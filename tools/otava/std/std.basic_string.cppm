@@ -787,13 +787,13 @@ template<typename T>
 string to_hex(const T& x)
 {
     string s;
-    int n = sizeof(x);
+    int n = static_cast<int>(sizeof(x));
     for (int i = 0; i < n; ++i)
     {
-        uint8_t b = x & 0xFF;
+        uint8_t b = static_cast<uint8_t>(x & 0xFF);
         s.append(1, hex_char(b & 0x0F));
         s.append(1, hex_char(b >> 4));
-        x = x >> 8;
+        x = static_cast<T>(x >> 8);
     }
     std::reverse(s.begin(), s.end());
     return s;
@@ -805,15 +805,14 @@ string to_hexstring(uint32_t x);
 string to_hexstring(uint64_t x);
 
 template<typename T>
-string to_oct(const T& x)
+string to_oct(T x)
 {
-    uint8_t zero = 0;
     string s;
     do
     {
-        uint8_t b = x;
+        uint8_t b = static_cast<uint8_t>(x);
         s.append(1, static_cast<char>(static_cast<int>(b & 7) + static_cast<int>('0')));
-        x = x >> 3;
+        x = static_cast<T>(x >> static_cast<T>(3));
     } while (x != 0);
     if (s[s.length() - 1] != '0')
     {

@@ -18,10 +18,15 @@ class Exception : public std::runtime_error
 {
 public:
     Exception();
+    Exception(const std::string& message_);
     Exception(const std::string& message_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     Exception(const std::string& message_, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos, otava::symbols::Context* context);
     Exception(const std::string& title, const std::string& message_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     Exception(const std::string& title, const std::string& message_, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos, otava::symbols::Context* context);
+    void SetWarning() { warning = true; }
+    bool Warning() const { return warning; }
+private:
+    bool warning;
 };
 
 [[noreturn]]
@@ -32,6 +37,8 @@ void ThrowException(const std::string& message, const soul::ast::SourcePos& sour
 
 [[noreturn]]
 void ThrowException(const Exception& ex);
+
+void PrintWarning(const Exception& ex);
 
 void PrintWarning(const std::string& message, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 

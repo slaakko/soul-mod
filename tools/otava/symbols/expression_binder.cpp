@@ -358,10 +358,10 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
     args.push_back(std::unique_ptr<BoundExpressionNode>(left->Clone()));
     args.push_back(std::unique_ptr<BoundExpressionNode>(right->Clone()));
     std::unique_ptr<BoundFunctionCallNode> functionCall;
-    Exception ex;
+    Exception ex1;
     FunctionMatch match1;
     std::vector<TypeSymbol*> templateArgs;
-    std::unique_ptr<BoundFunctionCallNode> functionCall1 = ResolveOverload(scope, groupName, templateArgs, args, sourcePos, context, ex, match1);
+    std::unique_ptr<BoundFunctionCallNode> functionCall1 = ResolveOverload(scope, groupName, templateArgs, args, sourcePos, context, ex1, match1);
     Exception ex2;
     FunctionMatch match2;
     TypeSymbol* type = left->GetType()->AddPointer(context);
@@ -373,15 +373,24 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
     context->PopFlags();
     if (!functionCall1 && !functionCall2)
     {
+        Exception ex(std::string(ex1.what()) + "\n" + std::string(ex2.what()));
         ThrowException(ex);
     }
     else if (functionCall1 && !functionCall2)
     {
         functionCall.reset(functionCall1.release());
+        if (ex1.Warning())
+        {
+            PrintWarning(ex1);
+        }
     }
     else if (functionCall2 && !functionCall1)
     {
         functionCall.reset(functionCall2.release());
+        if (ex2.Warning())
+        {
+            PrintWarning(ex2);
+        }
     }
     else
     {
@@ -441,17 +450,33 @@ void ExpressionBinder::BindUnaryOp(otava::ast::NodeKind op, const soul::ast::Sou
     std::u32string groupName = OperatorGroupNameMap::Instance().GetGroupName(op, sourcePos, context);
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
     args.push_back(std::unique_ptr<BoundExpressionNode>(operand));
-    Exception ex;
+    Exception ex1;
+    Exception ex2;
     std::vector<TypeSymbol*> templateArgs;
-    std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverload(scope, groupName, templateArgs, args, sourcePos, context, ex);
+    std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverload(scope, groupName, templateArgs, args, sourcePos, context, ex1);
+    if (functionCall)
+    {
+        if (ex1.Warning())
+        {
+            PrintWarning(ex1);
+        }
+    }
     if (!functionCall)
     {
         TypeSymbol* type = args[0]->GetType()->AddPointer(context);
         args[0].reset(new BoundAddressOfNode(args[0].release(), sourcePos, type));
-        functionCall = ResolveOverload(scope, groupName, templateArgs, args, sourcePos, context, ex);
+        functionCall = ResolveOverload(scope, groupName, templateArgs, args, sourcePos, context, ex2);
+        if (functionCall)
+        {
+            if (ex2.Warning())
+            {
+                PrintWarning(ex2);
+            }
+        }
     }
     if (!functionCall)
     {
+        Exception ex(std::string(ex1.what()) + "\n" + std::string(ex2.what()));
         ThrowException(ex);
     }
     FunctionSymbol* functionSymbol = functionCall->GetFunctionSymbol();
@@ -578,7 +603,9 @@ void ExpressionBinder::BindPrefixInc(const soul::ast::SourcePos& sourcePos, Boun
             child->Clone(),
             new otava::ast::BinaryExprNode(sourcePos, new otava::ast::PlusNode(sourcePos), child->Clone(),
                 new otava::ast::IntegerLiteralNode(sourcePos, 1, otava::ast::Suffix::none, otava::ast::Base::decimal, U"")));
+        context->PushSetFlag(ContextFlags::suppress_warning);
         boundExpression = BindExpression(&assignmentExpr, context);
+        context->PopFlags();
     }
 }
 
@@ -603,7 +630,9 @@ void ExpressionBinder::BindPrefixDec(const soul::ast::SourcePos& sourcePos, Boun
             child->Clone(),
             new otava::ast::BinaryExprNode(sourcePos, new otava::ast::MinusNode(sourcePos), child->Clone(),
                 new otava::ast::IntegerLiteralNode(sourcePos, 1, otava::ast::Suffix::none, otava::ast::Base::decimal, U"")));
+        context->PushSetFlag(ContextFlags::suppress_warning);
         boundExpression = BindExpression(&assignmentExpr, context);
+        context->PopFlags();
     }
 }
 
@@ -805,6 +834,11 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
             symbol = sp->ClassTemplate()->GetScope()->Lookup(node.Str(), symbolGroups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
         }
     }
+    if (boundExpression && boundExpression->IsBoundTypeNode())
+    {
+        TypeSymbol* type = static_cast<TypeSymbol*>(boundExpression->GetType());
+        symbol = type->GetScope()->Lookup(node.Str(), symbolGroups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+    }
     if (symbol)
     {
         switch (symbol->Kind())
@@ -913,6 +947,13 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
             case SymbolKind::fundamentalTypeSymbol:
             {
                 boundExpression = new BoundTypeNode(static_cast<TypeSymbol*>(symbol), node.GetSourcePos());
+                break;
+            }
+            case SymbolKind::namespaceSymbol:
+            {
+                NamespaceSymbol* ns = static_cast<NamespaceSymbol*>(symbol);
+                scope = ns->GetScope();
+                qualifiedScope = true;
                 break;
             }
             default:
@@ -1126,6 +1167,7 @@ void ExpressionBinder::BindMemberExpr(otava::ast::MemberExprNode* node, BoundExp
 void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
 {
     bool thisPtrAdded = false;
+    bool suppressWarning = false;
     VariableSymbol* temporary = nullptr;
     Scope* subjectScope = scope;
     OverloadResolutionFlags resolutionFlags = OverloadResolutionFlags::none;
@@ -1165,6 +1207,7 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
                 temporary->GetType()->AddPointer(context));
             args.push_back(std::unique_ptr<BoundExpressionNode>(boundAddrOfNode));
             resolutionFlags = resolutionFlags & ~OverloadResolutionFlags::dontSearchArgumentScopes;
+            suppressWarning = true;
         }
         else
         {
@@ -1199,22 +1242,60 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
         {
             groupName = GetGroupName(subject.get());
         }
-        Exception ex;
+        Exception ex1;
+        Exception ex2;
         std::vector<TypeSymbol*> templateArgs;
         if (subject->IsBoundFunctionGroupNode())
         {
             BoundFunctionGroupNode* boundFunctionGroup = static_cast<BoundFunctionGroupNode*>(subject.get());
             templateArgs = boundFunctionGroup->TemplateArgs();
         }
-        std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverload(subjectScope, groupName, templateArgs, args, node.GetSourcePos(), context, ex, resolutionFlags);
+        bool flagsPushed = false;
+        if (suppressWarning)
+        {
+            context->PushSetFlag(ContextFlags::suppress_warning);
+            flagsPushed = true;
+        }
+        std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverload(subjectScope, groupName, templateArgs, args, node.GetSourcePos(), context, ex1, 
+            resolutionFlags);
+        if (flagsPushed)
+        {
+            context->PopFlags();
+            flagsPushed = false;
+        }
+        if (functionCall)
+        {
+            if (ex1.Warning())
+            {
+                PrintWarning(ex1);
+            }
+        }
         if (!functionCall && thisPtrAdded)
         {
             args.erase(args.begin());
             Exception ex2;
+            if (suppressWarning)
+            {
+                context->PushSetFlag(ContextFlags::suppress_warning);
+                flagsPushed = true;
+            }
             functionCall = ResolveOverload(subjectScope, groupName, templateArgs, args, node.GetSourcePos(), context, ex2, resolutionFlags);
+            if (flagsPushed)
+            {
+                context->PopFlags();
+                flagsPushed = false;
+            }
+            if (functionCall)
+            {
+                if (ex2.Warning())
+                {
+                    PrintWarning(ex2);
+                }
+            }
         }
         if (!functionCall)
         {
+            Exception ex(std::string(ex1.what()) + "\n" + std::string(ex2.what()));
             ThrowException(ex);
         }
         FunctionSymbol* functionSymbol = functionCall->GetFunctionSymbol();
@@ -1636,7 +1717,9 @@ void ExpressionBinder::Visit(otava::ast::PostfixIncExprNode& node)
                         new otava::ast::BinaryExprNode(node.GetSourcePos(), new otava::ast::PlusNode(node.GetSourcePos()), node.Child()->Clone(),
                             new otava::ast::IntegerLiteralNode(node.GetSourcePos(), 1, otava::ast::Suffix::none, otava::ast::Base::decimal, U"")))),
                 new otava::ast::IdentifierNode(node.GetSourcePos(), temporaryName));
+            context->PushSetFlag(ContextFlags::suppress_warning);
             boundExpression = BindExpression(&expr, context);
+            context->PopFlags();
         }
     }
 }

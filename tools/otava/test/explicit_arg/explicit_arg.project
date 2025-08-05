@@ -1,0 +1,3 @@
+project explicit_arg;
+target=program;
+source <explicit_arg.cpp>;

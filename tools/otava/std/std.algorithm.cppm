@@ -3,6 +3,7 @@ export module std.algorithm;
 import std.utilities.utility;
 import std.type_traits;
 import std.utilities.pair;
+import std.iterator;
 
 export namespace std {
 
@@ -28,8 +29,23 @@ constexpr void swap(T& left, T& right)
     right = move(temp);
 }
 
-template<typename I> 
-void reverse(I begin, I end)
+namespace detail {
+
+template<typename I>
+void reverse_iter(I begin, I end, std::bidirectional_iterator_tag)
+{
+    while (true)
+    {
+        if (begin == end) return;
+        --end;
+        if (begin == end) return;
+        swap(*begin, *end);
+        ++begin;
+    }
+}
+
+template<typename I>
+void reverse_iter(I begin, I end, std::random_access_iterator_tag)
 {
     while (begin < end)
     {
@@ -37,6 +53,14 @@ void reverse(I begin, I end)
         swap(*begin, *end);
         ++begin;
     }
+}
+
+} // namespace detail
+
+template<typename I> 
+constexpr void reverse(I begin, I end)
+{
+    detail::reverse_iter(begin, end, typename std::iterator_traits<I>::iterator_category());
 }
 
 template<typename I>

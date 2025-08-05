@@ -143,6 +143,7 @@ public:
     inline FunctionSymbol* CopyCtor() const { return copyCtor; }
     void GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context);
     std::pair<bool, std::int64_t> Delta(ClassTypeSymbol* base, Emitter& emitter, Context* context);
+    int TotalMemberCount() const;
 private:
     ClassTypeSymbolFlags flags;
     std::vector<ClassTypeSymbol*> baseClasses;

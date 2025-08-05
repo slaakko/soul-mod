@@ -282,11 +282,11 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& fu
         {
             TypeSymbol* argType = arg->GetType();
             FunctionSymbol* conversionFun = argumentMatch.conversionFun;
-            if (conversionFun->GetConversionKind() == ConversionKind::explicitConversion)
+            if (conversionFun->GetConversionKind() == ConversionKind::explicitConversion && !context->GetFlag(ContextFlags::suppress_warning))
             {
-                ex = Exception("cannot convert from '" + util::ToUtf8(conversionFun->ConversionArgType()->FullName()) + "' to '" +
+                ex = Exception("warning: ", "conversion from '" + util::ToUtf8(conversionFun->ConversionArgType()->FullName()) + "' to '" +
                     util::ToUtf8(conversionFun->ConversionParamType()->FullName()) + "' without a cast", sourcePos, context);
-                return std::unique_ptr<BoundFunctionCallNode>();
+                ex.SetWarning();
             }
             if (conversionFun->GetFunctionKind() == FunctionKind::conversionMemFn && argType->PlainType(context)->IsClassTypeSymbol())
             {
@@ -1111,12 +1111,22 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
         }
         else
         {
-            ex = Exception("ambiguous function call, " + std::to_string(viableFunctions.size()) + " viable functions examined.", sourcePos, context);
+            std::string message = "ambiguous function call, " + std::to_string(viableFunctions.size()) + " viable functions examined:";
+            bool first = true;
             for (const auto& functionMatch : functionMatches)
             {
                 if (BetterFunctionMatch()(functionMatches[0], functionMatch)) break;
-                std::cout << util::ToUtf8(functionMatch->function->FullName()) << std::endl;
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    message.append(" or \n");
+                }
+                message.append(util::ToUtf8(functionMatch->function->FullName()));
             }
+            ex = Exception(message);
             return std::unique_ptr<FunctionMatch>(nullptr);
         }
     }

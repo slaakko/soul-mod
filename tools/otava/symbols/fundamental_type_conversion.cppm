@@ -85,6 +85,8 @@ struct FundamentalTypeConversion : public FunctionSymbol
     {
         SetConversion();
         SetAccess(Access::public_);
+        SetConversionParamType(paramType_);
+        SetConversionArgType(argType_);
         ParameterSymbol* arg = new ParameterSymbol(U"arg", argType);
         AddParameter(arg, soul::ast::SourcePos(), nullptr);
         SetReturnType(paramType_, context);

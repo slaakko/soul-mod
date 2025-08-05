@@ -742,6 +742,8 @@ void AddFundamentalIntegerOperationsToSymbolTable(TypeSymbol* type, Context* con
 void AddFundamentalFloatingPointOperationsToSymbolTable(TypeSymbol* type, Context* context)
 {
     TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeUnaryPlusOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeUnaryMinusOperation(type, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeAddOperation(type, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeSubOperation(type, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMulOperation(type, context), context);

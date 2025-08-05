@@ -59,6 +59,7 @@ class VariableGroupSymbol;
 class VariableSymbol;
 class ConstraintExprSymbol;
 class GenericTypeSymbol;
+class NamespaceTypeSymbol;
 
 class Visitor
 {

@@ -920,6 +920,7 @@ ClassDefaultCtor::ClassDefaultCtor(ClassTypeSymbol* classType_, const soul::ast:
     FunctionDefinitionSymbol(U"@constructor"), classType(classType_)
 {
     SetFunctionKind(FunctionKind::constructor);
+    SetGenerated();
     SetAccess(Access::public_);
     SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
     std::string digestSource = util::ToUtf8(classType->FullName());
@@ -1051,6 +1052,10 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
     }
     context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
     context->PopBoundFunction();
+    if (classType->TotalMemberCount() <= inlineClassOperationsThreshold)
+    {
+        classDefaultCtor->SetInline();
+    }
 }
 
 class ClassCopyCtor : public FunctionDefinitionSymbol
@@ -1067,6 +1072,7 @@ ClassCopyCtor::ClassCopyCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
     FunctionDefinitionSymbol(U"@constructor"), classType(classType_)
 {
     SetFunctionKind(FunctionKind::constructor);
+    SetGenerated();
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = ThisParam(context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddConst(context)->AddLValueRef(context));
@@ -1211,6 +1217,10 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
     }
     context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
     context->PopBoundFunction();
+    if (classType->TotalMemberCount() <= inlineClassOperationsThreshold)
+    {
+        classCopyCtor->SetInline();
+    }
 }
 
 class ClassMoveCtor : public FunctionDefinitionSymbol
@@ -1227,6 +1237,7 @@ ClassMoveCtor::ClassMoveCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
     FunctionDefinitionSymbol(U"@constructor"), classType(classType_)
 {
     SetFunctionKind(FunctionKind::constructor);
+    SetGenerated();
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = ThisParam(context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddRValueRef(context));
@@ -1381,6 +1392,10 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
     }
     context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
     context->PopBoundFunction();
+    if (classType->TotalMemberCount() <= inlineClassOperationsThreshold)
+    {
+        classMoveCtor->SetInline();
+    }
 }
 
 class ClassCopyAssignment: public FunctionDefinitionSymbol
@@ -1397,6 +1412,7 @@ ClassCopyAssignment::ClassCopyAssignment(ClassTypeSymbol* classType_, const soul
     FunctionDefinitionSymbol(U"operator="), classType(classType_)
 {
     SetFunctionKind(FunctionKind::special);
+    SetGenerated();
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = ThisParam(context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddConst(context)->AddLValueRef(context));
@@ -1508,6 +1524,10 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
     context->GetBoundFunction()->Body()->AddStatement(returnStatement);
     context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
     context->PopBoundFunction();
+    if (classType->TotalMemberCount() <= inlineClassOperationsThreshold)
+    {
+        classCopyAssignment->SetInline();
+    }
 }
 
 class ClassMoveAssignment : public FunctionDefinitionSymbol
@@ -1524,6 +1544,7 @@ ClassMoveAssignment::ClassMoveAssignment(ClassTypeSymbol* classType_, const soul
     FunctionDefinitionSymbol(U"operator="), classType(classType_)
 {
     SetFunctionKind(FunctionKind::constructor);
+    SetGenerated();
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = ThisParam(context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddRValueRef(context));
@@ -1641,6 +1662,10 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
     context->GetBoundFunction()->Body()->AddStatement(returnStatement);
     context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
     context->PopBoundFunction();
+    if (classType->TotalMemberCount() <= inlineClassOperationsThreshold)
+    {
+        classMoveAssignment->SetInline();
+    }
 }
 
 class FunctionPtrApply : public FunctionSymbol

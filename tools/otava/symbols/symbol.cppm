@@ -89,7 +89,7 @@ enum class SymbolKind : std::int32_t
     arrayTypeBegin, arrayTypeEnd,
     defaultBool, defaultSByte, defaultByte, defaultShort, defaultUShort, defaultInt, defaultUInt, defaultLong, defaultULong, defaultFloat, defaultDouble,
     defaultChar, defaultChar16, defaultChar32,
-    functionGroupTypeSymbol, friendSymbol,
+    functionGroupTypeSymbol, friendSymbol, namespaceTypeSymbol,
     max
 };
 

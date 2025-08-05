@@ -1,0 +1,3 @@
+project partial_specialization;
+target=program;
+source <partial_specialization.cpp>;

@@ -338,10 +338,6 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
     for (std::int32_t file : topologicalOrder)
     {
         const std::string& filePath = project->GetFileMap().GetFilePath(file);
-        if (filePath.find("std.basic_string.cppm") != std::string::npos)
-        {
-            int x = 0;
-        }
         files.push_back(std::make_pair(file, filePath));
         const auto& fileContent = project->GetFileMap().GetFileContent(file).first;
         auto lexer = otava::lexer::MakeLexer(fileContent.c_str(), fileContent.c_str() + fileContent.length(), filePath);

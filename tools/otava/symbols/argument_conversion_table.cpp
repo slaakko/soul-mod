@@ -699,6 +699,7 @@ EnumTypeToUnderlyingTypeConversion::EnumTypeToUnderlyingTypeConversion(Enumerate
 {
     SetConversion();
     SetAccess(Access::public_);
+    SetConversionKind(ConversionKind::explicitConversion);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", enumType);
     AddParameter(arg, soul::ast::SourcePos(), context);
     SetReturnType(underlyingType, context);
@@ -757,8 +758,8 @@ UnderlyingTypeToEnumTypeConversion::UnderlyingTypeToEnumTypeConversion(Enumerate
     FunctionSymbol(U"@conversion"), enumType(enumType_), underlyingType(underlyingType_)
 {
     SetConversion();
-    SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
+    SetConversionKind(ConversionKind::explicitConversion);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", underlyingType);
     AddParameter(arg, soul::ast::SourcePos(), context);
     SetReturnType(enumType, context);

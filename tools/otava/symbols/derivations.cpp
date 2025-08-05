@@ -191,6 +191,10 @@ int CountMatchingDerivations(const Derivations& left, const Derivations& right)
     {
         ++matchingDerivationsCount;
     }
+    if (!HasDerivation(left, Derivation::constDerivation) && !HasDerivation(right, Derivation::constDerivation))
+    {
+        ++matchingDerivationsCount;
+    }
     int leftPointerCount = PointerCount(left);
     int rightPointerCount = PointerCount(right);
     matchingDerivationsCount += std::min(leftPointerCount, rightPointerCount);

@@ -764,6 +764,17 @@ std::pair<bool, std::int64_t> ClassTypeSymbol::Delta(ClassTypeSymbol* base, Emit
     return std::make_pair(false, 0);
 }
 
+int ClassTypeSymbol::TotalMemberCount() const
+{
+    int totalMemberCount = 0;
+    for (const auto& baseClass : baseClasses)
+    {
+        totalMemberCount += baseClass->TotalMemberCount();
+    }
+    totalMemberCount += static_cast<int>(memberVariables.size());
+    return totalMemberCount;
+}
+
 ForwardClassDeclarationSymbol::ForwardClassDeclarationSymbol(const std::u32string& name_) : 
     TypeSymbol(SymbolKind::forwardClassDeclarationSymbol, name_), 
     classKind(ClassKind::class_),

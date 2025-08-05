@@ -23,7 +23,7 @@ using Lexer = soul::lexer::LexerBase<char32_t>;
 
 struct DeclarationList;
 
-enum class ContextFlags : std::int32_t
+enum class ContextFlags : std::int64_t
 {
     none = 0,
     hasDefiningTypeSpecifier = 1 << 0,
@@ -57,22 +57,23 @@ enum class ContextFlags : std::int32_t
     derefAfterConv = 1 << 28,
     generatingVTab = 1 << 29,
     resolveNestedTypes = 1 << 30,
-    release = 1 << 31
+    release = 1 << 31,
+    suppress_warning = static_cast<std::int64_t>(1) << 32
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
 {
-    return ContextFlags(std::int32_t(left) | std::int32_t(right));
+    return ContextFlags(std::int64_t(left) | std::int64_t(right));
 }
 
-constexpr  ContextFlags operator&(ContextFlags left, ContextFlags right)
+constexpr ContextFlags operator&(ContextFlags left, ContextFlags right)
 {
-    return ContextFlags(std::int32_t(left) & std::int32_t(right));
+    return ContextFlags(std::int64_t(left) & std::int64_t(right));
 }
 
-constexpr  ContextFlags operator~(ContextFlags flags)
+constexpr ContextFlags operator~(ContextFlags flags)
 {
-    return ContextFlags(~std::int32_t(flags));
+    return ContextFlags(~std::int64_t(flags));
 }
 
 class SymbolTable;

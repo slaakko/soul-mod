@@ -10,6 +10,8 @@ import soul.ast.source.pos;
 
 export namespace otava::symbols {
 
+const int inlineClassOperationsThreshold = 4;
+
 class BoundExpressionNode;
 class FunctionSymbol;
 class Context;

@@ -16,6 +16,9 @@ import util;
 
 export namespace otava::symbols {
 
+class NamespaceSymbol;
+class NamespaceTypeSymbol;
+
 enum class OperationFlags : std::int32_t
 {
     none = 0, addr = 1 << 0, deref = 1 << 1, defaultInit = 1 << 2, virtualCall = 1 << 3, setPtr = 1 << 4, dup = 1 << 5, storeDeref = 1 << 6, derefAfterConv = 1 << 7, 

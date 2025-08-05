@@ -45,6 +45,7 @@ FunctionSymbol* InlineFunctionRepository::GetInlineFunction(FunctionSymbol* fn) 
 
 FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    if (fn->IsGenerated()) return fn;
     InlineFunctionRepository* inlineFunctionRepository = context->GetBoundCompileUnit()->GetInlineFunctionRepository();
     FunctionSymbol* inlineFn = inlineFunctionRepository->GetInlineFunction(fn);
     if (inlineFn)

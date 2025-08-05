@@ -9,9 +9,9 @@ namespace std {
 
 rt_init::rt_init()
 {
-    stdin = static_cast<void*>(&stdin_);
-    stdout = static_cast<void*>(&stdout_);
-    stderr = static_cast<void*>(&stderr_);
+    stdin = static_cast<FILE*>(&stdin_);
+    stdout = static_cast<FILE*>(&stdout_);
+    stderr = static_cast<FILE*>(&stderr_);
 }
 
 bool isspace(int c)

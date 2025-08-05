@@ -19,6 +19,7 @@ using size_t = uint64_t;
 using ssize_t = int64_t;
 using time_t = int64_t;
 using void_ptr_type = void*;
+using ptrdiff_t = int64_t;
 
 } 
 
@@ -32,7 +33,9 @@ using ::int32_t;
 using ::uint32_t;
 using ::int64_t;
 using ::uint64_t;
+using ::size_t;
 using ::ssize_t;
 using ::time_t;
+using ::ptrdiff_t;
 
 } // namespace std

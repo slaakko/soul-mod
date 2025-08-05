@@ -59,6 +59,7 @@ class BoundGlobalVariableDefinitionNode;
 class BoundEmptyDestructorNode;
 class BoundFunctionValueNode;
 class BoundVariableAsVoidPtrNode;
+class BoundNamespaceExpression;
 
 class BoundTreeVisitor
 {
@@ -114,6 +115,7 @@ public:
     virtual void Visit(BoundEmptyDestructorNode& node) {}
     virtual void Visit(BoundFunctionValueNode& node) {}
     virtual void Visit(BoundVariableAsVoidPtrNode& node) {}
+    virtual void Visit(BoundNamespaceExpression& node) {}
 };
 
 class DefaultBoundTreeVisitor : public BoundTreeVisitor

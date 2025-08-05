@@ -346,6 +346,7 @@ bool Symbol::IsTypeSymbol() const
         case SymbolKind::templateParameterSymbol:
         case SymbolKind::boundTemplateParameterSymbol:
         case SymbolKind::varArgTypeSymbol:
+        case SymbolKind::namespaceTypeSymbol:
         {
             return true;
         }

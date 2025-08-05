@@ -32,13 +32,13 @@ string to_utf8(const u32string& s)
         }
         else if (x < 0x800u)
         {
-            uint8_t b1 = 0x80u;
-            for (uint8_t i = 0u; i < 6u; ++i)
+            uint8_t b1 = static_cast<uint8_t>(0x80u);
+            for (uint8_t i = static_cast < uint8_t>(0u); i < 6u; ++i)
             {
                 b1 = b1 | (static_cast<uint8_t>(x & 1u) << i);
                 x = x >> 1u;
             }
-            uint8_t b0 = 0xC0u;
+            uint8_t b0 = static_cast<uint8_t>(0xC0u);
             for (uint8_t i = 0u; i < 5u; ++i)
             {
                 b0 = b0 | (static_cast<uint8_t>(x & 1u) << i);
@@ -49,20 +49,20 @@ string to_utf8(const u32string& s)
         }
         else if (x < 0x10000u)
         {
-            uint8_t b2 = 0x80u;
-            for (uint8_t i = 0u; i < 6u; ++i)
+            uint8_t b2 = static_cast<uint8_t>(0x80u);
+            for (uint8_t i = static_cast <uint8_t>(0u); i < 6u; ++i)
             {
                 b2 = b2 | (static_cast<uint8_t>(x & 1u) << i);
                 x = x >> 1u;
             }
-            uint8_t b1 = 0x80u;
-            for (uint8_t i = 0u; i < 6u; ++i)
+            uint8_t b1 = static_cast<uint8_t>(0x80u);
+            for (uint8_t i = static_cast <uint8_t>(0u); i < 6u; ++i)
             {
                 b1 = b1 | (static_cast<uint8_t>(x & 1u) << i);
                 x = x >> 1u;
             }
-            uint8_t b0 = 0xE0u;
-            for (uint8_t i = 0u; i < 4u; ++i)
+            uint8_t b0 = static_cast<uint8_t>(0xE0u);
+            for (uint8_t i = static_cast <uint8_t>(0u); i < 4u; ++i)
             {
                 b0 = b0 | (static_cast<uint8_t>(x & 1u) << i);
                 x = x >> 1u;
@@ -73,26 +73,26 @@ string to_utf8(const u32string& s)
         }
         else if (x < 0x110000u)
         {
-            uint8_t b3 = 0x80u;
-            for (uint8_t i = 0u; i < 6u; ++i)
+            uint8_t b3 = static_cast<uint8_t>(0x80u);
+            for (uint8_t i = static_cast <uint8_t>(0u); i < 6u; ++i)
             {
                 b3 = b3 | (static_cast<uint8_t>(x & 1u) << i);
                 x = x >> 1u;
             }
-            uint8_t b2 = 0x80u;
-            for (uint8_t i = 0u; i < 6u; ++i)
+            uint8_t b2 = static_cast<uint8_t>(0x80u);
+            for (uint8_t i = static_cast <uint8_t>(0u); i < 6u; ++i)
             {
                 b2 = b2 | (static_cast<uint8_t>(x & 1u) << i);
                 x = x >> 1u;
             }
-            uint8_t b1 = 0x80u;
-            for (uint8_t i = 0u; i < 6u; ++i)
+            uint8_t b1 = static_cast<uint8_t>(0x80u);
+            for (uint8_t i = static_cast <uint8_t>(0u); i < 6u; ++i)
             {
                 b1 = b1 | (static_cast<uint8_t>(x & 1u) << i);
                 x = x >> 1u;
             }
-            uint8_t b0 = 0xF0u;
-            for (uint8_t i = 0u; i < 3u; ++i)
+            uint8_t b0 = static_cast<uint8_t>(0xF0u);
+            for (uint8_t i = static_cast <uint8_t>(0u); i < 3u; ++i)
             {
                 b0 = b0 | (static_cast<uint8_t>(x & 1u) << i);
                 x = x >> 1u;
@@ -191,7 +191,7 @@ u32string to_utf32(const string& s)
             for (uint8_t i = 0u; i < 6u; ++i)
             {
                 uint8_t bit = b1 & 1u;
-                b1 = b1 >> 1u;
+                b1 = static_cast<uint8_t>(b1 >> 1u);
                 u = static_cast<char32_t>(static_cast<uint32_t>(u) | (static_cast<uint32_t>(bit) << shift));
                 ++shift;
             }
@@ -199,7 +199,7 @@ u32string to_utf32(const string& s)
             for (uint8_t i = 0u; i < 5u; ++i)
             {
                 uint8_t bit = b0 & 1u;
-                b0 = b0 >> 1u;
+                b0 = static_cast<uint8_t>(b0 >> 1u);
                 u = static_cast<char32_t>(static_cast<uint32_t>(u) | (static_cast<uint32_t>(bit) << shift));
                 ++shift;
             }
@@ -225,7 +225,7 @@ u32string to_utf32(const string& s)
             for (uint8_t i = 0u; i < 6u; ++i)
             {
                 uint8_t bit = b2 & 1u;
-                b2 = b2 >> 1u;
+                b2 = static_cast<uint8_t>(b2 >> 1u);
                 u = static_cast<char32_t>(static_cast<uint32_t>(u) | (static_cast<uint32_t>(bit) << shift));
                 ++shift;
             }
@@ -238,7 +238,7 @@ u32string to_utf32(const string& s)
             for (uint8_t i = 0u; i < 6u; ++i)
             {
                 uint8_t bit = b1 & 1u;
-                b1 = b1 >> 1u;
+                b1 = static_cast<uint8_t>(b1 >> 1u);
                 u = static_cast<char32_t>(static_cast<uint32_t>(u) | (static_cast<uint32_t>(bit) << shift));
                 ++shift;
             }
@@ -246,7 +246,7 @@ u32string to_utf32(const string& s)
             for (uint8_t i = 0u; i < 4u; ++i)
             {
                 uint8_t bit = b0 & 1u;
-                b0 = b0 >> 1u;
+                b0 = static_cast<uint8_t>(b0 >> 1u);
                 u = static_cast<char32_t>(static_cast<uint32_t>(u) | (static_cast<uint32_t>(bit) << shift));
                 ++shift;
             }
@@ -272,7 +272,7 @@ u32string to_utf32(const string& s)
             for (uint8_t i = 0u; i < 6u; ++i)
             {
                 uint8_t bit = b3 & 1u;
-                b3 = b3 >> 1u;
+                b3 = static_cast<uint8_t>(b3 >> 1u);
                 u = static_cast<char32_t>(static_cast<uint32_t>(u) | (static_cast<uint32_t>(bit) << shift));
                 ++shift;
             }
@@ -285,7 +285,7 @@ u32string to_utf32(const string& s)
             for (uint8_t i = 0u; i < 6u; ++i)
             {
                 uint8_t bit = b2 & 1u;
-                b2 = b2 >> 1u;
+                b2 = static_cast<uint8_t>(b2 >> 1u);
                 u = static_cast<char32_t>(static_cast<uint32_t>(u) | (static_cast<uint32_t>(bit) << shift));
                 ++shift;
             }
@@ -298,7 +298,7 @@ u32string to_utf32(const string& s)
             for (uint8_t i = 0u; i < 6u; ++i)
             {
                 uint8_t bit = b1 & 1u;
-                b1 = b1 >> 1u;
+                b1 = static_cast<uint8_t>(b1 >> 1u);
                 u = static_cast<char32_t>(static_cast<uint32_t>(u) | (static_cast<uint32_t>(bit) << shift));
                 ++shift;
             }
@@ -306,7 +306,7 @@ u32string to_utf32(const string& s)
             for (uint8_t i = 0u; i < 3u; ++i)
             {
                 uint8_t bit = b0 & 1u;
-                b0 = b0 >> 1u;
+                b0 = static_cast<uint8_t>(b0 >> 1u);
                 u = static_cast<char32_t>(static_cast<uint32_t>(u) | (static_cast<uint32_t>(bit) << shift));
                 ++shift;
             }

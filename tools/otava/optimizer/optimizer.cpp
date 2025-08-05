@@ -10,6 +10,7 @@ import otava.optimizer.dead_code_elimination;
 import otava.optimizer.identity_calls;
 import otava.optimizer.inliner;
 import otava.optimizer.locals;
+import otava.optimizer.jumps;
 
 namespace otava::optimizer {
 
@@ -70,6 +71,10 @@ void Optimize(otava::intermediate::Context* context)
             if (HasOptimization(Optimizations::arithmetic))
             {
                 OptimizeArithmetics(fn, context);
+            }
+            if (HasOptimization(Optimizations::jump))
+            {
+                OptimizeJumps(fn);
             }
             if (HasOptimization(Optimizations::deadCodeElimination))
             {

@@ -149,6 +149,10 @@
     <ClCompile Include="identity_calls.cppm" />
     <ClCompile Include="inliner.cpp" />
     <ClCompile Include="inliner.cppm" />
+    <ClCompile Include="jumps.cpp" />
+    <ClCompile Include="jumps.cppm" />
+    <ClCompile Include="jump_table_switch.cpp" />
+    <ClCompile Include="jump_table_switch.cppm" />
     <ClCompile Include="locals.cpp" />
     <ClCompile Include="locals.cppm" />
     <ClCompile Include="opt.cppm" />

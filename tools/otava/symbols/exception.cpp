@@ -61,7 +61,11 @@ std::string ReferenceInfo(const soul::ast::SourcePos& refSourcePos, otava::symbo
     return std::string();
 }
 
-Exception::Exception() : std::runtime_error("empty")
+Exception::Exception() : std::runtime_error("empty"), warning(false)
+{
+}
+
+Exception::Exception(const std::string& message_) : std::runtime_error(message_)
 {
 }
 
@@ -83,7 +87,7 @@ Exception::Exception(const std::string& title, const std::string& message_, cons
 Exception::Exception(const std::string& title_, const std::string& message_, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos, 
     otava::symbols::Context* context) :
     std::runtime_error(title_ + message_ + ", file '" + SourceFilePath(sourcePos, context) +
-        "', line " + std::to_string(sourcePos.line) + ErrorLine(sourcePos, context) + ReferenceInfo(refSourcePos, context))
+        "', line " + std::to_string(sourcePos.line) + ErrorLine(sourcePos, context) + ReferenceInfo(refSourcePos, context)), warning(false)
 {
 }
 
@@ -107,6 +111,11 @@ void ThrowException(const Exception& ex)
     throw ex;
 }
 
+void PrintWarning(const Exception& ex)
+{
+    std::cout << ex.what() << std::endl;
+}
+
 void PrintWarning(const std::string& message, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     PrintWarning(message, sourcePos, soul::ast::SourcePos(), context);
@@ -115,7 +124,8 @@ void PrintWarning(const std::string& message, const soul::ast::SourcePos& source
 void PrintWarning(const std::string& message, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos, otava::symbols::Context* context)
 {
     Exception exception("warning: ", message, sourcePos, refSourcePos, context);
-    std::cout << exception.what() << std::endl;
+    exception.SetWarning();
+    PrintWarning(exception);
 }
 
 } // namespace otava::symbols
