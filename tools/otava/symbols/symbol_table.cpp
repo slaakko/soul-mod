@@ -219,6 +219,7 @@ void SymbolTable::Import(const SymbolTable& that, FunctionDefinitionSymbolSet* f
     globalNs->Import(that.globalNs.get(), &context);
     ImportSpecializations(that);
     ImportArrayTypes(that);
+    ImportDependentTypes(that);
     ImportCompoundTypeMap(that);
     ImportFundamentalTypeMap(that);
     ImportNodeSymbolMap(that);
@@ -271,6 +272,18 @@ void SymbolTable::ImportArrayTypes(const SymbolTable& that)
     for (const auto& s : that.arrayTypeSet)
     {
         arrayTypeSet.insert(s);
+    }
+}
+
+void SymbolTable::ImportDependentTypes(const SymbolTable& that)
+{
+    for (const auto & dependentType : that.dependentTypeSymbols)
+    {
+        dependentTypeSet.insert(dependentType.get());
+    }
+    for (const auto& dependentType : that.dependentTypeSet)
+    {
+        dependentTypeSet.insert(dependentType);
     }
 }
 
@@ -541,6 +554,12 @@ void SymbolTable::Write(Writer& writer)
     {
         writer.Write(arrayType.get());
     }
+    std::uint32_t dependentTypeCount = dependentTypeSymbols.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(dependentTypeCount);
+    for (const auto& dependentType : dependentTypeSymbols)
+    {
+        writer.Write(dependentType.get());
+    }
     std::uint32_t ccount = compoundTypes.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(ccount);
     for (const auto& compoundType : compoundTypes)
@@ -614,6 +633,21 @@ void SymbolTable::Read(Reader& reader)
             throw std::runtime_error("otava.symbols.symbol_table: array type expected");
         }
     }
+    std::uint32_t dependentTypeCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < dependentTypeCount; ++i)
+    {
+        Symbol* symbol = reader.ReadSymbol();
+        if (symbol->IsDependentTypeSymbol())
+        {
+            DependentTypeSymbol* dependentTypeSymbol = static_cast<DependentTypeSymbol*>(symbol);
+            dependentTypeSymbols.push_back(std::unique_ptr<DependentTypeSymbol>(dependentTypeSymbol));
+        }
+        else
+        {
+            otava::ast::SetExceptionThrown();
+            throw std::runtime_error("otava.symbols.symbol_table: dependent type expected");
+        }
+    }
     std::uint32_t ccount = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (std::uint32_t i = 0; i < ccount; ++i)
     {
@@ -675,6 +709,10 @@ void SymbolTable::Resolve()
     for (auto& arrayType : arrayTypes)
     {
         MapType(static_cast<TypeSymbol*>(arrayType.get()));
+    }
+    for (auto& dependentTypeSymbol : dependentTypeSymbols)
+    {
+        MapType(static_cast<TypeSymbol*>(dependentTypeSymbol.get()));
     }
     for (auto& compoundType : compoundTypes)
     {
@@ -1577,6 +1615,15 @@ ArrayTypeSymbol* SymbolTable::MakeArrayType(TypeSymbol* elementType, std::int64_
     arrayTypes.push_back(std::move(symbol));
     MapType(sym);
     return sym;
+}
+
+DependentTypeSymbol* SymbolTable::MakeDependentTypeSymbol(otava::ast::Node* node)
+{
+    DependentTypeSymbol* dependentTypeSymbol = new DependentTypeSymbol(node);
+    dependentTypeSet.insert(dependentTypeSymbol);
+    MapType(dependentTypeSymbol);
+    dependentTypeSymbols.push_back(std::unique_ptr<DependentTypeSymbol>(dependentTypeSymbol));
+    return dependentTypeSymbol;
 }
 
 void SymbolTable::CreateFundamentalTypes()

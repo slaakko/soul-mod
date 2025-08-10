@@ -1,0 +1,4 @@
+project ivec;
+target=program;
+interface <ivec.cppm>;
+source <ivec.cpp>;

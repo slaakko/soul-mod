@@ -1292,7 +1292,7 @@ void CodeGenerator::Visit(otava::symbols::BoundMemberExprNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundFunctionCallNode& node)
 {
     node.Load(emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
-    if (node.IsNoreturnFunctionCall())
+    if (node.IsNoReturnFunctionCall())
     {
         EmitReturn(node.GetSourcePos());
     }

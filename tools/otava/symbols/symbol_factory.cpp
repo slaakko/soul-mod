@@ -214,6 +214,10 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         {
             return new NestedTypeSymbol(name);
         }
+        case SymbolKind::dependentTypeSymbol:
+        {
+            return new DependentTypeSymbol(name);
+        }
         case SymbolKind::errorSymbol:
         {
             return new ErrorTypeSymbol();

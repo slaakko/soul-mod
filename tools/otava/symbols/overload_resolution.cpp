@@ -246,9 +246,19 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& fu
     }
     std::unique_ptr<BoundFunctionCallNode> boundFunctionCall(new BoundFunctionCallNode(functionMatch.function, sourcePos, type));
     int n = args.size();
-    for (int i = 0; i < n; ++i)
+    int m = functionMatch.defaultArgs.size();
+    int count = n + m;
+    for (int i = 0; i < count; ++i)
     {
-        BoundExpressionNode* arg = args[i].release();
+        BoundExpressionNode* arg = nullptr;
+        if (i >= n)
+        {
+            arg = functionMatch.defaultArgs[i - n].release();
+        }
+        else
+        {
+            arg = args[i].release();
+        }
         if (i == 0 && !functionMatch.function->IsMemberFunction() && functionMatch.function->IsCtorAssignmentOrArrow())
         {
             if (arg->IsBoundAddressOfNode())
@@ -344,12 +354,6 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& fu
         {
             arg = new BoundDereferenceNode(arg, sourcePos, arg->GetType()->RemoveReference(context));
         }
-        boundFunctionCall->AddArgument(arg);
-    }
-    int m = functionMatch.defaultArgs.size();
-    for (int i = 0; i < m; ++i)
-    {
-        BoundExpressionNode* arg = functionMatch.defaultArgs[i].release();
         boundFunctionCall->AddArgument(arg);
     }
     return boundFunctionCall;
@@ -940,9 +944,11 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
             ParameterSymbol* parameter = functionMatch.function->MemFunParameters(context)[i];
             if (parameter->DefaultValue())
             {
+                context->GetSymbolTable()->CurrentScope()->PushParentScope(functionMatch.function->GetScope());
                 defaultArg.reset(BindExpression(parameter->DefaultValue(), context));
+                context->GetSymbolTable()->CurrentScope()->PopParentScope();
                 arg = defaultArg.get();
-                argType = arg->GetType();
+                argType = arg->GetType()->DirectType(context)->FinalType(sourcePos, context);
                 functionMatch.defaultArgs.push_back(std::move(defaultArg));
             }
             else
@@ -956,7 +962,7 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
             argType = arg->GetType();
         }
         ParameterSymbol* parameter = functionMatch.function->MemFunParameters(context)[i];
-        context->PushSetFlag(ContextFlags::resolveNestedTypes);
+        context->PushSetFlag(ContextFlags::resolveDependentTypes | ContextFlags::resolveNestedTypes);
         context->PushTemplateParameterMap(&functionMatch.templateParameterMap);
         context->SetSourcePos(sourcePos);
         TypeSymbol* paramType = parameter->GetReferredType(context)->FinalType(sourcePos, context);
@@ -1224,14 +1230,6 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
     OverloadResolutionFlags flags)
 {
     MakeFinalDirectArgs(args, sourcePos, context);
-    BoundFunctionNode* fn = context->GetBoundFunction();
-/*
-    std::unique_ptr<BoundFunctionCallNode> ioManipFn = ResolveIOManipFn(scope, groupName, args, sourcePos, context, ex, flags);
-    if (ioManipFn)
-    {
-        return ioManipFn;
-    }
-*/
     std::vector<FunctionSymbol*> viableFunctions;
     if (groupName == U"@destructor")
     {
@@ -1266,6 +1264,10 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
             AddArgumentScopes(scopeLookups, args);
         }
         context->GetSymbolTable()->CollectViableFunctions(scopeLookups, groupName, templateArgs, args.size(), viableFunctions, context);
+    }
+    if (groupName == U"next")
+    {
+        int x = 0;
     }
     std::unique_ptr<FunctionMatch> bestMatch = SelectBestMatchingFunction(viableFunctions, templateArgs, args, groupName, sourcePos, context, ex);
     if (!bestMatch)

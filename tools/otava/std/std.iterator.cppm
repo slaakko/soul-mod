@@ -111,14 +111,14 @@ constexpr typename std::iterator_traits<IterT>::difference_type distance(IterT f
 }
 
 template<typename IterT>
-constexpr IterT next(IterT it, std::iterator_traits<IterT>::difference_type n = 1)
+constexpr IterT next(IterT it, typename std::iterator_traits<IterT>::difference_type n = 1)
 {
     std::advance(it, n);
     return it;
 }
 
 template<typename IterT>
-constexpr IterT prev(IterT it, std::iterator_traits<IterT>::difference_type n = 1)
+constexpr IterT prev(IterT it, typename std::iterator_traits<IterT>::difference_type n = 1)
 {
     std::advance(it, -n);
     return it;

@@ -1,0 +1,3 @@
+project replace;
+target=program;
+source <replace.cpp>;

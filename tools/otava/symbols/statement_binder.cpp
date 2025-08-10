@@ -1454,6 +1454,10 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
 
 void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
+    if (functionDefinitionSymbol->Name() == U"partition")
+    {
+        int x = 0;
+    }
     RemoveTemporaryAliasTypeSymbols(context);
     if (functionDefinitionSymbol->IsBound()) return;
     if (functionDefinitionSymbol->IsTemplate()) return;
@@ -1466,7 +1470,7 @@ void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSy
     bool hasNoReturnAttribute = false;
     if (functionDefinitionNode->IsFunctionDefinitionNode())
     {
-        hasNoReturnAttribute = HasNoreturnAttribute(static_cast<otava::ast::FunctionDefinitionNode*>(functionDefinitionNode)->Attributes());
+        hasNoReturnAttribute = HasNoReturnAttribute(static_cast<otava::ast::FunctionDefinitionNode*>(functionDefinitionNode)->Attributes());
     }
     if (functionDefinitionSymbol->ReturnType() && 
         !functionDefinitionSymbol->ReturnType()->IsVoidType() && 

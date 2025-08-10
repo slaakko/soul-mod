@@ -339,6 +339,7 @@ bool Symbol::IsTypeSymbol() const
         case SymbolKind::forwardEnumDeclarationSymbol:
         case SymbolKind::errorSymbol:
         case SymbolKind::nestedTypeSymbol:
+        case SymbolKind::dependentTypeSymbol:
         case SymbolKind::functionTypeSymbol:
         case SymbolKind::fundamentalTypeSymbol:
         case SymbolKind::genericTypeSymbol:

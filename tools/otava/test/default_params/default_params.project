@@ -1,0 +1,3 @@
+project default_params;
+target=program;
+source <default_params.cpp>;

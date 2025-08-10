@@ -353,6 +353,83 @@ ExpressionBinder::ExpressionBinder(Context* context_, SymbolGroupKind symbolGrou
 
 void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::SourcePos& sourcePos, BoundExpressionNode* left, BoundExpressionNode* right)
 {
+    bool isClassType = left->GetType()->IsClassTypeSymbol();
+    if (!isClassType)
+    {
+        switch (op)
+        {
+            case otava::ast::NodeKind::plusAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::plusNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::minusAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::minusNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::mulAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::mulNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::divAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::divNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::modAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::modNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::andAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::andNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::orAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::inclusiveOrNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::xorAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::exclusiveOrNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::shiftLeftAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::shiftLeftNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::shiftRightAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::shiftRightNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+        }
+    }
     std::u32string groupName = OperatorGroupNameMap::Instance().GetGroupName(op, sourcePos, context);
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
     args.push_back(std::unique_ptr<BoundExpressionNode>(left->Clone()));
@@ -834,7 +911,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
             symbol = sp->ClassTemplate()->GetScope()->Lookup(node.Str(), symbolGroups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
         }
     }
-    if (boundExpression && boundExpression->IsBoundTypeNode())
+    if (!symbol && boundExpression && boundExpression->IsBoundTypeNode())
     {
         TypeSymbol* type = static_cast<TypeSymbol*>(boundExpression->GetType());
         symbol = type->GetScope()->Lookup(node.Str(), symbolGroups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
@@ -1022,6 +1099,10 @@ void ExpressionBinder::Visit(otava::ast::ThisNode& node)
 
 void ExpressionBinder::Visit(otava::ast::TemplateIdNode& node)
 {
+    if (node.TemplateName()->Str() == U"operand_rel_x")
+    {
+        int x = 0;
+    }
     context->GetSymbolTable()->BeginScope(scope);
     TypeSymbol* type = ResolveType(&node, DeclarationFlags::none, context, TypeResolverFlags::dontThrow);
     if (type)

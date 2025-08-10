@@ -296,13 +296,47 @@ void TypeResolver::Visit(otava::ast::PtrNode& node)
 
 void TypeResolver::Visit(otava::ast::TypenameSpecifierNode& node)
 {
-    context->GetSymbolTable()->PushTopScopeIndex();
-    BeginScope(node.NestedNameSpecifier(), context);
-    createTypeSymbol = true;
-    node.Id()->Accept(*this);
-    createTypeSymbol = false;
-    EndScope(context);
-    context->GetSymbolTable()->PopTopScopeIndex();
+    if (context->GetFlag(ContextFlags::processingAliasDeclation))
+    {
+        context->GetSymbolTable()->PushTopScopeIndex();
+        BeginScope(node.NestedNameSpecifier(), context);
+        createTypeSymbol = true;
+        node.Id()->Accept(*this);
+        createTypeSymbol = false;
+        EndScope(context);
+        context->GetSymbolTable()->PopTopScopeIndex();
+    }
+    else
+    {
+        if (context->GetFlag(ContextFlags::parsingTemplateDeclaration))
+        {
+            type = context->GetSymbolTable()->MakeDependentTypeSymbol(node.Clone());
+        }
+        else
+        {
+            InstantiationScope instantiationScope(context->GetSymbolTable()->CurrentScope());
+            std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
+            if (context->TemplateParameterMap())
+            {
+                for (const auto& templateParamType : *context->TemplateParameterMap())
+                {
+                    TemplateParameterSymbol* templateParameter = templateParamType.first;
+                    BoundTemplateParameterSymbol* boundTemplateParameter(new BoundTemplateParameterSymbol(templateParameter->Name()));
+                    boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
+                    boundTemplateParameter->SetBoundSymbol(templateParamType.second);
+                    boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
+                    instantiationScope.Install(boundTemplateParameter);
+                }
+            }
+            context->GetSymbolTable()->PushTopScopeIndex();
+            context->GetSymbolTable()->BeginScope(&instantiationScope);
+            BeginScope(node.NestedNameSpecifier(), context);
+            node.Id()->Accept(*this);
+            EndScope(context);
+            context->GetSymbolTable()->EndScope();
+            context->GetSymbolTable()->PopTopScopeIndex();
+        }
+    }
 }
 
 void TypeResolver::Visit(otava::ast::DeclTypeSpecifierNode& node)

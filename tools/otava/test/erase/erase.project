@@ -1,0 +1,3 @@
+project erase;
+target=program;
+source <erase.cpp>;

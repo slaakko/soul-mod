@@ -222,6 +222,39 @@ void NestedTypeSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+DependentTypeSymbol::DependentTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::dependentTypeSymbol, name_), node()
+{
+}
+
+DependentTypeSymbol::DependentTypeSymbol(otava::ast::Node* node_) : TypeSymbol(SymbolKind::dependentTypeSymbol, U"@dependent_type"), node(node_)
+{
+    if (node->IsTypenameSpecifierNode())
+    {
+        otava::ast::TypenameSpecifierNode* s = static_cast<otava::ast::TypenameSpecifierNode*>(node.get());
+        SetName(s->Id()->Str());
+    }
+}
+
+void DependentTypeSymbol::Write(Writer& writer)
+{
+    TypeSymbol::Write(writer);
+    otava::ast::Writer astWriter(&writer.GetBinaryStreamWriter());
+    astWriter.Write(node.get());
+}
+
+void DependentTypeSymbol::Read(Reader& reader)
+{
+    TypeSymbol::Read(reader);
+    otava::ast::Reader astReader(&reader.GetBinaryStreamReader());
+    astReader.SetNodeMap(reader.GetSymbolTable()->GetNodeMap());
+    node.reset(astReader.ReadNode());
+}
+
+void DependentTypeSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
 ErrorTypeSymbol::ErrorTypeSymbol() : TypeSymbol(SymbolKind::errorSymbol, U"<error_type>")
 {
 }

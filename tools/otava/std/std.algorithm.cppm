@@ -4,6 +4,7 @@ import std.utilities.utility;
 import std.type_traits;
 import std.utilities.pair;
 import std.iterator;
+import std.rt;
 
 export namespace std {
 
@@ -200,30 +201,18 @@ void insertion_sort(I begin, I end, R r)
 template<typename I>
 constexpr void insertion_sort(I begin, I end)
 {
-    insertion_sort(begin, end, less<iter_value_t<I>>());
-}
-
-template<typename I>
-constexpr I next(I i, ssize_t n)
-{
-    return i + n;
-}
-
-template<typename I>
-constexpr ssize_t distance(I first, I last)
-{
-    return last - first;
+    insertion_sort(begin, end, less<iterator_traits<I>::value_type>());
 }
 
 template<typename I, typename P>
-void partition(I begin, I end, P p)
+I partition(I begin, I end, P p)
 {
     begin = find_if_not(begin, end, p);
     if (begin == end)
     {
         return begin;
     }
-    for (auto i = next(begin, 1); i != end; ++i)
+    for (auto i = next(begin); i != end; ++i)
     {
         if (p(*i))
         {
@@ -267,13 +256,13 @@ void quick_sort(I begin, I end, R r)
 {
     if (begin == end) return;
     auto pivot = *next(begin, distance(begin, end) / 2);
-    auto mid1 = partition(begin, end, operand_rel_x<iter_value_t<I>, r>(pivot, r));
-    auto mid2 = partition(mid1, end, not_x_rel_operand<iter_value_t<I>, r>(pivot, r));
+    auto mid1 = partition(begin, end, operand_rel_x<iterator_traits<I>::value_type, R>(pivot, r));
+    auto mid2 = partition(mid1, end, not_x_rel_operand<iterator_traits<I>::value_type, R>(pivot, r));
     quick_sort(begin, mid1, r);
     quick_sort(mid2, end, r);
 }
 
-const ssize_t insertion_sort_threshold = 16;
+constexpr ssize_t insertion_sort_threshold = 16;
 
 template<typename I, typename R>
 void sort(I begin, I end, R r)
@@ -287,6 +276,12 @@ void sort(I begin, I end, R r)
     {
         quick_sort(begin, end, r);
     }
+}
+
+template<typename I>
+inline void sort(I begin, I end)
+{
+    sort(begin, end, less<iterator_traits<I>::value_type>());
 }
 
 template<typename I, typename R>
@@ -312,7 +307,7 @@ I adjacent_find(I begin, I end, R r)
 template<typename I>
 I adjacent_find(I begin, I end)
 {
-    return adjacent_find(begin, end, equal_to<iter_value_t<I>>());
+    return adjacent_find(begin, end, equal_to<iterator_traits<I>::value_type>());
 }
 
 template<typename I, typename R>
@@ -340,19 +335,7 @@ I unique(I begin, I end, R r)
 template<typename I>
 I unique(I begin, I end)
 {
-    return unique(begin, end, equal_to<iter_value_t<I>>());
-}
-
-template<typename I>
-ssize_t distance(I first, I last)
-{
-    return last - first;
-}
-
-template<typename I>
-I iter_next(I i, ssize_t n)
-{
-    return i + n;
+    return unique(begin, end, equal_to<iterator_traits<I>::value_type>());
 }
 
 template<typename I, typename T>
@@ -501,6 +484,54 @@ pair<I, I> equal_range(I first, I last, const T& value, R r)
         }
     }
     return pair<I, I>(first, first);
+}
+
+template<typename I1, typename I2>
+bool lexicographical_compare(I1 first1, I1 last1, I2 first2, I2 last2)
+{
+    while (first1 != last1 && first2 != last2)
+    {
+        if (*first1 < *first2)
+        {
+            return true;
+        }
+        if (*first1 > *first2)
+        {
+            return false;
+        }
+        ++first1;
+        ++first2;
+    }
+    return first1 == last1 && first2 != last2;
+}
+
+template<typename I1, typename I2, typename Compare>
+bool lexicographical_compare(I1 first1, I1 last1, I2 first2, I2 last2, Compare comp)
+{
+    while (first1 != last1 && first2 != last2)
+    {
+        if (comp(*first1, *first2))
+        {
+            return true;
+        }
+        if (comp(*first2, *first1))
+        {
+            return false;
+        }
+        ++first1;
+        ++first2;
+    }
+    return first1 == last1 && first2 != last2;
+}
+
+std::uint32_t random()
+{
+    return ort_random();
+}
+
+std::uint64_t random64()
+{
+    return ort_random64();
 }
 
 } // std

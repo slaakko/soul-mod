@@ -73,7 +73,7 @@ enum class SymbolKind : std::int32_t
     conceptSymbol, enumTypeSymbol, enumConstantSymbol, functionSymbol, functionTypeSymbol, functionDefinitionSymbol, explicitlyInstantiatedFunctionDefinitionSymbol,
     fundamentalTypeSymbol, namespaceSymbol, templateDeclarationSymbol, typenameConstraintSymbol, explicitInstantiationSymbol,
     templateParameterSymbol, varArgTypeSymbol, variableSymbol, parameterSymbol, errorSymbol,
-    classTemplateSpecializationSymbol, aliasTypeTemplateSpecializationSymbol, nestedTypeSymbol, nullPtrValueSymbol, symbolValueSymbol, invokeValueSymbol,
+    classTemplateSpecializationSymbol, aliasTypeTemplateSpecializationSymbol, nestedTypeSymbol, dependentTypeSymbol, nullPtrValueSymbol, symbolValueSymbol, invokeValueSymbol,
     forwardClassDeclarationSymbol, forwardEnumDeclarationSymbol, boundTemplateParameterSymbol, constraintExprSymbol,
     fundamentalTypeNot, fundamentalTypeUnaryPlus, fundamentalTypeUnaryMinus, fundamentalTypeComplement,
     fundamentalTypeAdd, fundamentalTypeSub, fundamentalTypeMul, fundamentalTypeDiv, fundamentalTypeMod,
@@ -181,6 +181,7 @@ public:
     inline bool IsForwardDeclarationSymbol() const { return IsForwardClassDeclarationSymbol() || IsForwardEnumDeclarationSymbol(); }
     inline bool IsFunctionGroupTypeSymbol() const { return kind == SymbolKind::functionGroupTypeSymbol; }
     inline bool IsNestedTypeSymbol() const { return kind == SymbolKind::nestedTypeSymbol; }
+    inline bool IsDependentTypeSymbol()  const { return kind == SymbolKind::dependentTypeSymbol; }
     bool IsDefaultCtor() const;
     bool IsCopyCtor() const;
     bool IsMoveCtor() const;

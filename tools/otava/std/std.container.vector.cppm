@@ -32,6 +32,17 @@ void constructive_move(T* to, T* from, ssize_t count)
 }
 
 template<typename T>
+void constructive_move_backward(T* to, T* from, ssize_t count)
+{
+    for (ssize_t i = 0; i < count; ++i)
+    {
+        --to;
+        --from;
+        new (to) T(std::move(*from));
+    }
+}
+
+template<typename T>
 void destroy(T* elements, ssize_t count)
 {
     for (ssize_t i = 0; i < count; ++i)
@@ -55,7 +66,7 @@ public:
     using iterator = value_type*;
     using const_iterator = const value_type*;
 
-    vector() : elements(nullptr), sz(0), res(0) {}
+    inline vector() : elements(nullptr), sz(0), res(0) {}
     explicit vector(size_type n) : elements(nullptr), sz(n), res(0)
     {
         reserve(sz);
@@ -80,7 +91,7 @@ public:
             constructive_copy(elements, that.elements, sz);
         }
     }
-    vector(vector&& that) : elements(that.elements), sz(that.sz), res(that.res)
+    inline vector(vector&& that) : elements(that.elements), sz(that.sz), res(that.res)
     {
         that.elements = static_cast<T*>(nullptr);
         that.sz = 0;
@@ -92,7 +103,7 @@ public:
     }
     vector& operator=(const vector& that)
     {
-        destroy();
+        clear();
         sz = that.sz;
         reserve(sz);
         constructive_copy(elements, that.elements, sz);
@@ -105,10 +116,18 @@ public:
         std::swap(res, that.res);
         return *this;
     }
-    void assign(size_type n, const T& value);
+    void assign(size_type n, const T& value)
+    {
+        clear();
+        reserve(n);
+        for (size_type i = 0; i < n; ++i)
+        {
+            push_back(value);
+        }
+    }
     
-    iterator begin() { return elements; }
-    const_iterator begin() const { return elements; }
+    inline iterator begin() { return elements; }
+    inline const_iterator begin() const { return elements; }
     iterator end()
     {
         if (elements)
@@ -131,7 +150,7 @@ public:
             return nullptr;
         }
     }
-    const_iterator cbegin() const { return elements; }
+    inline const_iterator cbegin() const { return elements; }
     const_iterator cend() const
     {
         if (elements)
@@ -144,10 +163,9 @@ public:
         }
     }
 
-    bool empty() const { return sz == 0; }
-    size_type size() const { return sz; }
-    size_type max_size() const;
-    size_type capacity() const { return res; }
+    inline bool empty() const { return sz == 0; }
+    inline size_type size() const { return sz; }
+    inline size_type capacity() const { return res; }
     void resize(size_type new_sz)
     {
         if (new_sz != sz)
@@ -201,36 +219,33 @@ public:
             grow(n);
         }
     }
-    void shrink_to_fit();
-    
-    reference operator[](size_type n)
+   
+    inline reference operator[](size_type n)
     {
         return elements[n];
     }
-    const_reference operator[](size_type n) const
+    inline const_reference operator[](size_type n) const
     {
         return elements[n];
     }
-    reference at(size_type n);
-    const_reference at(size_type n) const;
-    reference front()
+    inline reference front()
     {
         return elements[0];
     }
-    const_reference front() const
+    inline const_reference front() const
     {
         return elements[0];
     }
-    reference back()
+    inline reference back()
     {
         return elements[sz - 1];
     }
-    const_reference back() const
+    inline const_reference back() const
     {
         return elements[sz - 1];
     }
-    pointer data() { return elements; }
-    const_pointer data() const { return elements; }
+    inline pointer data() { return elements; }
+    inline const_pointer data() const { return elements; }
 
     void push_back(const T& x)
     {
@@ -253,34 +268,112 @@ public:
     iterator insert(const_iterator position, const T& x)
     {
         reserve(sz + 1);
-        constructive_move(end(), end() - 1, end() - position);
+        size_type index = position - begin();
+        iterator e = end();
+        constructive_move_backward(e + 1, e, e - position);
         new (position) T(x);
         ++sz;
+        return begin() + index;
     }
     iterator insert(const_iterator position, T&& x)
     {
         reserve(sz + 1);
-        constructive_move(end(), end() - 1, end() - position);
+        size_type index = position - begin();
+        iterator e = end();
+        constructive_move_backward(e + 1, e, e - position);
         new (position) T(std::move(x));
         ++sz;
+        return begin() + index;
     }
-    iterator insert(const_iterator position, size_type n, const T& x);
-    iterator erase(const_iterator position)
+    iterator insert(const_iterator position, size_type n, const T& x)
     {
-        erase(position, position + 1);
+        size_type index = position - cbegin();
+        iterator first = end();
+        for (size_type i = 0; i < n; ++i)
+        {
+            const_iterator p = cbegin() + index;
+            iterator it = insert(p, x);
+            if (i == 0)
+            {
+                first = it;
+            }
+            ++index;
+        }
+        return first;
+    }
+    iterator erase(iterator pos)
+    {
+        size_type index = pos - begin();
+        pos->T::~T();
+        constructive_move(pos, pos + 1, end() - pos);
+        --sz;
+        if (sz > 0)
+        {
+            return begin() + index;
+        }
+        else
+        {
+            return end();
+        }
+    }
+    iterator erase(const_iterator pos)
+    {
+        size_type index = pos - begin();
+        pos->T::~T();
+        constructive_move(pos, pos + 1, end() - pos);
+        --sz;
+        if (sz > 0)
+        {
+            return begin() + index;
+        }
+        else
+        {
+            return end();
+        }
     }
     iterator erase(iterator first, iterator last)
     {
+        if (first == last) return last;
+        size_type index = first - begin();
         size_type n = last - first;
-        for (iterator i = first; i != last; ++i)
+        for (iterator it = first; it != last; ++it)
         { 
-            i->T::~T();
+            it->T::~T();
         }
         size_type m = end() - last;
         constructive_move(first, last, m);
         sz -= n;
+        if (sz > 0)
+        {
+            return begin() + index;
+        }
+        else
+        {
+            return end();
+        }
     }
-    void clear()
+    iterator erase(const_iterator first, const_iterator last)
+    {
+        if (first == last) return last;
+        size_type index = first - begin();
+        size_type n = last - first;
+        for (iterator it = first; it != last; ++it)
+        {
+            it->T::~T();
+        }
+        size_type m = end() - last;
+        constructive_move(first, last, m);
+        sz -= n;
+        if (sz > 0)
+        {
+            return begin() + index;
+        }
+        else
+        {
+            return end();
+        }
+    }
+    inline void clear()
     {
         destroy();
     }
@@ -318,7 +411,7 @@ private:
     size_type res;
 };
 
-template<class T>
+template<typename T>
 bool operator==(const vector<T>& x, const vector<T>& y)
 {
     if (x.size() != y.size()) return false;
@@ -328,6 +421,12 @@ bool operator==(const vector<T>& x, const vector<T>& y)
         if (x[i] != y[i]) return false;
     }
     return true;
+}
+
+template<typename T>
+inline bool operator<(const vector<T>& x, const vector<T>& y)
+{
+    return lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
 }
 
 } // namespace std

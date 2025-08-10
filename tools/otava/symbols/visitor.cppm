@@ -55,6 +55,7 @@ class TemplateDeclarationSymbol;
 class ExplicitInstantiationSymbol;
 class ErrorTypeSymbol;
 class NestedTypeSymbol;
+class DependentTypeSymbol;
 class VariableGroupSymbol;
 class VariableSymbol;
 class ConstraintExprSymbol;
@@ -113,6 +114,7 @@ public:
     virtual void Visit(TemplateDeclarationSymbol& symbol) {}
     virtual void Visit(ExplicitInstantiationSymbol& symbol) {}
     virtual void Visit(NestedTypeSymbol& symbol) {}
+    virtual void Visit(DependentTypeSymbol& symbol) {}
     virtual void Visit(ErrorTypeSymbol& symbol) {}
     virtual void Visit(VariableGroupSymbol& symbol) {}
     virtual void Visit(VariableSymbol& symbol) {}

@@ -12,6 +12,8 @@ export {
 extern "C" void* malloc(ssize_t size);
 extern "C" void free(void* ptr);
 extern "C" void ort_io_write(int handle, const char* s);
+extern "C" std::uint32_t ort_random();
+extern "C" std::uint64_t ort_random64();
 extern "C" void flush_handle(int handle);
 extern "C" bool is_space(int c);
 extern "C" const char* get_env(const char* env);

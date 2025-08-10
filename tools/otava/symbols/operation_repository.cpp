@@ -925,6 +925,7 @@ ClassDefaultCtor::ClassDefaultCtor(ClassTypeSymbol* classType_, const soul::ast:
     SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
     std::string digestSource = util::ToUtf8(classType->FullName());
     digestSource.append(1, '.').append(classType->IrName(context));
+    digestSource.append(context->GetBoundCompileUnit()->Id());
     irName = "default_ctor_" + util::ToUtf8(classType->Group()->Name()) + "_" + util::GetSha1MessageDigest(digestSource);
     SetFixedIrName(irName);
 }
@@ -1080,6 +1081,7 @@ ClassCopyCtor::ClassCopyCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
     SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
     std::string digestSource = util::ToUtf8(classType->FullName());
     digestSource.append(1, '.').append(classType->IrName(context));
+    digestSource.append(context->GetBoundCompileUnit()->Id());
     irName = "copy_ctor_" + util::ToUtf8(classType->Group()->Name()) + "_" + util::GetSha1MessageDigest(digestSource);
     SetFixedIrName(irName);
 }
@@ -1245,6 +1247,7 @@ ClassMoveCtor::ClassMoveCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
     SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
     std::string digestSource = util::ToUtf8(classType->FullName());
     digestSource.append(1, '.').append(classType->IrName(context));
+    digestSource.append(context->GetBoundCompileUnit()->Id());
     irName = "move_ctor_" + util::ToUtf8(classType->Group()->Name()) + "_" + util::GetSha1MessageDigest(digestSource);
     SetFixedIrName(irName);
 }
@@ -1420,6 +1423,7 @@ ClassCopyAssignment::ClassCopyAssignment(ClassTypeSymbol* classType_, const soul
     SetReturnType(classType->AddLValueRef(context), context);
     std::string digestSource = util::ToUtf8(classType->FullName());
     digestSource.append(1, '.').append(classType->IrName(context));
+    digestSource.append(context->GetBoundCompileUnit()->Id());
     irName = "copy_assignment_" + util::ToUtf8(classType->Group()->Name()) + "_" + util::GetSha1MessageDigest(digestSource);
     SetFixedIrName(irName);
 }
@@ -1552,6 +1556,7 @@ ClassMoveAssignment::ClassMoveAssignment(ClassTypeSymbol* classType_, const soul
     SetReturnType(classType->AddLValueRef(context), context);
     std::string digestSource = util::ToUtf8(classType->FullName());
     digestSource.append(1, '.').append(classType->IrName(context));
+    digestSource.append(context->GetBoundCompileUnit()->Id());
     irName = "move_assignment_" + util::ToUtf8(classType->Group()->Name()) + "_" + util::GetSha1MessageDigest(digestSource);
     SetFixedIrName(irName);
 }

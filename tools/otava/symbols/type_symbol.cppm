@@ -10,6 +10,7 @@ import otava.symbols.container.symbol;
 import otava.symbols.derivations;
 import otava.symbols.template_param_compare;
 import otava.intermediate.types;
+import otava.ast;
 import util.uuid;
 
 export namespace otava::symbols {
@@ -71,6 +72,21 @@ public:
     std::string SymbolKindStr() const override { return "nested type symbol"; }
     std::string SymbolDocKindStr() const override { return "nested_type"; }
     void Accept(Visitor& visitor) override;
+};
+
+class DependentTypeSymbol : public TypeSymbol
+{
+public:
+    DependentTypeSymbol(const std::u32string& name_);
+    DependentTypeSymbol(otava::ast::Node* node_);
+    std::string SymbolKindStr() const override { return "dependent type symbol"; }
+    std::string SymbolDocKindStr() const override { return "dependent_type"; }
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Accept(Visitor& visitor) override;
+    inline otava::ast::Node* GetNode() const { return node.get(); }
+private:
+    std::unique_ptr<otava::ast::Node> node;
 };
 
 class ErrorTypeSymbol : public TypeSymbol

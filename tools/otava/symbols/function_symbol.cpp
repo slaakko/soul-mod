@@ -31,7 +31,9 @@ import otava.symbols.namespaces;
 import otava.symbols.function.templates;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.operation.repository;
+import otava.symbols.type.resolver;
 import otava.intermediate;
+import otava.ast;
 import util.sha1;
 import util.unicode;
 
@@ -215,6 +217,8 @@ void ParameterSymbol::Write(Writer& writer)
     if (hasDefaultValue)
     {
         writer.GetBinaryStreamWriter().Write(defaultValue->Id());
+        otava::ast::Writer astWriter(&writer.GetBinaryStreamWriter());
+        astWriter.Write(defaultValue);
     }
 }
 
@@ -226,6 +230,9 @@ void ParameterSymbol::Read(Reader& reader)
     if (hasDefaultValue)
     {
         defaultValueNodeId = reader.GetBinaryStreamReader().ReadLong();
+        otava::ast::Reader astReader(&reader.GetBinaryStreamReader());
+        astReader.SetNodeMap(reader.GetSymbolTable()->GetNodeMap());
+        defaultValueNode.reset(astReader.ReadNode());
     }
 }
 
@@ -252,7 +259,12 @@ TypeSymbol* ParameterSymbol::GetReferredType(Context* context) const
     {
         AliasTypeSymbol* aliasType = static_cast<AliasTypeSymbol*>(referredType);
         referredType = aliasType->ReferredType();
-        if (context->GetFlag(ContextFlags::resolveNestedTypes) && referredType->IsNestedTypeSymbol())
+        if (context->GetFlag(ContextFlags::resolveDependentTypes) && referredType->IsDependentTypeSymbol())
+        {
+            DependentTypeSymbol* dependentType = static_cast<DependentTypeSymbol*>(referredType);
+            referredType = ResolveType(dependentType->GetNode(), DeclarationFlags::none, context);
+        }
+        else if (context->GetFlag(ContextFlags::resolveNestedTypes) && referredType->IsNestedTypeSymbol())
         {
             if (context->TemplateParameterMap())
             {
@@ -277,6 +289,17 @@ TypeSymbol* ParameterSymbol::GetReferredType(Context* context) const
     if (type->IsCompoundType())
     {
         referredType = context->GetSymbolTable()->MakeCompoundType(referredType, type->GetDerivations());
+    }
+    if (context->GetFlag(ContextFlags::resolveDependentTypes) && referredType->IsDependentTypeSymbol())
+    {
+        DependentTypeSymbol* dependentType = static_cast<DependentTypeSymbol*>(referredType);
+        TypeSymbol* type = ResolveType(dependentType->GetNode(), DeclarationFlags::none, context);
+        referredType = type;
+        while (referredType->IsAliasTypeSymbol())
+        {
+            AliasTypeSymbol* aliasType = static_cast<AliasTypeSymbol*>(referredType);
+            referredType = aliasType->ReferredType();
+        }
     }
     return referredType;
 }

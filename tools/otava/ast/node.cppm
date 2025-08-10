@@ -138,6 +138,7 @@ public:
     inline bool IsLBraceNode() const { return kind == NodeKind::lbraceNode; }
     inline bool IsRBraceNode() const { return kind == NodeKind::rbraceNode; }
     inline bool IsFunctionDeclaratorNode() const { return kind == NodeKind::functionDeclaratorNode; }
+    inline bool IsTypenameSpecifierNode() const { return kind == NodeKind::typenameSpecifierNode; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;

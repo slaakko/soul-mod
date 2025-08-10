@@ -645,7 +645,8 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
     if (explicitInstantiation)
     {
         bool isInline = memFn->IsInline() && context->ReleaseConfig() && otava::optimizer::HasOptimization(otava::optimizer::Optimizations::inlining);
-        if (!isInline)
+        bool hasDefaultParams = memFn->HasDefaultParams();
+        if (!isInline && !hasDefaultParams)
         {
             if (memFn->IsFunctionDefinitionSymbol())
             {

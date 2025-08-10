@@ -1,14 +1,17 @@
-import std.core;
+import std;
 
 int main()
 {
-    std::vector<int> x;
-    x.push_back(2);
-    x.push_back(1);
-    x.push_back(3);
-    std::sort(x.begin(), x.end());
-    for (auto v : x)
+    std::vector<int> v;
+    int n = 32;
+    for (int i = 0; i < n; ++i)
     {
-        std::cout << v << "\n";
+        int x = static_cast<int>(std::random() & 0x7FFFFFFFu);
+        v.push_back(x);
+    }
+    std::sort(v.begin(), v.end());
+    for (auto x : v)
+    {
+        std::cout << x << "\n";
     }
 }

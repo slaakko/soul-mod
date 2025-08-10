@@ -43,10 +43,10 @@ import util;
 
 namespace otava::symbols {
 
-class NoreturnAttributeMatcher : public otava::ast::DefaultVisitor
+class NoReturnAttributeMatcher : public otava::ast::DefaultVisitor
 {
 public:
-    NoreturnAttributeMatcher();
+    NoReturnAttributeMatcher();
     void Visit(otava::ast::AttributeNode& node);
     void Visit(otava::ast::IdentifierNode& node);
     inline bool Value() const { return value; }
@@ -55,18 +55,18 @@ private:
     bool value;
 };
 
-NoreturnAttributeMatcher::NoreturnAttributeMatcher() : matchId(false), value(false)
+NoReturnAttributeMatcher::NoReturnAttributeMatcher() : matchId(false), value(false)
 {
 }
 
-void NoreturnAttributeMatcher::Visit(otava::ast::AttributeNode& node)
+void NoReturnAttributeMatcher::Visit(otava::ast::AttributeNode& node)
 {
     matchId = true;
     node.AttributeToken()->Accept(*this);
     matchId = false;
 }
 
-void NoreturnAttributeMatcher::Visit(otava::ast::IdentifierNode& node)
+void NoReturnAttributeMatcher::Visit(otava::ast::IdentifierNode& node)
 {
     if (!matchId) return;
     if (node.Str() == U"noreturn")
@@ -75,10 +75,10 @@ void NoreturnAttributeMatcher::Visit(otava::ast::IdentifierNode& node)
     }
 }
 
-bool HasNoreturnAttribute(otava::ast::Node* attributes)
+bool HasNoReturnAttribute(otava::ast::Node* attributes)
 {
     if (!attributes) return false;
-    NoreturnAttributeMatcher noreturnAttributeMatcher;
+    NoReturnAttributeMatcher noreturnAttributeMatcher;
     attributes->Accept(noreturnAttributeMatcher);
     return noreturnAttributeMatcher.Value();
 }
@@ -973,7 +973,7 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
         if (symbol && symbol->IsFunctionDefinitionSymbol())
         {
             functionDefinitionSymbol = static_cast<FunctionDefinitionSymbol*>(symbol);
-            if (HasNoreturnAttribute(functionDefinitionNode->Attributes()))
+            if (HasNoReturnAttribute(functionDefinitionNode->Attributes()))
             {
                 functionDefinitionSymbol->SetFunctionQualifiers(functionDefinitionSymbol->Qualifiers() | FunctionQualifiers::noreturn);
             }

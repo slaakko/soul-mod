@@ -858,7 +858,7 @@ void BoundExpressionStatementNode::SetExpr(BoundExpressionNode* expr_, const sou
 
 bool BoundExpressionStatementNode::IsTerminator() const
 {
-    return expr && (expr->IsNoreturnFunctionCall() || expr->IsBoundThrowExpression());
+    return expr && (expr->IsNoReturnFunctionCall() || expr->IsBoundThrowExpression());
 }
 
 BoundSetVPtrStatementNode::BoundSetVPtrStatementNode(BoundExpressionNode* thisPtr_, ClassTypeSymbol* forClass_, ClassTypeSymbol* vptrHolderClass_, 
@@ -1477,7 +1477,7 @@ bool BoundFunctionCallNode::CallsClassConstructor(ClassTypeSymbol*& cls, BoundEx
     return true;
 }
 
-bool BoundFunctionCallNode::IsNoreturnFunctionCall() const
+bool BoundFunctionCallNode::IsNoReturnFunctionCall() const
 {
     if ((functionSymbol->Qualifiers() & FunctionQualifiers::noreturn) != FunctionQualifiers::none)
     {

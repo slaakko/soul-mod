@@ -182,9 +182,6 @@ public:
     { 
         return len; 
     }
-    size_type max_size() const;
-    void resize(size_type n, charT c);
-    void resize(size_type n);
     inline size_type capacity() const 
     { 
         return res; 
@@ -200,7 +197,6 @@ public:
             }
         }
     }
-    void shrink_to_fit();
     inline void clear() 
     { 
         deallocate; 
@@ -217,8 +213,6 @@ public:
     {
         return chars[pos];
     }
-    const_reference at(size_type n) const;
-    reference at(size_type n);
     inline const charT& front() const
     {
         return chars[0];
@@ -329,31 +323,176 @@ public:
         clear();
         return append(n, c);
     }
-    basic_string& insert(size_type pos, const basic_string& str);
-    basic_string& insert(size_type pos1, const basic_string& str, size_type pos2, size_type n = npos);
-    basic_string& insert(size_type pos, const charT* s, size_type n);
-    basic_string& insert(size_type pos, const charT* s);
-    basic_string& insert(size_type pos, size_type n, charT c);
-    iterator insert(const_iterator p, charT c);
-    iterator insert(const_iterator p, size_type n, charT c);
+    basic_string& insert(size_type index, const basic_string& str)
+    {
+        insert_from(str.c_str(), str.length(), index);
+        return *this;
+    }
+    basic_string& insert(size_type index1, const basic_string& str, size_type index2, size_type n = npos)
+    {
+        if (n == npos)
+        {
+            n = str.length() - index2;
+        }
+        insert_from(str.c_str() + index2, n, index1);
+        return *this;
+    }
+    basic_string& insert(size_type index, const charT* s, size_type n)
+    {
+        insert_from(s, n, index);
+        return *this;
+    }
+    basic_string& insert(size_type index, const charT* s)
+    {
+        insert_from(s, slen(s), index);
+        return *this;
+    }
+    basic_string& insert(size_type index, size_type n, charT c)
+    {
+        basic_string that(n, c);
+        insert_from(that.c_str(), n, index);
+        return *this;
+    }
+    iterator insert(const_iterator p, size_type n, charT c)
+    {
+        basic_string that(n, c);
+        size_type index = p - begin();
+        insert_from(that.c_str(), n, index);
+        return begin() + index;
+    }
+    inline iterator insert(const_iterator p, charT c)
+    {
+        return insert(p, 1, c);
+    }
 
-    basic_string& erase(size_type pos = 0, size_type n = npos);
-    iterator erase(const_iterator p);
-    iterator erase(const_iterator first, const_iterator last);
-    
-    void pop_back();
-    
-    basic_string& replace(size_type pos1, size_type n1, const basic_string& str);
-    basic_string& replace(size_type pos1, size_type n1, const basic_string& str, size_type pos2, size_type n2 = npos);
-    basic_string& replace(size_type pos, size_type n1, const charT* s, size_type n2);
-    basic_string& replace(size_type pos, size_type n1, const charT* s);
-    basic_string& replace(size_type pos, size_type n1, size_type n2, charT c);
-    basic_string& replace(const_iterator i1, const_iterator i2, const basic_string& str);
-    basic_string& replace(const_iterator i1, const_iterator i2, const charT* s, size_type n);
-    basic_string& replace(const_iterator i1, const_iterator i2, const charT* s);
-    basic_string& replace(const_iterator i1, const_iterator i2, size_type n, charT c);
-    
-    size_type copy(const charT* s, size_type n, size_type pos = 0) const;
+    basic_string& erase(size_type index = 0, size_type count = npos)
+    {
+        if (index == 0 && count == npos)
+        {
+            clear();
+        }
+        else
+        {
+            if (count == npos)
+            {
+                count = length() - index;
+            }
+            iterator p = begin() + index;
+            iterator e = end();
+            copy(p + count, e, p);
+            iterator new_end = e - count;
+            len -= count;
+            *new_end = '\0';
+        }
+        return *this;
+    }
+    iterator erase(iterator position)
+    {
+        size_type index = position - begin();
+        erase(index, 1);
+        iterator p = begin() + index;
+        iterator e = end();
+        if (p < e)
+        {
+            return p;
+        }
+        else
+        {
+            return e;
+        }
+    }
+    iterator erase(const_iterator position)
+    {
+        size_type index = position - begin();
+        erase(index, 1);
+        iterator p = begin() + index;
+        iterator e = end();
+        if (p < e)
+        {
+            return p;
+        }
+        else
+        {
+            return e;
+        }
+    }
+    iterator erase(iterator first, iterator last)
+    {
+        size_type index = first - begin();
+        size_type count = last - first;
+        size_type last_index = last - begin();
+        erase(index, count);
+        iterator p = begin() + last_index;
+        iterator e = end();
+        if (p < e)
+        {
+            return p;
+        }
+        else
+        {
+            return e;
+        }
+    }
+
+    basic_string& replace(size_type pos, size_type count, const basic_string& str)
+    {
+        erase(pos, count);
+        return insert(pos, str);
+    }
+    inline basic_string& replace(const_iterator first, const_iterator last, const basic_string& str)
+    {
+        return replace(first - begin(), last - first, str);
+    }
+    basic_string& replace(size_type pos, size_type count, const basic_string& str, size_type pos2, size_type count2 = npos)
+    {
+        basic_string s = str.substr(pos2, count2);
+        return replace(pos, count, s);
+    }
+    basic_string& replace(size_type pos, size_type count, const charT* cstr, size_type count2)
+    {
+        erase(pos, count);
+        return insert(pos, cstr, count2);
+    }
+    basic_string& replace(const_iterator first, const_iterator last, const charT* cstr, size_type count2)
+    {
+        size_type index = first - begin();
+        erase(first, last);
+        return insert(index, cstr, count2);
+    }
+    inline basic_string& replace(size_type pos, size_type count, const charT* cstr)
+    {
+        return replace(pos, count, cstr, slen(cstr));
+    }
+    inline basic_string& replace(const_iterator first, const_iterator last, const charT* cstr)
+    {
+        return replace(first, last, cstr, slen(cstr));
+    }
+    basic_string& replace(size_type pos, size_type count, size_type count2, charT c)
+    {
+        basic_string str(count2, c);
+        return replace(pos, count, str);
+    }
+
+    size_type copy(charT* dest, size_type count, size_type pos = 0) const
+    {
+        if (count == npos || pos + count >= length())
+        {
+            count = length() - pos;
+        }
+        if (chars)
+        {
+            for (size_type i = 0; i < count; ++i)
+            {
+                size_type p = i + pos;
+                *dest++ = chars[p];
+            }
+            return count;
+        }
+        else
+        { 
+            return 0;
+        }
+    }
     inline void swap(basic_string& that)
     {
         std::swap(chars, that.chars);
@@ -484,11 +623,7 @@ public:
     {
         return rfind(s, slen(s));
     }
-    inline size_type rfind(const charT* s, size_type n) const
-    {
-        return rfind(s, n, npos);
-    }
-    size_type rfind(const charT* s, size_type n, size_type pos) const
+    size_type rfind(const charT* s, size_type n, size_type pos = npos) const
     {
         if (n == 0) return pos;
         size_type p = rfind(s[0], pos);
@@ -531,53 +666,36 @@ public:
         }
         return npos;
     }
-    size_type find_first_of(const basic_string& str, size_type pos = 0) const;
-    size_type find_first_of(const charT* s, size_type pos, size_type n) const;
-    size_type find_first_of(const charT* s, size_type pos = 0) const;
-    size_type find_first_of(charT c, size_type pos = 0) const;
-    
-    size_type find_last_of(const basic_string& str, size_type pos = npos) const;
-    size_type find_last_of(const charT* s, size_type pos, size_type n) const;
-    size_type find_last_of(const charT* s, size_type pos = npos) const;
-    size_type find_last_of(charT c, size_type pos = npos) const;
-    
-    size_type find_first_not_of(const basic_string& str, size_type pos = 0) const;
-    size_type find_first_not_of(const charT* s, size_type pos, size_type n) const;
-    size_type find_first_not_of(const charT* s, size_type pos = 0) const;
-    size_type find_first_not_of(charT c, size_type pos = 0) const;
 
-    size_type find_last_not_of(const basic_string& str, size_type pos = npos) const;
-    size_type find_last_not_of(const charT* s, size_type pos, size_type n) const;
-    size_type find_last_not_of(const charT* s, size_type pos = npos) const;
-    size_type find_last_not_of(charT c, size_type pos = npos) const;
+    //size_type find_first_of(const basic_string& str, size_type pos = 0) const;
+    //size_type find_first_of(const charT* s, size_type pos, size_type n) const;
+    //size_type find_first_of(const charT* s, size_type pos = 0) const;
+    //size_type find_first_of(charT c, size_type pos = 0) const;
+    //
+    //size_type find_last_of(const basic_string& str, size_type pos = npos) const;
+    //size_type find_last_of(const charT* s, size_type pos, size_type n) const;
+    //size_type find_last_of(const charT* s, size_type pos = npos) const;
+    //size_type find_last_of(charT c, size_type pos = npos) const;
+    //
+    //size_type find_first_not_of(const basic_string& str, size_type pos = 0) const;
+    //size_type find_first_not_of(const charT* s, size_type pos, size_type n) const;
+    //size_type find_first_not_of(const charT* s, size_type pos = 0) const;
+    //size_type find_first_not_of(charT c, size_type pos = 0) const;
+
+    //size_type find_last_not_of(const basic_string& str, size_type pos = npos) const;
+    //size_type find_last_not_of(const charT* s, size_type pos, size_type n) const;
+    //size_type find_last_not_of(const charT* s, size_type pos = npos) const;
+    //size_type find_last_not_of(charT c, size_type pos = npos) const;
     
-    basic_string substr() const
-    {
-        if (chars)
-        {
-            return basic_string<charT>(chars);
-        }
-        else
-        {
-            return basic_string<charT>();
-        }
-    }
-    basic_string substr(size_type pos) const
+    basic_string substr(size_type pos = 0, size_type count = npos) const
     {
         if (pos >= 0 && pos < len)
         {
-            return basic_string<charT>(chars + pos);
-        }
-        else
-        {
-            return basic_string<charT>();
-        }
-    }
-    basic_string substr(size_type pos, size_type n) const
-    {
-        if (pos >= 0 && pos < len)
-        {
-            return basic_string<charT>(chars + pos, n);
+            if (count == npos)
+            {
+                count = len - pos;
+            }
+            return basic_string<charT>(chars + pos, count);
         }
         else
         {
@@ -585,12 +703,12 @@ public:
         }
     }
    
-    int compare(const basic_string& str) const;
-    int compare(size_type pos1, size_type n1, const basic_string& str) const;
-    int compare(size_type pos1, size_type n1, const basic_string& str, size_type pos2, size_type n2 = npos) const;
-    int compare(const charT* s) const;
-    int compare(size_type pos1, size_type n1, const charT* s) const;
-    int compare(size_type pos1, size_type n1, const charT* s, size_type n2) const;
+    //int compare(const basic_string& str) const;
+    //int compare(size_type pos1, size_type n1, const basic_string& str) const;
+    //int compare(size_type pos1, size_type n1, const basic_string& str, size_type pos2, size_type n2 = npos) const;
+    //int compare(const charT* s) const;
+    //int compare(size_type pos1, size_type n1, const charT* s) const;
+    //int compare(size_type pos1, size_type n1, const charT* s, size_type n2) const;
     
     inline bool starts_with(charT x) const
     {
@@ -649,6 +767,22 @@ private:
             newlen = len + slencpy(chars + len, s, n);
         }
         len = newlen;
+    }
+    void insert_from(const charT* s, size_type n, size_type index)
+    {
+        size_type new_len = len + n;
+        if (new_len > 0)
+        {
+            reserve(new_len);
+            iterator b = begin();
+            iterator e = end();
+            iterator new_end = e + n;
+            iterator p = b + index;
+            copy_backward(p, e, new_end);
+            copy(s, s + n, p);
+            *new_end = '\0';
+        }
+        len = new_len;
     }
     void grow(size_type min_res)
     {

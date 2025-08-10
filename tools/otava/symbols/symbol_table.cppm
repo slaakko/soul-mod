@@ -80,6 +80,7 @@ class Writer;
 class Visitor;
 class ConversionTable;
 class FunctionDefinitionSymbolSet;
+class DependentTypeSymbol;
 
 enum class SymbolGroupKind : std::int32_t;
 
@@ -166,6 +167,7 @@ public:
     ClassTemplateSpecializationSymbol* MakeClassTemplateSpecialization(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments);
     AliasTypeTemplateSpecializationSymbol* MakeAliasTypeTemplateSpecialization(TypeSymbol* aliasTypeTemplate, const std::vector<Symbol*>& templateArguments);
     ArrayTypeSymbol* MakeArrayType(TypeSymbol* elementType, std::int64_t size);
+    DependentTypeSymbol* MakeDependentTypeSymbol(otava::ast::Node* node);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
     Symbol* LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
@@ -241,6 +243,7 @@ private:
     void AddFundamentalTypeOperations();
     void ImportSpecializations(const SymbolTable& that);
     void ImportArrayTypes(const SymbolTable& that);
+    void ImportDependentTypes(const SymbolTable& that);
     void ImportCompoundTypeMap(const SymbolTable& that);
     void ImportFundamentalTypeMap(const SymbolTable& that);
     void ImportNodeSymbolMap(const SymbolTable& that);
@@ -266,6 +269,7 @@ private:
     std::set<AliasTypeTemplateSpecializationSymbol*, AliasTypeTemplateSpecializationLess> aliasTypeTemplateSpecializationSet;
     std::vector<std::unique_ptr<Symbol>> arrayTypes;
     std::set<ArrayTypeSymbol*, ArrayTypeLess> arrayTypeSet;
+    std::set<DependentTypeSymbol*> dependentTypeSet;
     std::vector<std::unique_ptr<CompoundTypeSymbol>> compoundTypes;
     std::map<TypeSymbol*, std::vector<CompoundTypeSymbol*>> compoundTypeMap;
     std::vector<std::unique_ptr<ExplicitInstantiationSymbol>> explicitInstantiations;
@@ -290,6 +294,7 @@ private:
     std::map<util::uuid, Symbol*> constraintMap;
     std::map<util::uuid, FunctionGroupSymbol*> functionGroupMap;
     std::map<util::uuid, ConceptSymbol*> conceptMap;
+    std::vector<std::unique_ptr<DependentTypeSymbol>> dependentTypeSymbols;
     Symbol* typenameConstraintSymbol;
     TypeSymbol* errorTypeSymbol;
     int topScopeIndex;

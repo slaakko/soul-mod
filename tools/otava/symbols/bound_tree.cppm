@@ -166,7 +166,7 @@ public:
     virtual bool IsBoundLocalVariable() const { return false; }
     virtual bool IsBoundMemberVariable() const { return false; }
     virtual bool IsLvalueExpression() const { return false; }
-    virtual bool IsNoreturnFunctionCall() const { return false; }
+    virtual bool IsNoReturnFunctionCall() const { return false; }
     virtual bool IsBoundThrowExpression() const { return false; }
 private:
     BoundExpressionFlags flags;
@@ -649,7 +649,7 @@ public:
     bool IsLvalueExpression() const override;
     BoundExpressionNode* Clone() const override;
     bool CallsClassConstructor(ClassTypeSymbol*& cls, BoundExpressionNode*& firstArg, FunctionDefinitionSymbol*& destructor) const;
-    bool IsNoreturnFunctionCall() const override;
+    bool IsNoReturnFunctionCall() const override;
     void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     FunctionSymbol* functionSymbol;

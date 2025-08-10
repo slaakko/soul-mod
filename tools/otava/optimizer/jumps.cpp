@@ -9,6 +9,7 @@ namespace otava::optimizer {
 
 void OptimizeJumps(otava::intermediate::Function* fn)
 {
+    bool optimized = false;
     otava::intermediate::BasicBlock* bb = fn->FirstBasicBlock();
     while (bb)
     {
@@ -28,6 +29,7 @@ void OptimizeJumps(otava::intermediate::Function* fn)
             if (target != firstTarget)
             {
                 jmp->SetTargetBasicBlock(target);
+                optimized = true;
             }
             else if (terminator->IsBranchInstruction())
             {
@@ -44,6 +46,7 @@ void OptimizeJumps(otava::intermediate::Function* fn)
                 if (trueTarget != firstTrueTarget)
                 {
                     branch->SetTrueTargetBasicBlock(trueTarget);
+                    optimized = true;
                 }
                 otava::intermediate::BasicBlock* falseTarget = branch->FalseTargetBasicBlock();
                 otava::intermediate::BasicBlock* firstFalseTarget = falseTarget;
@@ -57,22 +60,29 @@ void OptimizeJumps(otava::intermediate::Function* fn)
                 if (falseTarget != firstFalseTarget)
                 {
                     branch->SetFalseTargetBasicBlock(falseTarget);
+                    optimized = true;
                 }
                 if (branch->Cond()->IsTrue())
                 {
                     otava::intermediate::JmpInstruction* jmp = new otava::intermediate::JmpInstruction(soul::ast::Span(), trueTarget->Id());
                     jmp->SetTargetBasicBlock(trueTarget);
                     otava::intermediate::ReplaceInstructionWithInstruction(branch, jmp);
+                    optimized = true;
                 }
                 else if (branch->Cond()->IsFalse())
                 {
                     otava::intermediate::JmpInstruction* jmp = new otava::intermediate::JmpInstruction(soul::ast::Span(), falseTarget->Id());
                     jmp->SetTargetBasicBlock(falseTarget);
                     otava::intermediate::ReplaceInstructionWithInstruction(branch, jmp);
+                    optimized = true;
                 }
             }
         }
         bb = bb->Next();
+    }
+    if (optimized)
+    {
+        fn->SetNumbers();
     }
 }
 

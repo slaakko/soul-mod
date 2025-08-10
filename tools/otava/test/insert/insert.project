@@ -1,0 +1,3 @@
+project insert;
+target=program;
+source <insert.cpp>;

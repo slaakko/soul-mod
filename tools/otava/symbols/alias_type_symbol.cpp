@@ -108,6 +108,7 @@ AliasDeclarationProcessor::AliasDeclarationProcessor(Context* context_) : contex
 
 void AliasDeclarationProcessor::Visit(otava::ast::AliasDeclarationNode& node)
 {
+    context->PushSetFlag(ContextFlags::processingAliasDeclation);
     idNode = node.Identifier();
     type = ResolveType(node.DefiningTypeId(), DeclarationFlags::none, context);
     while (type->IsAliasTypeSymbol())
@@ -115,6 +116,7 @@ void AliasDeclarationProcessor::Visit(otava::ast::AliasDeclarationNode& node)
         AliasTypeSymbol* aliasType = static_cast<AliasTypeSymbol*>(type);
         type = aliasType->ReferredType();
     }
+    context->PopFlags();
 }
 
 void ProcessAliasDeclaration(otava::ast::Node* aliasDeclarationNode, Context* context)

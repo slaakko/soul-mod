@@ -103,6 +103,7 @@ private:
     util::uuid typeId;
     otava::ast::Node* defaultValue;
     std::int64_t defaultValueNodeId;
+    std::unique_ptr<otava::ast::Node> defaultValueNode;
 };
 
 class FunctionSymbol : public ContainerSymbol
@@ -117,6 +118,7 @@ public:
     int MemFunArity(Context* context) const;
     int MinArity() const;
     int MinMemFunArity(Context* context) const;
+    inline bool HasDefaultParams() const { return MinArity() < Arity(); }
     std::string SymbolKindStr() const override { return "function symbol"; }
     std::string SymbolDocKindStr() const override { return "function"; }
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
