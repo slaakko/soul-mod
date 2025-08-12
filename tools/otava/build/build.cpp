@@ -31,6 +31,7 @@ import otava.symbols.function.templates;
 import otava.symbols.inline_functions;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.operation.repository;
+import otava.symbols.emitter;
 import otava.pp;
 import otava.pp.state;
 import otava.codegen;
@@ -358,6 +359,8 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         }
         lexer.SetRuleNameMapPtr(otava::parser::spg::rules::GetRuleNameMapPtr());
         otava::symbols::Context context;
+        otava::symbols::Emitter emitter;
+        context.SetEmitter(&emitter);
         if (config == "release")
         {
             context.SetReleaseConfig();
@@ -427,7 +430,9 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         }
         lexer.SetFile(file);
         lexer.SetRuleNameMapPtr(otava::parser::spg::rules::GetRuleNameMapPtr());
+        otava::symbols::Emitter emitter;
         otava::symbols::Context context;
+        context.SetEmitter(&emitter);
         if (config == "release")
         {
             context.SetReleaseConfig();

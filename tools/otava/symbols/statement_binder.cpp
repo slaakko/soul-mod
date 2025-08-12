@@ -1454,10 +1454,6 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
 
 void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
-    if (functionDefinitionSymbol->Name() == U"partition")
-    {
-        int x = 0;
-    }
     RemoveTemporaryAliasTypeSymbols(context);
     if (functionDefinitionSymbol->IsBound()) return;
     if (functionDefinitionSymbol->IsTemplate()) return;

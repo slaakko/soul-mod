@@ -249,6 +249,7 @@ void ClassTypeSymbol::Write(Writer& writer)
     }
     writer.GetBinaryStreamWriter().Write(vtabSize);
     writer.GetBinaryStreamWriter().Write(vptrIndex);
+    writer.GetBinaryStreamWriter().Write(deltaIndex);
     writer.GetBinaryStreamWriter().Write(vtabName);
     util::uuid groupId = util::nil_uuid();
     if (group)
@@ -289,6 +290,7 @@ void ClassTypeSymbol::Read(Reader& reader)
     }
     vtabSize = reader.GetBinaryStreamReader().ReadInt();
     vptrIndex = reader.GetBinaryStreamReader().ReadInt();
+    deltaIndex = reader.GetBinaryStreamReader().ReadInt();
     vtabName = reader.GetBinaryStreamReader().ReadUtf8String();
     reader.GetBinaryStreamReader().ReadUuid(groupId);
 }
@@ -348,6 +350,10 @@ bool ClassTypeSymbol::IsPolymorphic() const
 
 void ClassTypeSymbol::MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    if (Name() == U"rb_node_base")
+    {
+        int x = 0;
+    }
     if (ObjectLayoutComputed())
     {
         for (const auto& memberVar : memberVariables)
@@ -659,7 +665,7 @@ otava::intermediate::Type* ClassTypeSymbol::IrType(Emitter& emitter, const soul:
     otava::intermediate::Type* irType = emitter.GetType(Id());
     if (!irType)
     {
-        irType = emitter.GetOrInsertFwdDeclaredStructureType(Id());
+        irType = emitter.GetOrInsertFwdDeclaredStructureType(Id(), util::ToUtf8(FullName()));
         emitter.SetType(Id(), irType);
         MakeObjectLayout(sourcePos, context);
         int n = objectLayout.size();

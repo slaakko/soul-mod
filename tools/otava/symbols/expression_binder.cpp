@@ -38,6 +38,7 @@ import otava.symbols.array.type.symbol;
 import otava.symbols.function.templates;
 import otava.symbols.inline_functions;
 import otava.symbols.operation.repository;
+import otava.symbols.emitter;
 import otava.ast.identifier;
 import otava.ast.punctuation;
 import otava.ast.expression;
@@ -1604,8 +1605,7 @@ void ExpressionBinder::Visit(otava::ast::SizeOfTypeExprNode& node)
 {
     TypeSymbol* type = ResolveType(node.Child(), DeclarationFlags::none, context);
     type = type->DirectType(context)->FinalType(node.GetSourcePos(), context);
-    Emitter emitter;
-    otava::intermediate::Type* irType = type->IrType(emitter, node.GetSourcePos(), context);
+    otava::intermediate::Type* irType = type->IrType(*context->GetEmitter(), node.GetSourcePos(), context);
     std::int64_t size = irType->Size();
     otava::ast::IdentifierNode size_t_node(node.GetSourcePos(), U"ssize_t");
     TypeSymbol* size_t_type = ResolveType(&size_t_node, DeclarationFlags::none, context);
@@ -1622,8 +1622,7 @@ void ExpressionBinder::Visit(otava::ast::SizeOfUnaryExprNode& node)
     boundExpression = BindExpression(node.Child(), context);
     TypeSymbol* type = boundExpression->GetType();
     type = type->DirectType(context)->FinalType(node.GetSourcePos(), context);
-    Emitter emitter;
-    otava::intermediate::Type* irType = type->IrType(emitter, node.GetSourcePos(), context);
+    otava::intermediate::Type* irType = type->IrType(*context->GetEmitter(), node.GetSourcePos(), context);
     std::int64_t size = irType->Size();
     otava::ast::IdentifierNode size_t_node(node.GetSourcePos(), U"size_t");
     TypeSymbol* size_t_type = ResolveType(&size_t_node, DeclarationFlags::none, context);

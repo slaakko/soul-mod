@@ -120,7 +120,7 @@ public:
     inline Type* GetULongType() { return types.GetULongType(); }
     inline Type* GetFloatType() { return types.GetFloatType(); }
     inline Type* GetDoubleType() { return types.GetDoubleType(); }
-    inline Type* MakePtrType(Type* baseType) { return baseType->AddPointer(this); }
+    inline Type* MakePtrType(Type* baseType) { return types.MakePtrType(baseType); }
     inline StructureType* GetStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
     {
         return types.GetStructureType(span, typeId, fieldTypeRefs);
@@ -129,9 +129,9 @@ public:
     {
         return types.GetFwdDeclaredStructureType(id);
     }
-    inline FwdDeclaredStructureType* MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId)
+    inline FwdDeclaredStructureType* MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId, const std::string& comment)
     {
-        return types.MakeFwdDeclaredStructureType(id, typeId);
+        return types.MakeFwdDeclaredStructureType(id, typeId, comment);
     }
     inline void AddFwdDependentType(FwdDeclaredStructureType* fwdType, Type* type) { types.AddFwdDependentType(fwdType, type); }
     inline void ResolveForwardReferences(const util::uuid& id, StructureType* structureType) { types.ResolveForwardReferences(id, structureType); }
@@ -200,7 +200,7 @@ public:
     Instruction* CreateLoad(Value* ptr);
     Instruction* CreateStore(Value* value, Value* ptr);
     Instruction* CreateArg(Value* arg);
-    Instruction* CreateElemAddr(Value* ptr, Value* index);
+    Instruction* CreateElemAddr(Value* ptr, Value* index, Type* type);
     Instruction* CreatePtrOffset(Value* ptr, Value* offset);
     Instruction* CreatePtrDiff(Value* leftPtr, Value* rightPtr);
     Instruction* CreateCall(Value* function);

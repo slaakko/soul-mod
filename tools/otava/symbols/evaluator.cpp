@@ -492,8 +492,7 @@ void Evaluator::Visit(otava::ast::SizeOfTypeExprNode& node)
 {
     TypeSymbol* type = ResolveType(node.Child(), DeclarationFlags::none, context);
     type = type->DirectType(context)->FinalType(node.GetSourcePos(), context);
-    Emitter emitter;
-    otava::intermediate::Type* irType = type->IrType(emitter, node.GetSourcePos(), context);
+    otava::intermediate::Type* irType = type->IrType(*context->GetEmitter(), node.GetSourcePos(), context);
     std::int64_t size = irType->Size();
     value = context->GetEvaluationContext()->GetIntegerValue(size, util::ToUtf32(std::to_string(size)), 
         context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType));

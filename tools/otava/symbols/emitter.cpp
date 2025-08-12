@@ -76,7 +76,7 @@ otava::intermediate::Type* Emitter::MakeArrayType(std::int64_t size, otava::inte
     return context->GetArrayType(soul::ast::Span(), context->NextTypeId(), size, elementTypeRef);
 }
 
-otava::intermediate::Type* Emitter::GetOrInsertFwdDeclaredStructureType(const util::uuid& id)
+otava::intermediate::Type* Emitter::GetOrInsertFwdDeclaredStructureType(const util::uuid& id, const std::string& comment)
 {
     otava::intermediate::Type* type = context->GetFwdDeclaredStructureType(id);
     if (type)
@@ -85,13 +85,13 @@ otava::intermediate::Type* Emitter::GetOrInsertFwdDeclaredStructureType(const ut
     }
     else
     {
-        return MakeFwdDeclaredStructureType(id);
+        return MakeFwdDeclaredStructureType(id, comment);
     }
 }
 
-void Emitter::ResolveForwardReferences(const util::uuid& id, otava::intermediate::StructureType* structureType)
+void Emitter::ResolveForwardReferences(const util::uuid& typeId, otava::intermediate::StructureType* structureType)
 {
-    context->ResolveForwardReferences(id, structureType);
+    context->ResolveForwardReferences(typeId, structureType);
 }
 
 otava::intermediate::Value* Emitter::EmitBool(bool value)

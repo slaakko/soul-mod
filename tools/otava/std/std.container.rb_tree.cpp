@@ -146,7 +146,6 @@ void rotate_right(rb_node_base* n, rb_node_base** root_ptr)
     }
     u->set_right(n);
     n->set_parent(u);
-
 }
 
 void rebalance_after_insert(rb_node_base* n, rb_node_base** root_ptr)

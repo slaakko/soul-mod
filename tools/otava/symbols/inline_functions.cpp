@@ -77,6 +77,7 @@ FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::S
                 FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(inlineFn);
                 functionDefinition->SetFlag(FunctionSymbolFlags::fixedIrName);
                 functionDefinition->SetCompileUnitId(context->GetBoundCompileUnit()->Id());
+                functionDefinition->SetParent(fn->Parent());
                 std::string irName = functionDefinition->IrName(context);
                 inlineFunctionRepository->AddInlineFunction(fn, inlineFn);
                 context->PushBoundFunction(new BoundFunctionNode(functionDefinition, sourcePos));

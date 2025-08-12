@@ -139,7 +139,9 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     std::unique_ptr<otava::symbols::SymbolTable> symbolTable(new otava::symbols::SymbolTable());
     symbolTable->SetModule(&main);
     symbolTable->Import(*core->GetSymbolTable(), moduleMapper.GetFunctionDefinitionSymbolSet());
+    otava::symbols::Emitter emitter;
     otava::symbols::Context context;
+    context.SetEmitter(&emitter);
     context.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
     context.SetSymbolTable(symbolTable.get());
     context.SetFileName((std::filesystem::path(mainFilePath).parent_path().parent_path() / std::filesystem::path(mainFilePath).filename()).generic_string());

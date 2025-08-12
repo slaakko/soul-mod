@@ -42,7 +42,8 @@ Context::Context() :
     paramType(nullptr),
     totalFunctionsCompiled(0),
     functionCallsInlined(0),
-    functionsInlined(0)
+    functionsInlined(0),
+    emitter(nullptr)
 {
 }
 

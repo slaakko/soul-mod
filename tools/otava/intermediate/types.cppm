@@ -130,6 +130,7 @@ public:
     virtual Value* MakeDefaultValue(Context& context) const { return nullptr; }
     TypeRef GetTypeRef();
     virtual Type* BaseType() const { return const_cast<Type*>(this); }
+    virtual void IncCount();
 private:
     soul::ast::Span span;
     TypeKind kind;
@@ -323,8 +324,11 @@ public:
     std::int64_t Alignment() const override { return -1; }
     std::string Name() const override { return "FWD_DECLARED_STRUCTURE_TYPE"; }
     inline const util::uuid& Id() const { return id; }
+    inline const std::string& Comment() const { return comment; }
+    void SetComment(const std::string& comment_);
 private:
     util::uuid id;
+    std::string comment;
 };
 
 class ArrayType : public Type
@@ -383,6 +387,7 @@ public:
     inline TypeRef& BaseTypeRef() { return baseTypeRef; }
     inline Type* BaseType() const override { return baseTypeRef.GetType(); }
     Value* MakeDefaultValue(Context& context) const override;
+    void ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context) override;
 private:
     std::int8_t pointerCount;
     TypeRef baseTypeRef;
@@ -421,11 +426,12 @@ public:
     inline FloatType* GetFloatType() const { return const_cast<FloatType*>(&floatType); }
     inline DoubleType* GetDoubleType() const { return const_cast<DoubleType*>(&doubleType); }
     PointerType* MakePointerType(const soul::ast::Span& span, std::int32_t baseTypeId, std::int8_t pointerCount, Context* context);
+    Type* MakePtrType(Type* baseType);
     StructureType* GetStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
     ArrayType* GetArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
     FunctionType* GetFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
     FwdDeclaredStructureType* GetFwdDeclaredStructureType(const util::uuid& id);
-    FwdDeclaredStructureType* MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId);
+    FwdDeclaredStructureType* MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId, const std::string& comment);
     void AddFwdDependentType(FwdDeclaredStructureType* fwdType, Type* type);
     void ResolveForwardReferences(const util::uuid& id, StructureType* structureType);
     inline std::int32_t NextTypeId() { return nextTypeId++; }

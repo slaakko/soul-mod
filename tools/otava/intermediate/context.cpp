@@ -486,9 +486,9 @@ Instruction* Context::CreateArg(Value* arg)
     return inst;
 }
 
-Instruction* Context::CreateElemAddr(Value* ptr, Value* index)
+Instruction* Context::CreateElemAddr(Value* ptr, Value* index, Type* type)
 {
-    Instruction* inst = new ElemAddrInstruction(soul::ast::Span(), MakeRegValue(GetElemType(ptr, index, soul::ast::Span(), this)), ptr, index);
+    Instruction* inst = new ElemAddrInstruction(soul::ast::Span(), MakeRegValue(type), ptr, index);
     AddLineInfo(inst);
     if (currentBasicBlock)
     {

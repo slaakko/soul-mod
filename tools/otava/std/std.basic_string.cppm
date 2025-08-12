@@ -838,9 +838,9 @@ basic_string<charT> operator+(const basic_string<charT>& lhs, const charT* rhs)
 template<typename charT>
 bool operator==(const basic_string<charT>& lhs, const basic_string<charT>& rhs)
 {
-    ssize_t len = lhs.length();
+    basic_string<charT>::size_type len = lhs.length();
     if (len != rhs.length()) return false;
-    for (ssize_t i = 0; i < len; ++i)
+    for (basic_string<charT>::size_type i = 0; i < len; ++i)
     {
         if (lhs[i] != rhs[i])
         {
@@ -853,9 +853,9 @@ bool operator==(const basic_string<charT>& lhs, const basic_string<charT>& rhs)
 template<typename charT>
 bool operator==(const basic_string<charT>& lhs, const charT* rhs)
 {
-    ssize_t len = lhs.length();
+    basic_string<charT>::size_type len = lhs.length();
     if (len != slen(rhs)) return false;
-    for (ssize_t i = 0; i < len; ++i)
+    for (basic_string<charT>::size_type i = 0; i < len; ++i)
     {
         if (lhs[i] != rhs[i])
         {
@@ -868,9 +868,9 @@ bool operator==(const basic_string<charT>& lhs, const charT* rhs)
 template<typename charT>
 bool operator==(const charT* lhs, const basic_string<charT>& rhs)
 {
-    ssize_t len = slen(lhs);
+    basic_string<charT>::size_type len = slen(lhs);
     if (len != rhs.length()) return false;
-    for (ssize_t i = 0; i < len; ++i)
+    for (basic_string<charT>::size_type i = 0; i < len; ++i)
     {
         if (lhs[i] != rhs[i])
         {
@@ -883,12 +883,12 @@ bool operator==(const charT* lhs, const basic_string<charT>& rhs)
 template<typename charT>
 bool operator<(const basic_string<charT>& lhs, const basic_string<charT>& rhs)
 {
-    ssize_t leftLen = lhs.length();
-    ssize_t rightLen = rhs.length();
+    basic_string<charT>::size_type leftLen = lhs.length();
+    basic_string<charT>::size_type rightLen = rhs.length();
     if (leftLen == 0 && rightLen > 0) return true;
     if (leftLen > 0 && rightLen == 0) return false;
-    ssize_t n = min(leftLen, rightLen);
-    for (ssize_t i = 0; i < n; ++i)
+    basic_string<charT>::size_type n = min(leftLen, rightLen);
+    for (basic_string<charT>::size_type i = 0; i < n; ++i)
     {
         charT l = lhs[i];
         charT r = rhs[i];

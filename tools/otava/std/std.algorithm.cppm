@@ -341,11 +341,11 @@ I unique(I begin, I end)
 template<typename I, typename T>
 I lower_bound(I first, I last, const T& value)
 {
-    ssize_t len = distance(first, last);
+    typename std::iterator_traits<I>::difference_type len = distance(first, last);
     while (len > 0)
     {
-        ssize_t half = len >> 1;
-        I middle = iter_next(first, half);
+        typename std::iterator_traits<I>::difference_type half = len >> 1;
+        I middle = next(first, half);
         if (value > *middle)
         {
             first = middle;
@@ -363,11 +363,11 @@ I lower_bound(I first, I last, const T& value)
 template<typename I, typename T, typename R>
 I lower_bound(I first, I last, const T& value, R r)
 {
-    ssize_t len = distance(first, last);
+    typename std::iterator_traits<I>::difference_type len = distance(first, last);
     while (len > 0)
     {
-        ssize_t half = len >> 1;
-        I middle = iter_next(first, half);
+        typename std::iterator_traits<I>::difference_type half = len >> 1;
+        I middle = next(first, half);
         if (r(*middle, value))
         {
             first = middle;
@@ -385,11 +385,11 @@ I lower_bound(I first, I last, const T& value, R r)
 template<typename I, typename T>
 I upper_bound(I first, I last, const T& value)
 {
-    ssize_t len = distance(first, last);
+    typename std::iterator_traits<I>::difference_type len = distance(first, last);
     while (len > 0)
     {
-        ssize_t half = len >> 1;
-        I middle = iter_next(first, half);
+        typename std::iterator_traits<I>::difference_type half = len >> 1;
+        I middle = next(first, half);
         if (value < *middle)
         {
             len = half;
@@ -407,11 +407,11 @@ I upper_bound(I first, I last, const T& value)
 template<typename I, typename T, typename R>
 I upper_bound(I first, I last, const T& value, R r)
 {
-    ssize_t len = distance(first, last);
+    typename std::iterator_traits<I>::difference_type len = distance(first, last);
     while (len > 0)
     {
-        ssize_t half = len >> 1;
-        I middle = iter_next(first, half);
+        typename std::iterator_traits<I>::difference_type half = len >> 1;
+        I middle = next(first, half);
         if (r(value, *middle))
         {
             len = half;
@@ -429,10 +429,10 @@ I upper_bound(I first, I last, const T& value, R r)
 template<typename I, typename T>
 pair<I, I> equal_range(I first, I last, const T& value)
 {
-    ssize_t len = distance(first, last);
+    typename std::iterator_traits<I>::difference_type len = distance(first, last);
     while (len > 0)
     {
-        ssize_t half = len >> 1;
+        typename std::iterator_traits<I>::difference_type half = len >> 1;
         I middle = iter_next(first, half);
         if (*middle < value)
         {
@@ -459,11 +459,11 @@ pair<I, I> equal_range(I first, I last, const T& value)
 template<typename I, typename T, typename R>
 pair<I, I> equal_range(I first, I last, const T& value, R r)
 {
-    ssize_t len = distance(first, last);
+    typename std::iterator_traits<I>::difference_type len = distance(first, last);
     while (len > 0)
     {
-        ssize_t half = len >> 1;
-        I middle = iter_next(first, half);
+        typename std::iterator_traits<I>::difference_type half = len >> 1;
+        I middle = next(first, half);
         if (r(*middle, value))
         {
             first = middle;
@@ -477,13 +477,43 @@ pair<I, I> equal_range(I first, I last, const T& value, R r)
         else
         {
             I left = lower_bound(first, middle, value, r);
-            I end = iter_next(first, len);
+            I end = next(first, len);
             ++middle;
             I right = upper_bound(middle, end, value, r);
             return pair<I, I>(left, right);
         }
     }
     return pair<I, I>(first, first);
+}
+
+template<typename I1, typename I2>
+bool equal(I1 first1, I1 last1, I2 first2)
+{
+    while (first1 != last1)
+    {
+        if (*first1 != *first2)
+        {
+            return false;
+        }
+        ++first1;
+        ++first2;
+    }
+    return true;
+}
+
+template<typename I1, typename I2, typename R>
+bool equal(I1 first1, I1 last1, I2 first2, R r)
+{
+    while (first1 != last1)
+    {
+        if (!r(*first1, *first2))
+        {
+            return false;
+        }
+        ++first1;
+        ++first2;
+    }
+    return true;
 }
 
 template<typename I1, typename I2>

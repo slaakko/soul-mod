@@ -1,6 +1,28 @@
 import std.core;
 
-int main()
+template class std::rb_tree<int, std::pair<int, const int>, std::select_first<int, int>, std::less<int>>;
+template class std::map<int, int>;
+
+void print(const std::map<int, int>& m)
+{
+    for (const auto& x : m)
+    {
+        std::cout << "(" << x.first << ", " << x.second << ")\n";
+    }
+}
+
+void sixteen()
+{
+    std::map<int, int> m;
+    for (int i = 0; i < 16; ++i)
+    {
+        int x = std::random();
+        m[i] = x;
+    }
+    print(m);
+}
+
+void three()
 {
     std::map<int, int> m;
     m[0] = 0;
@@ -30,5 +52,11 @@ int main()
     {
         std::cout << "OK" << "\n";
     }
+}
+
+int main()
+{
+    three();
+    sixteen();
     return 0;
 }

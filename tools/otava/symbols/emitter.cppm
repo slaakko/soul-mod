@@ -37,9 +37,16 @@ public:
     otava::intermediate::Type* MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes, const std::string& comment);
     otava::intermediate::Type* MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes);
     otava::intermediate::Type* MakeArrayType(std::int64_t size, otava::intermediate::Type* elementType);
-    inline otava::intermediate::Type* MakeFwdDeclaredStructureType(const util::uuid& id) { return context->MakeFwdDeclaredStructureType(id, context->NextTypeId()); }
-    otava::intermediate::Type* GetOrInsertFwdDeclaredStructureType(const util::uuid& id);
-    void ResolveForwardReferences(const util::uuid& id, otava::intermediate::StructureType* structureType);
+    inline otava::intermediate::Type* MakeFwdDeclaredStructureType(const util::uuid& id, const std::string& comment) 
+    { 
+        return context->MakeFwdDeclaredStructureType(id, context->NextTypeId(), comment); 
+    }
+    inline void AddFwdDependentType(otava::intermediate::FwdDeclaredStructureType* fwdDeclaredType, otava::intermediate::Type* type)
+    {
+        return context->AddFwdDependentType(fwdDeclaredType, type);
+    }
+    otava::intermediate::Type* GetOrInsertFwdDeclaredStructureType(const util::uuid& id, const std::string& comment);
+    void ResolveForwardReferences(const util::uuid& typeId, otava::intermediate::StructureType* structureType);
     inline otava::intermediate::Type* GetVoidType() { return context->GetVoidType(); }
     inline otava::intermediate::Type* GetBoolType() { return context->GetBoolType(); }
     inline otava::intermediate::Type* GetSByteType() { return context->GetSByteType(); }
@@ -144,7 +151,10 @@ public:
     inline otava::intermediate::Value* EmitLoad(otava::intermediate::Value* value) { return context->CreateLoad(value); }
     inline void EmitStore(otava::intermediate::Value* value, otava::intermediate::Value* ptr) { context->CreateStore(value, ptr); }
     inline otava::intermediate::Value* EmitArg(otava::intermediate::Value* value) { return context->CreateArg(value); }
-    inline otava::intermediate::Value* EmitElemAddr(otava::intermediate::Value* ptr, otava::intermediate::Value* index) { return context->CreateElemAddr(ptr, index); }
+    inline otava::intermediate::Value* EmitElemAddr(otava::intermediate::Value* ptr, otava::intermediate::Value* index)
+    {
+        return context->CreateElemAddr(ptr, index, otava::intermediate::GetElemType(ptr, index, soul::ast::Span(), context));
+    }
     inline otava::intermediate::Value* EmitPtrOffset(otava::intermediate::Value* ptr, otava::intermediate::Value* offset) { return context->CreatePtrOffset(ptr, offset); }
     inline otava::intermediate::Value* EmitPtrDiff(otava::intermediate::Value* leftPtr, otava::intermediate::Value* rightPtr) 
     { 
@@ -181,6 +191,7 @@ private:
     std::map<void*, otava::intermediate::Value*> irObjectMap;
     std::map<void*, otava::intermediate::Value*> vtabVariableMap;
     otava::intermediate::Value* retValue;
+    std::map<util::uuid, otava::intermediate::StructureType*> forwardDeclarationMap;
 };
 
 } // namespace otava::symbols

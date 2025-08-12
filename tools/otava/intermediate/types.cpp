@@ -206,6 +206,10 @@ TypeRef Type::GetTypeRef()
     return typeRef;
 }
 
+void Type::IncCount()
+{
+}
+
 VoidType::VoidType() : Type(soul::ast::Span(), TypeKind::fundamentalType, voidTypeId)
 {
 }
@@ -467,6 +471,11 @@ void FwdDeclaredStructureType::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+void FwdDeclaredStructureType::SetComment(const std::string& comment_)
+{
+    comment = comment_;
+}
+
 ArrayType::ArrayType(const soul::ast::Span& span_, std::int32_t typeId_, std::int64_t elementCount_, const TypeRef& elementTypeRef_) :
     Type(span_, TypeKind::arrayType, typeId_), elementCount(elementCount_), elementTypeRef(elementTypeRef_)
 {
@@ -606,6 +615,15 @@ Value* PointerType::MakeDefaultValue(Context& context) const
     return context.GetNullValue(soul::ast::Span(), const_cast<PointerType*>(this));
 }
 
+void PointerType::ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context)
+{
+    Type* baseType = BaseType();
+    if (baseType == fwdDeclaredType)
+    {
+        baseTypeRef.SetType(structureType);
+    }
+}
+
 std::string PointerType::Name() const
 {
     return baseTypeRef.GetType()->Name() + "*";
@@ -638,7 +656,8 @@ Type* GetElemType(Value* ptr, Value* index, const soul::ast::Span& span, Context
         }
         else if (aggregateType->IsFwdDeclaredStructureType())
         {
-            Error("forward declaration of structure type id " + std::to_string(aggregateType->Id()) + " not resolved", span, context);
+            FwdDeclaredStructureType* fwdType = static_cast<FwdDeclaredStructureType*>(aggregateType);
+            Error("forward declaration of structure type id " + std::to_string(aggregateType->Id()) + " (" + fwdType->Comment() + ") not resolved", span, context);
         }
         else
         {
@@ -776,6 +795,17 @@ PointerType* Types::MakePointerType(const soul::ast::Span& span, std::int32_t ba
     return type;
 }
 
+Type* Types::MakePtrType(Type* baseType)
+{
+    Type* type = baseType->AddPointer(context);
+    if (baseType->IsFwdDeclaredStructureType())
+    {
+        FwdDeclaredStructureType* fwdDeclaredStructureType = static_cast<FwdDeclaredStructureType*>(baseType);
+        AddFwdDependentType(fwdDeclaredStructureType, type);
+    }
+    return type;
+}
+
 StructureType* Types::GetStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
 {
     std::vector<std::int32_t> fieldTypeIds;
@@ -860,9 +890,10 @@ FwdDeclaredStructureType* Types::GetFwdDeclaredStructureType(const util::uuid& i
     }
 }
 
-FwdDeclaredStructureType* Types::MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId)
+FwdDeclaredStructureType* Types::MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId, const std::string& comment)
 {
     FwdDeclaredStructureType* fwdDeclaredType = new FwdDeclaredStructureType(id, typeId);
+    fwdDeclaredType->SetComment(comment);
     fwdDeclaredStructureTypes[id] = fwdDeclaredType;
     types.push_back(std::unique_ptr<Type>(fwdDeclaredType));
     Map(fwdDeclaredType);

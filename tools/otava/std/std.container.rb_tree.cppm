@@ -1,6 +1,7 @@
 export module std.container.rb_tree;
 
 import std.type.fundamental;
+import std.iterator;
 import std.utilities.pair;
 import std.utilities.utility;
 import std.utilities.unique_ptr;
@@ -18,17 +19,17 @@ class rb_node_base
 public:
     explicit rb_node_base(rb_node_base* parent_);
     virtual ~rb_node_base();
-    rb_node_color get_color() const { return color; }
-    void set_color(rb_node_color color_) { color = color_; }
-    rb_node_base* get_parent() const { return parent; }
-    rb_node_base** parent_ptr() const { return &parent; }
-    void set_parent(rb_node_base* parent_) { parent = parent_; }
-    rb_node_base* get_left() const { return left; }
-    rb_node_base** left_ptr() { return &left; }
-    void set_left(rb_node_base* left_) { left = left_; }
-    rb_node_base* get_right() const { return right; }
-    rb_node_base** right_ptr() { return &right; }
-    void set_right(rb_node_base* right_) { right = right_; }
+    inline rb_node_color get_color() const { return color; }
+    inline void set_color(rb_node_color color_) { color = color_; }
+    inline rb_node_base* get_parent() const { return parent; }
+    inline rb_node_base** parent_ptr() const { return &parent; }
+    inline void set_parent(rb_node_base* parent_) { parent = parent_; }
+    inline rb_node_base* get_left() const { return left; }
+    inline rb_node_base** left_ptr() { return &left; }
+    inline void set_left(rb_node_base* left_) { left = left_; }
+    inline rb_node_base* get_right() const { return right; }
+    inline rb_node_base** right_ptr() { return &right; }
+    inline void set_right(rb_node_base* right_) { right = right_; }
     bool is_header_node() const;
 private:
     rb_node_base* parent;
@@ -54,9 +55,9 @@ public:
 
     rb_node(const value_type& value_, rb_node_base* parent_) : rb_node_base(parent_), val(value_) {}
     rb_node(value_type&& value_, rb_node_base* parent_) : rb_node_base(parent_), val(std::move(value_)) {}
-    const value_type& value() const { return val; }
-    value_type& value() { return val; }
-    value_type* value_ptr() { return &val; }
+    inline const value_type& value() const { return val; }
+    inline value_type& value() { return val; }
+    inline value_type* value_ptr() { return &val; }
 private:
     value_type val;
 };
@@ -65,20 +66,22 @@ template<typename T, typename R, typename P>
 class rb_node_iterator
 {
 public:
+    using difference_type = int64_t;
     using value_type = T;
-    using reference_type = R;
-    using pointer_type = P;
+    using pointer = P;
+    using reference = R;
+    using iterator_category = bidirectional_iterator_tag;
     using node_type = rb_node<value_type>;
 
-    rb_node_iterator() : n(nullptr) {}
-    rb_node_iterator(node_type* node_) : n(node_) {}
-    reference_type operator*() { return n->value(); }
-    pointer_type operator->() { return n->value_ptr(); }
-    rb_node_iterator& operator++() { n = static_cast<node_type*>(get_next(n)); return *this; }
-    rb_node_iterator operator++(int) { rb_node_iterator p = *this; n = static_cast<node_type*>(get_next(n)); return p; }
-    rb_node_iterator& operator--() { n = static_cast<node_type*>(get_prev(n)); return *this; }
-    rb_node_iterator operator--(int) { rb_node_iterator p = *this; n = static_cast<node_type*>(get_prev(n)); return p; }
-    node_type* node() const { return n; }
+    inline rb_node_iterator() : n(nullptr) {}
+    inline rb_node_iterator(node_type* node_) : n(node_) {}
+    inline reference operator*() { return n->value(); }
+    inline pointer operator->() { return n->value_ptr(); }
+    inline rb_node_iterator& operator++() { n = static_cast<node_type*>(get_next(n)); return *this; }
+    inline rb_node_iterator operator++(int) { rb_node_iterator p = *this; n = static_cast<node_type*>(get_next(n)); return p; }
+    inline rb_node_iterator& operator--() { n = static_cast<node_type*>(get_prev(n)); return *this; }
+    inline rb_node_iterator operator--(int) { rb_node_iterator p = *this; n = static_cast<node_type*>(get_prev(n)); return p; }
+    inline node_type* node() const { return n; }
 private:
     node_type* n;
 };
@@ -95,12 +98,17 @@ class rb_tree
 public:
     using key_type = KeyType;
     using value_type = ValueType;
+    using reference = value_type&;
+    using const_reference = const value_type&;
+    using pointer = value_type*;
+    using const_pointer = const value_type*;
     using node_type = rb_node<value_type>;
     using size_type = int64_t;
+    using difference_type = int64_t;
     using key_of_value = KeyOfValue;
     using compare = Compare;
-    using const_iterator = rb_node_iterator<value_type, const value_type&, const value_type*>;
     using iterator = rb_node_iterator<value_type, value_type&, value_type*>;
+    using const_iterator = rb_node_iterator<value_type, const value_type&, const value_type*>;
 
     rb_tree() : header(), sz(0), key_of(), comp()
     {
@@ -150,35 +158,36 @@ public:
         set_rightmost(header.get());
         sz = 0;
     }
-    bool empty() const { return sz == 0; }
-    size_type size() const { return sz; }
-    iterator begin()
+    inline bool empty() const { return sz == 0; }
+    inline size_type size() const { return sz; }
+    inline iterator begin()
     {
         if (!header) return end();
         return iterator(leftmost());
     }
-    const_iterator begin() const
+    inline const_iterator begin() const
     {
         if (!header) return cend();
         return const_iterator(leftmost());
     }
-    const_iterator cbegin() const
+    inline const_iterator cbegin() const
     {
         if (!header) return cend();
         return const_iterator(leftmost());
     }
-    iterator end()
+    inline iterator end()
     {
         return iterator(header.get());
     }
-    const_iterator end() const
+    inline const_iterator end() const
     {
         return const_iterator(header.get());
     }
-    const_iterator cend() const
+    inline const_iterator cend() const
     {
         return const_iterator(header.get());
     }
+    inline compare cmp() { return comp; }
     std::pair<iterator, bool> insert(const value_type& value)
     {
         if (!header) init();
@@ -338,15 +347,87 @@ public:
             return j;
         }
     }
-    void erase(const iterator& position)
+    iterator lower_bound(const key_type& key) 
     {
+        if (empty()) return end();
+        node_type* y = header.get();
+        node_type* x = root();
+        while (x)
+        {
+            if (!comp(key_of(x->value()), key))
+            {
+                y = x;
+                x = static_cast<node_type*>(x->get_left());
+            }
+            else
+            {
+                x = static_cast<node_type*>(x->get_right());
+            }
+        }
+        return iterator(y);
+    }
+    const_iterator clower_bound(const key_type& key) const
+    {
+        if (empty()) return end();
+        node_type* y = header.get();
+        node_type* x = root();
+        while (x)
+        {
+            if (!comp(key_of(x->value()), key))
+            {
+                y = x;
+                x = static_cast<node_type*>(x->get_left());
+            }
+            else
+            {
+                x = static_cast<node_type*>(x->get_right());
+            }
+        }
+        return const_iterator(y);
+    }
+    inline bool keys_equal(const key_type& k1, const key_type& k2)
+    {
+        return !comp(k1, k2) && !comp(k2, k1);
+    }
+    iterator upper_bound(const key_type& key)
+    {
+        iterator f = find(key);
+        while (f != end() && keys_equal(key, key_of(f.node()->value())))
+        {
+            ++f;
+        }
+        return f;
+    }
+    const_iterator cupper_bound(const key_type& key) const
+    {
+        const_iterator f = find(key);
+        while (f != cend() && keys_equal(key, key_of(f.node()->value())))
+        {
+            ++f;
+        }
+        return f;
+    }
+    iterator erase(iterator position)
+    {
+        iterator n = next(position);
         node_type* r = static_cast<node_type*>(rebalance_for_remove(position.node(), root_ptr(), leftmost_ptr(), rightmost_ptr()));
         r->set_left(nullptr);
         r->set_right(nullptr);
         delete r;
         --sz;
+        return n;
     }
-    node_type* root()
+    iterator erase(const_iterator position)
+    {
+        const_iterator n = next(position);
+        node_type* r = static_cast<node_type*>(rebalance_for_remove(position.node(), root_ptr(), leftmost_ptr(), rightmost_ptr()));
+        r->set_left(nullptr);
+        r->set_right(nullptr);
+        delete r;
+        --sz;
+        return iterator(n.node());
+    }
+    inline node_type* root()
     {
         return static_cast<node_type*>(header->get_parent());
     }
@@ -358,35 +439,35 @@ private:
         set_leftmost(header.get());
         set_rightmost(header.get());
     }
-    void set_root(node_type* r)
+    inline void set_root(node_type* r)
     {
         header->set_parent(r);
     }
-    rb_node_base** root_ptr()
+    inline rb_node_base** root_ptr()
     {
         return header->parent_ptr();
     }
-    node_type* leftmost()
+    inline node_type* leftmost()
     {
         return static_cast<node_type*>(header->get_left());
     }
-    void set_leftmost(node_type* lm)
+    inline void set_leftmost(node_type* lm)
     {
         header->set_left(lm);
     }
-    rb_node_base** leftmost_ptr()
+    inline rb_node_base** leftmost_ptr()
     {
         return header->left_ptr();
     }
-    node_type* rightmost()
+    inline node_type* rightmost()
     {
         return static_cast<node_type*>(header->get_right());
     }
-    void set_rightmost(node_type* rm)
+    inline void set_rightmost(node_type* rm)
     {
         header->set_right(rm);
     }
-    rb_node_base** rightmost_ptr()
+    inline rb_node_base** rightmost_ptr()
     {
         return header->right_ptr();
     }

@@ -90,6 +90,7 @@ class FunctionDefinitionSymbol;
 class AliasTypeSymbol;
 class TypeSymbol;
 class ClassTemplateSpecializationSymbol;
+class Emitter;
 
 class Context
 {
@@ -178,9 +179,12 @@ public:
     inline void SetTotalFunctionsCompiled(int totalFunctionsCompiled_) { totalFunctionsCompiled = totalFunctionsCompiled_; }
     inline void SetFunctionCallsInlined(int functionCallsInlined_) { functionCallsInlined = functionCallsInlined_; }
     inline void SetFunctionsInlined(int functionsInlined_) { functionsInlined = functionsInlined_; }
+    inline Emitter* GetEmitter() { return emitter; }
+    inline void SetEmitter(Emitter* emitter_) { emitter = emitter_; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
+    Emitter* emitter;
     std::unique_ptr<BoundCompileUnitNode> boundCompileUnit;
     std::unique_ptr<BoundFunctionNode> boundFunction;
     std::stack<std::unique_ptr<BoundFunctionNode>> boundFunctionStack;
