@@ -1007,7 +1007,7 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
         }
         if (!context->GetFlag(ContextFlags::dontBind) && functionDefinitionSymbol)
         {
-            BindFunction(functionDefinitionNode, functionDefinitionSymbol, context);
+            functionDefinitionSymbol = BindFunction(functionDefinitionNode, functionDefinitionSymbol, context);
         }
         if (functionDefinitionSymbol && functionDefinitionSymbol->IsTemplate())
         {

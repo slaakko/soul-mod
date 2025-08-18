@@ -768,7 +768,8 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                         context->PushBoundFunction(new BoundFunctionNode(functionDefinition, sourcePos));
                         Scope* nsScope = classTemplateSpecialization->ClassTemplate()->GetScope()->GetNamespaceScope();
                         instantiationScope.PushParentScope(nsScope);
-                        BindFunction(functionDefinitionNode, functionDefinition, context);
+                        functionDefinition = BindFunction(functionDefinitionNode, functionDefinition, context);
+                        specialization = functionDefinition;
                         context->PopFlags();
                         if (specialization->IsBound())
                         {

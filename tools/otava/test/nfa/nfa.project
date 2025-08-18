@@ -1,0 +1,3 @@
+project nfa;
+target=program;
+source <nfa.cpp>;

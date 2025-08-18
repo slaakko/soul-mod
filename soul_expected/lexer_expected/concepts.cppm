@@ -20,7 +20,7 @@ concept LexicalIterator = requires(T it, std::int64_t pos)
 };
 
 template<typename Machine, typename Char>
-concept FiniteStateMachine = requires(Machine machine, Char chr, LexerBase<Char>&lexer)
+concept FiniteStateMachine = requires(Machine machine, Char chr, LexerBase<Char>& lexer)
 {
     machine.NextState(int{}, chr, lexer);  // returns next state id when given current state id, current input char and lexer ref
 };

@@ -201,7 +201,7 @@ public:
         const auto& token = GetToken(pos);
         return soul::ast::Span(static_cast<int>(token.match.begin - start), token.match.Length());
     }
-    const soul::lexer::Token<Char, LexerBase<Char>>& GetToken(std::int64_t pos) const override
+    const TokenType& GetToken(std::int64_t pos) const override
     {
         std::int32_t tokenIndex = static_cast<std::int32_t>(pos);
         if (tokenIndex >= 0 && tokenIndex < tokens.size())
@@ -416,7 +416,7 @@ public:
         parsing_error_thrown = true;
         throw ParsingException(GetError(farthestPos), fileName, sourcePos);
     }
-    inline void SetLog(ParsingLog* log_)
+    inline void SetLog(ParsingLog* log_) override
     {
         log = log_;
     }

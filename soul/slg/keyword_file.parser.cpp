@@ -71,7 +71,7 @@ soul::parser::Match KeywordFileParser<LexerT>::KeywordFile(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "KeywordFile");
+        soul::lexer::WriteBeginRuleToLog(lexer, "KeywordFile");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8613845327771860993);
@@ -383,7 +383,7 @@ soul::parser::Match KeywordFileParser<LexerT>::Imports(LexerT& lexer, soul::ast:
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Imports");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Imports");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8613845327771860994);
@@ -447,7 +447,7 @@ soul::parser::Match KeywordFileParser<LexerT>::Keyword(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Keyword");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Keyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8613845327771860995);

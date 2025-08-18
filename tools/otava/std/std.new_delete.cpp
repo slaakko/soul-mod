@@ -2,7 +2,7 @@ module std.new_delete_op;
 
 void* operator new(size_t size)
 {
-    return malloc(size);
+    return std::malloc(size);
 }
 
 void* operator new(size_t size, void* placement)
@@ -12,6 +12,5 @@ void* operator new(size_t size, void* placement)
 
 void operator delete(void* object)
 {
-    free(object);
-
+    std::free(object);
 }

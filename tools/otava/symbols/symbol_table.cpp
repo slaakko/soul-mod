@@ -1254,9 +1254,33 @@ void SymbolTable::AddForwardEnumDeclaration(const std::u32string& name, EnumType
 
 void SymbolTable::AddEnumerator(const std::u32string& name, Value* value, otava::ast::Node* node, Context* context)
 {
+    EnumeratedTypeSymbol* enumTypeSymbol = nullptr;
+    Scope* scope = currentScope->SymbolScope();
+    if (scope->IsContainerScope())
+    {
+        ContainerScope* containerScope = static_cast<ContainerScope*>(scope);
+        if (containerScope)
+        {
+            ContainerSymbol* containerSymbol = containerScope->GetContainerSymbol();
+            if (containerSymbol && containerSymbol->IsEnumeratedTypeSymbol())
+            {
+                enumTypeSymbol = static_cast<EnumeratedTypeSymbol*>(containerSymbol);
+                EnumTypeKind kind = enumTypeSymbol->GetEnumTypeKind();
+                if (kind == EnumTypeKind::enum_)
+                {
+                    scope = enumTypeSymbol->Parent()->GetScope();
+                }
+            }
+        }
+    }
+    if (!enumTypeSymbol)
+    {
+        ThrowException("could not add enumerator to symbol table: enumerated type not found", node->GetSourcePos(), context);
+    }
     EnumConstantSymbol* enumConstantSymbol = new EnumConstantSymbol(name);
+    enumConstantSymbol->SetEnumType(enumTypeSymbol);
     enumConstantSymbol->SetValue(value);
-    currentScope->SymbolScope()->AddSymbol(enumConstantSymbol, node->GetSourcePos(), context);
+    scope->AddSymbol(enumConstantSymbol, node->GetSourcePos(), context);
     MapNode(node, enumConstantSymbol);
 }
 

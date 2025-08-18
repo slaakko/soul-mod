@@ -31,6 +31,7 @@ import otava.symbols.inline_functions;
 import otava.symbols.operation.repository;
 import otava.symbols.declaration;
 import otava.symbols.type_compare;
+import soul.lexer;
 import util.unicode;
 import util.sha1;
 
@@ -350,10 +351,6 @@ bool ClassTypeSymbol::IsPolymorphic() const
 
 void ClassTypeSymbol::MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    if (Name() == U"rb_node_base")
-    {
-        int x = 0;
-    }
     if (ObjectLayoutComputed())
     {
         for (const auto& memberVar : memberVariables)
@@ -1140,9 +1137,14 @@ InlineMemberFunctionParserVisitor::InlineMemberFunctionParserVisitor(Context* co
 
 void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode& node)
 {
+    soul::lexer::XmlParsingLog log(std::cout);
     try
     {
         Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
+        if (symbol->Name() == U"GetToken")
+        {
+            context->GetLexer()->SetLog(&log);
+        }
         otava::ast::Node* fnBody = node.FunctionBody();
         otava::ast::ConstructorInitializerNode* ctorInitializerNode = nullptr;
         otava::ast::CompoundStatementNode* compoundStatementNode = nullptr;
@@ -1186,7 +1188,7 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
         {
             FunctionDefinitionSymbol* functionDefinitionSymbol = static_cast<FunctionDefinitionSymbol*>(functionSymbol);
             context->PushBoundFunction(new BoundFunctionNode(functionDefinitionSymbol, node.GetSourcePos()));
-            BindFunction(&node, functionDefinitionSymbol, context);
+            functionDefinitionSymbol = BindFunction(&node, functionDefinitionSymbol, context);
             std::unique_ptr<BoundNode> boundFunctionNode(context->ReleaseBoundFunction());
             if (functionDefinitionSymbol->IsBound())
             {
@@ -1194,6 +1196,7 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
             }
             context->PopBoundFunction();
         }
+        context->GetLexer()->SetLog(nullptr);
     }
     catch (const std::exception& ex)
     {

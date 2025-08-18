@@ -1,6 +1,8 @@
 export module std.expected;
 
 import std.type.fundamental;
+import std.algorithm;
+import std.utilities.utility;
 
 export namespace std {
 
@@ -14,7 +16,7 @@ public:
     constexpr explicit unexpected(E&& e_) : e(move(e_)) {}
     constexpr const E& error() const noexcept { return e; }
     constexpr E& error() noexcept { return e; }
-    constexpr void swap(unexpected& other) noexcept
+    constexpr void swap(unexpected<E>& other) noexcept
     {
         std::swap(e, other.e);
     }
@@ -44,9 +46,11 @@ public:
 
     constexpr expected() : has_val(true), val(), unex() {}
     constexpr expected(const T& val_) : has_val(true), val(val_), unex() {}
+    constexpr expected(T&& val_) : has_val(true), val(std::move(val_)), unex() {}
     constexpr expected(const unexpected<E>& e): has_val(false), unex(e.error()) {}
     constexpr expected(unexpected<E>&& e) : has_val(false), unex(e.error()) {}
     constexpr expected& operator=(const T& val_) { has_val = true; val = val_; return *this; }
+    constexpr expected& operator=(T&& val_) { hasVal = true; val = std::move(val_); return *this; }
     constexpr expected& operator=(const unexpected<E>& e) { has_val = false; unex = e.error(); return *this; }
     constexpr expected& operator=(unexpected<E>&& e) { has_val = false; unex = e.error(); return *this; }
     constexpr const T* operator->() const noexcept { return addressof(val); }
@@ -84,3 +88,5 @@ constexpr void swap(expected<T, E>& lhs, expected<T, E>& rhs)
 }
 
 } // namespace std
+
+template class std::unexpected<int>;

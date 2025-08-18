@@ -186,6 +186,7 @@ void ArrayTypeDefaultCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpre
     otava::intermediate::Value* nextLoopIndexValue = emitter.EmitAdd(currentLoopIndexValue, emitter.EmitLong(1));
     emitter.EmitStore(nextLoopIndexValue, loopIndexVar);
     emitter.EmitJump(condBlock);
+    emitter.SetCurrentBasicBlock(nextBlock);
 }
 
 ArrayTypeCopyCtor::ArrayTypeCopyCtor(const std::u32string& name_) : FunctionSymbol(SymbolKind::arrayTypeCopyCtor, name_), arrayType(nullptr)
@@ -255,6 +256,7 @@ void ArrayTypeCopyCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressi
     otava::intermediate::Value* nextLoopIndexValue = emitter.EmitAdd(currentLoopIndexValue, emitter.EmitLong(1));
     emitter.EmitStore(nextLoopIndexValue, loopIndexVar);
     emitter.EmitJump(condBlock);
+    emitter.SetCurrentBasicBlock(nextBlock);
 }
 
 ArrayTypeMoveCtor::ArrayTypeMoveCtor(const std::u32string& name_) : FunctionSymbol(SymbolKind::arrayTypeMoveCtor, name_), arrayType(nullptr)
@@ -324,6 +326,7 @@ void ArrayTypeMoveCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressi
     otava::intermediate::Value* nextLoopIndexValue = emitter.EmitAdd(currentLoopIndexValue, emitter.EmitLong(1));
     emitter.EmitStore(nextLoopIndexValue, loopIndexVar);
     emitter.EmitJump(condBlock);
+    emitter.SetCurrentBasicBlock(nextBlock);
 }
 
 ArrayTypeCopyAssignment::ArrayTypeCopyAssignment(const std::u32string& name_) : FunctionSymbol(SymbolKind::arrayTypeCopyAssignment, name_), arrayType(nullptr)
@@ -394,6 +397,7 @@ void ArrayTypeCopyAssignment::GenerateCode(Emitter& emitter, std::vector<BoundEx
     otava::intermediate::Value* nextLoopIndexValue = emitter.EmitAdd(currentLoopIndexValue, emitter.EmitLong(1));
     emitter.EmitStore(nextLoopIndexValue, loopIndexVar);
     emitter.EmitJump(condBlock);
+    emitter.SetCurrentBasicBlock(nextBlock);
     args[0]->Load(emitter, OperationFlags::none, sourcePos, context);
 }
 
@@ -466,6 +470,7 @@ void ArrayTypeMoveAssignment::GenerateCode(Emitter& emitter, std::vector<BoundEx
     otava::intermediate::Value* nextLoopIndexValue = emitter.EmitAdd(currentLoopIndexValue, emitter.EmitLong(1));
     emitter.EmitStore(nextLoopIndexValue, loopIndexVar);
     emitter.EmitJump(condBlock);
+    emitter.SetCurrentBasicBlock(nextBlock);
     args[0]->Load(emitter, OperationFlags::none, sourcePos, context);
 }
 

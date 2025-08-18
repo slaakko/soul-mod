@@ -787,11 +787,11 @@ private:
     void grow(size_type min_res)
     {
         min_res = std::grow_size(min_res);
-        charT* new_chars = static_cast<charT*>(malloc(min_res * sizeof(charT)));
+        charT* new_chars = static_cast<charT*>(std::malloc(min_res * sizeof(charT)));
         if (chars)
         {
             scpy(new_chars, chars);
-            free(chars);
+            std::free(chars);
         }
         chars = new_chars;
         res = min_res;
@@ -801,7 +801,7 @@ private:
         len = 0;
         if (res != 0)
         {
-            free(chars);
+            std::free(chars);
             res = 0;
         }
         chars = nullptr;

@@ -179,25 +179,42 @@ void ForwardEnumDeclarationSymbol::Resolve(SymbolTable& symbolTable)
     }
 }
 
-EnumConstantSymbol::EnumConstantSymbol(const std::u32string& name_) : Symbol(SymbolKind::enumConstantSymbol, name_), value(), valueId()
+EnumConstantSymbol::EnumConstantSymbol(const std::u32string& name_) : Symbol(SymbolKind::enumConstantSymbol, name_), value(), valueId(), enumType(nullptr)
 {
 }
 
 bool EnumConstantSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 {
-    return scopeKind == ScopeKind::enumerationScope;
+    if (enumType->GetEnumTypeKind() == EnumTypeKind::enumClass || enumType->GetEnumTypeKind() == EnumTypeKind::enumStruct)
+    {
+        return scopeKind == ScopeKind::enumerationScope;
+    }
+    else
+    {
+        switch (scopeKind)
+        {
+            case ScopeKind::namespaceScope:
+            case ScopeKind::classScope:
+            {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void EnumConstantSymbol::Write(Writer& writer)
 {
     Symbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(value->Id());
+    writer.GetBinaryStreamWriter().Write(enumType->Id());
 }
 
 void EnumConstantSymbol::Read(Reader& reader)
 {
     Symbol::Read(reader);
     reader.GetBinaryStreamReader().ReadUuid(valueId);
+    reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
 }
 
 void EnumConstantSymbol::Resolve(SymbolTable& symbolTable)
@@ -205,21 +222,16 @@ void EnumConstantSymbol::Resolve(SymbolTable& symbolTable)
     Symbol::Resolve(symbolTable);
     EvaluationContext* evaluationContext = symbolTable.GetModule()->GetEvaluationContext();
     value = evaluationContext->GetValue(valueId);
+    TypeSymbol* type = symbolTable.GetType(enumTypeId);
+    if (type && type->IsEnumeratedTypeSymbol())
+    {
+        enumType = static_cast<EnumeratedTypeSymbol*>(type);
+    }
 }
 
 void EnumConstantSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
-}
-
-EnumeratedTypeSymbol* EnumConstantSymbol::GetType() const
-{
-    const Symbol* parent = Parent();
-    if (parent && parent->IsEnumeratedTypeSymbol())
-    {
-        return const_cast<EnumeratedTypeSymbol*>(static_cast<const EnumeratedTypeSymbol*>(parent));
-    }
-    return nullptr;
 }
 
 bool EnumTypeLessFunctor::operator()(EnumeratedTypeSymbol* left, EnumeratedTypeSymbol* right) const
@@ -819,38 +831,39 @@ void BindEnumType(EnumeratedTypeSymbol* enumType, const soul::ast::SourcePos& so
 {
     if (enumType->IsBound()) return;
     enumType->SetBound();
-    FunctionGroupSymbol* constructorGroup = enumType->GetScope()->GetOrInsertFunctionGroup(U"@constructor", sourcePos, context);
+    Scope* scope = enumType->GetScope();
+    FunctionGroupSymbol* constructorGroup = scope->GetOrInsertFunctionGroup(U"@constructor", sourcePos, context);
     EnumTypeDefaultCtor* enumTypeDefaultCtor = new EnumTypeDefaultCtor(enumType, context);
-    enumType->GetScope()->AddSymbol(enumTypeDefaultCtor, sourcePos, context);
+    scope->AddSymbol(enumTypeDefaultCtor, sourcePos, context);
     constructorGroup->AddFunction(enumTypeDefaultCtor);
     EnumTypeCopyCtor* enumTypeCopyCtor = new EnumTypeCopyCtor(enumType, context);
-    enumType->GetScope()->AddSymbol(enumTypeCopyCtor, sourcePos, context);
+    scope->AddSymbol(enumTypeCopyCtor, sourcePos, context);
     constructorGroup->AddFunction(enumTypeCopyCtor);
     EnumTypeMoveCtor* enumTypeMoveCtor = new EnumTypeMoveCtor(enumType, context);
-    enumType->GetScope()->AddSymbol(enumTypeMoveCtor, sourcePos, context);
+    scope->AddSymbol(enumTypeMoveCtor, sourcePos, context);
     constructorGroup->AddFunction(enumTypeMoveCtor);
 
-    FunctionGroupSymbol* destructorGroup = enumType->GetScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
+    FunctionGroupSymbol* destructorGroup = scope->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
     TrivialDestructor* trivialDestructor = new TrivialDestructor(enumType, context);
-    enumType->GetScope()->AddSymbol(trivialDestructor, sourcePos, context);
+    scope->AddSymbol(trivialDestructor, sourcePos, context);
     destructorGroup->AddFunction(trivialDestructor);
 
-    FunctionGroupSymbol* assignmentGroup = enumType->GetScope()->GetOrInsertFunctionGroup(U"operator=", sourcePos, context);
+    FunctionGroupSymbol* assignmentGroup = scope->GetOrInsertFunctionGroup(U"operator=", sourcePos, context);
     EnumTypeCopyAssignment* enumTypeCopyAssignment = new EnumTypeCopyAssignment(enumType, context);
-    enumType->GetScope()->AddSymbol(enumTypeCopyAssignment, sourcePos, context);
+    scope->AddSymbol(enumTypeCopyAssignment, sourcePos, context);
     assignmentGroup->AddFunction(enumTypeCopyAssignment);
     EnumTypeMoveAssignment* enumTypeMoveAssignment = new EnumTypeMoveAssignment(enumType, context);
-    enumType->GetScope()->AddSymbol(enumTypeMoveAssignment, sourcePos, context);
+    scope->AddSymbol(enumTypeMoveAssignment, sourcePos, context);
     assignmentGroup->AddFunction(enumTypeMoveAssignment);
 
-    FunctionGroupSymbol* equalGroup = enumType->GetScope()->GetOrInsertFunctionGroup(U"operator==", sourcePos, context);
+    FunctionGroupSymbol* equalGroup = scope->GetOrInsertFunctionGroup(U"operator==", sourcePos, context);
     EnumTypeEqual* enumTypeEqual = new EnumTypeEqual(enumType, context);
-    enumType->GetScope()->AddSymbol(enumTypeEqual, sourcePos, context);
+    scope->AddSymbol(enumTypeEqual, sourcePos, context);
     equalGroup->AddFunction(enumTypeEqual);
 
-    FunctionGroupSymbol* lessGroup = enumType->GetScope()->GetOrInsertFunctionGroup(U"operator<", sourcePos, context);
+    FunctionGroupSymbol* lessGroup = scope->GetOrInsertFunctionGroup(U"operator<", sourcePos, context);
     EnumTypeLess* enumTypeLess = new EnumTypeLess(enumType, context);
-    enumType->GetScope()->AddSymbol(enumTypeLess, sourcePos, context);
+    scope->AddSymbol(enumTypeLess, sourcePos, context);
     lessGroup->AddFunction(enumTypeLess);
 }
 

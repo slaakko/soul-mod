@@ -29,6 +29,7 @@ import otava.symbols.fundamental.type.symbol;
 import otava.symbols.variable.symbol;
 import otava.symbols.type_compare;
 import otava.symbols.inline_functions;
+import otava.symbols.enums;
 import otava.opt;
 import util.unicode;
 
@@ -1080,10 +1081,6 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
     for (int i = 0; i < n; ++i)
     {
         FunctionSymbol* viableFunction = viableFunctions[i];
-        if ((viableFunction->Qualifiers() & FunctionQualifiers::isDeleted) != FunctionQualifiers::none)
-        {
-            continue;
-        }
         if (viableFunctionSet.find(viableFunction) != viableFunctionSet.end())
         {
             continue;
@@ -1146,6 +1143,15 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
 
 std::vector<Scope*> GetArgumentScopes(BoundExpressionNode* arg)
 {
+    if (arg->IsBoundEnumConstant())
+    {
+        BoundEnumConstant* c = static_cast<BoundEnumConstant*>(arg);
+        EnumConstantSymbol* e = c->EnumConstant();
+        if (e->Name() == U"dec")
+        {
+            int x = 0;
+        }
+    }
     std::vector<Scope*> scopes;
     TypeSymbol* type = arg->GetType();
     if (type)
@@ -1264,10 +1270,6 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
             AddArgumentScopes(scopeLookups, args);
         }
         context->GetSymbolTable()->CollectViableFunctions(scopeLookups, groupName, templateArgs, args.size(), viableFunctions, context);
-    }
-    if (groupName == U"next")
-    {
-        int x = 0;
     }
     std::unique_ptr<FunctionMatch> bestMatch = SelectBestMatchingFunction(viableFunctions, templateArgs, args, groupName, sourcePos, context, ex);
     if (!bestMatch)

@@ -39,7 +39,7 @@ std::expected<std::string, int> GetCurrentWorkingDirectory()
     }
     else
     {
-        return std::unexpected(AllocateError("could not get current working directory"));
+        return std::unexpected<int>(AllocateError("could not get current working directory"));
     }
 }
 

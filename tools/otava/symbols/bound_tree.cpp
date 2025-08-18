@@ -545,6 +545,11 @@ void BoundFunctionNode::SetDtorTerminator(BoundDtorTerminatorNode* dtorTerminato
     dtorTerminator.reset(dtorTerminator_);
 }
 
+void BoundFunctionNode::AddDefaultFunctionSymbol(FunctionSymbol* defaultFunctionSymbol)
+{
+    defaultFunctionSymbols.push_back(std::unique_ptr<FunctionSymbol>(defaultFunctionSymbol));
+}
+
 BoundStatementNode::BoundStatementNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) : 
     BoundNode(kind_, sourcePos_), parent(nullptr), generated(false), postfix(false)
 {
@@ -1247,7 +1252,7 @@ BoundExpressionNode* BoundParameterNode::Clone() const
 }
 
 BoundEnumConstant::BoundEnumConstant(EnumConstantSymbol* enumConstant_, const soul::ast::SourcePos& sourcePos_) :
-    BoundExpressionNode(BoundNodeKind::boundEnumConstantNode, sourcePos_, enumConstant_->GetType()), enumConstant(enumConstant_)
+    BoundExpressionNode(BoundNodeKind::boundEnumConstantNode, sourcePos_, enumConstant_->GetEnumType()), enumConstant(enumConstant_)
 {
 }
 
@@ -1384,7 +1389,7 @@ void BoundFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const s
         flags = flags | OperationFlags::virtualCall;
     }
     functionSymbol->GenerateCode(emitter, arguments, flags, sourcePos, context);
-    if ((flags & OperationFlags::deref) != OperationFlags::none)
+    if ((flags & OperationFlags::deref) != OperationFlags::none && functionSymbol->Name() != U"operator_bool")
     {
         otava::intermediate::Value* value = emitter.Stack().Pop();
         std::uint8_t n = GetDerefCount(flags);

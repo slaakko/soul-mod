@@ -189,7 +189,7 @@ public:
     virtual bool IsFinal() const;
     void SetOverride();
     ClassTypeSymbol* ParentClassType() const override;
-    ParameterSymbol* ThisParam(Context* ciontext) const;
+    virtual ParameterSymbol* ThisParam(Context* context) const;
     bool IsMemberFunction() const;
     SpecialFunctionKind GetSpecialFunctionKind(Context* context) const;
     inline Linkage GetLinkage() const { return linkage; }

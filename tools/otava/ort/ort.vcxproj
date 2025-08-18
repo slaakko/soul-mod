@@ -121,6 +121,7 @@
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <BuildStlModules>true</BuildStlModules>
+      <AdditionalIncludeDirectories>../../..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -141,6 +142,7 @@
       <EnableModules>false</EnableModules>
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
       <BuildStlModules>true</BuildStlModules>
+      <AdditionalIncludeDirectories>../../..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>

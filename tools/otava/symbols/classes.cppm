@@ -142,6 +142,7 @@ public:
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
     inline FunctionSymbol* CopyCtor() const { return copyCtor; }
     void GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context);
+    void ResetCopyCtor() { copyCtor = nullptr; }
     std::pair<bool, std::int64_t> Delta(ClassTypeSymbol* base, Emitter& emitter, Context* context);
     int TotalMemberCount() const;
 private:

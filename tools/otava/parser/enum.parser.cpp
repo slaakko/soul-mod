@@ -38,7 +38,7 @@ soul::parser::Match EnumParser<LexerT>::EnumName(LexerT& lexer, otava::symbols::
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "EnumName");
+        soul::lexer::WriteBeginRuleToLog(lexer, "EnumName");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993025);
@@ -84,7 +84,7 @@ soul::parser::Match EnumParser<LexerT>::EnumSpecifier(LexerT& lexer, otava::symb
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "EnumSpecifier");
+        soul::lexer::WriteBeginRuleToLog(lexer, "EnumSpecifier");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993026);
@@ -301,7 +301,7 @@ soul::parser::Match EnumParser<LexerT>::EnumHead(LexerT& lexer, otava::symbols::
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "EnumHead");
+        soul::lexer::WriteBeginRuleToLog(lexer, "EnumHead");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993027);
@@ -484,7 +484,7 @@ soul::parser::Match EnumParser<LexerT>::EnumKey(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "EnumKey");
+        soul::lexer::WriteBeginRuleToLog(lexer, "EnumKey");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993028);
@@ -668,7 +668,7 @@ soul::parser::Match EnumParser<LexerT>::EnumHeadName(LexerT& lexer, otava::symbo
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "EnumHeadName");
+        soul::lexer::WriteBeginRuleToLog(lexer, "EnumHeadName");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993029);
@@ -764,7 +764,7 @@ soul::parser::Match EnumParser<LexerT>::EnumBase(LexerT& lexer, otava::symbols::
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "EnumBase");
+        soul::lexer::WriteBeginRuleToLog(lexer, "EnumBase");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993030);
@@ -845,7 +845,7 @@ soul::parser::Match EnumParser<LexerT>::EnumeratorList(LexerT& lexer, otava::sym
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "EnumeratorList");
+        soul::lexer::WriteBeginRuleToLog(lexer, "EnumeratorList");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993031);
@@ -963,7 +963,7 @@ soul::parser::Match EnumParser<LexerT>::EnumeratorDefinition(LexerT& lexer, otav
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "EnumeratorDefinition");
+        soul::lexer::WriteBeginRuleToLog(lexer, "EnumeratorDefinition");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993032);
@@ -1101,7 +1101,7 @@ soul::parser::Match EnumParser<LexerT>::Enumerator(LexerT& lexer, otava::symbols
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Enumerator");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Enumerator");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993033);
@@ -1192,7 +1192,7 @@ soul::parser::Match EnumParser<LexerT>::OpaqueEnumDeclaration(LexerT& lexer, ota
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "OpaqueEnumDeclaration");
+        soul::lexer::WriteBeginRuleToLog(lexer, "OpaqueEnumDeclaration");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993034);
@@ -1349,7 +1349,7 @@ soul::parser::Match EnumParser<LexerT>::ElaboratedEnumSpecifier(LexerT& lexer, o
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ElaboratedEnumSpecifier");
+        soul::lexer::WriteBeginRuleToLog(lexer, "ElaboratedEnumSpecifier");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993035);

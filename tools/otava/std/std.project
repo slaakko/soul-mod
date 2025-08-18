@@ -39,10 +39,12 @@ interface <std.container.rb_tree.cppm>;
 source <std.container.rb_tree.cpp>;
 interface <std.stream.cppm>;
 source <std.stream.cpp>;
+interface <std.stringstream.cppm>;
 interface <std.thread.cppm>;
 interface <std.thread.condition_variable.cppm>;
 interface <std.thread.mutex.cppm>;
 source <std.thread.mutex.cpp>;
+interface <std.time.cppm>;
 interface <std.type.fundamental.cppm>;
 interface <std.type_traits.cppm>;
 interface <std.utf.cppm>;
@@ -52,4 +54,3 @@ interface <std.utilities.ratio.cppm>;
 interface <std.utilities.unique_ptr.cppm>;
 interface <std.utilities.utility.cppm>;
 source <std.utilities.utility.cpp>;
-

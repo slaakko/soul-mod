@@ -16,7 +16,7 @@ void sixteen()
     std::map<int, int> m;
     for (int i = 0; i < 16; ++i)
     {
-        int x = std::random();
+        int x = std::random() & 0x7FFFFFFFU;
         m[i] = x;
     }
     print(m);

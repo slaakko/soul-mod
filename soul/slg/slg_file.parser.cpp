@@ -69,7 +69,7 @@ soul::parser::Match SlgFileParser<LexerT>::SlgFile(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "SlgFile");
+        soul::lexer::WriteBeginRuleToLog(lexer, "SlgFile");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7800349797168185345);
@@ -247,7 +247,7 @@ soul::parser::Match SlgFileParser<LexerT>::SlgFileDeclaration(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "SlgFileDeclaration");
+        soul::lexer::WriteBeginRuleToLog(lexer, "SlgFileDeclaration");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7800349797168185346);
@@ -394,7 +394,7 @@ soul::parser::Match SlgFileParser<LexerT>::TokenFileDeclaration(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TokenFileDeclaration");
+        soul::lexer::WriteBeginRuleToLog(lexer, "TokenFileDeclaration");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7800349797168185347);
@@ -560,7 +560,7 @@ soul::parser::Match SlgFileParser<LexerT>::KeywordFileDeclaration(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "KeywordFileDeclaration");
+        soul::lexer::WriteBeginRuleToLog(lexer, "KeywordFileDeclaration");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7800349797168185348);
@@ -663,7 +663,7 @@ soul::parser::Match SlgFileParser<LexerT>::ExpressionFileDeclaration(LexerT& lex
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ExpressionFileDeclaration");
+        soul::lexer::WriteBeginRuleToLog(lexer, "ExpressionFileDeclaration");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7800349797168185349);
@@ -766,7 +766,7 @@ soul::parser::Match SlgFileParser<LexerT>::LexerFileDeclaration(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LexerFileDeclaration");
+        soul::lexer::WriteBeginRuleToLog(lexer, "LexerFileDeclaration");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7800349797168185350);

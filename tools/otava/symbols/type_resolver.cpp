@@ -28,6 +28,7 @@ import otava.symbols.value;
 import otava.symbols.expression.binder;
 import otava.symbols.bound.tree;
 import otava.symbols.function.symbol;
+import otava.symbols.variable.symbol;
 import util.unicode;
 
 namespace otava::symbols {
@@ -75,6 +76,8 @@ public:
     void Visit(otava::ast::TemplateIdNode& node) override;
     void Visit(otava::ast::TypeIdNode& node) override;
     void Visit(otava::ast::FunctionDeclaratorNode& node) override;
+    void Visit(otava::ast::NewTypeIdNode& node) override;
+    void Visit(otava::ast::ArrayNewDeclaratorNode& node) override;
 private:
     Context* context;
     TypeSymbol* type;
@@ -84,6 +87,7 @@ private:
     int pointerCount;
     bool typeResolved;
     bool createTypeSymbol;
+    BoundExpressionNode* size;
 };
 
 TypeResolver::TypeResolver(Context* context_, DeclarationFlags flags_, TypeResolverFlags resolverFlags_) :
@@ -94,7 +98,8 @@ TypeResolver::TypeResolver(Context* context_, DeclarationFlags flags_, TypeResol
     resolverFlags(resolverFlags_),
     pointerCount(0), 
     typeResolved(false), 
-    createTypeSymbol(false)
+    createTypeSymbol(false),
+    size(nullptr)
 {
 }
 
@@ -548,6 +553,21 @@ void TypeResolver::Visit(otava::ast::FunctionDeclaratorNode& node)
     ResolveType();
     Declaration declaration = ProcessDeclarator(type, &node, &node, flags, FunctionQualifiers::none, context);
     type = declaration.type;
+}
+
+void TypeResolver::Visit(otava::ast::NewTypeIdNode& node)
+{
+    node.TypeSpecifierSeq()->Accept(*this);
+    TypeSymbol* newType = type;
+    if (node.NewDeclarator())
+    {
+        node.NewDeclarator()->Accept(*this);
+    }
+}
+
+void TypeResolver::Visit(otava::ast::ArrayNewDeclaratorNode& node)
+{
+    size = BindExpression(&node, context);
 }
 
 TypeSymbol* ResolveType(otava::ast::Node* node, DeclarationFlags flags, Context* context)

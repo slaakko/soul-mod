@@ -30,7 +30,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::CppIdentifier(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "CppIdentifier");
+        soul::lexer::WriteBeginRuleToLog(lexer, "CppIdentifier");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2155528619961614337);
@@ -78,7 +78,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedCppId");
+        soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedCppId");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2155528619961614338);

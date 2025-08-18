@@ -1,0 +1,3 @@
+project double_node;
+target=program;
+source <double_node.cpp>;

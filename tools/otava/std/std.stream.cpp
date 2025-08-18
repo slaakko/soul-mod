@@ -2,7 +2,7 @@ module std.stream;
 
 namespace std {
 
-ios_base::ios_base() : fl(fmtflags::dec)
+ios_base::ios_base() : fl(std::ios_base::dec)
 {
 }
 
@@ -10,44 +10,44 @@ ios_base::~ios_base()
 {
 }
 
-fmtflags ios_base::flags() const
+ios_base::fmtflags ios_base::flags() const
 {
     return fl;
 }
 
-void ios_base::flags(fmtflags f_) 
+void ios_base::flags(ios_base::fmtflags f)
 {
-    fl = f_; 
+    fl = f; 
 }
 
-void ios_base::setf(fmtflags f_) 
+void ios_base::setf(ios_base::fmtflags f)
 { 
-    fl = fl | f_; 
+    fl = fmtflags(int(fl) | int(f));
 }
 
-void ios_base::unsetf(fmtflags f_) 
+void ios_base::unsetf(ios_base::fmtflags f)
 { 
-    fl = fl & ~f_; 
+    fl = fmtflags(int(fl) & ~int(f));
 }
 
 ios_base& dec(std::ios_base& strm)
 {
-    strm.unsetf(std::fmtflags::basefield);
-    strm.setf(std::fmtflags::dec);
+    strm.unsetf(std::ios_base::basefield);
+    strm.setf(std::ios_base::dec);
     return strm;
 }
 
 ios_base& hex(std::ios_base& strm)
 {
-    strm.unsetf(std::fmtflags::basefield);
-    strm.setf(std::fmtflags::hex);
+    strm.unsetf(std::ios_base::basefield);
+    strm.setf(std::ios_base::hex);
     return strm;
 }
 
 ios_base& oct(std::ios_base& strm)
 {
-    strm.unsetf(std::fmtflags::basefield);
-    strm.setf(std::fmtflags::oct);
+    strm.unsetf(std::ios_base::basefield);
+    strm.setf(std::ios_base::oct);
     return strm;
 }
 

@@ -278,11 +278,13 @@ public:
     inline BoundCtorInitializerNode* CtorInitializer() const { return ctorInitializer.get(); }
     inline BoundDtorTerminatorNode* DtorTerminator() const { return dtorTerminator.get(); }
     inline FunctionDefinitionSymbol* GetFunctionDefinitionSymbol() { return functionDefinitionSymbol; }
+    void AddDefaultFunctionSymbol(FunctionSymbol* defaultFunctionSymbol);
 private:
     FunctionDefinitionSymbol* functionDefinitionSymbol;
     std::unique_ptr<BoundCtorInitializerNode> ctorInitializer;
     std::unique_ptr<BoundDtorTerminatorNode> dtorTerminator;
     std::unique_ptr<BoundCompoundStatementNode> body;
+    std::vector<std::unique_ptr<FunctionSymbol>> defaultFunctionSymbols;
 };
 
 class BoundStatementNode : public BoundNode

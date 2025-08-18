@@ -11,6 +11,7 @@ import otava.intermediate.context;
 import otava.intermediate.code;
 import otava.intermediate.data;
 import otava.intermediate.types;
+import otava.intermediate.metadata;
 import util.uuid;
 
 export namespace otava::symbols {
@@ -184,6 +185,11 @@ public:
     inline otava::intermediate::Value* RetValue() const { return retValue; }
     inline void SetRetValue(otava::intermediate::Value* retValue_) { retValue = retValue_; }
     otava::intermediate::Value* EmitClassPtrConversion(otava::intermediate::Value* classPtr, otava::intermediate::Value* delta, otava::intermediate::Type* destType);
+    inline otava::intermediate::MetadataStruct* CreateMetadataStruct() { return context->CreateMetadataStruct(); }
+    inline otava::intermediate::MetadataBool* CreateMetadataBool(bool value) { return context->CreateMetadataBool(value); }
+    inline otava::intermediate::MetadataLong* CreateMetadataLong(std::int64_t value) { return context->CreateMetadataLong(value); }
+    inline otava::intermediate::MetadataString* CreateMetadataString(const std::string& value) { return context->CreateMetadataString(value, false); }
+    inline otava::intermediate::MetadataRef* CreateMetadataRef(int nodeId) { return context->CreateMetadataRef(soul::ast::Span(), nodeId); }
 private:
     otava::intermediate::Context* context;
     IrValueStack* stack;

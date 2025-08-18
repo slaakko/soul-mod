@@ -79,7 +79,7 @@ soul::parser::Match LexerFileParser<LexerT>::LexerFile(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LexerFile");
+        soul::lexer::WriteBeginRuleToLog(lexer, "LexerFile");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8883513078608560129);
@@ -345,7 +345,7 @@ soul::parser::Match LexerFileParser<LexerT>::Imports(LexerT& lexer, soul::ast::s
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Imports");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Imports");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8883513078608560130);
@@ -409,7 +409,7 @@ soul::parser::Match LexerFileParser<LexerT>::LexerContent(LexerT& lexer, soul::a
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LexerContent");
+        soul::lexer::WriteBeginRuleToLog(lexer, "LexerContent");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8883513078608560131);
@@ -473,7 +473,7 @@ soul::parser::Match LexerFileParser<LexerT>::Rules(LexerT& lexer, soul::ast::slg
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Rules");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Rules");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8883513078608560132);
@@ -628,7 +628,7 @@ soul::parser::Match LexerFileParser<LexerT>::Rule(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Rule");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Rule");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8883513078608560133);
@@ -723,7 +723,7 @@ soul::parser::Match LexerFileParser<LexerT>::Variables(LexerT& lexer, soul::ast:
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Variables");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Variables");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8883513078608560134);
@@ -878,7 +878,7 @@ soul::parser::Match LexerFileParser<LexerT>::Variable(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Variable");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Variable");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8883513078608560135);
@@ -992,7 +992,7 @@ soul::parser::Match LexerFileParser<LexerT>::Actions(LexerT& lexer, soul::ast::s
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Actions");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Actions");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8883513078608560136);
@@ -1201,7 +1201,7 @@ soul::parser::Match LexerFileParser<LexerT>::Action(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Action");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Action");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8883513078608560137);

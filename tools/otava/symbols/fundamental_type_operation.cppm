@@ -143,6 +143,7 @@ public:
         otava::intermediate::Value* value = emitter.Stack().Pop();
         emitter.Stack().Push(Op::Generate(emitter, value));
     }
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 };
 
 template<class Op>
@@ -171,6 +172,7 @@ public:
         otava::intermediate::Value* right = emitter.Stack().Pop();
         emitter.Stack().Push(Op::Generate(emitter, left, right));
     }
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 };
 
 template<typename Op>
@@ -202,6 +204,7 @@ public:
         emitter.Stack().Push(context->Ptr());
     }
     bool IsCtorAssignmentOrArrow() const override { return true; }
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     TypeSymbol* type;
 };
@@ -232,6 +235,7 @@ public:
         otava::intermediate::Value* right = emitter.Stack().Pop();
         emitter.Stack().Push(Op::Generate(emitter, left, right));
     }
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 };
 
 class FundamentalTypeNotOperation : public FundamentalTypeUnaryOperation<FundamentalTypeNot>
@@ -443,6 +447,7 @@ public:
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -459,6 +464,7 @@ public:
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -475,6 +481,7 @@ public:
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -491,6 +498,7 @@ public:
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -503,6 +511,7 @@ public:
     TrivialDestructor(TypeSymbol* type_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     TypeSymbol* type;
 };

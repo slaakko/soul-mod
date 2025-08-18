@@ -387,7 +387,7 @@ private:
         }
         if (res > 0)
         {
-            free(elements);
+            std::free(elements);
             elements = static_cast<T*>(nullptr);
             res = 0;
         }
@@ -395,7 +395,7 @@ private:
     void grow(size_type min_res)
     {
         min_res = std::grow_size(min_res);
-        value_type* new_elements = static_cast<value_type*>(malloc(min_res * sizeof(value_type)));
+        value_type* new_elements = static_cast<value_type*>(std::malloc(min_res * sizeof(value_type)));
         if (elements)
         {
             constructive_move(new_elements, elements, sz);

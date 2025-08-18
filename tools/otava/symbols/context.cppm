@@ -60,7 +60,8 @@ enum class ContextFlags : std::int64_t
     release = static_cast<std::int64_t>(1) << 31,
     suppress_warning = static_cast<std::int64_t>(1) << 32,
     resolveDependentTypes = static_cast<std::int64_t>(1) << 33,
-    processingAliasDeclation = static_cast<std::int64_t>(1) << 34
+    processingAliasDeclation = static_cast<std::int64_t>(1) << 34,
+    leaveBoundFunction = static_cast<std::int64_t>(1) << 35
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)

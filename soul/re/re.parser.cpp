@@ -69,7 +69,7 @@ soul::parser::Match RegExParser<LexerT>::RegularExpression(LexerT& lexer, soul::
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "RegularExpression");
+        soul::lexer::WriteBeginRuleToLog(lexer, "RegularExpression");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526657);
@@ -114,7 +114,7 @@ soul::parser::Match RegExParser<LexerT>::Alternative(LexerT& lexer, soul::ast::r
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Alternative");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Alternative");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526658);
@@ -259,7 +259,7 @@ soul::parser::Match RegExParser<LexerT>::Catenation(LexerT& lexer, soul::ast::re
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Catenation");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Catenation");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526659);
@@ -371,7 +371,7 @@ soul::parser::Match RegExParser<LexerT>::Repetition(LexerT& lexer, soul::ast::re
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Repetition");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Repetition");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526660);
@@ -541,7 +541,7 @@ soul::parser::Match RegExParser<LexerT>::Primary(LexerT& lexer, soul::ast::re::L
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Primary");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Primary");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526661);
@@ -844,7 +844,7 @@ soul::parser::Match RegExParser<LexerT>::Class(LexerT& lexer, soul::ast::re::Lex
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Class");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Class");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526662);
@@ -1045,7 +1045,7 @@ soul::parser::Match RegExParser<LexerT>::Range(LexerT& lexer, soul::ast::re::Lex
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Range");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Range");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526663);
@@ -1175,7 +1175,7 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Char");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Char");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526664);
@@ -1614,7 +1614,7 @@ soul::parser::Match RegExParser<LexerT>::ExpressionReference(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ExpressionReference");
+        soul::lexer::WriteBeginRuleToLog(lexer, "ExpressionReference");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526665);

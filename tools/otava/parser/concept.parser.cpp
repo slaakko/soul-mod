@@ -38,7 +38,7 @@ soul::parser::Match ConceptParser<LexerT>::ConceptDefinition(LexerT& lexer, otav
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ConceptDefinition");
+        soul::lexer::WriteBeginRuleToLog(lexer, "ConceptDefinition");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661825);
@@ -196,7 +196,7 @@ soul::parser::Match ConceptParser<LexerT>::ConceptName(LexerT& lexer, otava::sym
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ConceptName");
+        soul::lexer::WriteBeginRuleToLog(lexer, "ConceptName");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661826);
@@ -242,7 +242,7 @@ soul::parser::Match ConceptParser<LexerT>::ConceptNameChecked(LexerT& lexer, ota
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ConceptNameChecked");
+        soul::lexer::WriteBeginRuleToLog(lexer, "ConceptNameChecked");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661827);
@@ -298,7 +298,7 @@ soul::parser::Match ConceptParser<LexerT>::ConstraintExpression(LexerT& lexer, o
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ConstraintExpression");
+        soul::lexer::WriteBeginRuleToLog(lexer, "ConstraintExpression");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661828);
@@ -343,7 +343,7 @@ soul::parser::Match ConceptParser<LexerT>::RequiresClause(LexerT& lexer, otava::
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "RequiresClause");
+        soul::lexer::WriteBeginRuleToLog(lexer, "RequiresClause");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661829);
@@ -424,7 +424,7 @@ soul::parser::Match ConceptParser<LexerT>::ConstraintLogicalOrExpression(LexerT&
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ConstraintLogicalOrExpression");
+        soul::lexer::WriteBeginRuleToLog(lexer, "ConstraintLogicalOrExpression");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661830);
@@ -569,7 +569,7 @@ soul::parser::Match ConceptParser<LexerT>::ConstraintLogicalAndExpression(LexerT
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ConstraintLogicalAndExpression");
+        soul::lexer::WriteBeginRuleToLog(lexer, "ConstraintLogicalAndExpression");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661831);
@@ -713,7 +713,7 @@ soul::parser::Match ConceptParser<LexerT>::RequiresExpression(LexerT& lexer, ota
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "RequiresExpression");
+        soul::lexer::WriteBeginRuleToLog(lexer, "RequiresExpression");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661832);
@@ -824,7 +824,7 @@ soul::parser::Match ConceptParser<LexerT>::RequirementParameterList(LexerT& lexe
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "RequirementParameterList");
+        soul::lexer::WriteBeginRuleToLog(lexer, "RequirementParameterList");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661833);
@@ -938,7 +938,7 @@ soul::parser::Match ConceptParser<LexerT>::RequirementBody(LexerT& lexer, otava:
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "RequirementBody");
+        soul::lexer::WriteBeginRuleToLog(lexer, "RequirementBody");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661834);
@@ -1052,7 +1052,7 @@ soul::parser::Match ConceptParser<LexerT>::RequirementSeq(LexerT& lexer, otava::
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "RequirementSeq");
+        soul::lexer::WriteBeginRuleToLog(lexer, "RequirementSeq");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661835);
@@ -1139,7 +1139,7 @@ soul::parser::Match ConceptParser<LexerT>::Requirement(LexerT& lexer, otava::sym
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Requirement");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Requirement");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661836);
@@ -1283,7 +1283,7 @@ soul::parser::Match ConceptParser<LexerT>::SimpleRequirement(LexerT& lexer, otav
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "SimpleRequirement");
+        soul::lexer::WriteBeginRuleToLog(lexer, "SimpleRequirement");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661837);
@@ -1356,7 +1356,7 @@ soul::parser::Match ConceptParser<LexerT>::TypeRequirement(LexerT& lexer, otava:
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TypeRequirement");
+        soul::lexer::WriteBeginRuleToLog(lexer, "TypeRequirement");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661838);
@@ -1518,7 +1518,7 @@ soul::parser::Match ConceptParser<LexerT>::CompoundRequirement(LexerT& lexer, ot
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "CompoundRequirement");
+        soul::lexer::WriteBeginRuleToLog(lexer, "CompoundRequirement");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661839);
@@ -1707,7 +1707,7 @@ soul::parser::Match ConceptParser<LexerT>::ReturnTypeRequirement(LexerT& lexer, 
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ReturnTypeRequirement");
+        soul::lexer::WriteBeginRuleToLog(lexer, "ReturnTypeRequirement");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661840);
@@ -1788,7 +1788,7 @@ soul::parser::Match ConceptParser<LexerT>::NestedRequirement(LexerT& lexer, otav
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "NestedRequirement");
+        soul::lexer::WriteBeginRuleToLog(lexer, "NestedRequirement");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661841);
@@ -1886,7 +1886,7 @@ soul::parser::Match ConceptParser<LexerT>::TypeConstraint(LexerT& lexer, otava::
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TypeConstraint");
+        soul::lexer::WriteBeginRuleToLog(lexer, "TypeConstraint");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2039843044483661842);

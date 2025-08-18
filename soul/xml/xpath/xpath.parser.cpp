@@ -65,7 +65,7 @@ soul::parser::Match XPathParser<LexerT>::Expr(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Expr");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Expr");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127425);
@@ -115,7 +115,7 @@ soul::parser::Match XPathParser<LexerT>::OrExpr(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "OrExpr");
+        soul::lexer::WriteBeginRuleToLog(lexer, "OrExpr");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127426);
@@ -242,7 +242,7 @@ soul::parser::Match XPathParser<LexerT>::AndExpr(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AndExpr");
+        soul::lexer::WriteBeginRuleToLog(lexer, "AndExpr");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127427);
@@ -369,7 +369,7 @@ soul::parser::Match XPathParser<LexerT>::EqualityExpr(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "EqualityExpr");
+        soul::lexer::WriteBeginRuleToLog(lexer, "EqualityExpr");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127428);
@@ -511,7 +511,7 @@ soul::parser::Match XPathParser<LexerT>::RelationalExpr(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "RelationalExpr");
+        soul::lexer::WriteBeginRuleToLog(lexer, "RelationalExpr");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127429);
@@ -653,7 +653,7 @@ soul::parser::Match XPathParser<LexerT>::AdditiveExpr(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AdditiveExpr");
+        soul::lexer::WriteBeginRuleToLog(lexer, "AdditiveExpr");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127430);
@@ -795,7 +795,7 @@ soul::parser::Match XPathParser<LexerT>::MultiplicativeExpr(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "MultiplicativeExpr");
+        soul::lexer::WriteBeginRuleToLog(lexer, "MultiplicativeExpr");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127431);
@@ -937,7 +937,7 @@ soul::parser::Match XPathParser<LexerT>::UnaryExpr(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "UnaryExpr");
+        soul::lexer::WriteBeginRuleToLog(lexer, "UnaryExpr");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127432);
@@ -1036,7 +1036,7 @@ soul::parser::Match XPathParser<LexerT>::UnionExpr(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "UnionExpr");
+        soul::lexer::WriteBeginRuleToLog(lexer, "UnionExpr");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127433);
@@ -1168,7 +1168,7 @@ soul::parser::Match XPathParser<LexerT>::PathExpr(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "PathExpr");
+        soul::lexer::WriteBeginRuleToLog(lexer, "PathExpr");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127434);
@@ -1388,7 +1388,7 @@ soul::parser::Match XPathParser<LexerT>::LocationPath(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LocationPath");
+        soul::lexer::WriteBeginRuleToLog(lexer, "LocationPath");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127435);
@@ -1467,7 +1467,7 @@ soul::parser::Match XPathParser<LexerT>::AbsoluteLocationPath(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AbsoluteLocationPath");
+        soul::lexer::WriteBeginRuleToLog(lexer, "AbsoluteLocationPath");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127436);
@@ -1610,7 +1610,7 @@ soul::parser::Match XPathParser<LexerT>::AbbreviatedAbsoluteLocationPath(LexerT&
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AbbreviatedAbsoluteLocationPath");
+        soul::lexer::WriteBeginRuleToLog(lexer, "AbbreviatedAbsoluteLocationPath");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127437);
@@ -1675,7 +1675,7 @@ soul::parser::Match XPathParser<LexerT>::RelativeLocationPath(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "RelativeLocationPath");
+        soul::lexer::WriteBeginRuleToLog(lexer, "RelativeLocationPath");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127438);
@@ -1819,7 +1819,7 @@ soul::parser::Match XPathParser<LexerT>::Step(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Step");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Step");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127439);
@@ -1977,7 +1977,7 @@ soul::parser::Match XPathParser<LexerT>::AxisSpecifier(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AxisSpecifier");
+        soul::lexer::WriteBeginRuleToLog(lexer, "AxisSpecifier");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127440);
@@ -2076,7 +2076,7 @@ soul::parser::Match XPathParser<LexerT>::AxisName(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AxisName");
+        soul::lexer::WriteBeginRuleToLog(lexer, "AxisName");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127441);
@@ -2234,7 +2234,7 @@ soul::parser::Match XPathParser<LexerT>::AbbreviatedAxisSpecifier(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AbbreviatedAxisSpecifier");
+        soul::lexer::WriteBeginRuleToLog(lexer, "AbbreviatedAxisSpecifier");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127442);
@@ -2314,7 +2314,7 @@ soul::parser::Match XPathParser<LexerT>::NodeTest(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "NodeTest");
+        soul::lexer::WriteBeginRuleToLog(lexer, "NodeTest");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127443);
@@ -2542,7 +2542,7 @@ soul::parser::Match XPathParser<LexerT>::Literal(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127444);
@@ -2632,7 +2632,7 @@ soul::parser::Match XPathParser<LexerT>::NodeType(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "NodeType");
+        soul::lexer::WriteBeginRuleToLog(lexer, "NodeType");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127445);
@@ -2718,7 +2718,7 @@ soul::parser::Match XPathParser<LexerT>::NameTest(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "NameTest");
+        soul::lexer::WriteBeginRuleToLog(lexer, "NameTest");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127446);
@@ -2879,7 +2879,7 @@ soul::parser::Match XPathParser<LexerT>::NCName(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "NCName");
+        soul::lexer::WriteBeginRuleToLog(lexer, "NCName");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127447);
@@ -2927,7 +2927,7 @@ soul::parser::Match XPathParser<LexerT>::QName(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "QName");
+        soul::lexer::WriteBeginRuleToLog(lexer, "QName");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127448);
@@ -3006,7 +3006,7 @@ soul::parser::Match XPathParser<LexerT>::PrefixedName(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "PrefixedName");
+        soul::lexer::WriteBeginRuleToLog(lexer, "PrefixedName");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127449);
@@ -3093,7 +3093,7 @@ soul::parser::Match XPathParser<LexerT>::Prefix(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Prefix");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Prefix");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127450);
@@ -3138,7 +3138,7 @@ soul::parser::Match XPathParser<LexerT>::UnprefixedName(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "UnprefixedName");
+        soul::lexer::WriteBeginRuleToLog(lexer, "UnprefixedName");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127451);
@@ -3183,7 +3183,7 @@ soul::parser::Match XPathParser<LexerT>::LocalPart(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LocalPart");
+        soul::lexer::WriteBeginRuleToLog(lexer, "LocalPart");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127452);
@@ -3228,7 +3228,7 @@ soul::parser::Match XPathParser<LexerT>::Predicate(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Predicate");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Predicate");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127453);
@@ -3318,7 +3318,7 @@ soul::parser::Match XPathParser<LexerT>::AbbreviatedStep(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AbbreviatedStep");
+        soul::lexer::WriteBeginRuleToLog(lexer, "AbbreviatedStep");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127454);
@@ -3408,7 +3408,7 @@ soul::parser::Match XPathParser<LexerT>::FunctionCall(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "FunctionCall");
+        soul::lexer::WriteBeginRuleToLog(lexer, "FunctionCall");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127455);
@@ -3619,7 +3619,7 @@ soul::parser::Match XPathParser<LexerT>::FunctionName(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "FunctionName");
+        soul::lexer::WriteBeginRuleToLog(lexer, "FunctionName");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127456);
@@ -3694,7 +3694,7 @@ soul::parser::Match XPathParser<LexerT>::Argument(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Argument");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Argument");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127457);
@@ -3739,7 +3739,7 @@ soul::parser::Match XPathParser<LexerT>::FilterExpr(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "FilterExpr");
+        soul::lexer::WriteBeginRuleToLog(lexer, "FilterExpr");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127458);
@@ -3851,7 +3851,7 @@ soul::parser::Match XPathParser<LexerT>::PrimaryExpr(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "PrimaryExpr");
+        soul::lexer::WriteBeginRuleToLog(lexer, "PrimaryExpr");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127459);
@@ -4059,7 +4059,7 @@ soul::parser::Match XPathParser<LexerT>::VariableReference(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "VariableReference");
+        soul::lexer::WriteBeginRuleToLog(lexer, "VariableReference");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127460);
@@ -4129,7 +4129,7 @@ soul::parser::Match XPathParser<LexerT>::Number(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Number");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Number");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127461);
@@ -4177,7 +4177,7 @@ soul::parser::Match XPathParser<LexerT>::EqualityOp(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "EqualityOp");
+        soul::lexer::WriteBeginRuleToLog(lexer, "EqualityOp");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127462);
@@ -4267,7 +4267,7 @@ soul::parser::Match XPathParser<LexerT>::RelationalOp(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "RelationalOp");
+        soul::lexer::WriteBeginRuleToLog(lexer, "RelationalOp");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127463);
@@ -4415,7 +4415,7 @@ soul::parser::Match XPathParser<LexerT>::AdditiveOp(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AdditiveOp");
+        soul::lexer::WriteBeginRuleToLog(lexer, "AdditiveOp");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127464);
@@ -4505,7 +4505,7 @@ soul::parser::Match XPathParser<LexerT>::MultiplicativeOp(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "MultiplicativeOp");
+        soul::lexer::WriteBeginRuleToLog(lexer, "MultiplicativeOp");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127465);
@@ -4622,7 +4622,7 @@ soul::parser::Match XPathParser<LexerT>::CombinePathOp(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "CombinePathOp");
+        soul::lexer::WriteBeginRuleToLog(lexer, "CombinePathOp");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127466);
@@ -4712,7 +4712,7 @@ soul::parser::Match XPathParser<LexerT>::OrKeyword(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "OrKeyword");
+        soul::lexer::WriteBeginRuleToLog(lexer, "OrKeyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127467);
@@ -4760,7 +4760,7 @@ soul::parser::Match XPathParser<LexerT>::AndKeyword(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AndKeyword");
+        soul::lexer::WriteBeginRuleToLog(lexer, "AndKeyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127468);
@@ -4808,7 +4808,7 @@ soul::parser::Match XPathParser<LexerT>::DivKeyword(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "DivKeyword");
+        soul::lexer::WriteBeginRuleToLog(lexer, "DivKeyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127469);
@@ -4856,7 +4856,7 @@ soul::parser::Match XPathParser<LexerT>::ModKeyword(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ModKeyword");
+        soul::lexer::WriteBeginRuleToLog(lexer, "ModKeyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127470);
@@ -4904,7 +4904,7 @@ soul::parser::Match XPathParser<LexerT>::ProcessingInstructionKeyword(LexerT& le
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ProcessingInstructionKeyword");
+        soul::lexer::WriteBeginRuleToLog(lexer, "ProcessingInstructionKeyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127471);

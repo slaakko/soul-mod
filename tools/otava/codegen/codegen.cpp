@@ -700,6 +700,12 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     bool inline_ = context.ReleaseConfig() && functionDefinition->IsInline();
     otava::intermediate::Function* function = emitter->CreateFunction(functionDefinition->IrName(&context), functionType, inline_, once);
     function->SetComment(util::ToUtf8(functionDefinition->FullName()));
+    otava::intermediate::MetadataStruct* mdStruct = emitter->CreateMetadataStruct();
+    mdStruct->AddItem("nodeType", emitter->CreateMetadataLong(otava::intermediate::funcInfoNodeType));
+    mdStruct->AddItem("fullName", emitter->CreateMetadataString(util::ToUtf8(functionDefinition->FullName())));
+    function->SetMdId(mdStruct->Id());
+    otava::intermediate::MetadataRef* mdRef = emitter->CreateMetadataRef(mdStruct->Id());
+    function->SetMetadataRef(mdRef);
     entryBlock = emitter->CreateBasicBlock();
     emitter->SetCurrentBasicBlock(entryBlock);
     int np = functionDefinition->MemFunParameters(&context).size();

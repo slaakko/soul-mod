@@ -32,6 +32,8 @@ export import std.hash;
 export import std.iterator;
 export import std.new_delete_op;
 export import std.stream;
+export import std.stringstream;
+export import std.time;
 export import std.thread;
 export import std.thread.condition.variable;
 export import std.thread.mutex;

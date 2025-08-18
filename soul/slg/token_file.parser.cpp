@@ -71,7 +71,7 @@ soul::parser::Match TokenFileParser<LexerT>::TokenFile(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TokenFile");
+        soul::lexer::WriteBeginRuleToLog(lexer, "TokenFile");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7544922165020196865);
@@ -353,7 +353,7 @@ soul::parser::Match TokenFileParser<LexerT>::Token(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Token");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Token");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7544922165020196866);

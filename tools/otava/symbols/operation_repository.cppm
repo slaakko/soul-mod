@@ -14,6 +14,8 @@ const int inlineClassOperationsThreshold = 4;
 
 class BoundExpressionNode;
 class FunctionSymbol;
+class FunctionDefinitionSymbol;
+class ClassTypeSymbol;
 class Context;
 
 class Operation
@@ -56,5 +58,11 @@ private:
     std::vector<std::unique_ptr<OperationGroup>> groups;
     std::vector<std::unique_ptr<Operation>> operations;
 };
+
+FunctionDefinitionSymbol* GenerateClassDefaultCtor(ClassTypeSymbol* classType, const soul::ast::SourcePos& sourcePos, Context* context);
+FunctionDefinitionSymbol* GenerateClassCopyCtor(ClassTypeSymbol* classType, const soul::ast::SourcePos& sourcePos, Context* context);
+FunctionDefinitionSymbol* GenerateClassMoveCtor(ClassTypeSymbol* classType, const soul::ast::SourcePos& sourcePos, Context* context);
+FunctionDefinitionSymbol* GenerateClassCopyAssignment(ClassTypeSymbol* classType, const soul::ast::SourcePos& sourcePos, Context* context);
+FunctionDefinitionSymbol* GenerateClassMoveAssignment(ClassTypeSymbol* classType, const soul::ast::SourcePos& sourcePos, Context* context);
 
 } // namespace otava::symbols

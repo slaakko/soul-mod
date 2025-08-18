@@ -9,6 +9,18 @@ module;
 #include <direct.h>
 #include <io.h>
 #include <fcntl.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>    
+#include <Windows.h>
+#undef min
+#undef max
+#include <util_expected/ZLibInterface.h>
+#ifdef NDEBUG
+#pragma comment(lib, "zlibstat.lib")
+#else 
+#pragma comment(lib, "zlibstatd.lib")
+#endif
+#pragma comment(lib, "ws2_32.lib")
 
 module ort;
 
@@ -17,7 +29,7 @@ import util;
 
 bool initialized = false;
 
-void flush_handle(int handle)
+void ort_flush_handle(int handle)
 {
     switch (handle)
     {
@@ -79,12 +91,12 @@ __thread Rng* rng = nullptr;
 
 #endif
 
-void set_rand_seed(std::uint64_t seed)
+void ort_set_rand_seed(std::uint64_t seed)
 {
     init_seed = seed;
 }
 
-std::uint8_t get_random_byte()
+std::uint8_t ort_get_random_byte()
 {
     if (!rng)
     {
@@ -93,154 +105,149 @@ std::uint8_t get_random_byte()
     return rng->Get();
 }
 
+const char* ort_get_cwd(char* buf, int bufSize)
+{
+    const char* wd = _getcwd(buf, bufSize);
+    return wd;
+}
+
 void* current_exception = nullptr;
 std::uint64_t currentExceptionTypeIdHigh = 0;
 std::uint64_t currentExceptionTypeIdLow = 0;
 
-bool is_space(int c)
+void* ort_malloc(std::int64_t size)
 {
-    return std::isspace(c);
+    return std::malloc(size);
 }
 
-const char* get_env(const char* env)
+void ort_free(void* ptr)
 {
-#pragma warning(suppress : 4996)
-    return std::getenv(env);
+    std::free(ptr);
 }
 
-void* open_file(const char* path, const char* mode)
+void* ort_open_file(const char* path, const char* mode)
 {
 #pragma warning(suppress : 4996)
     return std::fopen(path, mode);
 }
 
-int close_file(void* stream)
+int ort_close_file(void* stream)
 {
     return std::fclose(static_cast<FILE*>(stream));
 }
 
-int get_char(void* stream)
-{
-    return std::fgetc(static_cast<FILE*>(stream));
-}
-
-int put_char(int character, void* stream)
-{
-    return std::fputc(character, static_cast<FILE*>(stream));
-}
-
-int read_file(void* ptr, size_t size, size_t count, void* stream)
-{
-    return std::fread(ptr, size, count, static_cast<FILE*>(stream));
-}
-
-int write_file(void* ptr, size_t size, size_t count, void* stream)
-{
-    return std::fwrite(ptr, size, count, static_cast<FILE*>(stream));
-}
-
-int puts_file(const char* str, void* stream)
-{
-    return std::fputs(str, static_cast<FILE*>(stream));
-}
-
-int eof_file(void* stream)
-{
-    return std::feof(static_cast<FILE*>(stream));
-}
-
- int flush_file(void* stream)
-{
-     return std::fflush(static_cast<FILE*>(stream));
-}
-
-int error_file(void* stream)
-{
-    return std::ferror(static_cast<FILE*>(stream));
-}
-
-int seek_file(void* stream, int offset, int origin)
-{
-    return std::fseek(static_cast<FILE*>(stream), offset, origin);
-}
-
-int tell_file(void* stream)
-{
-    return std::ftell(static_cast<FILE*>(stream));
-}
-
-char* str_error(int errnum)
+char* ort_error_str(int errnum)
 {
 #pragma warning(suppress : 4996)
     return std::strerror(errnum);
+#pragma warning(default : 4996)
 }
 
-int error_number()
+const char* ort_get_env(const char* env)
+{
+#pragma warning(suppress : 4996)
+    return std::getenv(env);
+#pragma warning(default : 4996)
+}
+
+int ort_error_number()
 {
     return errno;
 }
 
-void destroy_str(const char* str)
+int ort_fgetc(void* file)
 {
-    delete str;
+    return std::fgetc(static_cast<FILE*>(file));
 }
 
-void* mem_set(void* dest, int c, size_t count)
+int ort_fputc(int ch, void* file)
 {
-    return std::memset(dest, c, count);
+    return std::fputc(ch, static_cast<FILE*>(file));
 }
 
-char* get_cwd(char* buffer, int maxlen)
+int ort_fputs(const char* str, void* file)
 {
-    return _getcwd(buffer, maxlen);
+    return std::fputs(str, static_cast<FILE*>(file));
 }
 
-bool file_exists(const char* path)
+std::int64_t ort_fread(void* buffer, std::int64_t size, std::int64_t count, void* file)
 {
-    return std::filesystem::exists(path) && !std::filesystem::is_directory(path);
+    return std::fread(buffer, size, count, static_cast<FILE*>(file));
 }
 
-bool dir_exists(const char* path)
+std::int64_t ort_fwrite(void* buffer, std::int64_t size, std::int64_t count, void* file)
 {
-    return std::filesystem::exists(path) && std::filesystem::is_directory(path);
+    return std::fwrite(buffer, size, count, static_cast<FILE*>(file));
 }
 
-bool path_exists(const char* path)
+bool ort_isspace(int c)
 {
-    return std::filesystem::exists(path);
+    return std::isspace(c);
 }
 
-int to_lower(int c)
-{
-    return std::tolower(c);
-}
-
-int to_upper(int c)
-{
-    return std::toupper(c);
-}
-
-bool is_alpha(int c)
+bool ort_isalpha(int c)
 {
     return std::isalpha(c);
 }
 
-bool is_digit(int c)
+bool ort_isdigit(int c)
 {
     return std::isdigit(c);
 }
 
-bool is_atty(int handle)
+int ort_tolower(int c)
 {
-    return _isatty(handle);
+    return std::tolower(c);
 }
 
-std::int64_t current_time()
+int ort_toupper(int c)
+{
+    return std::toupper(c);
+}
+
+int ort_feof(void* file)
+{
+    return std::feof(static_cast<FILE*>(file));
+}
+
+int ort_ferror(void* file)
+{
+    return std::ferror(static_cast<FILE*>(file));
+}
+
+int ort_fflush(void* file)
+{
+    return std::fflush(static_cast<FILE*>(file));
+}
+
+int ort_fseek(void* file, long offset, int origin)
+{
+    return std::fseek(static_cast<FILE*>(file), offset, origin);
+}
+
+long ort_ftell(void* file)
+{
+    return std::ftell(static_cast<FILE*>(file));
+}
+
+int ort_platform_string_to_utf16_string(const char* platformString, char16_t* buf, int bufSize)
+{
+    int result = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, platformString, -1, (LPWSTR)buf, bufSize);
+    return result;
+}
+
+int ort_utf16_string_to_platform_string(const char16_t* utf16String, char* buf, int bufSize)
+{
+    int result = WideCharToMultiByte(CP_ACP, 0, (LPCWCH)utf16String, -1, (LPSTR)buf, bufSize, nullptr, nullptr);
+    return result;
+}
+
+std::int64_t ort_current_time()
 {
     return std::time(nullptr);
 }
 
-void current_date(int& yyyy, int& month, int& day)
+void ort_current_date(int& yyyy, int& month, int& day)
 {
     util::Date date = util::GetCurrentDate();
     yyyy = date.Year();
@@ -248,7 +255,7 @@ void current_date(int& yyyy, int& month, int& day)
     day = date.Day();
 }
 
-void current_date_time(int& yyyy, int& month, int& day, int& seconds)
+void ort_current_date_time(int& yyyy, int& month, int& day, int& seconds)
 {
     util::DateTime dateTime = util::GetCurrentDateTime();
     util::Date date = dateTime.GetDate();
@@ -258,14 +265,366 @@ void current_date_time(int& yyyy, int& month, int& day, int& seconds)
     seconds = dateTime.Seconds();
 }
 
-std::int64_t make_time(int yyyy, int month, int day, int seconds)
+std::int64_t ort_make_time(int yyyy, int month, int day, int seconds)
 {
     util::Date date(yyyy, static_cast<util::Month>(month), static_cast<std::int8_t>(day));
     util::DateTime dt(date, seconds);
     return util::MkTime(dt);
 }
 
-std::int64_t current_ms()
+std::int64_t ort_current_ms()
 {
-    return util::CurrentMs();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - std::chrono::steady_clock::time_point()).count();
+}
+
+void* ort_get_std_output_handle()
+{
+    return GetStdHandle(STD_OUTPUT_HANDLE);
+}
+
+void* ort_get_std_error_handle()
+{
+    return GetStdHandle(STD_ERROR_HANDLE);
+}
+
+std::uint16_t ort_get_console_attrs(void* handle)
+{
+    CONSOLE_SCREEN_BUFFER_INFO info;
+    if (GetConsoleScreenBufferInfo(handle, &info))
+    {
+        return info.wAttributes;
+    }
+    else
+    {
+        return static_cast<std::uint16_t>(-1);
+    }
+}
+
+bool ort_set_console_text_attribute(void* handle, std::uint16_t attrs)
+{
+    return SetConsoleTextAttribute(handle, attrs);
+}
+
+void* ort_load_library_as_data_file(const char16_t* moduleName)
+{
+    return LoadLibraryExW((LPCWSTR)moduleName, 0, LOAD_LIBRARY_AS_DATAFILE);
+}
+
+void* ort_get_module_handle(const char16_t* moduleName)
+{
+    return GetModuleHandleW((LPCWSTR)moduleName);
+}
+
+std::uint32_t ort_get_last_windows_error()
+{
+    return GetLastError();
+}
+
+std::uint32_t ort_get_last_socket_error()
+{
+    return WSAGetLastError();
+}
+
+void ort_get_windows_error_message(std::uint32_t error, char* buf, int bufSize)
+{
+    std::unique_ptr<char16_t[]> buffer(new char16_t[bufSize * 2]);
+    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, static_cast<DWORD>(error), LANG_SYSTEM_DEFAULT, (LPWSTR)buffer.get(), 4096, nullptr);
+    std::string s = util::ToUtf8(buffer.get());
+    std::string::size_type n = s.copy(buf, std::min(static_cast<int>(s.length()), bufSize - 1));
+    buf[n] = '\0';
+}
+
+void* ort_find_resource(void* moduleHandle, const char16_t* resourceName)
+{
+    void* resource = FindResourceW((HMODULE)moduleHandle, (LPWSTR)resourceName, RT_RCDATA);
+    return resource;
+}
+
+void* ort_load_resource(void* moduleHandle, void* resource)
+{
+    HGLOBAL handle = LoadResource((HMODULE)moduleHandle, (HRSRC)resource);
+    return handle;
+}
+
+std::uint8_t* ort_lock_resource(void* handle)
+{
+    return static_cast<std::uint8_t*>(LockResource(handle));
+}
+
+std::int64_t ort_size_of_resource(void* moduleHandle, void* resource)
+{
+    return SizeofResource((HMODULE)moduleHandle, (HRSRC)resource);
+}
+
+void ort_set_std_handles_to_utf16_mode()
+{
+    _setmode(0, _O_U16TEXT);
+    _setmode(1, _O_U16TEXT);
+    _setmode(2, _O_U16TEXT);
+}
+
+void ort_set_std_handles_to_narrow_mode()
+{
+    _setmode(0, _O_TEXT);
+    _setmode(1, _O_TEXT);
+    _setmode(2, _O_TEXT);
+}
+
+bool ort_is_handle_redirected(int handle)
+{
+    return !_isatty(handle);
+}
+
+int ort_zlib_init(std::int32_t mode, int compressionLevel, void** handle)
+{
+    return zlib_init(mode, compressionLevel, handle);
+}
+
+void ort_zlib_done(std::int32_t mode, void* handle)
+{
+    zlib_done(mode, handle);
+}
+
+void ort_zlib_set_input(void* inChunk, uint32_t inAvail, void* handle)
+{
+    zlib_set_input(inChunk, inAvail, handle);
+}
+
+int32_t ort_zlib_deflate(void* outChunk, uint32_t outChunkSize, uint32_t* have, uint32_t* outAvail, void* handle, int32_t flush)
+{
+    return zlib_deflate(outChunk, outChunkSize, have, outAvail, handle, flush);
+}
+
+int32_t ort_zlib_inflate(void* outChunk, uint32_t outChunkSize, uint32_t* have, uint32_t* outAvail, uint32_t* inAvail, void* handle)
+{
+    return zlib_inflate(outChunk, outChunkSize, have, outAvail, inAvail, handle);
+}
+
+const char* ort_zlib_retval_str(int32_t retVal)
+{
+    return zlib_retval_str(retVal);
+}
+
+void* ort_convert_thread_to_fiber(void* param)
+{
+    return ::ConvertThreadToFiber(param);
+}
+
+void* ort_create_fiber(std::uint64_t stackSize, void* startAddress, void* param)
+{
+    return ::CreateFiber(stackSize, (LPFIBER_START_ROUTINE)startAddress, param);
+}
+
+void ort_switch_to_fiber(void* fiber)
+{
+    ::SwitchToFiber(fiber);
+}
+
+void* ort_get_fiber_data()
+{
+    return ::GetFiberData();
+}
+
+void ort_delete_fiber(void* fiber)
+{
+    ::DeleteFiber(fiber);
+}
+
+std::time_t ort_time(std::time_t* arg)
+{
+    std::time_t t = std::time(arg);
+    return t;
+}
+
+void* ort_localtime(const std::time_t* time)
+{
+#pragma warning(disable : 4996)
+    std::tm* t = std::localtime(time);
+#pragma warning(default : 4996)
+    return t;
+}
+
+std::time_t ort_mktime(void* time)
+{
+    return std::mktime(static_cast<std::tm*>(time));
+}
+
+void ort_strftime(char* buffer, int bufSize, const char* format, void* time)
+{
+    std::strftime(buffer, bufSize, format, static_cast<std::tm*>(time));
+}
+
+bool ort_init_sockets()
+{
+    WORD ver = MAKEWORD(2, 2);
+    WSADATA wsaData;
+    if (WSAStartup(ver, &wsaData) != 0)
+    {
+        return false;
+    }
+    return true;
+}
+
+void ort_done_sockets()
+{
+    WSACleanup();
+}
+
+std::int64_t ort_socket()
+{
+    SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (s == INVALID_SOCKET)
+    {
+        return -1;
+    }
+    return std::int64_t(s);
+}
+
+bool ort_bind_socket(std::int64_t socket, int port)
+{
+    SOCKET s = static_cast<SOCKET>(socket);
+    struct sockaddr_in addr;
+    addr.sin_family = AF_INET;
+#pragma warning(suppress : 4996)
+    addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+#pragma warning(default : 4996)
+    addr.sin_port = htons(port);
+    int result = bind(s, (struct sockaddr*)&addr, sizeof(addr));
+    if (result != 0)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+bool ort_listen_socket(std::int64_t socket, int backlog)
+{
+    SOCKET s = static_cast<SOCKET>(socket);
+    int result = listen(s, backlog);
+    if (result != 0)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+std::int64_t ort_accept_socket(std::int64_t socket)
+{
+    SOCKET s = static_cast<SOCKET>(socket);
+    SOCKET a = accept(s, NULL, NULL);
+    if (a == INVALID_SOCKET)
+    {
+        return std::int64_t(-1);
+    }
+    else
+    {
+        return std::int64_t(a);
+    }
+}
+
+bool ort_close_socket(std::int64_t socket)
+{
+    SOCKET s = static_cast<SOCKET>(socket);
+    int result = closesocket(s);
+    if (result != 0)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+bool ort_shutdown_socket(std::int64_t socket, int how)
+{
+    SOCKET s = static_cast<SOCKET>(socket);
+    int result = shutdown(s, how);
+    if (result != 0)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+std::int64_t ort_connect_socket(const char* node, const char* service)
+{
+    struct addrinfo hint;
+    struct addrinfo* rp;
+    struct addrinfo* res;
+    memset(&hint, 0, sizeof(struct addrinfo));
+    hint.ai_flags = 0;
+    hint.ai_family = AF_INET;
+    hint.ai_socktype = SOCK_STREAM;
+    hint.ai_protocol = IPPROTO_TCP;
+    hint.ai_addrlen = 0;
+    hint.ai_addr = 0;
+    hint.ai_canonname = 0;
+    hint.ai_next = 0;
+    int result = getaddrinfo(node, service, &hint, &res);
+    if (result != 0)
+    {
+        return std::int64_t(-1);
+    }
+    else
+    {
+        for (rp = res; rp != 0; rp = rp->ai_next)
+        {
+            SOCKET s = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+            if (s == -1)
+            {
+                continue;
+            }
+            int result = connect(s, rp->ai_addr, (int)rp->ai_addrlen);
+            if (result == 0)
+            {
+                freeaddrinfo(res);
+                return static_cast<std::int64_t>(s);
+            }
+            else
+            {
+                return std::int64_t(-1);
+            }
+        }
+    }
+    return std::int64_t(-1);
+}
+
+int ort_send_socket(std::int64_t socket, const std::uint8_t* buf, int len, int flags)
+{
+    SOCKET s = static_cast<SOCKET>(socket);
+    return send(s, (const char*)buf, len, flags);
+}
+
+int ort_recv_socket(std::int64_t socket, std::uint8_t* buf, int len, int flags)
+{
+    SOCKET s = static_cast<SOCKET>(socket);
+    return recv(s, (char*)buf, len, flags);
+}
+
+bool ort_get_path_to_executable(char* buf, int bufSize)
+{
+    DWORD result = GetModuleFileNameA(NULL, buf, bufSize);
+    if (result == 0)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+void ort_exit(int exitCode)
+{
+    std::exit(exitCode);
 }

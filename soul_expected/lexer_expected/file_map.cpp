@@ -115,7 +115,7 @@ std::expected<std::u32string, int> FileMap::GetFileLine(std::int32_t fileId, int
     std::expected<std::pair<std::u32string, std::vector<int>>*, int> rv = GetFileContent(fileId);
     if (!rv) return std::unexpected<int>(rv.error());
     std::pair<std::u32string, std::vector<int>>* contents = *rv;
-    if (line < 1 || line >= contents->second.size()) throw std::runtime_error("invalid line");
+    if (line < 1 || line >= contents->second.size()) return std::unexpected<int>(util::AllocateError("invalid line"));
     std::u32string::size_type lineStart = contents->second[line];
     std::u32string::size_type lineLength = std::u32string::npos;
     if (line < contents->second.size() - 1)

@@ -14,6 +14,7 @@ import soul_expected.lexer.variables;
 import soul_expected.ast.slg;
 import soul_expected.ast.lexer.pos.pair;
 import soul_expected.ast.span;
+import soul_expected.lexer.parsing.log;
 
 export namespace soul_expected::lexer {
 
@@ -72,6 +73,7 @@ public:
     virtual void PreprocessCurrentToken() = 0;
     virtual void Skip(bool skip_) = 0;
     virtual bool Skipping() const = 0;
+    virtual void SetLog(ParsingLog* log) = 0;
 };
 
 } // namespace soul_expected::lexer

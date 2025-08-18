@@ -553,7 +553,7 @@ const std::vector<ParameterSymbol*>& FunctionSymbol::MemFunParameters(Context* c
 bool FunctionSymbol::IsMemberFunction() const
 {
     ClassTypeSymbol* classType = ParentClassType();
-    if (classType)
+    if (classType && Parent() == classType)
     {
         return true;
     }
@@ -567,26 +567,32 @@ SpecialFunctionKind FunctionSymbol::GetSpecialFunctionKind(Context* context) con
 {
     ClassTypeSymbol* classType = ParentClassType();
     TypeSymbol* classTemplate = nullptr;
+    std::u32string className;
+    if (classType)
+    {
+        className = classType->Name();
+    }
     if (classType && classType->IsClassTemplateSpecializationSymbol())
     {
         ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(classType);
         classTemplate = specialization->ClassTemplate();
+        className = classTemplate->Name();
     }
     if (classType)
     {
         const std::vector<ParameterSymbol*>& memFunParams = MemFunParameters(context);
         TypeSymbol* pointerType = classType->AddPointer(context);
-        if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == classType->Name()) return SpecialFunctionKind::defaultCtor;
-        if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == U"~" + classType->Name()) return SpecialFunctionKind::dtor;
+        if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == className) return SpecialFunctionKind::defaultCtor;
+        if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == U"~" + className) return SpecialFunctionKind::dtor;
         if (classTemplate)
         {
             if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == U"~" + classTemplate->Name()) return SpecialFunctionKind::dtor;
         }
         TypeSymbol* constRefType = classType->AddConst(context)->AddLValueRef(context);
-        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == classType->Name() &&
+        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == className &&
             TypesEqual(memFunParams[1]->GetType(), constRefType)) return SpecialFunctionKind::copyCtor;
         TypeSymbol* rvalueRefType = classType->AddRValueRef(context);
-        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == classType->Name() &&
+        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == className &&
             TypesEqual(memFunParams[1]->GetType(), rvalueRefType)) return SpecialFunctionKind::moveCtor;
         if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == U"operator=" &&
             TypesEqual(memFunParams[1]->GetType(), constRefType)) return SpecialFunctionKind::copyAssignment;

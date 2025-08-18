@@ -4,52 +4,52 @@ import std.rt;
 
 namespace std {
 
-mutex::mutex() : handle(create_mutex())
+mutex::mutex() : handle(ort_create_mutex())
 {
 }
 
 mutex::~mutex()
 {
-    destroy_mutex(handle);
+    ort_destroy_mutex(handle);
 }
 
 void mutex::lock()
 {
-    lock_mutex(handle);
+    ort_lock_mutex(handle);
 }
 
 bool mutex::try_lock()
 {
-    return trylock_mutex(handle);
+    return ort_trylock_mutex(handle);
 }
 
 void mutex::unlock()
 {
-    unlock_mutex(handle);
+    ort_unlock_mutex(handle);
 }
 
-recursive_mutex::recursive_mutex() : handle(create_recursive_mutex())
+recursive_mutex::recursive_mutex() : handle(ort_create_recursive_mutex())
 {
 }
 
 recursive_mutex::~recursive_mutex()
 {
-    destroy_recursive_mutex(handle);
+    ort_destroy_recursive_mutex(handle);
 }
 
 void recursive_mutex::lock()
 {
-    lock_recursive_mutex(handle);
+    ort_lock_recursive_mutex(handle);
 }
 
 bool recursive_mutex::try_lock()
 {
-    return trylock_recursive_mutex(handle);
+    return ort_trylock_recursive_mutex(handle);
 }
 
 void recursive_mutex::unlock()
 {
-    unlock_recursive_mutex(handle);
+    ort_unlock_recursive_mutex(handle);
 }
 
 } // namespace std

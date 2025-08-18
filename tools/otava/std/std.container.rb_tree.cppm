@@ -320,33 +320,6 @@ public:
             return j;
         }
     }
-    const_iterator cfind(const key_type& key) const
-    {
-        if (empty()) return cend();
-        node_type* y = header.get();
-        node_type* x = root();
-        while (x)
-        {
-            if (!comp(key_of(x->value()), key))
-            {
-                y = x;
-                x = static_cast<node_type*>(x->get_left());
-            }
-            else
-            {
-                x = static_cast<node_type*>(x->get_right());
-            }
-        }
-        const_iterator j = const_iterator(y);
-        if (j == cend() || comp(key, key_of(j.node()->value())))
-        {
-            return cend();
-        }
-        else
-        {
-            return j;
-        }
-    }
     iterator lower_bound(const key_type& key) 
     {
         if (empty()) return end();
@@ -366,7 +339,7 @@ public:
         }
         return iterator(y);
     }
-    const_iterator clower_bound(const key_type& key) const
+    const_iterator lower_bound(const key_type& key) const
     {
         if (empty()) return end();
         node_type* y = header.get();
@@ -398,7 +371,7 @@ public:
         }
         return f;
     }
-    const_iterator cupper_bound(const key_type& key) const
+    const_iterator upper_bound(const key_type& key) const
     {
         const_iterator f = find(key);
         while (f != cend() && keys_equal(key, key_of(f.node()->value())))

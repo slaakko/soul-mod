@@ -207,12 +207,12 @@ public:
         auto token = *rv;
         return soul_expected::ast::Span(static_cast<int>(token->match.begin - start), token->match.Length());
     }
-    std::expected<const soul_expected::lexer::Token<CharT, LexerBase<CharT>>*, int> GetToken(std::int64_t pos) const override
+    std::expected<const TokenType*, int> GetToken(std::int64_t pos) const override
     {
         std::int32_t tokenIndex = static_cast<std::int32_t>(pos);
         if (tokenIndex >= 0 && tokenIndex < tokens.size())
         {
-            const soul_expected::lexer::Token<CharT, LexerBase<CharT>>* token = &tokens[tokenIndex];
+            const TokenType* token = &tokens[tokenIndex];
             return std::expected<const soul_expected::lexer::Token<CharT, LexerBase<CharT>>*, int>(token);
         }
         else
@@ -224,21 +224,21 @@ public:
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        const soul_expected::lexer::Token<CharT, LexerBase<CharT>>* token = *rv;
+        const TokenType* token = *rv;
         return std::expected<std::basic_string<CharT>, int>(token->ToString());
     }
     std::expected<std::string, int> TokenToUtf8(std::int64_t pos) const override
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        const soul_expected::lexer::Token<CharT, LexerBase<CharT>>* token = *rv;
+        const TokenType* token = *rv;
         return util::ToUtf8(token->ToString());
     }
     std::expected<std::int8_t, int> TokenToSByte(std::int64_t pos) const override
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        const soul_expected::lexer::Token<CharT, LexerBase<CharT>>* token = *rv;
+        const TokenType* token = *rv;
         std::expected<std::int8_t, int> u = util::ParseSByte(token->ToString());
         if (!u) return std::unexpected<int>(util::AllocateError(util::GetErrorMessage(u.error()) + "\n(file='" + fileName + "', line=" + std::to_string(line) + ")"));
         return u;
@@ -247,7 +247,7 @@ public:
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        const soul_expected::lexer::Token<CharT, LexerBase<CharT>>* token = *rv;
+        const TokenType* token = *rv;
         std::expected<std::uint8_t, int> u = util::ParseByte(token->ToString());
         if (!u) return std::unexpected<int>(util::AllocateError(util::GetErrorMessage(u.error()) + "\n(file='" + fileName + "', line=" + std::to_string(line) + ")"));
         return u;
@@ -256,7 +256,7 @@ public:
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        const soul_expected::lexer::Token<CharT, LexerBase<CharT>>* token = *rv;
+        const TokenType* token = *rv;
         std::expected<std::int16_t, int> u = util::ParseShort(token->ToString());
         if (!u) return std::unexpected<int>(util::AllocateError(util::GetErrorMessage(u.error()) + "\n(file='" + fileName + "', line=" + std::to_string(line) + ")"));
         return u;
@@ -265,7 +265,7 @@ public:
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        const soul_expected::lexer::Token<CharT, LexerBase<CharT>>* token = *rv;
+        const TokenType* token = *rv;
         std::expected<std::uint16_t, int> u = util::ParseUShort(token->ToString());
         if (!u) return std::unexpected<int>(util::AllocateError(util::GetErrorMessage(u.error()) + "\n(file='" + fileName + "', line=" + std::to_string(line) + ")"));
         return u;
@@ -274,7 +274,7 @@ public:
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        const soul_expected::lexer::Token<CharT, LexerBase<CharT>>* token = *rv;
+        const TokenType* token = *rv;
         std::expected<std::int32_t, int> u = util::ParseInt(token->ToString());
         if (!u) return std::unexpected<int>(util::AllocateError(util::GetErrorMessage(u.error()) + "\n(file='" + fileName + "', line=" + std::to_string(line) + ")"));
         return u;
@@ -283,7 +283,7 @@ public:
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        const soul_expected::lexer::Token<CharT, LexerBase<CharT>>* token = *rv;
+        const TokenType* token = *rv;
         std::expected<std::uint32_t, int> u = util::ParseUInt(token->ToString());
         if (!u) return std::unexpected<int>(util::AllocateError(util::GetErrorMessage(u.error()) + "\n(file='" + fileName + "', line=" + std::to_string(line) + ")"));
         return u;
@@ -292,7 +292,7 @@ public:
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        const soul_expected::lexer::Token<CharT, LexerBase<CharT>>* token = *rv;
+        const TokenType* token = *rv;
         std::expected<std::int64_t, int> u = util::ParseLong(token->ToString());
         if (!u) return std::unexpected<int>(util::AllocateError(util::GetErrorMessage(u.error()) + "\n(file='" + fileName + "', line=" + std::to_string(line) + ")"));
         return u;
@@ -301,7 +301,7 @@ public:
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        const soul_expected::lexer::Token<CharT, LexerBase<CharT>>* token = *rv;
+        const TokenType* token = *rv;
         std::expected<std::uint64_t, int> u = util::ParseULong(token->ToString());
         if (!u) return std::unexpected<int>(util::AllocateError(util::GetErrorMessage(u.error()) + "\n(file='" + fileName + "', line=" + std::to_string(line) + ")"));
         return u;
@@ -310,7 +310,7 @@ public:
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        const soul_expected::lexer::Token<CharT, LexerBase<CharT>>* token = *rv;
+        const TokenType* token = *rv;
         std::expected<float, int> u = util::ParseFloat(token->ToString());
         if (!u) return std::unexpected<int>(util::AllocateError(util::GetErrorMessage(u.error()) + "\n(file='" + fileName + "', line=" + std::to_string(line) + ")"));
         return u;
@@ -319,7 +319,7 @@ public:
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        const soul_expected::lexer::Token<CharT, LexerBase<CharT>>* token = *rv;
+        const TokenType* token = *rv;
         std::expected<double, int> u = util::ParseDouble(token->ToString());
         if (!u) return std::unexpected<int>(util::AllocateError(util::GetErrorMessage(u.error()) + "\n(file='" + fileName + "', line=" + std::to_string(line) + ")"));
         return u;
@@ -328,7 +328,7 @@ public:
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        const soul_expected::lexer::Token<CharT, LexerBase<CharT>>* token = *rv;
+        const TokenType* token = *rv;
         std::expected<CharT, int> u = util::ParseCharLiteral(token->ToString());
         if (!u) return std::unexpected<int>(util::AllocateError(util::GetErrorMessage(u.error()) + "\n(file='" + fileName + "', line=" + std::to_string(line) + ")"));
         return u;
@@ -337,7 +337,7 @@ public:
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        const soul_expected::lexer::Token<CharT, LexerBase<CharT>>* token = *rv;
+        const TokenType* token = *rv;
         std::expected<std::basic_string<CharT>, int> u = util::ParseStringLiteral(token->ToString());
         if (!u) return std::unexpected<int>(util::AllocateError(util::GetErrorMessage(u.error()) + "\n(file='" + fileName + "', line=" + std::to_string(line) + ")"));
         return u;
@@ -556,7 +556,7 @@ public:
         if (!err) return std::unexpected<int>(err.error());
         return std::unexpected<int>(util::AllocateError(*err));
     }
-    inline void SetLog(ParsingLog* log_)
+    inline void SetLog(ParsingLog* log_) override
     {
         log = log_;
     }

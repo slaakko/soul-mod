@@ -29,7 +29,9 @@ std::expected<int, int> SocketStream::ReadByte()
 
 std::expected<std::int64_t, int> SocketStream::Read(std::uint8_t* buf, std::int64_t count)
 {
-    return socket.Receive(buf, static_cast<int>(count));
+    std::expected<int, int> result(socket.Receive(buf, static_cast<int>(count)));
+    if (!result) return std::unexpected<int>(result.error());
+    return std::expected<std::int64_t, int>(*result);
 }
 
 std::expected<bool, int> SocketStream::Write(std::uint8_t x)

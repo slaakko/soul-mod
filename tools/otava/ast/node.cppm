@@ -123,8 +123,11 @@ public:
     inline bool IsConstructorNode() const { return kind == NodeKind::constructorNode; }
     inline bool IsIdentifierNode() const { return kind == NodeKind::identifierNode; }
     inline bool IsQualifiedIdNode() const { return kind == NodeKind::qualifiedIdNode; }
+    inline bool IsTemplateIdNode() const { return kind == NodeKind::templateIdNode; }
     inline bool IsArrowNode() const { return kind == NodeKind::arrowNode; }
     inline bool IsDotNode() const { return kind == NodeKind::dotNode; }
+    inline bool IsInvokeExprNode() const { return kind == NodeKind::invokeExprNode; }
+    inline bool IsMemberExprNode() const { return kind == NodeKind::memberExprNode; }
     inline bool IsBinaryExprNode() const { return kind == NodeKind::binaryExprNode; }
     inline bool IsDefaultedOrDeletedFunctionNode() const { return kind == NodeKind::defaultedOrDeletedFunctionNode; }
     inline bool IsStringLiteralNode() const { return kind == NodeKind::stringLiteralNode; }

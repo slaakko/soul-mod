@@ -47,9 +47,9 @@ public:
     const_reference operator*() const { return n->value(); }
     pointer operator->() { return n->value_ptr(); }
     const_pointer operator->() const { return n->value_ptr(); }
-    list_iterator& operator++() { n = n->next(); }
+    list_iterator& operator++() { n = n->next(); return *this; }
     list_iterator operator++(int) { list_iterator p = *this; n = n->next(); return p; }
-    list_iterator& operator--() { n = n->prev(); }
+    list_iterator& operator--() { n = n->prev(); return *this; }
     list_iterator operator--(int) { list_iterator p = *this; n = n->prev(); return p; }
     node_type* node() const { return n; }
 private:

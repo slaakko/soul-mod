@@ -83,10 +83,13 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
-    EnumeratedTypeSymbol* GetType() const;
+    EnumeratedTypeSymbol* GetEnumType() const { return enumType; }
+    void SetEnumType(EnumeratedTypeSymbol* enumType_) { enumType = enumType_; }
 private:
     Value* value;
     util::uuid valueId;
+    EnumeratedTypeSymbol* enumType;
+    util::uuid enumTypeId;
 };
 
 struct EnumTypeLessFunctor
@@ -105,6 +108,7 @@ public:
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     util::uuid enumTypeId;
     EnumeratedTypeSymbol* enumType;
@@ -121,6 +125,7 @@ public:
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     util::uuid enumTypeId;
     EnumeratedTypeSymbol* enumType;
@@ -137,6 +142,7 @@ public:
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     util::uuid enumTypeId;
     EnumeratedTypeSymbol* enumType;
@@ -153,6 +159,7 @@ public:
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     util::uuid enumTypeId;
     EnumeratedTypeSymbol* enumType;
@@ -169,6 +176,7 @@ public:
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     util::uuid enumTypeId;
     EnumeratedTypeSymbol* enumType;
@@ -184,6 +192,7 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     util::uuid enumTypeId;
     EnumeratedTypeSymbol* enumType;
@@ -199,6 +208,7 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     util::uuid enumTypeId;
     EnumeratedTypeSymbol* enumType;

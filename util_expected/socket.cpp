@@ -148,9 +148,9 @@ std::expected<bool, int> ShutdownSocket(std::int64_t socketHandle, ShutdownMode 
     int how = SD_RECEIVE;
     switch (mode)
     {
-    case ShutdownMode::receive: how = SD_RECEIVE; break;
-    case ShutdownMode::send: how = SD_SEND; break;
-    case ShutdownMode::both: how = SD_BOTH; break;
+        case ShutdownMode::receive: how = SD_RECEIVE; break; 
+        case ShutdownMode::send: how = SD_SEND; break; 
+        case ShutdownMode::both: how = SD_BOTH; break;
     }
     SOCKET s = static_cast<SOCKET>(socketHandle);
     result = shutdown(s, how);

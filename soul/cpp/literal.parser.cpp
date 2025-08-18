@@ -30,7 +30,7 @@ soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5808325801866690561);

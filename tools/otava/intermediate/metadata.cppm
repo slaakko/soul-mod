@@ -23,6 +23,7 @@ enum class MetadataItemKind
 };
 
 const std::int64_t fileInfoNodeType = 0;
+const std::int64_t funcInfoNodeType = 1;
 const std::int64_t lineInfoNodeType = 2;
 
 class MetadataItem

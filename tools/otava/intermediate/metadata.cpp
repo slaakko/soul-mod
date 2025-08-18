@@ -219,6 +219,8 @@ MetadataRef* Metadata::CreateMetadataRef(const soul::ast::Span& span, std::int32
         referenceMap[metadataRef->NodeId()] = metadataRef;
         metadataItems.push_back(std::unique_ptr<MetadataItem>(metadataRef));
         metadataReferences.push_back(metadataRef);
+        MetadataStruct* metadataNode = GetMetadataStruct(nodeId);
+        metadataRef->SetMetadataStruct(metadataNode);
         return metadataRef;
     }
 }

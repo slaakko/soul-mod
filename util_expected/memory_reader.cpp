@@ -26,7 +26,8 @@ std::expected<std::int8_t, int> MemoryReader::ReadSByte()
 {
     std::expected<std::uint8_t, int> rv = ReadByte();
     if (!rv) return std::unexpected<int>(rv.error());
-    return std::expected<std::int8_t, int>(static_cast<std::int8_t>(*rv));
+    std::uint8_t u = *rv;
+    return std::expected<std::int8_t, int>(static_cast<std::int8_t>(u));
 }
 
 std::expected<std::uint16_t, int> MemoryReader::ReadUShort()

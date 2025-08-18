@@ -449,11 +449,11 @@ JsonValue* JsonArray::Clone() const
     return clone;
 }
 
-std::expected<JsonValue*, bool> JsonArray::GetItem(int index) const
+std::expected<JsonValue*, int> JsonArray::GetItem(int index) const
 {
     if (index >= 0 && index < items.size())
     {
-        return std::expected<JsonValue*, bool>(items[index].get());
+        return std::expected<JsonValue*, int>(items[index].get());
     }
     else
     {
@@ -461,7 +461,7 @@ std::expected<JsonValue*, bool> JsonArray::GetItem(int index) const
     }
 }
 
-std::expected<JsonValue*, bool> JsonArray::operator[](int index) const
+std::expected<JsonValue*, int> JsonArray::operator[](int index) const
 {
     return GetItem(index);
 }

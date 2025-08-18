@@ -7,38 +7,39 @@ import std.atexit;
 
 export namespace std {
 
-enum class fmtflags
+class ios_base
 {
-    none = 0, dec = 1 << 0, oct = 1 << 1, hex = 1 << 2, basefield = dec | oct | hex
+public:
+    ios_base();
+    virtual ~ios_base();
+    enum fmtflags
+    {
+        dec = 1 << 0, oct = 1 << 1, hex = 1 << 2, basefield = dec | oct | hex
+    };
+    enum openmode
+    {
+        app, ate, binary, in, out, trunc
+    };
+    fmtflags flags() const;
+    void flags(fmtflags f);
+    void setf(fmtflags f);
+    void unsetf(fmtflags f);
+private:
+    fmtflags fl;
 };
 
-constexpr fmtflags operator|(fmtflags left, fmtflags right)
-{
-    return fmtflags(int(left) | int(right));
-}
-
-constexpr fmtflags operator&(fmtflags left, fmtflags right)
-{
-    return fmtflags(int(left) & int(right));
-}
-
-constexpr fmtflags operator~(fmtflags f)
-{
-    return fmtflags(~int(f));
-}
-
 template<typename T>
-string to_base_string(const T& x, fmtflags f)
+string to_base_string(const T& x, ios_base::fmtflags f)
 {
-    if ((f & fmtflags::dec) != fmtflags::none)
+    if ((int(f) & int(ios_base::dec)) != 0)
     {
         return to_string(x);
     }
-    else if ((f & fmtflags::oct) != fmtflags::none)
+    else if ((int(f) & int(ios_base::oct)) != 0)
     {
         return to_octstring(x);
     }
-    else if ((f & fmtflags::hex) != fmtflags::none)
+    else if ((int(f) & int(ios_base::hex)) != 0)
     {
         return to_hexstring(x);
     }
@@ -48,37 +49,20 @@ string to_base_string(const T& x, fmtflags f)
     }
 }
 
-class ios_base
-{
-public:
-    ios_base();
-    virtual ~ios_base();
-    enum class openmode
-    {
-        app, ate, binary, in, out, trunc
-    };
-    fmtflags flags() const;
-    void flags(fmtflags f_);
-    void setf(fmtflags f_);
-    void unsetf(fmtflags f_);
-private:
-    fmtflags fl;
-};
-
-template<typename charT>
+template<typename CharT>
 class basic_ios : public ios_base
 {
 public:
-    virtual void write(const char* s) = 0;
 };
 
-template<typename charT>
-class basic_streambuf;
-template<typename charT>
-class basic_istream;
+template<typename CharT>
+class basic_istream : public basic_ios<CharT>
+{
+public:
+};
 
-template<typename charT>
-class basic_ostream : public basic_ios<charT>
+template<typename CharT>
+class basic_ostream : public basic_ios<CharT>
 {
 public:
     basic_ostream() : handle(1)
@@ -87,12 +71,12 @@ public:
     explicit basic_ostream(int handle_) : handle(handle_)
     {
     }
-    basic_ostream<charT>& flush()
+    basic_ostream<CharT>& flush()
     {
-        flush_handle(handle);
+        ort_flush_handle(handle);
         return *this;
     }
-    void write(const char* s) override
+    virtual void write(const char* s) 
     {
         ort_io_write(handle, s);
     }
@@ -104,141 +88,150 @@ private:
     int handle;
 };
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, char c)
+template<typename CharT>
+class basic_iostream : public basic_istream<CharT>, public basic_ostream<CharT>
 {
-    basic_string<charT> str(1, c);
+public:
+    basic_iostream() : basic_istream<CharT>(), basic_ostream<CharT>()
+    {
+    }
+};
+
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, char c)
+{
+    basic_string<CharT> str(1, c);
     s.write(to_utf8(str));
     return s;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, int x)
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, int x)
 {
     string str = to_base_string(x, s.flags());
     s.write(str);
     return s;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, long long x)
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, long long x)
 {
     string str = to_base_string(x, s.flags());
     s.write(str);
     return s;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, const char* str)
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, const char* str)
 {
     s.write(str);
     return s;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, const string& str)
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, const string& str)
 {
     s.write(str);
     return s;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, bool x)
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, bool x)
 {
     if (x) return s << "true"; else return s << "false";
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, long x)
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, long x)
 {
     string str = to_base_string(x, s.flags());
     s.write(str);
     return s;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, unsigned long x)
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, unsigned long x)
 {
     string str = to_base_string(x, s.flags());
     s.write(str);
     return s;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, unsigned long long x)
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, unsigned long long x)
 {
     string str = to_base_string(x, s.flags());
     s.write(str);
     return s;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, double x)
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, double x)
 {
     string str(to_string(x));
     return s << str;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, const void* x)
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, const void* x)
 {
     unsigned long long value = *static_cast<const unsigned long long*>(x);
     return s << value;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, nullptr_t)
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, nullptr_t)
 {
     return s << "nullptr";
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, short x)
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, short x)
 {
     string str = to_base_string(x, s.flags());
     s.write(str);
     return s;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>&s, unsigned short x)
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>&s, unsigned short x)
 {
     string str = to_base_string(x, s.flags());
     s.write(str);
     return s;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, unsigned int x)
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, unsigned int x)
 {
     string str = to_base_string(x, s.flags());
     s.write(str);
     return s;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, float x)
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, float x)
 {
     string str(to_string(x));
     return s << str;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, ios_base& (*f)(ios_base&))
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, ios_base& (*f)(ios_base&))
 {
     f(s);
     return s;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, basic_ios<charT>& (*f)(basic_ios<charT>&))
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, basic_ios<CharT>& (*f)(basic_ios<CharT>&))
 {
     f(s);
     return s;
 }
 
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, basic_ostream<charT>& (*f)(basic_ostream<charT>&))
+template<typename CharT>
+basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, basic_ostream<CharT>& (*f)(basic_ostream<CharT>&))
 {
     f(s);
     return s;
@@ -248,35 +241,20 @@ ios_base& dec(ios_base& strm);
 ios_base& hex(ios_base& strm);
 ios_base& oct(ios_base& strm);
 
-template<typename charT>
-basic_ostream<charT>& endl(basic_ostream<charT>& strm)
+template<typename CharT>
+basic_ostream<CharT>& endl(basic_ostream<CharT>& strm)
 {
     strm << "\n";
     return strm.flush();
 }
 
-template<typename charT>
-class basic_iostream;
-template<typename charT>
-class basic_stringbuf;
-template<typename charT>
-class basic_istringstream;
-template<typename charT>
-class basic_ostringstream;
-template<typename charT>
-class basic_stringstream;
-template<typename charT>
-class basic_filebuf;
-template<typename charT>
-class basic_ifstream;
-
-template<typename charT>
-class basic_ofstream : public basic_ostream<charT>
+template<typename CharT>
+class basic_ofstream : public basic_ostream<CharT>
 {
 public:
     basic_ofstream(const char* filename) : file(nullptr)
     {
-        open(filename, std::ios_base::openmode::out);
+        open(filename, std::ios_base::out);
     }
     basic_ofstream(const char* filename, std::ios_base::openmode mode) : file(nullptr)
     {
@@ -284,7 +262,7 @@ public:
     }
     basic_ofstream(const std::string& filename) : file(nullptr)
     {
-        open(filename.c_str(), std::ios_base::openmode::out);
+        open(filename.c_str(), std::ios_base::out);
     }
     basic_ofstream(const std::string& filename, std::ios_base::openmode mode) : file(nullptr)
     {
@@ -294,68 +272,54 @@ public:
     {
         if (file)
         {
-            fclose(file);
+            std::fclose(file);
         }
     }
     void write(const char* s) override
     {
         std::fputs(s, file);
     }
-private:
     void open(const char* filename, std::ios_base::openmode mode)
     {
-        if (mode == std::ios_base::openmode::out)
+        if (mode == std::ios_base::out)
         {
             file = std::fopen(filename, "w");
         }
-        else if (mode == std::ios_base::openmode::app)
+        else if (mode == std::ios_base::app)
         {
             file = std::fopen(filename, "a");
         }
     }
+private:
     FILE* file;
 };
 
-template<typename charT>
+template<typename CharT>
+class basic_istringstream;;
+template<typename CharT>
+class basic_ostringstream;
+template<typename CharT>
+class basic_stringstream;
+template<typename CharT>
+class basic_ifstream;
+template<typename CharT>
 class basic_fstream;
-template<typename charT>
-class basic_syncbuf;
-template<typename charT>
-class basic_osyncstream;
-template<typename charT>
-class istreambuf_iterator;
-template<typename charT>
-class ostreambuf_iterator;
 using ios = basic_ios<char>;
 using wios = basic_ios<wchar_t>;
-using streambuf = basic_streambuf<char>;
 using istream = basic_istream<char>;
 using ostream = basic_ostream<char>;
 using iostream = basic_iostream<char>;
-using stringbuf = basic_stringbuf<char>;
-using istringstream = basic_istringstream<char>;
-using ostringstream = basic_ostringstream<char>;
-using stringstream = basic_stringstream<char>;
-using filebuf = basic_filebuf<char>;
 using ifstream = basic_ifstream<char>;
 using ofstream = basic_ofstream<char>;
 using fstream = basic_fstream<char>;
-using syncbuf = basic_syncbuf<char>;
-using osyncstream = basic_osyncstream<char>;
-using wstreambuf = basic_streambuf<wchar_t>;
 using wistream = basic_istream<wchar_t>;
 using wostream = basic_ostream<wchar_t>;
-using wiostream = basic_iostream<wchar_t>;
-using wstringbuf = basic_stringbuf<wchar_t>;
 using wistringstream = basic_istringstream<wchar_t>;
 using wostringstream = basic_ostringstream<wchar_t>;
 using wstringstream = basic_stringstream<wchar_t>;
-using wfilebuf = basic_filebuf<wchar_t>;
 using wifstream = basic_ifstream<wchar_t>;
 using wofstream = basic_ofstream<wchar_t>;
 using wfstream = basic_fstream<wchar_t>;
-using wsyncbuf = basic_syncbuf<wchar_t>;
-using wosyncstream = basic_osyncstream<wchar_t>;
 
 extern ostream cout;
 extern ostream cerr;

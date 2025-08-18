@@ -82,7 +82,7 @@ public:
     inline key_compare key_comp() const { return tree.cmp(); }
     
     inline iterator find(const key_type& x) { return tree.find(x); }
-    inline const_iterator find(const key_type& x) const { return tree.cfind(x); }
+    inline const_iterator find(const key_type& x) const { return tree.find(x); }
     inline size_type count(const key_type& x) const
     {
         if (contains(x)) return 1;
@@ -95,9 +95,9 @@ public:
         return false;
     }
     inline iterator lower_bound(const key_type& x) { return tree.lower_bound(x); }
-    inline const_iterator lower_bound(const key_type& x) const { return tree.clower_bound(x); }
+    inline const_iterator lower_bound(const key_type& x) const { return tree.lower_bound(x); }
     inline iterator upper_bound(const key_type& x) { return tree.upper_bound(x); }
-    inline const_iterator upper_bound(const key_type& x) const { return tree.cupper_bound(x); }
+    inline const_iterator upper_bound(const key_type& x) const { return tree.upper_bound(x); }
 private:
     tree_type tree;
 };

@@ -24,7 +24,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "SimpleType");
+        soul::lexer::WriteBeginRuleToLog(lexer, "SimpleType");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 695727793635328001);

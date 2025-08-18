@@ -35,6 +35,7 @@ public:
     void Visit(otava::ast::ConstructorInitializerNode& node) override;
     void Visit(otava::ast::MemberInitializerListNode& node) override;
     void Visit(otava::ast::MemberInitializerNode& node) override;
+    void Visit(otava::ast::TemplateIdNode& node) override;
     void Visit(otava::ast::IdentifierNode& node) override;
     void Visit(otava::ast::ExpressionListNode& node) override;
     void Visit(otava::ast::FunctionBodyNode& node) override;
@@ -55,6 +56,7 @@ public:
     void Visit(otava::ast::SimpleDeclarationNode& node) override;
     void Visit(otava::ast::AliasDeclarationNode& node) override;
     void Visit(otava::ast::BoundStatementNode& node) override;
+    inline FunctionDefinitionSymbol* GetFunctionDefinitionSymbol() const { return functionDefinitionSymbol; }
 private:
     void SetStatement(BoundStatementNode* statement);
     bool HasThisInitializer() const;
@@ -95,7 +97,7 @@ private:
     VariableSymbol* globalStaticVariableSymbol;
 };
 
-void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);
+FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);
 BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);
 
 

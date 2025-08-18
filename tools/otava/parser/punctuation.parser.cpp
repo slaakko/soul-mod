@@ -24,7 +24,7 @@ soul::parser::Match PunctuationParser<LexerT>::Semicolon(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Semicolon");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Semicolon");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921281);
@@ -72,7 +72,7 @@ soul::parser::Match PunctuationParser<LexerT>::Comma(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Comma");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Comma");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921282);
@@ -120,7 +120,7 @@ soul::parser::Match PunctuationParser<LexerT>::Quest(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Quest");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Quest");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921283);
@@ -168,7 +168,7 @@ soul::parser::Match PunctuationParser<LexerT>::Colon(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Colon");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Colon");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921284);
@@ -216,7 +216,7 @@ soul::parser::Match PunctuationParser<LexerT>::ColonColon(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ColonColon");
+        soul::lexer::WriteBeginRuleToLog(lexer, "ColonColon");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921285);
@@ -264,7 +264,7 @@ soul::parser::Match PunctuationParser<LexerT>::Ellipsis(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Ellipsis");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Ellipsis");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921286);
@@ -312,7 +312,7 @@ soul::parser::Match PunctuationParser<LexerT>::LParen(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LParen");
+        soul::lexer::WriteBeginRuleToLog(lexer, "LParen");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921287);
@@ -360,7 +360,7 @@ soul::parser::Match PunctuationParser<LexerT>::RParen(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "RParen");
+        soul::lexer::WriteBeginRuleToLog(lexer, "RParen");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921288);
@@ -408,7 +408,7 @@ soul::parser::Match PunctuationParser<LexerT>::LBracket(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LBracket");
+        soul::lexer::WriteBeginRuleToLog(lexer, "LBracket");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921289);
@@ -456,7 +456,7 @@ soul::parser::Match PunctuationParser<LexerT>::RBracket(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "RBracket");
+        soul::lexer::WriteBeginRuleToLog(lexer, "RBracket");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921290);
@@ -504,7 +504,7 @@ soul::parser::Match PunctuationParser<LexerT>::LBrace(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LBrace");
+        soul::lexer::WriteBeginRuleToLog(lexer, "LBrace");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921291);
@@ -552,7 +552,7 @@ soul::parser::Match PunctuationParser<LexerT>::RBrace(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "RBrace");
+        soul::lexer::WriteBeginRuleToLog(lexer, "RBrace");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921292);
@@ -600,7 +600,7 @@ soul::parser::Match PunctuationParser<LexerT>::Assign(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Assign");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Assign");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921293);

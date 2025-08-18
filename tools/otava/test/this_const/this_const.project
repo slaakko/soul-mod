@@ -1,0 +1,3 @@
+project this_const;
+target=program;
+source <this_const.cpp>;

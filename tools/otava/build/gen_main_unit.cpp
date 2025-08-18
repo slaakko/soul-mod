@@ -120,7 +120,7 @@ std::string GenerateMainWrapper(otava::symbols::Context* context, int numParams)
     {
         otava::symbols::FunctionDefinitionSymbol* mainWrapperFnDefSymbol = static_cast<otava::symbols::FunctionDefinitionSymbol*>(mainWrapperFnSymbol);
         context->PushBoundFunction(new otava::symbols::BoundFunctionNode(mainWrapperFnDefSymbol, soul::ast::SourcePos()));
-        otava::symbols::BindFunction(mainWrapperFn.get(), mainWrapperFnDefSymbol, context);
+        mainWrapperFnDefSymbol = otava::symbols::BindFunction(mainWrapperFn.get(), mainWrapperFnDefSymbol, context);
         context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<otava::symbols::BoundNode>(context->ReleaseBoundFunction()), context);
         context->PopBoundFunction();
         return mainWrapperFnDefSymbol->IrName(context);

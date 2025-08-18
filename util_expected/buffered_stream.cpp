@@ -114,7 +114,7 @@ std::expected<bool, int> BufferedStream::Seek(std::int64_t pos, Origin origin)
 std::expected<std::int64_t, int> BufferedStream::Tell()
 {
     std::expected<bool, int> rv = Flush();
-    if (!rv) return rv;
+    if (!rv) return std::unexpected<int>(rv.error());
     std::expected<std::int64_t, int> trv = baseStream.Tell();
     if (!trv) return std::unexpected<int>(trv.error());
     return std::expected<std::int64_t, int>(*trv - bytesAvailable);
@@ -123,7 +123,7 @@ std::expected<std::int64_t, int> BufferedStream::Tell()
 std::expected<bool, int> BufferedStream::FillBuf()
 {
     std::expected<std::int64_t, int> rv = baseStream.Read(buffer.get(), bufferSize);
-    if (!rv) return rv;
+    if (!rv) return std::unexpected<int>(rv.error());
     bytesAvailable = *rv;
     pos = 0;
     return std::expected<bool, int>(true);

@@ -42,6 +42,7 @@ import otava.symbols.alias.type.symbol;
 import otava.symbols.function.templates;
 import otava.symbols.inline_functions;
 import otava.symbols.operation.repository;
+import otava.symbols.type.resolver;
 import util.sha1;
 import util.unicode;
 
@@ -166,6 +167,51 @@ void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
         if (bodyNode->DefaultOrDelete()->Kind() == otava::ast::NodeKind::defaultNode)
         {
             functionDefinitionSymbol->SetFunctionQualifiers(functionDefinitionSymbol->Qualifiers() | FunctionQualifiers::isDefault);
+            ClassTypeSymbol* classType = symbol->ParentClassType();
+            if (classType)
+            {
+                switch (specialFunctionKind)
+                {
+                    case SpecialFunctionKind::defaultCtor:
+                    {
+                        int defIndex = functionDefinitionSymbol->DefIndex();
+                        functionDefinitionSymbol = GenerateClassDefaultCtor(classType, node.GetSourcePos(), context);
+                        functionDefinitionSymbol->SetDefIndex(defIndex);
+                        break;
+                    }
+                    case SpecialFunctionKind::copyCtor:
+                    {
+                        int defIndex = functionDefinitionSymbol->DefIndex();
+                        functionDefinitionSymbol = GenerateClassCopyCtor(classType, node.GetSourcePos(), context);
+                        functionDefinitionSymbol->SetDefIndex(defIndex);
+                        break;
+                    }
+                    case SpecialFunctionKind::moveCtor:
+                    {
+                        int defIndex = functionDefinitionSymbol->DefIndex();
+                        functionDefinitionSymbol = GenerateClassMoveCtor(classType, node.GetSourcePos(), context);
+                        functionDefinitionSymbol->SetDefIndex(defIndex);
+                        break;
+                    }
+                    case SpecialFunctionKind::copyAssignment:
+                    {
+                        int defIndex = functionDefinitionSymbol->DefIndex();
+                        functionDefinitionSymbol = GenerateClassCopyAssignment(classType, node.GetSourcePos(), context);
+                        functionDefinitionSymbol->SetDefIndex(defIndex);
+                        break;
+                    }
+                    case SpecialFunctionKind::moveAssignment:
+                    {
+                        int defIndex = functionDefinitionSymbol->DefIndex();
+                        functionDefinitionSymbol = GenerateClassMoveAssignment(classType, node.GetSourcePos(), context);
+                        functionDefinitionSymbol->SetDefIndex(defIndex);
+                        break;
+                    }
+                }
+                std::unique_ptr<BoundFunctionNode> boundFunction(context->ReleaseBoundFunction());
+                context->GetBoundCompileUnit()->AddBoundNode(std::move(boundFunction), context);
+                context->PopBoundFunction();
+            }
         }
         else if (bodyNode->DefaultOrDelete()->Kind() == otava::ast::NodeKind::deleteNode)
         {
@@ -536,6 +582,18 @@ void StatementBinder::Visit(otava::ast::MemberInitializerNode& node)
     else
     {
         memberInitializers.push_back(std::make_pair(index, std::move(boundFunctionCall)));
+    }
+}
+
+void StatementBinder::Visit(otava::ast::TemplateIdNode& node)
+{
+    if (resolveClass)
+    {
+        TypeSymbol* type = ResolveType(&node, DeclarationFlags::none, context, TypeResolverFlags::none);
+        if (type && type->IsClassTypeSymbol())
+        {
+            classTypeSymbol = static_cast<ClassTypeSymbol*>(type);
+        }
     }
 }
 
@@ -1452,17 +1510,18 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
     return boundStatement;
 }
 
-void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
+FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
     RemoveTemporaryAliasTypeSymbols(context);
-    if (functionDefinitionSymbol->IsBound()) return;
-    if (functionDefinitionSymbol->IsTemplate()) return;
-    if (context->GetFlag(ContextFlags::parseMemberFunction)) return;
+    if (functionDefinitionSymbol->IsBound()) return functionDefinitionSymbol;
+    if (functionDefinitionSymbol->IsTemplate()) return functionDefinitionSymbol;
+    if (context->GetFlag(ContextFlags::parseMemberFunction)) return functionDefinitionSymbol;
     std::set<const Symbol*> visited;
-    if (functionDefinitionSymbol->IsTemplateParameterInstantiation(context, visited)) return;
+    if (functionDefinitionSymbol->IsTemplateParameterInstantiation(context, visited)) return functionDefinitionSymbol;
     functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
     functionDefinitionNode->Accept(binder);
+    functionDefinitionSymbol = binder.GetFunctionDefinitionSymbol();
     bool hasNoReturnAttribute = false;
     if (functionDefinitionNode->IsFunctionDefinitionNode())
     {
@@ -1475,6 +1534,7 @@ void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSy
     {
         CheckFunctionReturnPaths(functionDefinitionNode, context);
     }
+    return functionDefinitionSymbol;
 }
 
 } // namespace otava::symbols

@@ -917,10 +917,11 @@ private:
 };
 
 ClassDefaultCtor::ClassDefaultCtor(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) : 
-    FunctionDefinitionSymbol(U"@constructor"), classType(classType_)
+    FunctionDefinitionSymbol(U"@class_default_ctor"), classType(classType_)
 {
     SetFunctionKind(FunctionKind::constructor);
     SetGenerated();
+    SetParent(classType);
     SetAccess(Access::public_);
     SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
     std::string digestSource = util::ToUtf8(classType->FullName());
@@ -1051,18 +1052,32 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
         expressionStatement->SetExpr(memberConstructorCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
-    context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
-    context->PopBoundFunction();
+    if (!context->GetFlag(ContextFlags::leaveBoundFunction))
+    {
+        context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
+        context->PopBoundFunction();
+    }
     if (classType->TotalMemberCount() <= inlineClassOperationsThreshold)
     {
         classDefaultCtor->SetInline();
     }
 }
 
+FunctionDefinitionSymbol* GenerateClassDefaultCtor(ClassTypeSymbol* classType, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    std::unique_ptr<ClassDefaultCtor> defaultCtor(new ClassDefaultCtor(classType, sourcePos, context));
+    ClassDefaultCtorOperation operation;
+    context->PushSetFlag(ContextFlags::leaveBoundFunction);
+    operation.GenerateImplementation(defaultCtor.get(), sourcePos, context);
+    context->PopFlags();
+    return defaultCtor.release();
+}
+
 class ClassCopyCtor : public FunctionDefinitionSymbol
 {
 public:
     ClassCopyCtor(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+    ~ClassCopyCtor();
     ClassTypeSymbol* ClassType() const { return classType; }
 private:
     ClassTypeSymbol* classType;
@@ -1070,11 +1085,12 @@ private:
 };
 
 ClassCopyCtor::ClassCopyCtor(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) :
-    FunctionDefinitionSymbol(U"@constructor"), classType(classType_)
+    FunctionDefinitionSymbol(U"@class_copy_ctor"), classType(classType_)
 {
     SetFunctionKind(FunctionKind::constructor);
     SetGenerated();
     SetAccess(Access::public_);
+    SetParent(classType);
     ParameterSymbol* thisParam = ThisParam(context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddConst(context)->AddLValueRef(context));
     AddParameter(thatParam, sourcePos, context);
@@ -1084,6 +1100,14 @@ ClassCopyCtor::ClassCopyCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
     digestSource.append(context->GetBoundCompileUnit()->Id());
     irName = "copy_ctor_" + util::ToUtf8(classType->Group()->Name()) + "_" + util::GetSha1MessageDigest(digestSource);
     SetFixedIrName(irName);
+}
+
+ClassCopyCtor::~ClassCopyCtor()
+{
+    if (classType && classType->CopyCtor() == this)
+    {
+        classType->ResetCopyCtor();
+    }
 }
 
 class ClassCopyCtorOperation : public Operation
@@ -1217,12 +1241,25 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
         expressionStatement->SetExpr(memberConstructorCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
-    context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
-    context->PopBoundFunction();
+    if (!context->GetFlag(ContextFlags::leaveBoundFunction))
+    {
+        context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
+        context->PopBoundFunction();
+    }
     if (classType->TotalMemberCount() <= inlineClassOperationsThreshold)
     {
         classCopyCtor->SetInline();
     }
+}
+
+FunctionDefinitionSymbol* GenerateClassCopyCtor(ClassTypeSymbol* classType, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    std::unique_ptr<ClassCopyCtor> copyCtor(new ClassCopyCtor(classType, sourcePos, context));
+    ClassCopyCtorOperation operation;
+    context->PushSetFlag(ContextFlags::leaveBoundFunction);
+    operation.GenerateImplementation(copyCtor.get(), sourcePos, context);
+    context->PopFlags();
+    return copyCtor.release();
 }
 
 class ClassMoveCtor : public FunctionDefinitionSymbol
@@ -1236,11 +1273,12 @@ private:
 };
 
 ClassMoveCtor::ClassMoveCtor(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) :
-    FunctionDefinitionSymbol(U"@constructor"), classType(classType_)
+    FunctionDefinitionSymbol(U"@class_move_ctor"), classType(classType_)
 {
     SetFunctionKind(FunctionKind::constructor);
     SetGenerated();
     SetAccess(Access::public_);
+    SetParent(classType);
     ParameterSymbol* thisParam = ThisParam(context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddRValueRef(context));
     AddParameter(thatParam, sourcePos, context);
@@ -1393,12 +1431,25 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
         expressionStatement->SetExpr(memberConstructorCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
-    context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
-    context->PopBoundFunction();
+    if (!context->GetFlag(ContextFlags::leaveBoundFunction))
+    {
+        context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
+        context->PopBoundFunction();
+    }
     if (classType->TotalMemberCount() <= inlineClassOperationsThreshold)
     {
         classMoveCtor->SetInline();
     }
+}
+
+FunctionDefinitionSymbol* GenerateClassMoveCtor(ClassTypeSymbol* classType, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    std::unique_ptr<ClassMoveCtor> classMoveCtor(new ClassMoveCtor(classType, sourcePos, context));;
+    ClassMoveCtorOperation operation;
+    context->PushSetFlag(ContextFlags::leaveBoundFunction);
+    operation.GenerateImplementation(classMoveCtor.get(), sourcePos, context);
+    context->PopFlags();
+    return classMoveCtor.release();
 }
 
 class ClassCopyAssignment: public FunctionDefinitionSymbol
@@ -1417,6 +1468,7 @@ ClassCopyAssignment::ClassCopyAssignment(ClassTypeSymbol* classType_, const soul
     SetFunctionKind(FunctionKind::special);
     SetGenerated();
     SetAccess(Access::public_);
+    SetParent(classType);
     ParameterSymbol* thisParam = ThisParam(context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddConst(context)->AddLValueRef(context));
     AddParameter(thatParam, sourcePos, context);
@@ -1526,12 +1578,25 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
     BoundExpressionNode* derefThisExpr = BindExpression(&derefNode, context);
     returnStatement->SetExpr(derefThisExpr, sourcePos, context);
     context->GetBoundFunction()->Body()->AddStatement(returnStatement);
-    context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
-    context->PopBoundFunction();
+    if (!context->GetFlag(ContextFlags::leaveBoundFunction))
+    {
+        context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
+        context->PopBoundFunction();
+    }
     if (classType->TotalMemberCount() <= inlineClassOperationsThreshold)
     {
         classCopyAssignment->SetInline();
     }
+}
+
+FunctionDefinitionSymbol* GenerateClassCopyAssignment(ClassTypeSymbol* classType, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    std::unique_ptr<ClassCopyAssignment> copyAssignment(new ClassCopyAssignment(classType, sourcePos, context));
+    ClassCopyAssignmentOperation operation;
+    context->PushSetFlag(ContextFlags::leaveBoundFunction);
+    operation.GenerateImplementation(copyAssignment.get(), sourcePos, context);
+    context->PopFlags();
+    return copyAssignment.release();
 }
 
 class ClassMoveAssignment : public FunctionDefinitionSymbol
@@ -1550,6 +1615,7 @@ ClassMoveAssignment::ClassMoveAssignment(ClassTypeSymbol* classType_, const soul
     SetFunctionKind(FunctionKind::constructor);
     SetGenerated();
     SetAccess(Access::public_);
+    SetParent(classType);
     ParameterSymbol* thisParam = ThisParam(context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddRValueRef(context));
     AddParameter(thatParam, sourcePos, context);
@@ -1665,12 +1731,25 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
     BoundExpressionNode* derefThisExpr = BindExpression(&derefNode, context);
     returnStatement->SetExpr(derefThisExpr, sourcePos, context);
     context->GetBoundFunction()->Body()->AddStatement(returnStatement);
-    context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
-    context->PopBoundFunction();
+    if (!context->GetFlag(ContextFlags::leaveBoundFunction))
+    {
+        context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
+        context->PopBoundFunction();
+    }
     if (classType->TotalMemberCount() <= inlineClassOperationsThreshold)
     {
         classMoveAssignment->SetInline();
     }
+}
+
+FunctionDefinitionSymbol* GenerateClassMoveAssignment(ClassTypeSymbol* classType, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    std::unique_ptr<ClassMoveAssignment> moveAssignment(new ClassMoveAssignment(classType, sourcePos, context));
+    ClassMoveAssignmentOperation operation;
+    context->PushSetFlag(ContextFlags::leaveBoundFunction);
+    operation.GenerateImplementation(moveAssignment.get(), sourcePos, context);
+    context->PopFlags();
+    return moveAssignment.release();
 }
 
 class FunctionPtrApply : public FunctionSymbol

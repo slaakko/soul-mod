@@ -81,7 +81,8 @@ FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::S
                 std::string irName = functionDefinition->IrName(context);
                 inlineFunctionRepository->AddInlineFunction(fn, inlineFn);
                 context->PushBoundFunction(new BoundFunctionNode(functionDefinition, sourcePos));
-                BindFunction(functionDefinitionNode, functionDefinition, context);
+                functionDefinition = BindFunction(functionDefinitionNode, functionDefinition, context);
+                inlineFn = functionDefinition;
                 context->PopFlags();
                 if (functionDefinition->IsBound())
                 {

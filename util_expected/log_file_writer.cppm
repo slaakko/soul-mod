@@ -10,7 +10,7 @@ import std;
 export namespace util {
 
 using CoutType = std::ostream;
-using StandardEndLine = CoutType & (*)(CoutType&);
+using StandardEndLine = CoutType& (*)(CoutType&);
 
 class LogFileWriter
 {

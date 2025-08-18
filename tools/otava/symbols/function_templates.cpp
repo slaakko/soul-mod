@@ -158,7 +158,8 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
                 std::string irName = functionDefinition->IrName(context);
                 functionTemplateRepository->AddFunctionDefinition(key, functionDefinition, node);
                 context->PushBoundFunction(new BoundFunctionNode(functionDefinition, sourcePos));
-                BindFunction(functionDefinitionNode, functionDefinition, context);
+                functionDefinition = BindFunction(functionDefinitionNode, functionDefinition, context);
+                specialization = functionDefinition;
                 context->PopFlags();
                 if (functionDefinition->IsBound())
                 {

@@ -26,7 +26,7 @@ soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer, otava::symbols
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2723703907904651265);
@@ -369,7 +369,7 @@ soul::parser::Match LiteralParser<LexerT>::UserDefinedLiteral(LexerT& lexer, ota
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "UserDefinedLiteral");
+        soul::lexer::WriteBeginRuleToLog(lexer, "UserDefinedLiteral");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2723703907904651266);
@@ -629,7 +629,7 @@ soul::parser::Match LiteralParser<LexerT>::UdSuffix(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "UdSuffix");
+        soul::lexer::WriteBeginRuleToLog(lexer, "UdSuffix");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2723703907904651267);
@@ -677,7 +677,7 @@ soul::parser::Match LiteralParser<LexerT>::LiteralOperatorId(LexerT& lexer, otav
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LiteralOperatorId");
+        soul::lexer::WriteBeginRuleToLog(lexer, "LiteralOperatorId");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2723703907904651268);
@@ -811,7 +811,7 @@ soul::parser::Match LiteralParser<LexerT>::StringLiteral(LexerT& lexer, otava::s
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "StringLiteral");
+        soul::lexer::WriteBeginRuleToLog(lexer, "StringLiteral");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2723703907904651269);

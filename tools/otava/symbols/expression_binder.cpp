@@ -208,9 +208,25 @@ void FirstArgResolver::Visit(BoundMemberExprNode& node)
 
 void FirstArgResolver::Visit(BoundVariableNode& node)
 {
+    bool hasConstDerivation = false;
+    if (node.ThisPtr())
+    {
+        TypeSymbol* type = node.ThisPtr()->GetType();
+        if (type->IsConstType())
+        {
+            hasConstDerivation = true;
+        }
+    }
     if (node.GetType()->IsReferenceType())
     {
-        firstArg = new BoundRefToPtrNode(node.Clone(), node.GetSourcePos(), node.GetType()->RemoveReference(context)->AddPointer(context));
+        if (hasConstDerivation)
+        {
+            firstArg = new BoundRefToPtrNode(node.Clone(), node.GetSourcePos(), node.GetType()->RemoveReference(context)->AddPointer(context)->AddConst(context));
+        }
+        else
+        {
+            firstArg = new BoundRefToPtrNode(node.Clone(), node.GetSourcePos(), node.GetType()->RemoveReference(context)->AddPointer(context));
+        }
     }
     else if (op == otava::ast::NodeKind::arrowNode)
     {
@@ -220,7 +236,14 @@ void FirstArgResolver::Visit(BoundVariableNode& node)
     {
         if (node.GetType()->IsClassTypeSymbol())
         {
-            firstArg = new BoundAddressOfNode(node.Clone(), node.GetSourcePos(), node.GetType()->AddPointer(context));
+            if (hasConstDerivation)
+            {
+                firstArg = new BoundAddressOfNode(node.Clone(), node.GetSourcePos(), node.GetType()->AddPointer(context)->AddConst(context));
+            }
+            else
+            {
+                firstArg = new BoundAddressOfNode(node.Clone(), node.GetSourcePos(), node.GetType()->AddPointer(context));
+            }
         }
         else
         {
@@ -229,7 +252,14 @@ void FirstArgResolver::Visit(BoundVariableNode& node)
     }
     else
     {
-        firstArg = new BoundAddressOfNode(node.Clone(), node.GetSourcePos(), node.GetType()->AddPointer(context));
+        if (hasConstDerivation)
+        {
+            firstArg = new BoundAddressOfNode(node.Clone(), node.GetSourcePos(), node.GetType()->AddPointer(context)->AddConst(context));
+        }
+        else
+        {
+            firstArg = new BoundAddressOfNode(node.Clone(), node.GetSourcePos(), node.GetType()->AddPointer(context));
+        }
     }
 }
 
@@ -729,14 +759,26 @@ void ExpressionBinder::Visit(otava::ast::CppCastExprNode& node)
         reinterpretCast = true;
         context->PushSetFlag(ContextFlags::reinterpretCast);
     }
+    ArgumentMatch argumentMatch;
+    FunctionMatch functionMatch;
     FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-        resultType, boundExpression->GetType()->DirectType(context)->FinalType(node.GetSourcePos(), context), node.GetSourcePos(), context);
+        resultType, boundExpression->GetType()->DirectType(context)->FinalType(node.GetSourcePos(), context), boundExpression, node.GetSourcePos(), 
+        argumentMatch, functionMatch, context);
     if (reinterpretCast)
     {
         context->PopFlags();
     }
     if (conversion)
     {
+        if (argumentMatch.preConversionFlags == OperationFlags::addr)
+        {
+            boundExpression = new BoundAddressOfNode(MakeLvalueExpression(boundExpression, node.GetSourcePos(), context), node.GetSourcePos(), 
+                boundExpression->GetType()->AddPointer(context));
+        }
+        else if (argumentMatch.preConversionFlags == OperationFlags::deref)
+        {
+            boundExpression = new BoundDereferenceNode(boundExpression, node.GetSourcePos(), boundExpression->GetType()->RemoveReference(context));
+        }
         boundExpression = new BoundConversionNode(boundExpression, conversion, node.GetSourcePos());
     }
     else
@@ -895,27 +937,57 @@ void ExpressionBinder::Visit(otava::ast::DoubleNode& node)
 
 void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
 {
+    SymbolGroupKind groups = symbolGroups;
+    if ((groups & SymbolGroupKind::functionSymbolGroup) != SymbolGroupKind::none)
+    {
+        groups = groups & ~SymbolGroupKind::functionSymbolGroup;
+    }
     Symbol* symbol = nullptr;
     if (qualifiedScope)
     {
-        symbol = scope->Lookup(node.Str(), symbolGroups, ScopeLookup::thisScope, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+        symbol = scope->Lookup(node.Str(), groups, ScopeLookup::thisScope, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
     }
     if (!symbol)
     {
-        symbol = scope->Lookup(node.Str(), symbolGroups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+        symbol = scope->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
     }
     if (!symbol)
     {
         ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(scope->GetClassTemplateSpecialization());
         if (sp)
         {
-            symbol = sp->ClassTemplate()->GetScope()->Lookup(node.Str(), symbolGroups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+            symbol = sp->ClassTemplate()->GetScope()->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
         }
     }
     if (!symbol && boundExpression && boundExpression->IsBoundTypeNode())
     {
         TypeSymbol* type = static_cast<TypeSymbol*>(boundExpression->GetType());
-        symbol = type->GetScope()->Lookup(node.Str(), symbolGroups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+        symbol = type->GetScope()->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+    }
+    if (!symbol && (symbolGroups & SymbolGroupKind::functionSymbolGroup) != SymbolGroupKind::none)
+    {
+        groups = SymbolGroupKind::functionSymbolGroup;
+        if (qualifiedScope)
+        {
+            symbol = scope->Lookup(node.Str(), groups, ScopeLookup::thisScope, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+        }
+        if (!symbol)
+        {
+            symbol = scope->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+        }
+        if (!symbol)
+        {
+            ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(scope->GetClassTemplateSpecialization());
+            if (sp)
+            {
+                symbol = sp->ClassTemplate()->GetScope()->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+            }
+        }
+        if (!symbol && boundExpression && boundExpression->IsBoundTypeNode())
+        {
+            TypeSymbol* type = static_cast<TypeSymbol*>(boundExpression->GetType());
+            symbol = type->GetScope()->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+        }
     }
     if (symbol)
     {

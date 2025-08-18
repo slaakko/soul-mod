@@ -657,7 +657,7 @@ std::expected<std::string, int> PlatformStringToUtf8(const std::string& platform
 {
     if (platformString.empty()) return std::string();
     int bufSize = 4096;
-    std::unique_ptr<char16_t> wbuf(new char16_t[bufSize]);
+    std::unique_ptr<char16_t[]> wbuf(new char16_t[bufSize]);
     int result = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, platformString.c_str(), -1, (LPWSTR)wbuf.get(), bufSize);
     if (result == 0)
     {
@@ -684,7 +684,7 @@ std::expected<std::string, int> Utf8StringToPlatformString(const std::string& ut
     if (!rv) return std::unexpected<int>(rv.error());
     std::u16string utf16 = *rv;
     int bufSize = 4096;
-    std::unique_ptr<char> buf(new char[bufSize]);
+    std::unique_ptr<char[]> buf(new char[bufSize]);
     int result = WideCharToMultiByte(CP_ACP, 0, (LPCWCH)utf16.c_str(), -1, (LPSTR)buf.get(), bufSize, nullptr, nullptr);
     if (result == 0)
     {
