@@ -6,6 +6,7 @@
 export module soul.spg.spg.file.parser;
 
 [interface]import soul.ast.spg;
+[interface]import soul.ast.slg;
 [implementation]import soul.cpp.token;
 [implementation]import soul.cpp.op.token;
 [implementation]import soul.punctuation.token;
@@ -25,7 +26,7 @@ parser SpgFileParser
     SpgFile(var std::unique_ptr<soul::ast::spg::SpgFile> spgFile) : soul::ast::spg::SpgFile*
         ::= 
         (
-            PROJECT QualifiedId:projectName!{ spgFile.reset(new soul::ast::spg::SpgFile(lexer.FileName(), projectName)); } SEMICOLON!
+            PROJECT QualifiedId:projectName{ spgFile.reset(new soul::ast::spg::SpgFile(lexer.FileName(), projectName)); } SEMICOLON
             (SpgFileDeclaration:declaration{ spgFile->AddDeclaration(declaration); })*
         )
         {
@@ -35,16 +36,27 @@ parser SpgFileParser
 
 	SpgFileDeclaration : soul::ast::spg::SpgFileDeclaration*
 		::= ParserFileDeclaration:parserFileDeclaration{ return parserFileDeclaration; }
+        |   TokenFileDeclaration:tokenFileDeclaration{ return tokenFileDeclaration; }
 		;
 
     ParserFileDeclaration(var bool external) : soul::ast::spg::ParserFileDeclaration*
         ::= 
         (
-            (EXTERN{ external = true; } | empty{ external = false; }) ParserKeyword:parserKeyword FilePath:filePath! SEMICOLON!
+            (EXTERN{ external = true; } | empty{ external = false; }) ParserKeyword:parserKeyword FilePath:filePath SEMICOLON
         )
         {
             return new soul::ast::spg::ParserFileDeclaration(lexer.GetSourcePos(pos), filePath, external);
         }
         ;
+
+	TokenFileDeclaration(var bool external) : soul::ast::slg::SpgFileDeclaration*
+		::= 
+		(
+			(EXTERN{ external = true; } | empty{ external = false; }) TOKENS FilePath:filePath SEMICOLON
+		)
+		{
+			return new soul::ast::slg::TokenFileDeclaration(filePath, external); 
+		}
+		;
 
 }

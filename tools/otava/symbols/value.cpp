@@ -45,10 +45,6 @@ ValueKind CommonValueKind(ValueKind left, ValueKind right)
                 {
                     return ValueKind::boolValue;
                 }
-                case ValueKind::symbolValue:
-                {
-                    return ValueKind::integerValue;
-                }
                 default:
                 {
                     return ValueKind::none;
@@ -68,28 +64,6 @@ ValueKind CommonValueKind(ValueKind left, ValueKind right)
                 case ValueKind::boolValue:
                 {
                     return ValueKind::boolValue;
-                }
-                default:
-                {
-                    return ValueKind::none;
-                }
-            }
-        }
-        case ValueKind::symbolValue:
-        {
-            switch (right)
-            {
-                case ValueKind::integerValue:
-                {
-                    return ValueKind::integerValue;
-                }
-                case ValueKind::symbolValue:
-                {
-                    return ValueKind::integerValue;
-                }
-                default:
-                {
-                    return ValueKind::none;
                 }
             }
         }
@@ -126,6 +100,13 @@ void Value::Resolve(SymbolTable& symbolTable)
     if (typeId != util::nil_uuid())
     {
         type = symbolTable.GetType(typeId);
+    }
+    else
+    {
+        if (IsIntegerValue())
+        {
+            int x = 0;
+        }
     }
 }
 
@@ -229,14 +210,28 @@ otava::intermediate::Value* BoolValue::IrValue(Emitter& emitter, const soul::ast
 
 IntegerValue::IntegerValue(TypeSymbol* type_) : Value(SymbolKind::integerValueSymbol, std::u32string(U"0"), type_), value(0)
 {
+    if (!GetType())
+    {
+        int x = 0;
+    }
 }
 
 IntegerValue::IntegerValue(const std::u32string& rep_, TypeSymbol* type_) : Value(SymbolKind::integerValueSymbol, rep_, type_), value(0)
 {
+    if (readingEvaluationContext) return;
+    if (!GetType())
+    {
+        int x = 0;
+    }
 }
 
 IntegerValue::IntegerValue(std::int64_t value_, const std::u32string& rep_, TypeSymbol* type_) : Value(SymbolKind::integerValueSymbol, rep_, type_), value(value_)
 {
+    if (cloning) return;
+    if (!GetType())
+    {
+        int x = 0;
+    }
 }
 
 BoolValue* IntegerValue::ToBoolValue(EvaluationContext& context)
@@ -655,11 +650,13 @@ otava::intermediate::Value* ArrayValue::IrValue(Emitter& emitter, const soul::as
 
 Value* ArrayValue::Clone() const
 {
+    cloning = true;
     ArrayValue* clone = new ArrayValue(GetType());
     for (Value* elementValue : elementValues)
     {
         clone->AddElementValue(elementValue->Clone());
     }
+    cloning = false;
     return clone;
 }
 
@@ -896,6 +893,7 @@ void EvaluationContext::Write(Writer& writer)
 
 void EvaluationContext::Read(Reader& reader)
 {
+    readingEvaluationContext = true;
     trueValue.Read(reader);
     falseValue.Read(reader);
     nullPtrValue.Read(reader);
@@ -933,6 +931,7 @@ void EvaluationContext::Read(Reader& reader)
             throw std::runtime_error("otava.symbols.value: value symbol expected");
         }
     }
+    readingEvaluationContext = false;
 }
 
 Value* EvaluationContext::GetValue(const util::uuid& valueId) const

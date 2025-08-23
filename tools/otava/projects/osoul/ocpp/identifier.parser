@@ -1,0 +1,54 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp.identifier.parser;
+
+[interface]import soul.ast.cpp;
+[implementation]import soul.cpp.token;
+[implementation]import soul.cpp.op.token;
+[implementation]import soul.tool.token;
+[implementation]import soul.punctuation.token;
+[implementation]import soul.lex;
+
+parser CppIdentifierParser
+{
+    lexer soul::lex::slg::SlgLexer<char32_t>;
+    lexer soul::lex::spg::SpgLexer<char32_t>;
+
+    CppIdentifier(soul::ast::cpp::Context* context) : std::string
+        ::= ID
+            { 
+                auto u = lexer.TokenToUtf8(pos); 
+                if (!u) return std::unexpected<int>(u.error());
+                return *u;
+            }
+        ;
+
+    QualifiedCppId(soul::ast::cpp::Context* context, var std::string str) : std::string
+        ::= 
+        (
+            (
+                COLON_COLON{ str.append("::"); }
+            )? 
+            ID
+            { 
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                str.append(*u);
+            } 
+            (   COLON_COLON 
+                ID
+                { 
+                    auto u = lexer.TokenToUtf8(pos);
+                    if (!u) return std::unexpected<int>(u.error());
+                    str.append("::").append(*u);
+                }
+            )*
+        )
+        {
+            return str;
+        }
+        ;
+}

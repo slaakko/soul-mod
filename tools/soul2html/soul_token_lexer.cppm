@@ -5,6 +5,7 @@ export module soul.token.lexer;
 import std;
 import soul.lexer;
 import soul.ast.slg;
+import soul.ast.common;
 import soul.token;
 import soul.cpp.token;
 
@@ -23,7 +24,7 @@ struct SoulTokenLexer;
 template<typename Char>
 soul::lexer::Lexer<SoulTokenLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName);
 
-soul::ast::slg::TokenCollection* GetTokens();
+soul::ast::common::TokenCollection* GetTokens();
 
 struct SoulTokenLexer_Variables : public soul::lexer::Variables
 {

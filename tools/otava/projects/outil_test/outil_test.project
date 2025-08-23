@@ -1,4 +1,0 @@
-project outil_test;
-target=program;
-reference <../outil/outil.project>;
-source <outil_test.cpp>;

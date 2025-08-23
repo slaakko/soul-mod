@@ -5,6 +5,7 @@ export module soul.json.lexer;
 import std;
 import soul.lexer;
 import soul.ast.slg;
+import soul.ast.common;
 import util;
 import soul.json.token;
 
@@ -25,7 +26,7 @@ soul::lexer::Lexer<JsonLexer<Char>, Char> MakeLexer(const Char* start, const Cha
 template<typename Char>
 soul::lexer::Lexer<JsonLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);
 
-soul::ast::slg::TokenCollection* GetTokens();
+soul::ast::common::TokenCollection* GetTokens();
 
 struct JsonLexer_Variables : public soul::lexer::Variables
 {

@@ -1,2 +1,3 @@
 project common_expected.parser;
 parser <common.parser>;
+parser <token_file.parser>;

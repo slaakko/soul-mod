@@ -121,6 +121,7 @@ public:
     inline bool IsCtorInitializerNode() const { return kind == NodeKind::constructorInitializerNode; }
     inline bool IsFunctionBodyNode() const { return kind == NodeKind::functionBodyNode; }
     inline bool IsConstructorNode() const { return kind == NodeKind::constructorNode; }
+    inline bool IsEnumeratorNode() const { return kind == NodeKind::enumeratorNode; }
     inline bool IsIdentifierNode() const { return kind == NodeKind::identifierNode; }
     inline bool IsQualifiedIdNode() const { return kind == NodeKind::qualifiedIdNode; }
     inline bool IsTemplateIdNode() const { return kind == NodeKind::templateIdNode; }

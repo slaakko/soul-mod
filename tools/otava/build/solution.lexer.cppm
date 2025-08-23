@@ -4,6 +4,7 @@ export module otava.solution_lexer;
 
 import std;
 import soul.lexer;
+import soul.ast.common;
 import soul.ast.slg;
 import util;
 import otava.solution_token;
@@ -25,7 +26,7 @@ soul::lexer::Lexer<SolutionLexer<Char>, Char> MakeLexer(const Char* start, const
 template<typename Char>
 soul::lexer::Lexer<SolutionLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);
 
-soul::ast::slg::TokenCollection* GetTokens();
+soul::ast::common::TokenCollection* GetTokens();
 
 struct SolutionLexer_Variables : public soul::lexer::Variables
 {

@@ -1,0 +1,78 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp.literal.parser;
+
+[interface]import soul.ast.cpp;
+[implementation]import soul.cpp.token;
+[implementation]import soul.cpp.op.token;
+[implementation]import soul.tool.token;
+[implementation]import soul.punctuation.token;
+[implementation]import soul.lex;
+
+parser LiteralParser
+{
+    lexer soul::lex::slg::SlgLexer<char32_t>;
+    lexer soul::lex::spg::SpgLexer<char32_t>;
+
+    Literal(soul::ast::cpp::Context* context) : soul::ast::cpp::LiteralNode*
+        ::= INTEGER_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                return new soul::ast::cpp::LiteralNode(*sp, *u); 
+            }
+        |   FLOATING_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                return new soul::ast::cpp::LiteralNode(*sp, *u); 
+            }
+        |   CHAR_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                return new soul::ast::cpp::LiteralNode(*sp, *u); 
+            }
+        |   STRING_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                return new soul::ast::cpp::LiteralNode(*sp, *u); 
+            }
+        |   TRUE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                return new soul::ast::cpp::LiteralNode(*sp, *u); 
+            }
+        |   FALSE 
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                return new soul::ast::cpp::LiteralNode(*sp, *u); 
+            }
+        |   NULLPTR
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                return new soul::ast::cpp::LiteralNode(*sp, *u); 
+            }
+        ;
+}

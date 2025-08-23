@@ -10,13 +10,14 @@ import util;
 import soul.lexer.base;
 import soul.lexer.token;
 import soul.ast.slg;
+import soul.ast.common;
 
 export namespace soul::lexer {
 
 template<typename Lexer>
 void TestLexer(Lexer& lexer, util::CodeFormatter& formatter)
 {
-    soul::ast::slg::TokenCollection* tokens = lexer.GetTokenCollection();
+    soul::ast::common::TokenCollection* tokens = lexer.GetTokenCollection();
     ++lexer;
     while (*lexer != soul::lexer::END_TOKEN && *lexer != soul::lexer::INVALID_TOKEN)
     {

@@ -6,42 +6,42 @@ using namespace minilang::token;
 
 namespace minilang::lexer {
 
-soul::ast::slg::TokenCollection* GetTokens()
+soul::ast::common::TokenCollection* GetTokens()
 {
-    static soul::ast::slg::TokenCollection tokens("minilang.lexer.tokens");
+    static soul::ast::common::TokenCollection tokens("minilang.lexer.tokens");
     if (!tokens.Initialized())
     {
         tokens.SetInitialized();
-        tokens.AddToken(new soul::ast::slg::Token(IF, "IF", "'if'"));
-        tokens.AddToken(new soul::ast::slg::Token(ELSE, "ELSE", "'else'"));
-        tokens.AddToken(new soul::ast::slg::Token(WHILE, "WHILE", "'while'"));
-        tokens.AddToken(new soul::ast::slg::Token(RETURN, "RETURN", "'return'"));
-        tokens.AddToken(new soul::ast::slg::Token(INT, "INT", "'int'"));
-        tokens.AddToken(new soul::ast::slg::Token(BOOL, "BOOL", "'bool'"));
-        tokens.AddToken(new soul::ast::slg::Token(VOID, "VOID", "'void'"));
-        tokens.AddToken(new soul::ast::slg::Token(ID, "ID", "identifier"));
-        tokens.AddToken(new soul::ast::slg::Token(INTEGER_LITERAL, "INTEGER_LITERAL", "integer literal"));
-        tokens.AddToken(new soul::ast::slg::Token(TRUE, "TRUE", "'true'"));
-        tokens.AddToken(new soul::ast::slg::Token(FALSE, "FALSE", "'false'"));
-        tokens.AddToken(new soul::ast::slg::Token(SEMICOLON, "SEMICOLON", "';'"));
-        tokens.AddToken(new soul::ast::slg::Token(LPAREN, "LPAREN", "'('"));
-        tokens.AddToken(new soul::ast::slg::Token(RPAREN, "RPAREN", "')'"));
-        tokens.AddToken(new soul::ast::slg::Token(LBRACE, "LBRACE", "'{'"));
-        tokens.AddToken(new soul::ast::slg::Token(RBRACE, "RBRACE", "'}'"));
-        tokens.AddToken(new soul::ast::slg::Token(PLUS, "PLUS", "'+'"));
-        tokens.AddToken(new soul::ast::slg::Token(MINUS, "MINUS", "'-'"));
-        tokens.AddToken(new soul::ast::slg::Token(MUL, "MUL", "'*'"));
-        tokens.AddToken(new soul::ast::slg::Token(DIV, "DIV", "'/'"));
-        tokens.AddToken(new soul::ast::slg::Token(MOD, "MOD", "'%''"));
-        tokens.AddToken(new soul::ast::slg::Token(NOT, "NOT", "'!'"));
-        tokens.AddToken(new soul::ast::slg::Token(EQ, "EQ", "'=='"));
-        tokens.AddToken(new soul::ast::slg::Token(NEQ, "NEQ", "'!='"));
-        tokens.AddToken(new soul::ast::slg::Token(LEQ, "LEQ", "'<='"));
-        tokens.AddToken(new soul::ast::slg::Token(GEQ, "GEQ", "'>='"));
-        tokens.AddToken(new soul::ast::slg::Token(LESS, "LESS", "'<'"));
-        tokens.AddToken(new soul::ast::slg::Token(GREATER, "GREATER", "'>'"));
-        tokens.AddToken(new soul::ast::slg::Token(ASSIGN, "ASSIGN", "'='"));
-        tokens.AddToken(new soul::ast::slg::Token(COMMA, "COMMA", "','"));
+        tokens.AddToken(new soul::ast::common::Token(IF, "IF", "'if'"));
+        tokens.AddToken(new soul::ast::common::Token(ELSE, "ELSE", "'else'"));
+        tokens.AddToken(new soul::ast::common::Token(WHILE, "WHILE", "'while'"));
+        tokens.AddToken(new soul::ast::common::Token(RETURN, "RETURN", "'return'"));
+        tokens.AddToken(new soul::ast::common::Token(INT, "INT", "'int'"));
+        tokens.AddToken(new soul::ast::common::Token(BOOL, "BOOL", "'bool'"));
+        tokens.AddToken(new soul::ast::common::Token(VOID, "VOID", "'void'"));
+        tokens.AddToken(new soul::ast::common::Token(ID, "ID", "identifier"));
+        tokens.AddToken(new soul::ast::common::Token(INTEGER_LITERAL, "INTEGER_LITERAL", "integer literal"));
+        tokens.AddToken(new soul::ast::common::Token(TRUE, "TRUE", "'true'"));
+        tokens.AddToken(new soul::ast::common::Token(FALSE, "FALSE", "'false'"));
+        tokens.AddToken(new soul::ast::common::Token(SEMICOLON, "SEMICOLON", "';'"));
+        tokens.AddToken(new soul::ast::common::Token(LPAREN, "LPAREN", "'('"));
+        tokens.AddToken(new soul::ast::common::Token(RPAREN, "RPAREN", "')'"));
+        tokens.AddToken(new soul::ast::common::Token(LBRACE, "LBRACE", "'{'"));
+        tokens.AddToken(new soul::ast::common::Token(RBRACE, "RBRACE", "'}'"));
+        tokens.AddToken(new soul::ast::common::Token(PLUS, "PLUS", "'+'"));
+        tokens.AddToken(new soul::ast::common::Token(MINUS, "MINUS", "'-'"));
+        tokens.AddToken(new soul::ast::common::Token(MUL, "MUL", "'*'"));
+        tokens.AddToken(new soul::ast::common::Token(DIV, "DIV", "'/'"));
+        tokens.AddToken(new soul::ast::common::Token(MOD, "MOD", "'%''"));
+        tokens.AddToken(new soul::ast::common::Token(NOT, "NOT", "'!'"));
+        tokens.AddToken(new soul::ast::common::Token(EQ, "EQ", "'=='"));
+        tokens.AddToken(new soul::ast::common::Token(NEQ, "NEQ", "'!='"));
+        tokens.AddToken(new soul::ast::common::Token(LEQ, "LEQ", "'<='"));
+        tokens.AddToken(new soul::ast::common::Token(GEQ, "GEQ", "'>='"));
+        tokens.AddToken(new soul::ast::common::Token(LESS, "LESS", "'<'"));
+        tokens.AddToken(new soul::ast::common::Token(GREATER, "GREATER", "'>'"));
+        tokens.AddToken(new soul::ast::common::Token(ASSIGN, "ASSIGN", "'='"));
+        tokens.AddToken(new soul::ast::common::Token(COMMA, "COMMA", "','"));
     }
     return &tokens;
 }

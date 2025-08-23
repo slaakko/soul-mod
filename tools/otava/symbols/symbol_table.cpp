@@ -910,6 +910,10 @@ void SymbolTable::MapNode(otava::ast::Node* node, Symbol* symbol, MapKind kind)
             nodeSymbolMap[node] = symbol;
             allNodeSymbolMap[node] = symbol;
         }
+        else
+        {
+            int c = 0;
+        }
     }
     if ((kind & MapKind::symbolToNode) != MapKind::none)
     {

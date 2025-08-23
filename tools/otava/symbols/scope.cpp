@@ -387,7 +387,7 @@ Symbol* ContainerScope::GetSymbol()
     return containerSymbol;
 }
 
-ClassTemplateSpecializationSymbol* ContainerScope::GetClassTemplateSpecialization() const
+ClassTemplateSpecializationSymbol* ContainerScope::GetClassTemplateSpecialization(std::set<Scope*>& visited) const
 {
     if (containerSymbol->IsClassTemplateSpecializationSymbol())
     {
@@ -397,10 +397,14 @@ ClassTemplateSpecializationSymbol* ContainerScope::GetClassTemplateSpecializatio
     {
         for (const auto& parentScope : parentScopes)
         {
-            ClassTemplateSpecializationSymbol* sp = parentScope->GetClassTemplateSpecialization();
-            if (sp)
+            if (visited.find(parentScope) == visited.end())
             {
-                return sp;
+                visited.insert(parentScope);
+                ClassTemplateSpecializationSymbol* sp = parentScope->GetClassTemplateSpecialization(visited);
+                if (sp)
+                {
+                    return sp;
+                }
             }
         }
     }
@@ -534,6 +538,19 @@ EnumGroupSymbol* ContainerScope::GetOrInsertEnumGroup(const std::u32string& name
     EnumGroupSymbol* enumGroupSymbol = new EnumGroupSymbol(name);
     AddSymbol(enumGroupSymbol, sourcePos, context);
     return enumGroupSymbol;
+}
+
+bool ContainerScope::HasParentScope(const Scope* parentScope) const
+{
+    if (this == parentScope)
+    {
+        return true;
+    }
+    for (Scope* scope : parentScopes)
+    {
+        if (scope->HasParentScope(parentScope)) return true;
+    }
+    return false;
 }
 
 FunctionGroupSymbol* ContainerScope::GetOrInsertFunctionGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -670,14 +687,31 @@ void InstantiationScope::PopParentScope()
     parentScopes.erase(parentScopes.begin());
 }
 
-ClassTemplateSpecializationSymbol* InstantiationScope::GetClassTemplateSpecialization() const
+bool InstantiationScope::HasParentScope(const Scope* parentScope) const
+{
+    if (this == parentScope)
+    {
+        return true;
+    }
+    for (Scope* scope : parentScopes)
+    {
+        if (scope->HasParentScope(parentScope)) return true;
+    }
+    return false;
+}
+
+ClassTemplateSpecializationSymbol* InstantiationScope::GetClassTemplateSpecialization(std::set<Scope*>& visited) const
 {
     for (const auto& parentScope : parentScopes)
     {
-        ClassTemplateSpecializationSymbol* sp = parentScope->GetClassTemplateSpecialization();
-        if (sp)
+        if (visited.find(parentScope) == visited.end())
         {
-            return sp;
+            visited.insert(parentScope);
+            ClassTemplateSpecializationSymbol* sp = parentScope->GetClassTemplateSpecialization(visited);
+            if (sp)
+            {
+                return sp;
+            }
         }
     }
     return nullptr;
@@ -734,7 +768,11 @@ void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbol
             {
                 if (symbols.empty() || (flags & LookupFlags::all) != LookupFlags::none)
                 {
-                    parentScope->Lookup(id, symbolGroupKinds, scopeLookup, flags, symbols, visited, context);
+                    if (visited.find(parentScope) == visited.end())
+                    {
+                        visited.insert(parentScope);
+                        parentScope->Lookup(id, symbolGroupKinds, scopeLookup, flags, symbols, visited, context);
+                    }
                 }
             }
         }

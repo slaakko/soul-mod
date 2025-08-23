@@ -1,0 +1,700 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp.expression.parser;
+
+[interface]import soul.ast.cpp;
+[implementation]import soul.cpp.token;
+[implementation]import soul.cpp.op.token;
+[implementation]import soul.tool.token;
+[implementation]import soul.punctuation.token;
+[implementation]import soul.cpp.declarator.parser;
+[implementation]import soul.cpp.declaration.parser;
+[implementation]import soul.cpp.literal.parser;
+[implementation]import soul.cpp.identifier.parser;
+[implementation]import soul.lex;
+
+parser ExpressionParser
+{
+    lexer soul::lex::slg::SlgLexer<char32_t>;
+    lexer soul::lex::spg::SpgLexer<char32_t>;
+
+    using DeclaratorParser.TypeId;
+    using DeclaratorParser.TypeSpecifierSeq;
+    using DeclaratorParser.PtrOperator;
+    using DeclarationParser.SimpleTypeSpecifier;
+    using DeclarationParser.TypeName;
+    using LiteralParser.Literal;
+    using CppIdentifierParser.QualifiedCppId;
+
+    Expression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::= 
+        (
+            AssignmentExpression(context):left{ expr.reset(left); } 
+            (
+                COMMA AssignmentExpression(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(*sp, soul::ast::cpp::Operator::comma, expr.release(), right)); 
+                }
+            )*
+        )
+        {
+            return expr.release();
+        }
+        ;
+
+    ConstantExpression(soul::ast::cpp::Context* context) : soul::ast::cpp::Node*
+        ::= Expression(context):expr{ return expr; }
+        ;
+
+    AssignmentExpression(soul::ast::cpp::Context* context) : soul::ast::cpp::Node*
+        ::= LogicalOrExpression(context):left AssignmentOp(context):op 
+            AssignmentExpression(context):right
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul::ast::cpp::BinaryOpExprNode(*sp, op, left, right); 
+            }
+        |   ConditionalExpression(context):conditionalExpr{ return conditionalExpr; }
+        ;
+
+    AssignmentOp(soul::ast::cpp::Context* context) : soul::ast::cpp::Operator
+        ::= ASSIGN{ return soul::ast::cpp::Operator::assign; }
+        |   MUL_ASSIGN{ return soul::ast::cpp::Operator::mulAssign; }
+        |   DIV_ASSIGN{ return soul::ast::cpp::Operator::divAssign; }
+        |   REM_ASSIGN{ return soul::ast::cpp::Operator::remAssign; }
+        |   PLUS_ASSIGN{ return soul::ast::cpp::Operator::plusAssign; }
+        |   MINUS_ASSIGN{ return soul::ast::cpp::Operator::minusAssign; }
+        |   SHIFT_LEFT_ASSIGN{ return soul::ast::cpp::Operator::shiftLeftAssign; }
+        |   SHIFT_RIGHT_ASSIGN{ return soul::ast::cpp::Operator::shiftRightAssign; }
+        |   AND_ASSIGN{ return soul::ast::cpp::Operator::andAssign; }
+        |   XOR_ASSIGN{ return soul::ast::cpp::Operator::xorAssign; }
+        |   OR_ASSIGN{ return soul::ast::cpp::Operator::orAssign; }
+        ;
+
+    ConditionalExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::= 
+        (   LogicalOrExpression(context):left{ expr.reset(left); }
+            (
+                QUEST Expression(context):thenExpr 
+                COLON 
+                AssignmentExpression(context):elseExpr
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::ConditionalNode(*sp, expr.release(), thenExpr, elseExpr)); 
+                }
+            )?
+        )
+        {
+            return expr.release();
+        }
+        ;
+
+    LogicalOrExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::= 
+        (   LogicalAndExpression(context):left{ expr.reset(left); }
+            (
+                DISJUNCTION 
+                LogicalAndExpression(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(*sp, soul::ast::cpp::Operator::or_, expr.release(), right)); 
+                }
+            )*
+        )
+        {
+            return expr.release();
+        }
+        ;
+
+    LogicalAndExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::=
+        (   InclusiveOrExpression(context):left{ expr.reset(left); }
+            (   
+                AMP_AMP 
+                InclusiveOrExpression(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(*sp, soul::ast::cpp::Operator::and_, expr.release(), right)); 
+                }
+            )*
+        )
+        {
+            return expr.release();
+        }
+        ;
+
+    InclusiveOrExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::= 
+        (   ExclusiveOrExpression(context):left{ expr.reset(left); }
+            (
+                PIPE 
+                ExclusiveOrExpression(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(*sp, soul::ast::cpp::Operator::bitor_, expr.release(), right)); 
+                }
+            )*
+        )
+        {
+            return expr.release();
+        }
+        ;
+
+    ExclusiveOrExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::=
+        (   AndExpression(context):left{ expr.reset(left); }
+            (
+                CARET 
+                AndExpression(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(*sp, soul::ast::cpp::Operator::bitxor, expr.release(), right)); 
+                }
+            )*
+        )
+        {
+            return expr.release();
+        }
+        ;
+
+    AndExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::=
+        (   EqualityExpression(context):left{ expr.reset(left); }
+            (
+                AMP 
+                EqualityExpression(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(*sp, soul::ast::cpp::Operator::bitand_, expr.release(), right)); 
+                }
+            )*
+        )
+        {
+            return expr.release();
+        }
+        ;
+
+    EqualityExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::= 
+        (   RelationalExpression(context):left{ expr.reset(left); }
+            (
+                EqOp(context):op 
+                RelationalExpression(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(*sp, op, expr.release(), right)); 
+                }
+            )*
+        )
+        {
+            return expr.release();
+        }
+        ;
+
+    EqOp(soul::ast::cpp::Context* context) : soul::ast::cpp::Operator
+        ::= EQ{ return soul::ast::cpp::Operator::eq; }
+        |   NEQ{ return soul::ast::cpp::Operator::notEq; }
+        ;
+
+    RelationalExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::=
+        (   ShiftExpression(context):left{ expr.reset(left); }
+            (
+                RelOp(context):op 
+                ShiftExpression(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(*sp, op, expr.release(), right)); 
+                }
+            )*
+        )
+        {
+            return expr.release();
+        }
+        ;
+
+    RelOp(soul::ast::cpp::Context* context) : soul::ast::cpp::Operator
+        ::= LANGLE{ return soul::ast::cpp::Operator::less; }
+        |   empty{ pass = !context->ParsingTemplateId(); } RANGLE{ return soul::ast::cpp::Operator::greater; }
+        |   LEQ{ return soul::ast::cpp::Operator::lessOrEq; }
+        |   GEQ{ return soul::ast::cpp::Operator::greaterOrEq; }
+        ;
+
+    ShiftExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::=
+        (   AdditiveExpression(context):left{ expr.reset(left); }
+            (
+                ShiftOp(context):op 
+                AdditiveExpression(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(*sp, op, expr.release(), right)); 
+                }
+            )*
+        )
+        {
+            return expr.release();
+        }
+        ;
+
+    ShiftOp(soul::ast::cpp::Context* context) : soul::ast::cpp::Operator
+        ::= SHIFT_LEFT{ return soul::ast::cpp::Operator::shiftLeft; }
+        |   SHIFT_RIGHT{ return soul::ast::cpp::Operator::shiftRight; }
+        ;
+
+    AdditiveExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::= 
+        (   MultiplicativeExpression(context):left{ expr.reset(left); }
+            (
+                AddOp(context):op 
+                MultiplicativeExpression(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(*sp, op, expr.release(), right)); 
+                }
+            )*
+        )
+        {
+            return expr.release();
+        }
+        ;
+
+    AddOp(soul::ast::cpp::Context* context) : soul::ast::cpp::Operator
+        ::= PLUS{ return soul::ast::cpp::Operator::plus; }
+        |   MINUS{ return soul::ast::cpp::Operator::minus; }
+        ;
+
+    MultiplicativeExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::=
+        (   PmExpression(context):left{ expr.reset(left); }
+            (
+                MulOp(context):op 
+                PmExpression(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(*sp, op, expr.release(), right)); 
+                }
+            )*
+        )
+        {
+            return expr.release();
+        }
+        ;
+
+    MulOp(soul::ast::cpp::Context* context) : soul::ast::cpp::Operator
+        ::= STAR{ return soul::ast::cpp::Operator::mul; }
+        |   DIV{ return soul::ast::cpp::Operator::div; }
+        |   REM{ return soul::ast::cpp::Operator::rem; }
+        ;
+
+    PmExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::= 
+        (   CastExpression(context):left{ expr.reset(left); }
+            (
+                PmOp(context):op 
+                CastExpression(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(*sp, op, expr.release(), right)); 
+                }
+            )*
+        )
+        {
+            return expr.release();
+        }
+        ;
+
+    PmOp(soul::ast::cpp::Context* context) : soul::ast::cpp::Operator
+        ::= DOT_STAR{ return soul::ast::cpp::Operator::dotStar; }
+        |   ARROW_STAR{ return soul::ast::cpp::Operator::arrowStar; }
+        ;
+
+    CastExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::= 
+        (   LPAREN 
+            TypeId(context):typeId 
+            RPAREN 
+            CastExpression(context):castExpr
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                expr.reset(new soul::ast::cpp::CastNode(*sp, typeId, castExpr)); 
+            }
+        |   UnaryExpression(context):unaryExpr{ expr.reset(unaryExpr); }
+        )
+        {
+            return expr.release();
+        }
+        ;
+
+    UnaryExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::= 
+        (   PostfixExpression(context):postfixExpr{ expr.reset(postfixExpr); }
+        |   PostCastExpression(context):postCastExpr{ expr.reset(postCastExpr); }
+        |   PLUS_PLUS 
+            UnaryExpression(context):u1
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                expr.reset(new soul::ast::cpp::PreIncrementNode(*sp, u1)); 
+            }
+        |   MINUS_MINUS 
+            UnaryExpression(context):u2
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                expr.reset(new soul::ast::cpp::PreDecrementNode(*sp, u2)); 
+            }
+        |   UnaryOperator(context):op 
+            CastExpression(context):castExpr
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                expr.reset(new soul::ast::cpp::UnaryOpExprNode(*sp, op, castExpr)); 
+            }
+        |   SIZEOF 
+            LPAREN 
+            TypeId(context):typeId 
+            RPAREN
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                expr.reset(new soul::ast::cpp::SizeOfNode(*sp, typeId, true)); 
+            }
+        |   SIZEOF 
+            UnaryExpression(context):u3
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                expr.reset(new soul::ast::cpp::SizeOfNode(*sp, u3, false)); 
+            }
+        |   NewExpression(context):newExpr{ expr.reset(newExpr); }
+        |   DeleteExpression(context):deleteExpr{ expr.reset(deleteExpr); }
+        )
+        {
+            return expr.release();
+        }
+        ;
+
+    UnaryOperator(soul::ast::cpp::Context* context) : soul::ast::cpp::Operator
+        ::= STAR{ return soul::ast::cpp::Operator::deref; }
+        |   AMP{ return soul::ast::cpp::Operator::addrOf; }
+        |   PLUS{ return soul::ast::cpp::Operator::plus; }
+        |   MINUS{ return soul::ast::cpp::Operator::minus; }
+        |   EXCLAMATION{ return soul::ast::cpp::Operator::not_; }
+        |   TILDE{ return soul::ast::cpp::Operator::cpl; }
+        ;
+
+    PostfixExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::= 
+        (   PrimaryExpression(context):primaryExpr{ expr.reset(primaryExpr); }
+            (   LBRACKET 
+                Expression(context):index 
+                RBRACKET
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::IndexExprNode(*sp, expr.release(), index)); 
+                }
+            |   LPAREN
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::InvokeNode(*sp, expr.release())); 
+                }
+                ExpressionList(context, expr.get()):exprList? 
+                RPAREN
+            |   DOT 
+                IdExpression(context):dotMember
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::MemberAccessNode(*sp, expr.release(), dotMember)); 
+                }
+            |   ARROW 
+                IdExpression(context):arrowMember
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::PtrMemberAccessNode(*sp, expr.release(), arrowMember)); 
+                }
+            |   PLUS_PLUS
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::PostIncrementNode(*sp, expr.release())); 
+                }
+            |   MINUS_MINUS
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    expr.reset(new soul::ast::cpp::PostDecrementNode(*sp, expr.release())); 
+                }
+            )*
+        )
+        {
+            return expr.release();
+        }
+        ;
+    
+    PostCastExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::CppCastNode> cppCastNode) : soul::ast::cpp::Node*
+        ::= 
+        (
+            (   STATIC_CAST
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    cppCastNode.reset(new soul::ast::cpp::StaticCastNode(*sp)); 
+                }
+            |   DYNAMIC_CAST
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    cppCastNode.reset(new soul::ast::cpp::DynamicCastNode(*sp)); 
+                }
+            |   REINTERPRET_CAST
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    cppCastNode.reset(new soul::ast::cpp::ReinterpretCastNode(*sp)); 
+                }
+            |   CONST_CAST
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    cppCastNode.reset(new soul::ast::cpp::ConstCastNode(*sp)); 
+                }
+            )
+            LANGLE 
+            TypeId(context):typeId 
+            RANGLE 
+            LPAREN 
+            Expression(context):expr 
+            RPAREN
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul::ast::cpp::PostCastNode(*sp, cppCastNode.release(), typeId, expr); 
+            }
+        |   TYPEID 
+            LPAREN 
+            Expression(context):typeIdExpr 
+            RPAREN
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul::ast::cpp::TypeIdExprNode(*sp, typeIdExpr); 
+            }
+        )
+        ;
+
+    ExpressionList(soul::ast::cpp::Context* context, soul::ast::cpp::Node* owner)
+        ::= AssignmentExpression(context):expr{ owner->Add(expr); } % COMMA
+        ;
+
+    PrimaryExpression(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+        ::= Literal(context):literal{ return literal; }
+        |   THIS
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul::ast::cpp::ThisNode(*sp); 
+            }
+        |   LPAREN 
+            Expression(context):parenExpr 
+            RPAREN
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul::ast::cpp::ParenExprNode(*sp, parenExpr); 
+            }
+        |   IdExpression(context):idExpr{ return idExpr; }
+        ;
+
+    IdExpression(soul::ast::cpp::Context* context, var std::string str) : soul::ast::cpp::Node*
+        ::= 
+        (   TypeName(context):typeName{ return typeName; }
+        |   QualifiedCppId(context):id1{ str = id1; } 
+            COLON_COLON 
+            OperatorFunctionId(context):ofId1
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                str.append("::").append(ofId1); 
+                return new soul::ast::cpp::IdExprNode(*sp, str); 
+            }
+        |   empty{ str.clear(); } 
+            (
+                COLON_COLON{ str.append("::"); }
+            )? 
+            OperatorFunctionId(context):ofId2
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                str.append(ofId2); 
+                return new soul::ast::cpp::IdExprNode(*sp, str); 
+            }
+        |   QualifiedCppId(context):id2
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul::ast::cpp::IdExprNode(*sp, id2); 
+            }
+        )
+        ;
+
+    TypeSpecifierOrTypeName(soul::ast::cpp::Context* context) : soul::ast::cpp::Node*
+        ::= SimpleTypeSpecifier(context):simpleTypeSpecifier{ return simpleTypeSpecifier; }
+        |   TypeName(context):typeName{ return typeName; }
+        ;
+
+    NewExpression(soul::ast::cpp::Context* context, var bool global, var std::unique_ptr<soul::ast::cpp::NewNode> newExprNode) : soul::ast::cpp::Node*
+        ::= 
+        (   (COLON_COLON{ global = true; })?
+            NEW
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                newExprNode.reset(new soul::ast::cpp::NewNode(*sp, global)); 
+            }
+            empty{ newExprNode->BeginAddToPlacement(); } NewPlacement(context, newExprNode.get()):placement? empty{ newExprNode->EndAddToPlacement(); }
+            (NewTypeId(context):newTypeId{ newExprNode->SetParens(false); newExprNode->SetTypeId(newTypeId); } | LPAREN TypeId(context):ti RPAREN
+            { 
+                newExprNode->SetParens(true); newExprNode->SetTypeId(ti); }
+            )
+            empty{ newExprNode->BeginAddToInitializer(); } NewInitializer(context, newExprNode.get()):initializer? empty{ newExprNode->EndAddToInitializer(); }
+        )
+        {
+            return newExprNode.release();
+        }
+        ;
+
+    NewPlacement(soul::ast::cpp::Context* context, soul::ast::cpp::Node* owner)
+        ::= LPAREN ExpressionList(context, owner):exprList RPAREN
+        ;
+
+    NewTypeId(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::TypeIdNode> ti) : soul::ast::cpp::TypeIdNode*
+        ::= empty{ ti.reset(new soul::ast::cpp::TypeIdNode(*lexer.GetSourcePos(pos))); }
+        (
+            (TypeSpecifierSeq(context, ti.get()):typeSpecifierSeq | TypeName(context):typeName{ ti->Add(typeName); })
+            (NewDeclarator(context):newDeclarator{ ti->SetDeclarator(newDeclarator); })?
+        )
+        {
+            return ti.release();
+        }
+        ;
+
+    NewDeclarator(soul::ast::cpp::Context* context, var std::string str) : std::string
+        ::= 
+        (   PtrOperator(context):ptrOperator{ str.append(ptrOperator); } (NewDeclarator(context):newDeclarator{ str.append(newDeclarator); })?
+        |   DirectNewDeclarator(context):directNewDeclarator{ str.append(directNewDeclarator); }
+        )
+        {
+            return str;
+        }
+        ;
+
+    NewInitializer(soul::ast::cpp::Context* context, soul::ast::cpp::Node* owner)
+        ::= LPAREN ExpressionList(context, owner):initializer? RPAREN
+        ;
+
+    DirectNewDeclarator(soul::ast::cpp::Context* context, var std::string str) : std::string
+        ::= 
+        (
+            LBRACKET{ str.append("["); } Expression(context):expr{ str.append(expr->ToString()); } RBRACKET{ str.append("]"); } 
+            (LBRACKET ConstantExpression(context):constantExpr RBRACKET{ str.append("[").append(constantExpr->ToString()).append("]"); })*
+        )
+        {
+            return str;
+        }
+        ;
+
+    DeleteExpression(soul::ast::cpp::Context* context, var bool global, var bool isArray) : soul::ast::cpp::Node*
+        ::= 
+        (
+            (COLON_COLON{ global = true; })? 
+            DELETE
+            (LBRACKET RBRACKET{ isArray = true; })? 
+            CastExpression(context):ptr
+        )
+        {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul::ast::cpp::DeleteNode(*sp, global, isArray, ptr);
+        }
+        ;
+
+    OperatorFunctionId(soul::ast::cpp::Context* context, var std::string str) : std::string
+        ::= 
+        (
+            OPERATOR{ str.append("operator"); } Operator(context):op{ str.append(op); }
+        )
+        {
+            return str;
+        }
+        ;
+
+    Operator(soul::ast::cpp::Context* context) : std::string
+        ::= 
+        (   LBRACKET RBRACKET{ return "[]"; }
+        |   LPAREN RPAREN{ return "()"; }
+        |   ARROW_STAR{ return "->*"; }
+        |   ARROW{ return "->"; }
+        |   COMMA{ return ","; }
+        |   MINUS_MINUS{ return "--"; }
+        |   PLUS_PLUS{ return "++"; }
+        |   DISJUNCTION{ return "||"; }
+        |   AMP_AMP{ return "&&"; }
+        |   LEQ{ return "<="; }
+        |   GEQ{ return ">="; }
+        |   NEQ{ return "!="; }
+        |   EQ{ return "=="; }
+        |   SHIFT_LEFT_ASSIGN{ return "<<="; }
+        |   SHIFT_RIGHT_ASSIGN{ return ">>="; }
+        |   SHIFT_LEFT{ return "<<"; }
+        |   SHIFT_RIGHT{ return ">>"; }
+        |   OR_ASSIGN{ return "|="; }
+        |   AND_ASSIGN{ return "&="; }
+        |   XOR_ASSIGN{ return "^="; }
+        |   REM_ASSIGN{ return "%="; }
+        |   DIV_ASSIGN{ return "/="; }
+        |   MUL_ASSIGN{ return "*="; }
+        |   MINUS_ASSIGN{ return "-="; }
+        |   PLUS_ASSIGN{ return "+="; }
+        |   LANGLE{ return "<"; }
+        |   RANGLE{ return ">"; }
+        |   ASSIGN{ return "="; }
+        |   EXCLAMATION{ return "!"; }
+        |   TILDE{ return "~"; }
+        |   AMP{ return "&"; }
+        |   CARET{ return "^"; }
+        |   PIPE{ return "|"; }
+        |   REM{ return "%"; }
+        |   DIV{ return "/"; }
+        |   STAR{ return "*"; }
+        |   MINUS{ return "-"; }
+        |   PLUS{ return "+"; }
+        |   NEW LBRACKET RBRACKET{ return " new[]"; }
+        |   DELETE LBRACKET RBRACKET{ return " delete[]"; }   
+        |   NEW{ return " new"; }
+        |   DELETE{ return " delete"; }
+        )
+        ;
+}

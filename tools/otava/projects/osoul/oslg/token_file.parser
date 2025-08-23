@@ -1,0 +1,64 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.slg.token.file.parser;
+
+[interface]import soul.ast.slg;
+[implementation]import soul.cpp.token;
+[implementation]import soul.cpp.op.token;
+[implementation]import soul.punctuation.token;
+[implementation]import soul.tool.token;
+[implementation]import soul.common.common.parser;
+[implementation]import soul.common.token.parser;
+[implementation]import soul.lex;
+
+parser TokenFileParser
+{
+    lexer soul::lex::slg::SlgLexer<char32_t>;
+
+    main;
+    using CommonParser.QualifiedId;
+
+    TokenFile(var std::unique_ptr<soul::ast::slg::TokenFile> tokenFile, var std::unique_ptr<soul::ast::slg::TokenCollection> tokenCollection) : soul::ast::slg::TokenFile*
+        ::= 
+        (   
+            TOKENS{ tokenFile.reset(new soul::ast::slg::TokenFile(lexer.FileName())); }
+            QualifiedId:tokenCollectionName{ tokenCollection.reset(new soul::ast::slg::TokenCollection(tokenCollectionName)); }
+			LBRACE
+			(Token:token{ tokenCollection->AddToken(token); } % COMMA)?
+			RBRACE
+        )
+        {
+            tokenFile->SetTokenCollection(tokenCollection.release());
+            return tokenFile.release();
+        }
+        ;
+
+    Token(var std::string name, var std::string info) : soul::ast::slg::Token*
+        ::= 
+        (
+            LPAREN 
+            ID
+            { 
+                auto rv = lexer.TokenToUtf8(pos);
+                if (!rv) return std::unexpected<int>(rv.error());
+                name = *rv;
+            } 
+            COMMA 
+            STRING_LITERAL
+            { 
+                auto rv = lexer.TokenToStringLiteral(pos);
+                if (!rv) return std::unexpected<int>(rv.error());
+                auto u = util::ToUtf8(*rv);
+                if (!u) return std::unexpected<int>(u.error());
+                info = *u;
+            } 
+            RPAREN
+        )
+        {
+            return new soul::ast::slg::Token(name, info);
+        }
+        ;
+}

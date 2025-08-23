@@ -12,6 +12,8 @@ import soul_expected.lex.spg;
 import soul_expected.spg.spg.file.parser;
 import soul_expected.spg.parser.file.parser;
 import soul_expected.spg.parsers.rules;
+import soul_expected.common.token.file.parser;
+import common_expected.parser.rules;
 
 namespace soul_expected::spg {
 
@@ -87,5 +89,30 @@ std::expected<std::unique_ptr<soul_expected::ast::spg::ParserFile>, int>  ParseP
     }
     return std::expected<std::unique_ptr<soul_expected::ast::spg::ParserFile>, int>(std::move(parserFile));
 }
+
+std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int> ParseTokenFile(const std::string& tokenFilePath, bool external)
+{
+    std::expected<std::string, int> frv = util::ReadFile(tokenFilePath);
+    if (!frv) return std::unexpected<int>(frv.error());
+    std::string tokenFileContent = std::move(*frv);
+    std::expected<std::u32string, int> crv = util::ToUtf32(tokenFileContent);
+    if (!crv) return std::unexpected<int>(crv.error());
+    std::u32string content = std::move(*crv);
+    auto rv = soul_expected::lex::spg::MakeLexer(content.c_str(), content.c_str() + content.length(), tokenFilePath);
+    if (!rv) return std::unexpected<int>(rv.error());
+    auto lexer = std::move(*rv);
+    lexer.SetRuleNameMapPtr(common_expected::parser::rules::GetRuleNameMapPtr());
+    using LexerType = decltype(lexer);
+    std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int> tokenFileRv = soul_expected::common::token::file::parser::TokenFileParser<LexerType>::Parse(
+        lexer);
+    if (!tokenFileRv) return tokenFileRv;
+    std::unique_ptr<soul_expected::ast::slg::TokenFile> tokenFile = std::move(*tokenFileRv);
+    if (external)
+    {
+        tokenFile->SetExternal();
+    }
+    return std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int>(std::move(tokenFile));
+}
+
 
 } // namespace soul_expected::spg

@@ -938,11 +938,7 @@ void GrammarParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
     }
 }
 
-File::File(FileKind kind_, const std::string& filePath_) : kind(kind_), filePath(filePath_)
-{
-}
-
-SpgFileDeclaration::SpgFileDeclaration(const soul::ast::SourcePos& sourcePos_, FileKind fileKind_, const std::string& filePath_) : 
+SpgFileDeclaration::SpgFileDeclaration(const soul::ast::SourcePos& sourcePos_, soul::ast::common::FileKind fileKind_, const std::string& filePath_) :
     sourcePos(sourcePos_), fileKind(fileKind_), filePath(filePath_)
 {
 }
@@ -952,17 +948,20 @@ SpgFileDeclaration::~SpgFileDeclaration()
 }
 
 ParserFileDeclaration::ParserFileDeclaration(const soul::ast::SourcePos& sourcePos_, const std::string& filePath_, bool external_) : 
-    SpgFileDeclaration(sourcePos_, FileKind::parserFile, filePath_), external(external_)
+    SpgFileDeclaration(sourcePos_, soul::ast::common::FileKind::parserFile, filePath_), external(external_)
 {
 }
 
-ParserFile::ParserFile(const std::string& filePath_) : File(FileKind::parserFile, filePath_), external(false)
+ParserFile::ParserFile(const std::string& filePath_) : File(soul::ast::common::FileKind::parserFile, filePath_), external(false)
 {
 }
 
-void ParserFile::Accept(Visitor& visitor)
+void ParserFile::Accept(soul::ast::common::Visitor& visitor)
 {
-    visitor.Visit(*this);
+    if (Visitor* spgVisitor = dynamic_cast<Visitor*>(&visitor))
+    {
+        spgVisitor->Visit(*this);
+    }
 }
 
 void ParserFile::SetExportModule(soul::ast::common::ExportModule* exportModule_)
@@ -985,7 +984,7 @@ void ParserFile::AddParser(soul::ast::spg::GrammarParser* parser)
     parsers.push_back(std::unique_ptr< soul::ast::spg::GrammarParser>(parser));
 }
 
-SpgFile::SpgFile(const std::string& filePath_, const std::string& projectName_) : File(FileKind::spgFile, filePath_), projectName(projectName_)
+SpgFile::SpgFile(const std::string& filePath_, const std::string& projectName_) : File(soul::ast::common::FileKind::spgFile, filePath_), projectName(projectName_)
 {
 }
 
@@ -999,14 +998,22 @@ void SpgFile::AddParserFile(ParserFile* parserFile)
     parserFiles.push_back(std::unique_ptr<ParserFile>(parserFile));
 }
 
+void SpgFile::AddTokenFile(soul::ast::common::TokenFile* tokenFile)
+{
+    tokenFiles.push_back(std::unique_ptr<soul::ast::common::TokenFile>(tokenFile));
+}
+
 void SpgFile::AddRule(RuleParser* rule)
 {
     rules.push_back(rule);
 }
 
-void SpgFile::Accept(Visitor& visitor)
+void SpgFile::Accept(soul::ast::common::Visitor& visitor)
 {
-    visitor.Visit(*this);
+    if (Visitor* spgVisitor = dynamic_cast<Visitor*>(&visitor))
+    {
+        spgVisitor->Visit(*this);
+    }
 }
 
 bool SpgFile::AddParser(GrammarParser* parser)

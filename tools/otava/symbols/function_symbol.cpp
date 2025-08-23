@@ -1121,6 +1121,10 @@ std::string FunctionSymbol::IrName(Context* context) const
         }
         digestSource.append(fullName);
         digestSource.append(compileUnitId);
+        if (returnType)
+        {
+            digestSource.append(util::ToUtf8(returnType->FullName()));
+        }
         irName.append("_").append(util::GetSha1MessageDigest(digestSource));
         if (GetFlag(FunctionSymbolFlags::fixedIrName))
         {

@@ -596,31 +596,20 @@ int ClassTypeSymbol::Arity()
 
 void ClassTypeSymbol::AddMemFunDefSymbol(FunctionDefinitionSymbol* memFunDefSymbol)
 {
-    if (IsClassTemplateSpecializationSymbol())
+    if (std::find(memFunDefSymbols.begin(), memFunDefSymbols.end(), memFunDefSymbol) == memFunDefSymbols.end())
     {
-        ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(this);
-        if (sp->ClassTemplate())
+        if (memFunDefSymbol->DefIndex() == -1)
         {
-            sp->ClassTemplate()->AddMemFunDefSymbol(memFunDefSymbol);
+            memFunDefSymbol->SetDefIndex(memFunDefSymbols.size());
+            memFunDefSymbols.push_back(memFunDefSymbol);
         }
-    }
-    else
-    {
-        if (std::find(memFunDefSymbols.begin(), memFunDefSymbols.end(), memFunDefSymbol) == memFunDefSymbols.end())
+        else
         {
-            if (memFunDefSymbol->DefIndex() == -1)
+            while (memFunDefSymbol->DefIndex() >= memFunDefSymbols.size())
             {
-                memFunDefSymbol->SetDefIndex(memFunDefSymbols.size());
-                memFunDefSymbols.push_back(memFunDefSymbol);
+                memFunDefSymbols.push_back(nullptr);
             }
-            else
-            {
-                while (memFunDefSymbol->DefIndex() >= memFunDefSymbols.size())
-                {
-                    memFunDefSymbols.push_back(nullptr);
-                }
-                memFunDefSymbols[memFunDefSymbol->DefIndex()] = memFunDefSymbol;
-            }
+            memFunDefSymbols[memFunDefSymbol->DefIndex()] = memFunDefSymbol;
         }
     }
 }
@@ -1137,14 +1126,9 @@ InlineMemberFunctionParserVisitor::InlineMemberFunctionParserVisitor(Context* co
 
 void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode& node)
 {
-    soul::lexer::XmlParsingLog log(std::cout);
     try
     {
         Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
-        if (symbol->Name() == U"GetToken")
-        {
-            context->GetLexer()->SetLog(&log);
-        }
         otava::ast::Node* fnBody = node.FunctionBody();
         otava::ast::ConstructorInitializerNode* ctorInitializerNode = nullptr;
         otava::ast::CompoundStatementNode* compoundStatementNode = nullptr;

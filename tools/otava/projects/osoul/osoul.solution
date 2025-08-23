@@ -1,0 +1,10 @@
+solution osoul;
+project <../outil/outil.project>;
+project <otoken/otoken.project>;
+project <oparser/oparser.project>;
+project <oast/oast.project>;
+project <olexer/olexer.project>;
+project <olex/olex.project>;
+project <ocpp/ocpp.project>;
+project <ocommon/ocommon.project>;
+project <ore/ore.project>;

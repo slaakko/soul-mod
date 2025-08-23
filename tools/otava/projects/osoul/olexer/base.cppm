@@ -22,16 +22,17 @@ class LexerBase
 {
 public:
     using Self = LexerBase<CharT>;
+    using TokenType = soul::lexer::Token<CharT, Self>;
     virtual ~LexerBase() {}
     virtual void Retract() = 0;
     virtual std::int64_t GetKeywordToken(const Lexeme<CharT>& lexeme) const = 0;
     virtual void EraseTail() = 0;
-    virtual soul::lexer::Token<CharT, Self>& CurrentToken() = 0;
+    virtual TokenType& CurrentToken() = 0;
     virtual const Lexeme<CharT>& CurrentLexeme() const = 0;
     virtual Lexeme<CharT>& CurrentLexeme() = 0;
     virtual std::expected<soul::ast::Span, int> GetSpan() const = 0;
     virtual std::expected<soul::ast::Span, int> GetSpan(std::int64_t pos) const = 0;
-    virtual std::expected<const soul::lexer::Token<CharT, Self>*, int> GetToken(std::int64_t pos) const = 0;
+    virtual std::expected<const TokenType*, int> GetToken(std::int64_t pos) const = 0;
     virtual std::expected<std::basic_string<CharT>, int> TokenToString(std::int64_t pos) const = 0;
     virtual std::expected<std::string, int> TokenToUtf8(std::int64_t pos) const = 0;
     virtual std::expected<std::int8_t, int> TokenToSByte(std::int64_t pos) const = 0;

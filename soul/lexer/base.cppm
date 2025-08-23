@@ -12,6 +12,7 @@ import soul.lexer.keyword;
 import soul.lexer.classmap;
 import soul.lexer.variables;
 import soul.ast.slg;
+import soul.ast.common;
 import soul.ast.lexer.pos.pair;
 import soul.ast.span;
 import soul.lexer.parsing.log;
@@ -41,8 +42,8 @@ public:
     virtual void SetClassMap(soul::lexer::ClassMap<Char>* classMap) = 0;
     virtual Variables* GetVariables() const = 0;
     virtual std::vector<int> GetLineStartIndeces() const = 0;
-    virtual soul::ast::slg::TokenCollection* GetTokenCollection() const = 0;
-    virtual void SetTokenCollection(soul::ast::slg::TokenCollection* tokenCollection_) = 0;
+    virtual soul::ast::common::TokenCollection* GetTokenCollection() const = 0;
+    virtual void SetTokenCollection(soul::ast::common::TokenCollection* tokenCollection_) = 0;
     virtual KeywordMap<Char>* GetKeywordMap() const = 0;
     virtual void SetKeywordMap(KeywordMap<Char>* keywordMap_) = 0;
     virtual std::map<std::int64_t, std::string>* GetRuleNameMapPtr() const = 0;

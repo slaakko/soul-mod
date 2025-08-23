@@ -43,7 +43,7 @@ parser SlgFileParser
 	TokenFileDeclaration(var bool external) : soul::ast::slg::SlgFileDeclaration*
 		::= 
 		(
-			(EXTERN{ external = true; } | empty{ external = false; }) TOKENS FilePath:filePath SEMICOLON!
+			(EXTERN{ external = true; } | empty{ external = false; }) TOKENS FilePath:filePath SEMICOLON
 		)
 		{
 			return new soul::ast::slg::TokenFileDeclaration(filePath, external); 

@@ -217,6 +217,7 @@ public:
     void SetFixedIrName(const std::string& fixedIrName_);
     void SetCompileUnitId(const std::string& compileUnitId_);
     inline const std::string& CompileUnitId() const { return compileUnitId; }
+    void SetTemplateArgs(const std::vector<TypeSymbol*>& templateArgs_);
 private:
     mutable bool memFunParamsConstructed;
     FunctionKind kind;

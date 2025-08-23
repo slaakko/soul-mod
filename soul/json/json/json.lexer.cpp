@@ -6,23 +6,23 @@ using namespace soul::json::token;
 
 namespace soul::json::lexer {
 
-soul::ast::slg::TokenCollection* GetTokens()
+soul::ast::common::TokenCollection* GetTokens()
 {
-    static soul::ast::slg::TokenCollection tokens("soul.json.lexer.tokens");
+    static soul::ast::common::TokenCollection tokens("soul.json.lexer.tokens");
     if (!tokens.Initialized())
     {
         tokens.SetInitialized();
-        tokens.AddToken(new soul::ast::slg::Token(STRING, "STRING", "'string'"));
-        tokens.AddToken(new soul::ast::slg::Token(NUMBER, "NUMBER", "'number'"));
-        tokens.AddToken(new soul::ast::slg::Token(LBRACKET, "LBRACKET", "'['"));
-        tokens.AddToken(new soul::ast::slg::Token(RBRACKET, "RBRACKET", "']"));
-        tokens.AddToken(new soul::ast::slg::Token(LBRACE, "LBRACE", "{'"));
-        tokens.AddToken(new soul::ast::slg::Token(RBRACE, "RBRACE", "'}'"));
-        tokens.AddToken(new soul::ast::slg::Token(COMMA, "COMMA", "','"));
-        tokens.AddToken(new soul::ast::slg::Token(COLON, "COLON", "':'"));
-        tokens.AddToken(new soul::ast::slg::Token(TRUE, "TRUE", "'true'"));
-        tokens.AddToken(new soul::ast::slg::Token(FALSE, "FALSE", "'false'"));
-        tokens.AddToken(new soul::ast::slg::Token(NULL, "NULL", "'null'"));
+        tokens.AddToken(new soul::ast::common::Token(STRING, "STRING", "'string'"));
+        tokens.AddToken(new soul::ast::common::Token(NUMBER, "NUMBER", "'number'"));
+        tokens.AddToken(new soul::ast::common::Token(LBRACKET, "LBRACKET", "'['"));
+        tokens.AddToken(new soul::ast::common::Token(RBRACKET, "RBRACKET", "']"));
+        tokens.AddToken(new soul::ast::common::Token(LBRACE, "LBRACE", "{'"));
+        tokens.AddToken(new soul::ast::common::Token(RBRACE, "RBRACE", "'}'"));
+        tokens.AddToken(new soul::ast::common::Token(COMMA, "COMMA", "','"));
+        tokens.AddToken(new soul::ast::common::Token(COLON, "COLON", "':'"));
+        tokens.AddToken(new soul::ast::common::Token(TRUE, "TRUE", "'true'"));
+        tokens.AddToken(new soul::ast::common::Token(FALSE, "FALSE", "'false'"));
+        tokens.AddToken(new soul::ast::common::Token(NULL, "NULL", "'null'"));
     }
     return &tokens;
 }

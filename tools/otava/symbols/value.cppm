@@ -23,6 +23,9 @@ enum class ValueKind : std::int32_t
 
 ValueKind CommonValueKind(ValueKind left, ValueKind right);
 
+bool readingEvaluationContext = false;
+bool cloning = false;
+
 class Value : public Symbol
 {
 public:

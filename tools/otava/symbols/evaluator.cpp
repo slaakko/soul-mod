@@ -9,6 +9,7 @@ import otava.ast.literal;
 import otava.ast.identifier;
 import otava.ast.visitor;
 import otava.ast.expression;
+import otava.symbols.alias.type.symbol;
 import otava.symbols.context;
 import otava.symbols.declaration;
 import otava.symbols.exception;
@@ -21,6 +22,7 @@ import otava.symbols.emitter;
 import otava.symbols.variable.symbol;
 import otava.symbols.array.type.symbol;
 import otava.symbols.classes;
+import otava.symbols.enums;
 import otava.symbols.modules;
 import util.unicode;
 
@@ -130,6 +132,7 @@ public:
     void Visit(otava::ast::InvokeExprNode& node) override;
     void Visit(otava::ast::SizeOfTypeExprNode& node) override;
     void Visit(otava::ast::BracedInitListNode& node) override;
+    void Visit(otava::ast::CppCastExprNode& node) override;
 private:
     Context* context;
     Value* value;
@@ -190,21 +193,32 @@ void Evaluator::Visit(otava::ast::IdentifierNode& node)
         LookupFlags::none);
     if (symbol)
     {
-        if (symbol->IsGlobalVariableSymbol())
+        switch (symbol->Kind())
         {
-            VariableSymbol* variableSymbol = static_cast<VariableSymbol*>(symbol);
-            if (variableSymbol->GetValue())
+            case SymbolKind::variableSymbol:
             {
-                value = variableSymbol->GetValue();
+                VariableSymbol* variableSymbol = static_cast<VariableSymbol*>(symbol);
+                if (variableSymbol->GetValue())
+                {
+                    value = variableSymbol->GetValue();
+                }
+                else
+                {
+                    value = context->GetEvaluationContext()->GetSymbolValue(symbol);
+                }
+                break;
             }
-            else
+            case SymbolKind::enumConstantSymbol:
+            {
+                EnumConstantSymbol* enumConstant = static_cast<EnumConstantSymbol*>(symbol);
+                value = enumConstant->GetValue();
+                break;
+            }
+            default:
             {
                 value = context->GetEvaluationContext()->GetSymbolValue(symbol);
+                break;
             }
-        }
-        else
-        {
-            value = context->GetEvaluationContext()->GetSymbolValue(symbol);
         }
     }
 }
@@ -548,6 +562,42 @@ void Evaluator::Visit(otava::ast::BracedInitListNode& node)
     else
     {
         value = nullptr;
+    }
+}
+
+void Evaluator::Visit(otava::ast::CppCastExprNode& node)
+{
+    TypeSymbol* type = ResolveType(node.TypeId(), DeclarationFlags(), context);
+    node.Child()->Accept(*this);
+    if (value)
+    {
+        switch (value->GetValueKind())
+        {
+            case ValueKind::integerValue:
+            {
+                IntegerValue* integerValue = static_cast<IntegerValue*>(value);
+                value = context->GetEvaluationContext()->GetIntegerValue(integerValue->GetValue(), integerValue->Rep(), type);
+                break;
+            }
+            case ValueKind::floatingValue:
+            {
+                FloatingValue* floatingValue = static_cast<FloatingValue*>(value);
+                value = context->GetEvaluationContext()->GetFloatingValue(floatingValue->GetValue(), floatingValue->Rep(), type);
+                break;
+            }
+            case ValueKind::stringValue:
+            {
+                StringValue* stringValue = static_cast<StringValue*>(value);
+                value = context->GetEvaluationContext()->GetStringValue(stringValue->GetValue(), type);
+                break;
+            }
+            case ValueKind::charValue:
+            {
+                CharValue* charValue = static_cast<CharValue*>(value);
+                value = context->GetEvaluationContext()->GetCharValue(charValue->GetValue(), type);
+                break;
+            }
+        }
     }
 }
 

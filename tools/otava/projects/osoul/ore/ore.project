@@ -1,0 +1,13 @@
+project ore;
+target=library;
+reference <../../outil/outil.project>;
+reference <../otoken/otoken.project>;
+reference <../oast/oast.project>;
+reference <../oparser/oparser.project>;
+reference <../olexer/olexer.project>;
+reference <../olex/olex.project>;
+interface <re.parser.cppm>;
+source <re.parser.cpp>;
+interface <re_rules.cppm>;
+source <re_rules.cpp>;
+interface <token_parser.cppm>;

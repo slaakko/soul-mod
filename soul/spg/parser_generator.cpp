@@ -137,7 +137,7 @@ void GenerateParsers(soul::ast::spg::SpgFile* spgFile, soul::lexer::FileMap& fil
     {
         switch (declaration->GetFileKind())
         {
-            case soul::ast::spg::FileKind::parserFile:
+            case soul::ast::common::FileKind::parserFile:
             {
                 soul::ast::spg::ParserFileDeclaration* parserFileDeclaration = static_cast<soul::ast::spg::ParserFileDeclaration*>(declaration.get());
                 std::string parserFilePath = util::GetFullPath(util::Path::Combine(root, parserFileDeclaration->FilePath()));

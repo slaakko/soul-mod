@@ -102,6 +102,7 @@ extern "C" std::int64_t ort_connect_socket(const char* node, const char* service
 extern "C" int ort_send_socket(std::int64_t socket, const std::uint8_t* buf, int len, int flags);
 extern "C" int ort_recv_socket(std::int64_t socket, std::uint8_t* buf, int len, int flags);
 extern "C" bool ort_get_path_to_executable(char* buf, int bufSize);
+extern "C" double ort_pow(double x, int exponent);
 extern "C" void ort_exit(int exitCode);
 
 using FILE = void;
@@ -218,6 +219,11 @@ inline long ftell(void* file)
 inline const char* getenv(const char* env)
 {
     return ort_get_env(env);
+}
+
+inline double pow(double x, int exponent)
+{
+    return ort_pow(x, exponent);
 }
 
 inline void exit(int exitCode)

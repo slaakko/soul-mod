@@ -8,6 +8,7 @@ export module soul.ast.spg;
 import std;
 import soul.ast.common;
 import soul.ast.cpp;
+import soul.ast.common;
 import soul.ast.source.pos;
 
 export namespace soul::ast::spg {
@@ -468,34 +469,17 @@ private:
     std::map<std::string, RuleParser*> ruleMap;
 };
 
-enum class FileKind
-{
-    spgFile, parserFile
-};
-
-class File
-{
-public:
-    File(FileKind kind_, const std::string& filePath_);
-    inline FileKind Kind() const { return kind; }
-    inline const std::string& FilePath() const { return filePath; }
-    virtual void Accept(Visitor& visitor) = 0;
-private:
-    FileKind kind;
-    std::string filePath;
-};
-
 class SpgFileDeclaration
 {
 public:
-    SpgFileDeclaration(const soul::ast::SourcePos& sourcePos_, FileKind fileKind_, const std::string& filePath_);
+    SpgFileDeclaration(const soul::ast::SourcePos& sourcePos_, soul::ast::common::FileKind fileKind_, const std::string& filePath_);
     virtual ~SpgFileDeclaration();
     inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
-    inline FileKind GetFileKind() const { return fileKind; }
+    inline soul::ast::common::FileKind GetFileKind() const { return fileKind; }
     inline const std::string& FilePath() const { return filePath; }
 private:
     soul::ast::SourcePos sourcePos;
-    FileKind fileKind;
+    soul::ast::common::FileKind fileKind;
     std::string filePath;
 };
 
@@ -508,7 +492,7 @@ private:
     bool external;
 };
 
-class ParserFile : public File
+class ParserFile : public soul::ast::common::File
 {
 public:
     ParserFile(const std::string& filePath_);
@@ -520,7 +504,7 @@ public:
     inline const std::vector<std::unique_ptr<soul::ast::spg::GrammarParser>>& Parsers() const { return parsers; }
     inline bool IsExternal() const { return external; }
     inline void SetExternal() { external = true; }
-    void Accept(Visitor& visitor) override;
+    void Accept(soul::ast::common::Visitor& visitor) override;
 private:
     std::unique_ptr<soul::ast::common::ExportModule> exportModule;
     std::vector<std::unique_ptr<soul::ast::common::Import>> imports;
@@ -528,7 +512,7 @@ private:
     bool external;
 };
 
-class SpgFile : public File
+class SpgFile : public soul::ast::common::File
 {
 public:
     SpgFile(const std::string& filePath_, const std::string& projectName_);
@@ -537,20 +521,23 @@ public:
     inline const std::vector<std::unique_ptr<SpgFileDeclaration>>& Declarations() const { return declarations; }
     void AddParserFile(ParserFile* parserFile);
     inline const std::vector<std::unique_ptr<ParserFile>>& ParserFiles() const { return parserFiles; }
+    void AddTokenFile(soul::ast::common::TokenFile* tokenFile);
+    inline const std::vector<std::unique_ptr<soul::ast::common::TokenFile>>& TokenFiles() const { return tokenFiles; }
     bool AddParser(GrammarParser* parser);
     GrammarParser* GetParser(const std::string& name) const;
     void AddRule(RuleParser* rule);
     inline const std::vector<RuleParser*>& Rules() const { return rules; }
-    void Accept(Visitor& visitor) override;
+    void Accept(soul::ast::common::Visitor& visitor) override;
 private:
     std::string projectName;
     std::vector<std::unique_ptr<SpgFileDeclaration>> declarations;
     std::vector<std::unique_ptr<ParserFile>> parserFiles;
+    std::vector<std::unique_ptr<soul::ast::common::TokenFile>> tokenFiles;
     std::map<std::string, GrammarParser*> parserMap;
     std::vector<RuleParser*> rules;
 };
 
-class Visitor
+class Visitor : public soul::ast::common::Visitor
 {
 public:
     virtual void Visit(ChoiceParser& parser) {}

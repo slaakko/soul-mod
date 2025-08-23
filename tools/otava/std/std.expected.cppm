@@ -3,6 +3,7 @@ export module std.expected;
 import std.type.fundamental;
 import std.algorithm;
 import std.utilities.utility;
+import std.functional;
 
 export namespace std {
 
@@ -50,11 +51,11 @@ public:
     constexpr expected(const unexpected<E>& e): has_val(false), unex(e.error()) {}
     constexpr expected(unexpected<E>&& e) : has_val(false), unex(e.error()) {}
     constexpr expected& operator=(const T& val_) { has_val = true; val = val_; return *this; }
-    constexpr expected& operator=(T&& val_) { hasVal = true; val = std::move(val_); return *this; }
+    constexpr expected& operator=(T&& val_) { has_val = true; val = std::move(val_); return *this; }
     constexpr expected& operator=(const unexpected<E>& e) { has_val = false; unex = e.error(); return *this; }
     constexpr expected& operator=(unexpected<E>&& e) { has_val = false; unex = e.error(); return *this; }
-    constexpr const T* operator->() const noexcept { return addressof(val); }
-    constexpr T* operator->() noexcept { return addressof(val); }
+    constexpr const T* operator->() const noexcept { return &val; }
+    constexpr T* operator->() noexcept { return &val; }
     constexpr const T& operator*() const noexcept  { return val; }
     constexpr T& operator*() noexcept  { return val; }
     constexpr bool has_value() const noexcept { return has_val; }

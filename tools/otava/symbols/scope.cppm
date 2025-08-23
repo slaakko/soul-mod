@@ -57,7 +57,7 @@ public:
     virtual Scope* GetClassScope() const { return nullptr; }
     virtual Scope* GetNamespaceScope() const { return nullptr; }
     virtual Symbol* GetSymbol() { return nullptr; }
-    virtual ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization() const { return nullptr; }
+    virtual ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(std::set<Scope*>& visited) const { return nullptr; }
     virtual void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags, 
         std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const;
     virtual void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context);
@@ -66,6 +66,7 @@ public:
     virtual void AddParentScope(Scope* parentScope_);
     virtual void PushParentScope(Scope* parentScope);
     virtual void PopParentScope();
+    virtual bool HasParentScope(const Scope* parentScope) const { return false; }
     virtual void ClearParentScopes() {}
     virtual void AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual void AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::SourcePos& sourcePos, Context* context);
@@ -97,7 +98,7 @@ public:
     Scope* GetNamespaceScope() const override;
     void AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context) override;
     Symbol* GetSymbol() override;
-    ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization() const override;
+    ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(std::set<Scope*>& visited) const override;
     inline ContainerSymbol* GetContainerSymbol() const { return containerSymbol; }
     void SetContainerSymbol(ContainerSymbol* containerSymbol_) { containerSymbol = containerSymbol_; }
     void AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::SourcePos& sourcePos, Context* context) override;
@@ -113,6 +114,7 @@ public:
     VariableGroupSymbol* GetOrInsertVariableGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
     AliasGroupSymbol* GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
     EnumGroupSymbol* GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    bool HasParentScope(const Scope* parentScope) const override;
 private:
     std::vector<Scope*> parentScopes;
     std::vector<Scope*> baseScopes;
@@ -155,11 +157,12 @@ public:
     Scope* SymbolScope() override;
     Scope* GetClassScope() const override;
     Scope* GetNamespaceScope() const override;
-    ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization() const override;
+    ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(std::set<Scope*>& visited) const override;
     void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags, 
         std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const override;
     void PushParentScope(Scope* parentScope_) override;
     void PopParentScope() override;
+    bool HasParentScope(const Scope* parentScope) const override;
 private:
     std::vector<Scope*> parentScopes;
 };

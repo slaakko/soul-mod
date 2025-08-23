@@ -428,6 +428,10 @@ void InstantiateVirtualFunctions(ClassTemplateSpecializationSymbol* specializati
 ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs, const soul::ast::SourcePos& sourcePos, 
     Context* context)
 {
+    if (classTemplate->Group()->Name() == U"stack")
+    {
+        int x = 0;
+    }
     if (classTemplate->IsClassTemplateSpecializationSymbol())
     {
         ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(classTemplate);
@@ -676,6 +680,10 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
         {
             InstantiateDestructor(classTemplateSpecialization, sourcePos, context);
             return memFn;
+        }
+        else
+        {
+            ThrowException("node for symbol '" + util::ToUtf8(memFn->FullName()) + "¨' not found", sourcePos, context);
         }
     }
     if (node->IsFunctionDefinitionNode())

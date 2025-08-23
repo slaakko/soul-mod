@@ -5,8 +5,10 @@ export module soul.rex.lexer;
 import std;
 import soul.lexer;
 import soul.ast.slg;
+import soul.ast.common;
 import util;
 import soul.rex.token;
+
 
 using namespace soul;
 using namespace soul::lexer;
@@ -25,7 +27,7 @@ soul::lexer::Lexer<RexLexer<Char>, Char> MakeLexer(const Char* start, const Char
 template<typename Char>
 soul::lexer::Lexer<RexLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);
 
-soul::ast::slg::TokenCollection* GetTokens();
+soul::ast::common::TokenCollection* GetTokens();
 
 struct RexLexer_Variables : public soul::lexer::Variables
 {

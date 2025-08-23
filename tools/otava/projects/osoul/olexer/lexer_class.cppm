@@ -106,7 +106,7 @@ public:
     using TokenType = soul::lexer::Token<CharT, LexerBase<CharT>>;
     using TokenLineType = soul::lexer::TokenLine<CharT, LexerBase<CharT>>;
     using VariableClassType = Machine::Variables;
-    using PPHook = void (*)(LexerType& lexer, TokenType& token);
+    using PPHook = void (*)(LexerType* lexer, TokenType* token);
 
     Lexer(const CharT* start_, const CharT* end_, const std::string& fileName_) :
         flags(LexerFlags::none),
@@ -180,17 +180,17 @@ public:
         }
         return std::expected<bool, int>(true);
     }
-    inline std::int64_t GetPos() const override
+    std::int64_t GetPos() const override
     {
         std::int32_t p = static_cast<std::int32_t>(current - tokens.begin());
         return (static_cast<std::int64_t>(line) << 32) | static_cast<std::int64_t>(p);
     }
-    inline void SetPos(std::int64_t pos)
+    void SetPos(std::int64_t pos)
     {
         current = tokens.begin() + static_cast<std::int32_t>(pos);
         line = static_cast<std::int32_t>(pos >> 32);
     }
-    inline std::expected<soul::ast::Span, int> GetSpan() const override
+    std::expected<soul::ast::Span, int> GetSpan() const override
     {
         return GetSpan(GetPos());
     }
@@ -198,7 +198,7 @@ public:
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        auto token = *rv;
+        const TokenType* token = *rv;
         return soul::ast::Span(static_cast<int>(token->match.begin - start), token->match.Length());
     }
     std::expected<const TokenType*, int> GetToken(std::int64_t pos) const override
@@ -336,55 +336,55 @@ public:
         if (!u) return std::unexpected<int>(util::AllocateError(util::GetErrorMessage(u.error()) + "\n(file='" + fileName + "', line=" + std::to_string(line) + ")"));
         return u;
     }
-    inline const std::string& FileName() const override
+    const std::string& FileName() const override
     {
         return fileName;
     }
-    inline int File() const override
+    int File() const override
     {
         return file;
     }
-    inline void SetFile(int file_)
+    void SetFile(int file_)
     {
         file = file_;
     }
-    inline int Line() const override
+    int Line() const override
     {
         return line;
     }
-    inline void SetLine(std::int32_t line_) override
+    void SetLine(std::int32_t line_) override
     {
         line = line_;
     }
-    inline soul::lexer::ClassMap<CharT>* GetClassMap() const override
+    soul::lexer::ClassMap<CharT>* GetClassMap() const override
     {
         return classMap;
     }
-    inline void SetClassMap(soul::lexer::ClassMap<CharT>* classMap_) override
+    void SetClassMap(soul::lexer::ClassMap<CharT>* classMap_) override
     {
         classMap = classMap_;
     }
-    inline soul::ast::slg::TokenCollection* GetTokenCollection() const override
+    soul::ast::slg::TokenCollection* GetTokenCollection() const override
     {
         return tokenCollection;
     }
-    inline void SetTokenCollection(soul::ast::slg::TokenCollection* tokenCollection_) override
+    void SetTokenCollection(soul::ast::slg::TokenCollection* tokenCollection_) override
     {
         tokenCollection = tokenCollection_;
     }
-    inline KeywordMap<CharT>* GetKeywordMap() const override
+    KeywordMap<CharT>* GetKeywordMap() const override
     {
         return keywordMap;
     }
-    inline void SetKeywordMap(KeywordMap<CharT>* keywordMap_) override
+    void SetKeywordMap(KeywordMap<CharT>* keywordMap_) override
     {
         keywordMap = keywordMap_;
     }
-    inline std::map<std::int64_t, std::string>* GetRuleNameMapPtr() const override
+    std::map<std::int64_t, std::string>* GetRuleNameMapPtr() const override
     {
         return ruleNameMapPtr;
     }
-    inline void SetRuleNameMapPtr(std::map<std::int64_t, std::string>* ruleNameMapPtr_) override
+    void SetRuleNameMapPtr(std::map<std::int64_t, std::string>* ruleNameMapPtr_) override
     {
         ruleNameMapPtr = ruleNameMapPtr_;
     }
@@ -400,7 +400,7 @@ public:
     {
         ruleContext.pop_back();
     }
-    inline std::int64_t GetKeywordToken(const Lexeme<CharT>& lexeme) const override
+    std::int64_t GetKeywordToken(const Lexeme<CharT>& lexeme) const override
     {
         if (keywordMap)
         {
@@ -411,23 +411,23 @@ public:
             return soul::lexer::INVALID_TOKEN;
         }
     }
-    inline void Retract() override
+    void Retract() override
     {
         token.match.end = pos;
     }
-    inline soul::lexer::Token<CharT, LexerBase<CharT>>& CurrentToken() override
+    soul::lexer::Token<CharT, LexerBase<CharT>>& CurrentToken() override
     {
         return token;
     }
-    inline void EraseTail() override
+    void EraseTail() override
     {
         tokens.erase(current + 1, tokens.end());
     }
-    inline const Lexeme<CharT>& CurrentLexeme() const override
+    const Lexeme<CharT>& CurrentLexeme() const override
     {
         return lexeme;
     }
-    inline Lexeme<CharT>& CurrentLexeme() override
+    Lexeme<CharT>& CurrentLexeme() override
     {
         return lexeme;
     }
@@ -471,7 +471,7 @@ public:
         }
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        auto token = *rv;
+        const TokenType* token = *rv;
         int col = static_cast<int>(token->match.begin - s + 1);
         return soul::ast::SourcePos(pos, file, line, col);
     }
@@ -479,7 +479,7 @@ public:
     {
         auto rv = GetToken(pos);
         if (!rv) return std::unexpected<int>(rv.error());
-        auto token = *rv;
+        const TokenType* token = *rv;
         std::basic_string<CharT> lines;
         const CharT* lineStart = LineStart(start, token->match.begin);
         const CharT* lineEnd = LineEnd(end, token->match.end);
@@ -558,14 +558,22 @@ public:
     {
         return log;
     }
-    std::string RestOfLine(int maxLineLength) const
+    std::expected<std::string, int> RestOfLine(int maxLineLength) const
     {
-        std::string restOfLine(util::ToUtf8(current->match.ToString()) + ToString(current->match.end, pos) + ToString(pos, LineEnd(end, pos)));
+        std::expected<std::string, int> rv = util::ToUtf8(current->match.ToString());
+        if (!rv) return rv;
+        std::string restOfLine = *rv;
+        rv = ToString(current->match.end, pos);
+        if (!rv) return rv;
+        restOfLine.append(*rv);
+        rv = ToString(pos, LineEnd(end, pos));
+        if (!rv) return rv;
+        restOfLine.append(*rv);
         if (maxLineLength != 0)
         {
             restOfLine = restOfLine.substr(0, maxLineLength);
         }
-        return restOfLine;
+        return std::expected<std::string, int>(restOfLine);
     }
     std::vector<int> GetLineStartIndeces() const override
     {
@@ -588,11 +596,11 @@ public:
     {
         return pos;
     }
-    inline void SetPos(const CharT* pos_) override
+    void SetPos(const CharT* pos_) override
     {
         pos = pos_;
     }
-    inline const CharT* End() const override
+    const CharT* End() const override
     {
         return end;
     }
@@ -604,11 +612,11 @@ public:
     {
         return std::move(tokens);
     }
-    inline void SetCurrentMatchEnd(const CharT* end) override
+    void SetCurrentMatchEnd(const CharT* end) override
     {
         current->match.end = end;
     }
-    inline std::expected<bool, int> Increment() override
+    std::expected<bool, int> Increment() override
     {
         return ++ * this;
     }
@@ -634,7 +642,7 @@ public:
         SetPos(recordedPosPair.start);
         SetFlag(LexerFlags::recordedParse);
     }
-    inline void EndRecordedParse() override
+    void EndRecordedParse() override
     {
         PopState();
     }
@@ -646,7 +654,7 @@ public:
     {
         if (ppHook)
         {
-            ppHook(*this, token);
+            ppHook(this, &token);
         }
     }
     inline void PushState()
@@ -748,7 +756,7 @@ public:
                 tokenLine.tokens.push_back(token);
                 if (pos + 1 < end && *pos == '\"' && *(pos + 1) == '\\' && prevPrevState == 13 && prevState == 71)
                 {
-                    TokenType tok(nullptr);
+                    TokenType tok(this);
                     tok.match.begin = pos;
                     tok.match.end = pos + 2;
                     tokenLine.tokens.push_back(tok);

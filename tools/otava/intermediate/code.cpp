@@ -2897,6 +2897,7 @@ Function* Code::AddFunctionDeclaration(const soul::ast::Span& span, FunctionType
         if (prev->GetType() != functionType)
         {
             Error("error adding function declaration '" + functionId + "': type '" + functionType->Name() + "' conflicts with earlier declaration", span, context, prev->Span());
+            return nullptr;
         }
         return prev;
     }

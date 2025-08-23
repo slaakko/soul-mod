@@ -9,6 +9,7 @@ import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.punctuation.token;
 import soul.tool.token;
+import soul.ast.common;
 import re.expr;
 
 lexer RegExLexer

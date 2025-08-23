@@ -143,12 +143,15 @@
   <ItemGroup>
     <None Include="common.parser" />
     <None Include="common_parser.spg" />
+    <None Include="token_file.parser" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="common.parser.cpp" />
     <ClCompile Include="common.parser.cppm" />
     <ClCompile Include="common_parser_rules.cpp" />
     <ClCompile Include="common_parser_rules.cppm" />
+    <ClCompile Include="token_file.parser.cpp" />
+    <ClCompile Include="token_file.parser.cppm" />
     <ClCompile Include="token_parser.cppm" />
   </ItemGroup>
   <ItemGroup>

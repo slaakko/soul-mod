@@ -5,6 +5,7 @@ export module soul.cpp20.token.line.lexer;
 import std;
 import soul.lexer;
 import soul.ast.slg;
+import soul.ast.common;
 import otava.token;
 
 using namespace soul;
@@ -21,7 +22,7 @@ struct OtavaTokenLineLexer;
 template<typename Char>
 soul::lexer::Lexer<OtavaTokenLineLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName);
 
-soul::ast::slg::TokenCollection* GetTokens();
+soul::ast::common::TokenCollection* GetTokens();
 
 struct OtavaTokenLineLexer_Variables : public soul::lexer::Variables
 {

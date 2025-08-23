@@ -36,4 +36,101 @@ private:
     ImportPrefix prefix;
 };
 
+enum class FileKind
+{
+    tokenFile, keywordFile, expressionFile, lexerFile, slgFile, parserFile, spgFile
+};
+
+class Visitor;
+
+class File
+{
+public:
+    File(FileKind kind_, const std::string& filePath_);
+    virtual ~File();
+    inline FileKind Kind() const { return kind; }
+    inline const std::string& FilePath() const { return filePath; }
+    inline bool IsExternal() const { return external; }
+    inline void SetExternal() { external = true; }
+    virtual void Accept(Visitor& visitor);
+private:
+    FileKind kind;
+    std::string filePath;
+    bool external;
+};
+
+enum class CollectionKind
+{
+    tokenCollection, keywordCollection, expressionCollection, lexer
+};
+
+class Collection
+{
+public:
+    Collection(CollectionKind kind_, const std::string& name_);
+    virtual ~Collection();
+    inline CollectionKind Kind() const { return kind; }
+    inline const std::string& Name() const { return name; }
+    inline void SetFile(File* file_) { file = file_; }
+    inline File* GetFile() const { return file; }
+private:
+    CollectionKind kind;
+    std::string name;
+    File* file;
+};
+
+class Token
+{
+public:
+    Token(std::int64_t id_, const std::string& name_, const std::string& info_);
+    Token(const std::string& name_, const std::string& info_);
+    inline void SetCollection(Collection* collection_) { collection = collection_; }
+    inline Collection* GetCollection() const { return collection; }
+    inline std::int64_t Id() const { return id; }
+    inline void SetId(std::int64_t id_) { id = id_; }
+    inline const std::string& Name() const { return name; }
+    inline const std::string& Info() const { return info; }
+private:
+    std::int64_t id;
+    std::string name;
+    std::string info;
+    Collection* collection;
+};
+
+class TokenCollection : public Collection
+{
+public:
+    TokenCollection(const std::string& name_);
+    inline bool Initialized() const { return initialized; }
+    inline void SetInitialized() { initialized = true; }
+    void AddToken(Token* token);
+    inline const std::vector<std::unique_ptr<Token>>& Tokens() const { return tokens; }
+    inline std::int32_t Id() const { return id; }
+    Token* GetToken(std::int64_t id) const;
+private:
+    bool initialized;
+    std::int32_t id;
+    std::vector<std::unique_ptr<Token>> tokens;
+    std::map<std::int64_t, Token*> tokenMap;
+};
+
+class TokenFile : public File
+{
+public:
+    TokenFile(const std::string& filePath_);
+    void SetTokenCollection(TokenCollection* tokenCollection_);
+    inline TokenCollection* GetTokenCollection() const { return tokenCollection.get(); }
+    void Accept(Visitor& visitor) override;
+private:
+    std::unique_ptr<TokenCollection> tokenCollection;
+};
+
+class Visitor
+{
+public:
+    Visitor();
+    virtual ~Visitor();
+    virtual void Visit(TokenFile& tokenFile) {}
+};
+
 } // namespace soul::ast::common

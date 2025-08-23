@@ -1,0 +1,13 @@
+project soul.slg.parsers;
+parser <expression_file.parser>;
+parser <lexer_file.parser>;
+parser <keyword_file.parser>;
+parser <slg_file.parser>;
+parser <token_file.parser>;
+extern parser <../ocommon/common.parser>;
+extern parser <../ocpp/declaration.parser>;
+extern parser <../ocpp/declarator.parser>;
+extern parser <../ocpp/expression.parser>;
+extern parser <../ocpp/identifier.parser>;
+extern parser <../ocpp/literal.parser>;
+extern parser <../ocpp/statement.parser>;

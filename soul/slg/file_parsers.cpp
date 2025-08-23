@@ -10,7 +10,7 @@ import soul.lexer;
 import soul.parser;
 import soul.lex.slg;
 import soul.cpp.token;
-import soul.slg.token.file.parser;
+import soul.common.token.file.parser;
 import soul.slg.keyword.file.parser;
 import soul.slg.expression.file.parser;
 import soul.slg.lexer.file.parser;
@@ -21,20 +21,20 @@ namespace soul::slg {
 
 using namespace soul::cpp::token;
 using namespace soul::lex::slg;
-using namespace soul::slg::token::file::parser;
+using namespace soul::common::token::file::parser;
 using namespace soul::slg::keyword::file::parser;
 using namespace soul::slg::expression::file::parser;
 using namespace soul::slg::lexer::file::parser;
 using namespace soul::slg::slg::file::parser;
 
-std::unique_ptr<soul::ast::slg::TokenFile> ParseTokenFile(const std::string& tokenFilePath, bool external)
+std::unique_ptr<soul::ast::common::TokenFile> ParseTokenFile(const std::string& tokenFilePath, bool external)
 {
     std::string tokenFileContent = util::ReadFile(tokenFilePath);
     std::u32string content = util::ToUtf32(tokenFileContent);
     auto lexer = MakeLexer(content.c_str(), content.c_str() + content.length(), tokenFilePath);
     lexer.SetRuleNameMapPtr(soul::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
-    std::unique_ptr<soul::ast::slg::TokenFile> tokenFile = TokenFileParser<LexerType>::Parse(lexer);
+    std::unique_ptr<soul::ast::common::TokenFile> tokenFile = soul::common::token::file::parser::TokenFileParser<LexerType>::Parse(lexer);
     if (external)
     {
         tokenFile->SetExternal();

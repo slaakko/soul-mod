@@ -1,0 +1,226 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp.declarator.parser;
+
+[interface]import soul.ast.cpp;
+[implementation]import soul.cpp.token;
+[implementation]import soul.cpp.op.token;
+[implementation]import soul.tool.token;
+[implementation]import soul.punctuation.token;
+[implementation]import soul.cpp.declaration.parser;
+[implementation]import soul.cpp.expression.parser;
+[implementation]import soul.lex;
+
+parser DeclaratorParser
+{
+    lexer soul::lex::slg::SlgLexer<char32_t>;
+    lexer soul::lex::spg::SpgLexer<char32_t>;
+
+    using ExpressionParser.ConstantExpression;
+    using ExpressionParser.IdExpression;
+    using ExpressionParser.ExpressionList;
+    using ExpressionParser.AssignmentExpression;
+    using DeclarationParser.TypeName;
+    using DeclarationParser.TypeSpecifier;
+    using DeclarationParser.CVQualifier;
+
+    InitDeclaratorList(soul::ast::cpp::Context* context, 
+        var std::unique_ptr<soul::ast::cpp::InitDeclaratorListNode> initDeclaratorList) : soul::ast::cpp::InitDeclaratorListNode*
+        ::= 
+        (   empty
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                initDeclaratorList.reset(new soul::ast::cpp::InitDeclaratorListNode(*sp)); 
+            }
+            (
+                InitDeclarator(context):initDeclarator{ initDeclaratorList->Add(initDeclarator); } % COMMA
+            )
+        )
+        {
+            return initDeclaratorList.release();
+        }
+        ;
+
+    InitDeclarator(soul::ast::cpp::Context* context) : soul::ast::cpp::InitDeclaratorNode*
+        ::= 
+        (
+            Declarator(context):declarator Initializer(context):initializer?
+        )
+        {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul::ast::cpp::InitDeclaratorNode(*sp, declarator, initializer);
+        }
+        ;
+
+    Declarator(soul::ast::cpp::Context* context, var std::string str) : std::string
+        ::=
+        (   DirectDeclarator(context):directDeclarator{ str.append(directDeclarator); }
+        |   PtrOperator(context):ptrOperator{ str.append(ptrOperator); } Declarator(context):declarator{ str.append(declarator); }
+        )
+        {
+            return str;
+        }
+        ;
+    
+    DirectDeclarator(soul::ast::cpp::Context* context, var std::string str) : std::string
+        ::= 
+        (
+            DeclaratorId(context):declaratorId{ str.append(declaratorId); }
+            (   LBRACKET ConstantExpression(context):expr RBRACKET{ str.append("[").append(expr->ToString()).append("]"); }
+            |   LBRACKET RBRACKET{ str.append("[]"); }
+            |   LPAREN Declarator(context):declarator RPAREN{ str.append("(").append(declarator).append(")"); }
+            )*
+        )
+        {
+            return str;
+        }
+        ;
+
+    DeclaratorId(soul::ast::cpp::Context* context) : std::string
+        ::= IdExpression(context):idExpr{ return idExpr->ToString(); }
+        |   TypeName(context):typeName{ return typeName->ToString(); }
+        ;
+
+    TypeId(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::TypeIdNode> typeId) : soul::ast::cpp::TypeIdNode*
+        ::= empty{ typeId.reset(new soul::ast::cpp::TypeIdNode(*lexer.GetSourcePos(pos))); }
+        (
+            (
+                TypeSpecifierSeq(context, typeId.get()):typeSpecifierSeq | TypeName(context):typeName{ typeId->Add(typeName); }
+            )
+            (
+                AbstractDeclarator(context):abstractDeclarator{ typeId->SetDeclarator(abstractDeclarator); }
+            )?
+        )
+        {
+            return typeId.release();
+        }
+        ;
+
+    Type(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::cpp::TypeNode> type) : soul::ast::cpp::TypeNode*
+        ::= empty
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                type.reset(new soul::ast::cpp::TypeNode(*sp)); 
+            }
+        (   
+            (
+                TypeSpecifier(context):typeSpecifier{ type->Add(typeSpecifier); }
+            )+
+        |   TypeName(context):typeName{ type->Add(typeName); }
+        )
+        {
+            return type.release();
+        }
+        ;
+
+    TypeSpecifierSeq(soul::ast::cpp::Context* context, soul::ast::cpp::TypeIdNode* typeId)
+        ::= (TypeSpecifier(context):typeSpecifier{ typeId->Add(typeSpecifier); })+
+        ;
+
+    AbstractDeclarator(soul::ast::cpp::Context* context, var std::string str) : std::string
+        ::= 
+        (   PtrOperator(context):ptrOperator{ str.append(ptrOperator); } (AbstractDeclarator(context):abstractDeclarator{ str.append(abstractDeclarator); })?
+        |   DirectAbstractDeclarator(context):directAbstractDeclarator{ str.append(directAbstractDeclarator); }
+        )
+        {
+            return str;
+        }
+        ;
+
+    DirectAbstractDeclarator(soul::ast::cpp::Context* context, var std::string str) : std::string
+        ::=
+        (
+            (   LBRACKET ConstantExpression(context):expr RBRACKET{ str.append("[").append(expr->ToString()).append("]"); }
+            |   LBRACKET RBRACKET{ str.append("[]"); }
+            |   LPAREN AbstractDeclarator(context):abstractDeclarator RPAREN{ str.append("(").append(abstractDeclarator).append(")"); }
+            )+
+        )
+        {
+            return str;
+        }
+        ;
+
+    PtrOperator(soul::ast::cpp::Context* context, var std::string str) : std::string
+        ::= 
+        (   STAR{ str.append("*"); } (CVQualifierSeq(context):cvQualifiedSeq{ str.append(1, ' ').append(cvQualifiedSeq); })?
+        |   AMP{ str.append("&"); }
+        )
+        {
+            return str;
+        }
+        ;
+
+    CVQualifierSeq(soul::ast::cpp::Context* context, var std::string str) : std::string
+        ::= 
+        (
+            (
+                CVQualifier(context):cvQualifier{ if (str != std::string()) str.append(1, ' '); str.append(cvQualifier->ToString()); }
+            )+
+        )
+        {
+            return str;
+        }
+        ;
+
+    Initializer(soul::ast::cpp::Context* context, 
+        var std::unique_ptr<soul::ast::cpp::InitializerNode> initializer) : soul::ast::cpp::InitializerNode*
+        ::=
+        (   ASSIGN InitializerClause(context):initializerClause
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                initializer.reset(new soul::ast::cpp::InitializerNode(*sp, initializerClause)); 
+            }
+        |   LPAREN
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                initializer.reset(new soul::ast::cpp::InitializerNode(*sp, nullptr)); 
+            } 
+            ExpressionList(context, initializer.get()):exprList 
+            RPAREN
+        )
+        {
+            return initializer.release();
+        }
+        ;
+
+    InitializerClause(soul::ast::cpp::Context* context, 
+        var std::unique_ptr<soul::ast::cpp::AssignInitNode> assignInit) : soul::ast::cpp::AssignInitNode*
+        ::=
+        (   AssignmentExpression(context):expr
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                assignInit.reset(new soul::ast::cpp::AssignInitNode(*sp, expr)); 
+            }
+        |   LBRACE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                assignInit.reset(new soul::ast::cpp::AssignInitNode(*sp, nullptr)); 
+            } 
+            InitializerList(context, assignInit.get()):initializerList 
+            RBRACE
+        |   LBRACE RBRACE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                assignInit.reset(new soul::ast::cpp::AssignInitNode(*sp, nullptr)); 
+            }
+        )
+        {
+            return assignInit.release();
+        }
+        ;
+
+    InitializerList(soul::ast::cpp::Context* context, soul::ast::cpp::AssignInitNode* init)
+        ::= InitializerClause(context):initializerClause{ init->Add(initializerClause); } % COMMA
+        ;
+}

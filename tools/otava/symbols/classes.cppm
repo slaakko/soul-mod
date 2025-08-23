@@ -114,7 +114,7 @@ public:
     bool IsPolymorphic() const override;
     inline const std::vector<VariableSymbol*>& MemberVariables() const { return memberVariables; }
     inline const std::vector<FunctionSymbol*>& MemberFunctions() const { return memberFunctions; }
-    inline std::vector<FunctionDefinitionSymbol*> MemFunDefSymbols() const { return memFunDefSymbols; }
+    inline const std::vector<FunctionDefinitionSymbol*>& MemFunDefSymbols() const { return memFunDefSymbols; }
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void AddMemFunDefSymbol(FunctionDefinitionSymbol* memFunDefSymbol);
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;

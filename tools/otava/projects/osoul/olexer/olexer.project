@@ -9,6 +9,7 @@ source <file_map.cpp>;
 interface <keyword.cppm>;
 interface <lexeme.cppm>;
 interface <lexer_class.cppm>;
+interface <lexer.cppm>;
 interface <lexing_util.cppm>;
 interface <parsing_log.cppm>;
 source <parsing_log.cpp>;

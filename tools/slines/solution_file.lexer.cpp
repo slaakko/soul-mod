@@ -6,57 +6,57 @@ using namespace solution_file::token;
 
 namespace solution_file::lexer {
 
-soul::ast::slg::TokenCollection* GetTokens()
+soul::ast::common::TokenCollection* GetTokens()
 {
-    static soul::ast::slg::TokenCollection tokens("solution_file.lexer.tokens");
+    static soul::ast::common::TokenCollection tokens("solution_file.lexer.tokens");
     if (!tokens.Initialized())
     {
         tokens.SetInitialized();
-        tokens.AddToken(new soul::ast::slg::Token(MICROSOFT, "MICROSOFT", "'Microsoft'"));
-        tokens.AddToken(new soul::ast::slg::Token(VISUAL, "VISUAL", "'Visual'"));
-        tokens.AddToken(new soul::ast::slg::Token(STUDIO, "STUDIO", "'Studio'"));
-        tokens.AddToken(new soul::ast::slg::Token(SOLUTION, "SOLUTION", "'Solution'"));
-        tokens.AddToken(new soul::ast::slg::Token(FILE_, "FILE_", "'File'"));
-        tokens.AddToken(new soul::ast::slg::Token(PIPE, "PIPE", "'|'"));
-        tokens.AddToken(new soul::ast::slg::Token(DOT, "DOT", "'.'"));
-        tokens.AddToken(new soul::ast::slg::Token(COMMA, "COMMA", "','"));
-        tokens.AddToken(new soul::ast::slg::Token(ASSIGN, "ASSIGN", "'='"));
-        tokens.AddToken(new soul::ast::slg::Token(GUID, "GUID", "GUID"));
-        tokens.AddToken(new soul::ast::slg::Token(PATH, "PATH", "path"));
-        tokens.AddToken(new soul::ast::slg::Token(STRING, "STRING", "string"));
-        tokens.AddToken(new soul::ast::slg::Token(NUMBER, "NUMBER", "number"));
-        tokens.AddToken(new soul::ast::slg::Token(TRUE, "TRUE", "'True'"));
-        tokens.AddToken(new soul::ast::slg::Token(FALSE, "FALSE", "'False'"));
-        tokens.AddToken(new soul::ast::slg::Token(LPAREN, "LPAREN", "'('"));
-        tokens.AddToken(new soul::ast::slg::Token(RPAREN, "RPAREN", "')'"));
-        tokens.AddToken(new soul::ast::slg::Token(ID, "ID", "identifier"));
-        tokens.AddToken(new soul::ast::slg::Token(CONFIG, "CONFIG", "config"));
-        tokens.AddToken(new soul::ast::slg::Token(GUID_CONFIG, "GUID_CONFIG", "GUID config"));
-        tokens.AddToken(new soul::ast::slg::Token(FORMAT, "FORMAT", "'Format'"));
-        tokens.AddToken(new soul::ast::slg::Token(VERSION, "VERSION", "'Version'"));
-        tokens.AddToken(new soul::ast::slg::Token(VISUAL_STUDIO_VERSION, "VISUAL_STUDIO_VERSION", "'VisualStudioVersion'"));
-        tokens.AddToken(new soul::ast::slg::Token(MINIMUM_VERSION, "MINIMUM_VERSION", "'MinimumVisualStudioVersion'"));
-        tokens.AddToken(new soul::ast::slg::Token(PROJECT, "PROJECT", "'Project'"));
-        tokens.AddToken(new soul::ast::slg::Token(END_PROJECT, "END_PROJECT", "'EndProject'"));
-        tokens.AddToken(new soul::ast::slg::Token(PROJECT_SECTION, "PROJECT_SECTION", "'ProjectSection'"));
-        tokens.AddToken(new soul::ast::slg::Token(END_PROJECT_SECTION, "END_PROJECT_SECTION", "'EndProjectSection'"));
-        tokens.AddToken(new soul::ast::slg::Token(SOLUTION_ITEMS, "SOLUTION_ITEMS", "'SolutionItems'"));
-        tokens.AddToken(new soul::ast::slg::Token(PREPROJECT, "PREPROJECT", "'preProject'"));
-        tokens.AddToken(new soul::ast::slg::Token(POSTPROJECT, "POSTPROJECT", "'postProject'"));
-        tokens.AddToken(new soul::ast::slg::Token(PROJECT_DEPENDENCIES, "PROJECT_DEPENDENCIES", "'ProjectDependencies'"));
-        tokens.AddToken(new soul::ast::slg::Token(GLOBAL, "GLOBAL", "'Global'"));
-        tokens.AddToken(new soul::ast::slg::Token(END_GLOBAL, "END_GLOBAL", "'EndGlobal'"));
-        tokens.AddToken(new soul::ast::slg::Token(GLOBAL_SECTION, "GLOBAL_SECTION", "'GlobalSection'"));
-        tokens.AddToken(new soul::ast::slg::Token(END_GLOBAL_SECTION, "END_GLOBAL_SECTION", "'EndGlobalSection'"));
-        tokens.AddToken(new soul::ast::slg::Token(SOLUTION_CONFIGURATION_PLATFORMS, "SOLUTION_CONFIGURATION_PLATFORMS", "'SolutionConfigurationPlatforms'"));
-        tokens.AddToken(new soul::ast::slg::Token(PROJECT_CONFIGURATION_PLATFORMS, "PROJECT_CONFIGURATION_PLATFORMS", "'ProjectConfigurationPlatforms'"));
-        tokens.AddToken(new soul::ast::slg::Token(SOLUTION_PROPERTIES, "SOLUTION_PROPERTIES", "'SolutionProperties'"));
-        tokens.AddToken(new soul::ast::slg::Token(HIDE_SOLUTION_NODE, "HIDE_SOLUTION_NODE", "'HideSolutionNode'"));
-        tokens.AddToken(new soul::ast::slg::Token(PRESOLUTION, "PRESOLUTION", "'preSolution'"));
-        tokens.AddToken(new soul::ast::slg::Token(POSTSOLUTION, "POSTSOLUTION", "'postSolution'"));
-        tokens.AddToken(new soul::ast::slg::Token(SOLUTION_GUID, "SOLUTION_GUID", "'SolutionGuid'"));
-        tokens.AddToken(new soul::ast::slg::Token(EXTENSIBILITY_GLOBALS, "EXTENSIBILITY_GLOBALS", "'ExtensibilityGlobals'"));
-        tokens.AddToken(new soul::ast::slg::Token(NESTED_PROJECTS, "NESTED_PROJECTS", "'NestedProjects'"));
+        tokens.AddToken(new soul::ast::common::Token(MICROSOFT, "MICROSOFT", "'Microsoft'"));
+        tokens.AddToken(new soul::ast::common::Token(VISUAL, "VISUAL", "'Visual'"));
+        tokens.AddToken(new soul::ast::common::Token(STUDIO, "STUDIO", "'Studio'"));
+        tokens.AddToken(new soul::ast::common::Token(SOLUTION, "SOLUTION", "'Solution'"));
+        tokens.AddToken(new soul::ast::common::Token(FILE_, "FILE_", "'File'"));
+        tokens.AddToken(new soul::ast::common::Token(PIPE, "PIPE", "'|'"));
+        tokens.AddToken(new soul::ast::common::Token(DOT, "DOT", "'.'"));
+        tokens.AddToken(new soul::ast::common::Token(COMMA, "COMMA", "','"));
+        tokens.AddToken(new soul::ast::common::Token(ASSIGN, "ASSIGN", "'='"));
+        tokens.AddToken(new soul::ast::common::Token(GUID, "GUID", "GUID"));
+        tokens.AddToken(new soul::ast::common::Token(PATH, "PATH", "path"));
+        tokens.AddToken(new soul::ast::common::Token(STRING, "STRING", "string"));
+        tokens.AddToken(new soul::ast::common::Token(NUMBER, "NUMBER", "number"));
+        tokens.AddToken(new soul::ast::common::Token(TRUE, "TRUE", "'True'"));
+        tokens.AddToken(new soul::ast::common::Token(FALSE, "FALSE", "'False'"));
+        tokens.AddToken(new soul::ast::common::Token(LPAREN, "LPAREN", "'('"));
+        tokens.AddToken(new soul::ast::common::Token(RPAREN, "RPAREN", "')'"));
+        tokens.AddToken(new soul::ast::common::Token(ID, "ID", "identifier"));
+        tokens.AddToken(new soul::ast::common::Token(CONFIG, "CONFIG", "config"));
+        tokens.AddToken(new soul::ast::common::Token(GUID_CONFIG, "GUID_CONFIG", "GUID config"));
+        tokens.AddToken(new soul::ast::common::Token(FORMAT, "FORMAT", "'Format'"));
+        tokens.AddToken(new soul::ast::common::Token(VERSION, "VERSION", "'Version'"));
+        tokens.AddToken(new soul::ast::common::Token(VISUAL_STUDIO_VERSION, "VISUAL_STUDIO_VERSION", "'VisualStudioVersion'"));
+        tokens.AddToken(new soul::ast::common::Token(MINIMUM_VERSION, "MINIMUM_VERSION", "'MinimumVisualStudioVersion'"));
+        tokens.AddToken(new soul::ast::common::Token(PROJECT, "PROJECT", "'Project'"));
+        tokens.AddToken(new soul::ast::common::Token(END_PROJECT, "END_PROJECT", "'EndProject'"));
+        tokens.AddToken(new soul::ast::common::Token(PROJECT_SECTION, "PROJECT_SECTION", "'ProjectSection'"));
+        tokens.AddToken(new soul::ast::common::Token(END_PROJECT_SECTION, "END_PROJECT_SECTION", "'EndProjectSection'"));
+        tokens.AddToken(new soul::ast::common::Token(SOLUTION_ITEMS, "SOLUTION_ITEMS", "'SolutionItems'"));
+        tokens.AddToken(new soul::ast::common::Token(PREPROJECT, "PREPROJECT", "'preProject'"));
+        tokens.AddToken(new soul::ast::common::Token(POSTPROJECT, "POSTPROJECT", "'postProject'"));
+        tokens.AddToken(new soul::ast::common::Token(PROJECT_DEPENDENCIES, "PROJECT_DEPENDENCIES", "'ProjectDependencies'"));
+        tokens.AddToken(new soul::ast::common::Token(GLOBAL, "GLOBAL", "'Global'"));
+        tokens.AddToken(new soul::ast::common::Token(END_GLOBAL, "END_GLOBAL", "'EndGlobal'"));
+        tokens.AddToken(new soul::ast::common::Token(GLOBAL_SECTION, "GLOBAL_SECTION", "'GlobalSection'"));
+        tokens.AddToken(new soul::ast::common::Token(END_GLOBAL_SECTION, "END_GLOBAL_SECTION", "'EndGlobalSection'"));
+        tokens.AddToken(new soul::ast::common::Token(SOLUTION_CONFIGURATION_PLATFORMS, "SOLUTION_CONFIGURATION_PLATFORMS", "'SolutionConfigurationPlatforms'"));
+        tokens.AddToken(new soul::ast::common::Token(PROJECT_CONFIGURATION_PLATFORMS, "PROJECT_CONFIGURATION_PLATFORMS", "'ProjectConfigurationPlatforms'"));
+        tokens.AddToken(new soul::ast::common::Token(SOLUTION_PROPERTIES, "SOLUTION_PROPERTIES", "'SolutionProperties'"));
+        tokens.AddToken(new soul::ast::common::Token(HIDE_SOLUTION_NODE, "HIDE_SOLUTION_NODE", "'HideSolutionNode'"));
+        tokens.AddToken(new soul::ast::common::Token(PRESOLUTION, "PRESOLUTION", "'preSolution'"));
+        tokens.AddToken(new soul::ast::common::Token(POSTSOLUTION, "POSTSOLUTION", "'postSolution'"));
+        tokens.AddToken(new soul::ast::common::Token(SOLUTION_GUID, "SOLUTION_GUID", "'SolutionGuid'"));
+        tokens.AddToken(new soul::ast::common::Token(EXTENSIBILITY_GLOBALS, "EXTENSIBILITY_GLOBALS", "'ExtensibilityGlobals'"));
+        tokens.AddToken(new soul::ast::common::Token(NESTED_PROJECTS, "NESTED_PROJECTS", "'NestedProjects'"));
     }
     return &tokens;
 }

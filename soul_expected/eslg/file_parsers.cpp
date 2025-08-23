@@ -11,18 +11,18 @@ import soul_expected.parser;
 import soul_expected.lex.slg;
 import soul_expected.ast.cpp;
 import soul_expected.cpp.token;
-import soul_expected.slg.token.file.parser;
 import soul_expected.slg.keyword.file.parser;
 import soul_expected.slg.expression.file.parser;
 import soul_expected.slg.lexer.file.parser;
 import soul_expected.slg.slg.file.parser;
 import soul_expected.slg.parsers.rules;
+import soul_expected.common.token.file.parser;
+import common_expected.parser.rules;
 
 namespace soul_expected::slg {
 
 using namespace soul_expected::cpp::token;
 using namespace soul_expected::lex::slg;
-using namespace soul_expected::slg::token::file::parser;
 using namespace soul_expected::slg::keyword::file::parser;
 using namespace soul_expected::slg::expression::file::parser;
 using namespace soul_expected::slg::lexer::file::parser;
@@ -39,9 +39,10 @@ std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int> ParseTok
     auto rv = MakeLexer(content.c_str(), content.c_str() + content.length(), tokenFilePath);
     if (!rv) return std::unexpected<int>(rv.error());
     auto lexer = std::move(*rv);
-    lexer.SetRuleNameMapPtr(soul_expected::slg::parsers::rules::GetRuleNameMapPtr());
+    lexer.SetRuleNameMapPtr(common_expected::parser::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
-    std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int> tokenFileRv = TokenFileParser<LexerType>::Parse(lexer);
+    std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int> tokenFileRv = soul_expected::common::token::file::parser::TokenFileParser<LexerType>::Parse(
+        lexer);
     if (!tokenFileRv) return tokenFileRv;
     std::unique_ptr<soul_expected::ast::slg::TokenFile> tokenFile = std::move(*tokenFileRv);
     if (external)
@@ -50,6 +51,7 @@ std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int> ParseTok
     }
     return std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int>(std::move(tokenFile));
 }
+
 std::expected<std::unique_ptr<soul_expected::ast::slg::KeywordFile>, int> ParseKeywordFile(const std::string& keywordFilePath)
 {
     std::expected<std::string, int> frv = util::ReadFile(keywordFilePath);

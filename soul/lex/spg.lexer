@@ -12,6 +12,7 @@ import soul.tool.token;
 import soul.cpp.keyword;
 import soul.spg.keyword;
 import soul.tool.expr;
+import soul.ast.common;
 
 lexer SpgLexer
 {

@@ -5,6 +5,7 @@ export module otava.intermediate.lexer;
 import std;
 import soul.lexer;
 import soul.ast.slg;
+import soul.ast.common;
 import util;
 import otava.intermediate.token;
 
@@ -25,7 +26,7 @@ soul::lexer::Lexer<IntermediateLexer<Char>, Char> MakeLexer(const Char* start, c
 template<typename Char>
 soul::lexer::Lexer<IntermediateLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);
 
-soul::ast::slg::TokenCollection* GetTokens();
+soul::ast::common::TokenCollection* GetTokens();
 
 struct IntermediateLexer_Variables : public soul::lexer::Variables
 {

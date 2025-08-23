@@ -10,6 +10,7 @@ import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.punctuation.token;
 import soul.tool.token;
+import soul.ast.common;
 
 using namespace soul;
 using namespace soul::lexer;
@@ -31,7 +32,7 @@ soul::lexer::Lexer<SpgLexer<Char>, Char> MakeLexer(const Char* start, const Char
 template<typename Char>
 soul::lexer::Lexer<SpgLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);
 
-soul::ast::slg::TokenCollection* GetTokens();
+soul::ast::common::TokenCollection* GetTokens();
 
 struct SpgLexer_Variables : public soul::lexer::Variables
 {

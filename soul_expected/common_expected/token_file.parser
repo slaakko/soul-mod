@@ -1,0 +1,66 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul_expected.common.token.file.parser;
+
+[interface]import soul_expected.ast.slg;
+[implementation]import soul_expected.cpp.token;
+[implementation]import soul_expected.cpp.op.token;
+[implementation]import soul_expected.punctuation.token;
+[implementation]import soul_expected.tool.token;
+[implementation]import soul_expected.common.common.parser;
+[implementation]import soul_expected.common.token.parser;
+[implementation]import soul_expected.lex.slg;
+[implementation]import soul_expected.lex.spg;
+
+parser TokenFileParser
+{
+    lexer soul_expected::lex::slg::SlgLexer<char32_t>;
+    lexer soul_expected::lex::spg::SpgLexer<char32_t>; 
+
+    main;
+    using CommonParser.QualifiedId;
+
+    TokenFile(var std::unique_ptr<soul_expected::ast::slg::TokenFile> tokenFile, var std::unique_ptr<soul_expected::ast::slg::TokenCollection> tokenCollection) : soul_expected::ast::slg::TokenFile*
+        ::= 
+        (   
+            TOKENS{ tokenFile.reset(new soul_expected::ast::slg::TokenFile(lexer.FileName())); }
+            QualifiedId:tokenCollectionName{ tokenCollection.reset(new soul_expected::ast::slg::TokenCollection(tokenCollectionName)); }
+			LBRACE
+			(Token:token{ tokenCollection->AddToken(token); } % COMMA)?
+			RBRACE
+        )
+        {
+            tokenFile->SetTokenCollection(tokenCollection.release());
+            return tokenFile.release();
+        }
+        ;
+
+    Token(var std::string name, var std::string info) : soul_expected::ast::slg::Token*
+        ::= 
+        (
+            LPAREN 
+            ID
+            { 
+                auto rv = lexer.TokenToUtf8(pos);
+                if (!rv) return std::unexpected<int>(rv.error());
+                name = *rv;
+            } 
+            COMMA 
+            STRING_LITERAL
+            { 
+                auto rv = lexer.TokenToStringLiteral(pos);
+                if (!rv) return std::unexpected<int>(rv.error());
+                auto u = util::ToUtf8(*rv);
+                if (!u) return std::unexpected<int>(u.error());
+                info = *u;
+            } 
+            RPAREN
+        )
+        {
+            return new soul_expected::ast::slg::Token(name, info);
+        }
+        ;
+}

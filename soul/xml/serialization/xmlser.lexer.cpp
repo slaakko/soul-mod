@@ -6,58 +6,58 @@ using namespace soul::xml::serialization::token;
 
 namespace soul::xml::serialization::lexer {
 
-soul::ast::slg::TokenCollection* GetTokens()
+soul::ast::common::TokenCollection* GetTokens()
 {
-    static soul::ast::slg::TokenCollection tokens("soul.xml.serialization.lexer.tokens");
+    static soul::ast::common::TokenCollection tokens("soul.xml.serialization.lexer.tokens");
     if (!tokens.Initialized())
     {
         tokens.SetInitialized();
-        tokens.AddToken(new soul::ast::slg::Token(ID, "ID", "identifier"));
-        tokens.AddToken(new soul::ast::slg::Token(CLASS, "CLASS", "'class'"));
-        tokens.AddToken(new soul::ast::slg::Token(ENUM, "ENUM", "'enum'"));
-        tokens.AddToken(new soul::ast::slg::Token(BASE, "BASE", "'base'"));
-        tokens.AddToken(new soul::ast::slg::Token(BOOL, "BOOL", "'bool'"));
-        tokens.AddToken(new soul::ast::slg::Token(SBYTE, "SBYTE", "'sbyte'"));
-        tokens.AddToken(new soul::ast::slg::Token(BYTE, "BYTE", "'byte'"));
-        tokens.AddToken(new soul::ast::slg::Token(SHORT, "SHORT", "'short'"));
-        tokens.AddToken(new soul::ast::slg::Token(USHORT, "USHORT", "'ushort'"));
-        tokens.AddToken(new soul::ast::slg::Token(INT, "INT", "'int'"));
-        tokens.AddToken(new soul::ast::slg::Token(UINT, "UINT", "'uint'"));
-        tokens.AddToken(new soul::ast::slg::Token(LONG, "LONG", "'long'"));
-        tokens.AddToken(new soul::ast::slg::Token(ULONG, "ULONG", "'ulong'"));
-        tokens.AddToken(new soul::ast::slg::Token(FLOAT, "FLOAT", "'float'"));
-        tokens.AddToken(new soul::ast::slg::Token(DOUBLE, "DOUBLE", "'double'"));
-        tokens.AddToken(new soul::ast::slg::Token(CHAR, "CHAR", "'char'"));
-        tokens.AddToken(new soul::ast::slg::Token(WCHAR, "WCHAR", "'wchar'"));
-        tokens.AddToken(new soul::ast::slg::Token(UCHAR, "UCHAR", "'uchar'"));
-        tokens.AddToken(new soul::ast::slg::Token(UUID, "UUID", "'uuid'"));
-        tokens.AddToken(new soul::ast::slg::Token(STRING, "STRING", "'string'"));
-        tokens.AddToken(new soul::ast::slg::Token(WSTRING, "WSTRING", "'wstring'"));
-        tokens.AddToken(new soul::ast::slg::Token(USTRING, "USTRING", "'ustring'"));
-        tokens.AddToken(new soul::ast::slg::Token(DATE, "DATE", "'date'"));
-        tokens.AddToken(new soul::ast::slg::Token(DATETIME, "DATETIME", "'datetime'"));
-        tokens.AddToken(new soul::ast::slg::Token(TIMESTAMP, "TIMESTAMP", "'timestamp'"));
-        tokens.AddToken(new soul::ast::slg::Token(TIME_POINT, "TIME_POINT", "'time_point'"));
-        tokens.AddToken(new soul::ast::slg::Token(DURATION, "DURATION", "'duration'"));
-        tokens.AddToken(new soul::ast::slg::Token(LBRACKET, "LBRACKET", "'['"));
-        tokens.AddToken(new soul::ast::slg::Token(RBRACKET, "RBRACKET", "']'"));
-        tokens.AddToken(new soul::ast::slg::Token(LBRACE, "LBRACE", "'{'"));
-        tokens.AddToken(new soul::ast::slg::Token(RBRACE, "RBRACE", "'}'"));
-        tokens.AddToken(new soul::ast::slg::Token(SEMICOLON, "SEMICOLON", "';'"));
-        tokens.AddToken(new soul::ast::slg::Token(COLON, "COLON", "':'"));
-        tokens.AddToken(new soul::ast::slg::Token(AST, "AST", "'*'"));
-        tokens.AddToken(new soul::ast::slg::Token(LPAREN, "LPAREN", "'('"));
-        tokens.AddToken(new soul::ast::slg::Token(RPAREN, "RPAREN", "')'"));
-        tokens.AddToken(new soul::ast::slg::Token(COMMA, "COMMA", "','"));
-        tokens.AddToken(new soul::ast::slg::Token(ASSIGN, "ASSIGN", "'='"));
-        tokens.AddToken(new soul::ast::slg::Token(START_CPP, "START_CPP", "'<%'"));
-        tokens.AddToken(new soul::ast::slg::Token(END_CPP, "END_CPP", "'%>'"));
-        tokens.AddToken(new soul::ast::slg::Token(LANGLE, "LANGLE", "'<'"));
-        tokens.AddToken(new soul::ast::slg::Token(RANGLE, "RANGLE", "'>'"));
-        tokens.AddToken(new soul::ast::slg::Token(COLON_COLON, "COLON_COLON", "'::'"));
-        tokens.AddToken(new soul::ast::slg::Token(NAMESPACE, "NAMESPACE", "'namespace'"));
-        tokens.AddToken(new soul::ast::slg::Token(USING, "USING", "'using'"));
-        tokens.AddToken(new soul::ast::slg::Token(DOT, "DOT", "'.'"));
+        tokens.AddToken(new soul::ast::common::Token(ID, "ID", "identifier"));
+        tokens.AddToken(new soul::ast::common::Token(CLASS, "CLASS", "'class'"));
+        tokens.AddToken(new soul::ast::common::Token(ENUM, "ENUM", "'enum'"));
+        tokens.AddToken(new soul::ast::common::Token(BASE, "BASE", "'base'"));
+        tokens.AddToken(new soul::ast::common::Token(BOOL, "BOOL", "'bool'"));
+        tokens.AddToken(new soul::ast::common::Token(SBYTE, "SBYTE", "'sbyte'"));
+        tokens.AddToken(new soul::ast::common::Token(BYTE, "BYTE", "'byte'"));
+        tokens.AddToken(new soul::ast::common::Token(SHORT, "SHORT", "'short'"));
+        tokens.AddToken(new soul::ast::common::Token(USHORT, "USHORT", "'ushort'"));
+        tokens.AddToken(new soul::ast::common::Token(INT, "INT", "'int'"));
+        tokens.AddToken(new soul::ast::common::Token(UINT, "UINT", "'uint'"));
+        tokens.AddToken(new soul::ast::common::Token(LONG, "LONG", "'long'"));
+        tokens.AddToken(new soul::ast::common::Token(ULONG, "ULONG", "'ulong'"));
+        tokens.AddToken(new soul::ast::common::Token(FLOAT, "FLOAT", "'float'"));
+        tokens.AddToken(new soul::ast::common::Token(DOUBLE, "DOUBLE", "'double'"));
+        tokens.AddToken(new soul::ast::common::Token(CHAR, "CHAR", "'char'"));
+        tokens.AddToken(new soul::ast::common::Token(WCHAR, "WCHAR", "'wchar'"));
+        tokens.AddToken(new soul::ast::common::Token(UCHAR, "UCHAR", "'uchar'"));
+        tokens.AddToken(new soul::ast::common::Token(UUID, "UUID", "'uuid'"));
+        tokens.AddToken(new soul::ast::common::Token(STRING, "STRING", "'string'"));
+        tokens.AddToken(new soul::ast::common::Token(WSTRING, "WSTRING", "'wstring'"));
+        tokens.AddToken(new soul::ast::common::Token(USTRING, "USTRING", "'ustring'"));
+        tokens.AddToken(new soul::ast::common::Token(DATE, "DATE", "'date'"));
+        tokens.AddToken(new soul::ast::common::Token(DATETIME, "DATETIME", "'datetime'"));
+        tokens.AddToken(new soul::ast::common::Token(TIMESTAMP, "TIMESTAMP", "'timestamp'"));
+        tokens.AddToken(new soul::ast::common::Token(TIME_POINT, "TIME_POINT", "'time_point'"));
+        tokens.AddToken(new soul::ast::common::Token(DURATION, "DURATION", "'duration'"));
+        tokens.AddToken(new soul::ast::common::Token(LBRACKET, "LBRACKET", "'['"));
+        tokens.AddToken(new soul::ast::common::Token(RBRACKET, "RBRACKET", "']'"));
+        tokens.AddToken(new soul::ast::common::Token(LBRACE, "LBRACE", "'{'"));
+        tokens.AddToken(new soul::ast::common::Token(RBRACE, "RBRACE", "'}'"));
+        tokens.AddToken(new soul::ast::common::Token(SEMICOLON, "SEMICOLON", "';'"));
+        tokens.AddToken(new soul::ast::common::Token(COLON, "COLON", "':'"));
+        tokens.AddToken(new soul::ast::common::Token(AST, "AST", "'*'"));
+        tokens.AddToken(new soul::ast::common::Token(LPAREN, "LPAREN", "'('"));
+        tokens.AddToken(new soul::ast::common::Token(RPAREN, "RPAREN", "')'"));
+        tokens.AddToken(new soul::ast::common::Token(COMMA, "COMMA", "','"));
+        tokens.AddToken(new soul::ast::common::Token(ASSIGN, "ASSIGN", "'='"));
+        tokens.AddToken(new soul::ast::common::Token(START_CPP, "START_CPP", "'<%'"));
+        tokens.AddToken(new soul::ast::common::Token(END_CPP, "END_CPP", "'%>'"));
+        tokens.AddToken(new soul::ast::common::Token(LANGLE, "LANGLE", "'<'"));
+        tokens.AddToken(new soul::ast::common::Token(RANGLE, "RANGLE", "'>'"));
+        tokens.AddToken(new soul::ast::common::Token(COLON_COLON, "COLON_COLON", "'::'"));
+        tokens.AddToken(new soul::ast::common::Token(NAMESPACE, "NAMESPACE", "'namespace'"));
+        tokens.AddToken(new soul::ast::common::Token(USING, "USING", "'using'"));
+        tokens.AddToken(new soul::ast::common::Token(DOT, "DOT", "'.'"));
     }
     return &tokens;
 }

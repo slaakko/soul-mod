@@ -6,27 +6,27 @@ using namespace otava::project_token;
 
 namespace otava::project_lexer {
 
-soul::ast::slg::TokenCollection* GetTokens()
+soul::ast::common::TokenCollection* GetTokens()
 {
-    static soul::ast::slg::TokenCollection tokens("otava.project_lexer.tokens");
+    static soul::ast::common::TokenCollection tokens("otava.project_lexer.tokens");
     if (!tokens.Initialized())
     {
         tokens.SetInitialized();
-        tokens.AddToken(new soul::ast::slg::Token(PROJECT, "PROJECT", "'project'"));
-        tokens.AddToken(new soul::ast::slg::Token(ID, "ID", "identifier"));
-        tokens.AddToken(new soul::ast::slg::Token(DOT, "DOT", "'.'"));
-        tokens.AddToken(new soul::ast::slg::Token(SEMICOLON, "SEMICOLON", "';'"));
-        tokens.AddToken(new soul::ast::slg::Token(ASSIGN, "ASSIGN", "'='"));
-        tokens.AddToken(new soul::ast::slg::Token(INTERFACE, "INTERFACE", "'interface'"));
-        tokens.AddToken(new soul::ast::slg::Token(SOURCE, "SOURCE", "'source'"));
-        tokens.AddToken(new soul::ast::slg::Token(RESOURCE, "RESOURCE", "'resource'"));
-        tokens.AddToken(new soul::ast::slg::Token(FILEPATH, "FILEPATH", "file path"));
-        tokens.AddToken(new soul::ast::slg::Token(REFERENCE, "REFERENCE", "'reference'"));
-        tokens.AddToken(new soul::ast::slg::Token(DEFINE, "DEFINE", "'define'"));
-        tokens.AddToken(new soul::ast::slg::Token(VALUE, "VALUE", "value"));
-        tokens.AddToken(new soul::ast::slg::Token(TARGET, "TARGET", "'target'"));
-        tokens.AddToken(new soul::ast::slg::Token(PROGRAM, "PROGRAM", "'program'"));
-        tokens.AddToken(new soul::ast::slg::Token(LIBRARY, "LIBRARY", "'library"));
+        tokens.AddToken(new soul::ast::common::Token(PROJECT, "PROJECT", "'project'"));
+        tokens.AddToken(new soul::ast::common::Token(ID, "ID", "identifier"));
+        tokens.AddToken(new soul::ast::common::Token(DOT, "DOT", "'.'"));
+        tokens.AddToken(new soul::ast::common::Token(SEMICOLON, "SEMICOLON", "';'"));
+        tokens.AddToken(new soul::ast::common::Token(ASSIGN, "ASSIGN", "'='"));
+        tokens.AddToken(new soul::ast::common::Token(INTERFACE, "INTERFACE", "'interface'"));
+        tokens.AddToken(new soul::ast::common::Token(SOURCE, "SOURCE", "'source'"));
+        tokens.AddToken(new soul::ast::common::Token(RESOURCE, "RESOURCE", "'resource'"));
+        tokens.AddToken(new soul::ast::common::Token(FILEPATH, "FILEPATH", "file path"));
+        tokens.AddToken(new soul::ast::common::Token(REFERENCE, "REFERENCE", "'reference'"));
+        tokens.AddToken(new soul::ast::common::Token(DEFINE, "DEFINE", "'define'"));
+        tokens.AddToken(new soul::ast::common::Token(VALUE, "VALUE", "value"));
+        tokens.AddToken(new soul::ast::common::Token(TARGET, "TARGET", "'target'"));
+        tokens.AddToken(new soul::ast::common::Token(PROGRAM, "PROGRAM", "'program'"));
+        tokens.AddToken(new soul::ast::common::Token(LIBRARY, "LIBRARY", "'library"));
     }
     return &tokens;
 }

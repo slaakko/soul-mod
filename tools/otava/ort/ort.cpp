@@ -624,6 +624,11 @@ bool ort_get_path_to_executable(char* buf, int bufSize)
     }
 }
 
+double ort_pow(double x, int exponent)
+{
+    return std::pow(x, exponent);
+}
+
 void ort_exit(int exitCode)
 {
     std::exit(exitCode);

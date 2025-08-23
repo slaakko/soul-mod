@@ -139,7 +139,7 @@ std::expected<T, int> ParseSigned(const std::basic_string<CharT>& s, const std::
             CharT c = *it++;
             if (c >= '0' && c <= '9')
             {
-                value = 10 * value + c - '0';
+                value = static_cast<T>(10) * value + static_cast<T>(c) - static_cast<T>('0');
             }
             else
             {
@@ -186,7 +186,7 @@ std::expected<T, int> ParseUnsigned(const std::basic_string<CharT>& s, const std
             CharT c = *it++;
             if (c >= '0' && c <= '9')
             {
-                value = 10 * value + c - '0';
+                value = static_cast<T>(10) * static_cast<T>(value) + static_cast<T>(c) - static_cast<T>('0');
             }
             else
             {
@@ -245,7 +245,7 @@ std::expected<T, int> ParseFloating(const std::basic_string<CharT>& s, const std
         {
             if (c >= '0' && c <= '9')
             {
-                value = 10 * value + c - '0';
+                value = static_cast<T>(10) * static_cast<T>(value) + static_cast<T>(c) - static_cast<T>('0');
             }
             else if (c == '.')
             {
@@ -265,7 +265,7 @@ std::expected<T, int> ParseFloating(const std::basic_string<CharT>& s, const std
         {
             if (c >= '0' && c <= '9')
             {
-                value += (c - '0') / d;
+                value += (static_cast<T>(c) - static_cast<T>('0')) / d;
                 d *= 10;
             }
             else if (c == 'e' || c == 'E')
@@ -291,7 +291,7 @@ std::expected<T, int> ParseFloating(const std::basic_string<CharT>& s, const std
             }
             else if (c >= '0' && c <= '9')
             {
-                exponent = c - '0';
+                exponent = static_cast<int>(c) - static_cast<int>('0');
                 state = 3;
             }
             else
@@ -304,7 +304,7 @@ std::expected<T, int> ParseFloating(const std::basic_string<CharT>& s, const std
         {
             if (c >= '0' && c <= '9')
             {
-                exponent = 10 * exponent + c - '0';
+                exponent = 10 * exponent + static_cast<int>(c) - static_cast<int>('0');
             }
             else
             {
@@ -405,17 +405,17 @@ std::expected<bool, int> ParseHexChar(CharT& value, const CharT*& p, const CharT
         {
         case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
         {
-            value = 16 * value + s - '0';
+            value = static_cast<CharT>(16 * static_cast<int>(value) + static_cast<int>(s) - static_cast<int>('0'));
             break;
         }
         case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
         {
-            value = 16 * value + 10 + s - 'A';
+            value = static_cast<CharT>(16 * static_cast<int>(value) + 10 + static_cast<int>(s) - static_cast<int>('A'));
             break;
         }
         case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
         {
-            value = 16 * value + 10 + s - 'a';
+            value = static_cast<CharT>(16 * static_cast<int>(value) + 10 + static_cast<int>(s) - static_cast<int>('a'));
             break;
         }
         }
@@ -448,7 +448,7 @@ std::expected<CharT, int> ParseEscape(const CharT*& p, const CharT* e, const std
         ++p;
         while (p != e && *p >= '0' && *p <= '9')
         {
-            value = 10 * value + (*p - '0');
+            value = static_cast<CharT>(10 * static_cast<int>(value) + (static_cast<int>(*p) - static_cast<int>('0')));
             ++p;
         }
     }
@@ -456,7 +456,7 @@ std::expected<CharT, int> ParseEscape(const CharT*& p, const CharT* e, const std
     {
         while (p != e && *p >= '0' && *p <= '7')
         {
-            value = 8 * value + (*p - '0');
+            value = static_cast<CharT>(8 * static_cast<int>(value) + (static_cast<int>(*p) - static_cast<int>('0')));
             ++p;
         }
     }
@@ -497,14 +497,14 @@ std::expected<CharT, int> ParseEscape(const CharT*& p, const CharT* e, const std
         CharT s = *p;
         switch (s)
         {
-        case 'a': value = '\a'; break;
-        case 'b': value = '\b'; break;
-        case 'f': value = '\f'; break;
-        case 'n': value = '\n'; break;
-        case 'r': value = '\r'; break;
-        case 't': value = '\t'; break;
-        case 'v': value = '\v'; break;
-        default: value = s; break;
+        case 'a': { value = '\a'; break; }
+        case 'b': { value = '\b'; break; }
+        case 'f': { value = '\f'; break; }
+        case 'n': { value = '\n'; break; }
+        case 'r': { value = '\r'; break; }
+        case 't': { value = '\t'; break; }
+        case 'v': { value = '\v'; break; }
+        default: { value = s; break; }
         }
         ++p;
     }

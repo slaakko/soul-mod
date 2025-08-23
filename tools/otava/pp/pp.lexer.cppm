@@ -5,6 +5,7 @@ export module otava.pp.lexer;
 import std;
 import soul.lexer;
 import soul.ast.slg;
+import soul.ast.common;
 import otava.token;
 
 using namespace soul;
@@ -21,7 +22,7 @@ struct PPLexer;
 template<typename Char>
 soul::lexer::Lexer<PPLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName);
 
-soul::ast::slg::TokenCollection* GetTokens();
+soul::ast::common::TokenCollection* GetTokens();
 
 struct PPLexer_Variables : public soul::lexer::Variables
 {

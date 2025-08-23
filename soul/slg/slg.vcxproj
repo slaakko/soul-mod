@@ -211,8 +211,6 @@
     <ClCompile Include="slg_file.parser.cppm" />
     <ClCompile Include="slg_parsers_rules.cpp" />
     <ClCompile Include="slg_parsers_rules.cppm" />
-    <ClCompile Include="token_file.parser.cpp" />
-    <ClCompile Include="token_file.parser.cppm" />
     <ClCompile Include="token_generator.cpp" />
     <ClCompile Include="token_generator.cppm" />
   </ItemGroup>
@@ -223,7 +221,6 @@
     <None Include="slg.project" />
     <None Include="slg_file.parser" />
     <None Include="slg_parsers.spg" />
-    <None Include="token_file.parser" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\lex\soul.lex.re.classmap.rc" />

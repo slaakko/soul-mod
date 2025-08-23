@@ -564,14 +564,22 @@ public:
     {
         return log;
     }
-    std::string RestOfLine(int maxLineLength) const
+    std::expected<std::string, int> RestOfLine(int maxLineLength) const
     {
-        std::string restOfLine(util::ToUtf8(current->match.ToString()) + ToString(current->match.end, pos) + ToString(pos, LineEnd(end, pos)));
+        std::expected<std::string, int> rv = util::ToUtf8(current->match.ToString());
+        if (!rv) return rv;
+        std::string restOfLine = *rv;
+        rv = ToString(current->match.end, pos);
+        if (!rv) return rv;
+        restOfLine.append(*rv);
+        rv = ToString(pos, LineEnd(end, pos));
+        if (!rv) return rv;
+        restOfLine.append(*rv);
         if (maxLineLength != 0)
         {
             restOfLine = restOfLine.substr(0, maxLineLength);
         }
-        return restOfLine;
+        return std::expected<std::string, int>(restOfLine);
     }
     std::vector<int> GetLineStartIndeces() const override
     {

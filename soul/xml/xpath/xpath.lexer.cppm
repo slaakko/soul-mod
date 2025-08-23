@@ -5,6 +5,7 @@ export module soul.xml.xpath.lexer;
 import std;
 import soul.lexer;
 import soul.ast.slg;
+import soul.ast.common;
 import util;
 import soul.xml.xpath.token;
 
@@ -25,7 +26,7 @@ soul::lexer::Lexer<XPathLexer<Char>, Char> MakeLexer(const Char* start, const Ch
 template<typename Char>
 soul::lexer::Lexer<XPathLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);
 
-soul::ast::slg::TokenCollection* GetTokens();
+soul::ast::common::TokenCollection* GetTokens();
 
 struct XPathLexer_Variables : public soul::lexer::Variables
 {

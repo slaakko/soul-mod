@@ -953,7 +953,8 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
     }
     if (!symbol)
     {
-        ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(scope->GetClassTemplateSpecialization());
+        std::set<Scope*> visited;
+        ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(scope->GetClassTemplateSpecialization(visited));
         if (sp)
         {
             symbol = sp->ClassTemplate()->GetScope()->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
@@ -977,7 +978,8 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
         }
         if (!symbol)
         {
-            ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(scope->GetClassTemplateSpecialization());
+            std::set<Scope*> visited;
+            ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(scope->GetClassTemplateSpecialization(visited));
             if (sp)
             {
                 symbol = sp->ClassTemplate()->GetScope()->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
@@ -1172,11 +1174,8 @@ void ExpressionBinder::Visit(otava::ast::ThisNode& node)
 
 void ExpressionBinder::Visit(otava::ast::TemplateIdNode& node)
 {
-    if (node.TemplateName()->Str() == U"operand_rel_x")
-    {
-        int x = 0;
-    }
-    context->GetSymbolTable()->BeginScope(scope);
+    Scope* currentScope = context->GetSymbolTable()->CurrentScope();
+    currentScope->PushParentScope(scope);
     TypeSymbol* type = ResolveType(&node, DeclarationFlags::none, context, TypeResolverFlags::dontThrow);
     if (type)
     {
@@ -1202,7 +1201,7 @@ void ExpressionBinder::Visit(otava::ast::TemplateIdNode& node)
                 node.GetSourcePos(), context);
         }
     }
-    context->GetSymbolTable()->EndScope();
+    currentScope->PopParentScope();
 }
 
 void ExpressionBinder::Visit(otava::ast::MemberExprNode& node)

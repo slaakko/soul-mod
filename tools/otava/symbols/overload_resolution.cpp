@@ -1237,6 +1237,10 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
 {
     MakeFinalDirectArgs(args, sourcePos, context);
     std::vector<FunctionSymbol*> viableFunctions;
+    if (groupName == U"push")
+    {
+        int x = 0;
+    }
     if (groupName == U"@destructor")
     {
         if (args.size() == 1)

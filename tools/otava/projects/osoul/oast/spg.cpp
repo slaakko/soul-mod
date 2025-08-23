@@ -245,9 +245,10 @@ UnaryParser::UnaryParser(const soul::ast::SourcePos& sourcePos_, ParserKind kind
 
 std::expected<bool, int> UnaryParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    Parser* thisParser = this;
+    if (visited.find(thisParser) == visited.cend())
     {
-        visited.insert(this);
+        visited.insert(thisParser);
         std::expected<bool, int> rv = child->ComputeFirst(changed, visited);
         if (!rv) return rv;
         if (First().Merge(child->First()))
@@ -281,9 +282,10 @@ void ChoiceParser::Accept(Visitor& visitor)
 
 std::expected<bool, int> ChoiceParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    Parser* thisParser = this;
+    if (visited.find(thisParser) == visited.cend())
     {
-        visited.insert(this);
+        visited.insert(thisParser);
         std::expected<bool, int> rv = Left()->ComputeFirst(changed, visited);
         if (!rv) return rv;
         rv = Right()->ComputeFirst(changed, visited);
@@ -360,9 +362,10 @@ void SwitchParser::Accept(Visitor& visitor)
 
 std::expected<bool, int> SwitchParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    Parser* thisParser = this;
+    if (visited.find(thisParser) == visited.cend())
     {
-        visited.insert(this);
+        visited.insert(thisParser);
         for (const auto& caseParser : caseParsers)
         {
             std::expected<bool, int> rv = caseParser->ComputeFirst(changed, visited);
@@ -397,9 +400,10 @@ void SequenceParser::Accept(Visitor& visitor)
 
 std::expected<bool, int> SequenceParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    Parser* thisParser = this;
+    if (visited.find(thisParser) == visited.cend())
     {
-        visited.insert(this);
+        visited.insert(thisParser);
         std::expected<bool, int> rv = Left()->ComputeFirst(changed, visited);
         if (!rv) return rv;
         rv = Right()->ComputeFirst(changed, visited);
@@ -435,9 +439,10 @@ void DifferenceParser::Accept(Visitor& visitor)
 
 std::expected<bool, int> DifferenceParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    Parser* thisParser = this;
+    if (visited.find(thisParser) == visited.cend())
     {
-        visited.insert(this);
+        visited.insert(thisParser);
         std::expected<bool, int> rv = Left()->ComputeFirst(changed, visited);
         if (!rv) return rv;
         if (First().Merge(Left()->First()))
@@ -497,9 +502,10 @@ void KleeneParser::Accept(Visitor& visitor)
 
 std::expected<bool, int> KleeneParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    Parser* thisParser = this;
+    if (visited.find(thisParser) == visited.cend())
     {
-        visited.insert(this);
+        visited.insert(thisParser);
         std::expected<bool, int> rv = Child()->ComputeFirst(changed, visited);
         if (!rv) return rv;
         if (First().Merge(Child()->First()))
@@ -545,9 +551,10 @@ void OptionalParser::Accept(Visitor& visitor)
 
 std::expected<bool, int> OptionalParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    Parser* thisParser = this;
+    if (visited.find(thisParser) == visited.cend())
     {
-        visited.insert(this);
+        visited.insert(thisParser);
         std::expected<bool, int> rv = Child()->ComputeFirst(changed, visited);
         if (!rv) return rv;
         if (First().Merge(Child()->First()))
@@ -620,9 +627,10 @@ void NonterminalParser::Accept(Visitor& visitor)
 
 std::expected<bool, int> NonterminalParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    Parser* thisParser = this;
+    if (visited.find(thisParser) == visited.cend())
     {
-        visited.insert(this);
+        visited.insert(thisParser);
         std::expected<bool, int> rv = rule->ComputeFirst(changed, visited);
         if (!rv) return rv;
         if (First().Merge(rule->First()))
@@ -649,9 +657,10 @@ void EmptyParser::Accept(Visitor& visitor)
 
 std::expected<bool, int> EmptyParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    Parser* thisParser = this;
+    if (visited.find(thisParser) == visited.cend())
     {
-        visited.insert(this);
+        visited.insert(thisParser);
         if (First().AddToken("#"))
         {
             changed = true;
@@ -676,9 +685,10 @@ void AnyParser::Accept(Visitor& visitor)
 
 std::expected<bool, int> AnyParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    Parser* thisParser = this;
+    if (visited.find(thisParser) == visited.cend())
     {
-        visited.insert(this);
+        visited.insert(thisParser);
         if (First().AddToken("*"))
         {
             changed = true;
@@ -703,9 +713,10 @@ void TokenParser::Accept(Visitor& visitor)
 
 std::expected<bool, int> TokenParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    Parser* thisParser = this;
+    if (visited.find(thisParser) == visited.cend())
     {
-        visited.insert(this);
+        visited.insert(thisParser);
         if (First().AddToken(tokenName))
         {
             changed = true;
@@ -875,9 +886,10 @@ void RuleParser::Accept(Visitor& visitor)
 
 std::expected<bool, int> RuleParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    Parser* thisParser = this;
+    if (visited.find(thisParser) == visited.cend())
     {
-        visited.insert(this);
+        visited.insert(thisParser);
         std::expected<bool, int> rv = definition->ComputeFirst(changed, visited);
         if (!rv) return rv;
         if (First().Merge(definition->First()))
@@ -953,9 +965,10 @@ void GrammarParser::Accept(Visitor& visitor)
 
 std::expected<bool, int> GrammarParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    Parser* thisParser = this;
+    if (visited.find(thisParser) == visited.cend())
     {
-        visited.insert(this);
+        visited.insert(thisParser);
         for (const auto& rule : rules)
         {
             std::expected<bool, int> rv = rule->ComputeFirst(changed, visited);

@@ -150,6 +150,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
                 if (!context->InstantiationIrName().empty())
                 {
                     functionDefinition->SetFixedIrName(context->InstantiationIrName());
+                    context->SetInstantiationIrName(std::string());
                 }
                 else
                 {

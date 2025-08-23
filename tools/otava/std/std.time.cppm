@@ -1,11 +1,7 @@
 export module std.time;
 
 import std.type.fundamental;
-
-extern "C" std::time_t ort_time(std::time_t* arg);
-extern "C" void* ort_localtime(const std::time_t* time);
-extern "C" std::time_t ort_mktime(void* time);
-extern "C" void ort_strftime(char* buffer, int bufSize, const char* format, void* time);
+import std.rt;
 
 export namespace std {
 

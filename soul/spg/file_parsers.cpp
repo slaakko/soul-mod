@@ -11,6 +11,8 @@ import soul.lex.spg;
 import soul.spg.spg.file.parser;
 import soul.spg.parser.file.parser;
 import soul.spg.parsers.rules;
+import soul.common.token.file.parser;
+import common.parser.rules;
 
 namespace soul::spg {
 
@@ -66,6 +68,21 @@ std::unique_ptr<soul::ast::spg::ParserFile> ParseParserFile(const std::string& p
         parserFile->SetExternal();
     }
     return parserFile;
+}
+
+std::unique_ptr<soul::ast::common::TokenFile> ParseTokenFile(const std::string& tokenFilePath, bool external)
+{
+    std::string tokenFileContent = util::ReadFile(tokenFilePath);
+    std::u32string content = util::ToUtf32(tokenFileContent);
+    auto lexer = soul::lex::spg::MakeLexer(content.c_str(), content.c_str() + content.length(), tokenFilePath);
+    lexer.SetRuleNameMapPtr(::common::parser::rules::GetRuleNameMapPtr());
+    using LexerType = decltype(lexer);
+    std::unique_ptr<soul::ast::common::TokenFile> tokenFile = soul::common::token::file::parser::TokenFileParser<LexerType>::Parse(lexer);
+    if (external)
+    {
+        tokenFile->SetExternal();
+    }
+    return tokenFile;
 }
 
 } // namespace soul::spg

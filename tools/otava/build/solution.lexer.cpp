@@ -6,18 +6,18 @@ using namespace otava::solution_token;
 
 namespace otava::solution_lexer {
 
-soul::ast::slg::TokenCollection* GetTokens()
+soul::ast::common::TokenCollection* GetTokens()
 {
-    static soul::ast::slg::TokenCollection tokens("otava.solution_lexer.tokens");
+    static soul::ast::common::TokenCollection tokens("otava.solution_lexer.tokens");
     if (!tokens.Initialized())
     {
         tokens.SetInitialized();
-        tokens.AddToken(new soul::ast::slg::Token(SOLUTION, "SOLUTION", "'solution'"));
-        tokens.AddToken(new soul::ast::slg::Token(ID, "ID", "identifier"));
-        tokens.AddToken(new soul::ast::slg::Token(DOT, "DOT", "'.'"));
-        tokens.AddToken(new soul::ast::slg::Token(SEMICOLON, "SEMICOLON", "';'"));
-        tokens.AddToken(new soul::ast::slg::Token(PROJECT, "PROJECT", "'project'"));
-        tokens.AddToken(new soul::ast::slg::Token(FILEPATH, "FILEPATH", "file path"));
+        tokens.AddToken(new soul::ast::common::Token(SOLUTION, "SOLUTION", "'solution'"));
+        tokens.AddToken(new soul::ast::common::Token(ID, "ID", "identifier"));
+        tokens.AddToken(new soul::ast::common::Token(DOT, "DOT", "'.'"));
+        tokens.AddToken(new soul::ast::common::Token(SEMICOLON, "SEMICOLON", "';'"));
+        tokens.AddToken(new soul::ast::common::Token(PROJECT, "PROJECT", "'project'"));
+        tokens.AddToken(new soul::ast::common::Token(FILEPATH, "FILEPATH", "file path"));
     }
     return &tokens;
 }

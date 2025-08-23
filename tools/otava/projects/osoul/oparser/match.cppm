@@ -11,10 +11,13 @@ export namespace soul::parser {
 
 struct Match
 {
-    inline Match(bool hit_) : hit(hit_), value(nullptr) {}
-    inline Match(bool hit_, void* value_) : hit(hit_), value(value_) {}
+    constexpr Match() : hit(false), value(nullptr) {}
+    constexpr Match(bool hit_) : hit(hit_), value(nullptr) {}
+    constexpr Match(bool hit_, void* value_) : hit(hit_), value(value_) {}
     bool hit;
     void* value;
 };
+
+template struct std::expected<Match, int>;
 
 } // namespace soul::parser;

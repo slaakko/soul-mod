@@ -10,7 +10,7 @@ import util;
 
 namespace soul::slg {
 
-void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose, soul::common::ModuleMap& moduleMap, bool ppstyle)
+void GenerateTokenModule(soul::ast::common::TokenFile* tokenFile, bool verbose, soul::common::ModuleMap& moduleMap, bool ppstyle)
 {
     if (tokenFile->IsExternal())
     {
@@ -31,7 +31,7 @@ void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose, sou
     }
     std::ofstream interfaceFile(interfaceFilePath);
     util::CodeFormatter formatter(interfaceFile);
-    soul::ast::slg::TokenCollection* tokenCollection = tokenFile->GetTokenCollection();
+    soul::ast::common::TokenCollection* tokenCollection = tokenFile->GetTokenCollection();
     if (ppstyle)
     {
         moduleMap.MapModule(tokenCollection->Name(), interfaceFilePath);
@@ -73,7 +73,7 @@ void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose, sou
     int n = tokenCollection->Tokens().size();
     for (int i = 0; i < n; ++i)
     {
-        soul::ast::slg::Token* token = tokenCollection->Tokens()[i].get();
+        soul::ast::common::Token* token = tokenCollection->Tokens()[i].get();
         formatter.WriteLine("constexpr std::int64_t " + token->Name() + " = (static_cast<std::int64_t>(tokenSetID) << 32) | " + std::to_string(i + 1) + ";");
     }
     formatter.WriteLine();

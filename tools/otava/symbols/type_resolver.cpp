@@ -150,7 +150,7 @@ void TypeResolver::ResolveType()
     {
         derivations.vec.push_back(Derivation::rvalueRefDerivation);
     }
-    if (!derivations.IsEmpty())
+    if (!derivations.IsEmpty() && type)
     {
         type = context->GetSymbolTable()->MakeCompoundType(type, derivations);
     }
@@ -424,6 +424,10 @@ void TypeResolver::Visit(otava::ast::IdentifierNode& node)
 
 void TypeResolver::Visit(otava::ast::TemplateIdNode& node)
 {
+    if (node.TemplateName()->Str() == U"Token")
+    {
+        int x = 0;
+    }
     TypeSymbol* typeSymbol = otava::symbols::ResolveType(node.TemplateName(), DeclarationFlags::none, context, resolverFlags);
     if (!typeSymbol)
     {
