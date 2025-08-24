@@ -4071,10 +4071,10 @@ soul::parser::Match ExpressionParser<LexerT>::PostCastExpression(LexerT& lexer)
         soul::parser::Match* parentMatch1 = &match;
         switch (*lexer)
         {
-            case soul::cpp::token::DYNAMIC_CAST:
-            case soul::cpp::token::CONST_CAST:
             case soul::cpp::token::REINTERPRET_CAST:
             case soul::cpp::token::STATIC_CAST:
+            case soul::cpp::token::CONST_CAST:
+            case soul::cpp::token::DYNAMIC_CAST:
             {
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch2 = &match;
@@ -4547,13 +4547,13 @@ soul::parser::Match ExpressionParser<LexerT>::PrimaryExpression(LexerT& lexer)
         soul::parser::Match* parentMatch1 = &match;
         switch (*lexer)
         {
-            case soul::cpp::token::FALSE:
-            case soul::cpp::token::NULLPTR:
-            case soul::cpp::token::FLOATING_LITERAL:
             case soul::cpp::token::CHAR_LITERAL:
             case soul::cpp::token::STRING_LITERAL:
-            case soul::cpp::token::INTEGER_LITERAL:
+            case soul::cpp::token::NULLPTR:
             case soul::cpp::token::TRUE:
+            case soul::cpp::token::FLOATING_LITERAL:
+            case soul::cpp::token::INTEGER_LITERAL:
+            case soul::cpp::token::FALSE:
             {
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch2 = &match;
@@ -4977,19 +4977,19 @@ soul::parser::Match ExpressionParser<LexerT>::TypeSpecifierOrTypeName(LexerT& le
     switch (*lexer)
     {
         case soul::cpp::token::CHAR:
-        case soul::cpp::token::CHAR16T:
         case soul::cpp::token::CHAR8T:
+        case soul::cpp::token::CHAR16T:
         case soul::cpp::token::CHAR32T:
-        case soul::cpp::token::BOOL:
         case soul::cpp::token::WCHART:
-        case soul::cpp::token::UNSIGNED:
+        case soul::cpp::token::BOOL:
         case soul::cpp::token::FLOAT:
         case soul::cpp::token::SIGNED:
-        case soul::cpp::token::VOID:
-        case soul::cpp::token::INT:
-        case soul::cpp::token::LONG:
-        case soul::cpp::token::SHORT:
         case soul::cpp::token::DOUBLE:
+        case soul::cpp::token::LONG:
+        case soul::cpp::token::UNSIGNED:
+        case soul::cpp::token::VOID:
+        case soul::cpp::token::SHORT:
+        case soul::cpp::token::INT:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch1 = &match;
@@ -5550,21 +5550,21 @@ soul::parser::Match ExpressionParser<LexerT>::NewTypeId(LexerT& lexer)
                             switch (*lexer)
                             {
                                 case soul::cpp::token::CHAR:
-                                case soul::cpp::token::CHAR16T:
                                 case soul::cpp::token::CHAR8T:
+                                case soul::cpp::token::CHAR16T:
                                 case soul::cpp::token::CHAR32T:
-                                case soul::cpp::token::BOOL:
                                 case soul::cpp::token::WCHART:
-                                case soul::cpp::token::UNSIGNED:
+                                case soul::cpp::token::BOOL:
                                 case soul::cpp::token::FLOAT:
                                 case soul::cpp::token::CONST:
                                 case soul::cpp::token::SIGNED:
-                                case soul::cpp::token::VOID:
-                                case soul::cpp::token::INT:
-                                case soul::cpp::token::VOLATILE:
-                                case soul::cpp::token::LONG:
-                                case soul::cpp::token::SHORT:
                                 case soul::cpp::token::DOUBLE:
+                                case soul::cpp::token::LONG:
+                                case soul::cpp::token::UNSIGNED:
+                                case soul::cpp::token::VOID:
+                                case soul::cpp::token::VOLATILE:
+                                case soul::cpp::token::SHORT:
+                                case soul::cpp::token::INT:
                                 {
                                     soul::parser::Match match = soul::cpp::declarator::parser::DeclaratorParser<LexerT>::TypeSpecifierSeq(lexer, ti.get());
                                     if (match.hit)

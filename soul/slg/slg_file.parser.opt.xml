@@ -13,10 +13,10 @@
        </sequence>
        <token first="{SEMICOLON}" name="SEMICOLON"/>
       </sequence>
-      <kleene first="{#, EXTERN, ID, TOKENS, KEYWORDS, EXPRESSIONS, SEMICOLON, FILEPATH}">
-       <group first="{#, EXTERN, ID, TOKENS, KEYWORDS, EXPRESSIONS, SEMICOLON, FILEPATH}">
-        <action first="{#, EXTERN, ID, TOKENS, KEYWORDS, EXPRESSIONS, SEMICOLON, FILEPATH}">
-         <nonterminal first="{#, EXTERN, ID, TOKENS, KEYWORDS, EXPRESSIONS, SEMICOLON, FILEPATH}" ruleName="SlgFileDeclaration"/>
+      <kleene first="{#, EXTERN, ID, TOKENS, KEYWORDS, SEMICOLON, EXPRESSIONS, FILEPATH}">
+       <group first="{#, EXTERN, ID, TOKENS, KEYWORDS, SEMICOLON, EXPRESSIONS, FILEPATH}">
+        <action first="{#, EXTERN, ID, TOKENS, KEYWORDS, SEMICOLON, EXPRESSIONS, FILEPATH}">
+         <nonterminal first="{#, EXTERN, ID, TOKENS, KEYWORDS, SEMICOLON, EXPRESSIONS, FILEPATH}" ruleName="SlgFileDeclaration"/>
         </action>
        </group>
       </kleene>
@@ -24,9 +24,9 @@
     </group>
    </action>
   </rule>
-  <rule first="{#, EXTERN, ID, TOKENS, KEYWORDS, EXPRESSIONS, SEMICOLON, FILEPATH}" name="SlgFileDeclaration">
-   <choice first="{#, EXTERN, ID, TOKENS, KEYWORDS, EXPRESSIONS, SEMICOLON, FILEPATH}">
-    <choice first="{#, EXTERN, TOKENS, KEYWORDS, EXPRESSIONS, SEMICOLON, FILEPATH}">
+  <rule first="{#, EXTERN, ID, TOKENS, KEYWORDS, SEMICOLON, EXPRESSIONS, FILEPATH}" name="SlgFileDeclaration">
+   <choice first="{#, EXTERN, ID, TOKENS, KEYWORDS, SEMICOLON, EXPRESSIONS, FILEPATH}">
+    <choice first="{#, EXTERN, TOKENS, KEYWORDS, SEMICOLON, EXPRESSIONS, FILEPATH}">
      <choice first="{#, EXTERN, TOKENS, KEYWORDS, SEMICOLON, FILEPATH}">
       <action first="{#, EXTERN, TOKENS, SEMICOLON, FILEPATH}">
        <nonterminal first="{#, EXTERN, TOKENS, SEMICOLON, FILEPATH}" ruleName="TokenFileDeclaration"/>
