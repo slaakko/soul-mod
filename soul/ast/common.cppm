@@ -16,6 +16,7 @@ class ExportModule
 public:
     ExportModule(const std::string& moduleName_);
     inline const std::string& ModuleName() const { return moduleName; }
+    std::string NamespaceName() const;
 private:
     std::string moduleName;
 };
@@ -90,6 +91,11 @@ public:
     inline void SetId(std::int64_t id_) { id = id_; }
     inline const std::string& Name() const { return name; }
     inline const std::string& Info() const { return info; }
+    inline bool IsAny() const { return id == -1; }
+    inline bool IsEpsilon() const { return id == -2;  }
+    std::string FullName() const;
+    std::string FullCppId() const;
+    Token* Clone() const;
 private:
     std::int64_t id;
     std::string name;
@@ -107,6 +113,7 @@ public:
     inline const std::vector<std::unique_ptr<Token>>& Tokens() const { return tokens; }
     inline std::int32_t Id() const { return id; }
     Token* GetToken(std::int64_t id) const;
+    TokenCollection* Clone() const;
 private:
     bool initialized;
     std::int32_t id;
@@ -121,8 +128,27 @@ public:
     void SetTokenCollection(TokenCollection* tokenCollection_);
     inline TokenCollection* GetTokenCollection() const { return tokenCollection.get(); }
     void Accept(Visitor& visitor) override;
+    TokenFile* Clone() const;
 private:
     std::unique_ptr<TokenCollection> tokenCollection;
+};
+
+class TokenMap
+{
+public:
+    TokenMap();
+    void AddUsingToken(Token* usingToken);
+    void AddToken(Token* token);
+    std::vector<Token*> GetTokens(const std::string& tokenName) const;
+    Token* GetToken(const std::string& tokenFullName) const;
+    const Token* Any() const { return &any; }
+    const Token* Epsilon() const { return &epsilon; }
+private:
+    std::map<std::string, Token*> usingTokenMap;
+    std::map<std::string, std::vector<Token*>> tokenMap;
+    std::map<std::string, Token*> tokenFullNameMap;
+    Token any;
+    Token epsilon;
 };
 
 class Visitor

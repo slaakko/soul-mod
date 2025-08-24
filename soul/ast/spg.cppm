@@ -73,14 +73,14 @@ class TokenSet
 {
 public:
     TokenSet();
-    bool AddToken(const std::string& token);
+    bool AddToken(const soul::ast::common::Token* token);
     bool Merge(const TokenSet& that);
-    bool Contains(const std::string& token) const;
+    bool Contains(const soul::ast::common::Token* token) const;
     bool Intersects(const TokenSet& that) const;
     std::string ToString() const;
-    inline const std::set<std::string>& Tokens() const { return tokens; }
+    inline const std::set<const soul::ast::common::Token*>& Tokens() const { return tokens; }
 private:
-    std::set<std::string> tokens;
+    std::set<const soul::ast::common::Token*> tokens;
 };
 
 class Visitor;
@@ -92,6 +92,8 @@ enum class ParserKind
 };
 
 std::string ParserKindStr(ParserKind kind);
+
+class TokenMap;
 
 class Parser
 {
@@ -106,13 +108,16 @@ public:
     virtual std::string Name() const = 0;
     virtual void ComputeFirst(bool& changed, std::set<Parser*>& visited) = 0;
     inline ParserKind Kind() const { return kind; }
+    inline bool IsActionParser() const { return kind == ParserKind::actionParser; }
     inline bool IsNonterminalParser() const { return kind == ParserKind::nonterminalParser; }
     inline bool IsTokenParser() const { return kind == ParserKind::tokenParser; }
     inline bool IsListParser() const { return kind == ParserKind::listParser; }
     inline bool IsSwitchParser() const { return kind == ParserKind::switchParser; }
     inline bool IsDifferenceParser() const { return kind == ParserKind::differenceParser; }
+    inline bool IsGrammarParser() const { return kind == ParserKind::grammarParser; }
     inline const TokenSet& First() const { return first; }
     inline TokenSet& First() { return first; }
+    soul::ast::common::TokenMap* GetTokenMap();
 private:
     Parser* parent;
     soul::ast::SourcePos sourcePos;
@@ -324,9 +329,12 @@ public:
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "token"; }
+    inline soul::ast::common::Token* GetToken() const { return token; }
+    inline void SetToken(soul::ast::common::Token* token_) { token = token_; }
     void ComputeFirst(bool& changed, std::set<Parser*>& visited) override;
 private:
     std::string tokenName;
+    soul::ast::common::Token* token;
 };
 
 class CharParser : public Parser
@@ -429,9 +437,9 @@ private:
 
 struct Using
 {
-    Using(const soul::ast::SourcePos& sourcePos_, const std::string& parserRuleId_);
+    Using(const soul::ast::SourcePos& sourcePos_, const std::string& fullName_);
     soul::ast::SourcePos sourcePos;
-    std::string parserRuleId;
+    std::string fullName;
 };
 
 class ParserFile;
@@ -449,7 +457,7 @@ public:
     inline void SetParserFile(ParserFile* parserFile_) { parserFile = parserFile_; }
     void AddLexer(soul::ast::cpp::TypeIdNode* lexerTypeId);
     inline const std::vector<std::unique_ptr<soul::ast::cpp::TypeIdNode>>& Lexers() const { return lexers; }
-    void AddUsing(const soul::ast::SourcePos& sourcePos, const std::string& parserRuleId);
+    void AddUsing(const soul::ast::SourcePos& sourcePos, const std::string& fullName);
     inline const std::vector<Using>& Usings() const { return usings; }
     bool AddRule(RuleParser* rule);
     bool MapRule(RuleParser* rule);
@@ -492,6 +500,15 @@ private:
     bool external;
 };
 
+class TokenFileDeclaration : public SpgFileDeclaration
+{
+public:
+    TokenFileDeclaration(const soul::ast::SourcePos& sourcePos_, const std::string& filePath_, bool external_);
+    inline bool External() const { return external; }
+private:
+    bool external;
+};
+
 class ParserFile : public soul::ast::common::File
 {
 public:
@@ -505,10 +522,12 @@ public:
     inline bool IsExternal() const { return external; }
     inline void SetExternal() { external = true; }
     void Accept(soul::ast::common::Visitor& visitor) override;
+    inline soul::ast::common::TokenMap* GetTokenMap() { return &tokenMap; }
 private:
     std::unique_ptr<soul::ast::common::ExportModule> exportModule;
     std::vector<std::unique_ptr<soul::ast::common::Import>> imports;
     std::vector<std::unique_ptr<soul::ast::spg::GrammarParser>> parsers;
+    soul::ast::common::TokenMap tokenMap;
     bool external;
 };
 
@@ -527,12 +546,14 @@ public:
     GrammarParser* GetParser(const std::string& name) const;
     void AddRule(RuleParser* rule);
     inline const std::vector<RuleParser*>& Rules() const { return rules; }
+    soul::ast::common::TokenCollection* GetTokenCollection(const std::string& tokenCollectionName) const;
     void Accept(soul::ast::common::Visitor& visitor) override;
 private:
     std::string projectName;
     std::vector<std::unique_ptr<SpgFileDeclaration>> declarations;
     std::vector<std::unique_ptr<ParserFile>> parserFiles;
     std::vector<std::unique_ptr<soul::ast::common::TokenFile>> tokenFiles;
+    std::map<std::string, soul::ast::common::TokenCollection*> tokenCollectionMap;
     std::map<std::string, GrammarParser*> parserMap;
     std::vector<RuleParser*> rules;
 };

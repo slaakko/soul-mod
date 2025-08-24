@@ -9,11 +9,6 @@ import soul.ast.common;
 import util;
 import soul.rex.token;
 
-
-using namespace soul;
-using namespace soul::lexer;
-using namespace soul::rex::token;
-
 export namespace soul::rex::lexer {
 
 std::mutex& MakeLexerMtx();
@@ -3106,79 +3101,79 @@ struct RexLexer
             case 0:
             {
                 lexer.Retract();
-                return LPAREN;
+                return soul::rex::token::LPAREN;
                 break;
             }
             case 1:
             {
                 lexer.Retract();
-                return RPAREN;
+                return soul::rex::token::RPAREN;
                 break;
             }
             case 2:
             {
                 lexer.Retract();
-                return LBRACKET;
+                return soul::rex::token::LBRACKET;
                 break;
             }
             case 3:
             {
                 lexer.Retract();
-                return RBRACKET;
+                return soul::rex::token::RBRACKET;
                 break;
             }
             case 4:
             {
                 lexer.Retract();
-                return ALT;
+                return soul::rex::token::ALT;
                 break;
             }
             case 5:
             {
                 lexer.Retract();
-                return STAR;
+                return soul::rex::token::STAR;
                 break;
             }
             case 6:
             {
                 lexer.Retract();
-                return PLUS;
+                return soul::rex::token::PLUS;
                 break;
             }
             case 7:
             {
                 lexer.Retract();
-                return QUEST;
+                return soul::rex::token::QUEST;
                 break;
             }
             case 8:
             {
                 lexer.Retract();
-                return DOT;
+                return soul::rex::token::DOT;
                 break;
             }
             case 9:
             {
                 lexer.Retract();
-                return INVERSE;
+                return soul::rex::token::INVERSE;
                 break;
             }
             case 10:
             {
                 lexer.Retract();
-                return MINUS;
+                return soul::rex::token::MINUS;
                 break;
             }
             case 11:
             {
                 lexer.Retract();
-                return ESCAPE;
+                return soul::rex::token::ESCAPE;
                 break;
             }
             case 12:
             {
                 lexer.Retract();
-                return CHAR;
+                return soul::rex::token::CHAR;
                 break;
             }
         }

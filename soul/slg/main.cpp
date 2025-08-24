@@ -9,6 +9,7 @@ import soul.ast.slg;
 import soul.slg.file.parsers;
 import soul.slg.lexer.generator;
 import soul.slg.classmap;
+import soul.lexer.file.map;
 import soul.common.module_map;
 
 void Init()
@@ -52,6 +53,7 @@ int main(int argc, const char** argv)
     try
     {
         Init();
+        soul::lexer::FileMap fileMap;
         bool verbose = false;
         bool ppstyle = false;
         bool debug = false;
@@ -128,7 +130,7 @@ int main(int argc, const char** argv)
             {
                 std::cout << "> " << file << std::endl;
             }
-            std::unique_ptr<soul::ast::slg::SlgFile> slgFile = soul::slg::ParseSlgFile(file);
+            std::unique_ptr<soul::ast::slg::SlgFile> slgFile = soul::slg::ParseSlgFile(file, fileMap);
             soul::common::ModuleMap moduleMap;
             std::string moduleMapFilePath;
             if (ppstyle)
@@ -141,7 +143,7 @@ int main(int argc, const char** argv)
                     moduleMap.Read(moduleMapFilePath);
                 }
             }
-            soul::slg::GenerateLexer(slgFile.get(), verbose, moduleMap, ppstyle, debug);
+            soul::slg::GenerateLexer(slgFile.get(), verbose, moduleMap, fileMap, ppstyle, debug);
             if (ppstyle)
             {
                 moduleMap.Write(moduleMapFilePath);

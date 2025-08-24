@@ -1,12 +1,12 @@
 <parserFile>
  <grammar name="ExpressionFileParser">
-  <rule first="{#, EXPRESSIONS, ID, LBRACE, RBRACE}" name="ExpressionFile">
-   <action first="{#, EXPRESSIONS, ID, LBRACE, RBRACE}">
-    <group first="{#, EXPRESSIONS, ID, LBRACE, RBRACE}">
-     <sequence first="{#, EXPRESSIONS, ID, LBRACE, RBRACE}">
-      <sequence first="{#, EXPRESSIONS, ID, LBRACE}">
-       <sequence first="{#, EXPRESSIONS, ID, LBRACE}">
-        <sequence first="{#, EXPRESSIONS, ID}">
+  <rule first="{#, ID, RBRACE, LBRACE, EXPRESSIONS}" name="ExpressionFile">
+   <action first="{#, ID, RBRACE, LBRACE, EXPRESSIONS}">
+    <group first="{#, ID, RBRACE, LBRACE, EXPRESSIONS}">
+     <sequence first="{#, ID, RBRACE, LBRACE, EXPRESSIONS}">
+      <sequence first="{#, ID, LBRACE, EXPRESSIONS}">
+       <sequence first="{#, ID, LBRACE, EXPRESSIONS}">
+        <sequence first="{#, ID, EXPRESSIONS}">
          <sequence first="{#, EXPRESSIONS}">
           <action first="{#}">
            <empty first="{#}"/>
@@ -14,14 +14,10 @@
           <token first="{EXPRESSIONS}" name="EXPRESSIONS"/>
          </sequence>
          <action first="{ID}">
-          <expectation first="{ID}">
-           <nonterminal first="{ID}" ruleName="QualifiedId"/>
-          </expectation>
+          <nonterminal first="{ID}" ruleName="QualifiedId"/>
          </action>
         </sequence>
-        <expectation first="{LBRACE}">
-         <token first="{LBRACE}" name="LBRACE"/>
-        </expectation>
+        <token first="{LBRACE}" name="LBRACE"/>
        </sequence>
        <kleene first="{#, ID}">
         <group first="{ID}">
@@ -47,17 +43,11 @@
         <action first="{ID}">
          <token first="{ID}" name="ID"/>
         </action>
-        <expectation first="{ASSIGN}">
-         <token first="{ASSIGN}" name="ASSIGN"/>
-        </expectation>
+        <token first="{ASSIGN}" name="ASSIGN"/>
        </sequence>
-       <expectation first="{STRING_LITERAL}">
-        <nonterminal first="{STRING_LITERAL}" ruleName="ExprString"/>
-       </expectation>
+       <nonterminal first="{STRING_LITERAL}" ruleName="ExprString"/>
       </sequence>
-      <expectation first="{SEMICOLON}">
-       <token first="{SEMICOLON}" name="SEMICOLON"/>
-      </expectation>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
      </sequence>
     </group>
    </action>

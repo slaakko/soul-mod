@@ -7,8 +7,7 @@ import std;
 import soul.lexer;
 import soul.parser;
 import soul.ast.cpp;
-
-using namespace soul::ast::cpp;
+import soul.ast.common;
 
 export namespace soul::cpp::statement::parser {
 

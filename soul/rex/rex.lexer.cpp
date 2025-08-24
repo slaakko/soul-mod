@@ -2,7 +2,6 @@
 
 module soul.rex.lexer;
 
-using namespace soul::rex::token;
 
 namespace soul::rex::lexer {
 
@@ -12,19 +11,19 @@ soul::ast::common::TokenCollection* GetTokens()
     if (!tokens.Initialized())
     {
         tokens.SetInitialized();
-        tokens.AddToken(new soul::ast::common::Token(LPAREN, "LPAREN", "'('"));
-        tokens.AddToken(new soul::ast::common::Token(RPAREN, "RPAREN", "')'"));
-        tokens.AddToken(new soul::ast::common::Token(LBRACKET, "LBRACKET", "'['"));
-        tokens.AddToken(new soul::ast::common::Token(RBRACKET, "RBRACKET", "']'"));
-        tokens.AddToken(new soul::ast::common::Token(ALT, "ALT", "'|'"));
-        tokens.AddToken(new soul::ast::common::Token(STAR, "STAR", "'*'"));
-        tokens.AddToken(new soul::ast::common::Token(PLUS, "PLUS", "'+'"));
-        tokens.AddToken(new soul::ast::common::Token(QUEST, "QUEST", "'?'"));
-        tokens.AddToken(new soul::ast::common::Token(DOT, "DOT", "'.'"));
-        tokens.AddToken(new soul::ast::common::Token(ESCAPE, "ESCAPE", "escape"));
-        tokens.AddToken(new soul::ast::common::Token(INVERSE, "INVERSE", "'^'"));
-        tokens.AddToken(new soul::ast::common::Token(MINUS, "MINUS", "'-'"));
-        tokens.AddToken(new soul::ast::common::Token(CHAR, "CHAR", "character"));
+        tokens.AddToken(new soul::ast::common::Token(soul::rex::token::LPAREN, "LPAREN", "'('"));
+        tokens.AddToken(new soul::ast::common::Token(soul::rex::token::RPAREN, "RPAREN", "')'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::rex::token::LBRACKET, "LBRACKET", "'['"));
+        tokens.AddToken(new soul::ast::common::Token(soul::rex::token::RBRACKET, "RBRACKET", "']'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::rex::token::ALT, "ALT", "'|'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::rex::token::STAR, "STAR", "'*'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::rex::token::PLUS, "PLUS", "'+'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::rex::token::QUEST, "QUEST", "'?'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::rex::token::DOT, "DOT", "'.'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::rex::token::ESCAPE, "ESCAPE", "escape"));
+        tokens.AddToken(new soul::ast::common::Token(soul::rex::token::INVERSE, "INVERSE", "'^'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::rex::token::MINUS, "MINUS", "'-'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::rex::token::CHAR, "CHAR", "character"));
     }
     return &tokens;
 }

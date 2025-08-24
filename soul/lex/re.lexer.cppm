@@ -5,19 +5,12 @@ export module soul.lex.re;
 import std;
 import soul.lexer;
 import soul.ast.slg;
+import soul.ast.common;
 import util;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.punctuation.token;
 import soul.tool.token;
-import soul.ast.common;
-
-using namespace soul;
-using namespace soul::lexer;
-using namespace soul::cpp::token;
-using namespace soul::cpp::op::token;
-using namespace soul::punctuation::token;
-using namespace soul::tool::token;
 
 export namespace soul::lex::re {
 
@@ -3169,91 +3162,91 @@ struct RegExLexer
             case 0:
             {
                 lexer.Retract();
-                return LPAREN;
+                return soul::punctuation::token::LPAREN;
                 break;
             }
             case 1:
             {
                 lexer.Retract();
-                return RPAREN;
+                return soul::punctuation::token::RPAREN;
                 break;
             }
             case 2:
             {
                 lexer.Retract();
-                return LBRACKET;
+                return soul::punctuation::token::LBRACKET;
                 break;
             }
             case 3:
             {
                 lexer.Retract();
-                return RBRACKET;
+                return soul::punctuation::token::RBRACKET;
                 break;
             }
             case 4:
             {
                 lexer.Retract();
-                return LBRACE;
+                return soul::punctuation::token::LBRACE;
                 break;
             }
             case 5:
             {
                 lexer.Retract();
-                return RBRACE;
+                return soul::punctuation::token::RBRACE;
                 break;
             }
             case 6:
             {
                 lexer.Retract();
-                return PIPE;
+                return soul::punctuation::token::PIPE;
                 break;
             }
             case 7:
             {
                 lexer.Retract();
-                return STAR;
+                return soul::cpp::op::token::STAR;
                 break;
             }
             case 8:
             {
                 lexer.Retract();
-                return PLUS;
+                return soul::cpp::op::token::PLUS;
                 break;
             }
             case 9:
             {
                 lexer.Retract();
-                return QUEST;
+                return soul::punctuation::token::QUEST;
                 break;
             }
             case 10:
             {
                 lexer.Retract();
-                return DOT;
+                return soul::punctuation::token::DOT;
                 break;
             }
             case 11:
             {
                 lexer.Retract();
-                return CARET;
+                return soul::punctuation::token::CARET;
                 break;
             }
             case 12:
             {
                 lexer.Retract();
-                return MINUS;
+                return soul::cpp::op::token::MINUS;
                 break;
             }
             case 13:
             {
                 lexer.Retract();
-                return ESCAPE;
+                return soul::tool::token::ESCAPE;
                 break;
             }
             case 14:
             {
                 lexer.Retract();
-                return CHARACTER;
+                return soul::tool::token::CHARACTER;
                 break;
             }
         }

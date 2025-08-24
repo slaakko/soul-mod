@@ -4,6 +4,7 @@
 module soul.cpp.identifier.parser;
 
 import util;
+import soul.ast.common;
 import soul.ast.spg;
 import soul.cpp.token;
 import soul.cpp.op.token;
@@ -11,13 +12,6 @@ import soul.tool.token;
 import soul.punctuation.token;
 import soul.lex.slg;
 import soul.lex.spg;
-
-using namespace soul::cpp::token;
-using namespace soul::cpp::op::token;
-using namespace soul::tool::token;
-using namespace soul::punctuation::token;
-using namespace soul::lex::slg;
-using namespace soul::lex::spg;
 
 namespace soul::cpp::identifier::parser {
 
@@ -39,7 +33,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::CppIdentifier(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == ID)
+        if (*lexer == soul::cpp::token::ID)
         {
             ++lexer;
             match.hit = true;
@@ -108,7 +102,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
                             {
                                 std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(false);
-                                if (*lexer == COLON_COLON)
+                                if (*lexer == soul::cpp::op::token::COLON_COLON)
                                 {
                                     ++lexer;
                                     match.hit = true;
@@ -142,7 +136,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
                         {
                             std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
-                            if (*lexer == ID)
+                            if (*lexer == soul::cpp::token::ID)
                             {
                                 ++lexer;
                                 match.hit = true;
@@ -178,7 +172,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
                                     soul::parser::Match* parentMatch12 = &match;
                                     {
                                         soul::parser::Match match(false);
-                                        if (*lexer == COLON_COLON)
+                                        if (*lexer == soul::cpp::op::token::COLON_COLON)
                                         {
                                             ++lexer;
                                             match.hit = true;
@@ -195,7 +189,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
                                             {
                                                 std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match(false);
-                                                if (*lexer == ID)
+                                                if (*lexer == soul::cpp::token::ID)
                                                 {
                                                     ++lexer;
                                                     match.hit = true;

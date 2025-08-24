@@ -1,14 +1,14 @@
 <parserFile>
  <grammar name="LexerFileParser">
-  <rule first="{#, ACTIONS, ID, LBRACE, LBRACKET, RBRACE, RULES, SEMICOLON, VARIABLES}" name="LexerFile">
-   <action first="{#, ACTIONS, ID, LBRACE, LBRACKET, RBRACE, RULES, SEMICOLON, VARIABLES}">
-    <group first="{#, ACTIONS, ID, LBRACE, LBRACKET, RBRACE, RULES, SEMICOLON, VARIABLES}">
-     <sequence first="{#, ACTIONS, ID, LBRACE, LBRACKET, RBRACE, RULES, SEMICOLON, VARIABLES}">
-      <sequence first="{#, ACTIONS, ID, LBRACE, LBRACKET, RULES, SEMICOLON, VARIABLES}">
-       <sequence first="{#, ID, LBRACE, LBRACKET, SEMICOLON}">
-        <sequence first="{#, ID, LBRACKET, SEMICOLON}">
-         <sequence first="{#, ID, LBRACKET, SEMICOLON}">
-          <sequence first="{#, ID, LBRACKET, SEMICOLON}">
+  <rule first="{#, #, ID, VARIABLES, LBRACKET, ACTIONS, RBRACE, LBRACE, SEMICOLON, RULES}" name="LexerFile">
+   <action first="{#, #, ID, VARIABLES, LBRACKET, ACTIONS, RBRACE, LBRACE, SEMICOLON, RULES}">
+    <group first="{#, #, ID, VARIABLES, LBRACKET, ACTIONS, RBRACE, LBRACE, SEMICOLON, RULES}">
+     <sequence first="{#, #, ID, VARIABLES, LBRACKET, ACTIONS, RBRACE, LBRACE, SEMICOLON, RULES}">
+      <sequence first="{#, #, ID, VARIABLES, LBRACKET, ACTIONS, LBRACE, SEMICOLON, RULES}">
+       <sequence first="{#, #, ID, LBRACKET, LBRACE, SEMICOLON}">
+        <sequence first="{#, #, ID, LBRACKET, SEMICOLON}">
+         <sequence first="{#, #, ID, LBRACKET, SEMICOLON}">
+          <sequence first="{#, #, ID, LBRACKET, SEMICOLON}">
            <sequence first="{#, ID}">
             <action first="{#}">
              <empty first="{#}"/>
@@ -17,35 +17,29 @@
              <nonterminal first="{ID}" ruleName="ExportModule"/>
             </action>
            </sequence>
-           <nonterminal first="{#, ID, LBRACKET, SEMICOLON}" ruleName="Imports"/>
+           <nonterminal first="{#, #, ID, LBRACKET, SEMICOLON}" ruleName="Imports"/>
           </sequence>
           <nonterminal first="{ID}" ruleName="LexerKeyword"/>
          </sequence>
          <action first="{ID}">
-          <expectation first="{ID}">
-           <token first="{ID}" name="ID"/>
-          </expectation>
+          <token first="{ID}" name="ID"/>
          </action>
         </sequence>
-        <expectation first="{LBRACE}">
-         <token first="{LBRACE}" name="LBRACE"/>
-        </expectation>
+        <token first="{LBRACE}" name="LBRACE"/>
        </sequence>
-       <kleene first="{#, ACTIONS, RULES, VARIABLES}">
-        <group first="{ACTIONS, RULES, VARIABLES}">
-         <nonterminal first="{ACTIONS, RULES, VARIABLES}" ruleName="LexerContent"/>
+       <kleene first="{#, VARIABLES, ACTIONS, RULES}">
+        <group first="{VARIABLES, ACTIONS, RULES}">
+         <nonterminal first="{VARIABLES, ACTIONS, RULES}" ruleName="LexerContent"/>
         </group>
        </kleene>
       </sequence>
-      <expectation first="{RBRACE}">
-       <token first="{RBRACE}" name="RBRACE"/>
-      </expectation>
+      <token first="{RBRACE}" name="RBRACE"/>
      </sequence>
     </group>
    </action>
   </rule>
-  <rule first="{#, ID, LBRACKET, SEMICOLON}" name="Imports">
-   <kleene first="{#, ID, LBRACKET, SEMICOLON}">
+  <rule first="{#, #, ID, LBRACKET, SEMICOLON}" name="Imports">
+   <kleene first="{#, #, ID, LBRACKET, SEMICOLON}">
     <group first="{#, ID, LBRACKET, SEMICOLON}">
      <action first="{#, ID, LBRACKET, SEMICOLON}">
       <nonterminal first="{#, ID, LBRACKET, SEMICOLON}" ruleName="Import"/>
@@ -53,9 +47,9 @@
     </group>
    </kleene>
   </rule>
-  <rule first="{ACTIONS, RULES, VARIABLES}" name="LexerContent">
-   <group first="{ACTIONS, RULES, VARIABLES}">
-    <switch first="{ACTIONS, RULES, VARIABLES}">
+  <rule first="{VARIABLES, ACTIONS, RULES}" name="LexerContent">
+   <group first="{VARIABLES, ACTIONS, RULES}">
+    <switch first="{VARIABLES, ACTIONS, RULES}">
      <case first="{RULES}">
       <nonterminal first="{RULES}" ruleName="Rules"/>
      </case>
@@ -74,9 +68,7 @@
      <sequence first="{RULES}">
       <sequence first="{RULES}">
        <token first="{RULES}" name="RULES"/>
-       <expectation first="{LBRACE}">
-        <token first="{LBRACE}" name="LBRACE"/>
-       </expectation>
+       <token first="{LBRACE}" name="LBRACE"/>
       </sequence>
       <kleene first="{#, STRING_LITERAL}">
        <group first="{STRING_LITERAL}">
@@ -86,9 +78,7 @@
        </group>
       </kleene>
      </sequence>
-     <expectation first="{RBRACE}">
-      <token first="{RBRACE}" name="RBRACE"/>
-     </expectation>
+     <token first="{RBRACE}" name="RBRACE"/>
     </sequence>
    </group>
   </rule>
@@ -113,37 +103,31 @@
      <sequence first="{VARIABLES}">
       <sequence first="{VARIABLES}">
        <token first="{VARIABLES}" name="VARIABLES"/>
-       <expectation first="{LBRACE}">
-        <token first="{LBRACE}" name="LBRACE"/>
-       </expectation>
+       <token first="{LBRACE}" name="LBRACE"/>
       </sequence>
-      <kleene first="{#, AMP, BOOL, CHAR, CHAR16T, CHAR32T, CHAR8T, COLON_COLON, CONST, DOUBLE, FLOAT, ID, INT, LANGLE, LBRACKET, LONG, LPAREN, SEMICOLON, SHORT, SIGNED, STAR, UNSIGNED, VOID, VOLATILE, WCHART}">
-       <group first="{#, AMP, BOOL, CHAR, CHAR16T, CHAR32T, CHAR8T, COLON_COLON, CONST, DOUBLE, FLOAT, ID, INT, LANGLE, LBRACKET, LONG, LPAREN, SEMICOLON, SHORT, SIGNED, STAR, UNSIGNED, VOID, VOLATILE, WCHART}">
-        <action first="{#, AMP, BOOL, CHAR, CHAR16T, CHAR32T, CHAR8T, COLON_COLON, CONST, DOUBLE, FLOAT, ID, INT, LANGLE, LBRACKET, LONG, LPAREN, SEMICOLON, SHORT, SIGNED, STAR, UNSIGNED, VOID, VOLATILE, WCHART}">
-         <nonterminal first="{#, AMP, BOOL, CHAR, CHAR16T, CHAR32T, CHAR8T, COLON_COLON, CONST, DOUBLE, FLOAT, ID, INT, LANGLE, LBRACKET, LONG, LPAREN, SEMICOLON, SHORT, SIGNED, STAR, UNSIGNED, VOID, VOLATILE, WCHART}" ruleName="Variable"/>
+      <kleene first="{#, #, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}">
+       <group first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}">
+        <action first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}">
+         <nonterminal first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}" ruleName="Variable"/>
         </action>
        </group>
       </kleene>
      </sequence>
-     <expectation first="{RBRACE}">
-      <token first="{RBRACE}" name="RBRACE"/>
-     </expectation>
+     <token first="{RBRACE}" name="RBRACE"/>
     </sequence>
    </group>
   </rule>
-  <rule first="{#, AMP, BOOL, CHAR, CHAR16T, CHAR32T, CHAR8T, COLON_COLON, CONST, DOUBLE, FLOAT, ID, INT, LANGLE, LBRACKET, LONG, LPAREN, SEMICOLON, SHORT, SIGNED, STAR, UNSIGNED, VOID, VOLATILE, WCHART}" name="Variable">
-   <action first="{#, AMP, BOOL, CHAR, CHAR16T, CHAR32T, CHAR8T, COLON_COLON, CONST, DOUBLE, FLOAT, ID, INT, LANGLE, LBRACKET, LONG, LPAREN, SEMICOLON, SHORT, SIGNED, STAR, UNSIGNED, VOID, VOLATILE, WCHART}">
-    <group first="{#, AMP, BOOL, CHAR, CHAR16T, CHAR32T, CHAR8T, COLON_COLON, CONST, DOUBLE, FLOAT, ID, INT, LANGLE, LBRACKET, LONG, LPAREN, SEMICOLON, SHORT, SIGNED, STAR, UNSIGNED, VOID, VOLATILE, WCHART}">
-     <sequence first="{#, AMP, BOOL, CHAR, CHAR16T, CHAR32T, CHAR8T, COLON_COLON, CONST, DOUBLE, FLOAT, ID, INT, LANGLE, LBRACKET, LONG, LPAREN, SEMICOLON, SHORT, SIGNED, STAR, UNSIGNED, VOID, VOLATILE, WCHART}">
-      <sequence first="{#, AMP, BOOL, CHAR, CHAR16T, CHAR32T, CHAR8T, COLON_COLON, CONST, DOUBLE, FLOAT, ID, INT, LANGLE, LBRACKET, LONG, LPAREN, SHORT, SIGNED, STAR, UNSIGNED, VOID, VOLATILE, WCHART}">
-       <nonterminal first="{#, AMP, BOOL, CHAR, CHAR16T, CHAR32T, CHAR8T, COLON_COLON, CONST, DOUBLE, FLOAT, ID, INT, LANGLE, LBRACKET, LONG, LPAREN, SHORT, SIGNED, STAR, UNSIGNED, VOID, VOLATILE, WCHART}" ruleName="TypeId"/>
+  <rule first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}" name="Variable">
+   <action first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}">
+    <group first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}">
+     <sequence first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}">
+      <sequence first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}">
+       <nonterminal first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}" ruleName="TypeId"/>
        <action first="{ID}">
         <token first="{ID}" name="ID"/>
        </action>
       </sequence>
-      <expectation first="{SEMICOLON}">
-       <token first="{SEMICOLON}" name="SEMICOLON"/>
-      </expectation>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
      </sequence>
     </group>
    </action>
@@ -154,13 +138,11 @@
      <sequence first="{ACTIONS}">
       <sequence first="{ACTIONS}">
        <token first="{ACTIONS}" name="ACTIONS"/>
-       <expectation first="{LBRACE}">
-        <token first="{LBRACE}" name="LBRACE"/>
-       </expectation>
+       <token first="{LBRACE}" name="LBRACE"/>
       </sequence>
-      <kleene first="{#, ASSIGN, DOLLAR, LBRACE}">
-       <group first="{#, ASSIGN, DOLLAR, LBRACE}">
-        <sequence first="{#, ASSIGN, DOLLAR, LBRACE}">
+      <kleene first="{#, ASSIGN, LBRACE, DOLLAR}">
+       <group first="{#, ASSIGN, LBRACE, DOLLAR}">
+        <sequence first="{#, ASSIGN, LBRACE, DOLLAR}">
          <sequence first="{#, ASSIGN, DOLLAR}">
           <action first="{#, DOLLAR}">
            <nonterminal first="{#, DOLLAR}" ruleName="Action"/>
@@ -174,9 +156,7 @@
        </group>
       </kleene>
      </sequence>
-     <expectation first="{RBRACE}">
-      <token first="{RBRACE}" name="RBRACE"/>
-     </expectation>
+     <token first="{RBRACE}" name="RBRACE"/>
     </sequence>
    </group>
   </rule>

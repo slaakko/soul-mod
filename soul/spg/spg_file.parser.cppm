@@ -7,8 +7,7 @@ import std;
 import soul.lexer;
 import soul.parser;
 import soul.ast.spg;
-
-using namespace soul::ast::spg;
+import soul.ast.slg;
 
 export namespace soul::spg::spg::file::parser {
 
@@ -19,6 +18,7 @@ struct SpgFileParser
     static soul::parser::Match SpgFile(LexerT& lexer);
     static soul::parser::Match SpgFileDeclaration(LexerT& lexer);
     static soul::parser::Match ParserFileDeclaration(LexerT& lexer);
+    static soul::parser::Match TokenFileDeclaration(LexerT& lexer);
 };
 
 } // namespace soul::spg::spg::file::parser

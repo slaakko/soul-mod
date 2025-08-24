@@ -9,9 +9,6 @@ import soul.parser;
 import soul.rex.context;
 import soul.rex.nfa;
 
-using namespace soul::rex::context;
-using namespace soul::rex::nfa;
-
 export namespace soul::rex::parser {
 
 template<typename LexerT>

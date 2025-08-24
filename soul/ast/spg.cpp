@@ -166,7 +166,7 @@ TokenSet::TokenSet()
 {
 }
 
-bool TokenSet::AddToken(const std::string& token)
+bool TokenSet::AddToken(const soul::ast::common::Token* token)
 {
     auto it = tokens.find(token);
     if (it != tokens.cend())
@@ -193,7 +193,7 @@ bool TokenSet::Merge(const TokenSet& that)
     return changed;
 }
 
-bool TokenSet::Contains(const std::string& token) const
+bool TokenSet::Contains(const soul::ast::common::Token* token) const
 {
     return tokens.find(token) != tokens.cend();
 }
@@ -224,7 +224,7 @@ std::string TokenSet::ToString() const
         {
             set.append(", ");
         }
-        set.append(token);
+        set.append(token->Name());
     }
     set.append("}");
     return set;
@@ -236,6 +236,24 @@ Parser::Parser(const soul::ast::SourcePos& sourcePos_, ParserKind kind_) : paren
 
 Parser::~Parser()
 {
+}
+
+soul::ast::common::TokenMap* Parser::GetTokenMap() 
+{
+    if (IsGrammarParser())
+    {
+        const GrammarParser* grammar = static_cast<const GrammarParser*>(this);
+        ParserFile* parserFile = grammar->GetParserFile();
+        return parserFile->GetTokenMap();
+    }
+    else if (parent)
+    {
+        return parent->GetTokenMap();
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 UnaryParser::UnaryParser(const soul::ast::SourcePos& sourcePos_, ParserKind kind_, Parser* child_) : Parser(sourcePos_, kind_), child(child_)
@@ -306,16 +324,25 @@ void ChoiceParser::SetOptimizationFlag(int& count)
         }
         parent = parent->Parent();
     }
-    if (!First().Contains("*"))
+    soul::ast::common::TokenMap* tokenMap = GetTokenMap();
+    if (tokenMap)
     {
-        if (!Left()->First().Contains("#") && !Right()->First().Contains("#") &&!Left()->First().Contains("*") && !Right()->First().Contains("*"))
+        if (!First().Contains(tokenMap->Any()))
         {
-            if (!Left()->First().Intersects(Right()->First()))
+            if (!Left()->First().Contains(tokenMap->Epsilon()) && !Right()->First().Contains(tokenMap->Epsilon()) && !Left()->First().Contains(tokenMap->Any()) &&
+                !Right()->First().Contains(tokenMap->Any()))
             {
-                optimize = true;
-                ++count;
+                if (!Left()->First().Intersects(Right()->First()))
+                {
+                    optimize = true;
+                    ++count;
+                }
             }
         }
+    }
+    else
+    {
+        throw std::runtime_error("token map not found");
     }
 }
 
@@ -371,6 +398,7 @@ void SwitchParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 
 void SwitchParser::AddCaseParser(CaseParser* caseParser)
 {
+    caseParser->SetParent(this);
     caseParsers.push_back(std::unique_ptr<CaseParser>(caseParser));
 }
 
@@ -399,12 +427,20 @@ void SequenceParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
         {
             changed = true;
         }
-        if (First().Contains("#"))
+        soul::ast::common::TokenMap* tokenMap = GetTokenMap();
+        if (tokenMap)
         {
-            if (First().Merge(Right()->First()))
+            if (First().Contains(tokenMap->Epsilon()))
             {
-                changed = true;
+                if (First().Merge(Right()->First()))
+                {
+                    changed = true;
+                }
             }
+        }
+        else
+        {
+            throw std::runtime_error("token map not found");
         }
     }
 }
@@ -493,10 +529,18 @@ void KleeneParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
         {
             changed = true;
         }
-        bool epsilonAdded = First().AddToken("#");
-        if (epsilonAdded)
+        soul::ast::common::TokenMap* tokenMap = GetTokenMap();
+        if (tokenMap)
         {
-            changed = true;
+            bool epsilonAdded = First().AddToken(tokenMap->Epsilon());
+            if (epsilonAdded)
+            {
+                changed = true;
+            }
+        }
+        else
+        {
+            throw std::runtime_error("token map not found");
         }
     }
 }
@@ -539,10 +583,18 @@ void OptionalParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
         {
             changed = true;
         }
-        bool epsilonAdded = First().AddToken("#");
-        if (epsilonAdded)
+        soul::ast::common::TokenMap* tokenMap = GetTokenMap();
+        if (tokenMap)
         {
-            changed = true;
+            bool epsilonAdded = First().AddToken(tokenMap->Epsilon());
+            if (epsilonAdded)
+            {
+                changed = true;
+            }
+        }
+        else
+        {
+            throw std::runtime_error("token map not found");
         }
     }
 }
@@ -634,9 +686,17 @@ void EmptyParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
     if (visited.find(this) == visited.cend())
     {
         visited.insert(this);
-        if (First().AddToken("#"))
+        soul::ast::common::TokenMap* tokenMap = GetTokenMap();
+        if (tokenMap)
         {
-            changed = true;
+            if (First().AddToken(tokenMap->Epsilon()))
+            {
+                changed = true;
+            }
+        }
+        else
+        {
+            throw std::runtime_error("token map not found");
         }
     }
 }
@@ -660,14 +720,23 @@ void AnyParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
     if (visited.find(this) == visited.cend())
     {
         visited.insert(this);
-        if (First().AddToken("*"))
+        soul::ast::common::TokenMap* tokenMap = GetTokenMap();
+        if (tokenMap)
         {
-            changed = true;
+            if (First().AddToken(tokenMap->Any()))
+            {
+                changed = true;
+            }
+        }
+        else
+        {
+            throw std::runtime_error("token map not found");
         }
     }
 }
 
-TokenParser::TokenParser(const soul::ast::SourcePos& sourcePos_, const std::string& tokenName_) : Parser(sourcePos_, ParserKind::tokenParser), tokenName(tokenName_)
+TokenParser::TokenParser(const soul::ast::SourcePos& sourcePos_, const std::string& tokenName_) : 
+    Parser(sourcePos_, ParserKind::tokenParser), tokenName(tokenName_), token(nullptr)
 {
 }
 
@@ -686,7 +755,7 @@ void TokenParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
     if (visited.find(this) == visited.cend())
     {
         visited.insert(this);
-        if (First().AddToken(tokenName))
+        if (First().AddToken(token))
         {
             changed = true;
         }
@@ -799,6 +868,7 @@ void RuleParser::AddParamOrVariable(ParamVar* paramVar)
 void RuleParser::SetDefinition(Parser* definition_)
 {
     definition.reset(definition_);
+    definition->SetParent(this);
 }
 
 void RuleParser::SetReturnType(soul::ast::cpp::TypeIdNode* returnType_)
@@ -865,7 +935,7 @@ void RuleParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
     }
 }
 
-Using::Using(const soul::ast::SourcePos& sourcePos_, const std::string& parserRuleId_) : sourcePos(sourcePos_), parserRuleId(parserRuleId_)
+Using::Using(const soul::ast::SourcePos& sourcePos_, const std::string& fullName_) : sourcePos(sourcePos_), fullName(fullName_)
 {
 }
 
@@ -879,14 +949,15 @@ void GrammarParser::AddLexer(soul::ast::cpp::TypeIdNode* lexerTypeId)
     lexers.push_back(std::unique_ptr< soul::ast::cpp::TypeIdNode>(lexerTypeId));
 }
 
-void GrammarParser::AddUsing(const soul::ast::SourcePos& sourcePos, const std::string& parserRuleId)
+void GrammarParser::AddUsing(const soul::ast::SourcePos& sourcePos, const std::string& fullName)
 {
-    usings.push_back(Using(sourcePos, parserRuleId));
+    usings.push_back(Using(sourcePos, fullName));
 }
 
 bool GrammarParser::AddRule(RuleParser* rule)
 {
     rule->SetGrammar(this);
+    rule->SetParent(this);
     rule->SetIndex(rules.size());
     rules.push_back(std::unique_ptr<RuleParser>(rule));
     return MapRule(rule);
@@ -952,7 +1023,12 @@ ParserFileDeclaration::ParserFileDeclaration(const soul::ast::SourcePos& sourceP
 {
 }
 
-ParserFile::ParserFile(const std::string& filePath_) : File(soul::ast::common::FileKind::parserFile, filePath_), external(false)
+TokenFileDeclaration::TokenFileDeclaration(const soul::ast::SourcePos& sourcePos_, const std::string& filePath_, bool external_) :
+    SpgFileDeclaration(sourcePos_, soul::ast::common::FileKind::tokenFile, filePath_), external(external_)
+{
+}
+
+ParserFile::ParserFile(const std::string& filePath_) : File(soul::ast::common::FileKind::parserFile, filePath_), external(false), tokenMap()
 {
 }
 
@@ -1001,6 +1077,20 @@ void SpgFile::AddParserFile(ParserFile* parserFile)
 void SpgFile::AddTokenFile(soul::ast::common::TokenFile* tokenFile)
 {
     tokenFiles.push_back(std::unique_ptr<soul::ast::common::TokenFile>(tokenFile));
+    tokenCollectionMap[tokenFile->GetTokenCollection()->Name()] = tokenFile->GetTokenCollection();
+}
+
+soul::ast::common::TokenCollection* SpgFile::GetTokenCollection(const std::string& tokenCollectionName) const
+{
+    auto it = tokenCollectionMap.find(tokenCollectionName);
+    if (it != tokenCollectionMap.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 void SpgFile::AddRule(RuleParser* rule)

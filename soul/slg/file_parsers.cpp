@@ -27,11 +27,13 @@ using namespace soul::slg::expression::file::parser;
 using namespace soul::slg::lexer::file::parser;
 using namespace soul::slg::slg::file::parser;
 
-std::unique_ptr<soul::ast::common::TokenFile> ParseTokenFile(const std::string& tokenFilePath, bool external)
+std::unique_ptr<soul::ast::common::TokenFile> ParseTokenFile(const std::string& tokenFilePath, bool external, soul::lexer::FileMap& fileMap)
 {
+    std::int32_t file = fileMap.MapFile(tokenFilePath);
     std::string tokenFileContent = util::ReadFile(tokenFilePath);
     std::u32string content = util::ToUtf32(tokenFileContent);
     auto lexer = MakeLexer(content.c_str(), content.c_str() + content.length(), tokenFilePath);
+    lexer.SetFile(file);
     lexer.SetRuleNameMapPtr(soul::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
     std::unique_ptr<soul::ast::common::TokenFile> tokenFile = soul::common::token::file::parser::TokenFileParser<LexerType>::Parse(lexer);
@@ -39,49 +41,66 @@ std::unique_ptr<soul::ast::common::TokenFile> ParseTokenFile(const std::string& 
     {
         tokenFile->SetExternal();
     }
+    fileMap.AddFileContent(file, std::move(content), std::move(lexer.GetLineStartIndeces()));
     return tokenFile;
 }
 
-std::unique_ptr<soul::ast::slg::KeywordFile> ParseKeywordFile(const std::string& keywordFilePath)
+std::unique_ptr<soul::ast::slg::KeywordFile> ParseKeywordFile(const std::string& keywordFilePath, soul::lexer::FileMap& fileMap)
 {
+    std::int32_t file = fileMap.MapFile(keywordFilePath);
     std::string keywordFileContent = util::ReadFile(keywordFilePath);
     std::u32string content = util::ToUtf32(keywordFileContent);
     auto lexer = MakeLexer(content.c_str(), content.c_str() + content.length(), keywordFilePath);
+    lexer.SetFile(file);
     lexer.SetRuleNameMapPtr(soul::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
-    return KeywordFileParser<LexerType>::Parse(lexer);
+    std::unique_ptr<soul::ast::slg::KeywordFile> keywordFile = KeywordFileParser<LexerType>::Parse(lexer);
+    fileMap.AddFileContent(file, std::move(content), std::move(lexer.GetLineStartIndeces()));
+    return keywordFile;
 }
 
-std::unique_ptr<soul::ast::slg::ExpressionFile> ParseExpressionFile(const std::string& expressionFilePath)
+std::unique_ptr<soul::ast::slg::ExpressionFile> ParseExpressionFile(const std::string& expressionFilePath, soul::lexer::FileMap& fileMap)
 {
+    std::int32_t file = fileMap.MapFile(expressionFilePath);
     std::string expressionFileContent = util::ReadFile(expressionFilePath);
     std::u32string content = util::ToUtf32(expressionFileContent);
     auto lexer = MakeLexer(content.c_str(), content.c_str() + content.length(), expressionFilePath);
+    lexer.SetFile(file);
     lexer.SetRuleNameMapPtr(soul::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
-    return ExpressionFileParser<LexerType>::Parse(lexer);
+    std::unique_ptr<soul::ast::slg::ExpressionFile> expressionFile = ExpressionFileParser<LexerType>::Parse(lexer);
+    fileMap.AddFileContent(file, std::move(content), std::move(lexer.GetLineStartIndeces()));
+    return expressionFile;
 }
 
-std::unique_ptr<soul::ast::slg::LexerFile> ParseLexerFile(const std::string& lexerFilePath)
+std::unique_ptr<soul::ast::slg::LexerFile> ParseLexerFile(const std::string& lexerFilePath, soul::lexer::FileMap& fileMap)
 {
+    std::int32_t file = fileMap.MapFile(lexerFilePath);
     std::string lexerFileContent = util::ReadFile(lexerFilePath);
     std::u32string content = util::ToUtf32(lexerFileContent);
     auto lexer = MakeLexer(content.c_str(), content.c_str() + content.length(), lexerFilePath);
+    lexer.SetFile(file);
     lexer.SetRuleNameMapPtr(soul::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
-    return LexerFileParser<LexerType>::Parse(lexer);
+    std::unique_ptr<soul::ast::slg::LexerFile> lexerFile = LexerFileParser<LexerType>::Parse(lexer);
+    fileMap.AddFileContent(file, std::move(content), std::move(lexer.GetLineStartIndeces()));
+    return lexerFile;
 }
 
-std::unique_ptr<soul::ast::slg::SlgFile> ParseSlgFile(const std::string& slgFilePath)
+std::unique_ptr<soul::ast::slg::SlgFile> ParseSlgFile(const std::string& slgFilePath, soul::lexer::FileMap& fileMap)
 {
+    std::int32_t file = fileMap.MapFile(slgFilePath);
     std::string slgFileContent = util::ReadFile(slgFilePath);
     std::u32string content = util::ToUtf32(slgFileContent);
     auto lexer = MakeLexer(content.c_str(), content.c_str() + content.length(), slgFilePath);
+    lexer.SetFile(file);
     lexer.SetRuleNameMapPtr(soul::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
     auto vars = static_cast<typename LexerType::VariableClassType*>(lexer.GetVariables());
     vars->matchFilePath = true;
-    return SlgFileParser<LexerType>::Parse(lexer);
+    std::unique_ptr<soul::ast::slg::SlgFile> slgFile = SlgFileParser<LexerType>::Parse(lexer);
+    fileMap.AddFileContent(file, std::move(content), std::move(lexer.GetLineStartIndeces()));
+    return slgFile;
 }
 
 } // namespace soul::slg

@@ -54,9 +54,9 @@ parser ParserFileParser
         ::= 
         (
             ParserKeyword:parserKeyword ID{ parser.reset(new soul::ast::spg::GrammarParser(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString()))); }
-            LBRACE! 
+            LBRACE
             ParserStatement(parser.get()):statement*
-            RBRACE!
+            RBRACE
         )
         {
             return parser.release();
@@ -71,20 +71,20 @@ parser ParserFileParser
         ;
 
     LexerStatement(soul::ast::spg::GrammarParser* parser)
-        ::= LexerKeyword:lexerKeyword TypeId:lexerTypeId! SEMICOLON!{ parser->AddLexer(lexerTypeId); }
+        ::= LexerKeyword:lexerKeyword TypeId:lexerTypeId SEMICOLON{ parser->AddLexer(lexerTypeId); }
         ;
 
     MainStatement(soul::ast::spg::GrammarParser* parser)
-        ::= MAIN SEMICOLON!{ parser->SetMain(); }
+        ::= MAIN SEMICOLON{ parser->SetMain(); }
         ;
 
     UsingStatement(soul::ast::spg::GrammarParser* parser)
         ::= 
         (
-            USING QualifiedId:parserRuleId! SEMICOLON!
+            USING QualifiedId:fullName SEMICOLON
         )
         { 
-            parser->AddUsing(lexer.GetSourcePos(pos), parserRuleId); 
+            parser->AddUsing(lexer.GetSourcePos(pos), fullName); 
         }
         ;
 
@@ -95,8 +95,8 @@ parser ParserFileParser
             ParametersAndVariables(rule.get()):paramsAndVars?
             ReturnType:returnType?
             PRODUCES
-            RuleBody:definition! 
-            SEMICOLON!
+            RuleBody:definition
+            SEMICOLON
         )
         {
             rule->SetDefinition(definition);
@@ -111,7 +111,7 @@ parser ParserFileParser
         ;
 
     ParametersAndVariables(soul::ast::spg::RuleParser* rule)
-        ::= LPAREN (ParamOrVariable:paramOrVariable{ rule->AddParamOrVariable(paramOrVariable); } % COMMA)? RPAREN!
+        ::= LPAREN (ParamOrVariable:paramOrVariable{ rule->AddParamOrVariable(paramOrVariable); } % COMMA)? RPAREN
         ;
 
     ParamOrVariable : soul::ast::spg::ParamVar*
@@ -132,7 +132,7 @@ parser ParserFileParser
         (
             Sequence:left{ value.reset(left); } 
             (
-                PIPE Sequence:right!{ value.reset(new soul::ast::spg::ChoiceParser(lexer.GetSourcePos(pos), value.release(), right)); }
+                PIPE Sequence:right{ value.reset(new soul::ast::spg::ChoiceParser(lexer.GetSourcePos(pos), value.release(), right)); }
             )*
         )
         {
@@ -158,7 +158,7 @@ parser ParserFileParser
         (
             List:left{ value.reset(left); }
             (
-                MINUS List:right!{ value.reset(new soul::ast::spg::DifferenceParser(lexer.GetSourcePos(pos), value.release(), right)); }
+                MINUS List:right{ value.reset(new soul::ast::spg::DifferenceParser(lexer.GetSourcePos(pos), value.release(), right)); }
             )*
         )
         {
@@ -171,7 +171,7 @@ parser ParserFileParser
         (
             Prefix:left{ value.reset(left); }
             (
-                REM Prefix:right!{ value.reset(new soul::ast::spg::ListParser(lexer.GetSourcePos(pos), value.release(), right)); }
+                REM Prefix:right{ value.reset(new soul::ast::spg::ListParser(lexer.GetSourcePos(pos), value.release(), right)); }
             )?
         )
         {
@@ -237,7 +237,7 @@ parser ParserFileParser
                 RPAREN
             )? 
             COLON 
-            ID!
+            ID
             {
                 std::string instanceName = util::ToUtf8(lexer.GetToken(pos).ToString());
                 return new soul::ast::spg::NonterminalParser(lexer.GetSourcePos(pos), ruleName, instanceName, args.release());
@@ -270,7 +270,7 @@ parser ParserFileParser
         (
             LPAREN 
             Choice:choice
-            RPAREN!
+            RPAREN
         )
         {
             return new soul::ast::spg::GroupParser(lexer.GetSourcePos(pos), choice);

@@ -33,6 +33,26 @@ ExportModule::ExportModule(const std::string& moduleName_) : moduleName(moduleNa
 {
 }
 
+std::string ExportModule::NamespaceName() const
+{
+    std::string namespaceName;
+    std::vector<std::string> components = util::Split(moduleName, '.');
+    bool first = true;
+    for (const auto& component : components)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            namespaceName.append("::");
+        }
+        namespaceName.append(component);
+    }
+    return namespaceName;
+}
+
 Import::Import(const std::string& moduleName_, ImportPrefix prefix_) : moduleName(moduleName_), prefix(prefix_)
 {
 }
@@ -65,12 +85,53 @@ Token::Token(const std::string& name_, const std::string& info_) : id(-1), name(
 {
 }
 
-TokenCollection::TokenCollection(const std::string& name_) : Collection(CollectionKind::tokenCollection, name_), initialized(false), id(std::hash<std::string>()(Name()) & 0x7FFFFFFF)
+Token* Token::Clone() const
+{
+    Token* clone = new Token(id, name, info);
+    return clone;
+}
+
+std::string Token::FullName() const
+{
+    Collection* collection = GetCollection();
+    if (collection)
+    {
+        return collection->Name() + "." + Name();
+    }
+    else
+    {
+        return Name();
+    }
+}
+
+std::string Token::FullCppId() const
+{
+    std::string fullCppId;
+    std::vector<std::string> components = util::Split(FullName(), '.');
+    bool first = true;
+    for (const std::string& component : components)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            fullCppId.append("::");
+        }
+        fullCppId.append(component);
+    }
+    return fullCppId;
+}
+
+TokenCollection::TokenCollection(const std::string& name_) : 
+    Collection(CollectionKind::tokenCollection, name_), initialized(false), id(std::hash<std::string>()(Name()) & 0x7FFFFFFF)
 {
 }
 
 void TokenCollection::AddToken(Token* token)
 {
+    token->SetCollection(this);
     if (token->Id() == -1)
     {
         std::int64_t tokenId = (std::int64_t(Id()) << 32) | (std::int64_t(tokens.size()) + 1);
@@ -94,8 +155,25 @@ Token* TokenCollection::GetToken(std::int64_t id) const
     }
 }
 
+TokenCollection* TokenCollection::Clone() const
+{
+    TokenCollection* clone = new TokenCollection(Name());
+    for (const auto& token : tokens)
+    {
+        clone->AddToken(token->Clone());
+    }
+    return clone;
+}
+
 TokenFile::TokenFile(const std::string& filePath_) : File(FileKind::tokenFile, filePath_)
 {
+}
+
+TokenFile* TokenFile::Clone() const
+{
+    TokenFile* clone = new TokenFile(FilePath());
+    clone->SetTokenCollection(tokenCollection->Clone());
+    return clone;
 }
 
 void TokenFile::SetTokenCollection(TokenCollection* tokenCollection_)
@@ -107,6 +185,63 @@ void TokenFile::SetTokenCollection(TokenCollection* tokenCollection_)
 void TokenFile::Accept(soul::ast::common::Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+TokenMap::TokenMap() : any(-1, "*", "<any>"), epsilon(-2, "#", "<epsilon>")
+{
+}
+
+void TokenMap::AddUsingToken(Token* usingToken)
+{
+    usingTokenMap[usingToken->Name()] = usingToken;
+}
+
+void TokenMap::AddToken(Token* token)
+{
+    auto it = tokenFullNameMap.find(token->FullName());
+    if (it != tokenFullNameMap.end())
+    {
+        throw std::runtime_error("token name '" + token->FullName() + "' not unique");
+    }
+    tokenFullNameMap[token->FullName()] = token;
+    std::vector<Token*>& tokens = tokenMap[token->Name()];
+    if (std::find(tokens.begin(), tokens.end(), token) == tokens.end())
+    {
+        tokens.push_back(token);
+    }
+}
+
+std::vector<Token*> TokenMap::GetTokens(const std::string& tokenName) const
+{
+    auto uit = usingTokenMap.find(tokenName);
+    if (uit != usingTokenMap.end())
+    {
+        std::vector<Token*> tokens;
+        tokens.push_back(uit->second);
+        return tokens;
+    }
+    auto it = tokenMap.find(tokenName);
+    if (it != tokenMap.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        return std::vector<Token*>();
+    }
+}
+
+Token* TokenMap::GetToken(const std::string& tokenFullName) const
+{
+    auto it = tokenFullNameMap.find(tokenFullName);
+    if (it != tokenFullNameMap.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 Visitor::Visitor()

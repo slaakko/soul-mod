@@ -34,19 +34,17 @@
         <nonterminal first="{ID}" ruleName="QualifiedId"/>
        </action>
       </sequence>
-      <expectation first="{SEMICOLON}">
-       <token first="{SEMICOLON}" name="SEMICOLON"/>
-      </expectation>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
      </sequence>
     </group>
    </action>
   </rule>
-  <rule first="{#, ID, LBRACKET, SEMICOLON}" name="Import">
-   <action first="{#, ID, LBRACKET, SEMICOLON}">
-    <group first="{#, ID, LBRACKET, SEMICOLON}">
-     <sequence first="{#, ID, LBRACKET, SEMICOLON}">
-      <sequence first="{#, ID, LBRACKET}">
-       <sequence first="{#, ID, LBRACKET}">
+  <rule first="{#, SEMICOLON, LBRACKET, ID}" name="Import">
+   <action first="{#, SEMICOLON, LBRACKET, ID}">
+    <group first="{#, SEMICOLON, LBRACKET, ID}">
+     <sequence first="{#, SEMICOLON, LBRACKET, ID}">
+      <sequence first="{#, LBRACKET, ID}">
+       <sequence first="{#, LBRACKET, ID}">
         <group first="{#, LBRACKET}">
          <choice first="{#, LBRACKET}">
           <action first="{LBRACKET}">
@@ -63,9 +61,7 @@
         <nonterminal first="{ID}" ruleName="QualifiedId"/>
        </action>
       </sequence>
-      <expectation first="{SEMICOLON}">
-       <token first="{SEMICOLON}" name="SEMICOLON"/>
-      </expectation>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
      </sequence>
     </group>
    </action>

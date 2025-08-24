@@ -77,7 +77,10 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::CaseParser& parser)
 {
     for (const auto& token : parser.First().Tokens())
     {
-        formatter->WriteLine("case " + token + ":");
+        if (!token->IsEpsilon() && !token->IsAny())
+        {
+            formatter->WriteLine("case " + token->FullCppId() + ":");
+        }
     }
     formatter->WriteLine("{");
     formatter->IncIndent();
@@ -370,7 +373,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ExpectationParser& parser)
         else if (parser.Child()->IsTokenParser())
         {
             soul::ast::spg::TokenParser* tokenParser = static_cast<soul::ast::spg::TokenParser*>(parser.Child());
-            std::string tokenName = tokenParser->TokenName();
+            std::string tokenName = tokenParser->GetToken()->FullCppId();
             formatter->WriteLine("lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(" + tokenName + "));");
         }
         else
@@ -458,7 +461,9 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::NonterminalParser& parser)
     if (stage == CodeGenerationStage::generateImplementation)
     {
         soul::ast::spg::RuleParser* rule = parser.Rule();
-        std::string ruleName = rule->Grammar()->Name() + "<LexerT>::" + rule->Name();
+        soul::ast::spg::GrammarParser* grammar = rule->Grammar();
+        soul::ast::spg::ParserFile* parserFile = grammar->GetParserFile();
+        std::string ruleName = parserFile->ExportModule()->NamespaceName() + "::" + grammar->Name() + "<LexerT>::" + rule->Name();
         formatter->Write("soul::parser::Match match = " + ruleName + "(lexer");
         if (parser.Arguments())
         {
@@ -517,7 +522,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::TokenParser& parser)
     if (stage == CodeGenerationStage::generateImplementation)
     {
         formatter->WriteLine("soul::parser::Match match(false);");
-        formatter->WriteLine("if (*lexer == " + parser.TokenName() + ")");
+        formatter->WriteLine("if (*lexer == " + parser.GetToken()->FullCppId() + ")");
         formatter->WriteLine("{");
         formatter->IncIndent();
         formatter->WriteLine("++lexer;");
@@ -1050,6 +1055,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
         }
     }
     formatter->WriteLine();
+/*
     for (const auto& imprt : parserFile.Imports())
     {
         if (imprt->Prefix() == soul::ast::common::ImportPrefix::interfacePrefix)
@@ -1061,6 +1067,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     {
         formatter->WriteLine();
     }
+*/
     formatter->WriteLine("export namespace " + soul::ast::common::ToNamespaceName(mod->ModuleName()) + " {");
     formatter->WriteLine();
     bool first = true;
@@ -1095,6 +1102,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     formatter->WriteLine("module " + mod->ModuleName() + ";");
     formatter->WriteLine();
     formatter->WriteLine("import util;");
+    formatter->WriteLine("import soul.ast.common;");
     formatter->WriteLine("import soul.ast.spg;");
     for (const auto& imprt : parserFile.Imports())
     {
@@ -1104,6 +1112,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
         }
     }
     formatter->WriteLine();
+/*  
     bool hasImplementationImports = false;
     for (const auto& imprt : parserFile.Imports())
     {
@@ -1117,6 +1126,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     {
         formatter->WriteLine();
     }
+*/
     formatter->WriteLine("namespace " + soul::ast::common::ToNamespaceName(mod->ModuleName()) + " {");
     formatter->WriteLine();
     GenerateArrays(parserFile, *formatter, sn);

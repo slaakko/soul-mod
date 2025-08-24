@@ -4,6 +4,7 @@
 module soul.common.common.parser;
 
 import util;
+import soul.ast.common;
 import soul.ast.spg;
 import soul.cpp.token;
 import soul.cpp.op.token;
@@ -12,14 +13,6 @@ import soul.tool.token;
 import soul.lex.slg;
 import soul.lex.spg;
 import soul.common.token.parser;
-
-using namespace soul::cpp::token;
-using namespace soul::cpp::op::token;
-using namespace soul::punctuation::token;
-using namespace soul::tool::token;
-using namespace soul::lex::slg;
-using namespace soul::lex::spg;
-using namespace soul::common::token::parser;
 
 namespace soul::common::common::parser {
 
@@ -52,7 +45,7 @@ soul::parser::Match CommonParser<LexerT>::QualifiedId(LexerT& lexer)
                 {
                     std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match(false);
-                    if (*lexer == ID)
+                    if (*lexer == soul::cpp::token::ID)
                     {
                         ++lexer;
                         match.hit = true;
@@ -84,7 +77,7 @@ soul::parser::Match CommonParser<LexerT>::QualifiedId(LexerT& lexer)
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         soul::parser::Match match(false);
-                                        if (*lexer == DOT)
+                                        if (*lexer == soul::punctuation::token::DOT)
                                         {
                                             ++lexer;
                                             match.hit = true;
@@ -101,7 +94,7 @@ soul::parser::Match CommonParser<LexerT>::QualifiedId(LexerT& lexer)
                                             {
                                                 std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match(false);
-                                                if (*lexer == ID)
+                                                if (*lexer == soul::cpp::token::ID)
                                                 {
                                                     ++lexer;
                                                     match.hit = true;
@@ -192,7 +185,7 @@ soul::parser::Match CommonParser<LexerT>::ExportModule(LexerT& lexer)
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch4 = &match;
                     {
-                        soul::parser::Match match = CommonParser<LexerT>::ExportKeyword(lexer);
+                        soul::parser::Match match = soul::common::common::parser::CommonParser<LexerT>::ExportKeyword(lexer);
                         *parentMatch4 = match;
                     }
                     if (match.hit)
@@ -200,7 +193,7 @@ soul::parser::Match CommonParser<LexerT>::ExportModule(LexerT& lexer)
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch5 = &match;
                         {
-                            soul::parser::Match match = CommonParser<LexerT>::ModuleKeyword(lexer);
+                            soul::parser::Match match = soul::common::common::parser::CommonParser<LexerT>::ModuleKeyword(lexer);
                             *parentMatch5 = match;
                         }
                         *parentMatch4 = match;
@@ -216,7 +209,7 @@ soul::parser::Match CommonParser<LexerT>::ExportModule(LexerT& lexer)
                         soul::parser::Match* parentMatch7 = &match;
                         {
                             std::int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = CommonParser<LexerT>::QualifiedId(lexer);
+                            soul::parser::Match match = soul::common::common::parser::CommonParser<LexerT>::QualifiedId(lexer);
                             moduleName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                             if (match.hit)
                             {
@@ -235,24 +228,11 @@ soul::parser::Match CommonParser<LexerT>::ExportModule(LexerT& lexer)
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch8 = &match;
                 {
-                    soul::parser::Match match(true);
-                    soul::parser::Match* parentMatch9 = &match;
+                    soul::parser::Match match(false);
+                    if (*lexer == soul::punctuation::token::SEMICOLON)
                     {
-                        std::int64_t pos = lexer.GetPos();
-                        soul::parser::Match match(false);
-                        if (*lexer == SEMICOLON)
-                        {
-                            ++lexer;
-                            match.hit = true;
-                        }
-                        if (match.hit)
-                        {
-                            *parentMatch9 = match;
-                        }
-                        else
-                        {
-                            lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(SEMICOLON));
-                        }
+                        ++lexer;
+                        match.hit = true;
                     }
                     *parentMatch8 = match;
                 }
@@ -329,7 +309,7 @@ soul::parser::Match CommonParser<LexerT>::Import(LexerT& lexer)
                                 soul::parser::Match* parentMatch7 = &match;
                                 {
                                     std::int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = CommonParser<LexerT>::ImportPrefix(lexer);
+                                    soul::parser::Match match = soul::common::common::parser::CommonParser<LexerT>::ImportPrefix(lexer);
                                     importPrefix.reset(static_cast<soul::parser::Value<soul::ast::common::ImportPrefix>*>(match.value));
                                     if (match.hit)
                                     {
@@ -369,7 +349,7 @@ soul::parser::Match CommonParser<LexerT>::Import(LexerT& lexer)
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch10 = &match;
                         {
-                            soul::parser::Match match = CommonParser<LexerT>::ImportKeyword(lexer);
+                            soul::parser::Match match = soul::common::common::parser::CommonParser<LexerT>::ImportKeyword(lexer);
                             *parentMatch10 = match;
                         }
                         *parentMatch4 = match;
@@ -385,7 +365,7 @@ soul::parser::Match CommonParser<LexerT>::Import(LexerT& lexer)
                         soul::parser::Match* parentMatch12 = &match;
                         {
                             std::int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = CommonParser<LexerT>::QualifiedId(lexer);
+                            soul::parser::Match match = soul::common::common::parser::CommonParser<LexerT>::QualifiedId(lexer);
                             moduleName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                             if (match.hit)
                             {
@@ -404,24 +384,11 @@ soul::parser::Match CommonParser<LexerT>::Import(LexerT& lexer)
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch13 = &match;
                 {
-                    soul::parser::Match match(true);
-                    soul::parser::Match* parentMatch14 = &match;
+                    soul::parser::Match match(false);
+                    if (*lexer == soul::punctuation::token::SEMICOLON)
                     {
-                        std::int64_t pos = lexer.GetPos();
-                        soul::parser::Match match(false);
-                        if (*lexer == SEMICOLON)
-                        {
-                            ++lexer;
-                            match.hit = true;
-                        }
-                        if (match.hit)
-                        {
-                            *parentMatch14 = match;
-                        }
-                        else
-                        {
-                            lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(SEMICOLON));
-                        }
+                        ++lexer;
+                        match.hit = true;
                     }
                     *parentMatch13 = match;
                 }
@@ -477,7 +444,7 @@ soul::parser::Match CommonParser<LexerT>::ImportPrefix(LexerT& lexer)
         soul::parser::Match* parentMatch1 = &match;
         {
             std::int64_t pos = lexer.GetPos();
-            soul::parser::Match match = CommonParser<LexerT>::ImplementationPrefix(lexer);
+            soul::parser::Match match = soul::common::common::parser::CommonParser<LexerT>::ImplementationPrefix(lexer);
             implementationPrefix.reset(static_cast<soul::parser::Value<soul::ast::common::ImportPrefix>*>(match.value));
             if (match.hit)
             {
@@ -501,7 +468,7 @@ soul::parser::Match CommonParser<LexerT>::ImportPrefix(LexerT& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = CommonParser<LexerT>::InterfacePrefix(lexer);
+                    soul::parser::Match match = soul::common::common::parser::CommonParser<LexerT>::InterfacePrefix(lexer);
                     interfacePrefix.reset(static_cast<soul::parser::Value<soul::ast::common::ImportPrefix>*>(match.value));
                     if (match.hit)
                     {
@@ -551,7 +518,7 @@ soul::parser::Match CommonParser<LexerT>::ExprString(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == STRING_LITERAL)
+        if (*lexer == soul::cpp::token::STRING_LITERAL)
         {
             ++lexer;
             match.hit = true;
@@ -562,7 +529,7 @@ soul::parser::Match CommonParser<LexerT>::ExprString(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExprString");
                 #endif
-                return soul::parser::Match(true, new soul::parser::Value<std::string>(MakeExprStringValue(lexer.FileName(), lexer.GetToken(pos))));
+                return soul::parser::Match(true, new soul::parser::Value<std::string>(soul::common::token::parser::MakeExprStringValue(lexer.FileName(), lexer.GetToken(pos))));
             }
         }
         *parentMatch0 = match;
@@ -599,7 +566,7 @@ soul::parser::Match CommonParser<LexerT>::FilePath(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == FILEPATH)
+        if (*lexer == soul::tool::token::FILEPATH)
         {
             ++lexer;
             match.hit = true;
@@ -610,7 +577,7 @@ soul::parser::Match CommonParser<LexerT>::FilePath(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FilePath");
                 #endif
-                return soul::parser::Match(true, new soul::parser::Value<std::string>(MakeFilePath(lexer.FileName(), lexer.GetToken(pos))));
+                return soul::parser::Match(true, new soul::parser::Value<std::string>(soul::common::token::parser::MakeFilePath(lexer.FileName(), lexer.GetToken(pos))));
             }
         }
         *parentMatch0 = match;
@@ -648,7 +615,7 @@ soul::parser::Match CommonParser<LexerT>::ExportKeyword(LexerT& lexer)
         std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul::parser::Match match(false);
-        if (*lexer == ID)
+        if (*lexer == soul::cpp::token::ID)
         {
             ++lexer;
             match.hit = true;
@@ -696,7 +663,7 @@ soul::parser::Match CommonParser<LexerT>::ModuleKeyword(LexerT& lexer)
         std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul::parser::Match match(false);
-        if (*lexer == ID)
+        if (*lexer == soul::cpp::token::ID)
         {
             ++lexer;
             match.hit = true;
@@ -744,7 +711,7 @@ soul::parser::Match CommonParser<LexerT>::ImportKeyword(LexerT& lexer)
         std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul::parser::Match match(false);
-        if (*lexer == ID)
+        if (*lexer == soul::cpp::token::ID)
         {
             ++lexer;
             match.hit = true;
@@ -793,7 +760,7 @@ soul::parser::Match CommonParser<LexerT>::ImplementationPrefix(LexerT& lexer)
         soul::parser::Match* parentMatch1 = &match;
         {
             soul::parser::Match match(false);
-            if (*lexer == LBRACKET)
+            if (*lexer == soul::punctuation::token::LBRACKET)
             {
                 ++lexer;
                 match.hit = true;
@@ -805,7 +772,7 @@ soul::parser::Match CommonParser<LexerT>::ImplementationPrefix(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                soul::parser::Match match = CommonParser<LexerT>::ImplementationKeyword(lexer);
+                soul::parser::Match match = soul::common::common::parser::CommonParser<LexerT>::ImplementationKeyword(lexer);
                 *parentMatch2 = match;
             }
             *parentMatch1 = match;
@@ -822,7 +789,7 @@ soul::parser::Match CommonParser<LexerT>::ImplementationPrefix(LexerT& lexer)
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == RBRACKET)
+                if (*lexer == soul::punctuation::token::RBRACKET)
                 {
                     ++lexer;
                     match.hit = true;
@@ -876,7 +843,7 @@ soul::parser::Match CommonParser<LexerT>::InterfacePrefix(LexerT& lexer)
         soul::parser::Match* parentMatch1 = &match;
         {
             soul::parser::Match match(false);
-            if (*lexer == LBRACKET)
+            if (*lexer == soul::punctuation::token::LBRACKET)
             {
                 ++lexer;
                 match.hit = true;
@@ -888,7 +855,7 @@ soul::parser::Match CommonParser<LexerT>::InterfacePrefix(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                soul::parser::Match match = CommonParser<LexerT>::InterfaceKeyword(lexer);
+                soul::parser::Match match = soul::common::common::parser::CommonParser<LexerT>::InterfaceKeyword(lexer);
                 *parentMatch2 = match;
             }
             *parentMatch1 = match;
@@ -905,7 +872,7 @@ soul::parser::Match CommonParser<LexerT>::InterfacePrefix(LexerT& lexer)
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == RBRACKET)
+                if (*lexer == soul::punctuation::token::RBRACKET)
                 {
                     ++lexer;
                     match.hit = true;
@@ -958,7 +925,7 @@ soul::parser::Match CommonParser<LexerT>::ImplementationKeyword(LexerT& lexer)
         std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul::parser::Match match(false);
-        if (*lexer == ID)
+        if (*lexer == soul::cpp::token::ID)
         {
             ++lexer;
             match.hit = true;
@@ -1006,7 +973,7 @@ soul::parser::Match CommonParser<LexerT>::InterfaceKeyword(LexerT& lexer)
         std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul::parser::Match match(false);
-        if (*lexer == ID)
+        if (*lexer == soul::cpp::token::ID)
         {
             ++lexer;
             match.hit = true;
@@ -1054,7 +1021,7 @@ soul::parser::Match CommonParser<LexerT>::ParserKeyword(LexerT& lexer)
         std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul::parser::Match match(false);
-        if (*lexer == ID)
+        if (*lexer == soul::cpp::token::ID)
         {
             ++lexer;
             match.hit = true;
@@ -1102,7 +1069,7 @@ soul::parser::Match CommonParser<LexerT>::LexerKeyword(LexerT& lexer)
         std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul::parser::Match match(false);
-        if (*lexer == ID)
+        if (*lexer == soul::cpp::token::ID)
         {
             ++lexer;
             match.hit = true;

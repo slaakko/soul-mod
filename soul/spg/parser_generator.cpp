@@ -146,6 +146,14 @@ void GenerateParsers(soul::ast::spg::SpgFile* spgFile, soul::lexer::FileMap& fil
                 spgFile->AddParserFile(parserFile.release());
                 break;
             }
+            case soul::ast::common::FileKind::tokenFile:
+            {
+                soul::ast::spg::TokenFileDeclaration* tokenFileDeclaration = static_cast<soul::ast::spg::TokenFileDeclaration*>(declaration.get());
+                std::string tokenFilePath = util::GetFullPath(util::Path::Combine(root, tokenFileDeclaration->FilePath()));
+                std::unique_ptr<soul::ast::common::TokenFile> tokenFile = soul::spg::ParseTokenFile(tokenFilePath, tokenFileDeclaration->External());
+                spgFile->AddTokenFile(tokenFile.release());
+                break;
+            }
         }
     }
     Link(spgFile, verbose, fileMap);

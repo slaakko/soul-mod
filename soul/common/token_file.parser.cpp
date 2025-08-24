@@ -4,6 +4,7 @@
 module soul.common.token.file.parser;
 
 import util;
+import soul.ast.common;
 import soul.ast.spg;
 import soul.cpp.token;
 import soul.cpp.op.token;
@@ -13,15 +14,6 @@ import soul.common.common.parser;
 import soul.common.token.parser;
 import soul.lex.slg;
 import soul.lex.spg;
-
-using namespace soul::cpp::token;
-using namespace soul::cpp::op::token;
-using namespace soul::punctuation::token;
-using namespace soul::tool::token;
-using namespace soul::common::common::parser;
-using namespace soul::common::token::parser;
-using namespace soul::lex::slg;
-using namespace soul::lex::spg;
 
 namespace soul::common::token::file::parser {
 
@@ -105,7 +97,7 @@ soul::parser::Match TokenFileParser<LexerT>::TokenFile(LexerT& lexer)
                             {
                                 std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(false);
-                                if (*lexer == TOKENS)
+                                if (*lexer == soul::tool::token::TOKENS)
                                 {
                                     ++lexer;
                                     match.hit = true;
@@ -127,7 +119,7 @@ soul::parser::Match TokenFileParser<LexerT>::TokenFile(LexerT& lexer)
                                 soul::parser::Match* parentMatch8 = &match;
                                 {
                                     std::int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = CommonParser<LexerT>::QualifiedId(lexer);
+                                    soul::parser::Match match = soul::common::common::parser::CommonParser<LexerT>::QualifiedId(lexer);
                                     tokenCollectionName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                                     if (match.hit)
                                     {
@@ -147,7 +139,7 @@ soul::parser::Match TokenFileParser<LexerT>::TokenFile(LexerT& lexer)
                         soul::parser::Match* parentMatch9 = &match;
                         {
                             soul::parser::Match match(false);
-                            if (*lexer == LBRACE)
+                            if (*lexer == soul::punctuation::token::LBRACE)
                             {
                                 ++lexer;
                                 match.hit = true;
@@ -177,7 +169,7 @@ soul::parser::Match TokenFileParser<LexerT>::TokenFile(LexerT& lexer)
                                     soul::parser::Match* parentMatch14 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = TokenFileParser<LexerT>::Token(lexer);
+                                        soul::parser::Match match = soul::common::token::file::parser::TokenFileParser<LexerT>::Token(lexer);
                                         token.reset(static_cast<soul::ast::common::Token*>(match.value));
                                         if (match.hit)
                                         {
@@ -203,7 +195,7 @@ soul::parser::Match TokenFileParser<LexerT>::TokenFile(LexerT& lexer)
                                                     soul::parser::Match* parentMatch17 = &match;
                                                     {
                                                         soul::parser::Match match(false);
-                                                        if (*lexer == COMMA)
+                                                        if (*lexer == soul::punctuation::token::COMMA)
                                                         {
                                                             ++lexer;
                                                             match.hit = true;
@@ -219,7 +211,7 @@ soul::parser::Match TokenFileParser<LexerT>::TokenFile(LexerT& lexer)
                                                             soul::parser::Match* parentMatch19 = &match;
                                                             {
                                                                 std::int64_t pos = lexer.GetPos();
-                                                                soul::parser::Match match = TokenFileParser<LexerT>::Token(lexer);
+                                                                soul::parser::Match match = soul::common::token::file::parser::TokenFileParser<LexerT>::Token(lexer);
                                                                 token.reset(static_cast<soul::ast::common::Token*>(match.value));
                                                                 if (match.hit)
                                                                 {
@@ -270,7 +262,7 @@ soul::parser::Match TokenFileParser<LexerT>::TokenFile(LexerT& lexer)
                 soul::parser::Match* parentMatch20 = &match;
                 {
                     soul::parser::Match match(false);
-                    if (*lexer == RBRACE)
+                    if (*lexer == soul::punctuation::token::RBRACE)
                     {
                         ++lexer;
                         match.hit = true;
@@ -342,7 +334,7 @@ soul::parser::Match TokenFileParser<LexerT>::Token(LexerT& lexer)
                         soul::parser::Match* parentMatch5 = &match;
                         {
                             soul::parser::Match match(false);
-                            if (*lexer == LPAREN)
+                            if (*lexer == soul::punctuation::token::LPAREN)
                             {
                                 ++lexer;
                                 match.hit = true;
@@ -359,7 +351,7 @@ soul::parser::Match TokenFileParser<LexerT>::Token(LexerT& lexer)
                                 {
                                     std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match(false);
-                                    if (*lexer == ID)
+                                    if (*lexer == soul::cpp::token::ID)
                                     {
                                         ++lexer;
                                         match.hit = true;
@@ -382,7 +374,7 @@ soul::parser::Match TokenFileParser<LexerT>::Token(LexerT& lexer)
                         soul::parser::Match* parentMatch8 = &match;
                         {
                             soul::parser::Match match(false);
-                            if (*lexer == COMMA)
+                            if (*lexer == soul::punctuation::token::COMMA)
                             {
                                 ++lexer;
                                 match.hit = true;
@@ -403,14 +395,14 @@ soul::parser::Match TokenFileParser<LexerT>::Token(LexerT& lexer)
                         {
                             std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
-                            if (*lexer == STRING_LITERAL)
+                            if (*lexer == soul::cpp::token::STRING_LITERAL)
                             {
                                 ++lexer;
                                 match.hit = true;
                             }
                             if (match.hit)
                             {
-                                info = util::ToUtf8(ParseStringLiteral(lexer.FileName(), lexer.GetToken(pos)));
+                                info = util::ToUtf8(soul::common::token::parser::ParseStringLiteral(lexer.FileName(), lexer.GetToken(pos)));
                             }
                             *parentMatch10 = match;
                         }
@@ -426,7 +418,7 @@ soul::parser::Match TokenFileParser<LexerT>::Token(LexerT& lexer)
                 soul::parser::Match* parentMatch11 = &match;
                 {
                     soul::parser::Match match(false);
-                    if (*lexer == RPAREN)
+                    if (*lexer == soul::punctuation::token::RPAREN)
                     {
                         ++lexer;
                         match.hit = true;

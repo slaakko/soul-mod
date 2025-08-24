@@ -5,19 +5,12 @@ export module soul.lex.spg;
 import std;
 import soul.lexer;
 import soul.ast.slg;
+import soul.ast.common;
 import util;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.punctuation.token;
 import soul.tool.token;
-import soul.ast.common;
-
-using namespace soul;
-using namespace soul::lexer;
-using namespace soul::cpp::token;
-using namespace soul::cpp::op::token;
-using namespace soul::punctuation::token;
-using namespace soul::tool::token;
 
 export namespace soul::lex::spg {
 
@@ -16931,128 +16924,128 @@ struct SpgLexer
                 lexer.Retract();
                 auto &token = lexer.CurrentToken();
                 std::int64_t kw = lexer.GetKeywordToken(token.match);
-                if (kw == soul::lexer::INVALID_TOKEN) return ID;
+                if (kw == soul::lexer::INVALID_TOKEN) return soul::cpp::token::ID;
                 else return kw;
                 break;
             }
             case 2:
             {
                 lexer.Retract();
-                return INTEGER_LITERAL;
+                return soul::cpp::token::INTEGER_LITERAL;
                 break;
             }
             case 3:
             {
                 lexer.Retract();
-                return FLOATING_LITERAL;
+                return soul::cpp::token::FLOATING_LITERAL;
                 break;
             }
             case 4:
             {
                 lexer.Retract();
-                return CHAR_LITERAL;
+                return soul::cpp::token::CHAR_LITERAL;
                 break;
             }
             case 5:
             {
                 lexer.Retract();
-                return STRING_LITERAL;
+                return soul::cpp::token::STRING_LITERAL;
                 break;
             }
             case 6:
             {
                 lexer.Retract();
-                return PRODUCES;
+                return soul::punctuation::token::PRODUCES;
                 break;
             }
             case 7:
             {
                 lexer.Retract();
-                return DOLLAR;
+                return soul::punctuation::token::DOLLAR;
                 break;
             }
             case 8:
             {
                 lexer.Retract();
-                return DISJUNCTION;
+                return soul::cpp::op::token::DISJUNCTION;
                 break;
             }
             case 9:
             {
                 lexer.Retract();
-                return AMP_AMP;
+                return soul::cpp::op::token::AMP_AMP;
                 break;
             }
             case 10:
             {
                 lexer.Retract();
-                return DOT_STAR;
+                return soul::cpp::op::token::DOT_STAR;
                 break;
             }
             case 11:
             {
                 lexer.Retract();
-                return ARROW_STAR;
+                return soul::cpp::op::token::ARROW_STAR;
                 break;
             }
             case 12:
             {
                 lexer.Retract();
-                return PIPE;
+                return soul::punctuation::token::PIPE;
                 break;
             }
             case 13:
             {
                 lexer.Retract();
-                return CARET;
+                return soul::punctuation::token::CARET;
                 break;
             }
             case 14:
             {
                 lexer.Retract();
-                return AMP;
+                return soul::punctuation::token::AMP;
                 break;
             }
             case 15:
             {
                 lexer.Retract();
-                return EQ;
+                return soul::cpp::op::token::EQ;
                 break;
             }
             case 16:
             {
                 lexer.Retract();
-                return NEQ;
+                return soul::cpp::op::token::NEQ;
                 break;
             }
             case 17:
             {
                 lexer.Retract();
-                return LEQ;
+                return soul::cpp::op::token::LEQ;
                 break;
             }
             case 18:
             {
                 lexer.Retract();
-                return GEQ;
+                return soul::cpp::op::token::GEQ;
                 break;
             }
             case 19:
             {
                 lexer.Retract();
-                return LANGLE;
+                return soul::punctuation::token::LANGLE;
                 break;
             }
             case 20:
             {
                 lexer.Retract();
-                return RANGLE;
+                return soul::punctuation::token::RANGLE;
                 break;
             }
             case 21:
             {
                 lexer.Retract();
-                return SHIFT_LEFT;
+                return soul::cpp::op::token::SHIFT_LEFT;
                 break;
             }
             case 22:
@@ -17060,217 +17053,217 @@ struct SpgLexer
                 auto vars = static_cast<Variables*>(lexer.GetVariables());
                 if (vars->leftAngleCount > 0) return soul::lexer::INVALID_TOKEN;
                 lexer.Retract();
-                return SHIFT_RIGHT;
+                return soul::cpp::op::token::SHIFT_RIGHT;
                 break;
             }
             case 23:
             {
                 lexer.Retract();
-                return PLUS;
+                return soul::cpp::op::token::PLUS;
                 break;
             }
             case 24:
             {
                 lexer.Retract();
-                return MINUS;
+                return soul::cpp::op::token::MINUS;
                 break;
             }
             case 25:
             {
                 lexer.Retract();
-                return STAR;
+                return soul::cpp::op::token::STAR;
                 break;
             }
             case 26:
             {
                 lexer.Retract();
-                return DIV;
+                return soul::cpp::op::token::DIV;
                 break;
             }
             case 27:
             {
                 lexer.Retract();
-                return REM;
+                return soul::cpp::op::token::REM;
                 break;
             }
             case 28:
             {
                 lexer.Retract();
-                return PLUS_PLUS;
+                return soul::cpp::op::token::PLUS_PLUS;
                 break;
             }
             case 29:
             {
                 lexer.Retract();
-                return MINUS_MINUS;
+                return soul::cpp::op::token::MINUS_MINUS;
                 break;
             }
             case 30:
             {
                 lexer.Retract();
-                return EXCLAMATION;
+                return soul::punctuation::token::EXCLAMATION;
                 break;
             }
             case 31:
             {
                 lexer.Retract();
-                return QUEST;
+                return soul::punctuation::token::QUEST;
                 break;
             }
             case 32:
             {
                 lexer.Retract();
-                return TILDE;
+                return soul::punctuation::token::TILDE;
                 break;
             }
             case 33:
             {
                 lexer.Retract();
-                return DOT;
+                return soul::punctuation::token::DOT;
                 break;
             }
             case 34:
             {
                 lexer.Retract();
-                return ARROW;
+                return soul::punctuation::token::ARROW;
                 break;
             }
             case 35:
             {
                 lexer.Retract();
-                return LBRACKET;
+                return soul::punctuation::token::LBRACKET;
                 break;
             }
             case 36:
             {
                 lexer.Retract();
-                return RBRACKET;
+                return soul::punctuation::token::RBRACKET;
                 break;
             }
             case 37:
             {
                 lexer.Retract();
-                return LPAREN;
+                return soul::punctuation::token::LPAREN;
                 break;
             }
             case 38:
             {
                 lexer.Retract();
-                return RPAREN;
+                return soul::punctuation::token::RPAREN;
                 break;
             }
             case 39:
             {
                 lexer.Retract();
-                return LBRACE;
+                return soul::punctuation::token::LBRACE;
                 break;
             }
             case 40:
             {
                 lexer.Retract();
-                return RBRACE;
+                return soul::punctuation::token::RBRACE;
                 break;
             }
             case 41:
             {
                 lexer.Retract();
-                return ELLIPSIS;
+                return soul::cpp::op::token::ELLIPSIS;
                 break;
             }
             case 42:
             {
                 lexer.Retract();
-                return COLON_COLON;
+                return soul::cpp::op::token::COLON_COLON;
                 break;
             }
             case 43:
             {
                 lexer.Retract();
-                return COLON;
+                return soul::punctuation::token::COLON;
                 break;
             }
             case 44:
             {
                 lexer.Retract();
-                return SEMICOLON;
+                return soul::punctuation::token::SEMICOLON;
                 break;
             }
             case 45:
             {
                 lexer.Retract();
-                return HASH;
+                return soul::punctuation::token::HASH;
                 break;
             }
             case 46:
             {
                 lexer.Retract();
-                return COMMA;
+                return soul::punctuation::token::COMMA;
                 break;
             }
             case 47:
             {
                 lexer.Retract();
-                return ASSIGN;
+                return soul::cpp::op::token::ASSIGN;
                 break;
             }
             case 48:
             {
                 lexer.Retract();
-                return MUL_ASSIGN;
+                return soul::cpp::op::token::MUL_ASSIGN;
                 break;
             }
             case 49:
             {
                 lexer.Retract();
-                return DIV_ASSIGN;
+                return soul::cpp::op::token::DIV_ASSIGN;
                 break;
             }
             case 50:
             {
                 lexer.Retract();
-                return REM_ASSIGN;
+                return soul::cpp::op::token::REM_ASSIGN;
                 break;
             }
             case 51:
             {
                 lexer.Retract();
-                return PLUS_ASSIGN;
+                return soul::cpp::op::token::PLUS_ASSIGN;
                 break;
             }
             case 52:
             {
                 lexer.Retract();
-                return MINUS_ASSIGN;
+                return soul::cpp::op::token::MINUS_ASSIGN;
                 break;
             }
             case 53:
             {
                 lexer.Retract();
-                return SHIFT_LEFT_ASSIGN;
+                return soul::cpp::op::token::SHIFT_LEFT_ASSIGN;
                 break;
             }
             case 54:
             {
                 lexer.Retract();
-                return SHIFT_RIGHT_ASSIGN;
+                return soul::cpp::op::token::SHIFT_RIGHT_ASSIGN;
                 break;
             }
             case 55:
             {
                 lexer.Retract();
-                return AND_ASSIGN;
+                return soul::cpp::op::token::AND_ASSIGN;
                 break;
             }
             case 56:
             {
                 lexer.Retract();
-                return XOR_ASSIGN;
+                return soul::cpp::op::token::XOR_ASSIGN;
                 break;
             }
             case 57:
             {
                 lexer.Retract();
-                return OR_ASSIGN;
+                return soul::cpp::op::token::OR_ASSIGN;
                 break;
             }
             case 58:
@@ -17278,7 +17271,7 @@ struct SpgLexer
                 auto vars = static_cast<Variables*>(lexer.GetVariables());
                 if (!vars->matchFilePath) return soul::lexer::INVALID_TOKEN;
                 lexer.Retract();
-                return FILEPATH;
+                return soul::tool::token::FILEPATH;
                 break;
             }
         }

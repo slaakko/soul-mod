@@ -49,13 +49,13 @@ parser SpgFileParser
         }
         ;
 
-	TokenFileDeclaration(var bool external) : soul::ast::slg::SpgFileDeclaration*
+	TokenFileDeclaration(var bool external) : soul::ast::spg::SpgFileDeclaration*
 		::= 
 		(
 			(EXTERN{ external = true; } | empty{ external = false; }) TOKENS FilePath:filePath SEMICOLON
 		)
 		{
-			return new soul::ast::slg::TokenFileDeclaration(filePath, external); 
+			return new soul::ast::spg::TokenFileDeclaration(lexer.GetSourcePos(pos), filePath, external); 
 		}
 		;
 

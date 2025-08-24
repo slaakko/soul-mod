@@ -8,8 +8,6 @@ import soul.lexer;
 import soul.parser;
 import soul.ast.spg;
 
-using namespace soul::ast::spg;
-
 export namespace soul::spg::parser::file::parser {
 
 template<typename LexerT>

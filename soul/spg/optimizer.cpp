@@ -338,7 +338,7 @@ void Optimizer::Visit(soul::ast::spg::GrammarParser& parser)
     }
     for (const auto& usng : parser.Usings())
     {
-        optimizedGrammar->AddUsing(usng.sourcePos, usng.parserRuleId);
+        optimizedGrammar->AddUsing(usng.sourcePos, usng.fullName);
     }
     for (const auto& rule : parser.Rules())
     {
@@ -386,7 +386,13 @@ soul::ast::spg::SpgFile* GenerateOptimizedSpg(soul::ast::spg::SpgFile* spgFile, 
     }
     Optimizer optimizer(nullptr);
     spgFile->Accept(optimizer);
-    return optimizer.GetOptimizedSpgFile();
+    soul::ast::spg::SpgFile* optimizedSpgFile = optimizer.GetOptimizedSpgFile();
+    int n = static_cast<int>(spgFile->TokenFiles().size());
+    for (int i = 0; i < n; ++i)
+    {
+        optimizedSpgFile->AddTokenFile(spgFile->TokenFiles()[i]->Clone());
+    }
+    return optimizedSpgFile;
 }
 
 void SetOptimizationFlags(soul::ast::spg::SpgFile* spgFile, bool verbose)

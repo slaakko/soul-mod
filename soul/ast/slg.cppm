@@ -8,14 +8,16 @@ export module soul.ast.slg;
 import std;
 import soul.ast.common;
 import soul.ast.cpp;
+import soul.ast.source.pos;
 
 export namespace soul::ast::slg {
 
 class Keyword
 {
 public:
-    Keyword(const std::string& str_, const std::string& tokenName_, std::int64_t tokenId_);
-    Keyword(const std::string& str_, const std::string& tokenName_);
+    Keyword(const soul::ast::SourcePos& sourcePos_, const std::string& str_, const std::string& tokenName_, std::int64_t tokenId_);
+    Keyword(const soul::ast::SourcePos& sourcePos_, const std::string& str_, const std::string& tokenName_);
+    inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
     inline void SetCollection(soul::ast::common::Collection* collection_) { collection = collection_; }
     inline soul::ast::common::Collection* GetCollection() const { return collection; }
     inline const std::string& Str() const { return str; }
@@ -23,6 +25,7 @@ public:
     inline std::int64_t TokenId() const { return tokenId; }
     inline void SetTokenId(std::int64_t tokenId_) { tokenId = tokenId_; }
 private:
+    soul::ast::SourcePos sourcePos;
     std::string str;
     std::string tokenName;
     std::int64_t tokenId;
@@ -148,6 +151,13 @@ private:
     std::map<int, Action*> actionMap;
 };
 
+struct Using
+{
+    Using(const soul::ast::SourcePos& sourcePos_, const std::string& fullName_);
+    soul::ast::SourcePos sourcePos;
+    std::string fullName;
+};
+
 class Lexer : public soul::ast::common::Collection
 {
 public:
@@ -160,11 +170,14 @@ public:
     inline const Actions& GetActions() const { return actions; }
     inline const std::string& VariableClassName() const { return variableClassName; }
     void SetVariableClassName(const std::string& variableClassName_);
+    void AddUsing(const soul::ast::SourcePos& sourcePos, const std::string& fullName);
+    inline const std::vector<Using>& Usings() const { return usings; }
 private:
     std::vector<std::unique_ptr<Rule>> rules;
     std::vector<std::unique_ptr<Variable>> variables;
     Actions actions;
     std::string variableClassName;
+    std::vector<Using> usings;
 };
 
 class LexerFile : public soul::ast::common::File
@@ -177,10 +190,12 @@ public:
     inline const std::vector<std::unique_ptr<soul::ast::common::Import>>& Imports() const { return imports; }
     void SetLexer(Lexer* lexer_);
     inline Lexer* GetLexer() const { return lexer.get(); }
+    inline soul::ast::common::TokenMap* GetTokenMap() { return &tokenMap; }
 private:
     std::unique_ptr<soul::ast::common::ExportModule> exportModule;
     std::vector<std::unique_ptr<soul::ast::common::Import>> imports;
     std::unique_ptr<Lexer> lexer;
+    soul::ast::common::TokenMap tokenMap;
 };
 
 enum class SlgFileDeclarationKind

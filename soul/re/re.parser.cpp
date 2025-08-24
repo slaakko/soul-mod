@@ -4,6 +4,7 @@
 module soul.re.parser;
 
 import util;
+import soul.ast.common;
 import soul.ast.spg;
 import soul.cpp.token;
 import soul.cpp.op.token;
@@ -11,13 +12,6 @@ import soul.punctuation.token;
 import soul.tool.token;
 import soul.lex.re;
 import soul.re.token.parser;
-
-using namespace soul::cpp::token;
-using namespace soul::cpp::op::token;
-using namespace soul::punctuation::token;
-using namespace soul::tool::token;
-using namespace soul::lex::re;
-using namespace soul::re::token::parser;
 
 namespace soul::re::parser {
 
@@ -78,7 +72,7 @@ soul::parser::Match RegExParser<LexerT>::RegularExpression(LexerT& lexer, soul::
     soul::parser::Match* parentMatch0 = &match;
     {
         std::int64_t pos = lexer.GetPos();
-        soul::parser::Match match = RegExParser<LexerT>::Alternative(lexer, lexerContext);
+        soul::parser::Match match = soul::re::parser::RegExParser<LexerT>::Alternative(lexer, lexerContext);
         alternative.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
         if (match.hit)
         {
@@ -135,7 +129,7 @@ soul::parser::Match RegExParser<LexerT>::Alternative(LexerT& lexer, soul::ast::r
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = RegExParser<LexerT>::Catenation(lexer, lexerContext);
+                    soul::parser::Match match = soul::re::parser::RegExParser<LexerT>::Catenation(lexer, lexerContext);
                     left.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
                     if (match.hit)
                     {
@@ -164,7 +158,7 @@ soul::parser::Match RegExParser<LexerT>::Alternative(LexerT& lexer, soul::ast::r
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         soul::parser::Match match(false);
-                                        if (*lexer == PIPE)
+                                        if (*lexer == soul::punctuation::token::PIPE)
                                         {
                                             ++lexer;
                                             match.hit = true;
@@ -180,21 +174,8 @@ soul::parser::Match RegExParser<LexerT>::Alternative(LexerT& lexer, soul::ast::r
                                             soul::parser::Match* parentMatch9 = &match;
                                             {
                                                 std::int64_t pos = lexer.GetPos();
-                                                soul::parser::Match match(true);
-                                                soul::parser::Match* parentMatch10 = &match;
-                                                {
-                                                    std::int64_t pos = lexer.GetPos();
-                                                    soul::parser::Match match = RegExParser<LexerT>::Catenation(lexer, lexerContext);
-                                                    right.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
-                                                    if (match.hit)
-                                                    {
-                                                        *parentMatch10 = match;
-                                                    }
-                                                    else
-                                                    {
-                                                        lexer.ThrowExpectationFailure(pos, "Catenation");
-                                                    }
-                                                }
+                                                soul::parser::Match match = soul::re::parser::RegExParser<LexerT>::Catenation(lexer, lexerContext);
+                                                right.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
                                                 if (match.hit)
                                                 {
                                                     value = soul::ast::re::Alt(*lexerContext, value, right->value);
@@ -280,7 +261,7 @@ soul::parser::Match RegExParser<LexerT>::Catenation(LexerT& lexer, soul::ast::re
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = RegExParser<LexerT>::Repetition(lexer, lexerContext);
+                    soul::parser::Match match = soul::re::parser::RegExParser<LexerT>::Repetition(lexer, lexerContext);
                     left.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
                     if (match.hit)
                     {
@@ -309,7 +290,7 @@ soul::parser::Match RegExParser<LexerT>::Catenation(LexerT& lexer, soul::ast::re
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = RegExParser<LexerT>::Repetition(lexer, lexerContext);
+                                        soul::parser::Match match = soul::re::parser::RegExParser<LexerT>::Repetition(lexer, lexerContext);
                                         right.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
                                         if (match.hit)
                                         {
@@ -391,7 +372,7 @@ soul::parser::Match RegExParser<LexerT>::Repetition(LexerT& lexer, soul::ast::re
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = RegExParser<LexerT>::Primary(lexer, lexerContext);
+                    soul::parser::Match match = soul::re::parser::RegExParser<LexerT>::Primary(lexer, lexerContext);
                     left.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
                     if (match.hit)
                     {
@@ -417,14 +398,14 @@ soul::parser::Match RegExParser<LexerT>::Repetition(LexerT& lexer, soul::ast::re
                             soul::parser::Match* parentMatch7 = &match;
                             switch (*lexer)
                             {
-                                case STAR:
+                                case soul::cpp::op::token::STAR:
                                 {
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch8 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match(false);
-                                        if (*lexer == STAR)
+                                        if (*lexer == soul::cpp::op::token::STAR)
                                         {
                                             ++lexer;
                                             match.hit = true;
@@ -441,14 +422,14 @@ soul::parser::Match RegExParser<LexerT>::Repetition(LexerT& lexer, soul::ast::re
                                     }
                                     break;
                                 }
-                                case PLUS:
+                                case soul::cpp::op::token::PLUS:
                                 {
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch9 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match(false);
-                                        if (*lexer == PLUS)
+                                        if (*lexer == soul::cpp::op::token::PLUS)
                                         {
                                             ++lexer;
                                             match.hit = true;
@@ -465,14 +446,14 @@ soul::parser::Match RegExParser<LexerT>::Repetition(LexerT& lexer, soul::ast::re
                                     }
                                     break;
                                 }
-                                case QUEST:
+                                case soul::punctuation::token::QUEST:
                                 {
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch10 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match(false);
-                                        if (*lexer == QUEST)
+                                        if (*lexer == soul::punctuation::token::QUEST)
                                         {
                                             ++lexer;
                                             match.hit = true;
@@ -560,7 +541,7 @@ soul::parser::Match RegExParser<LexerT>::Primary(LexerT& lexer, soul::ast::re::L
             soul::parser::Match* parentMatch2 = &match;
             switch (*lexer)
             {
-                case LPAREN:
+                case soul::punctuation::token::LPAREN:
                 {
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch3 = &match;
@@ -569,7 +550,7 @@ soul::parser::Match RegExParser<LexerT>::Primary(LexerT& lexer, soul::ast::re::L
                         soul::parser::Match* parentMatch4 = &match;
                         {
                             soul::parser::Match match(false);
-                            if (*lexer == LPAREN)
+                            if (*lexer == soul::punctuation::token::LPAREN)
                             {
                                 ++lexer;
                                 match.hit = true;
@@ -585,21 +566,8 @@ soul::parser::Match RegExParser<LexerT>::Primary(LexerT& lexer, soul::ast::re::L
                                 soul::parser::Match* parentMatch6 = &match;
                                 {
                                     std::int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match(true);
-                                    soul::parser::Match* parentMatch7 = &match;
-                                    {
-                                        std::int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = RegExParser<LexerT>::Alternative(lexer, lexerContext);
-                                        alt.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
-                                        if (match.hit)
-                                        {
-                                            *parentMatch7 = match;
-                                        }
-                                        else
-                                        {
-                                            lexer.ThrowExpectationFailure(pos, "Alternative");
-                                        }
-                                    }
+                                    soul::parser::Match match = soul::re::parser::RegExParser<LexerT>::Alternative(lexer, lexerContext);
+                                    alt.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
                                     if (match.hit)
                                     {
                                         value = alt->value;
@@ -615,28 +583,28 @@ soul::parser::Match RegExParser<LexerT>::Primary(LexerT& lexer, soul::ast::re::L
                     if (match.hit)
                     {
                         soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch8 = &match;
+                        soul::parser::Match* parentMatch7 = &match;
                         {
                             soul::parser::Match match(true);
-                            soul::parser::Match* parentMatch9 = &match;
+                            soul::parser::Match* parentMatch8 = &match;
                             {
                                 std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(false);
-                                if (*lexer == RPAREN)
+                                if (*lexer == soul::punctuation::token::RPAREN)
                                 {
                                     ++lexer;
                                     match.hit = true;
                                 }
                                 if (match.hit)
                                 {
-                                    *parentMatch9 = match;
+                                    *parentMatch8 = match;
                                 }
                                 else
                                 {
-                                    lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(RPAREN));
+                                    lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(soul::punctuation::token::RPAREN));
                                 }
                             }
-                            *parentMatch8 = match;
+                            *parentMatch7 = match;
                         }
                         *parentMatch3 = match;
                     }
@@ -646,21 +614,45 @@ soul::parser::Match RegExParser<LexerT>::Primary(LexerT& lexer, soul::ast::re::L
                     }
                     break;
                 }
-                case ESCAPE:
+                case soul::tool::token::ESCAPE:
                 {
                     soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch10 = &match;
+                    soul::parser::Match* parentMatch9 = &match;
                     {
                         std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
-                        if (*lexer == ESCAPE)
+                        if (*lexer == soul::tool::token::ESCAPE)
                         {
                             ++lexer;
                             match.hit = true;
                         }
                         if (match.hit)
                         {
-                            value = soul::ast::re::MakeNfa(*lexerContext, lexerContext->MakeChar(MakeEscapeValue(lexer.FileName(), lexer.GetToken(pos))));
+                            value = soul::ast::re::MakeNfa(*lexerContext, lexerContext->MakeChar(soul::re::token::parser::MakeEscapeValue(lexer.FileName(), lexer.GetToken(pos))));
+                        }
+                        *parentMatch9 = match;
+                    }
+                    if (match.hit)
+                    {
+                        *parentMatch2 = match;
+                    }
+                    break;
+                }
+                case soul::punctuation::token::CARET:
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch10 = &match;
+                    {
+                        std::int64_t pos = lexer.GetPos();
+                        soul::parser::Match match(false);
+                        if (*lexer == soul::punctuation::token::CARET)
+                        {
+                            ++lexer;
+                            match.hit = true;
+                        }
+                        if (match.hit)
+                        {
+                            value = soul::ast::re::MakeNfa(*lexerContext, lexerContext->MakeChar('^'));
                         }
                         *parentMatch10 = match;
                     }
@@ -670,21 +662,21 @@ soul::parser::Match RegExParser<LexerT>::Primary(LexerT& lexer, soul::ast::re::L
                     }
                     break;
                 }
-                case CARET:
+                case soul::cpp::op::token::MINUS:
                 {
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch11 = &match;
                     {
                         std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
-                        if (*lexer == CARET)
+                        if (*lexer == soul::cpp::op::token::MINUS)
                         {
                             ++lexer;
                             match.hit = true;
                         }
                         if (match.hit)
                         {
-                            value = soul::ast::re::MakeNfa(*lexerContext, lexerContext->MakeChar('^'));
+                            value = soul::ast::re::MakeNfa(*lexerContext, lexerContext->MakeChar('-'));
                         }
                         *parentMatch11 = match;
                     }
@@ -694,38 +686,14 @@ soul::parser::Match RegExParser<LexerT>::Primary(LexerT& lexer, soul::ast::re::L
                     }
                     break;
                 }
-                case MINUS:
+                case soul::tool::token::CHARACTER:
                 {
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch12 = &match;
                     {
                         std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
-                        if (*lexer == MINUS)
-                        {
-                            ++lexer;
-                            match.hit = true;
-                        }
-                        if (match.hit)
-                        {
-                            value = soul::ast::re::MakeNfa(*lexerContext, lexerContext->MakeChar('-'));
-                        }
-                        *parentMatch12 = match;
-                    }
-                    if (match.hit)
-                    {
-                        *parentMatch2 = match;
-                    }
-                    break;
-                }
-                case CHARACTER:
-                {
-                    soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch13 = &match;
-                    {
-                        std::int64_t pos = lexer.GetPos();
-                        soul::parser::Match match(false);
-                        if (*lexer == CHARACTER)
+                        if (*lexer == soul::tool::token::CHARACTER)
                         {
                             ++lexer;
                             match.hit = true;
@@ -735,6 +703,30 @@ soul::parser::Match RegExParser<LexerT>::Primary(LexerT& lexer, soul::ast::re::L
                             auto match = lexer.GetToken(pos).ToString();
                             value = soul::ast::re::MakeNfa(*lexerContext, lexerContext->MakeChar(match.front()));
                         }
+                        *parentMatch12 = match;
+                    }
+                    if (match.hit)
+                    {
+                        *parentMatch2 = match;
+                    }
+                    break;
+                }
+                case soul::punctuation::token::DOT:
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch13 = &match;
+                    {
+                        std::int64_t pos = lexer.GetPos();
+                        soul::parser::Match match(false);
+                        if (*lexer == soul::punctuation::token::DOT)
+                        {
+                            ++lexer;
+                            match.hit = true;
+                        }
+                        if (match.hit)
+                        {
+                            value = soul::ast::re::MakeNfa(*lexerContext, lexerContext->MakeAny());
+                        }
                         *parentMatch13 = match;
                     }
                     if (match.hit)
@@ -743,21 +735,17 @@ soul::parser::Match RegExParser<LexerT>::Primary(LexerT& lexer, soul::ast::re::L
                     }
                     break;
                 }
-                case DOT:
+                case soul::punctuation::token::LBRACKET:
                 {
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch14 = &match;
                     {
                         std::int64_t pos = lexer.GetPos();
-                        soul::parser::Match match(false);
-                        if (*lexer == DOT)
-                        {
-                            ++lexer;
-                            match.hit = true;
-                        }
+                        soul::parser::Match match = soul::re::parser::RegExParser<LexerT>::Class(lexer, lexerContext);
+                        cls.reset(static_cast<soul::ast::re::Class*>(match.value));
                         if (match.hit)
                         {
-                            value = soul::ast::re::MakeNfa(*lexerContext, lexerContext->MakeAny());
+                            value = soul::ast::re::MakeNfa(*lexerContext, cls.release());
                         }
                         *parentMatch14 = match;
                     }
@@ -767,39 +755,19 @@ soul::parser::Match RegExParser<LexerT>::Primary(LexerT& lexer, soul::ast::re::L
                     }
                     break;
                 }
-                case LBRACKET:
+                case soul::punctuation::token::LBRACE:
                 {
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch15 = &match;
                     {
                         std::int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = RegExParser<LexerT>::Class(lexer, lexerContext);
-                        cls.reset(static_cast<soul::ast::re::Class*>(match.value));
-                        if (match.hit)
-                        {
-                            value = soul::ast::re::MakeNfa(*lexerContext, cls.release());
-                        }
-                        *parentMatch15 = match;
-                    }
-                    if (match.hit)
-                    {
-                        *parentMatch2 = match;
-                    }
-                    break;
-                }
-                case LBRACE:
-                {
-                    soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch16 = &match;
-                    {
-                        std::int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = RegExParser<LexerT>::ExpressionReference(lexer);
+                        soul::parser::Match match = soul::re::parser::RegExParser<LexerT>::ExpressionReference(lexer);
                         ref.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                         if (match.hit)
                         {
                             value = lexerContext->MakeExpr(ref->value);
                         }
-                        *parentMatch16 = match;
+                        *parentMatch15 = match;
                     }
                     if (match.hit)
                     {
@@ -868,7 +836,7 @@ soul::parser::Match RegExParser<LexerT>::Class(LexerT& lexer, soul::ast::re::Lex
                     {
                         std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
-                        if (*lexer == LBRACKET)
+                        if (*lexer == soul::punctuation::token::LBRACKET)
                         {
                             ++lexer;
                             match.hit = true;
@@ -904,7 +872,7 @@ soul::parser::Match RegExParser<LexerT>::Class(LexerT& lexer, soul::ast::re::Lex
                                         {
                                             std::int64_t pos = lexer.GetPos();
                                             soul::parser::Match match(false);
-                                            if (*lexer == CARET)
+                                            if (*lexer == soul::punctuation::token::CARET)
                                             {
                                                 ++lexer;
                                                 match.hit = true;
@@ -947,7 +915,7 @@ soul::parser::Match RegExParser<LexerT>::Class(LexerT& lexer, soul::ast::re::Lex
                                                     soul::parser::Match* parentMatch14 = &match;
                                                     {
                                                         std::int64_t pos = lexer.GetPos();
-                                                        soul::parser::Match match = RegExParser<LexerT>::Range(lexer, lexerContext);
+                                                        soul::parser::Match match = soul::re::parser::RegExParser<LexerT>::Range(lexer, lexerContext);
                                                         r.reset(static_cast<soul::ast::re::Symbol*>(match.value));
                                                         if (match.hit)
                                                         {
@@ -991,7 +959,7 @@ soul::parser::Match RegExParser<LexerT>::Class(LexerT& lexer, soul::ast::re::Lex
                     {
                         std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
-                        if (*lexer == RBRACKET)
+                        if (*lexer == soul::punctuation::token::RBRACKET)
                         {
                             ++lexer;
                             match.hit = true;
@@ -1002,7 +970,7 @@ soul::parser::Match RegExParser<LexerT>::Class(LexerT& lexer, soul::ast::re::Lex
                         }
                         else
                         {
-                            lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(RBRACKET));
+                            lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(soul::punctuation::token::RBRACKET));
                         }
                     }
                     *parentMatch15 = match;
@@ -1062,7 +1030,7 @@ soul::parser::Match RegExParser<LexerT>::Range(LexerT& lexer, soul::ast::re::Lex
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                soul::parser::Match match = RegExParser<LexerT>::Char(lexer);
+                soul::parser::Match match = soul::re::parser::RegExParser<LexerT>::Char(lexer);
                 s.reset(static_cast<soul::parser::Value<char32_t>*>(match.value));
                 *parentMatch2 = match;
             }
@@ -1082,7 +1050,7 @@ soul::parser::Match RegExParser<LexerT>::Range(LexerT& lexer, soul::ast::re::Lex
                             soul::parser::Match* parentMatch6 = &match;
                             {
                                 soul::parser::Match match(false);
-                                if (*lexer == MINUS)
+                                if (*lexer == soul::cpp::op::token::MINUS)
                                 {
                                     ++lexer;
                                     match.hit = true;
@@ -1098,7 +1066,7 @@ soul::parser::Match RegExParser<LexerT>::Range(LexerT& lexer, soul::ast::re::Lex
                                     soul::parser::Match* parentMatch8 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = RegExParser<LexerT>::Char(lexer);
+                                        soul::parser::Match match = soul::re::parser::RegExParser<LexerT>::Char(lexer);
                                         e.reset(static_cast<soul::parser::Value<char32_t>*>(match.value));
                                         if (match.hit)
                                         {
@@ -1183,14 +1151,14 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
     soul::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
-        case LPAREN:
+        case soul::punctuation::token::LPAREN:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch1 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == LPAREN)
+                if (*lexer == soul::punctuation::token::LPAREN)
                 {
                     ++lexer;
                     match.hit = true;
@@ -1212,14 +1180,14 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
             }
             break;
         }
-        case RPAREN:
+        case soul::punctuation::token::RPAREN:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == RPAREN)
+                if (*lexer == soul::punctuation::token::RPAREN)
                 {
                     ++lexer;
                     match.hit = true;
@@ -1241,14 +1209,14 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
             }
             break;
         }
-        case LBRACKET:
+        case soul::punctuation::token::LBRACKET:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch3 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == LBRACKET)
+                if (*lexer == soul::punctuation::token::LBRACKET)
                 {
                     ++lexer;
                     match.hit = true;
@@ -1270,14 +1238,14 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
             }
             break;
         }
-        case LBRACE:
+        case soul::punctuation::token::LBRACE:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch4 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == LBRACE)
+                if (*lexer == soul::punctuation::token::LBRACE)
                 {
                     ++lexer;
                     match.hit = true;
@@ -1299,14 +1267,14 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
             }
             break;
         }
-        case RBRACE:
+        case soul::punctuation::token::RBRACE:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch5 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == RBRACE)
+                if (*lexer == soul::punctuation::token::RBRACE)
                 {
                     ++lexer;
                     match.hit = true;
@@ -1328,14 +1296,14 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
             }
             break;
         }
-        case PIPE:
+        case soul::punctuation::token::PIPE:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch6 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == PIPE)
+                if (*lexer == soul::punctuation::token::PIPE)
                 {
                     ++lexer;
                     match.hit = true;
@@ -1357,14 +1325,14 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
             }
             break;
         }
-        case STAR:
+        case soul::cpp::op::token::STAR:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch7 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == STAR)
+                if (*lexer == soul::cpp::op::token::STAR)
                 {
                     ++lexer;
                     match.hit = true;
@@ -1386,14 +1354,14 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
             }
             break;
         }
-        case PLUS:
+        case soul::cpp::op::token::PLUS:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch8 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == PLUS)
+                if (*lexer == soul::cpp::op::token::PLUS)
                 {
                     ++lexer;
                     match.hit = true;
@@ -1415,14 +1383,14 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
             }
             break;
         }
-        case QUEST:
+        case soul::punctuation::token::QUEST:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch9 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == QUEST)
+                if (*lexer == soul::punctuation::token::QUEST)
                 {
                     ++lexer;
                     match.hit = true;
@@ -1444,14 +1412,14 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
             }
             break;
         }
-        case DOT:
+        case soul::punctuation::token::DOT:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch10 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == DOT)
+                if (*lexer == soul::punctuation::token::DOT)
                 {
                     ++lexer;
                     match.hit = true;
@@ -1473,14 +1441,14 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
             }
             break;
         }
-        case ESCAPE:
+        case soul::tool::token::ESCAPE:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch11 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == ESCAPE)
+                if (*lexer == soul::tool::token::ESCAPE)
                 {
                     ++lexer;
                     match.hit = true;
@@ -1491,7 +1459,7 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
                         #endif
-                        return soul::parser::Match(true, new soul::parser::Value<char32_t>(MakeEscapeValue(lexer.FileName(), lexer.GetToken(pos))));
+                        return soul::parser::Match(true, new soul::parser::Value<char32_t>(soul::re::token::parser::MakeEscapeValue(lexer.FileName(), lexer.GetToken(pos))));
                     }
                 }
                 *parentMatch11 = match;
@@ -1502,14 +1470,14 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
             }
             break;
         }
-        case CARET:
+        case soul::punctuation::token::CARET:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch12 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == CARET)
+                if (*lexer == soul::punctuation::token::CARET)
                 {
                     ++lexer;
                     match.hit = true;
@@ -1531,14 +1499,14 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
             }
             break;
         }
-        case MINUS:
+        case soul::cpp::op::token::MINUS:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch13 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == MINUS)
+                if (*lexer == soul::cpp::op::token::MINUS)
                 {
                     ++lexer;
                     match.hit = true;
@@ -1560,14 +1528,14 @@ soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
             }
             break;
         }
-        case CHARACTER:
+        case soul::tool::token::CHARACTER:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch14 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
-                if (*lexer == CHARACTER)
+                if (*lexer == soul::tool::token::CHARACTER)
                 {
                     ++lexer;
                     match.hit = true;
@@ -1629,7 +1597,7 @@ soul::parser::Match RegExParser<LexerT>::ExpressionReference(LexerT& lexer)
             soul::parser::Match* parentMatch2 = &match;
             {
                 soul::parser::Match match(false);
-                if (*lexer == LBRACE)
+                if (*lexer == soul::punctuation::token::LBRACE)
                 {
                     ++lexer;
                     match.hit = true;
@@ -1652,7 +1620,7 @@ soul::parser::Match RegExParser<LexerT>::ExpressionReference(LexerT& lexer)
                             {
                                 std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(false);
-                                if (*lexer == CHARACTER)
+                                if (*lexer == soul::tool::token::CHARACTER)
                                 {
                                     ++lexer;
                                     match.hit = true;
@@ -1683,7 +1651,7 @@ soul::parser::Match RegExParser<LexerT>::ExpressionReference(LexerT& lexer)
                                     {
                                         std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match(false);
-                                        if (*lexer == CHARACTER)
+                                        if (*lexer == soul::tool::token::CHARACTER)
                                         {
                                             ++lexer;
                                             match.hit = true;
@@ -1724,7 +1692,7 @@ soul::parser::Match RegExParser<LexerT>::ExpressionReference(LexerT& lexer)
                 {
                     std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match(false);
-                    if (*lexer == RBRACE)
+                    if (*lexer == soul::punctuation::token::RBRACE)
                     {
                         ++lexer;
                         match.hit = true;

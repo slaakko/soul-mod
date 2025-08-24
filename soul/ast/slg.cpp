@@ -7,11 +7,13 @@ module soul.ast.slg;
 
 namespace soul::ast::slg {
 
-Keyword::Keyword(const std::string& str_, const std::string& tokenName_, std::int64_t tokenId_) : str(str_), tokenName(tokenName_), tokenId(tokenId_), collection(nullptr)
+Keyword::Keyword(const soul::ast::SourcePos& sourcePos_, const std::string& str_, const std::string& tokenName_, std::int64_t tokenId_) : 
+    sourcePos(sourcePos_), str(str_), tokenName(tokenName_), tokenId(tokenId_), collection(nullptr)
 {
 }
 
-Keyword::Keyword(const std::string& str_, const std::string& tokenName_) : str(str_), tokenName(tokenName_), tokenId(-1), collection(nullptr)
+Keyword::Keyword(const soul::ast::SourcePos& sourcePos_, const std::string& str_, const std::string& tokenName_) : 
+    sourcePos(sourcePos_), str(str_), tokenName(tokenName_), tokenId(-1), collection(nullptr)
 {
 }
 
@@ -103,6 +105,10 @@ Action* Actions::GetAction(int id) const
     }
 }
 
+Using::Using(const soul::ast::SourcePos& sourcePos_, const std::string& fullName_) : sourcePos(sourcePos_), fullName(fullName_)
+{
+}
+
 Lexer::Lexer(const std::string& name_) : Collection(soul::ast::common::CollectionKind::lexer, name_)
 {
 }
@@ -127,6 +133,11 @@ void Lexer::AddAction(Action* action)
 void Lexer::SetVariableClassName(const std::string& variableClassName_)
 {
     variableClassName = variableClassName_;
+}
+
+void Lexer::AddUsing(const soul::ast::SourcePos& sourcePos, const std::string& fullName)
+{
+    usings.push_back(Using(sourcePos, fullName));
 }
 
 LexerFile::LexerFile(const std::string& filePath_) : File(soul::ast::common::FileKind::lexerFile, filePath_)
@@ -240,7 +251,7 @@ soul::ast::common::Collection* SlgFile::GetCollection(const std::string& name) c
     }
     else
     {
-        throw std::runtime_error("collection '" + name + "' not found");
+        return nullptr;
     }
 }
 

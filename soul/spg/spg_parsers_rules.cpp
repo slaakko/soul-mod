@@ -33,6 +33,7 @@ std::map<std::int64_t, std::string>* GetRuleNameMapPtr()
         { 8393744626267193345, "SpgFileParser.SpgFile" },
         { 8393744626267193346, "SpgFileParser.SpgFileDeclaration" },
         { 8393744626267193347, "SpgFileParser.ParserFileDeclaration" },
+        { 8393744626267193348, "SpgFileParser.TokenFileDeclaration" },
         { 2231932063773097985, "CommonParser.QualifiedId" },
         { 2231932063773097986, "CommonParser.ExportModule" },
         { 2231932063773097987, "CommonParser.Import" },
