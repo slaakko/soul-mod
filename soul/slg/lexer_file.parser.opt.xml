@@ -1,11 +1,11 @@
 <parserFile>
  <grammar name="LexerFileParser">
-  <rule first="{#, #, ID, VARIABLES, LBRACKET, ACTIONS, RBRACE, LBRACE, SEMICOLON, RULES}" name="LexerFile">
-   <action first="{#, #, ID, VARIABLES, LBRACKET, ACTIONS, RBRACE, LBRACE, SEMICOLON, RULES}">
-    <group first="{#, #, ID, VARIABLES, LBRACKET, ACTIONS, RBRACE, LBRACE, SEMICOLON, RULES}">
-     <sequence first="{#, #, ID, VARIABLES, LBRACKET, ACTIONS, RBRACE, LBRACE, SEMICOLON, RULES}">
-      <sequence first="{#, #, ID, VARIABLES, LBRACKET, ACTIONS, LBRACE, SEMICOLON, RULES}">
-       <sequence first="{#, #, ID, LBRACKET, LBRACE, SEMICOLON}">
+  <rule first="{#, #, RULES, VARIABLES, LBRACE, ID, ACTIONS, RBRACE, LBRACKET, SEMICOLON}" name="LexerFile">
+   <action first="{#, #, RULES, VARIABLES, LBRACE, ID, ACTIONS, RBRACE, LBRACKET, SEMICOLON}">
+    <group first="{#, #, RULES, VARIABLES, LBRACE, ID, ACTIONS, RBRACE, LBRACKET, SEMICOLON}">
+     <sequence first="{#, #, RULES, VARIABLES, LBRACE, ID, ACTIONS, RBRACE, LBRACKET, SEMICOLON}">
+      <sequence first="{#, #, RULES, VARIABLES, LBRACE, ID, ACTIONS, LBRACKET, SEMICOLON}">
+       <sequence first="{#, #, LBRACE, ID, LBRACKET, SEMICOLON}">
         <sequence first="{#, #, ID, LBRACKET, SEMICOLON}">
          <sequence first="{#, #, ID, LBRACKET, SEMICOLON}">
           <sequence first="{#, #, ID, LBRACKET, SEMICOLON}">
@@ -27,9 +27,9 @@
         </sequence>
         <token first="{LBRACE}" name="LBRACE"/>
        </sequence>
-       <kleene first="{#, VARIABLES, ACTIONS, RULES}">
-        <group first="{VARIABLES, ACTIONS, RULES}">
-         <nonterminal first="{VARIABLES, ACTIONS, RULES}" ruleName="LexerContent"/>
+       <kleene first="{#, RULES, VARIABLES, ACTIONS}">
+        <group first="{RULES, VARIABLES, ACTIONS}">
+         <nonterminal first="{RULES, VARIABLES, ACTIONS}" ruleName="LexerContent"/>
         </group>
        </kleene>
       </sequence>
@@ -47,9 +47,9 @@
     </group>
    </kleene>
   </rule>
-  <rule first="{VARIABLES, ACTIONS, RULES}" name="LexerContent">
-   <group first="{VARIABLES, ACTIONS, RULES}">
-    <switch first="{VARIABLES, ACTIONS, RULES}">
+  <rule first="{RULES, VARIABLES, ACTIONS}" name="LexerContent">
+   <group first="{RULES, VARIABLES, ACTIONS}">
+    <switch first="{RULES, VARIABLES, ACTIONS}">
      <case first="{RULES}">
       <nonterminal first="{RULES}" ruleName="Rules"/>
      </case>
@@ -105,10 +105,10 @@
        <token first="{VARIABLES}" name="VARIABLES"/>
        <token first="{LBRACE}" name="LBRACE"/>
       </sequence>
-      <kleene first="{#, #, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}">
-       <group first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}">
-        <action first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}">
-         <nonterminal first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}" ruleName="Variable"/>
+      <kleene first="{#, #, #, INT, COLON_COLON, SIGNED, CHAR16T, BOOL, FLOAT, VOID, VOLATILE, DOUBLE, CONST, CHAR8T, WCHART, LONG, UNSIGNED, CHAR, CHAR32T, SHORT, ID}">
+       <group first="{#, #, INT, COLON_COLON, SIGNED, CHAR16T, BOOL, FLOAT, VOID, VOLATILE, DOUBLE, CONST, CHAR8T, WCHART, LONG, UNSIGNED, CHAR, CHAR32T, SHORT, ID}">
+        <action first="{#, #, INT, COLON_COLON, SIGNED, CHAR16T, BOOL, FLOAT, VOID, VOLATILE, DOUBLE, CONST, CHAR8T, WCHART, LONG, UNSIGNED, CHAR, CHAR32T, SHORT, ID}">
+         <nonterminal first="{#, #, INT, COLON_COLON, SIGNED, CHAR16T, BOOL, FLOAT, VOID, VOLATILE, DOUBLE, CONST, CHAR8T, WCHART, LONG, UNSIGNED, CHAR, CHAR32T, SHORT, ID}" ruleName="Variable"/>
         </action>
        </group>
       </kleene>
@@ -117,12 +117,12 @@
     </sequence>
    </group>
   </rule>
-  <rule first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}" name="Variable">
-   <action first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}">
-    <group first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}">
-     <sequence first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}">
-      <sequence first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}">
-       <nonterminal first="{#, #, COLON_COLON, CHAR32T, BOOL, CONST, CHAR8T, CHAR, SHORT, FLOAT, WCHART, VOID, CHAR16T, DOUBLE, INT, UNSIGNED, LONG, VOLATILE, ID, SIGNED}" ruleName="TypeId"/>
+  <rule first="{#, #, INT, COLON_COLON, SIGNED, CHAR16T, BOOL, FLOAT, VOID, VOLATILE, DOUBLE, CONST, CHAR8T, WCHART, LONG, UNSIGNED, CHAR, CHAR32T, SHORT, ID}" name="Variable">
+   <action first="{#, #, INT, COLON_COLON, SIGNED, CHAR16T, BOOL, FLOAT, VOID, VOLATILE, DOUBLE, CONST, CHAR8T, WCHART, LONG, UNSIGNED, CHAR, CHAR32T, SHORT, ID}">
+    <group first="{#, #, INT, COLON_COLON, SIGNED, CHAR16T, BOOL, FLOAT, VOID, VOLATILE, DOUBLE, CONST, CHAR8T, WCHART, LONG, UNSIGNED, CHAR, CHAR32T, SHORT, ID}">
+     <sequence first="{#, #, INT, COLON_COLON, SIGNED, CHAR16T, BOOL, FLOAT, VOID, VOLATILE, DOUBLE, CONST, CHAR8T, WCHART, LONG, UNSIGNED, CHAR, CHAR32T, SHORT, ID}">
+      <sequence first="{#, #, INT, COLON_COLON, SIGNED, CHAR16T, BOOL, FLOAT, VOID, VOLATILE, DOUBLE, CONST, CHAR8T, WCHART, LONG, UNSIGNED, CHAR, CHAR32T, SHORT, ID}">
+       <nonterminal first="{#, #, INT, COLON_COLON, SIGNED, CHAR16T, BOOL, FLOAT, VOID, VOLATILE, DOUBLE, CONST, CHAR8T, WCHART, LONG, UNSIGNED, CHAR, CHAR32T, SHORT, ID}" ruleName="TypeId"/>
        <action first="{ID}">
         <token first="{ID}" name="ID"/>
        </action>

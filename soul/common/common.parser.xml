@@ -7,7 +7,7 @@
       <action first="{ID}">
        <token first="{ID}" name="ID"/>
       </action>
-      <kleene first="{DOT, #}">
+      <kleene first="{#, DOT}">
        <group first="{DOT}">
         <sequence first="{DOT}">
          <token first="{DOT}" name="DOT"/>
@@ -39,14 +39,14 @@
     </group>
    </action>
   </rule>
-  <rule first="{SEMICOLON, LBRACKET, ID, #}" name="Import">
-   <action first="{SEMICOLON, LBRACKET, ID, #}">
-    <group first="{SEMICOLON, LBRACKET, ID, #}">
-     <sequence first="{SEMICOLON, LBRACKET, ID, #}">
-      <sequence first="{LBRACKET, ID, #}">
-       <sequence first="{LBRACKET, ID, #}">
-        <group first="{LBRACKET, #}">
-         <choice first="{LBRACKET, #}">
+  <rule first="{ID, #, SEMICOLON, LBRACKET}" name="Import">
+   <action first="{ID, #, SEMICOLON, LBRACKET}">
+    <group first="{ID, #, SEMICOLON, LBRACKET}">
+     <sequence first="{ID, #, SEMICOLON, LBRACKET}">
+      <sequence first="{ID, #, LBRACKET}">
+       <sequence first="{ID, #, LBRACKET}">
+        <group first="{#, LBRACKET}">
+         <choice first="{#, LBRACKET}">
           <action first="{LBRACKET}">
            <nonterminal first="{LBRACKET}" ruleName="ImportPrefix"/>
           </action>

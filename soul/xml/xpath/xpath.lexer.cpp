@@ -2,7 +2,6 @@
 
 module soul.xml.xpath.lexer;
 
-using namespace soul::xml::xpath::token;
 
 namespace soul::xml::xpath::lexer {
 
@@ -12,54 +11,54 @@ soul::ast::common::TokenCollection* GetTokens()
     if (!tokens.Initialized())
     {
         tokens.SetInitialized();
-        tokens.AddToken(new soul::ast::common::Token(OR, "OR", "'or'"));
-        tokens.AddToken(new soul::ast::common::Token(AND, "AND", "'and'"));
-        tokens.AddToken(new soul::ast::common::Token(EQ, "EQ", "'='"));
-        tokens.AddToken(new soul::ast::common::Token(NEQ, "NEQ", "'!='"));
-        tokens.AddToken(new soul::ast::common::Token(LEQ, "LEQ", "'<='"));
-        tokens.AddToken(new soul::ast::common::Token(GEQ, "GEQ", "'>='"));
-        tokens.AddToken(new soul::ast::common::Token(LESS, "LESS", "'<'"));
-        tokens.AddToken(new soul::ast::common::Token(GREATER, "GREATER", "'>'"));
-        tokens.AddToken(new soul::ast::common::Token(PLUS, "PLUS", "'+'"));
-        tokens.AddToken(new soul::ast::common::Token(MINUS, "MINUS", "'-'"));
-        tokens.AddToken(new soul::ast::common::Token(STAR, "STAR", "'*'"));
-        tokens.AddToken(new soul::ast::common::Token(DIV, "DIV", "'div'"));
-        tokens.AddToken(new soul::ast::common::Token(MOD, "MOD", "'mod'"));
-        tokens.AddToken(new soul::ast::common::Token(UNION, "UNION", "'|'"));
-        tokens.AddToken(new soul::ast::common::Token(SLASH_SLASH, "SLASH_SLASH", "'//'"));
-        tokens.AddToken(new soul::ast::common::Token(SLASH, "SLASH", "'/'"));
-        tokens.AddToken(new soul::ast::common::Token(DOT_DOT, "DOT_DOT", "'..'"));
-        tokens.AddToken(new soul::ast::common::Token(DOT, "DOT", "'.'"));
-        tokens.AddToken(new soul::ast::common::Token(COLON_COLON, "COLON_COLON", "'::'"));
-        tokens.AddToken(new soul::ast::common::Token(COLON, "COLON", "':'"));
-        tokens.AddToken(new soul::ast::common::Token(DOLLAR, "DOLLAR", "'$'"));
-        tokens.AddToken(new soul::ast::common::Token(COMMA, "COMMA", "','"));
-        tokens.AddToken(new soul::ast::common::Token(ANCESTOR, "ANCESTOR", "'ancestor'"));
-        tokens.AddToken(new soul::ast::common::Token(ANCESTOR_OR_SELF, "ANCESTOR_OR_SELF", "'ancestor-or-self'"));
-        tokens.AddToken(new soul::ast::common::Token(ATTRIBUTE, "ATTRIBUTE", "'attribte'"));
-        tokens.AddToken(new soul::ast::common::Token(CHILD, "CHILD", "'child'"));
-        tokens.AddToken(new soul::ast::common::Token(DESCENDANT, "DESCENDANT", "'descendant"));
-        tokens.AddToken(new soul::ast::common::Token(DESCENDANT_OR_SELF, "DESCENDANT_OR_SELF", "'descendant-or-self'"));
-        tokens.AddToken(new soul::ast::common::Token(FOLLOWING, "FOLLOWING", "'following'"));
-        tokens.AddToken(new soul::ast::common::Token(FOLLOWING_SIBLING, "FOLLOWING_SIBLING", "'following-sibling'"));
-        tokens.AddToken(new soul::ast::common::Token(NAMESPACE, "NAMESPACE", "'namespace'"));
-        tokens.AddToken(new soul::ast::common::Token(PARENT, "PARENT", "'parent'"));
-        tokens.AddToken(new soul::ast::common::Token(PRECEDING, "PRECEDING", "'preceding'"));
-        tokens.AddToken(new soul::ast::common::Token(PRECEDING_SIBLING, "PRECEDING_SIBLING", "'preceding-siblibg'"));
-        tokens.AddToken(new soul::ast::common::Token(SELF, "SELF", "'self'"));
-        tokens.AddToken(new soul::ast::common::Token(AT, "AT", "'@'"));
-        tokens.AddToken(new soul::ast::common::Token(LBRACKET, "LBRACKET", "'['"));
-        tokens.AddToken(new soul::ast::common::Token(RBRACKET, "RBRACKET", "']'"));
-        tokens.AddToken(new soul::ast::common::Token(LPAREN, "LPAREN", "'('"));
-        tokens.AddToken(new soul::ast::common::Token(RPAREN, "RPAREN", "')'"));
-        tokens.AddToken(new soul::ast::common::Token(PROCESSING_INSTRUCTION, "PROCESSING_INSTRUCTION", "'processing-instructioon'"));
-        tokens.AddToken(new soul::ast::common::Token(COMMENT, "COMMENT", "'comment'"));
-        tokens.AddToken(new soul::ast::common::Token(TEXT, "TEXT", "'text'"));
-        tokens.AddToken(new soul::ast::common::Token(NODE, "NODE", "'node'"));
-        tokens.AddToken(new soul::ast::common::Token(DQ_STRING, "DQ_STRING", "string"));
-        tokens.AddToken(new soul::ast::common::Token(SQ_STRING, "SQ_STRING", "string"));
-        tokens.AddToken(new soul::ast::common::Token(NUMBER, "NUMBER", "number"));
-        tokens.AddToken(new soul::ast::common::Token(NAME, "NAME", "name"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::OR, "OR", "'or'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::AND, "AND", "'and'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::EQ, "EQ", "'='"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::NEQ, "NEQ", "'!='"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::LEQ, "LEQ", "'<='"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::GEQ, "GEQ", "'>='"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::LESS, "LESS", "'<'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::GREATER, "GREATER", "'>'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::PLUS, "PLUS", "'+'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::MINUS, "MINUS", "'-'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::STAR, "STAR", "'*'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::DIV, "DIV", "'div'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::MOD, "MOD", "'mod'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::UNION, "UNION", "'|'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::SLASH_SLASH, "SLASH_SLASH", "'//'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::SLASH, "SLASH", "'/'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::DOT_DOT, "DOT_DOT", "'..'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::DOT, "DOT", "'.'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::COLON_COLON, "COLON_COLON", "'::'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::COLON, "COLON", "':'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::DOLLAR, "DOLLAR", "'$'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::COMMA, "COMMA", "','"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::ANCESTOR, "ANCESTOR", "'ancestor'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::ANCESTOR_OR_SELF, "ANCESTOR_OR_SELF", "'ancestor-or-self'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::ATTRIBUTE, "ATTRIBUTE", "'attribte'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::CHILD, "CHILD", "'child'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::DESCENDANT, "DESCENDANT", "'descendant"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::DESCENDANT_OR_SELF, "DESCENDANT_OR_SELF", "'descendant-or-self'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::FOLLOWING, "FOLLOWING", "'following'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::FOLLOWING_SIBLING, "FOLLOWING_SIBLING", "'following-sibling'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::NAMESPACE, "NAMESPACE", "'namespace'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::PARENT, "PARENT", "'parent'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::PRECEDING, "PRECEDING", "'preceding'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::PRECEDING_SIBLING, "PRECEDING_SIBLING", "'preceding-siblibg'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::SELF, "SELF", "'self'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::AT, "AT", "'@'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::LBRACKET, "LBRACKET", "'['"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::RBRACKET, "RBRACKET", "']'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::LPAREN, "LPAREN", "'('"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::RPAREN, "RPAREN", "')'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::PROCESSING_INSTRUCTION, "PROCESSING_INSTRUCTION", "'processing-instructioon'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::COMMENT, "COMMENT", "'comment'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::TEXT, "TEXT", "'text'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::NODE, "NODE", "'node'"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::DQ_STRING, "DQ_STRING", "string"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::SQ_STRING, "SQ_STRING", "string"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::NUMBER, "NUMBER", "number"));
+        tokens.AddToken(new soul::ast::common::Token(soul::xml::xpath::token::NAME, "NAME", "name"));
     }
     return &tokens;
 }
@@ -76,27 +75,27 @@ template<>
 soul::lexer::KeywordMap<char>* GetKeywords<char>()
 {
     static const soul::lexer::Keyword<char> keywords[] = {
-         { "or", OR },
-         { "and", AND },
-         { "div", DIV },
-         { "mod", MOD },
-         { "ancestor", ANCESTOR },
-         { "ancestor-or-self", ANCESTOR_OR_SELF },
-         { "attribute", ATTRIBUTE },
-         { "child", CHILD },
-         { "descendant", DESCENDANT },
-         { "descendant-or-self", DESCENDANT_OR_SELF },
-         { "following", FOLLOWING },
-         { "following-sibling", FOLLOWING_SIBLING },
-         { "namespace", NAMESPACE },
-         { "parent", PARENT },
-         { "preceding", PRECEDING },
-         { "preceding-sibling", PRECEDING_SIBLING },
-         { "self", SELF },
-         { "processing-instruction", PROCESSING_INSTRUCTION },
-         { "comment", COMMENT },
-         { "text", TEXT },
-         { "node", NODE },
+         { "or", soul::xml::xpath::token::OR },
+         { "and", soul::xml::xpath::token::AND },
+         { "div", soul::xml::xpath::token::DIV },
+         { "mod", soul::xml::xpath::token::MOD },
+         { "ancestor", soul::xml::xpath::token::ANCESTOR },
+         { "ancestor-or-self", soul::xml::xpath::token::ANCESTOR_OR_SELF },
+         { "attribute", soul::xml::xpath::token::ATTRIBUTE },
+         { "child", soul::xml::xpath::token::CHILD },
+         { "descendant", soul::xml::xpath::token::DESCENDANT },
+         { "descendant-or-self", soul::xml::xpath::token::DESCENDANT_OR_SELF },
+         { "following", soul::xml::xpath::token::FOLLOWING },
+         { "following-sibling", soul::xml::xpath::token::FOLLOWING_SIBLING },
+         { "namespace", soul::xml::xpath::token::NAMESPACE },
+         { "parent", soul::xml::xpath::token::PARENT },
+         { "preceding", soul::xml::xpath::token::PRECEDING },
+         { "preceding-sibling", soul::xml::xpath::token::PRECEDING_SIBLING },
+         { "self", soul::xml::xpath::token::SELF },
+         { "processing-instruction", soul::xml::xpath::token::PROCESSING_INSTRUCTION },
+         { "comment", soul::xml::xpath::token::COMMENT },
+         { "text", soul::xml::xpath::token::TEXT },
+         { "node", soul::xml::xpath::token::NODE },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char> keywordMap(keywords);
@@ -107,27 +106,27 @@ template<>
 soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
 {
     static const soul::lexer::Keyword<char8_t> keywords[] = {
-         { u8"or", OR },
-         { u8"and", AND },
-         { u8"div", DIV },
-         { u8"mod", MOD },
-         { u8"ancestor", ANCESTOR },
-         { u8"ancestor-or-self", ANCESTOR_OR_SELF },
-         { u8"attribute", ATTRIBUTE },
-         { u8"child", CHILD },
-         { u8"descendant", DESCENDANT },
-         { u8"descendant-or-self", DESCENDANT_OR_SELF },
-         { u8"following", FOLLOWING },
-         { u8"following-sibling", FOLLOWING_SIBLING },
-         { u8"namespace", NAMESPACE },
-         { u8"parent", PARENT },
-         { u8"preceding", PRECEDING },
-         { u8"preceding-sibling", PRECEDING_SIBLING },
-         { u8"self", SELF },
-         { u8"processing-instruction", PROCESSING_INSTRUCTION },
-         { u8"comment", COMMENT },
-         { u8"text", TEXT },
-         { u8"node", NODE },
+         { u8"or", soul::xml::xpath::token::OR },
+         { u8"and", soul::xml::xpath::token::AND },
+         { u8"div", soul::xml::xpath::token::DIV },
+         { u8"mod", soul::xml::xpath::token::MOD },
+         { u8"ancestor", soul::xml::xpath::token::ANCESTOR },
+         { u8"ancestor-or-self", soul::xml::xpath::token::ANCESTOR_OR_SELF },
+         { u8"attribute", soul::xml::xpath::token::ATTRIBUTE },
+         { u8"child", soul::xml::xpath::token::CHILD },
+         { u8"descendant", soul::xml::xpath::token::DESCENDANT },
+         { u8"descendant-or-self", soul::xml::xpath::token::DESCENDANT_OR_SELF },
+         { u8"following", soul::xml::xpath::token::FOLLOWING },
+         { u8"following-sibling", soul::xml::xpath::token::FOLLOWING_SIBLING },
+         { u8"namespace", soul::xml::xpath::token::NAMESPACE },
+         { u8"parent", soul::xml::xpath::token::PARENT },
+         { u8"preceding", soul::xml::xpath::token::PRECEDING },
+         { u8"preceding-sibling", soul::xml::xpath::token::PRECEDING_SIBLING },
+         { u8"self", soul::xml::xpath::token::SELF },
+         { u8"processing-instruction", soul::xml::xpath::token::PROCESSING_INSTRUCTION },
+         { u8"comment", soul::xml::xpath::token::COMMENT },
+         { u8"text", soul::xml::xpath::token::TEXT },
+         { u8"node", soul::xml::xpath::token::NODE },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char8_t> keywordMap(keywords);
@@ -138,27 +137,27 @@ template<>
 soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
 {
     static const soul::lexer::Keyword<char16_t> keywords[] = {
-         { u"or", OR },
-         { u"and", AND },
-         { u"div", DIV },
-         { u"mod", MOD },
-         { u"ancestor", ANCESTOR },
-         { u"ancestor-or-self", ANCESTOR_OR_SELF },
-         { u"attribute", ATTRIBUTE },
-         { u"child", CHILD },
-         { u"descendant", DESCENDANT },
-         { u"descendant-or-self", DESCENDANT_OR_SELF },
-         { u"following", FOLLOWING },
-         { u"following-sibling", FOLLOWING_SIBLING },
-         { u"namespace", NAMESPACE },
-         { u"parent", PARENT },
-         { u"preceding", PRECEDING },
-         { u"preceding-sibling", PRECEDING_SIBLING },
-         { u"self", SELF },
-         { u"processing-instruction", PROCESSING_INSTRUCTION },
-         { u"comment", COMMENT },
-         { u"text", TEXT },
-         { u"node", NODE },
+         { u"or", soul::xml::xpath::token::OR },
+         { u"and", soul::xml::xpath::token::AND },
+         { u"div", soul::xml::xpath::token::DIV },
+         { u"mod", soul::xml::xpath::token::MOD },
+         { u"ancestor", soul::xml::xpath::token::ANCESTOR },
+         { u"ancestor-or-self", soul::xml::xpath::token::ANCESTOR_OR_SELF },
+         { u"attribute", soul::xml::xpath::token::ATTRIBUTE },
+         { u"child", soul::xml::xpath::token::CHILD },
+         { u"descendant", soul::xml::xpath::token::DESCENDANT },
+         { u"descendant-or-self", soul::xml::xpath::token::DESCENDANT_OR_SELF },
+         { u"following", soul::xml::xpath::token::FOLLOWING },
+         { u"following-sibling", soul::xml::xpath::token::FOLLOWING_SIBLING },
+         { u"namespace", soul::xml::xpath::token::NAMESPACE },
+         { u"parent", soul::xml::xpath::token::PARENT },
+         { u"preceding", soul::xml::xpath::token::PRECEDING },
+         { u"preceding-sibling", soul::xml::xpath::token::PRECEDING_SIBLING },
+         { u"self", soul::xml::xpath::token::SELF },
+         { u"processing-instruction", soul::xml::xpath::token::PROCESSING_INSTRUCTION },
+         { u"comment", soul::xml::xpath::token::COMMENT },
+         { u"text", soul::xml::xpath::token::TEXT },
+         { u"node", soul::xml::xpath::token::NODE },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char16_t> keywordMap(keywords);
@@ -169,27 +168,27 @@ template<>
 soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
 {
     static const soul::lexer::Keyword<char32_t> keywords[] = {
-         { U"or", OR },
-         { U"and", AND },
-         { U"div", DIV },
-         { U"mod", MOD },
-         { U"ancestor", ANCESTOR },
-         { U"ancestor-or-self", ANCESTOR_OR_SELF },
-         { U"attribute", ATTRIBUTE },
-         { U"child", CHILD },
-         { U"descendant", DESCENDANT },
-         { U"descendant-or-self", DESCENDANT_OR_SELF },
-         { U"following", FOLLOWING },
-         { U"following-sibling", FOLLOWING_SIBLING },
-         { U"namespace", NAMESPACE },
-         { U"parent", PARENT },
-         { U"preceding", PRECEDING },
-         { U"preceding-sibling", PRECEDING_SIBLING },
-         { U"self", SELF },
-         { U"processing-instruction", PROCESSING_INSTRUCTION },
-         { U"comment", COMMENT },
-         { U"text", TEXT },
-         { U"node", NODE },
+         { U"or", soul::xml::xpath::token::OR },
+         { U"and", soul::xml::xpath::token::AND },
+         { U"div", soul::xml::xpath::token::DIV },
+         { U"mod", soul::xml::xpath::token::MOD },
+         { U"ancestor", soul::xml::xpath::token::ANCESTOR },
+         { U"ancestor-or-self", soul::xml::xpath::token::ANCESTOR_OR_SELF },
+         { U"attribute", soul::xml::xpath::token::ATTRIBUTE },
+         { U"child", soul::xml::xpath::token::CHILD },
+         { U"descendant", soul::xml::xpath::token::DESCENDANT },
+         { U"descendant-or-self", soul::xml::xpath::token::DESCENDANT_OR_SELF },
+         { U"following", soul::xml::xpath::token::FOLLOWING },
+         { U"following-sibling", soul::xml::xpath::token::FOLLOWING_SIBLING },
+         { U"namespace", soul::xml::xpath::token::NAMESPACE },
+         { U"parent", soul::xml::xpath::token::PARENT },
+         { U"preceding", soul::xml::xpath::token::PRECEDING },
+         { U"preceding-sibling", soul::xml::xpath::token::PRECEDING_SIBLING },
+         { U"self", soul::xml::xpath::token::SELF },
+         { U"processing-instruction", soul::xml::xpath::token::PROCESSING_INSTRUCTION },
+         { U"comment", soul::xml::xpath::token::COMMENT },
+         { U"text", soul::xml::xpath::token::TEXT },
+         { U"node", soul::xml::xpath::token::NODE },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char32_t> keywordMap(keywords);

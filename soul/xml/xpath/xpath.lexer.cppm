@@ -9,10 +9,6 @@ import soul.ast.common;
 import util;
 import soul.xml.xpath.token;
 
-using namespace soul;
-using namespace soul::lexer;
-using namespace soul::xml::xpath::token;
-
 export namespace soul::xml::xpath::lexer {
 
 std::mutex& MakeLexerMtx();
@@ -1257,163 +1253,163 @@ struct XPathLexer
             case 1:
             {
                 lexer.Retract();
-                return NAME;
+                return soul::xml::xpath::token::NAME;
                 break;
             }
             case 2:
             {
                 lexer.Retract();
-                return NUMBER;
+                return soul::xml::xpath::token::NUMBER;
                 break;
             }
             case 3:
             {
                 lexer.Retract();
-                return DQ_STRING;
+                return soul::xml::xpath::token::DQ_STRING;
                 break;
             }
             case 4:
             {
                 lexer.Retract();
-                return SQ_STRING;
+                return soul::xml::xpath::token::SQ_STRING;
                 break;
             }
             case 5:
             {
                 lexer.Retract();
-                return EQ;
+                return soul::xml::xpath::token::EQ;
                 break;
             }
             case 6:
             {
                 lexer.Retract();
-                return NEQ;
+                return soul::xml::xpath::token::NEQ;
                 break;
             }
             case 7:
             {
                 lexer.Retract();
-                return LEQ;
+                return soul::xml::xpath::token::LEQ;
                 break;
             }
             case 8:
             {
                 lexer.Retract();
-                return GEQ;
+                return soul::xml::xpath::token::GEQ;
                 break;
             }
             case 9:
             {
                 lexer.Retract();
-                return LESS;
+                return soul::xml::xpath::token::LESS;
                 break;
             }
             case 10:
             {
                 lexer.Retract();
-                return GREATER;
+                return soul::xml::xpath::token::GREATER;
                 break;
             }
             case 11:
             {
                 lexer.Retract();
-                return PLUS;
+                return soul::xml::xpath::token::PLUS;
                 break;
             }
             case 12:
             {
                 lexer.Retract();
-                return MINUS;
+                return soul::xml::xpath::token::MINUS;
                 break;
             }
             case 13:
             {
                 lexer.Retract();
-                return STAR;
+                return soul::xml::xpath::token::STAR;
                 break;
             }
             case 14:
             {
                 lexer.Retract();
-                return UNION;
+                return soul::xml::xpath::token::UNION;
                 break;
             }
             case 15:
             {
                 lexer.Retract();
-                return SLASH_SLASH;
+                return soul::xml::xpath::token::SLASH_SLASH;
                 break;
             }
             case 16:
             {
                 lexer.Retract();
-                return SLASH;
+                return soul::xml::xpath::token::SLASH;
                 break;
             }
             case 17:
             {
                 lexer.Retract();
-                return DOT_DOT;
+                return soul::xml::xpath::token::DOT_DOT;
                 break;
             }
             case 18:
             {
                 lexer.Retract();
-                return DOT;
+                return soul::xml::xpath::token::DOT;
                 break;
             }
             case 19:
             {
                 lexer.Retract();
-                return COLON_COLON;
+                return soul::xml::xpath::token::COLON_COLON;
                 break;
             }
             case 20:
             {
                 lexer.Retract();
-                return COLON;
+                return soul::xml::xpath::token::COLON;
                 break;
             }
             case 21:
             {
                 lexer.Retract();
-                return DOLLAR;
+                return soul::xml::xpath::token::DOLLAR;
                 break;
             }
             case 22:
             {
                 lexer.Retract();
-                return COMMA;
+                return soul::xml::xpath::token::COMMA;
                 break;
             }
             case 23:
             {
                 lexer.Retract();
-                return AT;
+                return soul::xml::xpath::token::AT;
                 break;
             }
             case 24:
             {
                 lexer.Retract();
-                return LBRACKET;
+                return soul::xml::xpath::token::LBRACKET;
                 break;
             }
             case 25:
             {
                 lexer.Retract();
-                return RBRACKET;
+                return soul::xml::xpath::token::RBRACKET;
                 break;
             }
             case 26:
             {
                 lexer.Retract();
-                return LPAREN;
+                return soul::xml::xpath::token::LPAREN;
                 break;
             }
             case 27:
             {
                 lexer.Retract();
-                return RPAREN;
+                return soul::xml::xpath::token::RPAREN;
                 break;
             }
         }

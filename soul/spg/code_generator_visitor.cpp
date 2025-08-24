@@ -434,7 +434,15 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ActionParser& parser)
         nonterminalName = nt->InstanceName();
     }
     soul::spg::parsing::util::CountNonterminals(parser.SuccessCode(), nonterminalInfos);
-    ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name(), fileMap);
+    soul::ast::common::TokenMap* tokenMap = parser.GetTokenMap();
+    if (tokenMap)
+    {
+        ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name(), tokenMap, fileMap);
+    }
+    else
+    {
+        throw std::runtime_error("token map not set");
+    }
     parser.SuccessCode()->Write(*formatter);
     if (parser.FailureCode())
     {

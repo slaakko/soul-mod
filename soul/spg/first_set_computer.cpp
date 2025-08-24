@@ -15,6 +15,8 @@ public:
     FirstSetComputer();
     bool Changed() const { return changed; }
     void Visit(soul::ast::spg::ChoiceParser& parser) override;
+    void Visit(soul::ast::spg::CaseParser& parser) override;
+    void Visit(soul::ast::spg::SwitchParser& parser) override;
     void Visit(soul::ast::spg::SequenceParser& parser) override;
     void Visit(soul::ast::spg::DifferenceParser& parser) override;
     void Visit(soul::ast::spg::ListParser& parser) override;
@@ -44,6 +46,16 @@ FirstSetComputer::FirstSetComputer() : changed(false)
 }
 
 void FirstSetComputer::Visit(soul::ast::spg::ChoiceParser& parser)
+{
+    parser.ComputeFirst(changed, visited);
+}
+
+void FirstSetComputer::Visit(soul::ast::spg::CaseParser& parser)
+{
+    parser.ComputeFirst(changed, visited);
+}
+
+void FirstSetComputer::Visit(soul::ast::spg::SwitchParser& parser)
 {
     parser.ComputeFirst(changed, visited);
 }

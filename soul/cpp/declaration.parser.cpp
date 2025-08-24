@@ -344,28 +344,28 @@ soul::parser::Match DeclarationParser<LexerT>::DeclSpecifierSeq(LexerT& lexer, s
         soul::parser::Match* parentMatch1 = &match;
         switch (*lexer)
         {
-            case soul::cpp::token::REGISTER:
+            case soul::cpp::token::STATIC:
+            case soul::cpp::token::CHAR:
+            case soul::cpp::token::CHAR16T:
+            case soul::cpp::token::MUTABLE:
             case soul::cpp::token::CHAR8T:
             case soul::cpp::token::CHAR32T:
-            case soul::cpp::token::WCHART:
             case soul::cpp::token::BOOL:
-            case soul::cpp::token::INT:
-            case soul::cpp::token::LONG:
             case soul::cpp::token::EXTERN:
-            case soul::cpp::token::CHAR:
-            case soul::cpp::token::SHORT:
-            case soul::cpp::token::SIGNED:
+            case soul::cpp::token::REGISTER:
             case soul::cpp::token::AUTO:
-            case soul::cpp::token::MUTABLE:
-            case soul::cpp::token::STATIC:
-            case soul::cpp::token::CHAR16T:
-            case soul::cpp::token::TYPEDEF:
+            case soul::cpp::token::WCHART:
             case soul::cpp::token::UNSIGNED:
-            case soul::cpp::token::VOID:
-            case soul::cpp::token::CONST:
-            case soul::cpp::token::DOUBLE:
-            case soul::cpp::token::VOLATILE:
             case soul::cpp::token::FLOAT:
+            case soul::cpp::token::CONST:
+            case soul::cpp::token::SIGNED:
+            case soul::cpp::token::VOID:
+            case soul::cpp::token::INT:
+            case soul::cpp::token::VOLATILE:
+            case soul::cpp::token::LONG:
+            case soul::cpp::token::TYPEDEF:
+            case soul::cpp::token::SHORT:
+            case soul::cpp::token::DOUBLE:
             {
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch2 = &match;
@@ -490,11 +490,11 @@ soul::parser::Match DeclarationParser<LexerT>::DeclSpecifier(LexerT& lexer)
     soul::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
-        case soul::cpp::token::REGISTER:
-        case soul::cpp::token::EXTERN:
-        case soul::cpp::token::AUTO:
-        case soul::cpp::token::MUTABLE:
         case soul::cpp::token::STATIC:
+        case soul::cpp::token::MUTABLE:
+        case soul::cpp::token::EXTERN:
+        case soul::cpp::token::REGISTER:
+        case soul::cpp::token::AUTO:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch1 = &match;
@@ -519,22 +519,22 @@ soul::parser::Match DeclarationParser<LexerT>::DeclSpecifier(LexerT& lexer)
             }
             break;
         }
+        case soul::cpp::token::CHAR:
+        case soul::cpp::token::CHAR16T:
         case soul::cpp::token::CHAR8T:
         case soul::cpp::token::CHAR32T:
-        case soul::cpp::token::WCHART:
         case soul::cpp::token::BOOL:
-        case soul::cpp::token::INT:
-        case soul::cpp::token::LONG:
-        case soul::cpp::token::CHAR:
-        case soul::cpp::token::SHORT:
-        case soul::cpp::token::SIGNED:
-        case soul::cpp::token::CHAR16T:
+        case soul::cpp::token::WCHART:
         case soul::cpp::token::UNSIGNED:
-        case soul::cpp::token::VOID:
-        case soul::cpp::token::CONST:
-        case soul::cpp::token::DOUBLE:
-        case soul::cpp::token::VOLATILE:
         case soul::cpp::token::FLOAT:
+        case soul::cpp::token::CONST:
+        case soul::cpp::token::SIGNED:
+        case soul::cpp::token::VOID:
+        case soul::cpp::token::INT:
+        case soul::cpp::token::VOLATILE:
+        case soul::cpp::token::LONG:
+        case soul::cpp::token::SHORT:
+        case soul::cpp::token::DOUBLE:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
@@ -795,20 +795,20 @@ soul::parser::Match DeclarationParser<LexerT>::TypeSpecifier(LexerT& lexer)
     soul::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
+        case soul::cpp::token::CHAR:
+        case soul::cpp::token::CHAR16T:
         case soul::cpp::token::CHAR8T:
         case soul::cpp::token::CHAR32T:
-        case soul::cpp::token::WCHART:
         case soul::cpp::token::BOOL:
+        case soul::cpp::token::WCHART:
+        case soul::cpp::token::UNSIGNED:
+        case soul::cpp::token::FLOAT:
+        case soul::cpp::token::SIGNED:
+        case soul::cpp::token::VOID:
         case soul::cpp::token::INT:
         case soul::cpp::token::LONG:
-        case soul::cpp::token::CHAR:
         case soul::cpp::token::SHORT:
-        case soul::cpp::token::SIGNED:
-        case soul::cpp::token::CHAR16T:
-        case soul::cpp::token::UNSIGNED:
-        case soul::cpp::token::VOID:
         case soul::cpp::token::DOUBLE:
-        case soul::cpp::token::FLOAT:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch1 = &match;

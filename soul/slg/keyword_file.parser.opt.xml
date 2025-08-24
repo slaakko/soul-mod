@@ -1,13 +1,13 @@
 <parserFile>
  <grammar name="KeywordFileParser">
-  <rule first="{#, #, LPAREN, ID, LBRACKET, RBRACE, LBRACE, SEMICOLON, KEYWORDS}" name="KeywordFile">
-   <action first="{#, #, LPAREN, ID, LBRACKET, RBRACE, LBRACE, SEMICOLON, KEYWORDS}">
-    <group first="{#, #, LPAREN, ID, LBRACKET, RBRACE, LBRACE, SEMICOLON, KEYWORDS}">
-     <sequence first="{#, #, LPAREN, ID, LBRACKET, RBRACE, LBRACE, SEMICOLON, KEYWORDS}">
-      <sequence first="{#, #, LPAREN, ID, LBRACKET, LBRACE, SEMICOLON, KEYWORDS}">
-       <sequence first="{#, #, ID, LBRACKET, LBRACE, SEMICOLON, KEYWORDS}">
-        <sequence first="{#, #, ID, LBRACKET, SEMICOLON, KEYWORDS}">
-         <sequence first="{#, #, ID, LBRACKET, SEMICOLON, KEYWORDS}">
+  <rule first="{#, #, LPAREN, LBRACE, ID, RBRACE, LBRACKET, KEYWORDS, SEMICOLON}" name="KeywordFile">
+   <action first="{#, #, LPAREN, LBRACE, ID, RBRACE, LBRACKET, KEYWORDS, SEMICOLON}">
+    <group first="{#, #, LPAREN, LBRACE, ID, RBRACE, LBRACKET, KEYWORDS, SEMICOLON}">
+     <sequence first="{#, #, LPAREN, LBRACE, ID, RBRACE, LBRACKET, KEYWORDS, SEMICOLON}">
+      <sequence first="{#, #, LPAREN, LBRACE, ID, LBRACKET, KEYWORDS, SEMICOLON}">
+       <sequence first="{#, #, LBRACE, ID, LBRACKET, KEYWORDS, SEMICOLON}">
+        <sequence first="{#, #, ID, LBRACKET, KEYWORDS, SEMICOLON}">
+         <sequence first="{#, #, ID, LBRACKET, KEYWORDS, SEMICOLON}">
           <sequence first="{#, #, ID, LBRACKET, SEMICOLON}">
            <action first="{#}">
             <empty first="{#}"/>

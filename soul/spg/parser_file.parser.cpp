@@ -1129,24 +1129,24 @@ soul::parser::Match ParserFileParser<LexerT>::ParamOrVariable(LexerT& lexer)
             }
             break;
         }
-        case soul::cpp::token::CONST:
+        case soul::cpp::op::token::COLON_COLON:
+        case soul::cpp::token::INT:
+        case soul::cpp::token::UNSIGNED:
+        case soul::cpp::token::CHAR16T:
         case soul::cpp::token::FLOAT:
         case soul::cpp::token::VOID:
-        case soul::cpp::token::CHAR16T:
         case soul::cpp::token::VOLATILE:
-        case soul::cpp::token::BOOL:
-        case soul::cpp::token::CHAR:
-        case soul::cpp::token::INT:
-        case soul::cpp::token::LONG:
-        case soul::cpp::token::SIGNED:
-        case soul::cpp::token::CHAR8T:
-        case soul::cpp::token::CHAR32T:
-        case soul::cpp::op::token::COLON_COLON:
-        case soul::cpp::token::UNSIGNED:
-        case soul::cpp::token::WCHART:
-        case soul::cpp::token::DOUBLE:
-        case soul::cpp::token::SHORT:
         case soul::cpp::token::ID:
+        case soul::cpp::token::CONST:
+        case soul::cpp::token::CHAR8T:
+        case soul::cpp::token::LONG:
+        case soul::cpp::token::WCHART:
+        case soul::cpp::token::BOOL:
+        case soul::cpp::token::DOUBLE:
+        case soul::cpp::token::CHAR:
+        case soul::cpp::token::SHORT:
+        case soul::cpp::token::SIGNED:
+        case soul::cpp::token::CHAR32T:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch6 = &match;
@@ -1878,12 +1878,12 @@ soul::parser::Match ParserFileParser<LexerT>::Prefix(LexerT& lexer)
             }
             break;
         }
-        case soul::punctuation::token::LPAREN:
-        case soul::tool::token::ANY:
-        case soul::cpp::token::STRING_LITERAL:
-        case soul::tool::token::EMPTY:
-        case soul::cpp::token::CHAR_LITERAL:
         case soul::cpp::token::ID:
+        case soul::cpp::token::CHAR_LITERAL:
+        case soul::cpp::token::STRING_LITERAL:
+        case soul::punctuation::token::LPAREN:
+        case soul::tool::token::EMPTY:
+        case soul::tool::token::ANY:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch4 = &match;
@@ -2132,11 +2132,11 @@ soul::parser::Match ParserFileParser<LexerT>::Primary(LexerT& lexer)
                         soul::parser::Match* parentMatch5 = &match;
                         switch (*lexer)
                         {
-                            case soul::tool::token::ANY:
+                            case soul::cpp::token::ID:
+                            case soul::cpp::token::CHAR_LITERAL:
                             case soul::cpp::token::STRING_LITERAL:
                             case soul::tool::token::EMPTY:
-                            case soul::cpp::token::CHAR_LITERAL:
-                            case soul::cpp::token::ID:
+                            case soul::tool::token::ANY:
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;

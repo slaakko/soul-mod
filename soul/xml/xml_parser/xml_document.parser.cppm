@@ -9,9 +9,6 @@ import soul.parser;
 import soul.xml.processor;
 import soul.lexer.trivial;
 
-using namespace soul::xml::processor;
-using namespace soul::lexer::trivial;
-
 export namespace soul::xml::document::parser {
 
 template<typename LexerT>
