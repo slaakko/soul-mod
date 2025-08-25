@@ -10,11 +10,6 @@ import soul_expected.xml.xpath.lexer;
 import soul_expected.xml.xpath.token;
 import soul_expected.xml.xpath.token.parser;
 
-using namespace soul_expected::xml::dom_expected;
-using namespace soul_expected::xml::xpath::lexer;
-using namespace soul_expected::xml::xpath::token;
-using namespace soul_expected::xml::xpath::token::parser;
-
 namespace soul_expected::xml::xpath::parser {
 
 template<typename LexerT>
@@ -80,7 +75,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Expr(Lexer
         soul_expected::parser::Match match(false);
         soul_expected::parser::Match* parentMatch1 = &match;
         {
-            std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::OrExpr(lexer);
+            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::OrExpr(lexer);
             if (!m) return std::unexpected<int>(m.error());
             soul_expected::parser::Match match = *m;
             orExpr.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -141,7 +136,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::OrExpr(Lex
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::AndExpr(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::AndExpr(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     left.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -171,7 +166,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::OrExpr(Lex
                                     soul_expected::parser::Match match(false);
                                     soul_expected::parser::Match* parentMatch7 = &match;
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::OrKeyword(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::OrKeyword(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         *parentMatch7 = match;
@@ -185,7 +180,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::OrExpr(Lex
                                             soul_expected::parser::Match* parentMatch9 = &match;
                                             {
                                                 std::int64_t pos = lexer.GetPos();
-                                                std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::AndExpr(lexer);
+                                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::AndExpr(lexer);
                                                 if (!m) return std::unexpected<int>(m.error());
                                                 soul_expected::parser::Match match = *m;
                                                 right.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -274,7 +269,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AndExpr(Le
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::EqualityExpr(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::EqualityExpr(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     left.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -304,7 +299,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AndExpr(Le
                                     soul_expected::parser::Match match(false);
                                     soul_expected::parser::Match* parentMatch7 = &match;
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::AndKeyword(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::AndKeyword(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         *parentMatch7 = match;
@@ -318,7 +313,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AndExpr(Le
                                             soul_expected::parser::Match* parentMatch9 = &match;
                                             {
                                                 std::int64_t pos = lexer.GetPos();
-                                                std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::EqualityExpr(lexer);
+                                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::EqualityExpr(lexer);
                                                 if (!m) return std::unexpected<int>(m.error());
                                                 soul_expected::parser::Match match = *m;
                                                 right.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -408,7 +403,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::EqualityEx
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::RelationalExpr(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::RelationalExpr(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     left.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -438,7 +433,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::EqualityEx
                                     soul_expected::parser::Match match(false);
                                     soul_expected::parser::Match* parentMatch7 = &match;
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::EqualityOp(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::EqualityOp(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         op.reset(static_cast<soul_expected::parser::Value<soul_expected::xml::xpath::expr::Operator>*>(match.value));
@@ -457,7 +452,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::EqualityEx
                                                 soul_expected::parser::Match* parentMatch10 = &match;
                                                 {
                                                     std::int64_t pos = lexer.GetPos();
-                                                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::RelationalExpr(lexer);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::RelationalExpr(lexer);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     right.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -556,7 +551,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Relational
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::AdditiveExpr(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::AdditiveExpr(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     left.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -586,7 +581,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Relational
                                     soul_expected::parser::Match match(false);
                                     soul_expected::parser::Match* parentMatch7 = &match;
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::RelationalOp(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::RelationalOp(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         op.reset(static_cast<soul_expected::parser::Value<soul_expected::xml::xpath::expr::Operator>*>(match.value));
@@ -605,7 +600,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Relational
                                                 soul_expected::parser::Match* parentMatch10 = &match;
                                                 {
                                                     std::int64_t pos = lexer.GetPos();
-                                                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::AdditiveExpr(lexer);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::AdditiveExpr(lexer);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     right.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -704,7 +699,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AdditiveEx
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::MultiplicativeExpr(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::MultiplicativeExpr(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     left.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -734,7 +729,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AdditiveEx
                                     soul_expected::parser::Match match(false);
                                     soul_expected::parser::Match* parentMatch7 = &match;
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::AdditiveOp(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::AdditiveOp(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         op.reset(static_cast<soul_expected::parser::Value<soul_expected::xml::xpath::expr::Operator>*>(match.value));
@@ -753,7 +748,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AdditiveEx
                                                 soul_expected::parser::Match* parentMatch10 = &match;
                                                 {
                                                     std::int64_t pos = lexer.GetPos();
-                                                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::MultiplicativeExpr(lexer);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::MultiplicativeExpr(lexer);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     right.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -852,7 +847,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Multiplica
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::UnaryExpr(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::UnaryExpr(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     left.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -882,7 +877,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Multiplica
                                     soul_expected::parser::Match match(false);
                                     soul_expected::parser::Match* parentMatch7 = &match;
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::MultiplicativeOp(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::MultiplicativeOp(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         op.reset(static_cast<soul_expected::parser::Value<soul_expected::xml::xpath::expr::Operator>*>(match.value));
@@ -901,7 +896,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Multiplica
                                                 soul_expected::parser::Match* parentMatch10 = &match;
                                                 {
                                                     std::int64_t pos = lexer.GetPos();
-                                                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::UnaryExpr(lexer);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::UnaryExpr(lexer);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     right.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -992,7 +987,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::UnaryExpr(
         soul_expected::parser::Match* parentMatch1 = &match;
         {
             soul_expected::parser::Match match(false);
-            if (*lexer == MINUS)
+            if (*lexer == soul_expected::xml::xpath::token::MINUS)
             {
                 auto a = ++lexer;
                 if (!a) return std::unexpected<int>(a.error());
@@ -1009,7 +1004,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::UnaryExpr(
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::UnaryExpr(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::UnaryExpr(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     subject.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -1039,7 +1034,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::UnaryExpr(
                 soul_expected::parser::Match* parentMatch5 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::UnionExpr(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::UnionExpr(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     unionExpr.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -1103,7 +1098,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::UnionExpr(
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::PathExpr(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::PathExpr(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     left.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -1134,7 +1129,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::UnionExpr(
                                     soul_expected::parser::Match* parentMatch7 = &match;
                                     {
                                         soul_expected::parser::Match match(false);
-                                        if (*lexer == UNION)
+                                        if (*lexer == soul_expected::xml::xpath::token::UNION)
                                         {
                                             auto a = ++lexer;
                                             if (!a) return std::unexpected<int>(a.error());
@@ -1151,7 +1146,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::UnionExpr(
                                             soul_expected::parser::Match* parentMatch9 = &match;
                                             {
                                                 std::int64_t pos = lexer.GetPos();
-                                                std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::PathExpr(lexer);
+                                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::PathExpr(lexer);
                                                 if (!m) return std::unexpected<int>(m.error());
                                                 soul_expected::parser::Match match = *m;
                                                 right.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -1247,7 +1242,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PathExpr(L
                     soul_expected::parser::Match* parentMatch4 = &match;
                     std::int64_t save = lexer.GetPos();
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::LocationPath(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::LocationPath(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         locationPath.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -1261,7 +1256,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PathExpr(L
                             std::int64_t tmp = lexer.GetPos();
                             lexer.SetPos(save);
                             save = tmp;
-                            std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::FunctionCall(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::FunctionCall(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             functionCall.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -1305,7 +1300,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PathExpr(L
                         soul_expected::parser::Match* parentMatch9 = &match;
                         {
                             std::int64_t pos = lexer.GetPos();
-                            std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::FilterExpr(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::FilterExpr(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             filterExpr.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -1346,7 +1341,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PathExpr(L
                                                     soul_expected::parser::Match match(false);
                                                     soul_expected::parser::Match* parentMatch17 = &match;
                                                     {
-                                                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::CombinePathOp(lexer);
+                                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::CombinePathOp(lexer);
                                                         if (!m) return std::unexpected<int>(m.error());
                                                         soul_expected::parser::Match match = *m;
                                                         op.reset(static_cast<soul_expected::parser::Value<soul_expected::xml::xpath::expr::Operator>*>(match.value));
@@ -1357,7 +1352,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PathExpr(L
                                                         soul_expected::parser::Match match(false);
                                                         soul_expected::parser::Match* parentMatch18 = &match;
                                                         {
-                                                            std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::RelativeLocationPath(lexer);
+                                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::RelativeLocationPath(lexer);
                                                             if (!m) return std::unexpected<int>(m.error());
                                                             soul_expected::parser::Match match = *m;
                                                             right.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -1463,7 +1458,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::LocationPa
         soul_expected::parser::Match* parentMatch1 = &match;
         {
             std::int64_t pos = lexer.GetPos();
-            std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::AbsoluteLocationPath(lexer);
+            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::AbsoluteLocationPath(lexer);
             if (!m) return std::unexpected<int>(m.error());
             soul_expected::parser::Match match = *m;
             absoluteLocationPath.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -1489,7 +1484,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::LocationPa
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::RelativeLocationPath(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::RelativeLocationPath(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     relativeLocationPath.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -1550,13 +1545,13 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AbsoluteLo
             soul_expected::parser::Match* parentMatch2 = &match;
             switch (*lexer)
             {
-                case SLASH_SLASH:
+                case soul_expected::xml::xpath::token::SLASH_SLASH:
                 {
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch3 = &match;
                     {
                         std::int64_t pos = lexer.GetPos();
-                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::AbbreviatedAbsoluteLocationPath(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::AbbreviatedAbsoluteLocationPath(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         abbreviatedAbsoluteLocationPath.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -1572,7 +1567,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AbsoluteLo
                     }
                     break;
                 }
-                case SLASH:
+                case soul_expected::xml::xpath::token::SLASH:
                 {
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch4 = &match;
@@ -1582,7 +1577,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AbsoluteLo
                         {
                             std::int64_t pos = lexer.GetPos();
                             soul_expected::parser::Match match(false);
-                            if (*lexer == SLASH)
+                            if (*lexer == soul_expected::xml::xpath::token::SLASH)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -1612,7 +1607,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AbsoluteLo
                                     soul_expected::parser::Match* parentMatch9 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
-                                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::RelativeLocationPath(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::RelativeLocationPath(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         right.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -1689,7 +1684,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Abbreviate
     soul_expected::parser::Match* parentMatch0 = &match;
     {
         soul_expected::parser::Match match(false);
-        if (*lexer == SLASH_SLASH)
+        if (*lexer == soul_expected::xml::xpath::token::SLASH_SLASH)
         {
             auto a = ++lexer;
             if (!a) return std::unexpected<int>(a.error());
@@ -1706,7 +1701,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Abbreviate
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
-                std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::RelativeLocationPath(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::RelativeLocationPath(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 right.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -1770,7 +1765,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::RelativeLo
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::Step(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::Step(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     left.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -1807,7 +1802,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::RelativeLo
                                             soul_expected::parser::Match match(false);
                                             soul_expected::parser::Match* parentMatch9 = &match;
                                             {
-                                                std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::CombinePathOp(lexer);
+                                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::CombinePathOp(lexer);
                                                 if (!m) return std::unexpected<int>(m.error());
                                                 soul_expected::parser::Match match = *m;
                                                 op.reset(static_cast<soul_expected::parser::Value<soul_expected::xml::xpath::expr::Operator>*>(match.value));
@@ -1818,7 +1813,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::RelativeLo
                                                 soul_expected::parser::Match match(false);
                                                 soul_expected::parser::Match* parentMatch10 = &match;
                                                 {
-                                                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::Step(lexer);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::Step(lexer);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     right.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -1924,7 +1919,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Step(Lexer
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch4 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::AxisSpecifier(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::AxisSpecifier(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         axis.reset(static_cast<soul_expected::parser::Value<soul_expected::xml::Axis>*>(match.value));
@@ -1939,7 +1934,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Step(Lexer
                             soul_expected::parser::Match* parentMatch6 = &match;
                             {
                                 std::int64_t pos = lexer.GetPos();
-                                std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::NodeTest(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::NodeTest(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 nodeTest.reset(static_cast<soul_expected::xml::xpath::expr::NodeTest*>(match.value));
@@ -1974,7 +1969,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Step(Lexer
                                         soul_expected::parser::Match* parentMatch10 = &match;
                                         {
                                             std::int64_t pos = lexer.GetPos();
-                                            std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::Predicate(lexer);
+                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::Predicate(lexer);
                                             if (!m) return std::unexpected<int>(m.error());
                                             soul_expected::parser::Match match = *m;
                                             predicate.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -2013,7 +2008,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Step(Lexer
                         soul_expected::parser::Match* parentMatch12 = &match;
                         {
                             std::int64_t pos = lexer.GetPos();
-                            std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::AbbreviatedStep(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::AbbreviatedStep(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             abbreviatedStep.reset(static_cast<soul_expected::xml::xpath::expr::LocationStepExpr*>(match.value));
@@ -2077,7 +2072,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisSpecif
         soul_expected::parser::Match match(false);
         soul_expected::parser::Match* parentMatch1 = &match;
         {
-            std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::AxisName(lexer);
+            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::AxisName(lexer);
             if (!m) return std::unexpected<int>(m.error());
             soul_expected::parser::Match match = *m;
             axis.reset(static_cast<soul_expected::parser::Value<soul_expected::xml::Axis>*>(match.value));
@@ -2093,7 +2088,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisSpecif
                 {
                     std::int64_t pos = lexer.GetPos();
                     soul_expected::parser::Match match(false);
-                    if (*lexer == COLON_COLON)
+                    if (*lexer == soul_expected::xml::xpath::token::COLON_COLON)
                     {
                         auto a = ++lexer;
                         if (!a) return std::unexpected<int>(a.error());
@@ -2125,7 +2120,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisSpecif
                 soul_expected::parser::Match* parentMatch5 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::AbbreviatedAxisSpecifier(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::AbbreviatedAxisSpecifier(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     abbreviatedAxisSpecifier.reset(static_cast<soul_expected::parser::Value<soul_expected::xml::Axis>*>(match.value));
@@ -2178,7 +2173,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisName(L
         std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul_expected::parser::Match match(false);
-        if (*lexer == NAME)
+        if (*lexer == soul_expected::xml::xpath::token::NAME)
         {
             auto a = ++lexer;
             if (!a) return std::unexpected<int>(a.error());
@@ -2191,7 +2186,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisName(L
             auto token = *t;
             switch (lexer.GetKeywordToken(token->match))
             {
-                case ANCESTOR: {
+                case soul_expected::xml::xpath::token::ANCESTOR: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
@@ -2199,7 +2194,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisName(L
                         return soul_expected::parser::Match(true, new soul_expected::parser::Value<soul_expected::xml::Axis>(soul_expected::xml::Axis::ancestor));
                     }
                 }
-                case ANCESTOR_OR_SELF: {
+                case soul_expected::xml::xpath::token::ANCESTOR_OR_SELF: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
@@ -2207,7 +2202,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisName(L
                         return soul_expected::parser::Match(true, new soul_expected::parser::Value<soul_expected::xml::Axis>(soul_expected::xml::Axis::ancestorOrSelf));
                     }
                 }
-                case ATTRIBUTE: {
+                case soul_expected::xml::xpath::token::ATTRIBUTE: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
@@ -2215,7 +2210,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisName(L
                         return soul_expected::parser::Match(true, new soul_expected::parser::Value<soul_expected::xml::Axis>(soul_expected::xml::Axis::attribute));
                     }
                 }
-                case CHILD: {
+                case soul_expected::xml::xpath::token::CHILD: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
@@ -2223,7 +2218,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisName(L
                         return soul_expected::parser::Match(true, new soul_expected::parser::Value<soul_expected::xml::Axis>(soul_expected::xml::Axis::child));
                     }
                 }
-                case DESCENDANT: {
+                case soul_expected::xml::xpath::token::DESCENDANT: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
@@ -2231,7 +2226,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisName(L
                         return soul_expected::parser::Match(true, new soul_expected::parser::Value<soul_expected::xml::Axis>(soul_expected::xml::Axis::descendant));
                     }
                 }
-                case DESCENDANT_OR_SELF: {
+                case soul_expected::xml::xpath::token::DESCENDANT_OR_SELF: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
@@ -2239,7 +2234,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisName(L
                         return soul_expected::parser::Match(true, new soul_expected::parser::Value<soul_expected::xml::Axis>(soul_expected::xml::Axis::descendantOrSelf));
                     }
                 }
-                case FOLLOWING: {
+                case soul_expected::xml::xpath::token::FOLLOWING: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
@@ -2247,7 +2242,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisName(L
                         return soul_expected::parser::Match(true, new soul_expected::parser::Value<soul_expected::xml::Axis>(soul_expected::xml::Axis::following));
                     }
                 }
-                case FOLLOWING_SIBLING: {
+                case soul_expected::xml::xpath::token::FOLLOWING_SIBLING: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
@@ -2255,7 +2250,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisName(L
                         return soul_expected::parser::Match(true, new soul_expected::parser::Value<soul_expected::xml::Axis>(soul_expected::xml::Axis::followingSibling));
                     }
                 }
-                case NAMESPACE: {
+                case soul_expected::xml::xpath::token::NAMESPACE: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
@@ -2263,7 +2258,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisName(L
                         return soul_expected::parser::Match(true, new soul_expected::parser::Value<soul_expected::xml::Axis>(soul_expected::xml::Axis::ns));
                     }
                 }
-                case PARENT: {
+                case soul_expected::xml::xpath::token::PARENT: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
@@ -2271,7 +2266,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisName(L
                         return soul_expected::parser::Match(true, new soul_expected::parser::Value<soul_expected::xml::Axis>(soul_expected::xml::Axis::parent));
                     }
                 }
-                case PRECEDING: {
+                case soul_expected::xml::xpath::token::PRECEDING: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
@@ -2279,7 +2274,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisName(L
                         return soul_expected::parser::Match(true, new soul_expected::parser::Value<soul_expected::xml::Axis>(soul_expected::xml::Axis::preceding));
                     }
                 }
-                case PRECEDING_SIBLING: {
+                case soul_expected::xml::xpath::token::PRECEDING_SIBLING: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
@@ -2287,7 +2282,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AxisName(L
                         return soul_expected::parser::Match(true, new soul_expected::parser::Value<soul_expected::xml::Axis>(soul_expected::xml::Axis::precedingSibling));
                     }
                 }
-                case SELF: {
+                case soul_expected::xml::xpath::token::SELF: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
@@ -2343,7 +2338,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Abbreviate
         {
             std::int64_t pos = lexer.GetPos();
             soul_expected::parser::Match match(false);
-            if (*lexer == AT)
+            if (*lexer == soul_expected::xml::xpath::token::AT)
             {
                 auto a = ++lexer;
                 if (!a) return std::unexpected<int>(a.error());
@@ -2445,7 +2440,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NodeTest(L
                                 soul_expected::parser::Match match(false);
                                 soul_expected::parser::Match* parentMatch7 = &match;
                                 {
-                                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::ProcessingInstructionKeyword(lexer);
+                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::ProcessingInstructionKeyword(lexer);
                                     if (!m) return std::unexpected<int>(m.error());
                                     soul_expected::parser::Match match = *m;
                                     *parentMatch7 = match;
@@ -2456,7 +2451,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NodeTest(L
                                     soul_expected::parser::Match* parentMatch8 = &match;
                                     {
                                         soul_expected::parser::Match match(false);
-                                        if (*lexer == LPAREN)
+                                        if (*lexer == soul_expected::xml::xpath::token::LPAREN)
                                         {
                                             auto a = ++lexer;
                                             if (!a) return std::unexpected<int>(a.error());
@@ -2473,7 +2468,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NodeTest(L
                                 soul_expected::parser::Match match(false);
                                 soul_expected::parser::Match* parentMatch9 = &match;
                                 {
-                                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::Literal(lexer);
+                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::Literal(lexer);
                                     if (!m) return std::unexpected<int>(m.error());
                                     soul_expected::parser::Match match = *m;
                                     pi.reset(static_cast<soul_expected::xml::xpath::expr::Literal*>(match.value));
@@ -2489,7 +2484,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NodeTest(L
                             soul_expected::parser::Match* parentMatch10 = &match;
                             {
                                 soul_expected::parser::Match match(false);
-                                if (*lexer == RPAREN)
+                                if (*lexer == soul_expected::xml::xpath::token::RPAREN)
                                 {
                                     auto a = ++lexer;
                                     if (!a) return std::unexpected<int>(a.error());
@@ -2532,7 +2527,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NodeTest(L
                                     soul_expected::parser::Match match(false);
                                     soul_expected::parser::Match* parentMatch15 = &match;
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::NodeType(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::NodeType(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         nodeType.reset(static_cast<soul_expected::xml::xpath::expr::NodeTest*>(match.value));
@@ -2544,7 +2539,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NodeTest(L
                                         soul_expected::parser::Match* parentMatch16 = &match;
                                         {
                                             soul_expected::parser::Match match(false);
-                                            if (*lexer == LPAREN)
+                                            if (*lexer == soul_expected::xml::xpath::token::LPAREN)
                                             {
                                                 auto a = ++lexer;
                                                 if (!a) return std::unexpected<int>(a.error());
@@ -2562,7 +2557,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NodeTest(L
                                     soul_expected::parser::Match* parentMatch17 = &match;
                                     {
                                         soul_expected::parser::Match match(false);
-                                        if (*lexer == RPAREN)
+                                        if (*lexer == soul_expected::xml::xpath::token::RPAREN)
                                         {
                                             auto a = ++lexer;
                                             if (!a) return std::unexpected<int>(a.error());
@@ -2604,7 +2599,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NodeTest(L
                         soul_expected::parser::Match match(false);
                         soul_expected::parser::Match* parentMatch20 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::NameTest(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::NameTest(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             nameTest.reset(static_cast<soul_expected::xml::xpath::expr::NodeTest*>(match.value));
@@ -2659,14 +2654,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Literal(Le
     soul_expected::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
-        case DQ_STRING:
+        case soul_expected::xml::xpath::token::DQ_STRING:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch1 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == DQ_STRING)
+                if (*lexer == soul_expected::xml::xpath::token::DQ_STRING)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -2693,14 +2688,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Literal(Le
             }
             break;
         }
-        case SQ_STRING:
+        case soul_expected::xml::xpath::token::SQ_STRING:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == SQ_STRING)
+                if (*lexer == soul_expected::xml::xpath::token::SQ_STRING)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -2761,7 +2756,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NodeType(L
         std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul_expected::parser::Match match(false);
-        if (*lexer == NAME)
+        if (*lexer == soul_expected::xml::xpath::token::NAME)
         {
             auto a = ++lexer;
             if (!a) return std::unexpected<int>(a.error());
@@ -2774,7 +2769,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NodeType(L
             auto token = *t;
             switch (lexer.GetKeywordToken(token->match))
             {
-                case COMMENT: {
+                case soul_expected::xml::xpath::token::COMMENT: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NodeType");
@@ -2782,7 +2777,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NodeType(L
                         return soul_expected::parser::Match(true, new soul_expected::xml::xpath::expr::NodeTest(soul_expected::xml::xpath::expr::NodeTestKind::commentNodeTest));
                     }
                 }
-                case TEXT: {
+                case soul_expected::xml::xpath::token::TEXT: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NodeType");
@@ -2790,7 +2785,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NodeType(L
                         return soul_expected::parser::Match(true, new soul_expected::xml::xpath::expr::NodeTest(soul_expected::xml::xpath::expr::NodeTestKind::textNodeTest));
                     }
                 }
-                case PROCESSING_INSTRUCTION: {
+                case soul_expected::xml::xpath::token::PROCESSING_INSTRUCTION: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NodeType");
@@ -2798,7 +2793,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NodeType(L
                         return soul_expected::parser::Match(true, new soul_expected::xml::xpath::expr::NodeTest(soul_expected::xml::xpath::expr::NodeTestKind::piNodeTest));
                     }
                 }
-                case NODE: {
+                case soul_expected::xml::xpath::token::NODE: {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul_expected::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NodeType");
@@ -2855,14 +2850,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NameTest(L
         soul_expected::parser::Match* parentMatch1 = &match;
         switch (*lexer)
         {
-            case STAR:
+            case soul_expected::xml::xpath::token::STAR:
             {
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch2 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
                     soul_expected::parser::Match match(false);
-                    if (*lexer == STAR)
+                    if (*lexer == soul_expected::xml::xpath::token::STAR)
                     {
                         auto a = ++lexer;
                         if (!a) return std::unexpected<int>(a.error());
@@ -2885,7 +2880,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NameTest(L
                 }
                 break;
             }
-            case NAME:
+            case soul_expected::xml::xpath::token::NAME:
             {
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch3 = &match;
@@ -2893,7 +2888,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NameTest(L
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch4 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::NCName(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::NCName(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         ncname.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -2905,7 +2900,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NameTest(L
                         soul_expected::parser::Match* parentMatch5 = &match;
                         {
                             soul_expected::parser::Match match(false);
-                            if (*lexer == COLON)
+                            if (*lexer == soul_expected::xml::xpath::token::COLON)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -2927,7 +2922,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NameTest(L
                         {
                             std::int64_t pos = lexer.GetPos();
                             soul_expected::parser::Match match(false);
-                            if (*lexer == STAR)
+                            if (*lexer == soul_expected::xml::xpath::token::STAR)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -2966,7 +2961,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NameTest(L
                 soul_expected::parser::Match* parentMatch9 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::QName(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::QName(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     qname.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -3018,7 +3013,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::NCName(Lex
     {
         std::int64_t pos = lexer.GetPos();
         soul_expected::parser::Match match(false);
-        if (*lexer == NAME)
+        if (*lexer == soul_expected::xml::xpath::token::NAME)
         {
             auto a = ++lexer;
             if (!a) return std::unexpected<int>(a.error());
@@ -3074,7 +3069,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::QName(Lexe
         soul_expected::parser::Match* parentMatch1 = &match;
         {
             std::int64_t pos = lexer.GetPos();
-            std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::PrefixedName(lexer);
+            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::PrefixedName(lexer);
             if (!m) return std::unexpected<int>(m.error());
             soul_expected::parser::Match match = *m;
             prefixedName.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -3100,7 +3095,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::QName(Lexe
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::UnprefixedName(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::UnprefixedName(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     unprefixedName.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -3162,7 +3157,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PrefixedNa
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::Prefix(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::Prefix(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     prefix.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -3174,7 +3169,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PrefixedNa
                     soul_expected::parser::Match* parentMatch4 = &match;
                     {
                         soul_expected::parser::Match match(false);
-                        if (*lexer == COLON)
+                        if (*lexer == soul_expected::xml::xpath::token::COLON)
                         {
                             auto a = ++lexer;
                             if (!a) return std::unexpected<int>(a.error());
@@ -3191,7 +3186,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PrefixedNa
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch5 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::LocalPart(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::LocalPart(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     localPart.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -3244,7 +3239,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Prefix(Lex
     soul_expected::parser::Match* parentMatch0 = &match;
     {
         std::int64_t pos = lexer.GetPos();
-        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::NCName(lexer);
+        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::NCName(lexer);
         if (!m) return std::unexpected<int>(m.error());
         soul_expected::parser::Match match = *m;
         ncname.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -3291,7 +3286,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Unprefixed
     soul_expected::parser::Match* parentMatch0 = &match;
     {
         std::int64_t pos = lexer.GetPos();
-        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::LocalPart(lexer);
+        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::LocalPart(lexer);
         if (!m) return std::unexpected<int>(m.error());
         soul_expected::parser::Match match = *m;
         localPart.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -3338,7 +3333,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::LocalPart(
     soul_expected::parser::Match* parentMatch0 = &match;
     {
         std::int64_t pos = lexer.GetPos();
-        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::NCName(lexer);
+        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::NCName(lexer);
         if (!m) return std::unexpected<int>(m.error());
         soul_expected::parser::Match match = *m;
         ncname.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -3395,7 +3390,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Predicate(
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     soul_expected::parser::Match match(false);
-                    if (*lexer == LBRACKET)
+                    if (*lexer == soul_expected::xml::xpath::token::LBRACKET)
                     {
                         auto a = ++lexer;
                         if (!a) return std::unexpected<int>(a.error());
@@ -3408,7 +3403,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Predicate(
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch4 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::Expr(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::Expr(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         expr.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -3424,7 +3419,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Predicate(
                 soul_expected::parser::Match* parentMatch5 = &match;
                 {
                     soul_expected::parser::Match match(false);
-                    if (*lexer == RBRACKET)
+                    if (*lexer == soul_expected::xml::xpath::token::RBRACKET)
                     {
                         auto a = ++lexer;
                         if (!a) return std::unexpected<int>(a.error());
@@ -3478,14 +3473,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Abbreviate
     soul_expected::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
-        case DOT_DOT:
+        case soul_expected::xml::xpath::token::DOT_DOT:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch1 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == DOT_DOT)
+                if (*lexer == soul_expected::xml::xpath::token::DOT_DOT)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -3508,14 +3503,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Abbreviate
             }
             break;
         }
-        case DOT:
+        case soul_expected::xml::xpath::token::DOT:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == DOT)
+                if (*lexer == soul_expected::xml::xpath::token::DOT)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -3585,7 +3580,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::FunctionCa
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch4 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::FunctionName(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::FunctionName(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         functionName.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -3601,7 +3596,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::FunctionCa
                             {
                                 std::int64_t pos = lexer.GetPos();
                                 soul_expected::parser::Match match(false);
-                                if (*lexer == LPAREN)
+                                if (*lexer == soul_expected::xml::xpath::token::LPAREN)
                                 {
                                     auto a = ++lexer;
                                     if (!a) return std::unexpected<int>(a.error());
@@ -3638,7 +3633,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::FunctionCa
                                     soul_expected::parser::Match* parentMatch11 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
-                                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::Argument(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::Argument(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         arg.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -3666,7 +3661,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::FunctionCa
                                                     soul_expected::parser::Match* parentMatch14 = &match;
                                                     {
                                                         soul_expected::parser::Match match(false);
-                                                        if (*lexer == COMMA)
+                                                        if (*lexer == soul_expected::xml::xpath::token::COMMA)
                                                         {
                                                             auto a = ++lexer;
                                                             if (!a) return std::unexpected<int>(a.error());
@@ -3683,7 +3678,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::FunctionCa
                                                             soul_expected::parser::Match* parentMatch16 = &match;
                                                             {
                                                                 std::int64_t pos = lexer.GetPos();
-                                                                std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::Argument(lexer);
+                                                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::Argument(lexer);
                                                                 if (!m) return std::unexpected<int>(m.error());
                                                                 soul_expected::parser::Match match = *m;
                                                                 arg.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -3736,7 +3731,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::FunctionCa
                 soul_expected::parser::Match* parentMatch17 = &match;
                 {
                     soul_expected::parser::Match match(false);
-                    if (*lexer == RPAREN)
+                    if (*lexer == soul_expected::xml::xpath::token::RPAREN)
                     {
                         auto a = ++lexer;
                         if (!a) return std::unexpected<int>(a.error());
@@ -3799,7 +3794,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::FunctionNa
             soul_expected::parser::Match* parentMatch2 = &match;
             std::int64_t save = lexer.GetPos();
             {
-                std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::QName(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::QName(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 qname.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -3813,7 +3808,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::FunctionNa
                     std::int64_t tmp = lexer.GetPos();
                     lexer.SetPos(save);
                     save = tmp;
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::NodeType(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::NodeType(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     nodeType.reset(static_cast<soul_expected::xml::xpath::expr::NodeTest*>(match.value));
@@ -3870,7 +3865,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Argument(L
     soul_expected::parser::Match* parentMatch0 = &match;
     {
         std::int64_t pos = lexer.GetPos();
-        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::Expr(lexer);
+        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::Expr(lexer);
         if (!m) return std::unexpected<int>(m.error());
         soul_expected::parser::Match match = *m;
         expr.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -3929,7 +3924,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::FilterExpr
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::PrimaryExpr(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::PrimaryExpr(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     primaryExpr.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -3960,7 +3955,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::FilterExpr
                                     soul_expected::parser::Match* parentMatch7 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
-                                        std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::Predicate(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::Predicate(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         predicate.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -4037,13 +4032,13 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PrimaryExp
     soul_expected::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
-        case NAME:
+        case soul_expected::xml::xpath::token::NAME:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch1 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
-                std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::FunctionCall(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::FunctionCall(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 functionCall.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -4064,13 +4059,13 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PrimaryExp
             }
             break;
         }
-        case DOLLAR:
+        case soul_expected::xml::xpath::token::DOLLAR:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
-                std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::VariableReference(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::VariableReference(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 variableReference.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -4091,7 +4086,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PrimaryExp
             }
             break;
         }
-        case LPAREN:
+        case soul_expected::xml::xpath::token::LPAREN:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch3 = &match;
@@ -4107,7 +4102,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PrimaryExp
                         soul_expected::parser::Match* parentMatch6 = &match;
                         {
                             soul_expected::parser::Match match(false);
-                            if (*lexer == LPAREN)
+                            if (*lexer == soul_expected::xml::xpath::token::LPAREN)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -4120,7 +4115,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PrimaryExp
                             soul_expected::parser::Match match(false);
                             soul_expected::parser::Match* parentMatch7 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::Expr(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::Expr(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 expr.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -4136,7 +4131,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PrimaryExp
                         soul_expected::parser::Match* parentMatch8 = &match;
                         {
                             soul_expected::parser::Match match(false);
-                            if (*lexer == RPAREN)
+                            if (*lexer == soul_expected::xml::xpath::token::RPAREN)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -4165,14 +4160,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PrimaryExp
             }
             break;
         }
-        case DQ_STRING:
-        case SQ_STRING:
+        case soul_expected::xml::xpath::token::DQ_STRING:
+        case soul_expected::xml::xpath::token::SQ_STRING:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch9 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
-                std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::Literal(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::Literal(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 literal.reset(static_cast<soul_expected::xml::xpath::expr::Literal*>(match.value));
@@ -4193,13 +4188,13 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::PrimaryExp
             }
             break;
         }
-        case NUMBER:
+        case soul_expected::xml::xpath::token::NUMBER:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch10 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
-                std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::Number(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::Number(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 number.reset(static_cast<soul_expected::xml::xpath::expr::Expr*>(match.value));
@@ -4260,7 +4255,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::VariableRe
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 soul_expected::parser::Match match(false);
-                if (*lexer == DOLLAR)
+                if (*lexer == soul_expected::xml::xpath::token::DOLLAR)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -4273,7 +4268,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::VariableRe
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::QName(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::QName(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     qname.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -4326,7 +4321,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Number(Lex
     {
         std::int64_t pos = lexer.GetPos();
         soul_expected::parser::Match match(false);
-        if (*lexer == NUMBER)
+        if (*lexer == soul_expected::xml::xpath::token::NUMBER)
         {
             auto a = ++lexer;
             if (!a) return std::unexpected<int>(a.error());
@@ -4377,14 +4372,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::EqualityOp
     soul_expected::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
-        case EQ:
+        case soul_expected::xml::xpath::token::EQ:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch1 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == EQ)
+                if (*lexer == soul_expected::xml::xpath::token::EQ)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -4407,14 +4402,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::EqualityOp
             }
             break;
         }
-        case NEQ:
+        case soul_expected::xml::xpath::token::NEQ:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == NEQ)
+                if (*lexer == soul_expected::xml::xpath::token::NEQ)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -4469,14 +4464,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Relational
     soul_expected::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
-        case LESS:
+        case soul_expected::xml::xpath::token::LESS:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch1 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == LESS)
+                if (*lexer == soul_expected::xml::xpath::token::LESS)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -4499,14 +4494,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Relational
             }
             break;
         }
-        case GREATER:
+        case soul_expected::xml::xpath::token::GREATER:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == GREATER)
+                if (*lexer == soul_expected::xml::xpath::token::GREATER)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -4529,14 +4524,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Relational
             }
             break;
         }
-        case LEQ:
+        case soul_expected::xml::xpath::token::LEQ:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch3 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == LEQ)
+                if (*lexer == soul_expected::xml::xpath::token::LEQ)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -4559,14 +4554,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Relational
             }
             break;
         }
-        case GEQ:
+        case soul_expected::xml::xpath::token::GEQ:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch4 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == GEQ)
+                if (*lexer == soul_expected::xml::xpath::token::GEQ)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -4621,14 +4616,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AdditiveOp
     soul_expected::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
-        case PLUS:
+        case soul_expected::xml::xpath::token::PLUS:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch1 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == PLUS)
+                if (*lexer == soul_expected::xml::xpath::token::PLUS)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -4651,14 +4646,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AdditiveOp
             }
             break;
         }
-        case MINUS:
+        case soul_expected::xml::xpath::token::MINUS:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == MINUS)
+                if (*lexer == soul_expected::xml::xpath::token::MINUS)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -4717,14 +4712,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Multiplica
         soul_expected::parser::Match* parentMatch1 = &match;
         switch (*lexer)
         {
-            case STAR:
+            case soul_expected::xml::xpath::token::STAR:
             {
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch2 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
                     soul_expected::parser::Match match(false);
-                    if (*lexer == STAR)
+                    if (*lexer == soul_expected::xml::xpath::token::STAR)
                     {
                         auto a = ++lexer;
                         if (!a) return std::unexpected<int>(a.error());
@@ -4747,13 +4742,13 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Multiplica
                 }
                 break;
             }
-            case NAME:
+            case soul_expected::xml::xpath::token::NAME:
             {
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::DivKeyword(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::DivKeyword(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     if (match.hit)
@@ -4785,7 +4780,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Multiplica
                 soul_expected::parser::Match* parentMatch5 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XPathParser<LexerT>::ModKeyword(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::xpath::parser::XPathParser<LexerT>::ModKeyword(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     if (match.hit)
@@ -4835,14 +4830,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::CombinePat
     soul_expected::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
-        case SLASH:
+        case soul_expected::xml::xpath::token::SLASH:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch1 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == SLASH)
+                if (*lexer == soul_expected::xml::xpath::token::SLASH)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -4865,14 +4860,14 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::CombinePat
             }
             break;
         }
-        case SLASH_SLASH:
+        case soul_expected::xml::xpath::token::SLASH_SLASH:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == SLASH_SLASH)
+                if (*lexer == soul_expected::xml::xpath::token::SLASH_SLASH)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -4929,7 +4924,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::OrKeyword(
         std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul_expected::parser::Match match(false);
-        if (*lexer == NAME)
+        if (*lexer == soul_expected::xml::xpath::token::NAME)
         {
             auto a = ++lexer;
             if (!a) return std::unexpected<int>(a.error());
@@ -4940,7 +4935,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::OrKeyword(
             auto t = lexer.GetToken(pos);
             if (!t) return std::unexpected<int>(t.error());
             auto token = *t;
-            pass = lexer.GetKeywordToken(token->match) == OR;
+            pass = lexer.GetKeywordToken(token->match) == soul_expected::xml::xpath::token::OR;
         }
         if (match.hit && !pass)
         {
@@ -4981,7 +4976,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AndKeyword
         std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul_expected::parser::Match match(false);
-        if (*lexer == NAME)
+        if (*lexer == soul_expected::xml::xpath::token::NAME)
         {
             auto a = ++lexer;
             if (!a) return std::unexpected<int>(a.error());
@@ -4992,7 +4987,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::AndKeyword
             auto t = lexer.GetToken(pos);
             if (!t) return std::unexpected<int>(t.error());
             auto token = *t;
-            pass = lexer.GetKeywordToken(token->match) == AND;
+            pass = lexer.GetKeywordToken(token->match) == soul_expected::xml::xpath::token::AND;
         }
         if (match.hit && !pass)
         {
@@ -5033,7 +5028,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::DivKeyword
         std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul_expected::parser::Match match(false);
-        if (*lexer == NAME)
+        if (*lexer == soul_expected::xml::xpath::token::NAME)
         {
             auto a = ++lexer;
             if (!a) return std::unexpected<int>(a.error());
@@ -5044,7 +5039,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::DivKeyword
             auto t = lexer.GetToken(pos);
             if (!t) return std::unexpected<int>(t.error());
             auto token = *t;
-            pass = lexer.GetKeywordToken(token->match) == DIV;
+            pass = lexer.GetKeywordToken(token->match) == soul_expected::xml::xpath::token::DIV;
         }
         if (match.hit && !pass)
         {
@@ -5085,7 +5080,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::ModKeyword
         std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul_expected::parser::Match match(false);
-        if (*lexer == NAME)
+        if (*lexer == soul_expected::xml::xpath::token::NAME)
         {
             auto a = ++lexer;
             if (!a) return std::unexpected<int>(a.error());
@@ -5096,7 +5091,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::ModKeyword
             auto t = lexer.GetToken(pos);
             if (!t) return std::unexpected<int>(t.error());
             auto token = *t;
-            pass = lexer.GetKeywordToken(token->match) == MOD;
+            pass = lexer.GetKeywordToken(token->match) == soul_expected::xml::xpath::token::MOD;
         }
         if (match.hit && !pass)
         {
@@ -5137,7 +5132,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Processing
         std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul_expected::parser::Match match(false);
-        if (*lexer == NAME)
+        if (*lexer == soul_expected::xml::xpath::token::NAME)
         {
             auto a = ++lexer;
             if (!a) return std::unexpected<int>(a.error());
@@ -5148,7 +5143,7 @@ std::expected<soul_expected::parser::Match, int> XPathParser<LexerT>::Processing
             auto t = lexer.GetToken(pos);
             if (!t) return std::unexpected<int>(t.error());
             auto token = *t;
-            pass = lexer.GetKeywordToken(token->match) == PROCESSING_INSTRUCTION;
+            pass = lexer.GetKeywordToken(token->match) == soul_expected::xml::xpath::token::PROCESSING_INSTRUCTION;
         }
         if (match.hit && !pass)
         {

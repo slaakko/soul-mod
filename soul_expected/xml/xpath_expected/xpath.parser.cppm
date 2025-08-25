@@ -8,8 +8,6 @@ import soul_expected.lexer;
 import soul_expected.parser;
 import soul_expected.xml.xpath.expr;
 
-using namespace soul_expected::xml::xpath::expr;
-
 export namespace soul_expected::xml::xpath::parser {
 
 template<typename LexerT>
