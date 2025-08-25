@@ -1,3 +1,7 @@
 project common_expected.parser;
 parser <common.parser>;
 parser <token_file.parser>;
+tokens <../token_expected/soul.cpp.op.token>;
+tokens <../token_expected/soul.cpp.token>;
+tokens <../token_expected/soul.punctuation.token>;
+tokens <../token_expected/soul.tool.token>;

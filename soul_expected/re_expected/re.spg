@@ -1,2 +1,6 @@
 project re_expected;
 parser <re.parser>;
+tokens <../token_expected/soul.cpp.op.token>;
+tokens <../token_expected/soul.cpp.token>;
+tokens <../token_expected/soul.punctuation.token>;
+tokens <../token_expected/soul.tool.token>;

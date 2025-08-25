@@ -12,7 +12,7 @@ namespace soul_expected::spg {
 
 enum class LinkingStage
 {
-    addParsers, resolveRules
+    makeTokenMap, addParsers, resolveRulesAndTokens
 };
 
 class LinkingVisitor : public soul_expected::ast::spg::DefaultVisitor
@@ -20,12 +20,14 @@ class LinkingVisitor : public soul_expected::ast::spg::DefaultVisitor
 public:
     LinkingVisitor(soul_expected::ast::spg::SpgFile* spgFile_, soul_expected::lexer::FileMap& fileMap_);
     void SetStage(LinkingStage stage_) { stage = stage_; }
+    void Visit(soul_expected::ast::spg::TokenParser& parser) override;
     void Visit(soul_expected::ast::spg::NonterminalParser& parser) override;
     void Visit(soul_expected::ast::spg::RuleParser& parser) override;
     void Visit(soul_expected::ast::spg::GrammarParser& parser) override;
     void Visit(soul_expected::ast::spg::ParserFile& parserFile) override;
 private:
     soul_expected::ast::spg::SpgFile* spgFile;
+    soul_expected::ast::spg::ParserFile* currentParserFile;
     soul_expected::ast::spg::GrammarParser* currentParser;
     soul_expected::ast::spg::RuleParser* currentRule;
     LinkingStage stage;
@@ -38,10 +40,73 @@ LinkingVisitor::LinkingVisitor(soul_expected::ast::spg::SpgFile* spgFile_, soul_
 {
 }
 
+void LinkingVisitor::Visit(soul_expected::ast::spg::TokenParser& parser)
+{
+    if (stage == LinkingStage::resolveRulesAndTokens)
+    {
+        soul_expected::ast::common::TokenMap* tokenMap = currentParserFile->GetTokenMap();
+        if (tokenMap)
+        {
+            std::vector<soul_expected::ast::common::Token*> tokens = tokenMap->GetTokens(parser.TokenName());
+            if (!tokens.empty())
+            {
+                int n = static_cast<int>(tokens.size());
+                if (n > 1)
+                {
+                    std::string tokenString;
+                    for (int i = 0; i < n; ++i)
+                    {
+                        soul_expected::ast::common::Token* token = tokens[i];
+                        if (i > 0)
+                        {
+                            tokenString.append(" or\n");
+                        }
+                        tokenString.append(token->FullName());
+                    }
+                    auto rv = soul_expected::lexer::MakeMessage("error", "ambiguous reference to token '" + parser.TokenName() + "' in parser file '" +
+                        currentParserFile->FilePath() + "':\n" + tokenString, parser.GetSourcePos(), fileMap);
+                    if (!rv)
+                    {
+                        SetError(rv.error());
+                        return;
+                    }
+                    std::string errorMessage = *rv;
+                    SetError(util::AllocateError(errorMessage));
+                    return;
+                }
+                else
+                {
+                    soul_expected::ast::common::Token* token = tokens.front();
+                    parser.SetToken(token);
+                }
+            }
+            else
+            {
+                auto rv = soul_expected::lexer::MakeMessage("error", "token '" + parser.TokenName() + "' not found from parser file '" + 
+                    currentParserFile->FilePath() + "'", parser.GetSourcePos(), fileMap);
+                if (!rv)
+                {
+                    SetError(rv.error());
+                    return;
+                }
+                std::string errorMessage = *rv;
+                SetError(util::AllocateError(errorMessage));
+                return;
+            }
+        }
+        else
+        {
+            SetError(util::AllocateError("token map not found"));
+            return;
+        }
+    }
+
+}
+
 void LinkingVisitor::Visit(soul_expected::ast::spg::NonterminalParser& parser)
 {
     if (!Valid()) return;
-    if (stage == LinkingStage::resolveRules)
+    if (stage == LinkingStage::resolveRulesAndTokens)
     {
         if (!currentRule)
         {
@@ -104,7 +169,7 @@ void LinkingVisitor::Visit(soul_expected::ast::spg::RuleParser& parser)
 {
     if (!Valid()) return;
     currentRule = &parser;
-    if (stage == LinkingStage::resolveRules)
+    if (stage == LinkingStage::resolveRulesAndTokens)
     {
         std::int64_t ruleId = (std::int64_t(parser.Grammar()->Id()) << 32) | std::int64_t(parser.Index() + 1);
         parser.SetId(ruleId);
@@ -153,7 +218,7 @@ void LinkingVisitor::Visit(soul_expected::ast::spg::GrammarParser& parser)
             return;
         }
     }
-    else if (stage == LinkingStage::resolveRules)
+    else if (stage == LinkingStage::resolveRulesAndTokens)
     {
         for (const auto& usng : parser.Usings())
         {
@@ -226,7 +291,36 @@ void LinkingVisitor::Visit(soul_expected::ast::spg::ParserFile& parserFile)
         SetError(util::AllocateError("export module declaration missing from parser file '" + parserFile.FilePath() + "'"));
         return;
     }
-    DefaultVisitor::Visit(parserFile);
+    currentParserFile = &parserFile;
+    if (stage == LinkingStage::makeTokenMap)
+    {
+        int n = static_cast<int>(parserFile.Imports().size());
+        for (int i = 0; i < n; ++i)
+        {
+            soul_expected::ast::common::Import* import = parserFile.Imports()[i].get();
+            soul_expected::ast::common::TokenCollection* tokenCollection = spgFile->GetTokenCollection(import->ModuleName());
+            if (tokenCollection)
+            {
+                for (const auto& token : tokenCollection->Tokens())
+                {
+                    soul_expected::ast::common::TokenMap* tokenMap = parserFile.GetTokenMap();
+                    if (tokenMap)
+                    {
+                        tokenMap->AddToken(token.get());
+                    }
+                    else
+                    {
+                        SetError(util::AllocateError("token map not found, detected in parser file '" + parserFile.FilePath() + "'"));
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        DefaultVisitor::Visit(parserFile);
+    }
 }
 
 std::expected<bool, int> Link(soul_expected::ast::spg::SpgFile* spgFile, bool verbose, soul_expected::lexer::FileMap& fileMap)
@@ -236,10 +330,13 @@ std::expected<bool, int> Link(soul_expected::ast::spg::SpgFile* spgFile, bool ve
         std::cout << "linking..." << std::endl;
     }
     LinkingVisitor visitor(spgFile, fileMap);
+    visitor.SetStage(LinkingStage::makeTokenMap);
+    spgFile->Accept(visitor);
+    if (!visitor) return std::unexpected<int>(visitor.Error());
     visitor.SetStage(LinkingStage::addParsers);
     spgFile->Accept(visitor);
     if (!visitor) return std::unexpected<int>(visitor.Error());
-    visitor.SetStage(LinkingStage::resolveRules);
+    visitor.SetStage(LinkingStage::resolveRulesAndTokens);
     spgFile->Accept(visitor);
     if (!visitor) return std::unexpected<int>(visitor.Error());
     return std::expected<bool, int>(true);

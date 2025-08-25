@@ -370,11 +370,11 @@ public:
     {
         classMap = classMap_;
     }
-    inline soul_expected::ast::slg::TokenCollection* GetTokenCollection() const override
+    inline soul_expected::ast::common::TokenCollection* GetTokenCollection() const override
     {
         return tokenCollection;
     }
-    inline void SetTokenCollection(soul_expected::ast::slg::TokenCollection* tokenCollection_) override
+    inline void SetTokenCollection(soul_expected::ast::common::TokenCollection* tokenCollection_) override
     {
         tokenCollection = tokenCollection_;
     }
@@ -439,7 +439,7 @@ public:
     }
     std::string GetTokenName(std::int64_t tokenID) const
     {
-        soul_expected::ast::slg::TokenCollection* tokenCollection = GetTokenCollection();
+        soul_expected::ast::common::TokenCollection* tokenCollection = GetTokenCollection();
         auto token = tokenCollection->GetToken(tokenID);
         if (token)
         {
@@ -452,7 +452,7 @@ public:
     }
     std::string GetTokenInfo(std::int64_t tokenID) const
     {
-        soul_expected::ast::slg::TokenCollection* tokenCollection = GetTokenCollection();
+        soul_expected::ast::common::TokenCollection* tokenCollection = GetTokenCollection();
         auto token = tokenCollection->GetToken(tokenID);
         if (token)
         {
@@ -939,7 +939,7 @@ private:
     std::string fileName;
     bool countLines;
     soul_expected::lexer::ClassMap<CharT>* classMap;
-    soul_expected::ast::slg::TokenCollection* tokenCollection;
+    soul_expected::ast::common::TokenCollection* tokenCollection;
     KeywordMap<CharT>* keywordMap;
     std::int64_t farthestPos;
     std::vector<std::int64_t> ruleContext;

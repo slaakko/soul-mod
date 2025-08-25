@@ -15,16 +15,6 @@ import soul_expected.cpp.declarator.parser;
 import soul_expected.lex.slg;
 import soul_expected.lex.spg;
 
-using namespace soul_expected::cpp::token;
-using namespace soul_expected::cpp::op::token;
-using namespace soul_expected::punctuation::token;
-using namespace soul_expected::tool::token;
-using namespace soul_expected::cpp::expression::parser;
-using namespace soul_expected::cpp::identifier::parser;
-using namespace soul_expected::cpp::declarator::parser;
-using namespace soul_expected::lex::slg;
-using namespace soul_expected::lex::spg;
-
 namespace soul_expected::cpp::declaration::parser {
 
 template<typename LexerT>
@@ -56,13 +46,13 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Bloc
             soul_expected::parser::Match* parentMatch2 = &match;
             switch (*lexer)
             {
-                case NAMESPACE:
+                case soul_expected::cpp::token::NAMESPACE:
                 {
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch3 = &match;
                     {
                         std::int64_t pos = lexer.GetPos();
-                        std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::NamespaceAliasDefinition(lexer, context);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::NamespaceAliasDefinition(lexer, context);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         nsAlias.reset(static_cast<soul_expected::ast::cpp::UsingObjectNode*>(match.value));
@@ -83,13 +73,13 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Bloc
                     }
                     break;
                 }
-                case USING:
+                case soul_expected::cpp::token::USING:
                 {
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch4 = &match;
                     {
                         std::int64_t pos = lexer.GetPos();
-                        std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::UsingDirective(lexer, context);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::UsingDirective(lexer, context);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         usingDirective.reset(static_cast<soul_expected::ast::cpp::UsingObjectNode*>(match.value));
@@ -122,7 +112,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Bloc
                     soul_expected::parser::Match* parentMatch6 = &match;
                     {
                         std::int64_t pos = lexer.GetPos();
-                        std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::UsingDeclaration(lexer, context);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::UsingDeclaration(lexer, context);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         usingDeclaration.reset(static_cast<soul_expected::ast::cpp::UsingObjectNode*>(match.value));
@@ -153,7 +143,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Bloc
                 soul_expected::parser::Match* parentMatch8 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::SimpleDeclaration(lexer, context);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::SimpleDeclaration(lexer, context);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     simpleDeclaration.reset(static_cast<soul_expected::ast::cpp::SimpleDeclarationNode*>(match.value));
@@ -238,7 +228,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
                         soul_expected::parser::Match match(false);
                         soul_expected::parser::Match* parentMatch6 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::DeclSpecifierSeq(lexer, context, simpleDeclaration.get());
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::DeclSpecifierSeq(lexer, context, simpleDeclaration.get());
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             *parentMatch6 = match;
@@ -274,7 +264,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
                         soul_expected::parser::Match* parentMatch10 = &match;
                         {
                             std::int64_t pos = lexer.GetPos();
-                            std::expected<soul_expected::parser::Match, int> m = DeclaratorParser<LexerT>::InitDeclaratorList(lexer, context);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declarator::parser::DeclaratorParser<LexerT>::InitDeclaratorList(lexer, context);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             initDeclaratorList.reset(static_cast<soul_expected::ast::cpp::InitDeclaratorListNode*>(match.value));
@@ -311,7 +301,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == SEMICOLON)
+                if (*lexer == soul_expected::punctuation::token::SEMICOLON)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -366,95 +356,122 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Decl
     {
         soul_expected::parser::Match match(false);
         soul_expected::parser::Match* parentMatch1 = &match;
+        switch (*lexer)
         {
-            std::int64_t save = lexer.GetPos();
-            soul_expected::parser::Match match(false);
-            soul_expected::parser::Match* parentMatch2 = &match;
+            case soul_expected::cpp::token::LONG:
+            case soul_expected::cpp::token::UNSIGNED:
+            case soul_expected::cpp::token::CHAR32T:
+            case soul_expected::cpp::token::CHAR8T:
+            case soul_expected::cpp::token::MUTABLE:
+            case soul_expected::cpp::token::STATIC:
+            case soul_expected::cpp::token::BOOL:
+            case soul_expected::cpp::token::SIGNED:
+            case soul_expected::cpp::token::VOID:
+            case soul_expected::cpp::token::TYPEDEF:
+            case soul_expected::cpp::token::CONST:
+            case soul_expected::cpp::token::VOLATILE:
+            case soul_expected::cpp::token::REGISTER:
+            case soul_expected::cpp::token::CHAR16T:
+            case soul_expected::cpp::token::WCHART:
+            case soul_expected::cpp::token::FLOAT:
+            case soul_expected::cpp::token::INT:
+            case soul_expected::cpp::token::EXTERN:
+            case soul_expected::cpp::token::CHAR:
+            case soul_expected::cpp::token::SHORT:
+            case soul_expected::cpp::token::DOUBLE:
+            case soul_expected::cpp::token::AUTO:
             {
                 soul_expected::parser::Match match(false);
-                soul_expected::parser::Match* parentMatch3 = &match;
+                soul_expected::parser::Match* parentMatch2 = &match;
                 {
                     soul_expected::parser::Match match(false);
-                    soul_expected::parser::Match* parentMatch4 = &match;
-                    {
-                        std::int64_t pos = lexer.GetPos();
-                        std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::DeclSpecifier(lexer, context);
-                        if (!m) return std::unexpected<int>(m.error());
-                        soul_expected::parser::Match match = *m;
-                        declSpecifier.reset(static_cast<soul_expected::ast::cpp::DeclSpecifierNode*>(match.value));
-                        if (match.hit)
-                        {
-                            declaration->Add(declSpecifier.release());
-                        }
-                        *parentMatch4 = match;
-                    }
-                    *parentMatch3 = match;
-                }
-                *parentMatch2 = match;
-            }
-            if (match.hit)
-            {
-                soul_expected::parser::Match match(true);
-                soul_expected::parser::Match* parentMatch5 = &match;
-                while (true)
-                {
-                    std::int64_t save = lexer.GetPos();
+                    soul_expected::parser::Match* parentMatch3 = &match;
                     {
                         soul_expected::parser::Match match(false);
-                        soul_expected::parser::Match* parentMatch6 = &match;
+                        soul_expected::parser::Match* parentMatch4 = &match;
+                        {
+                            std::int64_t pos = lexer.GetPos();
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::DeclSpecifier(lexer, context);
+                            if (!m) return std::unexpected<int>(m.error());
+                            soul_expected::parser::Match match = *m;
+                            declSpecifier.reset(static_cast<soul_expected::ast::cpp::DeclSpecifierNode*>(match.value));
+                            if (match.hit)
+                            {
+                                declaration->Add(declSpecifier.release());
+                            }
+                            *parentMatch4 = match;
+                        }
+                        *parentMatch3 = match;
+                    }
+                    *parentMatch2 = match;
+                }
+                if (match.hit)
+                {
+                    soul_expected::parser::Match match(true);
+                    soul_expected::parser::Match* parentMatch5 = &match;
+                    while (true)
+                    {
+                        std::int64_t save = lexer.GetPos();
                         {
                             soul_expected::parser::Match match(false);
-                            soul_expected::parser::Match* parentMatch7 = &match;
+                            soul_expected::parser::Match* parentMatch6 = &match;
                             {
-                                std::int64_t pos = lexer.GetPos();
-                                std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::DeclSpecifier(lexer, context);
-                                if (!m) return std::unexpected<int>(m.error());
-                                soul_expected::parser::Match match = *m;
-                                declSpecifier.reset(static_cast<soul_expected::ast::cpp::DeclSpecifierNode*>(match.value));
-                                if (match.hit)
+                                soul_expected::parser::Match match(false);
+                                soul_expected::parser::Match* parentMatch7 = &match;
                                 {
-                                    declaration->Add(declSpecifier.release());
+                                    std::int64_t pos = lexer.GetPos();
+                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::DeclSpecifier(lexer, context);
+                                    if (!m) return std::unexpected<int>(m.error());
+                                    soul_expected::parser::Match match = *m;
+                                    declSpecifier.reset(static_cast<soul_expected::ast::cpp::DeclSpecifierNode*>(match.value));
+                                    if (match.hit)
+                                    {
+                                        declaration->Add(declSpecifier.release());
+                                    }
+                                    *parentMatch7 = match;
                                 }
-                                *parentMatch7 = match;
+                                *parentMatch6 = match;
                             }
-                            *parentMatch6 = match;
-                        }
-                        if (match.hit)
-                        {
-                            *parentMatch5 = match;
-                        }
-                        else
-                        {
-                            lexer.SetPos(save);
-                            break;
+                            if (match.hit)
+                            {
+                                *parentMatch5 = match;
+                            }
+                            else
+                            {
+                                lexer.SetPos(save);
+                                break;
+                            }
                         }
                     }
                 }
+                if (match.hit)
+                {
+                    *parentMatch1 = match;
+                }
+                break;
             }
-            *parentMatch1 = match;
-            if (!match.hit)
+            case soul_expected::cpp::op::token::COLON_COLON:
+            case soul_expected::cpp::token::ID:
             {
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch8 = &match;
-                lexer.SetPos(save);
                 {
-                    soul_expected::parser::Match match(false);
-                    soul_expected::parser::Match* parentMatch9 = &match;
+                    std::int64_t pos = lexer.GetPos();
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::TypeName(lexer, context);
+                    if (!m) return std::unexpected<int>(m.error());
+                    soul_expected::parser::Match match = *m;
+                    typeName.reset(static_cast<soul_expected::ast::cpp::TypeNameNode*>(match.value));
+                    if (match.hit)
                     {
-                        std::int64_t pos = lexer.GetPos();
-                        std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::TypeName(lexer, context);
-                        if (!m) return std::unexpected<int>(m.error());
-                        soul_expected::parser::Match match = *m;
-                        typeName.reset(static_cast<soul_expected::ast::cpp::TypeNameNode*>(match.value));
-                        if (match.hit)
-                        {
-                            declaration->Add(typeName.release());
-                        }
-                        *parentMatch9 = match;
+                        declaration->Add(typeName.release());
                     }
                     *parentMatch8 = match;
                 }
-                *parentMatch1 = match;
+                if (match.hit)
+                {
+                    *parentMatch1 = match;
+                }
+                break;
             }
         }
         *parentMatch0 = match;
@@ -493,17 +510,17 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Decl
     soul_expected::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
-        case AUTO:
-        case EXTERN:
-        case MUTABLE:
-        case REGISTER:
-        case STATIC:
+        case soul_expected::cpp::token::MUTABLE:
+        case soul_expected::cpp::token::STATIC:
+        case soul_expected::cpp::token::REGISTER:
+        case soul_expected::cpp::token::EXTERN:
+        case soul_expected::cpp::token::AUTO:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch1 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
-                std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::StorageClassSpecifier(lexer, context);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::StorageClassSpecifier(lexer, context);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 storateClassSpecifier.reset(static_cast<soul_expected::ast::cpp::StorageClassSpecifierNode*>(match.value));
@@ -524,28 +541,28 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Decl
             }
             break;
         }
-        case BOOL:
-        case CHAR:
-        case CHAR16T:
-        case CHAR32T:
-        case CHAR8T:
-        case CONST:
-        case DOUBLE:
-        case FLOAT:
-        case INT:
-        case LONG:
-        case SHORT:
-        case SIGNED:
-        case UNSIGNED:
-        case VOID:
-        case VOLATILE:
-        case WCHART:
+        case soul_expected::cpp::token::LONG:
+        case soul_expected::cpp::token::UNSIGNED:
+        case soul_expected::cpp::token::CHAR32T:
+        case soul_expected::cpp::token::CHAR8T:
+        case soul_expected::cpp::token::BOOL:
+        case soul_expected::cpp::token::SIGNED:
+        case soul_expected::cpp::token::VOID:
+        case soul_expected::cpp::token::CONST:
+        case soul_expected::cpp::token::VOLATILE:
+        case soul_expected::cpp::token::CHAR16T:
+        case soul_expected::cpp::token::WCHART:
+        case soul_expected::cpp::token::FLOAT:
+        case soul_expected::cpp::token::INT:
+        case soul_expected::cpp::token::CHAR:
+        case soul_expected::cpp::token::SHORT:
+        case soul_expected::cpp::token::DOUBLE:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
-                std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::TypeSpecifier(lexer, context);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::TypeSpecifier(lexer, context);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 typeSpecifier.reset(static_cast<soul_expected::ast::cpp::TypeSpecifierNode*>(match.value));
@@ -566,13 +583,13 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Decl
             }
             break;
         }
-        case TYPEDEF:
+        case soul_expected::cpp::token::TYPEDEF:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch3 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
-                std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::Typedef(lexer, context);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::Typedef(lexer, context);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 tdef.reset(static_cast<soul_expected::ast::cpp::DeclSpecifierNode*>(match.value));
@@ -625,14 +642,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Stor
     soul_expected::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
-        case AUTO:
+        case soul_expected::cpp::token::AUTO:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch1 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == AUTO)
+                if (*lexer == soul_expected::cpp::token::AUTO)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -657,14 +674,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Stor
             }
             break;
         }
-        case REGISTER:
+        case soul_expected::cpp::token::REGISTER:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == REGISTER)
+                if (*lexer == soul_expected::cpp::token::REGISTER)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -689,14 +706,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Stor
             }
             break;
         }
-        case STATIC:
+        case soul_expected::cpp::token::STATIC:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch3 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == STATIC)
+                if (*lexer == soul_expected::cpp::token::STATIC)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -721,14 +738,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Stor
             }
             break;
         }
-        case EXTERN:
+        case soul_expected::cpp::token::EXTERN:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch4 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == EXTERN)
+                if (*lexer == soul_expected::cpp::token::EXTERN)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -753,14 +770,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Stor
             }
             break;
         }
-        case MUTABLE:
+        case soul_expected::cpp::token::MUTABLE:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch5 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == MUTABLE)
+                if (*lexer == soul_expected::cpp::token::MUTABLE)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -819,26 +836,26 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Type
     soul_expected::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
-        case BOOL:
-        case CHAR:
-        case CHAR16T:
-        case CHAR32T:
-        case CHAR8T:
-        case DOUBLE:
-        case FLOAT:
-        case INT:
-        case LONG:
-        case SHORT:
-        case SIGNED:
-        case UNSIGNED:
-        case VOID:
-        case WCHART:
+        case soul_expected::cpp::token::LONG:
+        case soul_expected::cpp::token::UNSIGNED:
+        case soul_expected::cpp::token::CHAR32T:
+        case soul_expected::cpp::token::CHAR8T:
+        case soul_expected::cpp::token::BOOL:
+        case soul_expected::cpp::token::SIGNED:
+        case soul_expected::cpp::token::VOID:
+        case soul_expected::cpp::token::CHAR16T:
+        case soul_expected::cpp::token::WCHART:
+        case soul_expected::cpp::token::FLOAT:
+        case soul_expected::cpp::token::INT:
+        case soul_expected::cpp::token::CHAR:
+        case soul_expected::cpp::token::SHORT:
+        case soul_expected::cpp::token::DOUBLE:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch1 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
-                std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::SimpleTypeSpecifier(lexer, context);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::SimpleTypeSpecifier(lexer, context);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 simpleTypeSpecifier.reset(static_cast<soul_expected::ast::cpp::TypeSpecifierNode*>(match.value));
@@ -859,14 +876,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Type
             }
             break;
         }
-        case CONST:
-        case VOLATILE:
+        case soul_expected::cpp::token::CONST:
+        case soul_expected::cpp::token::VOLATILE:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
-                std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::CVQualifier(lexer, context);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::CVQualifier(lexer, context);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 cvQualifier.reset(static_cast<soul_expected::ast::cpp::TypeSpecifierNode*>(match.value));
@@ -919,14 +936,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
     soul_expected::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
-        case CHAR:
+        case soul_expected::cpp::token::CHAR:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch1 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == CHAR)
+                if (*lexer == soul_expected::cpp::token::CHAR)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -951,14 +968,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
             }
             break;
         }
-        case CHAR8T:
+        case soul_expected::cpp::token::CHAR8T:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == CHAR8T)
+                if (*lexer == soul_expected::cpp::token::CHAR8T)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -983,14 +1000,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
             }
             break;
         }
-        case CHAR16T:
+        case soul_expected::cpp::token::CHAR16T:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch3 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == CHAR16T)
+                if (*lexer == soul_expected::cpp::token::CHAR16T)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -1015,14 +1032,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
             }
             break;
         }
-        case CHAR32T:
+        case soul_expected::cpp::token::CHAR32T:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch4 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == CHAR32T)
+                if (*lexer == soul_expected::cpp::token::CHAR32T)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -1047,14 +1064,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
             }
             break;
         }
-        case WCHART:
+        case soul_expected::cpp::token::WCHART:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch5 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == WCHART)
+                if (*lexer == soul_expected::cpp::token::WCHART)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -1079,14 +1096,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
             }
             break;
         }
-        case BOOL:
+        case soul_expected::cpp::token::BOOL:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch6 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == BOOL)
+                if (*lexer == soul_expected::cpp::token::BOOL)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -1111,14 +1128,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
             }
             break;
         }
-        case SHORT:
+        case soul_expected::cpp::token::SHORT:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch7 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == SHORT)
+                if (*lexer == soul_expected::cpp::token::SHORT)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -1143,14 +1160,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
             }
             break;
         }
-        case INT:
+        case soul_expected::cpp::token::INT:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch8 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == INT)
+                if (*lexer == soul_expected::cpp::token::INT)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -1175,14 +1192,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
             }
             break;
         }
-        case LONG:
+        case soul_expected::cpp::token::LONG:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch9 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == LONG)
+                if (*lexer == soul_expected::cpp::token::LONG)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -1207,14 +1224,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
             }
             break;
         }
-        case SIGNED:
+        case soul_expected::cpp::token::SIGNED:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch10 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == SIGNED)
+                if (*lexer == soul_expected::cpp::token::SIGNED)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -1239,14 +1256,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
             }
             break;
         }
-        case UNSIGNED:
+        case soul_expected::cpp::token::UNSIGNED:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch11 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == UNSIGNED)
+                if (*lexer == soul_expected::cpp::token::UNSIGNED)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -1271,14 +1288,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
             }
             break;
         }
-        case FLOAT:
+        case soul_expected::cpp::token::FLOAT:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch12 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == FLOAT)
+                if (*lexer == soul_expected::cpp::token::FLOAT)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -1303,14 +1320,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
             }
             break;
         }
-        case DOUBLE:
+        case soul_expected::cpp::token::DOUBLE:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch13 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == DOUBLE)
+                if (*lexer == soul_expected::cpp::token::DOUBLE)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -1335,14 +1352,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Simp
             }
             break;
         }
-        case VOID:
+        case soul_expected::cpp::token::VOID:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch14 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == VOID)
+                if (*lexer == soul_expected::cpp::token::VOID)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -1411,7 +1428,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Type
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = CppIdentifierParser<LexerT>::QualifiedCppId(lexer, context);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::identifier::parser::CppIdentifierParser<LexerT>::QualifiedCppId(lexer, context);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     qid.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -1449,7 +1466,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Type
                                         std::int64_t pos = lexer.GetPos();
                                         auto vars = static_cast<typename LexerT::VariableClassType*>(lexer.GetVariables());
                                         soul_expected::parser::Match match(false);
-                                        if (*lexer == LANGLE)
+                                        if (*lexer == soul_expected::punctuation::token::LANGLE)
                                         {
                                             auto a = ++lexer;
                                             if (!a) return std::unexpected<int>(a.error());
@@ -1470,7 +1487,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Type
                                     soul_expected::parser::Match match(false);
                                     soul_expected::parser::Match* parentMatch10 = &match;
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::TemplateArgumentList(lexer, context, typeName.get());
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::TemplateArgumentList(lexer, context, typeName.get());
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         *parentMatch10 = match;
@@ -1490,7 +1507,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Type
                                         std::int64_t pos = lexer.GetPos();
                                         auto vars = static_cast<typename LexerT::VariableClassType*>(lexer.GetVariables());
                                         soul_expected::parser::Match match(false);
-                                        if (*lexer == RANGLE)
+                                        if (*lexer == soul_expected::punctuation::token::RANGLE)
                                         {
                                             auto a = ++lexer;
                                             if (!a) return std::unexpected<int>(a.error());
@@ -1570,7 +1587,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Temp
         soul_expected::parser::Match* parentMatch1 = &match;
         {
             std::int64_t pos = lexer.GetPos();
-            std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::TemplateArgument(lexer, context);
+            std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::TemplateArgument(lexer, context);
             if (!m) return std::unexpected<int>(m.error());
             soul_expected::parser::Match match = *m;
             arg.reset(static_cast<soul_expected::ast::cpp::Node*>(match.value));
@@ -1598,7 +1615,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Temp
                         soul_expected::parser::Match* parentMatch4 = &match;
                         {
                             soul_expected::parser::Match match(false);
-                            if (*lexer == COMMA)
+                            if (*lexer == soul_expected::punctuation::token::COMMA)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -1615,7 +1632,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Temp
                                 soul_expected::parser::Match* parentMatch6 = &match;
                                 {
                                     std::int64_t pos = lexer.GetPos();
-                                    std::expected<soul_expected::parser::Match, int> m = DeclarationParser<LexerT>::TemplateArgument(lexer, context);
+                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declaration::parser::DeclarationParser<LexerT>::TemplateArgument(lexer, context);
                                     if (!m) return std::unexpected<int>(m.error());
                                     soul_expected::parser::Match match = *m;
                                     arg.reset(static_cast<soul_expected::ast::cpp::Node*>(match.value));
@@ -1682,7 +1699,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Temp
         soul_expected::parser::Match* parentMatch1 = &match;
         {
             std::int64_t pos = lexer.GetPos();
-            std::expected<soul_expected::parser::Match, int> m = DeclaratorParser<LexerT>::TypeId(lexer, context);
+            std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::declarator::parser::DeclaratorParser<LexerT>::TypeId(lexer, context);
             if (!m) return std::unexpected<int>(m.error());
             soul_expected::parser::Match match = *m;
             typeId.reset(static_cast<soul_expected::ast::cpp::TypeIdNode*>(match.value));
@@ -1708,7 +1725,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Temp
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = ExpressionParser<LexerT>::AssignmentExpression(lexer, context);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::expression::parser::ExpressionParser<LexerT>::AssignmentExpression(lexer, context);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     assignmentExpr.reset(static_cast<soul_expected::ast::cpp::Node*>(match.value));
@@ -1760,7 +1777,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Type
     {
         std::int64_t pos = lexer.GetPos();
         soul_expected::parser::Match match(false);
-        if (*lexer == TYPEDEF)
+        if (*lexer == soul_expected::cpp::token::TYPEDEF)
         {
             auto a = ++lexer;
             if (!a) return std::unexpected<int>(a.error());
@@ -1810,14 +1827,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::CVQu
     soul_expected::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
-        case CONST:
+        case soul_expected::cpp::token::CONST:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch1 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == CONST)
+                if (*lexer == soul_expected::cpp::token::CONST)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -1842,14 +1859,14 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::CVQu
             }
             break;
         }
-        case VOLATILE:
+        case soul_expected::cpp::token::VOLATILE:
         {
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
                 soul_expected::parser::Match match(false);
-                if (*lexer == VOLATILE)
+                if (*lexer == soul_expected::cpp::token::VOLATILE)
                 {
                     auto a = ++lexer;
                     if (!a) return std::unexpected<int>(a.error());
@@ -1924,7 +1941,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Name
                         soul_expected::parser::Match* parentMatch5 = &match;
                         {
                             soul_expected::parser::Match match(false);
-                            if (*lexer == NAMESPACE)
+                            if (*lexer == soul_expected::cpp::token::NAMESPACE)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -1937,7 +1954,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Name
                             soul_expected::parser::Match match(false);
                             soul_expected::parser::Match* parentMatch6 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = CppIdentifierParser<LexerT>::CppIdentifier(lexer, context);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::identifier::parser::CppIdentifierParser<LexerT>::CppIdentifier(lexer, context);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 id.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -1953,7 +1970,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Name
                         soul_expected::parser::Match* parentMatch7 = &match;
                         {
                             soul_expected::parser::Match match(false);
-                            if (*lexer == ASSIGN)
+                            if (*lexer == soul_expected::cpp::op::token::ASSIGN)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -1970,7 +1987,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Name
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch8 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = CppIdentifierParser<LexerT>::QualifiedCppId(lexer, context);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::identifier::parser::CppIdentifierParser<LexerT>::QualifiedCppId(lexer, context);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         qid.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -1986,7 +2003,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Name
                 soul_expected::parser::Match* parentMatch9 = &match;
                 {
                     soul_expected::parser::Match match(false);
-                    if (*lexer == SEMICOLON)
+                    if (*lexer == soul_expected::punctuation::token::SEMICOLON)
                     {
                         auto a = ++lexer;
                         if (!a) return std::unexpected<int>(a.error());
@@ -2053,7 +2070,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Usin
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     soul_expected::parser::Match match(false);
-                    if (*lexer == USING)
+                    if (*lexer == soul_expected::cpp::token::USING)
                     {
                         auto a = ++lexer;
                         if (!a) return std::unexpected<int>(a.error());
@@ -2066,7 +2083,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Usin
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch4 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = CppIdentifierParser<LexerT>::QualifiedCppId(lexer, context);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::identifier::parser::CppIdentifierParser<LexerT>::QualifiedCppId(lexer, context);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         qid.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -2082,7 +2099,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Usin
                 soul_expected::parser::Match* parentMatch5 = &match;
                 {
                     soul_expected::parser::Match match(false);
-                    if (*lexer == SEMICOLON)
+                    if (*lexer == soul_expected::punctuation::token::SEMICOLON)
                     {
                         auto a = ++lexer;
                         if (!a) return std::unexpected<int>(a.error());
@@ -2152,7 +2169,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Usin
                     soul_expected::parser::Match* parentMatch4 = &match;
                     {
                         soul_expected::parser::Match match(false);
-                        if (*lexer == USING)
+                        if (*lexer == soul_expected::cpp::token::USING)
                         {
                             auto a = ++lexer;
                             if (!a) return std::unexpected<int>(a.error());
@@ -2166,7 +2183,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Usin
                         soul_expected::parser::Match* parentMatch5 = &match;
                         {
                             soul_expected::parser::Match match(false);
-                            if (*lexer == NAMESPACE)
+                            if (*lexer == soul_expected::cpp::token::NAMESPACE)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -2183,7 +2200,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Usin
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch6 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = CppIdentifierParser<LexerT>::QualifiedCppId(lexer, context);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::cpp::identifier::parser::CppIdentifierParser<LexerT>::QualifiedCppId(lexer, context);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         ns.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -2199,7 +2216,7 @@ std::expected<soul_expected::parser::Match, int> DeclarationParser<LexerT>::Usin
                 soul_expected::parser::Match* parentMatch7 = &match;
                 {
                     soul_expected::parser::Match match(false);
-                    if (*lexer == SEMICOLON)
+                    if (*lexer == soul_expected::punctuation::token::SEMICOLON)
                     {
                         auto a = ++lexer;
                         if (!a) return std::unexpected<int>(a.error());

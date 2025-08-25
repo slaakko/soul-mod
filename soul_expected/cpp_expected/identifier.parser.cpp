@@ -12,13 +12,6 @@ import soul_expected.punctuation.token;
 import soul_expected.lex.slg;
 import soul_expected.lex.spg;
 
-using namespace soul_expected::cpp::token;
-using namespace soul_expected::cpp::op::token;
-using namespace soul_expected::tool::token;
-using namespace soul_expected::punctuation::token;
-using namespace soul_expected::lex::slg;
-using namespace soul_expected::lex::spg;
-
 namespace soul_expected::cpp::identifier::parser {
 
 template<typename LexerT>
@@ -39,7 +32,7 @@ std::expected<soul_expected::parser::Match, int> CppIdentifierParser<LexerT>::Cp
     {
         std::int64_t pos = lexer.GetPos();
         soul_expected::parser::Match match(false);
-        if (*lexer == ID)
+        if (*lexer == soul_expected::cpp::token::ID)
         {
             auto a = ++lexer;
             if (!a) return std::unexpected<int>(a.error());
@@ -111,7 +104,7 @@ std::expected<soul_expected::parser::Match, int> CppIdentifierParser<LexerT>::Qu
                             {
                                 std::int64_t pos = lexer.GetPos();
                                 soul_expected::parser::Match match(false);
-                                if (*lexer == COLON_COLON)
+                                if (*lexer == soul_expected::cpp::op::token::COLON_COLON)
                                 {
                                     auto a = ++lexer;
                                     if (!a) return std::unexpected<int>(a.error());
@@ -146,7 +139,7 @@ std::expected<soul_expected::parser::Match, int> CppIdentifierParser<LexerT>::Qu
                         {
                             std::int64_t pos = lexer.GetPos();
                             soul_expected::parser::Match match(false);
-                            if (*lexer == ID)
+                            if (*lexer == soul_expected::cpp::token::ID)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -185,7 +178,7 @@ std::expected<soul_expected::parser::Match, int> CppIdentifierParser<LexerT>::Qu
                                     soul_expected::parser::Match* parentMatch12 = &match;
                                     {
                                         soul_expected::parser::Match match(false);
-                                        if (*lexer == COLON_COLON)
+                                        if (*lexer == soul_expected::cpp::op::token::COLON_COLON)
                                         {
                                             auto a = ++lexer;
                                             if (!a) return std::unexpected<int>(a.error());
@@ -203,7 +196,7 @@ std::expected<soul_expected::parser::Match, int> CppIdentifierParser<LexerT>::Qu
                                             {
                                                 std::int64_t pos = lexer.GetPos();
                                                 soul_expected::parser::Match match(false);
-                                                if (*lexer == ID)
+                                                if (*lexer == soul_expected::cpp::token::ID)
                                                 {
                                                     auto a = ++lexer;
                                                     if (!a) return std::unexpected<int>(a.error());

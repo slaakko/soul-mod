@@ -1063,19 +1063,6 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
         }
     }
     formatter->WriteLine();
-/*
-    for (const auto& imprt : parserFile.Imports())
-    {
-        if (imprt->Prefix() == soul::ast::common::ImportPrefix::interfacePrefix)
-        {
-            formatter->WriteLine("using namespace " + soul::ast::common::ToNamespaceName(imprt->ModuleName()) + ";");
-        }
-    }
-    if (hasInterfaceImports)
-    {
-        formatter->WriteLine();
-    }
-*/
     formatter->WriteLine("export namespace " + soul::ast::common::ToNamespaceName(mod->ModuleName()) + " {");
     formatter->WriteLine();
     bool first = true;
@@ -1120,21 +1107,6 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
         }
     }
     formatter->WriteLine();
-/*  
-    bool hasImplementationImports = false;
-    for (const auto& imprt : parserFile.Imports())
-    {
-        if (imprt->Prefix() == soul::ast::common::ImportPrefix::implementationPrefix)
-        {
-            formatter->WriteLine("using namespace " + soul::ast::common::ToNamespaceName(imprt->ModuleName()) + ";");
-            hasImplementationImports = true;
-        }
-    }
-    if (hasImplementationImports)
-    {
-        formatter->WriteLine();
-    }
-*/
     formatter->WriteLine("namespace " + soul::ast::common::ToNamespaceName(mod->ModuleName()) + " {");
     formatter->WriteLine();
     GenerateArrays(parserFile, *formatter, sn);

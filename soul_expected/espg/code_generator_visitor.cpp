@@ -189,11 +189,14 @@ void CodeGeneratorVisitor::Visit(soul_expected::ast::spg::CaseParser& parser)
     if (!Valid()) return;
     for (const auto& token : parser.First().Tokens())
     {
-        std::expected<bool, int> rv = formatter->WriteLine("case " + token + ":");
-        if (!rv)
+        if (!token->IsEpsilon() && !token->IsAny())
         {
-            SetError(rv.error());
-            return;
+            std::expected<bool, int> rv = formatter->WriteLine("case " + token->FullCppId() + ":");
+            if (!rv)
+            {
+                SetError(rv.error());
+                return;
+            }
         }
     }
     std::expected<bool, int> rv = formatter->WriteLine("{");
@@ -1137,8 +1140,7 @@ void CodeGeneratorVisitor::Visit(soul_expected::ast::spg::ExpectationParser& par
         else if (parser.Child()->IsTokenParser())
         {
             soul_expected::ast::spg::TokenParser* tokenParser = static_cast<soul_expected::ast::spg::TokenParser*>(parser.Child());
-            std::string tokenName = tokenParser->TokenName();
-            rv = formatter->WriteLine("return lexer.ExpectationFailure(pos, lexer.GetTokenInfo(" + tokenName + "));");
+            rv = formatter->WriteLine("return lexer.ExpectationFailure(pos, lexer.GetTokenInfo(" + tokenParser->GetToken()->FullCppId() + "));");
             if (!rv)
             {
                 SetError(rv.error());
@@ -1260,7 +1262,8 @@ void CodeGeneratorVisitor::Visit(soul_expected::ast::spg::ActionParser& parser)
         nonterminalName = nt->InstanceName();
     }
     soul_expected::spg::parsing::util::CountNonterminals(parser.SuccessCode(), nonterminalInfos);
-    rv = ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name(), fileMap);
+    soul_expected::ast::common::TokenMap* tokenMap = parser.GetTokenMap();
+    rv = ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name(), tokenMap, fileMap);
     if (!rv)
     {
         SetError(rv.error());
@@ -1338,7 +1341,9 @@ void CodeGeneratorVisitor::Visit(soul_expected::ast::spg::NonterminalParser& par
     if (stage == CodeGenerationStage::generateImplementation)
     {
         soul_expected::ast::spg::RuleParser* rule = parser.Rule();
-        std::string ruleName = rule->Grammar()->Name() + "<LexerT>::" + rule->Name();
+        soul_expected::ast::spg::GrammarParser* grammar = rule->Grammar();
+        soul_expected::ast::spg::ParserFile* parserFile = grammar->GetParserFile();
+        std::string ruleName = parserFile->ExportModule()->NamespaceName() + "::" + grammar->Name() + "<LexerT>::" + rule->Name();
         std::expected<bool, int> rv = formatter->Write("std::expected<soul_expected::parser::Match, int> m = " + ruleName + "(lexer");
         if (!rv)
         {
@@ -1513,7 +1518,7 @@ void CodeGeneratorVisitor::Visit(soul_expected::ast::spg::TokenParser& parser)
             SetError(rv.error());
             return;
         }
-        rv = formatter->WriteLine("if (*lexer == " + parser.TokenName() + ")");
+        rv = formatter->WriteLine("if (*lexer == " + parser.GetToken()->FullCppId() + ")");
         if (!rv)
         {
             SetError(rv.error());
@@ -3104,22 +3109,6 @@ void CodeGeneratorVisitor::Visit(soul_expected::ast::spg::ParserFile& parserFile
         }
     }
     formatter->WriteLine();
-    for (const auto& imprt : parserFile.Imports())
-    {
-        if (imprt->Prefix() == soul_expected::ast::common::ImportPrefix::interfacePrefix)
-        {
-            rv = formatter->WriteLine("using namespace " + soul_expected::ast::common::ToNamespaceName(imprt->ModuleName()) + ";");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-        }
-    }
-    if (hasInterfaceImports)
-    {
-        formatter->WriteLine();
-    }
     rv =formatter->WriteLine("export namespace " + soul_expected::ast::common::ToNamespaceName(mod->ModuleName()) + " {");
     if (!rv)
     {
@@ -3204,24 +3193,6 @@ void CodeGeneratorVisitor::Visit(soul_expected::ast::spg::ParserFile& parserFile
         }
     }
     formatter->WriteLine();
-    bool hasImplementationImports = false;
-    for (const auto& imprt : parserFile.Imports())
-    {
-        if (imprt->Prefix() == soul_expected::ast::common::ImportPrefix::implementationPrefix)
-        {
-            rv = formatter->WriteLine("using namespace " + soul_expected::ast::common::ToNamespaceName(imprt->ModuleName()) + ";");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            hasImplementationImports = true;
-        }
-    }
-    if (hasImplementationImports)
-    {
-        formatter->WriteLine();
-    }
     rv = formatter->WriteLine("namespace " + soul_expected::ast::common::ToNamespaceName(mod->ModuleName()) + " {");
     if (!rv)
     {

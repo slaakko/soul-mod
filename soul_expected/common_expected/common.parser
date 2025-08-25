@@ -73,7 +73,7 @@ parser CommonParser
             { 
                 auto t = lexer.GetToken(pos);
                 if (!t)  return std::unexpected<int>(t.error());
-                auto u = MakeExprStringValue(lexer.FileName(), *t); 
+                auto u = soul_expected::common::token::parser::MakeExprStringValue(lexer.FileName(), *t); 
                 if (!u) return std::unexpected<int>(u.error());
                 return *u;
             }
@@ -84,7 +84,7 @@ parser CommonParser
             { 
                 auto t = lexer.GetToken(pos);
                 if (!t)  return std::unexpected<int>(t.error());
-                auto u = MakeFilePath(lexer.FileName(), *t); 
+                auto u = soul_expected::common::token::parser::MakeFilePath(lexer.FileName(), *t); 
                 if (!u) return std::unexpected<int>(u.error());
                 return *u;
             }

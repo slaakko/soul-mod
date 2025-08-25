@@ -562,20 +562,6 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
         }
     }
     interfaceFormatter.WriteLine();
-    //interfaceFormatter.WriteLine("using namespace soul;");
-    //interfaceFormatter.WriteLine("using namespace soul::lexer;");
-/*
-    for (const auto& imprt : lexerFile->Imports())
-    {
-        soul::ast::common::Collection* collection = slgFile->GetCollection(imprt->ModuleName());
-        if (collection->Kind() == soul::ast::common::CollectionKind::tokenCollection)
-        {
-            interfaceFormatter.WriteLine("using namespace " + soul::ast::common::ToNamespaceName(collection->Name()) + ";");
-            sourceFormatter.WriteLine("using namespace " + soul::ast::common::ToNamespaceName(collection->Name()) + ";");
-        }
-    }
-    interfaceFormatter.WriteLine();
-*/
     sourceFormatter.WriteLine();
     if (ppstyle)
     {

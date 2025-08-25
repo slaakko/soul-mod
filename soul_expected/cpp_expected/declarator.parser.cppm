@@ -8,8 +8,6 @@ import soul_expected.lexer;
 import soul_expected.parser;
 import soul_expected.ast.cpp;
 
-using namespace soul_expected::ast::cpp;
-
 export namespace soul_expected::cpp::declarator::parser {
 
 template<typename LexerT>

@@ -113,7 +113,7 @@ std::expected<bool, int> GenerateParsers(soul_expected::ast::spg::SpgFile* spgFi
     {
         switch (declaration->GetFileKind())
         {
-            case soul_expected::ast::spg::FileKind::parserFile:
+            case soul_expected::ast::common::FileKind::parserFile:
             {
                 soul_expected::ast::spg::ParserFileDeclaration* parserFileDeclaration = static_cast<soul_expected::ast::spg::ParserFileDeclaration*>(declaration.get());
                 std::expected<std::string, int> fp = util::GetFullPath(util::Path::Combine(root, parserFileDeclaration->FilePath()));
@@ -124,6 +124,19 @@ std::expected<bool, int> GenerateParsers(soul_expected::ast::spg::SpgFile* spgFi
                 if (!rv) return std::unexpected<int>(rv.error());
                 std::unique_ptr<soul_expected::ast::spg::ParserFile> parserFile = std::move(*rv);
                 spgFile->AddParserFile(parserFile.release());
+                break;
+            }
+            case soul_expected::ast::common::FileKind::tokenFile:
+            {
+                soul_expected::ast::spg::TokenFileDeclaration* tokenFileDeclaration = static_cast<soul_expected::ast::spg::TokenFileDeclaration*>(declaration.get());
+                auto rv = util::GetFullPath(util::Path::Combine(root, tokenFileDeclaration->FilePath()));
+                if (!rv) return std::unexpected<int>(rv.error());
+                std::string tokenFilePath = *rv;
+                auto prv = soul_expected::spg::ParseTokenFile(tokenFilePath, tokenFileDeclaration->GetSourcePos(), verbose, 
+                    tokenFileDeclaration->External(), fileMap);
+                if (!prv) return std::unexpected<int>(prv.error());
+                std::unique_ptr<soul_expected::ast::common::TokenFile> tokenFile = std::move(*prv);
+                spgFile->AddTokenFile(tokenFile.release());
                 break;
             }
         }

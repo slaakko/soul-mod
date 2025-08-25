@@ -1,6 +1,10 @@
 project soul_expected.spg.parsers;
 parser <parser_file.parser>;
 parser <spg_file.parser>;
+tokens <../token_expected/soul.cpp.op.token>;
+tokens <../token_expected/soul.cpp.token>;
+tokens <../token_expected/soul.punctuation.token>;
+tokens <../token_expected/soul.tool.token>;
 extern parser <../common_expected/common.parser>;
 extern parser <../cpp_expected/declaration.parser>;
 extern parser <../cpp_expected/declarator.parser>;

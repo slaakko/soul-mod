@@ -9,6 +9,7 @@ import soul_expected.ast.slg;
 import soul_expected.slg.file.parsers;
 import soul_expected.slg.lexer.generator;
 import soul_expected.slg.classmap;
+import soul_expected.lexer;
 
 std::expected<bool, int> Init()
 {
@@ -120,20 +121,21 @@ int main(int argc, const char** argv)
             files.push_back(std::move(*rv));
         }
     }
+    soul_expected::lexer::FileMap fileMap;
     for (const std::string& file : files)
     {
         if (verbose)
         {
             std::cout << "> " << file << std::endl;
         }
-        std::expected<std::unique_ptr<soul_expected::ast::slg::SlgFile>, int> rv = soul_expected::slg::ParseSlgFile(file);
+        std::expected<std::unique_ptr<soul_expected::ast::slg::SlgFile>, int> rv = soul_expected::slg::ParseSlgFile(file, fileMap);
         if (!rv)
         {
             std::cerr << util::GetErrorMessage(rv.error()) << "\n";
             return 1;
         }
         std::unique_ptr<soul_expected::ast::slg::SlgFile> slgFile = std::move(*rv);
-        std::expected<bool, int> grv = soul_expected::slg::GenerateLexer(slgFile.get(), verbose, debug);
+        std::expected<bool, int> grv = soul_expected::slg::GenerateLexer(slgFile.get(), fileMap, verbose, debug);
         if (!grv)
         {
             std::cerr << util::GetErrorMessage(grv.error()) << "\n";

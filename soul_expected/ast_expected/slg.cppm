@@ -8,113 +8,31 @@ export module soul_expected.ast.slg;
 import std;
 import soul_expected.ast.common;
 import soul_expected.ast.cpp;
+import soul_expected.ast.source.pos;
 
 export namespace soul_expected::ast::slg {
-
-enum class FileKind
-{
-    tokenFile, keywordFile, expressionFile, lexerFile, slgFile
-};
-
-class File
-{
-public:
-    File(FileKind kind_, const std::string& filePath_);
-    virtual ~File();
-    inline FileKind Kind() const { return kind; }
-    inline const std::string& FilePath() const { return filePath; }
-    inline bool IsExternal() const { return external; }
-    inline void SetExternal() { external = true; }
-private:
-    FileKind kind;
-    std::string filePath;
-    bool external;
-};
-
-enum class CollectionKind
-{
-    tokenCollection, keywordCollection, expressionCollection, lexer
-};
-
-class Collection
-{
-public:
-    Collection(CollectionKind kind_, const std::string& name_);
-    virtual ~Collection();
-    inline CollectionKind Kind() const { return kind; }
-    inline const std::string& Name() const { return name; }
-    inline void SetFile(File* file_) { file = file_; }
-    inline File* GetFile() const { return file; }
-private:
-    CollectionKind kind;
-    std::string name;
-    File* file;
-};
-
-class Token
-{
-public:
-    Token(std::int64_t id_, const std::string& name_, const std::string& info_);
-    Token(const std::string& name_, const std::string& info_);
-    inline void SetCollection(Collection* collection_) { collection = collection_; }
-    inline Collection* GetCollection() const { return collection; }
-    inline std::int64_t Id() const { return id; }
-    inline void SetId(std::int64_t id_) { id = id_; }
-    inline const std::string& Name() const { return name; }
-    inline const std::string& Info() const { return info; }
-private:
-    std::int64_t id;
-    std::string name;
-    std::string info;
-    Collection* collection;
-};
-
-class TokenCollection : public Collection
-{
-public:
-    TokenCollection(const std::string& name_);
-    inline bool Initialized() const { return initialized; }
-    inline void SetInitialized() { initialized = true; }
-    void AddToken(Token* token);
-    inline const std::vector<std::unique_ptr<Token>>& Tokens() const { return tokens; }
-    inline std::int32_t Id() const { return id; }
-    Token* GetToken(std::int64_t id) const;
-private:
-    bool initialized;
-    std::int32_t id;
-    std::vector<std::unique_ptr<Token>> tokens;
-    std::map<std::int64_t, Token*> tokenMap;
-};
-
-class TokenFile : public File
-{
-public:
-    TokenFile(const std::string& filePath_);
-    void SetTokenCollection(TokenCollection* tokenCollection_);
-    inline TokenCollection* GetTokenCollection() const { return tokenCollection.get(); }
-private:
-    std::unique_ptr<TokenCollection> tokenCollection;
-};
 
 class Keyword
 {
 public:
-    Keyword(const std::string& str_, const std::string& tokenName_, std::int64_t tokenId_);
-    Keyword(const std::string& str_, const std::string& tokenName_);
-    inline void SetCollection(Collection* collection_) { collection = collection_; }
-    inline Collection* GetCollection() const { return collection; }
+    Keyword(const soul_expected::ast::SourcePos& sourcePos_, const std::string& str_, const std::string& tokenName_, std::int64_t tokenId_);
+    Keyword(const soul_expected::ast::SourcePos& sourcePos_, const std::string& str_, const std::string& tokenName_);
+    inline const soul_expected::ast::SourcePos& GetSourcePos() const { return sourcePos; }
+    inline void SetCollection(soul_expected::ast::common::Collection* collection_) { collection = collection_; }
+    inline soul_expected::ast::common::Collection* GetCollection() const { return collection; }
     inline const std::string& Str() const { return str; }
     inline const std::string& TokenName() const { return tokenName; }
     inline std::int64_t TokenId() const { return tokenId; }
     inline void SetTokenId(std::int64_t tokenId_) { tokenId = tokenId_; }
 private:
+    soul_expected::ast::SourcePos sourcePos;
     std::string str;
     std::string tokenName;
     std::int64_t tokenId;
-    Collection* collection;
+    soul_expected::ast::common::Collection* collection;
 };
 
-class KeywordCollection : public Collection
+class KeywordCollection : public soul_expected::ast::common::Collection
 {
 public:
     KeywordCollection(const std::string& name_);
@@ -124,7 +42,7 @@ private:
     std::vector<std::unique_ptr<Keyword>> keywords;
 };
 
-class KeywordFile : public File
+class KeywordFile : public soul_expected::ast::common::File
 {
 public:
     KeywordFile(const std::string& filePath_);
@@ -141,8 +59,8 @@ class Expression
 {
 public:
     Expression(const std::string& id_, const std::string& value_, int line_);
-    inline void SetCollection(Collection* collection_) { collection = collection_; }
-    inline Collection* GetCollection() const { return collection; }
+    inline void SetCollection(soul_expected::ast::common::Collection* collection_) { collection = collection_; }
+    inline soul_expected::ast::common::Collection* GetCollection() const { return collection; }
     inline int Index() const { return index; }
     inline void SetIndex(int index_) { index = index_; }
     inline const std::string& Id() const { return id; }
@@ -154,10 +72,10 @@ private:
     std::string id;
     std::string value;
     int line;
-    Collection* collection;
+    soul_expected::ast::common::Collection* collection;
 };
 
-class ExpressionCollection : public Collection
+class ExpressionCollection : public soul_expected::ast::common::Collection
 {
 public:
     ExpressionCollection(const std::string& name_);
@@ -167,7 +85,7 @@ private:
     std::vector<std::unique_ptr<Expression>> expressions;
 };
 
-class ExpressionFile : public File
+class ExpressionFile : public soul_expected::ast::common::File
 {
 public:
     ExpressionFile(const std::string& filePath_);
@@ -183,8 +101,8 @@ public:
     Rule(const std::string& expr_, soul_expected::ast::cpp::CompoundStatementNode* code_, int action_, int line_);
     inline int Index() const { return index; }
     inline void SetIndex(int index_) { index = index_; }
-    inline void SetCollection(Collection* collection_) { collection = collection_; }
-    inline Collection* GetCollection() const { return collection; }
+    inline void SetCollection(soul_expected::ast::common::Collection* collection_) { collection = collection_; }
+    inline soul_expected::ast::common::Collection* GetCollection() const { return collection; }
     inline const std::string& Expr() const { return expr; }
     inline soul_expected::ast::cpp::CompoundStatementNode* Code() const { return code.get(); }
     inline int Action() const { return action; }
@@ -197,7 +115,7 @@ private:
     std::unique_ptr<soul_expected::ast::cpp::CompoundStatementNode> code;
     int action;
     int line;
-    Collection* collection;
+    soul_expected::ast::common::Collection* collection;
     int nfaIndex;
 };
 
@@ -233,7 +151,7 @@ private:
     std::map<int, Action*> actionMap;
 };
 
-class Lexer : public Collection
+class Lexer : public soul_expected::ast::common::Collection
 {
 public:
     Lexer(const std::string& name_);
@@ -252,7 +170,7 @@ private:
     std::string variableClassName;
 };
 
-class LexerFile : public File
+class LexerFile : public soul_expected::ast::common::File
 {
 public:
     LexerFile(const std::string& filePath_);
@@ -262,10 +180,12 @@ public:
     inline const std::vector<std::unique_ptr<soul_expected::ast::common::Import>>& Imports() const { return imports; }
     void SetLexer(Lexer* lexer_);
     inline Lexer* GetLexer() const { return lexer.get(); }
+    inline soul_expected::ast::common::TokenMap* GetTokenMap() { return &tokenMap; }
 private:
     std::unique_ptr<soul_expected::ast::common::ExportModule> exportModule;
     std::vector<std::unique_ptr<soul_expected::ast::common::Import>> imports;
     std::unique_ptr<Lexer> lexer;
+    soul_expected::ast::common::TokenMap tokenMap;
 };
 
 enum class SlgFileDeclarationKind
@@ -312,42 +232,42 @@ public:
     LexerFileDeclaration(const std::string& filePath_);
 };
 
-class SlgFile : public File
+class SlgFile : public soul_expected::ast::common::File
 {
 public:
     SlgFile(const std::string& filePath_, const std::string& projectName_);
     inline const std::string& ProjectName() const { return projectName; }
     void AddDeclaration(SlgFileDeclaration* declaration);
     inline const std::vector<std::unique_ptr<SlgFileDeclaration>>& Declarations() const { return declarations; }
-    std::expected<bool, int> AddTokenFile(TokenFile* tokenFile);
-    inline const std::vector<std::unique_ptr<TokenFile>>& TokenFiles() const { return tokenFiles; }
+    std::expected<bool, int> AddTokenFile(soul_expected::ast::common::TokenFile* tokenFile);
+    inline const std::vector<std::unique_ptr<soul_expected::ast::common::TokenFile>>& TokenFiles() const { return tokenFiles; }
     std::expected<bool, int> AddKeywordFile(KeywordFile* keywordFile);
     inline const std::vector<std::unique_ptr<KeywordFile>>& KeywordFiles() const { return keywordFiles; }
     std::expected<bool, int> AddExpressionFile(ExpressionFile* expressionFile);
     inline const std::vector<std::unique_ptr<ExpressionFile>>& ExpressionFiles() const { return expressionFiles; }
     std::expected<bool, int> AddLexerFile(LexerFile* lexerFile);
     inline const std::vector<std::unique_ptr<LexerFile>>& LexerFiles() const { return lexerFiles; }
-    inline const std::vector<Collection*>& Collections() const { return collections; }
-    std::expected<Collection*, int> GetCollection(const std::string& name) const;
+    inline const std::vector<soul_expected::ast::common::Collection*>& Collections() const { return collections; }
+    std::expected<soul_expected::ast::common::Collection*, int> GetCollection(const std::string& name) const;
 private:
     std::string projectName;
     std::vector<std::unique_ptr<SlgFileDeclaration>> declarations;
-    std::vector<std::unique_ptr<TokenFile>> tokenFiles;
+    std::vector<std::unique_ptr<soul_expected::ast::common::TokenFile>> tokenFiles;
     std::vector<std::unique_ptr<KeywordFile>> keywordFiles;
     std::vector<std::unique_ptr<ExpressionFile>> expressionFiles;
     std::vector<std::unique_ptr<LexerFile>> lexerFiles;
-    std::vector<Collection*> collections;
-    std::map<std::string, Collection*> collectionMap;
+    std::vector<soul_expected::ast::common::Collection*> collections;
+    std::map<std::string, soul_expected::ast::common::Collection*> collectionMap;
 };
 
 class Tokens
 {
 public:
     Tokens();
-    void AddToken(Token* token);
-    inline const std::vector<Token*>& GetTokens() const { return tokens; }
+    void AddToken(soul_expected::ast::common::Token* token);
+    inline const std::vector<soul_expected::ast::common::Token*>& GetTokens() const { return tokens; }
 private:
-    std::vector<Token*> tokens;
+    std::vector<soul_expected::ast::common::Token*> tokens;
 };
 
 class Keywords

@@ -13,6 +13,7 @@ export module soul_expected.slg.keyword.file.parser;
 [implementation]import soul_expected.common.common.parser;
 [implementation]import soul_expected.common.token.parser;
 [implementation]import soul_expected.lex.slg;
+[implementation]import soul_expected.ast.source.pos;
 
 parser KeywordFileParser
 {
@@ -65,7 +66,10 @@ parser KeywordFileParser
             RPAREN
         )
         {
-            return new soul_expected::ast::slg::Keyword(str, tokenName);
+            auto rv = lexer.GetSourcePos(pos);
+            if (!rv) return std::unexpected<int>(rv.error());
+            soul_expected::ast::SourcePos sp = *rv;
+            return new soul_expected::ast::slg::Keyword(sp, str, tokenName);
         }
         ;
 }

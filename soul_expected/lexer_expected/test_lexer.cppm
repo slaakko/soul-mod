@@ -10,6 +10,7 @@ import util_expected;
 import soul_expected.lexer.base;
 import soul_expected.lexer.token;
 import soul_expected.ast.slg;
+import soul_expected.ast.common;
 
 export namespace soul::lexer {
 
@@ -17,7 +18,7 @@ template<typename Lexer>
 std::expected<bool, int> TestLexer(Lexer& lexer, util::CodeFormatter& formatter)
 {
     bool succeeded = false;
-    soul_expected::ast::slg::TokenCollection* tokens = lexer.GetTokenCollection();
+    soul_expected::ast::common::TokenCollection* tokens = lexer.GetTokenCollection();
     ++lexer;
     while (*lexer != soul_expected::lexer::END_TOKEN && *lexer != soul_expected::lexer::INVALID_TOKEN)
     {

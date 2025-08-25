@@ -28,7 +28,12 @@ OptimizationFlagsSetter::OptimizationFlagsSetter() : count(0)
 void OptimizationFlagsSetter::Visit(soul_expected::ast::spg::ChoiceParser& parser)
 {
     soul_expected::ast::spg::DefaultVisitor::Visit(parser);
-    parser.SetOptimizationFlag(count);
+    auto rv = parser.SetOptimizationFlag(count);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 class Optimizer : public soul_expected::ast::spg::DefaultVisitor
@@ -493,7 +498,13 @@ std::expected<soul_expected::ast::spg::SpgFile*, int> GenerateOptimizedSpg(soul_
     Optimizer optimizer(nullptr);
     spgFile->Accept(optimizer);
     if (!optimizer) return std::unexpected<int>(optimizer.Error());
-    return optimizer.GetOptimizedSpgFile();
+    soul_expected::ast::spg::SpgFile* optimizedSpgFile = optimizer.GetOptimizedSpgFile();
+    int n = static_cast<int>(spgFile->TokenFiles().size());
+    for (int i = 0; i < n; ++i)
+    {
+        optimizedSpgFile->AddTokenFile(spgFile->TokenFiles()[i]->Clone());
+    }
+    return optimizedSpgFile;
 }
 
 std::expected<bool, int> SetOptimizationFlags(soul_expected::ast::spg::SpgFile* spgFile, bool verbose)

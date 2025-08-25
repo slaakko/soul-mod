@@ -6,6 +6,7 @@
 export module soul_expected.common.token.file.parser;
 
 [interface]import soul_expected.ast.slg;
+[interface]import soul_expected.ast.common;
 [implementation]import soul_expected.cpp.token;
 [implementation]import soul_expected.cpp.op.token;
 [implementation]import soul_expected.punctuation.token;
@@ -23,11 +24,11 @@ parser TokenFileParser
     main;
     using CommonParser.QualifiedId;
 
-    TokenFile(var std::unique_ptr<soul_expected::ast::slg::TokenFile> tokenFile, var std::unique_ptr<soul_expected::ast::slg::TokenCollection> tokenCollection) : soul_expected::ast::slg::TokenFile*
+    TokenFile(var std::unique_ptr<soul_expected::ast::common::TokenFile> tokenFile, var std::unique_ptr<soul_expected::ast::common::TokenCollection> tokenCollection) : soul_expected::ast::common::TokenFile*
         ::= 
         (   
-            TOKENS{ tokenFile.reset(new soul_expected::ast::slg::TokenFile(lexer.FileName())); }
-            QualifiedId:tokenCollectionName{ tokenCollection.reset(new soul_expected::ast::slg::TokenCollection(tokenCollectionName)); }
+            TOKENS{ tokenFile.reset(new soul_expected::ast::common::TokenFile(lexer.FileName())); }
+            QualifiedId:tokenCollectionName{ tokenCollection.reset(new soul_expected::ast::common::TokenCollection(tokenCollectionName)); }
 			LBRACE
 			(Token:token{ tokenCollection->AddToken(token); } % COMMA)?
 			RBRACE
@@ -38,7 +39,7 @@ parser TokenFileParser
         }
         ;
 
-    Token(var std::string name, var std::string info) : soul_expected::ast::slg::Token*
+    Token(var std::string name, var std::string info) : soul_expected::ast::common::Token*
         ::= 
         (
             LPAREN 
@@ -60,7 +61,7 @@ parser TokenFileParser
             RPAREN
         )
         {
-            return new soul_expected::ast::slg::Token(name, info);
+            return new soul_expected::ast::common::Token(name, info);
         }
         ;
 }

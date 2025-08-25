@@ -15,6 +15,8 @@ public:
     FirstSetComputer();
     bool Changed() const { return changed; }
     void Visit(soul_expected::ast::spg::ChoiceParser& parser) override;
+    void Visit(soul_expected::ast::spg::CaseParser& parser) override;
+    void Visit(soul_expected::ast::spg::SwitchParser& parser) override;
     void Visit(soul_expected::ast::spg::SequenceParser& parser) override;
     void Visit(soul_expected::ast::spg::DifferenceParser& parser) override;
     void Visit(soul_expected::ast::spg::ListParser& parser) override;
@@ -44,6 +46,28 @@ FirstSetComputer::FirstSetComputer() : changed(false)
 }
 
 void FirstSetComputer::Visit(soul_expected::ast::spg::ChoiceParser& parser)
+{
+    if (!Valid()) return;
+    std::expected<bool, int> rv = parser.ComputeFirst(changed, visited);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;;
+    }
+}
+
+void FirstSetComputer::Visit(soul_expected::ast::spg::CaseParser& parser)
+{
+    if (!Valid()) return;
+    std::expected<bool, int> rv = parser.ComputeFirst(changed, visited);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;;
+    }
+}
+
+void FirstSetComputer::Visit(soul_expected::ast::spg::SwitchParser& parser)
 {
     if (!Valid()) return;
     std::expected<bool, int> rv = parser.ComputeFirst(changed, visited);

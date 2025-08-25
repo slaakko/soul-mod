@@ -6,25 +6,25 @@ using namespace soul_expected::rex::token;
 
 namespace soul_expected::rex::lexer {
 
-soul_expected::ast::slg::TokenCollection* GetTokens()
+soul_expected::ast::common::TokenCollection* GetTokens()
 {
-    static soul_expected::ast::slg::TokenCollection tokens("soul_expected.rex.lexer.tokens");
+    static soul_expected::ast::common::TokenCollection tokens("soul_expected.rex.lexer.tokens");
     if (!tokens.Initialized())
     {
         tokens.SetInitialized();
-        tokens.AddToken(new soul_expected::ast::slg::Token(LPAREN, "LPAREN", "'('"));
-        tokens.AddToken(new soul_expected::ast::slg::Token(RPAREN, "RPAREN", "')'"));
-        tokens.AddToken(new soul_expected::ast::slg::Token(LBRACKET, "LBRACKET", "'['"));
-        tokens.AddToken(new soul_expected::ast::slg::Token(RBRACKET, "RBRACKET", "']'"));
-        tokens.AddToken(new soul_expected::ast::slg::Token(ALT, "ALT", "'|'"));
-        tokens.AddToken(new soul_expected::ast::slg::Token(STAR, "STAR", "'*'"));
-        tokens.AddToken(new soul_expected::ast::slg::Token(PLUS, "PLUS", "'+'"));
-        tokens.AddToken(new soul_expected::ast::slg::Token(QUEST, "QUEST", "'?'"));
-        tokens.AddToken(new soul_expected::ast::slg::Token(DOT, "DOT", "'.'"));
-        tokens.AddToken(new soul_expected::ast::slg::Token(ESCAPE, "ESCAPE", "escape"));
-        tokens.AddToken(new soul_expected::ast::slg::Token(INVERSE, "INVERSE", "'^'"));
-        tokens.AddToken(new soul_expected::ast::slg::Token(MINUS, "MINUS", "'-'"));
-        tokens.AddToken(new soul_expected::ast::slg::Token(CHAR, "CHAR", "character"));
+        tokens.AddToken(new soul_expected::ast::common::Token(LPAREN, "LPAREN", "'('"));
+        tokens.AddToken(new soul_expected::ast::common::Token(RPAREN, "RPAREN", "')'"));
+        tokens.AddToken(new soul_expected::ast::common::Token(LBRACKET, "LBRACKET", "'['"));
+        tokens.AddToken(new soul_expected::ast::common::Token(RBRACKET, "RBRACKET", "']'"));
+        tokens.AddToken(new soul_expected::ast::common::Token(ALT, "ALT", "'|'"));
+        tokens.AddToken(new soul_expected::ast::common::Token(STAR, "STAR", "'*'"));
+        tokens.AddToken(new soul_expected::ast::common::Token(PLUS, "PLUS", "'+'"));
+        tokens.AddToken(new soul_expected::ast::common::Token(QUEST, "QUEST", "'?'"));
+        tokens.AddToken(new soul_expected::ast::common::Token(DOT, "DOT", "'.'"));
+        tokens.AddToken(new soul_expected::ast::common::Token(ESCAPE, "ESCAPE", "escape"));
+        tokens.AddToken(new soul_expected::ast::common::Token(INVERSE, "INVERSE", "'^'"));
+        tokens.AddToken(new soul_expected::ast::common::Token(MINUS, "MINUS", "'-'"));
+        tokens.AddToken(new soul_expected::ast::common::Token(CHAR, "CHAR", "character"));
     }
     return &tokens;
 }

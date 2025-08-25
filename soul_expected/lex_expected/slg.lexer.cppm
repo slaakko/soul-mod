@@ -5,6 +5,7 @@ export module soul_expected.lex.slg;
 import std;
 import soul_expected.lexer;
 import soul_expected.ast.slg;
+import soul_expected.ast.common;
 import util_expected;
 import soul_expected.cpp.token;
 import soul_expected.cpp.op.token;
@@ -31,7 +32,7 @@ std::expected<soul_expected::lexer::Lexer<SlgLexer<CharT>, CharT>, int> MakeLexe
 template<typename CharT>
 std::expected<soul_expected::lexer::Lexer<SlgLexer<CharT>, CharT>, int> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const CharT* start, const CharT* end, const std::string& fileName);
 
-soul_expected::ast::slg::TokenCollection* GetTokens();
+soul_expected::ast::common::TokenCollection* GetTokens();
 
 struct SlgLexer_Variables : public soul_expected::lexer::Variables
 {

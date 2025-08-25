@@ -71,7 +71,7 @@ parser RegExParser
             { 
                 auto t = lexer.GetToken(pos);
                 if (!t) return std::unexpected<int>(t.error());
-                auto rv = MakeEscapeValue(lexer.FileName(), *t);
+                auto rv = soul_expected::re::token::parser::MakeEscapeValue(lexer.FileName(), *t);
                 if (!rv) return std::unexpected<int>(rv.error());
                 std::expected<soul_expected::ast::re::Symbol*, int> crv = lexerContext->MakeChar(*rv);
                 if (!crv) return std::unexpected<int>(crv.error());
@@ -169,7 +169,7 @@ parser RegExParser
             { 
                 auto t = lexer.GetToken(pos);
                 if (!t) return std::unexpected<int>(t.error());
-                auto rv = MakeEscapeValue(lexer.FileName(), *t);
+                auto rv = soul_expected::re::token::parser::MakeEscapeValue(lexer.FileName(), *t);
                 if (!rv) return std::unexpected<int>(rv.error());
                 return *rv;
             }

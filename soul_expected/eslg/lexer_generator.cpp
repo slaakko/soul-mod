@@ -10,9 +10,12 @@ import soul_expected.slg.classmap;
 import soul_expected.slg.file.parsers;
 import soul_expected.slg.token.generator;
 import soul_expected.slg.regular.expression.parser;
+import soul_expected.slg.code.modifier;
 import soul_expected.ast.re;
 import soul_expected.ast.cpp;
 import soul_expected.ast.common;
+import soul_expected.ast.source.pos;
+import soul_expected.lexer;
 
 namespace soul_expected::slg {
 
@@ -268,8 +271,8 @@ std::expected<bool, int> MakeClassMap(soul_expected::ast::re::LexerContext& lexe
     }
     std::string moduleName;
     soul_expected::ast::slg::Lexer* lexer = lexerContext.GetLexer();
-    soul_expected::ast::slg::File* file = lexer->GetFile();
-    if (file->Kind() == soul_expected::ast::slg::FileKind::lexerFile)
+    soul_expected::ast::common::File* file = lexer->GetFile();
+    if (file->Kind() == soul_expected::ast::common::FileKind::lexerFile)
     {
         soul_expected::ast::slg::LexerFile* lexerFile = static_cast<soul_expected::ast::slg::LexerFile*>(file);
         soul_expected::ast::common::ExportModule* mod = lexerFile->GetExportModule();
@@ -328,8 +331,8 @@ std::expected<bool, int> CompressClassMap(soul_expected::ast::re::LexerContext& 
 {
     std::string moduleName;
     soul_expected::ast::slg::Lexer* lexer = lexerContext.GetLexer();
-    soul_expected::ast::slg::File* file = lexer->GetFile();
-    if (file->Kind() == soul_expected::ast::slg::FileKind::lexerFile)
+    soul_expected::ast::common::File* file = lexer->GetFile();
+    if (file->Kind() == soul_expected::ast::common::FileKind::lexerFile)
     {
         soul_expected::ast::slg::LexerFile* lexerFile = static_cast<soul_expected::ast::slg::LexerFile*>(file);
         soul_expected::ast::common::ExportModule* mod = lexerFile->GetExportModule();
@@ -391,6 +394,52 @@ std::expected<bool, int> MakeDfa(soul_expected::ast::re::LexerContext& lexerCont
         }
     }
     return std::expected<bool, int>(true);
+}
+
+std::expected<std::string, int> GetTokenCppId(soul_expected::ast::slg::LexerFile* lexerFile, soul_expected::lexer::FileMap& fileMap, 
+    const soul_expected::ast::SourcePos& sourcePos,  const std::string& tokenName)
+{
+    soul_expected::ast::common::TokenMap* tokenMap = lexerFile->GetTokenMap();
+    if (tokenMap)
+    {
+        std::vector<soul_expected::ast::common::Token*> tokens = tokenMap->GetTokens(tokenName);
+        int n = static_cast<int>(tokens.size());
+        if (n == 1)
+        {
+            soul_expected::ast::common::Token* token = tokens.front();
+            return token->FullCppId();
+        }
+        else if (n > 1)
+        {
+            std::string tokenString;
+            for (int i = 0; i < n; ++i)
+            {
+                soul_expected::ast::common::Token* token = tokens[i];
+                if (i > 0)
+                {
+                    tokenString.append(" or\n");
+                }
+                tokenString.append(token->FullName());
+            }
+            std::expected<std::string, int> rv = soul_expected::lexer::MakeMessage("error", "ambiguous reference to token '" + tokenName + "' in lexer file '" +
+                lexerFile->FilePath() + "':\n" + tokenString, sourcePos, fileMap);
+            if (!rv) return rv;
+            std::string errorMessage = *rv;
+            return std::unexpected<int>(util::AllocateError(errorMessage));
+        }
+        else
+        {
+            std::expected<std::string, int> rv = soul_expected::lexer::MakeMessage("error", "token '" + tokenName + "' not found in lexer file '" +
+                lexerFile->FilePath(), sourcePos, fileMap);
+            if (!rv) return rv;
+            std::string errorMessage = *rv;
+            return std::unexpected<int>(util::AllocateError(errorMessage));
+        }
+    }
+    else
+    {
+        return std::unexpected<int>(util::AllocateError("token map not set"));
+    }
 }
 
 std::expected<bool, int> WriteVariables(soul_expected::ast::re::LexerContext& lexerContext, util::CodeFormatter& interfaceFormatter, util::CodeFormatter sourceFormatter)
@@ -456,7 +505,8 @@ std::expected<bool, int> WriteVariables(soul_expected::ast::re::LexerContext& le
     return std::expected<bool, int>(true);
 }
 
-std::expected<bool, int> WriteLexer(soul_expected::ast::re::LexerContext& lexerContext, soul_expected::ast::slg::SlgFile* slgFile, const std::string& root, bool verbose)
+std::expected<bool, int> WriteLexer(soul_expected::ast::re::LexerContext& lexerContext, soul_expected::ast::slg::SlgFile* slgFile, const std::string& root, 
+    soul_expected::lexer::FileMap& fileMap, bool verbose)
 {
     std::string interfaceFilePath;
     std::expected<std::string, int> fp = util::GetFullPath(util::Path::Combine(root, lexerContext.FileName() + ".cppm"));
@@ -480,10 +530,10 @@ std::expected<bool, int> WriteLexer(soul_expected::ast::re::LexerContext& lexerC
     if (!rv) return rv;
     sourceFormatter.WriteLine();
     soul_expected::ast::slg::Lexer* lexer = lexerContext.GetLexer();
-    soul_expected::ast::slg::File* file = lexer->GetFile();
+    soul_expected::ast::common::File* file = lexer->GetFile();
     soul_expected::ast::slg::LexerFile* lexerFile = nullptr;
     std::string moduleName;
-    if (file->Kind() == soul_expected::ast::slg::FileKind::lexerFile)
+    if (file->Kind() == soul_expected::ast::common::FileKind::lexerFile)
     {
         lexerFile = static_cast<soul_expected::ast::slg::LexerFile*>(file);
         soul_expected::ast::common::ExportModule* mod = lexerFile->GetExportModule();
@@ -505,34 +555,18 @@ std::expected<bool, int> WriteLexer(soul_expected::ast::re::LexerContext& lexerC
     if (!rv) return rv;
     rv = interfaceFormatter.WriteLine("import soul_expected.ast.slg;");
     if (!rv) return rv;
+    rv = interfaceFormatter.WriteLine("import soul_expected.ast.common;");
+    if (!rv) return rv;
     rv = interfaceFormatter.WriteLine("import util_expected;");
     if (!rv) return rv;
     for (const auto& imprt : lexerFile->Imports())
     {
-        std::expected< soul_expected::ast::slg::Collection*, int> crv = slgFile->GetCollection(imprt->ModuleName());
+        std::expected<soul_expected::ast::common::Collection*, int> crv = slgFile->GetCollection(imprt->ModuleName());
         if (!crv) return std::unexpected<int>(crv.error());
-        soul_expected::ast::slg::Collection* collection = *crv;
-        if (collection->Kind() == soul_expected::ast::slg::CollectionKind::tokenCollection)
+        soul_expected::ast::common::Collection* collection = *crv;
+        if (collection->Kind() == soul_expected::ast::common::CollectionKind::tokenCollection)
         {
             rv = interfaceFormatter.WriteLine("import " + collection->Name() + ";");
-            if (!rv) return rv;
-        }
-    }
-    interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("using namespace soul_expected;");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("using namespace soul_expected::lexer;");
-    if (!rv) return rv;
-    for (const auto& imprt : lexerFile->Imports())
-    {
-        std::expected< soul_expected::ast::slg::Collection*, int> crv = slgFile->GetCollection(imprt->ModuleName());
-        if (!crv) return std::unexpected<int>(crv.error());
-        soul_expected::ast::slg::Collection* collection = *crv;
-        if (collection->Kind() == soul_expected::ast::slg::CollectionKind::tokenCollection)
-        {
-            rv = interfaceFormatter.WriteLine("using namespace " + soul_expected::ast::common::ToNamespaceName(collection->Name()) + ";");
-            if (!rv) return rv;
-            rv = sourceFormatter.WriteLine("using namespace " + soul_expected::ast::common::ToNamespaceName(collection->Name()) + ";");
             if (!rv) return rv;
         }
     }
@@ -561,18 +595,18 @@ std::expected<bool, int> WriteLexer(soul_expected::ast::re::LexerContext& lexerC
         "const std::string& moduleFileName, util::ResourceFlags resourceFlags, const CharT* start, const CharT* end, const std::string& fileName);");
     if (!rv) return rv;
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("soul_expected::ast::slg::TokenCollection* GetTokens();");
+    rv = interfaceFormatter.WriteLine("soul_expected::ast::common::TokenCollection* GetTokens();");
     if (!rv) return rv;
     interfaceFormatter.WriteLine();
     rv = sourceFormatter.WriteLine("namespace " + soul_expected::ast::common::ToNamespaceName(moduleName) + " {");
     if (!rv) return rv;
     sourceFormatter.WriteLine();
-    rv = sourceFormatter.WriteLine("soul_expected::ast::slg::TokenCollection* GetTokens()");
+    rv = sourceFormatter.WriteLine("soul_expected::ast::common::TokenCollection* GetTokens()");
     if (!rv) return rv;
     rv = sourceFormatter.WriteLine("{");
     if (!rv) return rv;
     sourceFormatter.IncIndent();
-    rv = sourceFormatter.WriteLine("static soul_expected::ast::slg::TokenCollection tokens(\"" + moduleName + ".tokens\");");
+    rv = sourceFormatter.WriteLine("static soul_expected::ast::common::TokenCollection tokens(\"" + moduleName + ".tokens\");");
     if (!rv) return rv;
     rv = sourceFormatter.WriteLine("if (!tokens.Initialized())");
     if (!rv) return rv;
@@ -584,7 +618,7 @@ std::expected<bool, int> WriteLexer(soul_expected::ast::re::LexerContext& lexerC
     soul_expected::ast::slg::Tokens* tokens = lexerContext.GetTokens();
     for (const auto& token : tokens->GetTokens())
     {
-        rv = sourceFormatter.WriteLine("tokens.AddToken(new soul_expected::ast::slg::Token(" + token->Name() + ", \"" + token->Name() + "\", \"" + token->Info() + "\"));");
+        rv = sourceFormatter.WriteLine("tokens.AddToken(new soul_expected::ast::common::Token(" + token->FullCppId() + ", \"" + token->Name() + "\", \"" + token->Info() + "\"));");
         if (!rv) return rv;
     }
     sourceFormatter.DecIndent();
@@ -752,6 +786,16 @@ std::expected<bool, int> WriteLexer(soul_expected::ast::re::LexerContext& lexerC
     {
         rv = interfaceFormatter.WriteLine("case " + std::to_string(rule->Index()) + ":");
         if (!rv) return rv;
+        soul_expected::ast::common::TokenMap* tokenMap = lexerFile->GetTokenMap();
+        if (tokenMap)
+        {
+            rv = ModifyCode(rule->Code(), *tokenMap, lexerFile, fileMap);
+        }
+        else
+        {
+            return std::unexpected<int>(util::AllocateError("token map not set"));
+        }
+        if (!rv) return rv;
         soul_expected::ast::SourcePos sourcePos;
         rule->Code()->InsertFront(
             new soul_expected::ast::cpp::ExpressionStatementNode(sourcePos,
@@ -816,7 +860,7 @@ std::expected<bool, int> WriteLexer(soul_expected::ast::re::LexerContext& lexerC
     rv = interfaceFormatter.WriteLine("{");
     if (!rv) return rv;
     interfaceFormatter.IncIndent();
-    rv = interfaceFormatter.WriteLine("std::expected<ClassMap<CharT>*, int> rv = soul_expected::lexer::MakeClassMap<CharT>(\"" + moduleName + ".classmap\");");
+    rv = interfaceFormatter.WriteLine("std::expected<soul_expected::lexer::ClassMap<CharT>*, int> rv = soul_expected::lexer::MakeClassMap<CharT>(\"" + moduleName + ".classmap\");");
     if (!rv) return rv;
     rv = interfaceFormatter.WriteLine("if (!rv) return std::unexpected<int>(rv.error());");
     if (!rv) return rv;
@@ -845,7 +889,7 @@ std::expected<bool, int> WriteLexer(soul_expected::ast::re::LexerContext& lexerC
     rv = interfaceFormatter.WriteLine("{");
     if (!rv) return rv;
     interfaceFormatter.IncIndent();
-    rv = interfaceFormatter.WriteLine("std::expected<ClassMap<CharT>*, int> rv = soul_expected::lexer::MakeClassMap<CharT>(moduleFileName, \"" +
+    rv = interfaceFormatter.WriteLine("std::expected<soul_expected::lexer::ClassMap<CharT>*, int> rv = soul_expected::lexer::MakeClassMap<CharT>(moduleFileName, \"" +
         moduleName + ".classmap\", resourceFlags);");
     if (!rv) return rv;
     rv = interfaceFormatter.WriteLine("if (!rv) return std::unexpected<int>(rv.error());");
@@ -982,7 +1026,9 @@ std::expected<bool, int> WriteLexer(soul_expected::ast::re::LexerContext& lexerC
             rv = sourceFormatter.WriteLine(",");
             if (!rv) return rv;
         }
-        rv = sourceFormatter.Write(" { \"" + keyword->Str() + "\", " + keyword->TokenName() + " }");
+        auto kwrv = GetTokenCppId(lexerFile, fileMap, keyword->GetSourcePos(), keyword->TokenName());
+        if (!kwrv) return std::unexpected<int>(kwrv.error());
+        rv = sourceFormatter.Write(" { \"" + keyword->Str() + "\", " + *kwrv + " }");
         if (!rv) return rv;
         hasKw = true;
     }
@@ -1029,7 +1075,9 @@ std::expected<bool, int> WriteLexer(soul_expected::ast::re::LexerContext& lexerC
             rv = sourceFormatter.WriteLine(",");
             if (!rv) return rv;
         }
-        rv = sourceFormatter.Write(" { u8\"" + keyword->Str() + "\", " + keyword->TokenName() + " }");
+        auto kwrv = GetTokenCppId(lexerFile, fileMap, keyword->GetSourcePos(), keyword->TokenName());
+        if (!kwrv) return std::unexpected<int>(kwrv.error());
+        rv = sourceFormatter.Write(" { u8\"" + keyword->Str() + "\", " + *kwrv + " }");
         if (!rv) return rv;
         hasKw8 = true;
     }
@@ -1075,7 +1123,9 @@ std::expected<bool, int> WriteLexer(soul_expected::ast::re::LexerContext& lexerC
             rv = sourceFormatter.WriteLine(",");
             if (!rv) return rv;
         }
-        rv = sourceFormatter.Write(" { u\"" + keyword->Str() + "\", " + keyword->TokenName() + " }");
+        auto kwrv = GetTokenCppId(lexerFile, fileMap, keyword->GetSourcePos(), keyword->TokenName());
+        if (!kwrv) return std::unexpected<int>(kwrv.error());
+        rv = sourceFormatter.Write(" { u\"" + keyword->Str() + "\", " + *kwrv + " }");
         if (!rv) return rv;
         hasKw16 = true;
     }
@@ -1122,7 +1172,9 @@ std::expected<bool, int> WriteLexer(soul_expected::ast::re::LexerContext& lexerC
             rv = sourceFormatter.WriteLine(",");
             if (!rv) return rv;
         }
-        rv = sourceFormatter.Write(" { U\"" + keyword->Str() + "\", " + keyword->TokenName() + " }");
+        auto kwrv = GetTokenCppId(lexerFile, fileMap, keyword->GetSourcePos(), keyword->TokenName());
+        if (!kwrv) return std::unexpected<int>(kwrv.error());
+        rv = sourceFormatter.Write(" { U\"" + keyword->Str() + "\", " + *kwrv + " }");
         if (!rv) return rv;
         hasKw32 = true;
     }
@@ -1155,7 +1207,8 @@ std::expected<bool, int> WriteLexer(soul_expected::ast::re::LexerContext& lexerC
     return std::expected<bool, int>(true);
 }
 
-std::expected<bool, int> GenerateLexer(soul_expected::ast::slg::SlgFile* slgFile, soul_expected::ast::slg::LexerFile* lexerFile, bool verbose, bool debug)
+std::expected<bool, int> GenerateLexer(soul_expected::ast::slg::SlgFile* slgFile, soul_expected::ast::slg::LexerFile* lexerFile, soul_expected::lexer::FileMap& fileMap, 
+    bool verbose, bool debug)
 {
     soul_expected::ast::re::LexerContext lexerContext;
     if (!lexerContext) return std::unexpected<int>(lexerContext.Error());
@@ -1170,21 +1223,22 @@ std::expected<bool, int> GenerateLexer(soul_expected::ast::slg::SlgFile* slgFile
     soul_expected::ast::slg::Expressions expressions;
     for (const auto& imprt : lexerFile->Imports())
     {
-        std::expected<soul_expected::ast::slg::Collection*, int> rv = slgFile->GetCollection(imprt->ModuleName());
+        std::expected<soul_expected::ast::common::Collection*, int> rv = slgFile->GetCollection(imprt->ModuleName());
         if (!rv) return std::unexpected<int>(rv.error());
-        soul_expected::ast::slg::Collection* collection = *rv;
+        soul_expected::ast::common::Collection* collection = *rv;
         switch (collection->Kind())
         {
-            case soul_expected::ast::slg::CollectionKind::tokenCollection:
+            case soul_expected::ast::common::CollectionKind::tokenCollection:
             {
-                soul_expected::ast::slg::TokenCollection* tokenCollection = static_cast<soul_expected::ast::slg::TokenCollection*>(collection);
+                soul_expected::ast::common::TokenCollection* tokenCollection = static_cast<soul_expected::ast::common::TokenCollection*>(collection);
                 for (const auto& token : tokenCollection->Tokens())
                 {
                     tokens.AddToken(token.get());
+                    lexerFile->GetTokenMap()->AddToken(token.get());
                 }
                 break;
             }
-            case soul_expected::ast::slg::CollectionKind::keywordCollection:
+            case soul_expected::ast::common::CollectionKind::keywordCollection:
             {
                 soul_expected::ast::slg::KeywordCollection* keywordCollection = static_cast<soul_expected::ast::slg::KeywordCollection*>(collection);
                 for (const auto& keyword : keywordCollection->Keywords())
@@ -1193,7 +1247,7 @@ std::expected<bool, int> GenerateLexer(soul_expected::ast::slg::SlgFile* slgFile
                 }
                 break;
             }
-            case soul_expected::ast::slg::CollectionKind::expressionCollection:
+            case soul_expected::ast::common::CollectionKind::expressionCollection:
             {
                 soul_expected::ast::slg::ExpressionCollection* expressionCollection = static_cast<soul_expected::ast::slg::ExpressionCollection*>(collection);
                 for (const auto& expression : expressionCollection->Expressions())
@@ -1224,12 +1278,12 @@ std::expected<bool, int> GenerateLexer(soul_expected::ast::slg::SlgFile* slgFile
     if (!rv) return rv;
     rv = MakeDfa(lexerContext);
     if (!rv) return rv;
-    rv = WriteLexer(lexerContext, slgFile, root, verbose);
+    rv = WriteLexer(lexerContext, slgFile, root, fileMap, verbose);
     if (!rv) return rv;
     return std::expected<bool, int>(true);
 }
 
-std::expected<bool, int> GenerateLexer(soul_expected::ast::slg::SlgFile* slgFile, bool verbose, bool debug)
+std::expected<bool, int> GenerateLexer(soul_expected::ast::slg::SlgFile* slgFile, soul_expected::lexer::FileMap& fileMap, bool verbose, bool debug)
 {
     if (verbose)
     {
@@ -1253,9 +1307,9 @@ std::expected<bool, int> GenerateLexer(soul_expected::ast::slg::SlgFile* slgFile
                 {
                     std::cout << "> " << tokenFilePath << std::endl;
                 }
-                std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int> rv = ParseTokenFile(tokenFilePath, tokenFileDeclaration->External());
+                std::expected<std::unique_ptr<soul_expected::ast::common::TokenFile>, int> rv = ParseTokenFile(tokenFilePath, tokenFileDeclaration->External(), fileMap);
                 if (!rv) return std::unexpected<int>(rv.error());
-                std::unique_ptr<soul_expected::ast::slg::TokenFile> tokenFile = std::move(*rv);
+                std::unique_ptr<soul_expected::ast::common::TokenFile> tokenFile = std::move(*rv);
                 std::expected<bool, int> mrv = GenerateTokenModule(tokenFile.get(), verbose);
                 if (!mrv) return std::unexpected<int>(mrv.error());
                 std::expected<bool, int> trv = slgFile->AddTokenFile(tokenFile.release());
@@ -1271,7 +1325,7 @@ std::expected<bool, int> GenerateLexer(soul_expected::ast::slg::SlgFile* slgFile
                 {
                     std::cout << "> " << keywordFilePath << std::endl;
                 }
-                std::expected<std::unique_ptr<soul_expected::ast::slg::KeywordFile>, int> rv = ParseKeywordFile(keywordFilePath);
+                std::expected<std::unique_ptr<soul_expected::ast::slg::KeywordFile>, int> rv = ParseKeywordFile(keywordFilePath, fileMap);
                 if (!rv) return std::unexpected<int>(rv.error());
                 std::unique_ptr<soul_expected::ast::slg::KeywordFile> keywordFile = std::move(*rv);
                 std::expected<bool, int> krv = slgFile->AddKeywordFile(keywordFile.release());
@@ -1287,7 +1341,7 @@ std::expected<bool, int> GenerateLexer(soul_expected::ast::slg::SlgFile* slgFile
                 {
                     std::cout << "> " << expressionFilePath << std::endl;
                 }
-                std::expected<std::unique_ptr<soul_expected::ast::slg::ExpressionFile>, int> rv = ParseExpressionFile(expressionFilePath);
+                std::expected<std::unique_ptr<soul_expected::ast::slg::ExpressionFile>, int> rv = ParseExpressionFile(expressionFilePath, fileMap);
                 if (!rv) return std::unexpected<int>(rv.error());
                 std::unique_ptr<soul_expected::ast::slg::ExpressionFile> expressionFile = std::move(*rv);
                 std::expected<bool, int> erv = slgFile->AddExpressionFile(expressionFile.release());
@@ -1303,7 +1357,7 @@ std::expected<bool, int> GenerateLexer(soul_expected::ast::slg::SlgFile* slgFile
                 {
                     std::cout << "> " << lexerFilePath << std::endl;
                 }
-                std::expected<std::unique_ptr<soul_expected::ast::slg::LexerFile>, int> rv = ParseLexerFile(lexerFilePath);
+                std::expected<std::unique_ptr<soul_expected::ast::slg::LexerFile>, int> rv = ParseLexerFile(lexerFilePath, fileMap);
                 if (!rv) return std::unexpected<int>(rv.error());
                 std::unique_ptr<soul_expected::ast::slg::LexerFile> lexerFile = std::move(*rv);
                 std::expected<bool, int> lrv = slgFile->AddLexerFile(lexerFile.release());
@@ -1314,7 +1368,7 @@ std::expected<bool, int> GenerateLexer(soul_expected::ast::slg::SlgFile* slgFile
     }
     for (const auto& lexerFile : slgFile->LexerFiles())
     {
-        std::expected<bool, int> rv = GenerateLexer(slgFile, lexerFile.get(), verbose, debug);
+        std::expected<bool, int> rv = GenerateLexer(slgFile, lexerFile.get(), fileMap, verbose, debug);
         if (!rv) return rv;
     }
     if (verbose)

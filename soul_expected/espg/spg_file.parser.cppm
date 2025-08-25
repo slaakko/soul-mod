@@ -7,10 +7,7 @@ import std;
 import soul_expected.lexer;
 import soul_expected.parser;
 import soul_expected.ast.spg;
-import soul_expected.ast.cpp;
-
-using namespace soul_expected::ast::spg;
-using namespace soul_expected::ast::cpp;
+import soul_expected.ast.common;
 
 export namespace soul_expected::spg::spg::file::parser {
 
@@ -21,6 +18,7 @@ struct SpgFileParser
     static std::expected<soul_expected::parser::Match, int> SpgFile(LexerT& lexer);
     static std::expected<soul_expected::parser::Match, int> SpgFileDeclaration(LexerT& lexer);
     static std::expected<soul_expected::parser::Match, int> ParserFileDeclaration(LexerT& lexer);
+    static std::expected<soul_expected::parser::Match, int> TokenFileDeclaration(LexerT& lexer);
 };
 
 } // namespace soul_expected::spg::spg::file::parser

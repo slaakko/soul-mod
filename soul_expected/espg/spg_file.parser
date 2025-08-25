@@ -6,7 +6,7 @@
 export module soul_expected.spg.spg.file.parser;
 
 [interface]import soul_expected.ast.spg;
-[interface]import soul_expected.ast.cpp;
+[interface]import soul_expected.ast.common;
 [implementation]import soul_expected.cpp.token;
 [implementation]import soul_expected.cpp.op.token;
 [implementation]import soul_expected.punctuation.token;
@@ -36,6 +36,7 @@ parser SpgFileParser
 
 	SpgFileDeclaration : soul_expected::ast::spg::SpgFileDeclaration*
 		::= ParserFileDeclaration:parserFileDeclaration{ return parserFileDeclaration; }
+        |   TokenFileDeclaration:tokenFileDeclaration{ return tokenFileDeclaration; }
 		;
 
     ParserFileDeclaration(var bool external) : soul_expected::ast::spg::ParserFileDeclaration*
@@ -50,4 +51,15 @@ parser SpgFileParser
         }
         ;
 
+    TokenFileDeclaration(var bool external) : soul_expected::ast::spg::SpgFileDeclaration*
+        ::= 
+        (
+            (EXTERN{ external = true; } | empty{ external = false; }) TOKENS FilePath:filePath SEMICOLON
+        )
+        {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul_expected::ast::spg::TokenFileDeclaration(*sp, filePath, external); 
+        }
+        ;
 }

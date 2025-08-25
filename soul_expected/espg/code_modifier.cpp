@@ -7,6 +7,7 @@ module soul_expected.spg.code.modifier;
 
 import util_expected;
 import soul_expected.ast.cpp;
+import soul_expected.ast.common;
 import soul_expected.lexer.error;
 import soul_expected.spg.parsing.util;
 
@@ -69,7 +70,7 @@ class CodeModifierVisitor : public soul_expected::ast::cpp::DefaultVisitor
 {
 public:
     CodeModifierVisitor(bool ptrType_, const std::vector<NonterminalInfo>& nonterminalInfos_, soul_expected::ast::cpp::TypeIdNode* returnType_, bool noDebugSupport_,
-        const std::string& ruleName_, soul_expected::lexer::FileMap& fileMap_);
+        const std::string& ruleName_, soul_expected::ast::common::TokenMap* tokenMap, soul_expected::lexer::FileMap& fileMap_);
     void Visit(soul_expected::ast::cpp::TypeNameNode& node) override;
     void Visit(soul_expected::ast::cpp::IdExprNode& node) override;
     void Visit(soul_expected::ast::cpp::ReturnStatementNode& node) override;
@@ -79,13 +80,15 @@ private:
     soul_expected::ast::cpp::TypeIdNode* returnType;
     bool noDebugSupport;
     std::string ruleName;
+    soul_expected::ast::common::TokenMap* tokenMap;
     soul_expected::lexer::FileMap& fileMap;
 };
 
 CodeModifierVisitor::CodeModifierVisitor(
     bool ptrType_, const std::vector<NonterminalInfo>& nonterminalInfos_, soul_expected::ast::cpp::TypeIdNode* returnType_, bool noDebugSupport_, 
-    const std::string& ruleName_, soul_expected::lexer::FileMap& fileMap_) :
-    ptrType(ptrType_), nonterminalInfos(nonterminalInfos_), returnType(returnType_), noDebugSupport(noDebugSupport_), ruleName(ruleName_), fileMap(fileMap_)
+    const std::string& ruleName_, soul_expected::ast::common::TokenMap* tokenMap_, soul_expected::lexer::FileMap& fileMap_) :
+    ptrType(ptrType_), nonterminalInfos(nonterminalInfos_), returnType(returnType_), noDebugSupport(noDebugSupport_), ruleName(ruleName_), tokenMap(tokenMap_), 
+    fileMap(fileMap_)
 {
 }
 
@@ -110,6 +113,12 @@ void CodeModifierVisitor::Visit(soul_expected::ast::cpp::IdExprNode& node)
             }
         }
     }
+    std::vector<soul_expected::ast::common::Token*> tokens = tokenMap->GetTokens(node.Id());
+    if (tokens.size() == 1)
+    {
+        soul_expected::ast::common::Token* token = tokens.front();
+        node.SetId(token->FullCppId());
+    }
 }
 
 void CodeModifierVisitor::Visit(soul_expected::ast::cpp::TypeNameNode& node)
@@ -132,6 +141,12 @@ void CodeModifierVisitor::Visit(soul_expected::ast::cpp::TypeNameNode& node)
                 node.SetName(info.nonterminalParser->InstanceName() + "->value");
             }
         }
+    }
+    std::vector<soul_expected::ast::common::Token*> tokens = tokenMap->GetTokens(node.Name());
+    if (tokens.size() == 1)
+    {
+        soul_expected::ast::common::Token* token = tokens.front();
+        node.SetName(token->FullCppId());
     }
 }
 
@@ -229,9 +244,9 @@ void CodeModifierVisitor::Visit(soul_expected::ast::cpp::ReturnStatementNode& no
 
 std::expected<bool, int> ModifyCode(soul_expected::ast::cpp::CompoundStatementNode* code, bool ptrType, const std::string& nonterminalName, 
     const std::vector<NonterminalInfo>& nonterminalInfos, soul_expected::ast::cpp::TypeIdNode* returnType, bool noDebugSupport, const std::string& currentRuleName, 
-    soul_expected::lexer::FileMap& fileMap)
+    soul_expected::ast::common::TokenMap* tokenMap, soul_expected::lexer::FileMap& fileMap)
 {
-    CodeModifierVisitor visitor(ptrType, nonterminalInfos, returnType, noDebugSupport, currentRuleName, fileMap);
+    CodeModifierVisitor visitor(ptrType, nonterminalInfos, returnType, noDebugSupport, currentRuleName, tokenMap, fileMap);
     code->Accept(visitor);
     if (!visitor) return std::unexpected<int>(visitor.Error());
     return std::expected<bool, int>(true);

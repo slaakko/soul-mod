@@ -1,7 +1,0 @@
-project cpp_expected.parsers;
-parser <declaration.parser>;
-parser <declarator.parser>;
-parser <expression.parser>;
-parser <identifier.parser>;
-parser <literal.parser>;
-parser <statement.parser>;

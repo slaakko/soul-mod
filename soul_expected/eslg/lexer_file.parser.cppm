@@ -9,9 +9,6 @@ import soul_expected.parser;
 import soul_expected.ast.slg;
 import soul_expected.ast.cpp;
 
-using namespace soul_expected::ast::slg;
-using namespace soul_expected::ast::cpp;
-
 export namespace soul_expected::slg::lexer::file::parser {
 
 template<typename LexerT>

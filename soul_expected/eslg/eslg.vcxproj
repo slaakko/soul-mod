@@ -145,6 +145,8 @@
   <ItemGroup>
     <ClCompile Include="classmap.cpp" />
     <ClCompile Include="classmap.cppm" />
+    <ClCompile Include="code_modifier.cpp" />
+    <ClCompile Include="code_modifier.cppm" />
     <ClCompile Include="expression_file.parser.cpp" />
     <ClCompile Include="expression_file.parser.cppm" />
     <ClCompile Include="file_parsers.cpp" />
@@ -162,8 +164,6 @@
     <ClCompile Include="slg_file.parser.cppm" />
     <ClCompile Include="slg_parsers_rules.cpp" />
     <ClCompile Include="slg_parsers_rules.cppm" />
-    <ClCompile Include="token_file.parser.cpp" />
-    <ClCompile Include="token_file.parser.cppm" />
     <ClCompile Include="token_generator.cpp" />
     <ClCompile Include="token_generator.cppm" />
   </ItemGroup>
@@ -202,7 +202,6 @@
     <None Include="lexer_file.parser" />
     <None Include="slg_file.parser" />
     <None Include="slg_parsers.spg" />
-    <None Include="token_file.parser" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\lex_expected\soul_expected.lex.re.classmap.rc" />

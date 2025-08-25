@@ -90,8 +90,22 @@ std::expected<std::unique_ptr<soul_expected::ast::spg::ParserFile>, int>  ParseP
     return std::expected<std::unique_ptr<soul_expected::ast::spg::ParserFile>, int>(std::move(parserFile));
 }
 
-std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int> ParseTokenFile(const std::string& tokenFilePath, bool external)
+std::expected<std::unique_ptr<soul_expected::ast::common::TokenFile>, int> ParseTokenFile(const std::string& tokenFilePath, const soul_expected::ast::SourcePos& sourcePos, 
+    bool verbose, bool external, soul_expected::lexer::FileMap& fileMap)
 {
+    std::filesystem::path p = tokenFilePath;
+    if (!std::filesystem::exists(p))
+    {
+        std::expected<std::string, int> rv = soul_expected::lexer::MakeMessage("error", "token file '" + tokenFilePath + "' not found", sourcePos, fileMap);
+        if (!rv) return std::unexpected<int>(rv.error());
+        std::string errorMessage = std::move(*rv);
+        return std::unexpected<int>(util::AllocateError(errorMessage));
+    }
+    if (verbose)
+    {
+        std::cout << "> " << tokenFilePath << std::endl;
+    }
+    std::int32_t file = fileMap.MapFile(tokenFilePath);
     std::expected<std::string, int> frv = util::ReadFile(tokenFilePath);
     if (!frv) return std::unexpected<int>(frv.error());
     std::string tokenFileContent = std::move(*frv);
@@ -103,15 +117,16 @@ std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int> ParseTok
     auto lexer = std::move(*rv);
     lexer.SetRuleNameMapPtr(common_expected::parser::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
-    std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int> tokenFileRv = soul_expected::common::token::file::parser::TokenFileParser<LexerType>::Parse(
+    std::expected<std::unique_ptr<soul_expected::ast::common::TokenFile>, int> tokenFileRv = soul_expected::common::token::file::parser::TokenFileParser<LexerType>::Parse(
         lexer);
     if (!tokenFileRv) return tokenFileRv;
-    std::unique_ptr<soul_expected::ast::slg::TokenFile> tokenFile = std::move(*tokenFileRv);
+    std::unique_ptr<soul_expected::ast::common::TokenFile> tokenFile = std::move(*tokenFileRv);
     if (external)
     {
         tokenFile->SetExternal();
     }
-    return std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int>(std::move(tokenFile));
+    fileMap.AddFileContent(file, std::move(content), std::move(lexer.GetLineStartIndeces()));
+    return std::expected<std::unique_ptr<soul_expected::ast::common::TokenFile>, int>(std::move(tokenFile));
 }
 
 

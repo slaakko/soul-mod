@@ -12,6 +12,7 @@ import soul_expected.lexer.keyword;
 import soul_expected.lexer.classmap;
 import soul_expected.lexer.variables;
 import soul_expected.ast.slg;
+import soul_expected.ast.common;
 import soul_expected.ast.lexer.pos.pair;
 import soul_expected.ast.span;
 import soul_expected.lexer.parsing.log;
@@ -55,8 +56,8 @@ public:
     virtual void SetClassMap(soul_expected::lexer::ClassMap<CharT>* classMap) = 0;
     virtual Variables* GetVariables() const = 0;
     virtual std::vector<int> GetLineStartIndeces() const = 0;
-    virtual soul_expected::ast::slg::TokenCollection* GetTokenCollection() const = 0;
-    virtual void SetTokenCollection(soul_expected::ast::slg::TokenCollection* tokenCollection_) = 0;
+    virtual soul_expected::ast::common::TokenCollection* GetTokenCollection() const = 0;
+    virtual void SetTokenCollection(soul_expected::ast::common::TokenCollection* tokenCollection_) = 0;
     virtual KeywordMap<CharT>* GetKeywordMap() const = 0;
     virtual void SetKeywordMap(KeywordMap<CharT>* keywordMap_) = 0;
     virtual std::map<std::int64_t, std::string>* GetRuleNameMapPtr() const = 0;

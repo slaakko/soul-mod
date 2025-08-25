@@ -1,2 +1,3 @@
 project soul_expected.rex.spg;
 parser <rex.parser>;
+tokens <rex.token>;

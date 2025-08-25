@@ -1,2 +1,0 @@
-project common_expected.parser;
-parser <common.parser>;

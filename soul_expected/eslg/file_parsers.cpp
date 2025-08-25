@@ -28,8 +28,10 @@ using namespace soul_expected::slg::expression::file::parser;
 using namespace soul_expected::slg::lexer::file::parser;
 using namespace soul_expected::slg::slg::file::parser;
 
-std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int> ParseTokenFile(const std::string& tokenFilePath, bool external)
+std::expected<std::unique_ptr<soul_expected::ast::common::TokenFile>, int> ParseTokenFile(const std::string& tokenFilePath, bool external, 
+    soul_expected::lexer::FileMap& fileMap)
 {
+    int file = fileMap.MapFile(tokenFilePath);
     std::expected<std::string, int> frv = util::ReadFile(tokenFilePath);
     if (!frv) return std::unexpected<int>(frv.error());
     std::string tokenFileContent = std::move(*frv);
@@ -39,21 +41,24 @@ std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int> ParseTok
     auto rv = MakeLexer(content.c_str(), content.c_str() + content.length(), tokenFilePath);
     if (!rv) return std::unexpected<int>(rv.error());
     auto lexer = std::move(*rv);
+    lexer.SetFile(file);
     lexer.SetRuleNameMapPtr(common_expected::parser::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
-    std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int> tokenFileRv = soul_expected::common::token::file::parser::TokenFileParser<LexerType>::Parse(
+    std::expected<std::unique_ptr<soul_expected::ast::common::TokenFile>, int> tokenFileRv = soul_expected::common::token::file::parser::TokenFileParser<LexerType>::Parse(
         lexer);
     if (!tokenFileRv) return tokenFileRv;
-    std::unique_ptr<soul_expected::ast::slg::TokenFile> tokenFile = std::move(*tokenFileRv);
+    std::unique_ptr<soul_expected::ast::common::TokenFile> tokenFile = std::move(*tokenFileRv);
     if (external)
     {
         tokenFile->SetExternal();
     }
-    return std::expected<std::unique_ptr<soul_expected::ast::slg::TokenFile>, int>(std::move(tokenFile));
+    fileMap.AddFileContent(file, std::move(content), lexer.GetLineStartIndeces());
+    return std::expected<std::unique_ptr<soul_expected::ast::common::TokenFile>, int>(std::move(tokenFile));
 }
 
-std::expected<std::unique_ptr<soul_expected::ast::slg::KeywordFile>, int> ParseKeywordFile(const std::string& keywordFilePath)
+std::expected<std::unique_ptr<soul_expected::ast::slg::KeywordFile>, int> ParseKeywordFile(const std::string& keywordFilePath, soul_expected::lexer::FileMap& fileMap)
 {
+    int file = fileMap.MapFile(keywordFilePath);
     std::expected<std::string, int> frv = util::ReadFile(keywordFilePath);
     if (!frv) return std::unexpected<int>(frv.error());
     std::string keywordFileContent = std::move(*frv);
@@ -63,13 +68,19 @@ std::expected<std::unique_ptr<soul_expected::ast::slg::KeywordFile>, int> ParseK
     auto rv = MakeLexer(content.c_str(), content.c_str() + content.length(), keywordFilePath);
     if (!rv) return std::unexpected<int>(rv.error());
     auto lexer = std::move(*rv);
+    lexer.SetFile(file);
     lexer.SetRuleNameMapPtr(soul_expected::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
-    return KeywordFileParser<LexerType>::Parse(lexer);
+    auto prv = KeywordFileParser<LexerType>::Parse(lexer);
+    if (!prv) return prv;
+    fileMap.AddFileContent(file, std::move(content), lexer.GetLineStartIndeces());
+    return prv;
 }
 
-std::expected<std::unique_ptr<soul_expected::ast::slg::ExpressionFile>, int> ParseExpressionFile(const std::string& expressionFilePath)
+std::expected<std::unique_ptr<soul_expected::ast::slg::ExpressionFile>, int> ParseExpressionFile(const std::string& expressionFilePath, 
+    soul_expected::lexer::FileMap& fileMap)
 {
+    int file = fileMap.MapFile(expressionFilePath);
     std::expected<std::string, int> frv = util::ReadFile(expressionFilePath);
     if (!frv) return std::unexpected<int>(frv.error());
     std::string expressionFileContent = std::move(*frv);
@@ -79,13 +90,18 @@ std::expected<std::unique_ptr<soul_expected::ast::slg::ExpressionFile>, int> Par
     auto rv = MakeLexer(content.c_str(), content.c_str() + content.length(), expressionFilePath);
     if (!rv) return std::unexpected<int>(rv.error());
     auto lexer = std::move(*rv);
+    lexer.SetFile(file);
     lexer.SetRuleNameMapPtr(soul_expected::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
-    return ExpressionFileParser<LexerType>::Parse(lexer);
+    auto prv = ExpressionFileParser<LexerType>::Parse(lexer);
+    if (!prv) return prv;
+    fileMap.AddFileContent(file, std::move(content), lexer.GetLineStartIndeces());
+    return prv;
 }
 
-std::expected<std::unique_ptr<soul_expected::ast::slg::LexerFile>, int> ParseLexerFile(const std::string& lexerFilePath)
+std::expected<std::unique_ptr<soul_expected::ast::slg::LexerFile>, int> ParseLexerFile(const std::string& lexerFilePath, soul_expected::lexer::FileMap& fileMap)
 {
+    int file = fileMap.MapFile(lexerFilePath);
     std::expected<std::string, int> frv = util::ReadFile(lexerFilePath);
     if (!frv) return std::unexpected<int>(frv.error());
     std::string lexerFileContent = std::move(*frv);
@@ -95,14 +111,19 @@ std::expected<std::unique_ptr<soul_expected::ast::slg::LexerFile>, int> ParseLex
     auto rv = MakeLexer(content.c_str(), content.c_str() + content.length(), lexerFilePath);
     if (!rv) return std::unexpected<int>(rv.error());
     auto lexer = std::move(*rv);
+    lexer.SetFile(file);
     lexer.SetRuleNameMapPtr(soul_expected::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
     soul_expected::ast::cpp::Context context;
-    return LexerFileParser<LexerType>::Parse(lexer, &context);
+    auto prv = LexerFileParser<LexerType>::Parse(lexer, &context);
+    if (!prv) return prv;
+    fileMap.AddFileContent(file, std::move(content), lexer.GetLineStartIndeces());
+    return prv;
 }
 
-std::expected<std::unique_ptr<soul_expected::ast::slg::SlgFile>, int> ParseSlgFile(const std::string& slgFilePath)
+std::expected<std::unique_ptr<soul_expected::ast::slg::SlgFile>, int> ParseSlgFile(const std::string& slgFilePath, soul_expected::lexer::FileMap& fileMap)
 {
+    int file = fileMap.MapFile(slgFilePath);
     std::expected<std::string, int> frv = util::ReadFile(slgFilePath);
     if (!frv) return std::unexpected<int>(frv.error());
     std::string slgFileContent = std::move(*frv);
@@ -112,11 +133,15 @@ std::expected<std::unique_ptr<soul_expected::ast::slg::SlgFile>, int> ParseSlgFi
     auto rv = MakeLexer(content.c_str(), content.c_str() + content.length(), slgFilePath);
     if (!rv) return std::unexpected<int>(rv.error());
     auto lexer = std::move(*rv);
+    lexer.SetFile(file);
     lexer.SetRuleNameMapPtr(soul_expected::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
     auto vars = static_cast<typename LexerType::VariableClassType*>(lexer.GetVariables());
     vars->matchFilePath = true;
-    return SlgFileParser<LexerType>::Parse(lexer);
+    auto prv = SlgFileParser<LexerType>::Parse(lexer);
+    if (!prv) return prv;
+    fileMap.AddFileContent(file, std::move(content), lexer.GetLineStartIndeces());
+    return prv;
 }
 
 } // namespace soul_expected::slg

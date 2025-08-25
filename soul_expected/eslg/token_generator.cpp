@@ -10,7 +10,7 @@ import util_expected;
 
 namespace soul_expected::slg {
 
-std::expected<bool, int> GenerateTokenModule(soul_expected::ast::slg::TokenFile* tokenFile, bool verbose)
+std::expected<bool, int> GenerateTokenModule(soul_expected::ast::common::TokenFile* tokenFile, bool verbose)
 {
     if (tokenFile->IsExternal())
     {
@@ -25,7 +25,7 @@ std::expected<bool, int> GenerateTokenModule(soul_expected::ast::slg::TokenFile*
     std::ofstream interfaceFile(interfaceFilePath);
     if (!interfaceFile) return std::unexpected<int>(util::AllocateError("could not create file '" + interfaceFilePath + "'"));
     util::CodeFormatter formatter(interfaceFile);
-    soul_expected::ast::slg::TokenCollection* tokenCollection = tokenFile->GetTokenCollection();
+    soul_expected::ast::common::TokenCollection* tokenCollection = tokenFile->GetTokenCollection();
     formatter.WriteLine();
     std::expected<bool, int> rv = formatter.WriteLine("// this file has been automatically generated from '" +
         tokenFile->FilePath() + "' using soul lexer generator version " + util::SoulVersionStr());
@@ -47,7 +47,7 @@ std::expected<bool, int> GenerateTokenModule(soul_expected::ast::slg::TokenFile*
     int n = static_cast<int>(tokenCollection->Tokens().size());
     for (int i = 0; i < n; ++i)
     {
-        soul_expected::ast::slg::Token* token = tokenCollection->Tokens()[i].get();
+        soul_expected::ast::common::Token* token = tokenCollection->Tokens()[i].get();
         rv = formatter.WriteLine("constexpr std::int64_t " + token->Name() + " = (static_cast<std::int64_t>(tokenSetID) << 32) | " + std::to_string(i + 1) + ";");
         if (!rv) return rv;
     }
