@@ -14,6 +14,7 @@ import otava.symbols.namespaces;
 import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.type.symbol;
+import util;
 
 namespace otava::symbols {
 
@@ -493,6 +494,10 @@ void FundamentalTypeDefaultCtor::Resolve(SymbolTable& symbolTable)
 {
     FunctionSymbol::Resolve(symbolTable);
     type = symbolTable.GetType(typeId);
+    if (!type)
+    {
+        std::cout << "FundamentalTypeDefaultCtor::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+    }
 }
 
 void FundamentalTypeDefaultCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
@@ -536,6 +541,10 @@ void FundamentalTypeCopyCtor::Resolve(SymbolTable& symbolTable)
 {
     FunctionSymbol::Resolve(symbolTable);
     type = symbolTable.GetType(typeId);
+    if (!type)
+    {
+        std::cout << "FundamentalTypeCopyCtor::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+    }
 }
 
 void FundamentalTypeCopyCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -581,6 +590,10 @@ void FundamentalTypeMoveCtor::Resolve(SymbolTable& symbolTable)
 {
     FunctionSymbol::Resolve(symbolTable);
     type = symbolTable.GetType(typeId);
+    if (!type)
+    {
+        std::cout << "FundamentalTypeMoveCtor::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+    }
 }
 
 void FundamentalTypeMoveCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -629,6 +642,10 @@ void FundamentalTypeCopyAssignment::Resolve(SymbolTable& symbolTable)
 {
     FunctionSymbol::Resolve(symbolTable);
     type = symbolTable.GetType(typeId);
+    if (!type)
+    {
+        std::cout << "FundamentalTypeCopyAssignment::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+    }
 }
 
 void FundamentalTypeCopyAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -671,6 +688,10 @@ void FundamentalTypeMoveAssignment::Resolve(SymbolTable& symbolTable)
 {
     FunctionSymbol::Resolve(symbolTable);
     type = symbolTable.GetType(typeId);
+    if (!type)
+    {
+        std::cout << "FundamentalTypeMoveAssignment::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+    }
 }
 
 void FundamentalTypeMoveAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,

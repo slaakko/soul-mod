@@ -688,10 +688,6 @@ void ProcedureCallInstruction::Write(util::CodeFormatter& formatter)
 
 RetInstruction::RetInstruction(const soul::ast::Span& span_, Value* returnValue_) : Instruction(span_, nullptr, OpCode::ret), returnValue(returnValue_)
 {
-    if (returnValue && returnValue->GetType()->IsPointerType() && returnValue->GetType()->BaseType()->IsLongType())
-    {
-        int x = 0;
-    }
 }
 
 void RetInstruction::Accept(Visitor& visitor)

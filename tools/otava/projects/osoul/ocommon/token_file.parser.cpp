@@ -1,32 +1,26 @@
 
-// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/oslg/token_file.parser' using soul parser generator oespg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/ocommon/token_file.parser' using soul parser generator ospg version 5.0.0
 
-module soul.slg.token.file.parser;
+module soul.common.token.file.parser;
 
 import util;
 import soul.ast.spg;
+import soul.ast.common;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.punctuation.token;
 import soul.tool.token;
 import soul.common.common.parser;
 import soul.common.token.parser;
-import soul.lex;
+import soul.lex.slg;
+import soul.lex.spg;
 
-using namespace soul::cpp::token;
-using namespace soul::cpp::op::token;
-using namespace soul::punctuation::token;
-using namespace soul::tool::token;
-using namespace soul::common::common::parser;
-using namespace soul::common::token::parser;
-using namespace soul::lex;
-
-namespace soul::slg::token::file::parser {
+namespace soul::common::token::file::parser {
 
 template<typename LexerT>
-std::expected<std::unique_ptr<soul::ast::slg::TokenFile>, int> TokenFileParser<LexerT>::Parse(LexerT& lexer)
+std::expected<std::unique_ptr<soul::ast::common::TokenFile>, int> TokenFileParser<LexerT>::Parse(LexerT& lexer)
 {
-    std::unique_ptr<soul::ast::slg::TokenFile> value;
+    std::unique_ptr<soul::ast::common::TokenFile> value;
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
     {
@@ -39,7 +33,7 @@ std::expected<std::unique_ptr<soul::ast::slg::TokenFile>, int> TokenFileParser<L
     std::expected<soul::parser::Match, int> m = TokenFileParser<LexerT>::TokenFile(lexer);
     if (!m) return std::unexpected<int>(m.error());
     soul::parser::Match match = *m;
-    value.reset(static_cast<soul::ast::slg::TokenFile*>(match.value));
+    value.reset(static_cast<soul::ast::common::TokenFile*>(match.value));
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
     {
@@ -77,11 +71,11 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::TokenFile(Lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "TokenFile");
     }
     #endif
-    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7544922165020196865);
-    std::unique_ptr<soul::ast::slg::TokenFile> tokenFile = std::unique_ptr<soul::ast::slg::TokenFile>();
-    std::unique_ptr<soul::ast::slg::TokenCollection> tokenCollection = std::unique_ptr<soul::ast::slg::TokenCollection>();
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8614059994532282369);
+    std::unique_ptr<soul::ast::common::TokenFile> tokenFile = std::unique_ptr<soul::ast::common::TokenFile>();
+    std::unique_ptr<soul::ast::common::TokenCollection> tokenCollection = std::unique_ptr<soul::ast::common::TokenCollection>();
     std::unique_ptr<soul::parser::Value<std::string>> tokenCollectionName;
-    std::unique_ptr<soul::ast::slg::Token> token;
+    std::unique_ptr<soul::ast::common::Token> token;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -106,7 +100,7 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::TokenFile(Lexer
                             {
                                 std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(false);
-                                if (*lexer == TOKENS)
+                                if (*lexer == soul::tool::token::TOKENS)
                                 {
                                     auto a = ++lexer;
                                     if (!a) return std::unexpected<int>(a.error());
@@ -114,7 +108,7 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::TokenFile(Lexer
                                 }
                                 if (match.hit)
                                 {
-                                    tokenFile.reset(new soul::ast::slg::TokenFile(lexer.FileName()));
+                                    tokenFile.reset(new soul::ast::common::TokenFile(lexer.FileName()));
                                 }
                                 *parentMatch6 = match;
                             }
@@ -129,13 +123,13 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::TokenFile(Lexer
                                 soul::parser::Match* parentMatch8 = &match;
                                 {
                                     std::int64_t pos = lexer.GetPos();
-                                    std::expected<soul::parser::Match, int> m = CommonParser<LexerT>::QualifiedId(lexer);
+                                    std::expected<soul::parser::Match, int> m = soul::common::common::parser::CommonParser<LexerT>::QualifiedId(lexer);
                                     if (!m) return std::unexpected<int>(m.error());
                                     soul::parser::Match match = *m;
                                     tokenCollectionName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                                     if (match.hit)
                                     {
-                                        tokenCollection.reset(new soul::ast::slg::TokenCollection(tokenCollectionName->value));
+                                        tokenCollection.reset(new soul::ast::common::TokenCollection(tokenCollectionName->value));
                                     }
                                     *parentMatch8 = match;
                                 }
@@ -151,7 +145,7 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::TokenFile(Lexer
                         soul::parser::Match* parentMatch9 = &match;
                         {
                             soul::parser::Match match(false);
-                            if (*lexer == LBRACE)
+                            if (*lexer == soul::punctuation::token::LBRACE)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -182,10 +176,10 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::TokenFile(Lexer
                                     soul::parser::Match* parentMatch14 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
-                                        std::expected<soul::parser::Match, int> m = TokenFileParser<LexerT>::Token(lexer);
+                                        std::expected<soul::parser::Match, int> m = soul::common::token::file::parser::TokenFileParser<LexerT>::Token(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul::parser::Match match = *m;
-                                        token.reset(static_cast<soul::ast::slg::Token*>(match.value));
+                                        token.reset(static_cast<soul::ast::common::Token*>(match.value));
                                         if (match.hit)
                                         {
                                             tokenCollection->AddToken(token.release());
@@ -210,7 +204,7 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::TokenFile(Lexer
                                                     soul::parser::Match* parentMatch17 = &match;
                                                     {
                                                         soul::parser::Match match(false);
-                                                        if (*lexer == COMMA)
+                                                        if (*lexer == soul::punctuation::token::COMMA)
                                                         {
                                                             auto a = ++lexer;
                                                             if (!a) return std::unexpected<int>(a.error());
@@ -227,10 +221,10 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::TokenFile(Lexer
                                                             soul::parser::Match* parentMatch19 = &match;
                                                             {
                                                                 std::int64_t pos = lexer.GetPos();
-                                                                std::expected<soul::parser::Match, int> m = TokenFileParser<LexerT>::Token(lexer);
+                                                                std::expected<soul::parser::Match, int> m = soul::common::token::file::parser::TokenFileParser<LexerT>::Token(lexer);
                                                                 if (!m) return std::unexpected<int>(m.error());
                                                                 soul::parser::Match match = *m;
-                                                                token.reset(static_cast<soul::ast::slg::Token*>(match.value));
+                                                                token.reset(static_cast<soul::ast::common::Token*>(match.value));
                                                                 if (match.hit)
                                                                 {
                                                                     tokenCollection->AddToken(token.release());
@@ -280,7 +274,7 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::TokenFile(Lexer
                 soul::parser::Match* parentMatch20 = &match;
                 {
                     soul::parser::Match match(false);
-                    if (*lexer == RBRACE)
+                    if (*lexer == soul::punctuation::token::RBRACE)
                     {
                         auto a = ++lexer;
                         if (!a) return std::unexpected<int>(a.error());
@@ -330,7 +324,7 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::Token(LexerT& l
         soul::lexer::WriteBeginRuleToLog(lexer, "Token");
     }
     #endif
-    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7544922165020196866);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8614059994532282370);
     std::string name = std::string();
     std::string info = std::string();
     soul::parser::Match match(false);
@@ -353,7 +347,7 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::Token(LexerT& l
                         soul::parser::Match* parentMatch5 = &match;
                         {
                             soul::parser::Match match(false);
-                            if (*lexer == LPAREN)
+                            if (*lexer == soul::punctuation::token::LPAREN)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -371,7 +365,7 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::Token(LexerT& l
                                 {
                                     std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match(false);
-                                    if (*lexer == ID)
+                                    if (*lexer == soul::cpp::token::ID)
                                     {
                                         auto a = ++lexer;
                                         if (!a) return std::unexpected<int>(a.error());
@@ -397,7 +391,7 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::Token(LexerT& l
                         soul::parser::Match* parentMatch8 = &match;
                         {
                             soul::parser::Match match(false);
-                            if (*lexer == COMMA)
+                            if (*lexer == soul::punctuation::token::COMMA)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -419,7 +413,7 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::Token(LexerT& l
                         {
                             std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
-                            if (*lexer == STRING_LITERAL)
+                            if (*lexer == soul::cpp::token::STRING_LITERAL)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -447,7 +441,7 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::Token(LexerT& l
                 soul::parser::Match* parentMatch11 = &match;
                 {
                     soul::parser::Match match(false);
-                    if (*lexer == RPAREN)
+                    if (*lexer == soul::punctuation::token::RPAREN)
                     {
                         auto a = ++lexer;
                         if (!a) return std::unexpected<int>(a.error());
@@ -465,7 +459,7 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::Token(LexerT& l
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Token");
                 #endif
-                return soul::parser::Match(true, new soul::ast::slg::Token(name, info));
+                return soul::parser::Match(true, new soul::ast::common::Token(name, info));
             }
         }
         *parentMatch0 = match;
@@ -485,5 +479,6 @@ std::expected<soul::parser::Match, int> TokenFileParser<LexerT>::Token(LexerT& l
 }
 
 template struct TokenFileParser<soul::lexer::Lexer<soul::lex::slg::SlgLexer<char32_t>, char32_t>>;
+template struct TokenFileParser<soul::lexer::Lexer<soul::lex::spg::SpgLexer<char32_t>, char32_t>>;
 
-} // namespace soul::slg::token::file::parser
+} // namespace soul::common::token::file::parser

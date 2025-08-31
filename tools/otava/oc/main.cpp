@@ -39,6 +39,8 @@ void PrintHelp()
     std::cout << "  Set optimization level to OPTIMIZATION_LEVEL (0-3)" << std::endl;
     std::cout << "--rebuild | -r" << std::endl;
     std::cout << "  rebuild project" << std::endl;
+    std::cout << "--all | -a" << std::endl;
+    std::cout << "  build all dependent projects" << std::endl;
     std::cout << "--multithreaded | -m" << std::endl;
     std::cout << "  Build using all cores." << std::endl;
     std::cout << "--debug-parse | -d" << std::endl;
@@ -46,7 +48,7 @@ void PrintHelp()
     std::cout << "--xml | -x" << std::endl;
     std::cout << "  Write ASTs as XML." << std::endl;
     std::cout << "--seed | -s" << std::endl;
-    std::cout << "  Initialize uuid seed to 0." << std::endl;
+    std::cout << "  Initialize uuid seed from hash code of the file path of each project." << std::endl;
 }
 
 std::string Version()
@@ -64,7 +66,6 @@ int main(int argc, const char** argv)
         util::Init();
         otava::symbols::Init();
         otava::parser::recorded::parse::Init();
-        otava::symbols::ModuleMapper moduleMapper;
         soul::lexer::FileMap fileMap;
         std::vector<std::string> files;
         bool verbose = false;
@@ -74,6 +75,8 @@ int main(int argc, const char** argv)
         bool debugParse = false;
         bool setSeed = false;
         bool xml = false;
+        bool symbolXml = false;
+        bool all = false;
         int optLevel = -1;
         for (int i = 1; i < argc; ++i)
         {
@@ -134,6 +137,14 @@ int main(int argc, const char** argv)
                     {
                         xml = true;
                     }
+                    else if (arg == "--symbol-xml")
+                    {
+                        symbolXml = true;
+                    }
+                    else if (arg == "--all")
+                    {
+                        all = true;
+                    }
                     else
                     {
                         throw std::runtime_error("unknown option '" + arg + "'");
@@ -187,6 +198,11 @@ int main(int argc, const char** argv)
                                 rebuild = true;
                                 break;
                             }
+                            case 'a':
+                            {
+                                all = true;
+                                break;
+                            }
                             case 'm':
                             {
                                 multithreaded = true;
@@ -205,6 +221,11 @@ int main(int argc, const char** argv)
                             case 's':
                             {
                                 setSeed = true;
+                                break;
+                            }
+                            case 'y':
+                            {
+                                symbolXml = true;
                                 break;
                             }
                             default:
@@ -227,10 +248,6 @@ int main(int argc, const char** argv)
         if (config != "debug" && config != "release")
         {
             throw std::runtime_error("unknown configuration (" + config + "): not 'debug' or 'release'");
-        }
-        if (setSeed)
-        {
-            util::set_rand_seed(0);
         }
         if (optLevel != -1)
         {
@@ -255,6 +272,10 @@ int main(int argc, const char** argv)
                 {
                     buildFlags = buildFlags | otava::build::BuildFlags::rebuild;
                 }
+                if (all)
+                {
+                    buildFlags = buildFlags | otava::build::BuildFlags::all;
+                }
                 if (multithreaded)
                 {
                     buildFlags = buildFlags | otava::build::BuildFlags::multithreadedBuild;
@@ -267,7 +288,16 @@ int main(int argc, const char** argv)
                 {
                     buildFlags = buildFlags | otava::build::BuildFlags::xml;
                 }
-                otava::build::Build(moduleMapper, project.get(), config, optLevel, buildFlags);
+                if (symbolXml)
+                {
+                    buildFlags = buildFlags | otava::build::BuildFlags::symbolXml;
+                }
+                if (setSeed)
+                {
+                    buildFlags = buildFlags | otava::build::BuildFlags::seed;
+                }
+                std::set<otava::build::Project*, otava::build::ProjectLess> projectSet;
+                otava::build::Build(project.get(), config, optLevel, buildFlags, projectSet);
             }
             else if (file.ends_with(".solution"))
             {
@@ -281,6 +311,10 @@ int main(int argc, const char** argv)
                 {
                     buildFlags = buildFlags | otava::build::BuildFlags::rebuild;
                 }
+                if (all)
+                {
+                    buildFlags = buildFlags | otava::build::BuildFlags::all;
+                }
                 if (multithreaded)
                 {
                     buildFlags = buildFlags | otava::build::BuildFlags::multithreadedBuild;
@@ -289,7 +323,16 @@ int main(int argc, const char** argv)
                 {
                     buildFlags = buildFlags | otava::build::BuildFlags::xml;
                 }
-                otava::build::Build(moduleMapper, fileMap, solution.get(), config, optLevel, buildFlags);
+                if (symbolXml)
+                {
+                    buildFlags = buildFlags | otava::build::BuildFlags::symbolXml;
+                }
+                if (setSeed)
+                {
+                    buildFlags = buildFlags | otava::build::BuildFlags::seed;
+                }
+                std::set<otava::build::Project*, otava::build::ProjectLess> projectSet;
+                otava::build::Build(fileMap, solution.get(), config, optLevel, buildFlags, projectSet);
             }
             else
             {

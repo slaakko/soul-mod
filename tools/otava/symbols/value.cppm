@@ -188,6 +188,7 @@ public:
     std::string SymbolKindStr() const override { return "symbol value"; }
     std::string SymbolDocKindStr() const override { return "symbol_value"; }
     BoolValue* ToBoolValue(EvaluationContext& context) override;
+    bool IsExportSymbol(Context* context) const override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
@@ -210,6 +211,7 @@ public:
     std::string SymbolKindStr() const override { return "invoke value"; }
     std::string SymbolDocKindStr() const override { return "invoke_value"; }
     BoolValue* ToBoolValue(EvaluationContext& context) override;
+    bool IsExportSymbol(Context* context) const override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
@@ -262,7 +264,7 @@ class EvaluationContext
 public:
     EvaluationContext(SymbolTable& symbolTable_);
     void Init();
-    void Write(Writer& writer);
+    void Write(Writer& writer, Context* context);
     void Read(Reader& reader);
     BoolValue* GetBoolValue(bool value);
     IntegerValue* GetIntegerValue(std::int64_t value, const std::u32string& rep, TypeSymbol* type);

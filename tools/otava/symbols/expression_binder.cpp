@@ -1,5 +1,4 @@
 // =================================
-// =================================
 // Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
@@ -1024,6 +1023,12 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                     ClassTypeSymbol* cls = static_cast<ClassTypeSymbol*>(sym);
                     boundExpression = new BoundTypeNode(cls, node.GetSourcePos());
                 }
+                else if (sym && sym == classGroup)
+                {
+                    ClassGroupSymbol* classGroupSymbol = static_cast<ClassGroupSymbol*>(symbol);
+                    ClassGroupTypeSymbol* classGroupType = context->GetSymbolTable()->MakeClassGroupTypeSymbol(classGroupSymbol);
+                    boundExpression = new BoundClassGroupNode(classGroupSymbol, node.GetSourcePos(), classGroupType);
+                }
                 else
                 {
                     ThrowException("ambiguous reference to class '" + util::ToUtf8(classGroup->Name()) + "'", node.GetSourcePos(), context);
@@ -1050,6 +1055,11 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                         referredType = aliasType->ReferredType();
                     }
                     boundExpression = new BoundTypeNode(referredType, node.GetSourcePos());
+                }
+                else if (sym && sym == aliasGroup)
+                {
+                    AliasGroupTypeSymbol* aliasGroupType = context->GetSymbolTable()->MakeAliasGroupTypeSymbol(aliasGroup);
+                    boundExpression = new BoundAliasGroupNode(aliasGroup, node.GetSourcePos(), aliasGroupType);
                 }
                 else
                 {

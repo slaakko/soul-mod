@@ -306,7 +306,13 @@ void LinkingVisitor::Visit(soul_expected::ast::spg::ParserFile& parserFile)
                     soul_expected::ast::common::TokenMap* tokenMap = parserFile.GetTokenMap();
                     if (tokenMap)
                     {
-                        tokenMap->AddToken(token.get());
+                        auto rv = tokenMap->AddToken(token.get());
+                        if (!rv)
+                        {
+                            int error = rv.error();
+                            SetError(util::AllocateError(util::GetErrorMessage(error) + ": detected in parser file '" + parserFile.FilePath() + "'"));
+                            return;
+                        }
                     }
                     else
                     {

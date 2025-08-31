@@ -65,6 +65,7 @@ public:
     inline Symbol* BoundSymbol() const { return boundSymbol; }
     inline void SetBoundSymbol(Symbol* symbol) { boundSymbol = symbol; }
     void Accept(Visitor& visitor) override;
+    bool IsExportSymbol(Context* context) const override { return false; }
 private:
     TemplateParameterSymbol* templateParameterSymbol;
     Symbol* boundSymbol;

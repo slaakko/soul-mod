@@ -57,6 +57,8 @@ class ParameterSymbol;
 class EnumConstantSymbol;
 class TypeSymbol;
 class ClassTypeSymbol;
+class ClassGroupSymbol;
+class AliasGroupSymbol;
 class Context;
 class Value;
 class Scope;
@@ -77,7 +79,8 @@ enum class BoundNodeKind
     boundWhileStatementNode, boundDoStatementNode, boundForStatementNode, boundBreakStatementNode, boundContinueStatementNode, boundReturnStatementNode, boundGotoStatementNode,
     boundConstructionStatementNode, boundExpressionStatementNode, boundSequenceStatementNode, boundSetVPtrStatementNode,
     boundValueNode, boundLiteralNode, boundStringLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode,
-    boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, boundFunctionPtrCallNode, boundEmptyFunctionCallNode, boundExpressionListNode,
+    boundFunctionGroupNode, boundClassGroupNode, boundAliasGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, 
+    boundFunctionPtrCallNode, boundEmptyFunctionCallNode, boundExpressionListNode,
     boundConjunctionNode, boundDisjunctionNode, boundExpressionSequenceNode, boundConstructExpressionNode,
     boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundPtrToRefNode, boundDefaultInitNode,
     boundTemporaryNode, boundConstructTemporaryNode, boundCtorInitializerNode, boundDtorTerminatorNode, boundEmptyDestructorNode,
@@ -102,6 +105,8 @@ public:
     inline bool IsBoundMemberExprNode() const { return kind == BoundNodeKind::boundMemberExprNode; }
     inline bool IsBoundTypeNode() const { return kind == BoundNodeKind::boundTypeNode; }
     inline bool IsBoundFunctionGroupNode() const { return kind == BoundNodeKind::boundFunctionGroupNode; }
+    inline bool IsBoundClassGroupNode() const { return kind == BoundNodeKind::boundClassGroupNode; }
+    inline bool IsBoundAliasGroupNode() const { return kind == BoundNodeKind::boundAliasGroupNode; }
     inline bool IsBoundExpressionListNode() const { return kind == BoundNodeKind::boundExpressionListNode; }
     inline bool IsBoundParameterNode() const { return kind == BoundNodeKind::boundParameterNode; }
     inline bool IsBoundVariableNode() const { return kind == BoundNodeKind::boundVariableNode; }
@@ -610,6 +615,36 @@ public:
     inline const std::vector<TypeSymbol*>& TemplateArgs() const { return templateArgs; }
 private:
     FunctionGroupSymbol* functionGroupSymbol;
+    std::vector<TypeSymbol*> templateArgs;
+};
+
+class BoundClassGroupNode : public BoundExpressionNode
+{
+public:
+    BoundClassGroupNode(ClassGroupSymbol* classGroupSymbol_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_); 
+    void Accept(BoundTreeVisitor& visitor) override;
+    inline ClassGroupSymbol* GetClassGroupSymbol() const { return classGroupSymbol; }
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    BoundExpressionNode* Clone() const override;
+    void AddTemplateArg(TypeSymbol* templateArg);
+    inline const std::vector<TypeSymbol*>& TemplateArgs() const { return templateArgs; }
+private:
+    ClassGroupSymbol* classGroupSymbol;
+    std::vector<TypeSymbol*> templateArgs;
+};
+
+class BoundAliasGroupNode : public BoundExpressionNode
+{
+public:
+    BoundAliasGroupNode(AliasGroupSymbol* aliasGroupSymbol_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    inline AliasGroupSymbol* GetAliasGroupSymbol() const { return aliasGroupSymbol; }
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    BoundExpressionNode* Clone() const override;
+    void AddTemplateArg(TypeSymbol* templateArg);
+    inline const std::vector<TypeSymbol*>& TemplateArgs() const { return templateArgs; }
+private:
+    AliasGroupSymbol* aliasGroupSymbol;
     std::vector<TypeSymbol*> templateArgs;
 };
 

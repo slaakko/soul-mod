@@ -9,6 +9,7 @@ import std;
 import util;
 import soul.ast.source.pos;
 import soul.ast.slg;
+import soul.ast.common;
 import soul.lexer.token.parser;
 import soul.lexer.base;
 import soul.lexer.parsing.log;
@@ -364,11 +365,11 @@ public:
     {
         classMap = classMap_;
     }
-    soul::ast::slg::TokenCollection* GetTokenCollection() const override
+    soul::ast::common::TokenCollection* GetTokenCollection() const override
     {
         return tokenCollection;
     }
-    void SetTokenCollection(soul::ast::slg::TokenCollection* tokenCollection_) override
+    void SetTokenCollection(soul::ast::common::TokenCollection* tokenCollection_) override
     {
         tokenCollection = tokenCollection_;
     }
@@ -433,7 +434,7 @@ public:
     }
     std::string GetTokenName(std::int64_t tokenID) const
     {
-        soul::ast::slg::TokenCollection* tokenCollection = GetTokenCollection();
+        soul::ast::common::TokenCollection* tokenCollection = GetTokenCollection();
         auto token = tokenCollection->GetToken(tokenID);
         if (token)
         {
@@ -446,7 +447,7 @@ public:
     }
     std::string GetTokenInfo(std::int64_t tokenID) const
     {
-        soul::ast::slg::TokenCollection* tokenCollection = GetTokenCollection();
+        soul::ast::common::TokenCollection* tokenCollection = GetTokenCollection();
         auto token = tokenCollection->GetToken(tokenID);
         if (token)
         {
@@ -933,7 +934,7 @@ private:
     std::string fileName;
     bool countLines;
     soul::lexer::ClassMap<CharT>* classMap;
-    soul::ast::slg::TokenCollection* tokenCollection;
+    soul::ast::common::TokenCollection* tokenCollection;
     KeywordMap<CharT>* keywordMap;
     std::int64_t farthestPos;
     std::vector<std::int64_t> ruleContext;

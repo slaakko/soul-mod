@@ -368,6 +368,16 @@ void TypeResolver::Visit(otava::ast::IdentifierNode& node)
         {
             type = static_cast<TypeSymbol*>(symbol);
         }
+        else if (symbol->IsAliasGroupSymbol())
+        {
+            AliasGroupSymbol* aliasGroup = static_cast<AliasGroupSymbol*>(symbol);
+            type = context->GetSymbolTable()->MakeAliasGroupTypeSymbol(aliasGroup);
+        }
+        else if (symbol->IsClassGroupSymbol())
+        {
+            ClassGroupSymbol* classGroup = static_cast<ClassGroupSymbol*>(symbol);
+            type = context->GetSymbolTable()->MakeClassGroupTypeSymbol(classGroup);
+        }
         else
         {
             if ((resolverFlags & TypeResolverFlags::dontThrow) == TypeResolverFlags::none)
@@ -424,10 +434,6 @@ void TypeResolver::Visit(otava::ast::IdentifierNode& node)
 
 void TypeResolver::Visit(otava::ast::TemplateIdNode& node)
 {
-    if (node.TemplateName()->Str() == U"Token")
-    {
-        int x = 0;
-    }
     TypeSymbol* typeSymbol = otava::symbols::ResolveType(node.TemplateName(), DeclarationFlags::none, context, resolverFlags);
     if (!typeSymbol)
     {
@@ -466,9 +472,10 @@ void TypeResolver::Visit(otava::ast::TemplateIdNode& node)
         templateArg = templateArg->DirectType(context)->FinalType(node.GetSourcePos(), context);
         templateArgs.push_back(templateArg);
     }
-    if (typeSymbol->IsClassGroupSymbol())
+    if (typeSymbol->IsClassGroupTypeSymbol())
     {
-        ClassGroupSymbol* classGroup = static_cast<ClassGroupSymbol*>(typeSymbol);
+        ClassGroupTypeSymbol* classGroupType = static_cast<ClassGroupTypeSymbol*>(typeSymbol);
+        ClassGroupSymbol* classGroup = classGroupType->ClassGroup();
         TemplateMatchInfo matchInfo;
         typeSymbol = classGroup->GetBestMatchingClass(templateArgs, matchInfo, context);
         if (!typeSymbol)
@@ -483,9 +490,10 @@ void TypeResolver::Visit(otava::ast::TemplateIdNode& node)
             }
         }
     }
-    else if (typeSymbol->IsAliasGroupSymbol())
+    else if (typeSymbol->IsAliasGroupTypeSymbol())
     {
-        AliasGroupSymbol* aliasGroup = static_cast<AliasGroupSymbol*>(typeSymbol);
+        AliasGroupTypeSymbol* aliasGroupType = static_cast<AliasGroupTypeSymbol*>(typeSymbol);
+        AliasGroupSymbol* aliasGroup = aliasGroupType->AliasGroup();
         typeSymbol = aliasGroup->GetBestMatchingAliasType(templateArgs);
         if (!typeSymbol)
         {

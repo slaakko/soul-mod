@@ -30,7 +30,7 @@ struct TemplateMatchInfo
     std::vector<Symbol*> templateArgs;
 };
 
-class ClassGroupSymbol : public TypeSymbol
+class ClassGroupSymbol : public Symbol
 {
 public:
     ClassGroupSymbol(const std::u32string& name_);

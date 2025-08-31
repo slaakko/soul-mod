@@ -82,27 +82,27 @@ void EnumGroupSymbol::Resolve(SymbolTable& symbolTable)
     if (enumTypeId != util::nil_uuid())
     {
         TypeSymbol* type = symbolTable.GetType(enumTypeId);
-        if (type->IsEnumeratedTypeSymbol())
+        if (type && type->IsEnumeratedTypeSymbol())
         {
             enumType = static_cast<EnumeratedTypeSymbol*>(type);
         }
         else
         {
             otava::ast::SetExceptionThrown();
-            throw std::runtime_error("enum type expected");
+            throw std::runtime_error("enum group symbol: enum type expected");
         }
     }
     if (fwdDeclId != util::nil_uuid())
     {
         TypeSymbol* type = symbolTable.GetType(fwdDeclId);
-        if (type->IsForwardEnumDeclarationSymbol())
+        if (type && type->IsForwardEnumDeclarationSymbol())
         {
             forwardDeclaration = static_cast<ForwardEnumDeclarationSymbol*>(type);
         }
         else
         {
             otava::ast::SetExceptionThrown();
-            throw std::runtime_error("enum forward declaration expected");
+            throw std::runtime_error("enum group symbol: enum forward declaration expected");
         }
     }
 }

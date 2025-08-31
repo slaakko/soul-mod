@@ -8,6 +8,7 @@ export module soul.ast.cpp;
 import std;
 import util.code.formatter;
 import soul.ast.source.pos;
+import soul.ast.common;
 
 export namespace soul::ast::cpp {
 

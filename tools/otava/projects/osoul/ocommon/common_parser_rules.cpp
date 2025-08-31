@@ -22,7 +22,9 @@ std::map<std::int64_t, std::string>* GetRuleNameMapPtr()
         { 2231932063773097996, "CommonParser.ImplementationKeyword" },
         { 2231932063773097997, "CommonParser.InterfaceKeyword" },
         { 2231932063773097998, "CommonParser.ParserKeyword" },
-        { 2231932063773097999, "CommonParser.LexerKeyword" }
+        { 2231932063773097999, "CommonParser.LexerKeyword" },
+        { 8614059994532282369, "TokenFileParser.TokenFile" },
+        { 8614059994532282370, "TokenFileParser.Token" }
     };
     return &ruleNameMap;
 }

@@ -9,10 +9,6 @@ namespace otava::optimizer {
 
 bool IsIdentityFunction(otava::intermediate::Function* fn)
 {
-    if (fn->Name().find("move") != std::string::npos)
-    {
-        int x = 0;
-    }
     otava::intermediate::FunctionType* fnType = fn->GetType();
     if (fnType->IsUnaryOperationType())
     {

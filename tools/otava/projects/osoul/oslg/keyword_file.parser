@@ -65,7 +65,9 @@ parser KeywordFileParser
             RPAREN
         )
         {
-            return new soul::ast::slg::Keyword(str, tokenName);
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul::ast::slg::Keyword(*sp, str, tokenName);
         }
         ;
 }

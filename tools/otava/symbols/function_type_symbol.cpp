@@ -11,6 +11,7 @@ import otava.symbols.writer;
 import otava.symbols.visitor;
 import otava.symbols.emitter;
 import otava.symbols.type_compare;
+import util;
 
 namespace otava::symbols {
 
@@ -79,10 +80,21 @@ void FunctionTypeSymbol::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol::Resolve(symbolTable);
     returnType = symbolTable.GetType(returnTypeId);
+    if (!returnType)
+    {
+        std::cout << "FunctionTypeSymbol::Resolve(): warning: return type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+    }
     for (const auto& parameterTypeId : parameterTypeIds)
     {
         TypeSymbol* parameterType = symbolTable.GetType(parameterTypeId);
-        parameterTypes.push_back(parameterType);
+        if (parameterType)
+        {
+            parameterTypes.push_back(parameterType);
+        }
+        else
+        {
+            std::cout << "FunctionTypeSymbol::Resolve(): warning: parameter type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+        }
     }
 }
 

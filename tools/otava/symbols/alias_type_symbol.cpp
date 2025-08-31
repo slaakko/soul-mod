@@ -48,12 +48,23 @@ void AliasTypeSymbol::Read(Reader& reader)
 void AliasTypeSymbol::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol::Resolve(symbolTable);
-    referredType = symbolTable.GetTypeNothrow(referredTypeId);
+    referredType = symbolTable.GetTypeNoThrow(referredTypeId);
 }
 
 void AliasTypeSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+bool AliasTypeSymbol::IsExportSymbol(Context* context) const
+{
+    if (!referredType->IsExportSymbol(context)) return false;
+    return true;
+}
+
+bool AliasTypeSymbol::IsExportMapSymbol(Context* context) const
+{
+    return false;
 }
 
 TemplateDeclarationSymbol* AliasTypeSymbol::ParentTemplateDeclaration()
@@ -87,6 +98,16 @@ TypeSymbol* AliasTypeSymbol::DirectType(Context* context)
 otava::intermediate::Type* AliasTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     return DirectType(context)->IrType(emitter, sourcePos, context);
+}
+
+soul::xml::Element* AliasTypeSymbol::ToXml() const
+{
+    soul::xml::Element* element = TypeSymbol::ToXml();
+    if (group)
+    {
+        element->SetAttribute("groupId", util::ToString(group->Id()));
+    }
+    return element;
 }
 
 class AliasDeclarationProcessor : public otava::ast::DefaultVisitor

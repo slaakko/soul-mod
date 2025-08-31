@@ -185,6 +185,19 @@ std::string OperatorFunctionMap::GetPrefix(const std::u32string& name) const
     }
 }
 
+std::string FunctionKindStr(FunctionKind functionKind)
+{
+    switch (functionKind)
+    {
+        case FunctionKind::function: return "fn";
+        case FunctionKind::constructor: return "ctor";
+        case FunctionKind::destructor: return "dtor";
+        case FunctionKind::special: return "special";
+        case FunctionKind::conversionMemFn: return "conversionMemFn";
+    }
+    return "fn";
+}
+
 std::string GetOperatorFunctionPrefix(const std::u32string& functionName)
 {
     return OperatorFunctionMap::Instance().GetPrefix(functionName);
@@ -240,6 +253,10 @@ void ParameterSymbol::Resolve(SymbolTable& symbolTable)
 {
     Symbol::Resolve(symbolTable);
     type = symbolTable.GetType(typeId);
+    if (!type)
+    {
+        std::cout << "ParameterSymbol::Resolve(): warning: type of parameter '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+    }
     if (defaultValueNodeId != -1)
     {
         otava::ast::NodeMap* nodeMap = symbolTable.GetNodeMap();
@@ -322,6 +339,14 @@ bool ParameterSymbol::IsTemplateParameterInstantiation(Context* context, std::se
         return type->IsTemplateParameterInstantiation(context, visited);
     }
     return false;
+}
+
+soul::xml::Element* ParameterSymbol::ToXml() const
+{
+    soul::xml::Element* element = Symbol::ToXml();
+    element->SetAttribute("type", util::ToUtf8(type->Name()));
+    element->SetAttribute("typeId", util::ToString(type->Id()));
+    return element;
 }
 
 FunctionSymbol::FunctionSymbol(const std::u32string& name_) : 
@@ -849,6 +874,10 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable)
     if (returnTypeId != util::nil_uuid())
     {
         returnType = symbolTable.GetType(returnTypeId);
+        if (!returnType)
+        {
+            std::cout << "FunctionSymbol::Resolve(): warning: return type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+        }
         if (ReturnsClass())
         {
             returnValueParam->Resolve(symbolTable);
@@ -859,16 +888,31 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable)
         if (conversionParamTypeId != util::nil_uuid())
         {
             conversionParamType = symbolTable.GetType(conversionParamTypeId);
+            if (!conversionParamType)
+            {
+                std::cout << "FunctionSymbol::Resolve(): warning: conversion parameter type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+            }
         }
         if (conversionArgTypeId != util::nil_uuid())
         {
             conversionArgType = symbolTable.GetType(conversionArgTypeId);
+            if (!conversionArgType)
+            {
+                std::cout << "FunctionSymbol::Resolve(): warning: conversion argument type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+            }
         }
     }
     for (const auto& id : specializationIds)
     {
         TypeSymbol* type = symbolTable.GetType(id);
-        specialization.push_back(type);
+        if (type)
+        {
+            specialization.push_back(type);
+        }
+        else
+        {
+            std::cout << "FunctionSymbol::Resolve(): warning: specialization type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+        }
     }
 }
 
@@ -1230,6 +1274,18 @@ void FunctionSymbol::AddDefinitionToGroup(Context* context)
 {
 }
 
+soul::xml::Element* FunctionSymbol::ToXml() const
+{
+    soul::xml::Element* element = ContainerSymbol::ToXml();
+    element->SetAttribute("functionKind", FunctionKindStr(kind));
+    if (returnType)
+    {
+        element->SetAttribute("returnType", util::ToUtf8(returnType->Name()));
+        element->SetAttribute("returnTypeId", util::ToString(returnType->Id()));
+    }
+    return element;
+}
+
 FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : 
     FunctionSymbol(SymbolKind::functionDefinitionSymbol, name_), 
     declaration(), 
@@ -1450,6 +1506,12 @@ std::int32_t FunctionDefinitionSymbol::ConversionDistance() const
 void FunctionDefinitionSymbol::AddDefinitionToGroup(Context* context)
 {
     Group()->AddFunctionDefinition(this, context);
+}
+soul::xml::Element* FunctionDefinitionSymbol::ToXml() const
+{
+    soul::xml::Element* element = FunctionSymbol::ToXml();
+    element->SetAttribute("defIndex", std::to_string(defIndex));
+    return element;
 }
 
 ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol,

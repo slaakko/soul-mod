@@ -10,6 +10,8 @@ import otava.symbols.visitor;
 import otava.symbols.compound.type.symbol;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.function.group.symbol;
+import otava.symbols.class_group.symbol;
+import otava.symbols.alias.group.symbol;
 import otava.symbols.exception;
 import otava.symbols.context;
 import otava.symbols.writer;
@@ -293,6 +295,72 @@ void FunctionGroupTypeSymbol::Resolve(SymbolTable& symbolTable)
 }
 
 void FunctionGroupTypeSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+ClassGroupTypeSymbol::ClassGroupTypeSymbol(const std::u32string& name_) : 
+    TypeSymbol(SymbolKind::classGroupTypeSymbol, name_), classGroupSymbol(nullptr)
+{
+}
+
+ClassGroupTypeSymbol::ClassGroupTypeSymbol(ClassGroupSymbol* classGroupSymbol_) :
+    TypeSymbol(SymbolKind::classGroupTypeSymbol, U"@class_group_type"), classGroupSymbol(classGroupSymbol_)
+{
+}
+
+void ClassGroupTypeSymbol::Write(Writer& writer)
+{
+    TypeSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(classGroupSymbol->Id());
+}
+
+void ClassGroupTypeSymbol::Read(Reader& reader)
+{
+    TypeSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(classGroupSymbolId);
+}
+
+void ClassGroupTypeSymbol::Resolve(SymbolTable& symbolTable)
+{
+    TypeSymbol::Resolve(symbolTable);
+    classGroupSymbol = symbolTable.GetClassGroup(classGroupSymbolId);
+}
+
+void ClassGroupTypeSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+AliasGroupTypeSymbol::AliasGroupTypeSymbol(const std::u32string& name_) :
+    TypeSymbol(SymbolKind::aliasGroupTypeSymbol, name_), aliasGroupSymbol(nullptr)
+{
+}
+
+AliasGroupTypeSymbol::AliasGroupTypeSymbol(AliasGroupSymbol* aliasGroupSymbol_) :
+    TypeSymbol(SymbolKind::aliasGroupTypeSymbol, U"@alias_group_type"), aliasGroupSymbol(aliasGroupSymbol_)
+{
+}
+
+void AliasGroupTypeSymbol::Write(Writer& writer)
+{
+    TypeSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(aliasGroupSymbol->Id());
+}
+
+void AliasGroupTypeSymbol::Read(Reader& reader)
+{
+    TypeSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(aliasGroupSymbolId);
+}
+
+void AliasGroupTypeSymbol::Resolve(SymbolTable& symbolTable)
+{
+    TypeSymbol::Resolve(symbolTable);
+    aliasGroupSymbol = symbolTable.GetAliasGroup(aliasGroupSymbolId);
+}
+
+void AliasGroupTypeSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
 }

@@ -8,6 +8,11 @@ import otava.symbols.function.type.symbol;
 
 namespace otava::symbols {
 
+bool TypeIdLess::operator()(TypeSymbol* left, TypeSymbol* right) const
+{
+    return left->Id() < right->Id();
+}
+
 bool TypesEqual(TypeSymbol* left, TypeSymbol* right)
 {
     if (left->IsForwardClassDeclarationSymbol())

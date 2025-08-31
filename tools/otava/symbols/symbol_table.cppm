@@ -14,6 +14,7 @@ import otava.symbols.specialization.compare;
 import otava.symbols.symbol_map;
 import otava.symbols.array.type.compare;
 import otava.symbols.function.type.compare;
+import otava.symbols.type_compare;
 import util.uuid;
 import class_info_index;
 
@@ -55,9 +56,13 @@ class Symbol;
 class BlockSymbol;
 class Scope;
 class AliasTypeSymbol;
+class AliasGroupSymbol;
+class AliasGroupTypeSymbol;
 class ArrayTypeSymbol;
 class BoundExpressionNode;
 class ClassTypeSymbol;
+class ClassGroupSymbol;
+class ClassGroupTypeSymbol;
 class ConceptSymbol;
 class EnumeratedTypeSymbol;
 class FunctionTypeSymbol;
@@ -100,11 +105,11 @@ public:
     inline NamespaceSymbol* GlobalNs() const { return globalNs.get(); }
     void Init();
     void Import(const SymbolTable& that, FunctionDefinitionSymbolSet* functionDefinitionSymbolSet);
-    void Write(Writer& writer);
+    void Write(Writer& writer, Context* context);
     void Read(Reader& reader);
-    void Resolve();
+    void Resolve(Context* context);
     void Accept(Visitor& visitor);
-    void WriteMaps(Writer& writer);
+    void WriteMaps(Writer& writer, Context* context);
     void ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolMap* symbolMap);
     TypeSymbol* GetFundamentalTypeSymbol(FundamentalTypeKind kind);
     inline Symbol* GetTypenameConstraintSymbol() { return typenameConstraintSymbol; }
@@ -163,6 +168,8 @@ public:
     TypeSymbol* MakeConstWCharPtrType();
     FunctionTypeSymbol* MakeFunctionTypeSymbol(FunctionSymbol* functionSymbol);
     FunctionGroupTypeSymbol* MakeFunctionGroupTypeSymbol(FunctionGroupSymbol* functionGroup);
+    ClassGroupTypeSymbol* MakeClassGroupTypeSymbol(ClassGroupSymbol* classGroup);
+    AliasGroupTypeSymbol* MakeAliasGroupTypeSymbol(AliasGroupSymbol* aliasGroup);
     ConceptSymbol* AddConcept(const std::u32string& name, otava::ast::Node* node, Context* context);
     ClassTemplateSpecializationSymbol* MakeClassTemplateSpecialization(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments);
     AliasTypeTemplateSpecializationSymbol* MakeAliasTypeTemplateSpecialization(TypeSymbol* aliasTypeTemplate, const std::vector<Symbol*>& templateArguments);
@@ -185,15 +192,18 @@ public:
     void SetSpecifierNode(Symbol* symbol, otava::ast::Node* node);
     Symbol* GetSymbolNothrow(otava::ast::Node* node) const;
     Symbol* GetSymbol(otava::ast::Node* node) const;
-    TypeSymbol* GetTypeNothrow(const util::uuid& id) const;
+    TypeSymbol* GetTypeNoThrow(const util::uuid& id) const;
     TypeSymbol* GetType(const util::uuid& id) const;
     void MapType(TypeSymbol* type);
+    void UnmapType(TypeSymbol* type);
     void MapFundamentalType(FundamentalTypeSymbol* fundamentalTypeSymbol);
     void MapFunction(FunctionSymbol* function);
     void MapFunctionDefinition(FunctionDefinitionSymbol* functionDefinition);
     void MapVariable(VariableSymbol* variable);
     void MapConstraint(Symbol* constraint);
     void MapFunctionGroup(FunctionGroupSymbol* functionGroup);
+    void MapClassGroup(ClassGroupSymbol* classGroup);
+    void MapAliasGroup(AliasGroupSymbol* aliasGroup);
     void MapConcept(ConceptSymbol* cncp);
     FunctionSymbol* GetFunction(const util::uuid& id) const;
     FunctionDefinitionSymbol* GetFunctionDefinition(const util::uuid& id) const;
@@ -203,6 +213,8 @@ public:
     ConceptSymbol* GetConcept(const util::uuid& id) const;
     Symbol* GetConstraint(const util::uuid& id) const;
     FunctionGroupSymbol* GetFunctionGroup(const util::uuid& id) const;
+    ClassGroupSymbol* GetClassGroup(const util::uuid& id) const;
+    AliasGroupSymbol* GetAliasGroup(const util::uuid& id) const;
     TypeSymbol* GetFundamentalType(FundamentalTypeKind kind) const;
     inline void SetAddToRecomputeNameSet(bool addToRecomputeNameSet_) { addToRecomputeNameSet = addToRecomputeNameSet_; }
     inline bool AddToRecomputeNameSet() const { return addToRecomputeNameSet; }
@@ -236,6 +248,7 @@ public:
     void AddAliasTypeTemplateSpecializationToSet(AliasTypeTemplateSpecializationSymbol* at);
     void AddArrayTypeToSet(ArrayTypeSymbol* a);
     void ImportAfterResolve();
+    void ToXml(const std::string& xmlFilePath) const;
 private:
     void CreateFundamentalTypes();
     void AddFundamentalType(FundamentalTypeKind kind);
@@ -244,7 +257,7 @@ private:
     void ImportSpecializations(const SymbolTable& that);
     void ImportArrayTypes(const SymbolTable& that);
     void ImportDependentTypes(const SymbolTable& that);
-    void ImportCompoundTypeMap(const SymbolTable& that);
+    void ImportCompoundTypeMap(const SymbolTable& that, Context* context);
     void ImportFundamentalTypeMap(const SymbolTable& that);
     void ImportNodeSymbolMap(const SymbolTable& that);
     void ImportSymbolNodeMap(const SymbolTable& that);
@@ -259,6 +272,10 @@ private:
     void ImportClasses(const SymbolTable& that);
     void ImportExplicitInstantiations(const SymbolTable& that);
     void ImportFunctionGroupTypes(const SymbolTable& that);
+    void ImportClassGroups(const SymbolTable& that);
+    void ImportAliasGroups(const SymbolTable& that);
+    void ImportClassGroupTypes(const SymbolTable& that);
+    void ImportAliasGroupTypes(const SymbolTable& that);
     void ImportClassIndex(const SymbolTable& that);
     void AddImportAfterResolve(const SymbolTable* that);
     Module* module;
@@ -271,11 +288,15 @@ private:
     std::set<ArrayTypeSymbol*, ArrayTypeLess> arrayTypeSet;
     std::set<DependentTypeSymbol*> dependentTypeSet;
     std::vector<std::unique_ptr<CompoundTypeSymbol>> compoundTypes;
-    std::map<TypeSymbol*, std::vector<CompoundTypeSymbol*>> compoundTypeMap;
+    std::map<TypeSymbol*, std::vector<CompoundTypeSymbol*>, TypeIdLess> compoundTypeMap;
     std::vector<std::unique_ptr<ExplicitInstantiationSymbol>> explicitInstantiations;
     std::map<ClassTemplateSpecializationSymbol*, ExplicitInstantiationSymbol*, ClassTemplateNameLess> explicitInstantiationMap;
     std::vector<std::unique_ptr<FunctionGroupTypeSymbol>> functionGroupTypes;
     std::map<FunctionGroupSymbol*, FunctionGroupTypeSymbol*> functionGroupTypeMap;
+    std::vector<std::unique_ptr<ClassGroupTypeSymbol>> classGroupTypes;
+    std::map<ClassGroupSymbol*, ClassGroupTypeSymbol*> classGroupTypeMap;
+    std::vector<std::unique_ptr<AliasGroupTypeSymbol>> aliasGroupTypes;
+    std::map<AliasGroupSymbol*, AliasGroupTypeSymbol*> aliasGroupTypeMap;
     std::map<std::int32_t, TypeSymbol*> fundamentalTypeMap;
     std::vector<std::unique_ptr<Symbol>> functionTypes;
     std::set<FunctionTypeSymbol*, FunctionTypeCompare> functionTypeSet;
@@ -293,6 +314,8 @@ private:
     std::map<util::uuid, VariableSymbol*> variableMap;
     std::map<util::uuid, Symbol*> constraintMap;
     std::map<util::uuid, FunctionGroupSymbol*> functionGroupMap;
+    std::map<util::uuid, ClassGroupSymbol*> classGroupMap;
+    std::map<util::uuid, AliasGroupSymbol*> aliasGroupMap;
     std::map<util::uuid, ConceptSymbol*> conceptMap;
     std::vector<std::unique_ptr<DependentTypeSymbol>> dependentTypeSymbols;
     Symbol* typenameConstraintSymbol;

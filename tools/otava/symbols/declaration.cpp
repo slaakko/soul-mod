@@ -981,6 +981,15 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
             ClassTypeSymbol* classType = functionDefinitionSymbol->ParentClassType();
             if (classType)
             {
+                if (classType->IsClassTemplateSpecializationSymbol())
+                {
+                    std::set<const Symbol*> visited;
+                    if (classType->IsTemplateParameterInstantiation(context, visited))
+                    {
+                        ClassTemplateSpecializationSymbol* specialiazation = static_cast<ClassTemplateSpecializationSymbol*>(classType);
+                        classType = specialiazation->ClassTemplate();
+                    }
+                }
                 std::int32_t functionIndex = 0;
                 SpecialFunctionKind specialFunctionKind = functionDefinitionSymbol->GetSpecialFunctionKind(context);
                 if (specialFunctionKind != SpecialFunctionKind::none)
@@ -1018,10 +1027,6 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
             std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
             InstantiateFunctionTemplate(functionDefinitionSymbol, templateParameterMap, node->GetSourcePos(), context);
         }
-    }
-    else
-    {
-        int x = 0;
     }
     if (context->GetBoundFunction())
     {

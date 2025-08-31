@@ -300,6 +300,9 @@
     <ProjectReference Include="..\..\..\soul\lexer\lexer.vcxproj">
       <Project>{19e63f3e-0845-442b-b894-aed66b30662d}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\soul\xml\dom\dom.vcxproj">
+      <Project>{c7d66fce-6e85-4f03-9c35-200f53f37800}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\util\util.vcxproj">
       <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
     </ProjectReference>

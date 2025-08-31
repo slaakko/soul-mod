@@ -55,6 +55,60 @@ std::string AccessStr(Access access)
     return std::string();
 }
 
+std::string SymbolGroupStr(SymbolGroupKind group)
+{
+    std::string groupStr;
+    if ((group & SymbolGroupKind::functionSymbolGroup) != SymbolGroupKind::none)
+    {
+        if (!groupStr.empty())
+        {
+            groupStr.append(" | ");
+        }
+        groupStr.append("functionSymbolGroup");
+    }
+    if ((group & SymbolGroupKind::typeSymbolGroup) != SymbolGroupKind::none)
+    {
+        if (!groupStr.empty())
+        {
+            groupStr.append(" | ");
+        }
+        groupStr.append("typeSymbolGroup");
+    }
+    if ((group & SymbolGroupKind::variableSymbolGroup) != SymbolGroupKind::none)
+    {
+        if (!groupStr.empty())
+        {
+            groupStr.append(" | ");
+        }
+        groupStr.append("variableSymbolGroup");
+    }
+    if ((group & SymbolGroupKind::enumConstantSymbolGroup) != SymbolGroupKind::none)
+    {
+        if (!groupStr.empty())
+        {
+            groupStr.append(" | ");
+        }
+        groupStr.append("enumConstantSymbolGroup");
+    }
+    if ((group & SymbolGroupKind::conceptSymbolGroup) != SymbolGroupKind::none)
+    {
+        if (!groupStr.empty())
+        {
+            groupStr.append(" | ");
+        }
+        groupStr.append("conceptSymbolGroup");
+    }
+    if ((group & SymbolGroupKind::blockSymbolGroup) != SymbolGroupKind::none)
+    {
+        if (!groupStr.empty())
+        {
+            groupStr.append(" | ");
+        }
+        groupStr.append("blockSymbolGroup");
+    }
+    return groupStr;
+}
+
 std::vector<SymbolGroupKind> SymbolGroupKindstoSymbolGroupKindVec(SymbolGroupKind symbolGroupKinds)
 {
     std::vector<SymbolGroupKind> symbolGroupKindVec;
@@ -83,6 +137,135 @@ std::vector<SymbolGroupKind> SymbolGroupKindstoSymbolGroupKindVec(SymbolGroupKin
         symbolGroupKindVec.push_back(SymbolGroupKind::blockSymbolGroup);
     }
     return symbolGroupKindVec;
+}
+
+std::string SymbolKindToString(SymbolKind kind)
+{
+    switch (kind)
+    {
+        case SymbolKind::null: return "null";
+        case SymbolKind::classGroupSymbol: return "classGroup"; 
+        case SymbolKind::conceptGroupSymbol: return "conceptGroup";
+        case SymbolKind::functionGroupSymbol: return "functionGroup";
+        case SymbolKind::variableGroupSymbol: return "variableGroup";
+        case SymbolKind::aliasGroupSymbol: return "aliasGroup";
+        case SymbolKind::enumGroupSymbol: return "enumGroup";
+        case SymbolKind::boolValueSymbol: return "boolValue";
+        case SymbolKind::integerValueSymbol: return "integerValue";
+        case SymbolKind::floatingValueSymbol: return "floatingValue";
+        case SymbolKind::stringValueSymbol: return "stringValue";
+        case SymbolKind::charValueSymbol: return "charValue";
+        case SymbolKind::genericTypeSymbol: return "genericType";
+        case SymbolKind::nullPtrTypeSymbol: return "nullPtrType";
+        case SymbolKind::arrayValueSymbol: return "arrayValue";
+        case SymbolKind::structureValueSymbol: return "structureValue";
+        case SymbolKind::aliasTypeSymbol: return "aliasType";
+        case SymbolKind::arrayTypeSymbol: return "arrayType";
+        case SymbolKind::blockSymbol: return "block";
+        case SymbolKind::classTypeSymbol: return "classType";
+        case SymbolKind::compoundTypeSymbol: return "compoundType";
+        case SymbolKind::conceptSymbol: return "concept";
+        case SymbolKind::enumTypeSymbol: return "enumType";
+        case SymbolKind::enumConstantSymbol: return "enumConstant";
+        case SymbolKind::functionSymbol: return "function";
+        case SymbolKind::functionTypeSymbol: return "functionType";
+        case SymbolKind::functionDefinitionSymbol: return "functionDefinition";
+        case SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol: return "explicitlyInstantiatedFunctionDefinition";
+        case SymbolKind::fundamentalTypeSymbol: return "fundamentalType";
+        case SymbolKind::namespaceSymbol: return "namespace";
+        case SymbolKind::templateDeclarationSymbol: return "templateDeclaration";
+        case SymbolKind::typenameConstraintSymbol: return "typenameConstraint";
+        case SymbolKind::explicitInstantiationSymbol: return "explicitInstantiation";
+        case SymbolKind::templateParameterSymbol: return "templateParameter";
+        case SymbolKind::varArgTypeSymbol: return "varArgType";
+        case SymbolKind::variableSymbol: return "variable";
+        case SymbolKind::parameterSymbol: return "parameter";
+        case SymbolKind::errorSymbol: return "error";
+        case SymbolKind::classTemplateSpecializationSymbol: return "classTemplateSpecialization";
+        case SymbolKind::aliasTypeTemplateSpecializationSymbol: return "aliasTypeTemplateSpecialization";
+        case SymbolKind::nestedTypeSymbol: return "nestedType";
+        case SymbolKind::dependentTypeSymbol: return "dependentType";
+        case SymbolKind::nullPtrValueSymbol: return "nullPtrValue";
+        case SymbolKind::symbolValueSymbol: return "symbolValue";
+        case SymbolKind::invokeValueSymbol: return "invokeValue";
+        case SymbolKind::forwardClassDeclarationSymbol: return "forwardClassDeclaration";
+        case SymbolKind::forwardEnumDeclarationSymbol: return "forwardEnumDeclaration";
+        case SymbolKind::boundTemplateParameterSymbol: return "boundTemplateParameter";
+        case SymbolKind::constraintExprSymbol: return "constraintExpr";
+        case SymbolKind::fundamentalTypeNot: return "fundamentalTypeNot";
+        case SymbolKind::fundamentalTypeUnaryPlus: return "fundamentalTypeUnaryPlus";
+        case SymbolKind::fundamentalTypeUnaryMinus: return "fundamentalTypeUnaryMinus";
+        case SymbolKind::fundamentalTypeComplement: return "fundamentalTypeComplement";
+        case SymbolKind::fundamentalTypeAdd: return "fundamentalTypeAdd";
+        case SymbolKind::fundamentalTypeSub: return "fundamentalTypeSub";
+        case SymbolKind::fundamentalTypeMul: return "fundamentalTypeMul";
+        case SymbolKind::fundamentalTypeDiv: return "fundamentalTypeDiv";
+        case SymbolKind::fundamentalTypeMod: return "fundamentalTypeMod";
+        case SymbolKind::fundamentalTypeAnd: return "fundamentalTypeAnd";
+        case SymbolKind::fundamentalTypeOr: return "fundamentalTypeOr";
+        case SymbolKind::fundamentalTypeXor: return "fundamentalTypeXor";
+        case SymbolKind::fundamentalTypeShl: return "fundamentalTypeShl";
+        case SymbolKind::fundamentalTypeShr: return "fundamentalTypeShr";
+        case SymbolKind::fundamentalTypePlusAssign: return "fundamentalTypePlusAssign";
+        case SymbolKind::fundamentalTypeMinusAssign: return "fundamentalTypeMinusAssign";
+        case SymbolKind::fundamentalTypeMulAssign: return "fundamentalTypeMulAssign";
+        case SymbolKind::fundamentalTypeDivAssign: return "fundamentalTypeDivAssign";
+        case SymbolKind::fundamentalTypeModAssign: return "fundamentalTypeModAssign";
+        case SymbolKind::fundamentalTypeAndAssign: return "fundamentalTypeAndAssign";
+        case SymbolKind::fundamentalTypeOrAssign: return "fundamentalTypeOrAssign";
+        case SymbolKind::fundamentalTypeXorAssign: return "fundamentalTypeXorAssign";
+        case SymbolKind::fundamentalTypeShlAssign: return "fundamentalTypeShlAssign";
+        case SymbolKind::fundamentalTypeShrAssign: return "fundamentalTypeShrAssign";
+        case SymbolKind::fundamentalTypeEqual: return "fundamentalTypeEqual";
+        case SymbolKind::fundamentalTypeLess: return "fundamentalTypeLess";
+        case SymbolKind::fundamentalTypeBoolean: return "fundamentalTypeBoolean";
+        case SymbolKind::fundamentalTypeSignExtension: return "fundamentalTypeSignExtension";
+        case SymbolKind::fundamentalTypeZeroExtension: return "fundamentalTypeZeroExtension";
+        case SymbolKind::fundamentalTypeFloatingPointExtension: return "fundamentalTypeFloatingPointExtension";
+        case SymbolKind::fundamentalTypeTruncate: return "fundamentalTypeTruncate";
+        case SymbolKind::fundamentalTypeBitcast: return "fundamentalTypeBitcast";
+        case SymbolKind::fundamentalTypeIntToFloat: return "fundamentalTypeIntToFloat";
+        case SymbolKind::fundamentalTypeFloatToInt: return "fundamentalTypeFloatToInt";
+        case SymbolKind::fundamentalTypeDefaultCtor: return "fundamentalTypeDefaultCtor";
+        case SymbolKind::fundamentalTypeCopyCtor: return "fundamentalTypeCopyCtor";
+        case SymbolKind::fundamentalTypeCopyCtorLiteral: return "fundamentalTypeCopyCtorLiteral";
+        case SymbolKind::fundamentalTypeMoveCtor: return "fundamentalTypeMoveCtor";
+        case SymbolKind::fundamentalTypeCopyAssignment: return "fundamentalTypeCopyAssignment";
+        case SymbolKind::fundamentalTypeMoveAssignment: return "fundamentalTypeMoveAssignment";
+        case SymbolKind::enumTypeDefaultCtor: return "enumTypeDefaultCtor";
+        case SymbolKind::enumTypeCopyCtor: return "enumTypeCopyCtor";
+        case SymbolKind::enumTypeMoveCtor: return "enumTypeMoveCtor";
+        case SymbolKind::enumTypeCopyAssignment: return "enumTypeCopyAssignment";
+        case SymbolKind::enumTypeMoveAssignment: return "enumTypeMoveAssignment";
+        case SymbolKind::enumTypeEqual: return "enumTypeEqual";
+        case SymbolKind::enumTypeLess: return "enumTypeLess";
+        case SymbolKind::arrayTypeDefaultCtor: return "arrayTypeDefaultCtor";
+        case SymbolKind::arrayTypeCopyCtor: return "arrayTypeCopyCtor";
+        case SymbolKind::arrayTypeMoveCtor: return "arrayTypeMoveCtor";
+        case SymbolKind::arrayTypeCopyAssignment: return "arrayTypeCopyAssignment";
+        case SymbolKind::arrayTypeMoveAssignment: return "arrayTypeMoveAssignment";
+        case SymbolKind::arrayTypeBegin: return "arrayTypeBegin";
+        case SymbolKind::arrayTypeEnd: return "arrayTypeEnd";
+        case SymbolKind::defaultBool: return "defaultBool";
+        case SymbolKind::defaultSByte: return "defaultSByte";
+        case SymbolKind::defaultShort: return "defaultShort";
+        case SymbolKind::defaultUShort: return "defaultUShort";
+        case SymbolKind::defaultInt: return "defaultInt";
+        case SymbolKind::defaultUInt: return "defaultUInt";
+        case SymbolKind::defaultLong: return "defaultLong";
+        case SymbolKind::defaultULong: return "defaultULong";
+        case SymbolKind::defaultFloat: return "defaultFloat";
+        case SymbolKind::defaultDouble: return "defaultDouble";
+        case SymbolKind::defaultChar: return "defaultChar";
+        case SymbolKind::defaultChar16: return "defaultChar16";
+        case SymbolKind::defaultChar32: return "defaultChar32";
+        case SymbolKind::functionGroupTypeSymbol: return "functionGroupType";
+        case SymbolKind::classGroupTypeSymbol: return "classGroupType";
+        case SymbolKind::aliasGroupTypeSymbol: return "aliasGroupType";
+        case SymbolKind::friendSymbol: return "friend";
+        case SymbolKind::namespaceTypeSymbol: return "namespaceType";
+    }
+    return "symbol";
 }
 
 Symbol::Symbol(SymbolKind kind_, const std::u32string& name_) : kind(kind_), id(util::random_uuid()), name(name_), parent(nullptr), access(Access::none)
@@ -126,13 +309,13 @@ bool Symbol::IsTemplateParameterInstantiation(Context* context, std::set<const S
 }
 
 std::string Symbol::IrName(Context* context) const
-{ 
-    return util::ToUtf8(Name()); 
+{
+    return util::ToUtf8(Name());
 }
 
 void Symbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    ThrowException("cannot add " + symbol->SymbolKindStr() + " '" + util::ToUtf8(symbol->FullName()) + "' to " + SymbolKindStr() + " '" + util::ToUtf8(FullName()), 
+    ThrowException("cannot add " + symbol->SymbolKindStr() + " '" + util::ToUtf8(symbol->FullName()) + "' to " + SymbolKindStr() + " '" + util::ToUtf8(FullName()),
         sourcePos, context);
 }
 
@@ -325,9 +508,6 @@ bool Symbol::IsTypeSymbol() const
 {
     switch (kind)
     {
-        case SymbolKind::aliasGroupSymbol: 
-        case SymbolKind::classGroupSymbol:
-        case SymbolKind::enumGroupSymbol:
         case SymbolKind::aliasTypeSymbol:
         case SymbolKind::arrayTypeSymbol:
         case SymbolKind::classTypeSymbol:
@@ -591,6 +771,15 @@ void* Symbol::IrObject(Emitter& emitter, const soul::ast::SourcePos& sourcePos, 
 bool Symbol::IsExtern() const
 {
     return (declarationFlags & DeclarationFlags::externFlag) != DeclarationFlags::none;
+}
+
+soul::xml::Element* Symbol::ToXml() const
+{
+    soul::xml::Element* element = soul::xml::MakeElement(SymbolKindToString(kind));
+    element->SetAttribute("name", util::ToUtf8(name));
+    element->SetAttribute("id", util::ToString(id));
+    element->SetAttribute("symbolGroup", SymbolGroupStr(GetSymbolGroupKind()));
+    return element;
 }
 
 } // namespace otava::symbols

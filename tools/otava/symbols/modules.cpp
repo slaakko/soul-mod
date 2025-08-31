@@ -28,7 +28,20 @@ std::string MakeModuleFilePath(const std::string& root, const std::string& confi
     return util::GetFullPath(util::Path::Combine(util::Path::Combine(root, config), moduleName + ".module"));
 }
 
-Module::Module(const std::string& name_) : name(name_), symbolTable(), evaluationContext(symbolTable), fileId(-1), index(-1), reading(false)
+std::string MakeProjectFilePath(const std::string& root, const std::string& moduleName)
+{
+    return util::GetFullPath(util::Path::Combine(root, moduleName + ".project"));
+}
+
+bool ModuleLess::operator()(Module* left, Module* right) const
+{
+    if (left->ImportIndex() < right->ImportIndex()) return true;
+    if (left->ImportIndex() > right->ImportIndex()) return false;
+    return left->Id() < right->Id();
+}
+
+Module::Module(const std::string& name_) : 
+    kind(ModuleKind::interfaceModule), name(name_), symbolTable(), evaluationContext(symbolTable), fileId(-1), index(-1), importIndex(-1), reading(false)
 {
     symbolTable.SetModule(this);
 }
@@ -191,11 +204,11 @@ void Module::AddDerivedClasses()
     }
 }
 
-void Module::Write(const std::string& root, const std::string& config)
+void Module::Write(const std::string& root, const std::string& config, Context* context)
 {
     std::string moduleFilePath = MakeModuleFilePath(root, config, name);
     Writer writer(moduleFilePath);
-    Write(writer);
+    Write(writer, context);
 }
 
 void Module::Init()
@@ -264,10 +277,12 @@ void Module::AddDependsOnModule(Module* dependsOnModule)
     }
 }
 
-void Module::Write(Writer& writer)
+void Module::Write(Writer& writer, Context* context)
 {
+    writer.GetBinaryStreamWriter().Write(static_cast<std::int8_t>(kind));
     writer.GetBinaryStreamWriter().Write(name);
     writer.GetBinaryStreamWriter().Write(filePath);
+    writer.GetBinaryStreamWriter().Write(importIndex);
     std::uint32_t expCount = exportModuleNames.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(expCount);
     for (const auto& exportedModuleName : exportModuleNames)
@@ -286,11 +301,11 @@ void Module::Write(Writer& writer)
     {
         writer.GetBinaryStreamWriter().Write(implementationUnitName);
     }
-    symbolTable.Write(writer);
-    evaluationContext.Write(writer);
+    symbolTable.Write(writer, context);
+    evaluationContext.Write(writer, context);
     otava::ast::Writer astWriter(&writer.GetBinaryStreamWriter());
     astFile->Write(astWriter);
-    symbolTable.WriteMaps(writer);
+    symbolTable.WriteMaps(writer, context);
 }
 
 void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
@@ -301,8 +316,10 @@ void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
         throw std::runtime_error("circular module interface unit dependency for module '" + name + "' detected");
     }
     reading = true;
+    kind = static_cast<ModuleKind>(reader.GetBinaryStreamReader().ReadSByte());
     name = reader.GetBinaryStreamReader().ReadUtf8String();
     filePath = reader.GetBinaryStreamReader().ReadUtf8String();
+    importIndex = reader.GetBinaryStreamReader().ReadInt();
     std::uint32_t expCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (std::uint32_t i = 0; i < expCount; ++i)
     {
@@ -333,20 +350,20 @@ void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std:
     astReader.SetNodeMap(moduleMapper.GetNodeMap());
     astFile.reset(new otava::ast::File());
     astFile->Read(astReader);
-    symbolTable.ReadMaps(reader, moduleMapper.GetNodeMap(), moduleMapper.GetSymbolMap());
     Import(moduleMapper, config);
-    symbolTable.Resolve();
+    symbolTable.ReadMaps(reader, moduleMapper.GetNodeMap(), moduleMapper.GetSymbolMap());
+    symbolTable.Resolve(reader.GetContext());
     evaluationContext.Resolve(symbolTable);
     symbolTable.ImportAfterResolve();
     reading = false;
 }
 
-bool ModuleNameLess::operator()(Module* left, Module* right) const
+void Module::ToXml(const std::string& xmlFilePath) const
 {
-    return left->Name() < right->Name();
+    symbolTable.ToXml(xmlFilePath);
 }
 
-ModuleMapper::ModuleMapper()
+ModuleMapper::ModuleMapper() 
 {
     roots.push_back(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools"), "otava"), "std")));
 }
@@ -364,6 +381,32 @@ void ModuleMapper::AddModule(Module* module)
     std::lock_guard<std::recursive_mutex> lock(mtx);
     moduleMap[module->Name()] = module;
     modules.push_back(std::unique_ptr<Module>(module));
+}
+
+std::string ModuleMapper::GetProjectFilePath(const std::string& moduleName) const
+{
+    for (const auto& root : roots)
+    {
+        std::string projectFilePath = MakeProjectFilePath(root, moduleName);
+        if (std::filesystem::exists(projectFilePath))
+        {
+            return projectFilePath;
+        }
+    }
+    return std::string();
+}
+
+std::string ModuleMapper::GetModuleFilePath(const std::string& moduleName, const std::string& config) const
+{
+    for (const auto& root : roots)
+    {
+        std::string moduleFilePath = MakeModuleFilePath(root, config, moduleName);
+        if (std::filesystem::exists(moduleFilePath))
+        {
+            return moduleFilePath;
+        }
+    }
+    return std::string();
 }
 
 Module* ModuleMapper::GetModule(const std::string& moduleName, const std::string& config)
@@ -416,6 +459,11 @@ void ModuleMapper::SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* f
 FunctionDefinitionSymbolSet* ModuleMapper::GetFunctionDefinitionSymbolSet() const
 {
     return functionDefinitionSymbolSet;
+}
+
+int32_t ModuleMapper::ModuleCount() const
+{
+    return modules.size();
 }
 
 #ifdef _WIN32

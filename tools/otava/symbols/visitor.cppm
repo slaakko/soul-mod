@@ -25,10 +25,12 @@ class ArrayValue;
 class StructureValue;
 class AliasGroupSymbol;
 class AliasTypeSymbol;
+class AliasGroupTypeSymbol;
 class AliasTypeTemplateSpecializationSymbol;
 class ArrayTypeSymbol;
 class BlockSymbol;
 class ClassGroupSymbol;
+class ClassGroupTypeSymbol;
 class ClassTypeSymbol;
 class ForwardClassDeclarationSymbol;
 class FriendSymbol;
@@ -84,11 +86,13 @@ public:
     virtual void Visit(ArrayValue& value) {}
     virtual void Visit(StructureValue& value) {}
     virtual void Visit(AliasGroupSymbol& symbol) {}
+    virtual void Visit(AliasGroupTypeSymbol& symbol) {}
     virtual void Visit(AliasTypeSymbol& symbol) {}
     virtual void Visit(AliasTypeTemplateSpecializationSymbol& symbol) {}
     virtual void Visit(ArrayTypeSymbol& symbol) {}
     virtual void Visit(BlockSymbol& symbol) {}
     virtual void Visit(ClassGroupSymbol& symbol) {}
+    virtual void Visit(ClassGroupTypeSymbol& symbol) {}
     virtual void Visit(ClassTypeSymbol& symbol) {}
     virtual void Visit(ForwardClassDeclarationSymbol& symbol) {}
     virtual void Visit(FriendSymbol& symbol) {}

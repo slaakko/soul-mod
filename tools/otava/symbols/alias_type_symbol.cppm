@@ -30,9 +30,12 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
+    bool IsExportSymbol(Context* context) const override;
+    bool IsExportMapSymbol(Context* context) const override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     inline AliasGroupSymbol* Group() const { return group; }
     inline void SetGroup(AliasGroupSymbol* group_) { group = group_; }
+    soul::xml::Element* ToXml() const override;
 private:
     TypeSymbol* referredType;
     util::uuid referredTypeId;

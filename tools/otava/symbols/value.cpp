@@ -17,6 +17,7 @@ import otava.symbols.writer;
 import otava.symbols.reader;
 import otava.symbols.visitor;
 import otava.symbols.variable.symbol;
+import otava.symbols.classes;
 import otava.ast.error;
 
 namespace otava::symbols {
@@ -100,12 +101,9 @@ void Value::Resolve(SymbolTable& symbolTable)
     if (typeId != util::nil_uuid())
     {
         type = symbolTable.GetType(typeId);
-    }
-    else
-    {
-        if (IsIntegerValue())
+        if (!type)
         {
-            int x = 0;
+            std::cout << "Value::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
         }
     }
 }
@@ -210,28 +208,14 @@ otava::intermediate::Value* BoolValue::IrValue(Emitter& emitter, const soul::ast
 
 IntegerValue::IntegerValue(TypeSymbol* type_) : Value(SymbolKind::integerValueSymbol, std::u32string(U"0"), type_), value(0)
 {
-    if (!GetType())
-    {
-        int x = 0;
-    }
 }
 
 IntegerValue::IntegerValue(const std::u32string& rep_, TypeSymbol* type_) : Value(SymbolKind::integerValueSymbol, rep_, type_), value(0)
 {
-    if (readingEvaluationContext) return;
-    if (!GetType())
-    {
-        int x = 0;
-    }
 }
 
 IntegerValue::IntegerValue(std::int64_t value_, const std::u32string& rep_, TypeSymbol* type_) : Value(SymbolKind::integerValueSymbol, rep_, type_), value(value_)
 {
-    if (cloning) return;
-    if (!GetType())
-    {
-        int x = 0;
-    }
 }
 
 BoolValue* IntegerValue::ToBoolValue(EvaluationContext& context)
@@ -498,6 +482,11 @@ BoolValue* SymbolValue::ToBoolValue(EvaluationContext& context)
     return context.GetBoolValue(false);
 }
 
+bool SymbolValue::IsExportSymbol(Context* context) const
+{
+    return false;
+}
+
 void SymbolValue::Write(Writer& writer)
 {
     Value::Write(writer);
@@ -518,7 +507,7 @@ void SymbolValue::Accept(Visitor& visitor)
 void SymbolValue::Resolve(SymbolTable& symbolTable)
 {
     Value::Resolve(symbolTable);
-    symbol = symbolTable.GetSymbolMap()->GetSymbol(symbolId);
+    symbol = symbolTable.GetSymbolMap()->GetSymbol(symbolTable.GetModule(), SymbolKind::null, symbolId);
 }
 
 std::u32string SymbolValue::ToString() const
@@ -557,6 +546,11 @@ Value* InvokeValue::Convert(ValueKind kind, EvaluationContext& context)
 BoolValue* InvokeValue::ToBoolValue(EvaluationContext& context)
 {
     return context.GetBoolValue(false);
+}
+
+bool InvokeValue::IsExportSymbol(Context* context) const
+{
+    return false;
 }
 
 void InvokeValue::Write(Writer& writer)
@@ -877,16 +871,24 @@ void EvaluationContext::AddValue(Value* value)
     values.push_back(std::unique_ptr<Value>(value));
 }
 
-void EvaluationContext::Write(Writer& writer)
+void EvaluationContext::Write(Writer& writer, Context* context)
 {
     trueValue.Write(writer);
     falseValue.Write(writer);
     nullPtrValue.Write(writer);
-    std::uint32_t count = values.size();
+    std::vector<Symbol*> exportValues;
+    for (const auto& value : values)
+    {
+        if (value->IsExportSymbol(context))
+        {
+            exportValues.push_back(value.get());
+        }
+    }
+    std::uint32_t count = exportValues.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
     for (std::uint32_t i = 0; i < count; ++i)
     {
-        Symbol* value = values[i].get();
+        Symbol* value = exportValues[i];
         writer.Write(value);
     }
 }

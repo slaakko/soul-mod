@@ -5,6 +5,7 @@
 
 export module soul.lex.spg;
 
+import soul.lex.re;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.punctuation.token;

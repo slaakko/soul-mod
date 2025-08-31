@@ -24,7 +24,7 @@ public:
     bool IsVoidPtrType() const override { return baseType->IsVoidType(); }
     int PointerCount() const override;
     inline TypeSymbol* BaseType() const { return baseType; }
-    inline const Derivations& GetDerivations() const override { return derivations; }
+    const Derivations& GetDerivations() const override { return derivations; }
     TypeSymbol* RemoveDerivations(const Derivations& sourceDerivations, Context* context) override;
     TypeSymbol* Unify(TypeSymbol* argType, Context* context) override;
     TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
@@ -33,6 +33,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
+    bool IsExportSymbol(Context* context) const override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
     TypeSymbol* DirectType(Context* context) override;

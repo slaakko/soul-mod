@@ -8,6 +8,7 @@ module otava.symbols.symbol.table;
 import util.unicode;
 import util.uuid;
 import soul.lexer;
+import soul.xml.dom;
 import otava.ast.error;
 import otava.intermediate.error;
 import otava.symbols.alias.type.symbol;
@@ -220,7 +221,7 @@ void SymbolTable::Import(const SymbolTable& that, FunctionDefinitionSymbolSet* f
     ImportSpecializations(that);
     ImportArrayTypes(that);
     ImportDependentTypes(that);
-    ImportCompoundTypeMap(that);
+    ImportCompoundTypeMap(that, &context);
     ImportFundamentalTypeMap(that);
     ImportNodeSymbolMap(that);
     ImportSymbolNodeMap(that);
@@ -234,7 +235,11 @@ void SymbolTable::Import(const SymbolTable& that, FunctionDefinitionSymbolSet* f
     ImportSpecifierMap(that);
     ImportClasses(that);
     ImportExplicitInstantiations(that);
+    ImportClassGroups(that);
+    ImportAliasGroups(that);
     ImportFunctionGroupTypes(that);
+    ImportClassGroupTypes(that);
+    ImportAliasGroupTypes(that);
     typenameConstraintSymbol = that.typenameConstraintSymbol;
     errorTypeSymbol = that.errorTypeSymbol;
     MapConstraint(typenameConstraintSymbol);
@@ -253,10 +258,6 @@ void SymbolTable::AddImportAfterResolve(const SymbolTable* that)
 
 void SymbolTable::ImportSpecializations(const SymbolTable& that)
 {
-    if (module->Name() == "std.core" && that.module->Name() == "std.stream")
-    {
-        int x = 0;
-    }
     for (const auto& s : that.classTemplateSpecializationSet)
     {
         classTemplateSpecializationSet.insert(s);
@@ -287,11 +288,25 @@ void SymbolTable::ImportDependentTypes(const SymbolTable& that)
     }
 }
 
-void SymbolTable::ImportCompoundTypeMap(const SymbolTable& that)
+void SymbolTable::ImportCompoundTypeMap(const SymbolTable& that, Context* context)
 {
     for (const auto& p : that.compoundTypeMap)
     {
-        compoundTypeMap.insert(p);
+        TypeSymbol* type = p.first;
+        if (type->IsExportSymbol(context))
+        {
+            MapType(type);
+            const std::vector<CompoundTypeSymbol*>& vec = p.second;
+            std::vector<CompoundTypeSymbol*>& v = compoundTypeMap[type];
+            for (CompoundTypeSymbol* compound : vec)
+            {
+                MapType(compound);
+                if (std::find(v.begin(), v.end(), compound) == v.end())
+                {
+                    v.push_back(compound);
+                }
+            }
+        }
     }
 }
 
@@ -399,11 +414,43 @@ void SymbolTable::ImportExplicitInstantiations(const SymbolTable& that)
     }
 }
 
+void SymbolTable::ImportClassGroups(const SymbolTable& that)
+{
+    for (const auto& classGroup : that.classGroupMap)
+    {
+        classGroupMap.insert(classGroup);
+    }
+}
+
+void SymbolTable::ImportAliasGroups(const SymbolTable& that)
+{
+    for (const auto& aliasGroup : that.aliasGroupMap)
+    {
+        aliasGroupMap.insert(aliasGroup);
+    }
+}
+
 void SymbolTable::ImportFunctionGroupTypes(const SymbolTable& that)
 {
     for (const auto& functionGroupType : that.functionGroupTypeMap)
     {
         functionGroupTypeMap.insert(functionGroupType);
+    }
+}
+
+void SymbolTable::ImportClassGroupTypes(const SymbolTable& that)
+{
+    for (const auto& classGroupType : that.classGroupTypeMap)
+    {
+        classGroupTypeMap.insert(classGroupType);
+    }
+}
+
+void SymbolTable::ImportAliasGroupTypes(const SymbolTable& that)
+{
+    for (const auto& aliasGroupType : that.aliasGroupTypeMap)
+    {
+        aliasGroupTypeMap.insert(aliasGroupType);
     }
 }
 
@@ -415,30 +462,49 @@ void SymbolTable::ImportClassIndex(const SymbolTable& that)
     }
 }
 
-void SymbolTable::WriteMaps(Writer& writer)
+void SymbolTable::WriteMaps(Writer& writer, Context* context)
 {
-    std::uint32_t nns = nodeSymbolMap.size();
-    writer.GetBinaryStreamWriter().WriteULEB128UInt(nns);
+    std::vector<std::pair<otava::ast::Node*, Symbol*>> exportNodeSymbols;
     for (const auto& m : nodeSymbolMap)
     {
-        writer.GetBinaryStreamWriter().Write(static_cast<std::int32_t>(m.first->Kind()));
-        std::int64_t nodeId = m.first->Id();
-        if (m.first->IsInternallyMapped())
+        otava::ast::Node* node = m.first;
+        Symbol* symbol = m.second;
+        if (symbol->IsExportMapSymbol(context))
+        {
+            exportNodeSymbols.push_back(std::make_pair(node, symbol));
+        }
+    }
+    std::uint32_t nns = exportNodeSymbols.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(nns);
+    for (const auto& m : exportNodeSymbols)
+    {
+        otava::ast::Node* node = m.first;
+        Symbol* symbol = m.second;
+        std::int64_t nodeId = node->Id();
+        if (node->IsInternallyMapped())
         {
             nodeId = -1;
         }
+        writer.GetBinaryStreamWriter().Write(static_cast<std::int32_t>(node->Kind()));
         writer.GetBinaryStreamWriter().Write(nodeId);
-        const util::uuid& uuid = m.second->Id();
-        writer.GetBinaryStreamWriter().Write(uuid);
+        writer.GetBinaryStreamWriter().Write(symbol->Id());
     }
-    std::uint32_t nsn = symbolNodeMap.size();
-    writer.GetBinaryStreamWriter().WriteULEB128UInt(nsn);
+    std::vector<std::pair<Symbol*, otava::ast::Node*>> exportSymbolNodes;
     for (const auto& m : symbolNodeMap)
     {
-        const util::uuid& uuid = m.first->Id();
-        writer.GetBinaryStreamWriter().Write(uuid);
-        std::int64_t nodeId = m.second->Id();
-        if (m.second->IsInternallyMapped())
+        Symbol* symbol = m.first;
+        otava::ast::Node* node = m.second;
+        exportSymbolNodes.push_back(std::make_pair(symbol, node));
+    }
+    std::uint32_t nsn = exportSymbolNodes.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(nsn);
+    for (const auto& m : exportSymbolNodes)
+    {
+        Symbol* symbol = m.first;
+        otava::ast::Node* node = m.second;
+        writer.GetBinaryStreamWriter().Write(symbol->Id());
+        std::int64_t nodeId = node->Id();
+        if (node->IsInternallyMapped())
         {
             nodeId = -1;
         }
@@ -480,9 +546,16 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolM
         if (nodeId != -1)
         {
             otava::ast::Node* node = nodeMap->GetNode(nodeId);
-            Symbol* symbol = symbolMap->GetSymbol(symbolId);
-            nodeSymbolMap[node] = symbol;
-            allNodeSymbolMap[node] = symbol;
+            Symbol* symbol = symbolMap->GetSymbolNoThrow(symbolId);
+            if (symbol)
+            {
+                nodeSymbolMap[node] = symbol;
+                allNodeSymbolMap[node] = symbol;
+            }
+            else
+            {
+                std::cout << "SymbolTable::ReadMaps: warning: symbol for id '" + util::ToString(symbolId) + "' not found" << "\n";
+            }
         }
     }
     std::uint32_t nsn = reader.GetBinaryStreamReader().ReadULEB128UInt();
@@ -493,10 +566,17 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolM
         std::int64_t nodeId = reader.GetBinaryStreamReader().ReadLong();
         if (nodeId != -1)
         {
-            Symbol* symbol = symbolMap->GetSymbol(symbolId);
-            otava::ast::Node* node = nodeMap->GetNode(nodeId);
-            symbolNodeMap[symbol] = node;
-            allSymbolNodeMap[symbol] = node;
+            Symbol* symbol = symbolMap->GetSymbolNoThrow(symbolId);
+            if (symbol)
+            {
+                otava::ast::Node* node = nodeMap->GetNode(nodeId);
+                symbolNodeMap[symbol] = node;
+                allSymbolNodeMap[symbol] = node;
+            }
+            else
+            {
+                std::cout << "SymbolTable::ReadMaps: warning: symbol for id '" + util::ToString(symbolId) + "' not found" << "\n";
+            }
         }
     }
     std::uint32_t nfwd = reader.GetBinaryStreamReader().ReadULEB128UInt();
@@ -504,7 +584,7 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolM
     {
         util::uuid fwdId;
         reader.GetBinaryStreamReader().ReadUuid(fwdId);
-        Symbol* symbol = symbolMap->GetSymbol(fwdId);
+        Symbol* symbol = symbolMap->GetSymbol(GetModule(), SymbolKind::null, fwdId);
         forwardDeclarations.insert(symbol);
         allForwardDeclarations.insert(symbol);
     }
@@ -514,7 +594,7 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolM
         util::uuid symbolId;
         reader.GetBinaryStreamReader().ReadUuid(symbolId);
         std::int64_t nodeId = reader.GetBinaryStreamReader().ReadLong();
-        Symbol* symbol = symbolMap->GetSymbol(symbolId);
+        Symbol* symbol = symbolMap->GetSymbol(GetModule(), SymbolKind::null, symbolId);
         otava::ast::Node* node = nodeMap->GetNode(nodeId);
         specifierNodeMap[symbol] = node;
         allSpecifierNodeMap[symbol] = node;
@@ -524,7 +604,7 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolM
     {
         util::uuid clsId;
         reader.GetBinaryStreamReader().ReadUuid(clsId);
-        Symbol* symbol = symbolMap->GetSymbol(clsId);
+        Symbol* symbol = symbolMap->GetSymbol(GetModule(), SymbolKind::null, clsId);
         if (symbol->IsClassTypeSymbol())
         {
             classes.insert(static_cast<ClassTypeSymbol*>(symbol));
@@ -533,7 +613,7 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolM
     }
 }
 
-void SymbolTable::Write(Writer& writer)
+void SymbolTable::Write(Writer& writer, Context* context)
 {
     globalNs->Write(writer);
     std::uint32_t scount = classTemplateSpecializations.size();
@@ -560,11 +640,19 @@ void SymbolTable::Write(Writer& writer)
     {
         writer.Write(dependentType.get());
     }
-    std::uint32_t ccount = compoundTypes.size();
-    writer.GetBinaryStreamWriter().WriteULEB128UInt(ccount);
+    std::vector<CompoundTypeSymbol*> exportCompoundTypes;
     for (const auto& compoundType : compoundTypes)
     {
-        writer.Write(compoundType.get());
+        if (compoundType->IsExportSymbol(context))
+        {
+            exportCompoundTypes.push_back(compoundType.get());
+        }
+    }
+    std::uint32_t ccount = exportCompoundTypes.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(ccount);
+    for (auto compoundType : exportCompoundTypes)
+    {
+        writer.Write(compoundType);
     }
     std::uint32_t ecount = explicitInstantiations.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(ecount);
@@ -577,6 +665,18 @@ void SymbolTable::Write(Writer& writer)
     for (const auto& functionGroupType : functionGroupTypes)
     {
         writer.Write(functionGroupType.get());
+    }
+    std::uint32_t ctcount = classGroupTypes.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(ctcount);
+    for (const auto& classGroupType : classGroupTypes)
+    {
+        writer.Write(classGroupType.get());
+    }
+    std::uint32_t atcount = aliasGroupTypes.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(atcount);
+    for (const auto& aliasGroupType : aliasGroupTypes)
+    {
+        writer.Write(aliasGroupType.get());
     }
     index.write(writer.GetBinaryStreamWriter());
 }
@@ -693,10 +793,40 @@ void SymbolTable::Read(Reader& reader)
             throw std::runtime_error("otava.symbols.symbol_table: function group type symbol expected");
         }
     }
+    std::uint32_t ctcount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < ctcount; ++i)
+    {
+        Symbol* symbol = reader.ReadSymbol();
+        if (symbol->IsClassGroupTypeSymbol())
+        {
+            ClassGroupTypeSymbol* classGroupType = static_cast<ClassGroupTypeSymbol*>(symbol);
+            classGroupTypes.push_back(std::unique_ptr<ClassGroupTypeSymbol>(classGroupType));
+        }
+        else
+        {
+            otava::ast::SetExceptionThrown();
+            throw std::runtime_error("otava.symbols.symbol_table: class group type symbol expected");
+        }
+    }
+    std::uint32_t atcount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < atcount; ++i)
+    {
+        Symbol* symbol = reader.ReadSymbol();
+        if (symbol->IsAliasGroupTypeSymbol())
+        {
+            AliasGroupTypeSymbol* aliasGroupType = static_cast<AliasGroupTypeSymbol*>(symbol);
+            aliasGroupTypes.push_back(std::unique_ptr<AliasGroupTypeSymbol>(aliasGroupType));
+        }
+        else
+        {
+            otava::ast::SetExceptionThrown();
+            throw std::runtime_error("otava.symbols.symbol_table: class group type symbol expected");
+        }
+    }
     index.read(reader.GetBinaryStreamReader());
 }
 
-void SymbolTable::Resolve()
+void SymbolTable::Resolve(Context* context)
 {
     for (auto& specialization : classTemplateSpecializations)
     {
@@ -717,10 +847,47 @@ void SymbolTable::Resolve()
     for (auto& compoundType : compoundTypes)
     {
         MapType(compoundType.get());
+    }
+    globalNs->Resolve(*this);
+    for (const auto& specialization : classTemplateSpecializations)
+    {
+        if (specialization->Kind() == SymbolKind::classTemplateSpecializationSymbol)
+        {
+            ClassTemplateSpecializationSymbol* s = static_cast<ClassTemplateSpecializationSymbol*>(specialization.get());
+            s->Resolve(*this);
+        }
+        else
+        {
+            ThrowException("class template specialization expected", soul::ast::SourcePos(), context);
+        }
+    }
+    for (const auto& specialization : aliasTypeTemplateSpecializations)
+    {
+        if (specialization->Kind() == SymbolKind::aliasTypeTemplateSpecializationSymbol)
+        {
+            AliasTypeTemplateSpecializationSymbol* s = static_cast<AliasTypeTemplateSpecializationSymbol*>(specialization.get());
+            s->Resolve(*this);
+        }
+        else
+        {
+            ThrowException("alias type template specialization expected", soul::ast::SourcePos(), context);
+        }
+    }
+    for (const auto& arrayType : arrayTypes)
+    {
+        ArrayTypeSymbol* a = static_cast<ArrayTypeSymbol*>(arrayType.get());
+        a->Resolve(*this);
+    }
+    for (const auto& instantiation : explicitInstantiations)
+    {
+        instantiation->Resolve(*this);
+    }
+    for (auto& compoundType : compoundTypes)
+    {
         compoundType->Resolve(*this);
         bool found = false;
         std::vector<CompoundTypeSymbol*>& compoundTypeVec = compoundTypeMap[compoundType->BaseType()];
-        for (CompoundTypeSymbol* ct: compoundTypeVec)
+        for (CompoundTypeSymbol* ct : compoundTypeVec)
         {
             if (ct == compoundType.get())
             {
@@ -732,26 +899,6 @@ void SymbolTable::Resolve()
         {
             compoundTypeVec.push_back(compoundType.get());
         }
-    }
-    globalNs->Resolve(*this);
-    for (const auto& specialization : classTemplateSpecializations)
-    {
-        ClassTemplateSpecializationSymbol* s = static_cast<ClassTemplateSpecializationSymbol*>(specialization.get());
-        s->Resolve(*this);
-    }
-    for (const auto& specialization : aliasTypeTemplateSpecializations)
-    {
-        AliasTypeTemplateSpecializationSymbol* s = static_cast<AliasTypeTemplateSpecializationSymbol*>(specialization.get());
-        s->Resolve(*this);
-    }
-    for (const auto& arrayType : arrayTypes)
-    {
-        ArrayTypeSymbol* a = static_cast<ArrayTypeSymbol*>(arrayType.get());
-        a->Resolve(*this);
-    }
-    for (const auto& instantiation : explicitInstantiations)
-    {
-        instantiation->Resolve(*this);
     }
     conversionTable->Make();
 }
@@ -1011,7 +1158,7 @@ Symbol* SymbolTable::GetSymbol(otava::ast::Node* node) const
     }
 }
 
-TypeSymbol* SymbolTable::GetTypeNothrow(const util::uuid& id) const
+TypeSymbol* SymbolTable::GetTypeNoThrow(const util::uuid& id) const
 {
     auto it = typeMap.find(id);
     if (it != typeMap.cend())
@@ -1026,21 +1173,26 @@ TypeSymbol* SymbolTable::GetTypeNothrow(const util::uuid& id) const
 
 TypeSymbol* SymbolTable::GetType(const util::uuid& id) const
 {
-    TypeSymbol* type = GetTypeNothrow(id);
+    TypeSymbol* type = GetTypeNoThrow(id);
     if (type)
     {
         return type;
     }
     else
     {
-        otava::ast::SetExceptionThrown();
-        throw std::runtime_error("type for id '" + util::ToString(id) + "' not found");
+        std::cout << "SymbolTable::GetType(): warning: type for id '" + util::ToString(id) + " not found" << "\n";
     }
+    return nullptr;
 }
 
 void SymbolTable::MapType(TypeSymbol* type)
 {
     typeMap[type->Id()] = type;
+}
+
+void SymbolTable::UnmapType(TypeSymbol* type)
+{
+    typeMap.erase(type->Id());
 }
 
 VariableSymbol* SymbolTable::AddVariable(const std::u32string& name, otava::ast::Node* node, TypeSymbol* declaredType, TypeSymbol* initializerType, 
@@ -1475,6 +1627,7 @@ ParameterSymbol* SymbolTable::CreateParameter(const std::u32string& name, otava:
 
 TypeSymbol* SymbolTable::MakeCompoundType(TypeSymbol* baseType, const Derivations& derivations)
 {
+    MapType(baseType);
     Derivations drv = derivations;
     if (baseType->IsCompoundTypeSymbol())
     {
@@ -1578,6 +1731,32 @@ FunctionGroupTypeSymbol* SymbolTable::MakeFunctionGroupTypeSymbol(FunctionGroupS
     functionGroupTypeMap[functionGroup] = functionGroupType;
     functionGroupTypes.push_back(std::unique_ptr<FunctionGroupTypeSymbol>(functionGroupType));
     return functionGroupType;
+}
+
+ClassGroupTypeSymbol* SymbolTable::MakeClassGroupTypeSymbol(ClassGroupSymbol* classGroup)
+{
+    auto it = classGroupTypeMap.find(classGroup);
+    if (it != classGroupTypeMap.cend())
+    {
+        return it->second;
+    }
+    ClassGroupTypeSymbol* classGroupType = new ClassGroupTypeSymbol(classGroup);
+    classGroupTypeMap[classGroup] = classGroupType;
+    classGroupTypes.push_back(std::unique_ptr<ClassGroupTypeSymbol>(classGroupType));
+    return classGroupType;
+}
+
+AliasGroupTypeSymbol* SymbolTable::MakeAliasGroupTypeSymbol(AliasGroupSymbol* aliasGroup)
+{
+    auto it = aliasGroupTypeMap.find(aliasGroup);
+    if (it != aliasGroupTypeMap.cend())
+    {
+        return it->second;
+    }
+    AliasGroupTypeSymbol* aliasGroupType = new AliasGroupTypeSymbol(aliasGroup);
+    aliasGroupTypeMap[aliasGroup] = aliasGroupType;
+    aliasGroupTypes.push_back(std::unique_ptr<AliasGroupTypeSymbol>(aliasGroupType));
+    return aliasGroupType;
 }
 
 ConceptSymbol* SymbolTable::AddConcept(const std::u32string& name, otava::ast::Node* node, Context* context)
@@ -1741,6 +1920,16 @@ void SymbolTable::MapFunctionGroup(FunctionGroupSymbol* functionGroup)
     functionGroupMap[functionGroup->Id()] = functionGroup;
 }
 
+void SymbolTable::MapClassGroup(ClassGroupSymbol* classGroup)
+{
+    classGroupMap[classGroup->Id()] = classGroup;
+}
+
+void SymbolTable::MapAliasGroup(AliasGroupSymbol* aliasGroup)
+{
+    aliasGroupMap[aliasGroup->Id()] = aliasGroup;
+}
+
 void SymbolTable::MapConcept(ConceptSymbol* cncp)
 {
     conceptMap[cncp->Id()] = cncp;
@@ -1778,7 +1967,7 @@ FunctionDefinitionSymbol* SymbolTable::GetFunctionDefinition(const util::uuid& i
 AliasTypeSymbol* SymbolTable::GetAliasType(const util::uuid& id) const
 {
     TypeSymbol* type = GetType(id);
-    if (type->IsAliasTypeSymbol())
+    if (type && type->IsAliasTypeSymbol())
     {
         return static_cast<AliasTypeSymbol*>(type);
     }
@@ -1792,14 +1981,14 @@ AliasTypeSymbol* SymbolTable::GetAliasType(const util::uuid& id) const
 ClassTypeSymbol* SymbolTable::GetClass(const util::uuid& id) const
 {
     TypeSymbol* type = GetType(id);
-    if (type->IsClassTypeSymbol())
+    if (type && type->IsClassTypeSymbol())
     {
         return static_cast<ClassTypeSymbol*>(type);
     }
     else
     {
         otava::ast::SetExceptionThrown();
-        throw std::runtime_error("otava.symbols.symbol_table: class type expected");
+        throw std::runtime_error("otava.symbols.symbol_table: class type expected: id=" + util::ToString(id));
     }
 }
 
@@ -1856,6 +2045,34 @@ FunctionGroupSymbol* SymbolTable::GetFunctionGroup(const util::uuid& id) const
     {
         otava::ast::SetExceptionThrown();
         throw std::runtime_error("function group for id '" + util::ToString(id) + "' not found");
+    }
+}
+
+ClassGroupSymbol* SymbolTable::GetClassGroup(const util::uuid& id) const
+{
+    auto it = classGroupMap.find(id);
+    if (it != classGroupMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        otava::ast::SetExceptionThrown();
+        throw std::runtime_error("class group for id '" + util::ToString(id) + "' not found");
+    }
+}
+
+AliasGroupSymbol* SymbolTable::GetAliasGroup(const util::uuid& id) const
+{
+    auto it = aliasGroupMap.find(id);
+    if (it != aliasGroupMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        otava::ast::SetExceptionThrown();
+        throw std::runtime_error("alias group for id '" + util::ToString(id) + "' not found");
     }
 }
 
@@ -1956,6 +2173,31 @@ void SymbolTable::ImportAfterResolve()
         ImportArrayTypes(*st);
     }
     importAfterResolve.clear();
+}
+
+void SymbolTable::ToXml(const std::string& xmlFilePath) const
+{
+    soul::xml::Document doc;
+    Module* mod = GetModule();
+    soul::xml::Element* root = soul::xml::MakeElement("module");
+    root->SetAttribute("name", mod->Name());
+    root->SetAttribute("filePath", mod->FilePath());
+    doc.AppendChild(root);
+    std::ofstream xmlFile(xmlFilePath);
+    if (!xmlFile)
+    {
+        ThrowException("could not create file '" + xmlFilePath + "'");
+    }
+    root->AppendChild(globalNs->ToXml());
+    soul::xml::Element* specializationsElement = soul::xml::MakeElement("specialiazations");
+    root->AppendChild(specializationsElement);
+    for (const auto& specialization : classTemplateSpecializations)
+    {
+        specializationsElement->AppendChild(specialization->ToXml());
+    }
+    util::CodeFormatter formatter(xmlFile);
+    formatter.SetIndentSize(1);
+    doc.Write(formatter);
 }
 
 } // namespace otava::symbols

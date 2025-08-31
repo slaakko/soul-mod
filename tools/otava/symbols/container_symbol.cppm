@@ -22,6 +22,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
+    soul::xml::Element* ToXml() const override;
 private:
     std::vector<std::unique_ptr<Symbol>> symbols;
     ContainerScope scope;

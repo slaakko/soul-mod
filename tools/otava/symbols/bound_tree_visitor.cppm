@@ -37,6 +37,8 @@ class BoundVariableNode;
 class BoundParameterNode;
 class BoundEnumConstant;
 class BoundFunctionGroupNode;
+class BoundClassGroupNode;
+class BoundAliasGroupNode;
 class BoundTypeNode;
 class BoundMemberExprNode;
 class BoundFunctionCallNode;
@@ -93,6 +95,8 @@ public:
     virtual void Visit(BoundParameterNode& node) {}
     virtual void Visit(BoundEnumConstant& node) {}
     virtual void Visit(BoundFunctionGroupNode& node) {}
+    virtual void Visit(BoundClassGroupNode& node) {}
+    virtual void Visit(BoundAliasGroupNode& node) {}
     virtual void Visit(BoundTypeNode& node) {}
     virtual void Visit(BoundMemberExprNode& node) {}
     virtual void Visit(BoundFunctionCallNode& node) {}

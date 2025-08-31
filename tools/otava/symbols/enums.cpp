@@ -167,7 +167,7 @@ void ForwardEnumDeclarationSymbol::Resolve(SymbolTable& symbolTable)
     if (enumTypeSymbolId != util::nil_uuid())
     {
         TypeSymbol* type = symbolTable.GetType(enumTypeSymbolId);
-        if (type->IsEnumeratedTypeSymbol())
+        if (type && type->IsEnumeratedTypeSymbol())
         {
             enumTypeSymbol = static_cast<EnumeratedTypeSymbol*>(type);
         }
@@ -490,7 +490,7 @@ void EnumTypeDefaultCtor::Resolve(SymbolTable& symbolTable)
 {
     FunctionSymbol::Resolve(symbolTable);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
-    if (type->IsEnumeratedTypeSymbol())
+    if (type && type->IsEnumeratedTypeSymbol())
     {
         enumType = static_cast<EnumeratedTypeSymbol*>(type);
     }
@@ -541,7 +541,7 @@ void EnumTypeCopyCtor::Resolve(SymbolTable& symbolTable)
 {
     FunctionSymbol::Resolve(symbolTable);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
-    if (type->IsEnumeratedTypeSymbol())
+    if (type && type->IsEnumeratedTypeSymbol())
     {
         enumType = static_cast<EnumeratedTypeSymbol*>(type);
     }
@@ -594,7 +594,7 @@ void EnumTypeMoveCtor::Resolve(SymbolTable& symbolTable)
 {
     FunctionSymbol::Resolve(symbolTable);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
-    if (type->IsEnumeratedTypeSymbol())
+    if (type && type->IsEnumeratedTypeSymbol())
     {
         enumType = static_cast<EnumeratedTypeSymbol*>(type);
     }
@@ -650,7 +650,7 @@ void EnumTypeCopyAssignment::Resolve(SymbolTable& symbolTable)
 {
     FunctionSymbol::Resolve(symbolTable);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
-    if (type->IsEnumeratedTypeSymbol())
+    if (type && type->IsEnumeratedTypeSymbol())
     {
         enumType = static_cast<EnumeratedTypeSymbol*>(type);
     }
@@ -700,7 +700,7 @@ void EnumTypeMoveAssignment::Resolve(SymbolTable& symbolTable)
 {
     FunctionSymbol::Resolve(symbolTable);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
-    if (type->IsEnumeratedTypeSymbol())
+    if (type && type->IsEnumeratedTypeSymbol())
     {
         enumType = static_cast<EnumeratedTypeSymbol*>(type);
     }
@@ -753,7 +753,7 @@ void EnumTypeEqual::Resolve(SymbolTable& symbolTable)
 {
     FunctionSymbol::Resolve(symbolTable);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
-    if (type->IsEnumeratedTypeSymbol())
+    if (type && type->IsEnumeratedTypeSymbol())
     {
         enumType = static_cast<EnumeratedTypeSymbol*>(type);
     }
@@ -806,7 +806,7 @@ void EnumTypeLess::Resolve(SymbolTable& symbolTable)
 {
     FunctionSymbol::Resolve(symbolTable);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
-    if (type->IsEnumeratedTypeSymbol())
+    if (type && type->IsEnumeratedTypeSymbol())
     {
         enumType = static_cast<EnumeratedTypeSymbol*>(type);
     }

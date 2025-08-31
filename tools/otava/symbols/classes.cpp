@@ -301,7 +301,7 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
     TypeSymbol::Resolve(symbolTable);
     for (const util::uuid& baseClassId : baseClassIds)
     {
-        Symbol* baseClassSymbol = symbolTable.GetSymbolMap()->GetSymbol(baseClassId);
+        Symbol* baseClassSymbol = symbolTable.GetSymbolMap()->GetSymbol(symbolTable.GetModule(), SymbolKind::null, baseClassId);
         if (baseClassSymbol->IsClassTypeSymbol())
         {
             GetScope()->AddBaseScope(baseClassSymbol->GetScope(), soul::ast::SourcePos(), nullptr);
@@ -311,11 +311,22 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
     if (specializationId != util::nil_uuid())
     {
         specialization = symbolTable.GetType(specializationId);
+        if (!specialization)
+        {
+            std::cout << "ClassTypeSymbol::Resolve(): warning: specialization type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+        }
     }
     for (const auto& tid : objectLayoutIds)
     {
         TypeSymbol* type = symbolTable.GetType(tid);
-        objectLayout.push_back(type);
+        if (type)
+        {
+            objectLayout.push_back(type);
+        }
+        else
+        {
+            std::cout << "ClassTypeSymbol::Resolve(): warning: object layout type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+        }
     }
     for (const auto& fnIndexId : functionIdMap)
     {
@@ -328,11 +339,7 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
     }
     if (groupId != util::nil_uuid())
     {
-        TypeSymbol* groupSymbol = symbolTable.GetType(groupId);
-        if (groupSymbol->IsClassGroupSymbol())
-        {
-            group = static_cast<ClassGroupSymbol*>(groupSymbol);
-        }
+        group = symbolTable.GetClassGroup(groupId);
     }
 }
 
@@ -836,7 +843,7 @@ void ForwardClassDeclarationSymbol::Resolve(SymbolTable& symbolTable)
     if (classTypeSymbolId != util::nil_uuid())
     {
         TypeSymbol* type = symbolTable.GetType(classTypeSymbolId);
-        if (type->IsClassTypeSymbol())
+        if (type && type->IsClassTypeSymbol())
         {
             classTypeSymbol = static_cast<ClassTypeSymbol*>(type);
         }

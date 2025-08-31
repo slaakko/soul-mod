@@ -19,6 +19,8 @@ enum class FunctionKind
     function, constructor, destructor, special, conversionMemFn
 };
 
+std::string FunctionKindStr(FunctionKind functionKind);
+
 enum class SpecialFunctionKind
 {
     none, defaultCtor, copyCtor, moveCtor, copyAssignment, moveAssignment, dtor
@@ -86,7 +88,7 @@ public:
     ParameterSymbol(const std::u32string& name_);
     ParameterSymbol(const std::u32string& name_, TypeSymbol* type_);
     std::string SymbolKindStr() const override { return "parameter symbol"; }
-    std::string SymbolDocKindStr() const override { return "paremeter"; }
+    std::string SymbolDocKindStr() const override { return "parameter"; }
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     inline TypeSymbol* GetType() const { return type; }
     TypeSymbol* GetReferredType(Context* context) const;
@@ -98,6 +100,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
+    soul::xml::Element* ToXml() const override;
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -218,6 +221,7 @@ public:
     void SetCompileUnitId(const std::string& compileUnitId_);
     inline const std::string& CompileUnitId() const { return compileUnitId; }
     void SetTemplateArgs(const std::vector<TypeSymbol*>& templateArgs_);
+    soul::xml::Element* ToXml() const override;
 private:
     mutable bool memFunParamsConstructed;
     FunctionKind kind;
@@ -279,6 +283,7 @@ public:
     std::int32_t ConversionDistance() const override;
     void AddDefinitionToGroup(Context* context) override;
     inline const std::string& GetIrName() const { return irName; }
+    soul::xml::Element* ToXml() const override;
 private:
     FunctionSymbol* declaration;
     util::uuid declarationId;

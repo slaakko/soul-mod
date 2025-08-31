@@ -1,0 +1,54 @@
+<parserFile>
+ <grammar name="ExpressionFileParser">
+  <rule first="{#, ID, EXPRESSIONS, RBRACE, LBRACE}" name="ExpressionFile">
+   <action first="{#, ID, EXPRESSIONS, RBRACE, LBRACE}">
+    <group first="{#, ID, EXPRESSIONS, RBRACE, LBRACE}">
+     <sequence first="{#, ID, EXPRESSIONS, RBRACE, LBRACE}">
+      <sequence first="{#, ID, EXPRESSIONS, LBRACE}">
+       <sequence first="{#, ID, EXPRESSIONS, LBRACE}">
+        <sequence first="{#, ID, EXPRESSIONS}">
+         <sequence first="{#, EXPRESSIONS}">
+          <action first="{#}">
+           <empty first="{#}"/>
+          </action>
+          <token first="{EXPRESSIONS}" name="EXPRESSIONS"/>
+         </sequence>
+         <action first="{ID}">
+          <nonterminal first="{ID}" ruleName="QualifiedId"/>
+         </action>
+        </sequence>
+        <token first="{LBRACE}" name="LBRACE"/>
+       </sequence>
+       <kleene first="{#, ID}">
+        <group first="{ID}">
+         <action first="{ID}">
+          <nonterminal first="{ID}" ruleName="Expression"/>
+         </action>
+        </group>
+       </kleene>
+      </sequence>
+      <token first="{RBRACE}" name="RBRACE"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{ID}" name="Expression">
+   <action first="{ID}">
+    <group first="{ID}">
+     <sequence first="{ID}">
+      <sequence first="{ID}">
+       <sequence first="{ID}">
+        <action first="{ID}">
+         <token first="{ID}" name="ID"/>
+        </action>
+        <token first="{ASSIGN}" name="ASSIGN"/>
+       </sequence>
+       <nonterminal first="{STRING_LITERAL}" ruleName="ExprString"/>
+      </sequence>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+ </grammar>
+</parserFile>

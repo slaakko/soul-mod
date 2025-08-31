@@ -49,7 +49,7 @@ parser ExpressionFileParser
             { 
                 auto rv = lexer.GetToken(pos); 
                 if (!rv) return std::unexpected<int>(rv.error());
-                auto token = *rv;
+                const auto* token = *rv;
                 auto n = util::ToUtf8(token->ToString());
                 if (!n) return std::unexpected<int>(n.error());
                 name = *n;

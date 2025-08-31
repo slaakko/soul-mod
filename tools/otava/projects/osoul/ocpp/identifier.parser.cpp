@@ -1,21 +1,16 @@
 
-// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/ocpp/identifier.parser' using soul parser generator oespg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/ocpp/identifier.parser' using soul parser generator ospg version 5.0.0
 
 module soul.cpp.identifier.parser;
 
 import util;
 import soul.ast.spg;
+import soul.ast.common;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.tool.token;
 import soul.punctuation.token;
 import soul.lex;
-
-using namespace soul::cpp::token;
-using namespace soul::cpp::op::token;
-using namespace soul::tool::token;
-using namespace soul::punctuation::token;
-using namespace soul::lex;
 
 namespace soul::cpp::identifier::parser {
 
@@ -37,7 +32,7 @@ std::expected<soul::parser::Match, int> CppIdentifierParser<LexerT>::CppIdentifi
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == ID)
+        if (*lexer == soul::cpp::token::ID)
         {
             auto a = ++lexer;
             if (!a) return std::unexpected<int>(a.error());
@@ -109,7 +104,7 @@ std::expected<soul::parser::Match, int> CppIdentifierParser<LexerT>::QualifiedCp
                             {
                                 std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(false);
-                                if (*lexer == COLON_COLON)
+                                if (*lexer == soul::cpp::op::token::COLON_COLON)
                                 {
                                     auto a = ++lexer;
                                     if (!a) return std::unexpected<int>(a.error());
@@ -144,7 +139,7 @@ std::expected<soul::parser::Match, int> CppIdentifierParser<LexerT>::QualifiedCp
                         {
                             std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
-                            if (*lexer == ID)
+                            if (*lexer == soul::cpp::token::ID)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -183,7 +178,7 @@ std::expected<soul::parser::Match, int> CppIdentifierParser<LexerT>::QualifiedCp
                                     soul::parser::Match* parentMatch12 = &match;
                                     {
                                         soul::parser::Match match(false);
-                                        if (*lexer == COLON_COLON)
+                                        if (*lexer == soul::cpp::op::token::COLON_COLON)
                                         {
                                             auto a = ++lexer;
                                             if (!a) return std::unexpected<int>(a.error());
@@ -201,7 +196,7 @@ std::expected<soul::parser::Match, int> CppIdentifierParser<LexerT>::QualifiedCp
                                             {
                                                 std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match(false);
-                                                if (*lexer == ID)
+                                                if (*lexer == soul::cpp::token::ID)
                                                 {
                                                     auto a = ++lexer;
                                                     if (!a) return std::unexpected<int>(a.error());

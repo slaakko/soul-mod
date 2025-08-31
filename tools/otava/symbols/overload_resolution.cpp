@@ -1143,15 +1143,6 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
 
 std::vector<Scope*> GetArgumentScopes(BoundExpressionNode* arg)
 {
-    if (arg->IsBoundEnumConstant())
-    {
-        BoundEnumConstant* c = static_cast<BoundEnumConstant*>(arg);
-        EnumConstantSymbol* e = c->EnumConstant();
-        if (e->Name() == U"dec")
-        {
-            int x = 0;
-        }
-    }
     std::vector<Scope*> scopes;
     TypeSymbol* type = arg->GetType();
     if (type)
@@ -1237,10 +1228,6 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
 {
     MakeFinalDirectArgs(args, sourcePos, context);
     std::vector<FunctionSymbol*> viableFunctions;
-    if (groupName == U"push")
-    {
-        int x = 0;
-    }
     if (groupName == U"@destructor")
     {
         if (args.size() == 1)

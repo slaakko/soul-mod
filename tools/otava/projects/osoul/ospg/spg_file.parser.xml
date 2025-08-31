@@ -1,0 +1,88 @@
+<parserFile>
+ <grammar name="SpgFileParser">
+  <rule first="{PROJECT}" name="SpgFile">
+   <action first="{PROJECT}">
+    <group first="{PROJECT}">
+     <sequence first="{PROJECT}">
+      <sequence first="{PROJECT}">
+       <sequence first="{PROJECT}">
+        <token first="{PROJECT}" name="PROJECT"/>
+        <action first="{ID}">
+         <nonterminal first="{ID}" ruleName="QualifiedId"/>
+        </action>
+       </sequence>
+       <token first="{SEMICOLON}" name="SEMICOLON"/>
+      </sequence>
+      <kleene first="{#, ID, EXTERN, SEMICOLON, TOKENS, FILEPATH}">
+       <group first="{#, ID, EXTERN, SEMICOLON, TOKENS, FILEPATH}">
+        <action first="{#, ID, EXTERN, SEMICOLON, TOKENS, FILEPATH}">
+         <nonterminal first="{#, ID, EXTERN, SEMICOLON, TOKENS, FILEPATH}" ruleName="SpgFileDeclaration"/>
+        </action>
+       </group>
+      </kleene>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{#, ID, EXTERN, SEMICOLON, TOKENS, FILEPATH}" name="SpgFileDeclaration">
+   <choice first="{#, ID, EXTERN, SEMICOLON, TOKENS, FILEPATH}">
+    <action first="{#, ID, EXTERN, SEMICOLON, FILEPATH}">
+     <nonterminal first="{#, ID, EXTERN, SEMICOLON, FILEPATH}" ruleName="ParserFileDeclaration"/>
+    </action>
+    <action first="{#, EXTERN, SEMICOLON, TOKENS, FILEPATH}">
+     <nonterminal first="{#, EXTERN, SEMICOLON, TOKENS, FILEPATH}" ruleName="TokenFileDeclaration"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{#, ID, EXTERN, SEMICOLON, FILEPATH}" name="ParserFileDeclaration">
+   <action first="{#, ID, EXTERN, SEMICOLON, FILEPATH}">
+    <group first="{#, ID, EXTERN, SEMICOLON, FILEPATH}">
+     <sequence first="{#, ID, EXTERN, SEMICOLON, FILEPATH}">
+      <sequence first="{#, ID, EXTERN, FILEPATH}">
+       <sequence first="{#, ID, EXTERN}">
+        <group first="{#, EXTERN}">
+         <choice first="{#, EXTERN}">
+          <action first="{EXTERN}">
+           <token first="{EXTERN}" name="EXTERN"/>
+          </action>
+          <action first="{#}">
+           <empty first="{#}"/>
+          </action>
+         </choice>
+        </group>
+        <nonterminal first="{ID}" ruleName="ParserKeyword"/>
+       </sequence>
+       <nonterminal first="{FILEPATH}" ruleName="FilePath"/>
+      </sequence>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{#, EXTERN, SEMICOLON, TOKENS, FILEPATH}" name="TokenFileDeclaration">
+   <action first="{#, EXTERN, SEMICOLON, TOKENS, FILEPATH}">
+    <group first="{#, EXTERN, SEMICOLON, TOKENS, FILEPATH}">
+     <sequence first="{#, EXTERN, SEMICOLON, TOKENS, FILEPATH}">
+      <sequence first="{#, EXTERN, TOKENS, FILEPATH}">
+       <sequence first="{#, EXTERN, TOKENS}">
+        <group first="{#, EXTERN}">
+         <choice first="{#, EXTERN}">
+          <action first="{EXTERN}">
+           <token first="{EXTERN}" name="EXTERN"/>
+          </action>
+          <action first="{#}">
+           <empty first="{#}"/>
+          </action>
+         </choice>
+        </group>
+        <token first="{TOKENS}" name="TOKENS"/>
+       </sequence>
+       <nonterminal first="{FILEPATH}" ruleName="FilePath"/>
+      </sequence>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+ </grammar>
+</parserFile>

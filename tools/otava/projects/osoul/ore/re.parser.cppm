@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/ore/re.parser' using soul parser generator oespg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/ore/re.parser' using soul parser generator ospg version 5.0.0
 
 export module soul.re.parser;
 
@@ -7,8 +7,6 @@ import std;
 import soul.lexer;
 import soul.parser;
 import soul.ast.re;
-
-using namespace soul::ast::re;
 
 export namespace soul::re::parser {
 

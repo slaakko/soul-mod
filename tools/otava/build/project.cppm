@@ -27,6 +27,13 @@ enum class Target : std::int32_t
     program, library
 };
 
+class Project;
+
+struct ProjectLess
+{
+    bool operator()(Project* left, Project* right) const;
+};
+
 class Project
 {
 public:
@@ -34,6 +41,8 @@ public:
     inline void SetFileMap(soul::lexer::FileMap* fileMap_) { fileMap = fileMap_; }
     inline const std::string& FilePath() const { return filePath; }
     inline const std::string& Name() const { return name; }
+    inline const std::string& OutputFilePath() const { return outputFilePath; }
+    void SetOutputFilePath(const std::string& outputFilePath_) { outputFilePath = outputFilePath_; }
     std::int16_t Id() const;
     void AddInterfaceFilePath(const std::string& interfaceFilePath);
     inline const std::vector<std::string>& InterfaceFilePaths() const { return interfaceFilePaths; }
@@ -43,6 +52,8 @@ public:
     inline const std::vector<std::string>& ResourceFilePaths() const { return resourceFilePaths; }
     void AddReferenceFilePath(const std::string& referenceFilePath);
     inline const std::vector<std::string>& ReferenceFilePaths() const { return referenceFilePaths; }
+    void AddReferencedProject(Project* referencedProject);
+    inline const std::vector<std::unique_ptr<Project>>& ReferencedProjects() const { return referencedProjects; }
     inline soul::lexer::FileMap& GetFileMap() { return *fileMap; }
     void SetModule(std::int32_t fileId, otava::symbols::Module* module);
     otava::symbols::Module* GetModule(const std::string& moduleName) const;
@@ -78,6 +89,8 @@ private:
     std::vector<std::string> sourceFilePaths;
     std::vector<std::string> resourceFilePaths;
     std::vector<std::string> referenceFilePaths;
+    std::vector<std::unique_ptr<Project>> referencedProjects;
+    std::string outputFilePath;
     std::vector<std::unique_ptr<otava::symbols::Module>> modules;
     std::map<std::string, otava::symbols::Module*> moduleMap;
     std::map<std::int32_t, otava::symbols::Module*> fileIdModuleMap;

@@ -112,11 +112,6 @@ FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::S
         context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
         return inlineFn;
     }
-    else
-    {
-        // todo
-        int x = 0;
-    }
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
     return fn;
 }

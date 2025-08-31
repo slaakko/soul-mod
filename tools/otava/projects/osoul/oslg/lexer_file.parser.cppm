@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/oslg/lexer_file.parser' using soul parser generator oespg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/oslg/lexer_file.parser' using soul parser generator ospg version 5.0.0
 
 export module soul.slg.lexer.file.parser;
 
@@ -8,9 +8,6 @@ import soul.lexer;
 import soul.parser;
 import soul.ast.slg;
 import soul.ast.cpp;
-
-using namespace soul::ast::slg;
-using namespace soul::ast::cpp;
 
 export namespace soul::slg::lexer::file::parser {
 

@@ -18,10 +18,13 @@ public:
     Writer(const std::string& fileName);
     inline util::BinaryStreamWriter& GetBinaryStreamWriter() { return binaryStreamWriter; }
     void Write(Symbol* symbol);
+    void SetDump(bool dump_) { dump = dump_; }
+    bool Dump() const { return dump; }
 private:
     util::FileStream fileStream;
     util::BufferedStream bufferedStream;
     util::BinaryStreamWriter binaryStreamWriter;
+    bool dump;
 };
 
 } // namespace otava::symbols

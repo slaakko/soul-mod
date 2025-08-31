@@ -1315,6 +1315,68 @@ void BoundFunctionGroupNode::AddTemplateArg(TypeSymbol* templateArg)
     templateArgs.push_back(templateArg);
 }
 
+BoundClassGroupNode::BoundClassGroupNode(ClassGroupSymbol* classGroupSymbol_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
+    BoundExpressionNode(BoundNodeKind::boundClassGroupNode, sourcePos_, type_), classGroupSymbol(classGroupSymbol_)
+{
+}
+
+void BoundClassGroupNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+void BoundClassGroupNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    emitter.Stack().Push(nullptr);
+}
+
+BoundExpressionNode* BoundClassGroupNode::Clone() const
+{
+    BoundClassGroupNode* clone = new BoundClassGroupNode(classGroupSymbol, GetSourcePos(), GetType());
+    for (auto templateArg : templateArgs)
+    {
+        clone->AddTemplateArg(templateArg);
+    }
+    clone->SetFlags(Flags());
+    return clone;
+}
+
+void BoundClassGroupNode::AddTemplateArg(TypeSymbol* templateArg)
+{
+    templateArgs.push_back(templateArg);
+}
+
+BoundAliasGroupNode::BoundAliasGroupNode(AliasGroupSymbol* aliasGroupSymbol_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
+    BoundExpressionNode(BoundNodeKind::boundAliasGroupNode, sourcePos_, type_), aliasGroupSymbol(aliasGroupSymbol_)
+{
+}
+
+void BoundAliasGroupNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+void BoundAliasGroupNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    emitter.Stack().Push(nullptr);
+}
+
+BoundExpressionNode* BoundAliasGroupNode::Clone() const
+{
+    BoundAliasGroupNode* clone = new BoundAliasGroupNode(aliasGroupSymbol, GetSourcePos(), GetType());
+    for (auto templateArg : templateArgs)
+    {
+        clone->AddTemplateArg(templateArg);
+    }
+    clone->SetFlags(Flags());
+    return clone;
+}
+
+void BoundAliasGroupNode::AddTemplateArg(TypeSymbol* templateArg)
+{
+    templateArgs.push_back(templateArg);
+}
+
 BoundTypeNode::BoundTypeNode(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos_) : 
     BoundExpressionNode(BoundNodeKind::boundTypeNode, sourcePos_, type_)
 {
@@ -1815,7 +1877,6 @@ void BoundDisjunctionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Co
 BoundConversionNode::BoundConversionNode(BoundExpressionNode* subject_, FunctionSymbol* conversionFunction_, const soul::ast::SourcePos& sourcePos_) :
     BoundExpressionNode(BoundNodeKind::boundConversionNode, sourcePos_, conversionFunction_->ReturnType()), subject(subject_), conversionFunction(conversionFunction_)
 {
-    int x = 0;
 }
 
 void BoundConversionNode::Accept(BoundTreeVisitor& visitor)

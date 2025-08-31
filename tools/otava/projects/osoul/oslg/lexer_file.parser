@@ -89,7 +89,7 @@ parser LexerFileParser
             { 
                 auto t = lexer.GetToken(pos);
                 if (!t) return std::unexpected<int>(t.error());
-                auto token = *t;
+                const auto* token = *t;
                 line = token->line; 
             }
             Action(context):action

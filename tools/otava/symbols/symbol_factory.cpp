@@ -6,6 +6,7 @@
 module otava.symbols.symbol.factory;
 
 import otava.symbols.symbol;
+import otava.symbols.type.symbol;
 import otava.symbols.class_group.symbol;
 import otava.symbols.class_templates;
 import otava.symbols.concept_group.symbol;
@@ -17,6 +18,7 @@ import otava.symbols.concepts;
 import otava.symbols.value;
 import otava.symbols.symbol.table;
 import otava.symbols.fundamental.type.symbol;
+import otava.symbols.fundamental.type.conversion;
 import otava.symbols.function.type.symbol;
 import otava.symbols.exception;
 import otava.symbols.alias.type.symbol;
@@ -31,7 +33,6 @@ import otava.symbols.namespaces;
 import otava.symbols.templates;
 import otava.symbols.variable.symbol;
 import otava.symbols.fundamental.type.operation;
-import otava.symbols.fundamental.type.conversion;
 import otava.symbols.friends;
 import otava.ast.error;
 
@@ -449,6 +450,14 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         case SymbolKind::functionGroupTypeSymbol:
         {
             return new FunctionGroupTypeSymbol(name);
+        }
+        case SymbolKind::classGroupTypeSymbol:
+        {
+            return new ClassGroupTypeSymbol(name);
+        }
+        case SymbolKind::aliasGroupTypeSymbol:
+        {
+            return new AliasGroupTypeSymbol(name);
         }
         case SymbolKind::friendSymbol:
         {

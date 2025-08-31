@@ -13,10 +13,11 @@ export namespace otava::build {
 
 class Project;
 class Solution;
+struct ProjectLess;
 
 enum class BuildFlags : std::int32_t
 {
-    none = 0, multithreadedBuild = 1 << 0, verbose = 1 << 1, debugParse = 1 << 2, xml = 1 << 3, rebuild = 1 << 4
+    none = 0, multithreadedBuild = 1 << 0, verbose = 1 << 1, debugParse = 1 << 2, xml = 1 << 3, symbolXml = 1 << 4, rebuild = 1 << 5, all = 1 << 6, seed = 1 << 7
 };
 
 constexpr BuildFlags operator|(BuildFlags left, BuildFlags right)
@@ -36,7 +37,7 @@ constexpr BuildFlags operator~(BuildFlags flags)
 
 void ScanDependencies(Project* project, int file, bool implementationUnit, std::string& interfaceUnitName);
 otava::symbols::Module* GetModule(otava::symbols::ModuleMapper& moduleMapper, const std::string& moduleName);
-void Build(otava::symbols::ModuleMapper& moduleMapper, Project* project, const std::string& config, int optLevel, BuildFlags flags);
-void Build(otava::symbols::ModuleMapper& moduleMapper, soul::lexer::FileMap& fileMap, Solution* solution, const std::string& config, int optLevel, BuildFlags flags);
+void Build(Project* project, const std::string& config, int optLevel, BuildFlags flags, std::set<Project*, ProjectLess>& projectSet);
+void Build(soul::lexer::FileMap& fileMap, Solution* solution, const std::string& config, int optLevel, BuildFlags flags, std::set<Project*, ProjectLess>& projectSet);
 
 } // namespace otava::build

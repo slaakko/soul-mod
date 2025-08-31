@@ -1,0 +1,14 @@
+project soul.spg.parsers;
+parser <parser_file.parser>;
+parser <spg_file.parser>;
+tokens <../otoken/soul.cpp.op.token>;
+tokens <../otoken/soul.cpp.token>;
+tokens <../otoken/soul.punctuation.token>;
+tokens <../otoken/soul.tool.token>;
+extern parser <../ocommon/common.parser>;
+extern parser <../ocpp/declaration.parser>;
+extern parser <../ocpp/declarator.parser>;
+extern parser <../ocpp/expression.parser>;
+extern parser <../ocpp/identifier.parser>;
+extern parser <../ocpp/literal.parser>;
+extern parser <../ocpp/statement.parser>;

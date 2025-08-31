@@ -15,6 +15,8 @@ import otava.symbols.symbol.table;
 import otava.symbols.variable.symbol;
 import otava.symbols.conversion.table;
 import otava.symbols.function.group.symbol;
+import otava.symbols.class_group.symbol;
+import otava.symbols.alias.group.symbol;
 import otava.symbols.exception;
 import otava.symbols.concepts;
 import util.unicode;
@@ -67,26 +69,36 @@ void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
             context->GetSymbolTable()->GetConversionTable().AddConversion(functionDefinition);
         }
     }
-    if (symbol->IsVariableSymbol())
+    else if (symbol->IsVariableSymbol())
     {
         VariableSymbol* variable = static_cast<VariableSymbol*>(symbol);
         context->GetSymbolTable()->MapVariable(variable);
     }
-    if (symbol->IsFunctionGroupSymbol())
+    else if (symbol->IsFunctionGroupSymbol())
     {
         FunctionGroupSymbol* functionGroup = static_cast<FunctionGroupSymbol*>(symbol);
         context->GetSymbolTable()->MapFunctionGroup(functionGroup);
     }
-    if (symbol->IsConceptSymbol())
+    else if (symbol->IsClassGroupSymbol())
+    {
+        ClassGroupSymbol* classGroup = static_cast<ClassGroupSymbol*>(symbol);
+        context->GetSymbolTable()->MapClassGroup(classGroup);
+    }
+    else if (symbol->IsAliasGroupSymbol())
+    {
+        AliasGroupSymbol* aliasGroup = static_cast<AliasGroupSymbol*>(symbol);
+        context->GetSymbolTable()->MapAliasGroup(aliasGroup);
+    }
+    else if (symbol->IsConceptSymbol())
     {
         ConceptSymbol* cncp = static_cast<ConceptSymbol*>(symbol);
         context->GetSymbolTable()->MapConcept(cncp);
     }
-    if (symbol->IsTypenameConstraintSymbol())
+    else if (symbol->IsTypenameConstraintSymbol())
     {
         context->GetSymbolTable()->SetTypenameConstraintSymbol(symbol);
     }
-    if (symbol->IsErrorTypeSymbol())
+    else if (symbol->IsErrorTypeSymbol())
     {
         ErrorTypeSymbol* errorSymbol = static_cast<ErrorTypeSymbol*>(symbol);
         context->GetSymbolTable()->SetErrorTypeSymbol(errorSymbol);
@@ -155,6 +167,16 @@ void ContainerSymbol::Resolve(SymbolTable& symbolTable)
     {
         symbol->Resolve(symbolTable);
     }
+}
+
+soul::xml::Element* ContainerSymbol::ToXml() const
+{
+    soul::xml::Element* element = Symbol::ToXml();
+    for (const auto& symbol : symbols)
+    {
+        element->AppendChild(symbol->ToXml());
+    }
+    return element;
 }
 
 } // namespace otava::symbols

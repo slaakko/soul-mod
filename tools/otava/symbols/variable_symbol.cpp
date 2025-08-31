@@ -78,9 +78,17 @@ void VariableSymbol::Resolve(SymbolTable& symbolTable)
 {
     Symbol::Resolve(symbolTable);
     declaredType = symbolTable.GetType(declaredTypeId);
+    if (!declaredType)
+    {
+        std::cout << "VariableSymbol::Resolve(): warning: declared type not resolved" << "\n";
+    }
     if (initializerTypeId != util::nil_uuid())
     {
         initializerType = symbolTable.GetType(initializerTypeId);
+        if (!initializerType)
+        {
+            std::cout << "VariableSymbol::Resolve(): warning: initializer type not resolved" << "\n";
+        }
     }
     if (valueId != util::nil_uuid())
     {

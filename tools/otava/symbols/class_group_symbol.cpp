@@ -17,7 +17,7 @@ import otava.symbols.type_compare;
 
 namespace otava::symbols {
 
-ClassGroupSymbol::ClassGroupSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::classGroupSymbol, name_)
+ClassGroupSymbol::ClassGroupSymbol(const std::u32string& name_) : Symbol(SymbolKind::classGroupSymbol, name_)
 {
 }
 

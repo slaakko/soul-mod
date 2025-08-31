@@ -7,10 +7,12 @@ module otava.symbols.symbol_map;
 
 import otava.symbols.exception;
 import otava.symbols.symbol;
+import otava.symbols.modules;
+import util;
 
 namespace otava::symbols {
 
-Symbol* SymbolMap::GetSymbol(const util::uuid& symbolId) const
+Symbol* SymbolMap::GetSymbolNoThrow(const util::uuid& symbolId) const
 {
     auto it = symbolMap.find(symbolId);
     if (it != symbolMap.cend())
@@ -19,8 +21,26 @@ Symbol* SymbolMap::GetSymbol(const util::uuid& symbolId) const
     }
     else
     {
+        return nullptr;
+    }
+}
+
+Symbol* SymbolMap::GetSymbol(Module* module, SymbolKind symbolKind, const util::uuid& symbolId) const
+{
+    Symbol* symbol = GetSymbolNoThrow(symbolId);
+    if (symbol)
+    {
+        return symbol;
+    }
+    else
+    {
         SetExceptionThrown();
-        throw std::runtime_error("symbol id " + util::ToString(symbolId) + " not found");
+        std::string kindStr;
+        if (symbolKind != SymbolKind::null)
+        {
+            kindStr = "symbol kind is '" + SymbolKindToString(symbolKind) + "', ";
+        }
+        throw std::runtime_error("symbol id '" + util::ToString(symbolId) + "' not found: note: " + kindStr + "requesting module is '" + module->Name() + "'");
     }
 }
 

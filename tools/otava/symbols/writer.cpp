@@ -6,10 +6,13 @@
 module otava.symbols.writer;
 
 import otava.symbols.symbol;
+import otava.symbols.value;
+import otava.symbols.compound.type.symbol;
 
 namespace otava::symbols {
 
-Writer::Writer(const std::string& fileName) : fileStream(fileName, util::OpenMode::binary | util::OpenMode::write), bufferedStream(fileStream), binaryStreamWriter(bufferedStream)
+Writer::Writer(const std::string& fileName) : 
+    fileStream(fileName, util::OpenMode::binary | util::OpenMode::write), bufferedStream(fileStream), binaryStreamWriter(bufferedStream), dump(false)
 {
 }
 
@@ -31,4 +34,3 @@ void Writer::Write(Symbol* symbol)
 }
 
 } // namespace otava::symbols
-

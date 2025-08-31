@@ -1,10 +1,11 @@
 
-// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/oslg/keyword_file.parser' using soul parser generator oespg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/oslg/keyword_file.parser' using soul parser generator ospg version 5.0.0
 
 module soul.slg.keyword.file.parser;
 
 import util;
 import soul.ast.spg;
+import soul.ast.common;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.punctuation.token;
@@ -12,14 +13,6 @@ import soul.tool.token;
 import soul.common.common.parser;
 import soul.common.token.parser;
 import soul.lex;
-
-using namespace soul::cpp::token;
-using namespace soul::cpp::op::token;
-using namespace soul::punctuation::token;
-using namespace soul::tool::token;
-using namespace soul::common::common::parser;
-using namespace soul::common::token::parser;
-using namespace soul::lex;
 
 namespace soul::slg::keyword::file::parser {
 
@@ -125,7 +118,7 @@ std::expected<soul::parser::Match, int> KeywordFileParser<LexerT>::KeywordFile(L
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch9 = &match;
                                     {
-                                        std::expected<soul::parser::Match, int> m = KeywordFileParser<LexerT>::Imports(lexer, keywordFile.get());
+                                        std::expected<soul::parser::Match, int> m = soul::slg::keyword::file::parser::KeywordFileParser<LexerT>::Imports(lexer, keywordFile.get());
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul::parser::Match match = *m;
                                         *parentMatch9 = match;
@@ -140,7 +133,7 @@ std::expected<soul::parser::Match, int> KeywordFileParser<LexerT>::KeywordFile(L
                                 soul::parser::Match* parentMatch10 = &match;
                                 {
                                     soul::parser::Match match(false);
-                                    if (*lexer == KEYWORDS)
+                                    if (*lexer == soul::tool::token::KEYWORDS)
                                     {
                                         auto a = ++lexer;
                                         if (!a) return std::unexpected<int>(a.error());
@@ -161,7 +154,7 @@ std::expected<soul::parser::Match, int> KeywordFileParser<LexerT>::KeywordFile(L
                                 soul::parser::Match* parentMatch12 = &match;
                                 {
                                     std::int64_t pos = lexer.GetPos();
-                                    std::expected<soul::parser::Match, int> m = CommonParser<LexerT>::QualifiedId(lexer);
+                                    std::expected<soul::parser::Match, int> m = soul::common::common::parser::CommonParser<LexerT>::QualifiedId(lexer);
                                     if (!m) return std::unexpected<int>(m.error());
                                     soul::parser::Match match = *m;
                                     keywordCollectionName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
@@ -183,7 +176,7 @@ std::expected<soul::parser::Match, int> KeywordFileParser<LexerT>::KeywordFile(L
                         soul::parser::Match* parentMatch13 = &match;
                         {
                             soul::parser::Match match(false);
-                            if (*lexer == LBRACE)
+                            if (*lexer == soul::punctuation::token::LBRACE)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -214,7 +207,7 @@ std::expected<soul::parser::Match, int> KeywordFileParser<LexerT>::KeywordFile(L
                                     soul::parser::Match* parentMatch18 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
-                                        std::expected<soul::parser::Match, int> m = KeywordFileParser<LexerT>::Keyword(lexer);
+                                        std::expected<soul::parser::Match, int> m = soul::slg::keyword::file::parser::KeywordFileParser<LexerT>::Keyword(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul::parser::Match match = *m;
                                         keyword.reset(static_cast<soul::ast::slg::Keyword*>(match.value));
@@ -242,7 +235,7 @@ std::expected<soul::parser::Match, int> KeywordFileParser<LexerT>::KeywordFile(L
                                                     soul::parser::Match* parentMatch21 = &match;
                                                     {
                                                         soul::parser::Match match(false);
-                                                        if (*lexer == COMMA)
+                                                        if (*lexer == soul::punctuation::token::COMMA)
                                                         {
                                                             auto a = ++lexer;
                                                             if (!a) return std::unexpected<int>(a.error());
@@ -259,7 +252,7 @@ std::expected<soul::parser::Match, int> KeywordFileParser<LexerT>::KeywordFile(L
                                                             soul::parser::Match* parentMatch23 = &match;
                                                             {
                                                                 std::int64_t pos = lexer.GetPos();
-                                                                std::expected<soul::parser::Match, int> m = KeywordFileParser<LexerT>::Keyword(lexer);
+                                                                std::expected<soul::parser::Match, int> m = soul::slg::keyword::file::parser::KeywordFileParser<LexerT>::Keyword(lexer);
                                                                 if (!m) return std::unexpected<int>(m.error());
                                                                 soul::parser::Match match = *m;
                                                                 keyword.reset(static_cast<soul::ast::slg::Keyword*>(match.value));
@@ -312,7 +305,7 @@ std::expected<soul::parser::Match, int> KeywordFileParser<LexerT>::KeywordFile(L
                 soul::parser::Match* parentMatch24 = &match;
                 {
                     soul::parser::Match match(false);
-                    if (*lexer == RBRACE)
+                    if (*lexer == soul::punctuation::token::RBRACE)
                     {
                         auto a = ++lexer;
                         if (!a) return std::unexpected<int>(a.error());
@@ -378,7 +371,7 @@ std::expected<soul::parser::Match, int> KeywordFileParser<LexerT>::Imports(Lexer
                     soul::parser::Match* parentMatch2 = &match;
                     {
                         std::int64_t pos = lexer.GetPos();
-                        std::expected<soul::parser::Match, int> m = CommonParser<LexerT>::Import(lexer);
+                        std::expected<soul::parser::Match, int> m = soul::common::common::parser::CommonParser<LexerT>::Import(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul::parser::Match match = *m;
                         imp.reset(static_cast<soul::ast::common::Import*>(match.value));
@@ -451,7 +444,7 @@ std::expected<soul::parser::Match, int> KeywordFileParser<LexerT>::Keyword(Lexer
                         soul::parser::Match* parentMatch5 = &match;
                         {
                             soul::parser::Match match(false);
-                            if (*lexer == LPAREN)
+                            if (*lexer == soul::punctuation::token::LPAREN)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -469,7 +462,7 @@ std::expected<soul::parser::Match, int> KeywordFileParser<LexerT>::Keyword(Lexer
                                 {
                                     std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match(false);
-                                    if (*lexer == STRING_LITERAL)
+                                    if (*lexer == soul::cpp::token::STRING_LITERAL)
                                     {
                                         auto a = ++lexer;
                                         if (!a) return std::unexpected<int>(a.error());
@@ -497,7 +490,7 @@ std::expected<soul::parser::Match, int> KeywordFileParser<LexerT>::Keyword(Lexer
                         soul::parser::Match* parentMatch8 = &match;
                         {
                             soul::parser::Match match(false);
-                            if (*lexer == COMMA)
+                            if (*lexer == soul::punctuation::token::COMMA)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -519,7 +512,7 @@ std::expected<soul::parser::Match, int> KeywordFileParser<LexerT>::Keyword(Lexer
                         {
                             std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
-                            if (*lexer == ID)
+                            if (*lexer == soul::cpp::token::ID)
                             {
                                 auto a = ++lexer;
                                 if (!a) return std::unexpected<int>(a.error());
@@ -545,7 +538,7 @@ std::expected<soul::parser::Match, int> KeywordFileParser<LexerT>::Keyword(Lexer
                 soul::parser::Match* parentMatch11 = &match;
                 {
                     soul::parser::Match match(false);
-                    if (*lexer == RPAREN)
+                    if (*lexer == soul::punctuation::token::RPAREN)
                     {
                         auto a = ++lexer;
                         if (!a) return std::unexpected<int>(a.error());
@@ -559,11 +552,13 @@ std::expected<soul::parser::Match, int> KeywordFileParser<LexerT>::Keyword(Lexer
         }
         if (match.hit)
         {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Keyword");
                 #endif
-                return soul::parser::Match(true, new soul::ast::slg::Keyword(str, tokenName));
+                return soul::parser::Match(true, new soul::ast::slg::Keyword(*sp, str, tokenName));
             }
         }
         *parentMatch0 = match;

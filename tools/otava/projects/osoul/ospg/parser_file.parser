@@ -1,0 +1,416 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.spg.parser.file.parser;
+
+[interface]import soul.ast.spg;
+[interface]import soul.ast.cpp;
+[implementation]import soul.ast.common;
+[implementation]import soul.cpp.token;
+[implementation]import soul.cpp.op.token;
+[implementation]import soul.punctuation.token;
+[implementation]import soul.tool.token;
+[implementation]import soul.common.common.parser;
+[implementation]import soul.spg.token.parser;
+[implementation]import soul.cpp.declarator.parser;
+[implementation]import soul.cpp.statement.parser;
+[implementation]import soul.cpp.expression.parser; 
+[implementation]import soul.lex.spg;
+[implementation]import soul.ast.cpp;
+[implementation]import soul.common.token.parser;
+[implementation]import soul.spg.error;
+
+parser ParserFileParser
+{
+    lexer soul::lex::spg::SpgLexer<char32_t>;
+
+    main;
+    using CommonParser.ExportModule;
+    using CommonParser.Import;
+    using CommonParser.QualifiedId;
+    using CommonParser.ParserKeyword;
+    using CommonParser.LexerKeyword;
+    using DeclaratorParser.TypeId;
+    using DeclaratorParser.Declarator;
+    using StatementParser.CompoundStatement;
+    using ExpressionParser.ExpressionList;
+
+    ParserFile(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::spg::ParserFile> parserFile) : soul::ast::spg::ParserFile*
+        ::= 
+        (
+            empty{ parserFile.reset(new soul::ast::spg::ParserFile(lexer.FileName())); }
+            ExportModule:exportModuleDeclaration
+            { 
+                auto rv = parserFile->SetExportModule(exportModuleDeclaration); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+            (Import:importDeclaration{ parserFile->AddImport(importDeclaration); })*
+            (Parser(context):parser{ parserFile->AddParser(parser); })*
+        )
+        {
+            return parserFile.release();
+        }
+        ;
+
+    Parser(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::spg::GrammarParser> parser) : soul::ast::spg::GrammarParser*
+        ::= 
+        (
+            ParserKeyword:parserKeyword 
+            ID
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                parser.reset(new soul::ast::spg::GrammarParser(*sp, *u)); 
+            }
+            LBRACE
+            ParserStatement(context, parser.get()):statement*
+            RBRACE
+        )
+        {
+            return parser.release();
+        }
+        ;
+
+    ParserStatement(soul::ast::cpp::Context* context, soul::ast::spg::GrammarParser* parser)
+        ::= LexerStatement(context, parser):lexerStatement
+        |   MainStatement(parser):mainStatement
+        |   UsingStatement(parser):usingStatement
+        |   RuleStatement(context, parser):ruleStatement
+        ;
+
+    LexerStatement(soul::ast::cpp::Context* context, soul::ast::spg::GrammarParser* parser)
+        ::= LexerKeyword:lexerKeyword TypeId(context):lexerTypeId SEMICOLON{ parser->AddLexer(lexerTypeId); }
+        ;
+
+    MainStatement(soul::ast::spg::GrammarParser* parser)
+        ::= MAIN SEMICOLON{ parser->SetMain(); }
+        ;
+
+    UsingStatement(soul::ast::spg::GrammarParser* parser)
+        ::= 
+        (
+            USING QualifiedId:parserRuleId SEMICOLON
+        )
+        { 
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            parser->AddUsing(*sp, parserRuleId); 
+        }
+        ;
+
+    RuleStatement(soul::ast::cpp::Context* context, soul::ast::spg::GrammarParser* parser, 
+        var std::unique_ptr<soul::ast::spg::RuleParser> rule) : bool
+        ::= 
+        (
+            ID
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                rule.reset(new soul::ast::spg::RuleParser(*sp, *u)); 
+            }
+            ParametersAndVariables(context, rule.get()):paramsAndVars?
+            ReturnType(context):returnType?
+            PRODUCES
+            RuleBody(context):definition
+            SEMICOLON
+        )
+        {
+            rule->SetDefinition(definition);
+            rule->SetReturnType(returnType);
+            soul::ast::spg::RuleParser* rulePtr = rule.get();
+            bool succeeded = parser->AddRule(rule.release());
+            if (!succeeded)
+            {
+                return std::unexpected<int>(soul::spg::RuleNameNotUnique(lexer.FileName(), rulePtr));
+            }
+        }
+        ;
+
+    ParametersAndVariables(soul::ast::cpp::Context* context, soul::ast::spg::RuleParser* rule)
+        ::= LPAREN (ParamOrVariable(context):paramOrVariable{ rule->AddParamOrVariable(paramOrVariable); } % COMMA)? RPAREN
+        ;
+
+    ParamOrVariable(soul::ast::cpp::Context* context) : soul::ast::spg::ParamVar*
+        ::= VAR 
+            TypeId(context):varType 
+            Declarator(context):varName
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul::ast::spg::Variable(*sp, varType, varName); 
+            }
+        |   TypeId(context):paramType 
+            Declarator(context):paramName
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul::ast::spg::Parameter(*sp, paramType, paramName); 
+            }
+        ;
+
+    ReturnType(soul::ast::cpp::Context* context) : soul::ast::cpp::TypeIdNode*
+        ::= COLON TypeId(context):typeId{ return typeId; }
+        ;
+
+    RuleBody(soul::ast::cpp::Context* context) : soul::ast::spg::Parser*
+        ::= Choice(context):choice{ return choice; }
+        ;
+
+    Choice(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::spg::Parser> value) : soul::ast::spg::Parser*
+        ::= 
+        (
+            Sequence(context):left{ value.reset(left); } 
+            (
+                PIPE 
+                Sequence(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    value.reset(new soul::ast::spg::ChoiceParser(*sp, value.release(), right)); 
+                }
+            )*
+        )
+        {
+            return value.release();
+        }
+        ;
+
+    Sequence(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::spg::Parser> value) : soul::ast::spg::Parser*
+        ::=
+        (
+            Difference(context):left{ value.reset(left); }
+            (
+                Difference(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    value.reset(new soul::ast::spg::SequenceParser(*sp, value.release(), right)); 
+                }
+            )*
+        )
+        {
+            return value.release();
+        }
+        ;
+
+    Difference(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::spg::Parser> value) : soul::ast::spg::Parser*
+        ::=
+        (
+            List(context):left{ value.reset(left); }
+            (
+                MINUS 
+                List(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    value.reset(new soul::ast::spg::DifferenceParser(*sp, value.release(), right)); 
+                }
+            )*
+        )
+        {
+            return value.release();
+        }
+        ;
+
+    List(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::spg::Parser> value) : soul::ast::spg::Parser*
+        ::=
+        (
+            Prefix(context):left{ value.reset(left); }
+            (
+                REM 
+                Prefix(context):right
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    value.reset(new soul::ast::spg::ListParser(*sp, value.release(), right)); 
+                }
+            )?
+        )
+        {
+            return value.release();
+        }
+        ;
+
+    Prefix(soul::ast::cpp::Context* context) : soul::ast::spg::Parser*
+        ::= AMP 
+            Postfix(context):lookaheadp
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul::ast::spg::LookaheadParser(*sp, lookaheadp); 
+            }
+        |   Postfix(context):postfix{ return postfix; }
+        ;
+
+    Postfix(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::spg::Parser> value) : soul::ast::spg::Parser*
+        ::= 
+        (   Primary(context):primary{ value.reset(primary); }
+            (   STAR
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    value.reset(new soul::ast::spg::KleeneParser(*sp, value.release())); 
+                }
+            |   PLUS
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    value.reset(new soul::ast::spg::PositiveParser(*sp, value.release())); 
+                }
+            |   QUEST
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    value.reset(new soul::ast::spg::OptionalParser(*sp, value.release())); 
+                }
+            )?
+        )
+        {
+            return value.release();
+        }
+        ;
+
+    Primary(soul::ast::cpp::Context* context, var std::unique_ptr<soul::ast::spg::Parser> value) : soul::ast::spg::Parser*
+        ::= 
+        (
+            (   RuleCall(context):ruleCall{ value.reset(ruleCall); }
+            |   Primitive(context):primitive{ value.reset(primitive); }
+            |   Grouping(context):group{ value.reset(group); }
+            )
+            (
+                EXCLAMATION
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    value.reset(new soul::ast::spg::ExpectationParser(*sp, value.release())); 
+                }
+            )?
+            (
+                (
+                    CompoundStatement(context):successCode
+                    (
+                        DIV 
+                        CompoundStatement(context):failureCode
+                    )?
+                )
+                {
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    value.reset(new soul::ast::spg::ActionParser(*sp, value.release(), successCode, failureCode));
+                }
+            )?
+        )
+        {
+            return value.release();
+        }
+        ;
+
+    RuleCall(soul::ast::cpp::Context* context, var std::string ruleName, var std::int64_t nonterminalPos, var std::unique_ptr<soul::ast::cpp::ExprListNode> args) : soul::ast::spg::Parser*
+        ::= 
+        (
+            Nonterminal(context):nt{ ruleName = nt; nonterminalPos = pos; }
+            (   LPAREN
+                { 
+                    auto t1 = lexer.GetToken(pos);
+                    if (!t1) return std::unexpected<int>(t1.error());
+                    auto t2 = lexer.GetToken(nonterminalPos);
+                    if (!t2) return std::unexpected<int>(t2.error());
+                    pass = soul::lexer::NoWhiteSpaceBetweenTokens(**t2, **t1); 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    args.reset(new soul::ast::cpp::ExprListNode(*sp)); 
+                }
+                ExpressionList(context, args.get()):arguments 
+                RPAREN
+            )? 
+            COLON 
+            ID
+            {
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                std::string instanceName = *u;
+                return new soul::ast::spg::NonterminalParser(*sp, ruleName, instanceName, args.release());
+            }
+        )
+        ;
+
+    Nonterminal(soul::ast::cpp::Context* context) : std::string
+        ::= 
+        (
+            ID
+        )
+        { 
+            auto u = lexer.TokenToUtf8(pos);
+            if (!u) return std::unexpected<int>(u.error());
+            return *u;
+        }
+        ;
+
+    Primitive(soul::ast::cpp::Context* context) : soul::ast::spg::Parser*
+        ::= 
+        (   EMPTY
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul::ast::spg::EmptyParser(*sp); 
+            }
+        |   ANY
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul::ast::spg::AnyParser(*sp); 
+            }
+        |   ID
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                return new soul::ast::spg::TokenParser(*sp, *u); 
+            }
+        |   CHAR_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                auto cl = soul::common::token::parser::ParseCharLiteral(lexer.FileName(), *t);
+                if (!cl) return std::unexpected<int>(cl.error());
+                return new soul::ast::spg::CharParser(*sp, *cl); 
+            }
+        |   STRING_LITERAL
+            { 
+                
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                auto cs = soul::spg::token::parser::ParseStringLiteralOrCharSet(lexer.FileName(), *t, *sp); 
+                if (!cs) return std::unexpected<int>(cs.error());
+                return *cs;
+            }
+        )
+        ;
+
+    Grouping(soul::ast::cpp::Context* context) : soul::ast::spg::Parser*
+        ::= 
+        (
+            LPAREN 
+            Choice(context):choice
+            RPAREN
+        )
+        {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul::ast::spg::GroupParser(*sp, choice);
+        }
+		;
+}

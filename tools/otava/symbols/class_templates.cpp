@@ -99,6 +99,7 @@ void ClassTemplateSpecializationSymbol::Write(Writer& writer)
 void ClassTemplateSpecializationSymbol::Read(Reader& reader)
 {
     ClassTypeSymbol::Read(reader);
+    reader.GetSymbolTable()->AddClassTemplateSpecializationToSet(this);
     instantiated = reader.GetBinaryStreamReader().ReadBool();
     util::uuid id;
     reader.GetBinaryStreamReader().ReadUuid(id);
@@ -125,34 +126,48 @@ void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable)
 {
     ClassTypeSymbol::Resolve(symbolTable);
     classTemplate = static_cast<ClassTypeSymbol*>(symbolTable.GetType(ids[0].first));
-    for (int i = 1; i < ids.size(); ++i)
+    if (classTemplate)
     {
-        const std::pair<util::uuid, bool>& idType = ids[i];
-        if (idType.second)
+        for (int i = 1; i < ids.size(); ++i)
         {
-            TypeSymbol* templateArg = symbolTable.GetType(idType.first);
-            templateArguments.push_back(templateArg);
+            const std::pair<util::uuid, bool>& idType = ids[i];
+            if (idType.second)
+            {
+                TypeSymbol* templateArg = symbolTable.GetType(idType.first);
+                if (templateArg)
+                {
+                    templateArguments.push_back(templateArg);
+                }
+                else
+                {
+                    std::cout << "ClassTemplateSpecializationSymbol::Resolve(): warning: template argument not resolved" << "\n";
+                }
+            }
+            else
+            {
+                EvaluationContext* evaluationContext = symbolTable.GetModule()->GetEvaluationContext();
+                Value* value = evaluationContext->GetValue(idType.first);
+                templateArguments.push_back(value);
+            }
         }
-        else
+        if (destructorId != util::nil_uuid())
         {
-            EvaluationContext* evaluationContext = symbolTable.GetModule()->GetEvaluationContext();
-            Value* value = evaluationContext->GetValue(idType.first);
-            templateArguments.push_back(value);
+            destructor = symbolTable.GetFunctionDefinition(destructorId);
         }
+        for (const auto& vfId : instantiatedVirtualFunctionSpecializationIds)
+        {
+            FunctionSymbol* vf = symbolTable.GetFunction(vfId);
+            if (vf)
+            {
+                instantiatedVirtualFunctionSpecializations.push_back(vf);
+            }
+        }
+        symbolTable.AddClassTemplateSpecializationToSet(this);
     }
-    if (destructorId != util::nil_uuid())
+    else
     {
-        destructor = symbolTable.GetFunctionDefinition(destructorId);
+        std::cout << "ClassTemplateSpecializationSymbol::Resolve(): warning: class template not resolved" << "\n";
     }
-    for (const auto& vfId : instantiatedVirtualFunctionSpecializationIds)
-    {
-        FunctionSymbol* vf = symbolTable.GetFunction(vfId);
-        if (vf)
-        {
-            instantiatedVirtualFunctionSpecializations.push_back(vf);
-        }
-    }
-    symbolTable.AddClassTemplateSpecializationToSet(this);
 }
 
 void ClassTemplateSpecializationSymbol::Accept(Visitor& visitor)
@@ -428,10 +443,6 @@ void InstantiateVirtualFunctions(ClassTemplateSpecializationSymbol* specializati
 ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs, const soul::ast::SourcePos& sourcePos, 
     Context* context)
 {
-    if (classTemplate->Group()->Name() == U"stack")
-    {
-        int x = 0;
-    }
     if (classTemplate->IsClassTemplateSpecializationSymbol())
     {
         ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(classTemplate);
@@ -560,6 +571,10 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
     context->GetSymbolTable()->EndScope();
     context->GetSymbolTable()->EndScope();
     specialization->GetScope()->ClearParentScopes();
+    for (const auto& boundTemplateParameter : boundTemplateParameters)
+    {
+        context->GetSymbolTable()->UnmapType(boundTemplateParameter.get());
+    }
     return specialization;
 }
 
@@ -807,6 +822,10 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                 {
                     InstantiateDestructor(classTemplateSpecialization, sourcePos, context);
                 }
+                for (const auto& boundTemplateParameter : boundTemplateParameters)
+                {
+                    context->GetSymbolTable()->UnmapType(boundTemplateParameter.get());
+                }
                 return specialization;
             }
             else
@@ -906,6 +925,10 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                 if (prevParseMemberFunction)
                 {
                     context->SetFlag(ContextFlags::parseMemberFunction);
+                }
+                for (const auto& boundTemplateParameter : boundTemplateParameters)
+                {
+                    context->GetSymbolTable()->UnmapType(boundTemplateParameter.get());
                 }
                 return specialization;
             }

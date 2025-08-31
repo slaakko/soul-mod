@@ -14,7 +14,7 @@ import otava.symbols.type_compare;
 
 namespace otava::symbols {
 
-AliasGroupSymbol::AliasGroupSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::aliasGroupSymbol, name_)
+AliasGroupSymbol::AliasGroupSymbol(const std::u32string& name_) : Symbol(SymbolKind::aliasGroupSymbol, name_)
 {
 }
 

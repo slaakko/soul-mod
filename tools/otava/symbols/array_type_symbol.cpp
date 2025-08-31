@@ -150,7 +150,7 @@ void ArrayTypeDefaultCtor::Read(Reader& reader)
 void ArrayTypeDefaultCtor::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol* type = symbolTable.GetType(arrayTypeId);
-    if (type->IsArrayTypeSymbol())
+    if (type && type->IsArrayTypeSymbol())
     {
         arrayType = static_cast<ArrayTypeSymbol*>(type);
     }
@@ -218,7 +218,7 @@ void ArrayTypeCopyCtor::Read(Reader& reader)
 void ArrayTypeCopyCtor::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol* type = symbolTable.GetType(arrayTypeId);
-    if (type->IsArrayTypeSymbol())
+    if (type && type->IsArrayTypeSymbol())
     {
         arrayType = static_cast<ArrayTypeSymbol*>(type);
     }
@@ -288,7 +288,7 @@ void ArrayTypeMoveCtor::Read(Reader& reader)
 void ArrayTypeMoveCtor::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol* type = symbolTable.GetType(arrayTypeId);
-    if (type->IsArrayTypeSymbol())
+    if (type && type->IsArrayTypeSymbol())
     {
         arrayType = static_cast<ArrayTypeSymbol*>(type);
     }
@@ -360,7 +360,7 @@ void ArrayTypeCopyAssignment::Read(Reader& reader)
 void ArrayTypeCopyAssignment::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol* type = symbolTable.GetType(arrayTypeId);
-    if (type->IsArrayTypeSymbol())
+    if (type && type->IsArrayTypeSymbol())
     {
         arrayType = static_cast<ArrayTypeSymbol*>(type);
     }
@@ -432,7 +432,7 @@ void ArrayTypeMoveAssignment::Read(Reader& reader)
 void ArrayTypeMoveAssignment::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol* type = symbolTable.GetType(arrayTypeId);
-    if (type->IsArrayTypeSymbol())
+    if (type && type->IsArrayTypeSymbol())
     {
         arrayType = static_cast<ArrayTypeSymbol*>(type);
     }
@@ -503,7 +503,7 @@ void ArrayTypeBegin::Read(Reader& reader)
 void ArrayTypeBegin::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol* type = symbolTable.GetType(arrayTypeId);
-    if (type->IsArrayTypeSymbol())
+    if (type && type->IsArrayTypeSymbol())
     {
         arrayType = static_cast<ArrayTypeSymbol*>(type);
     }
@@ -552,7 +552,7 @@ void ArrayTypeEnd::Read(Reader& reader)
 void ArrayTypeEnd::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol* type = symbolTable.GetType(arrayTypeId);
-    if (type->IsArrayTypeSymbol())
+    if (type && type->IsArrayTypeSymbol())
     {
         arrayType = static_cast<ArrayTypeSymbol*>(type);
     }

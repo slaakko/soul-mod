@@ -21,6 +21,13 @@ Define::Define(const std::string& symbol_, std::int64_t value_) : symbol(symbol_
 {
 }
 
+bool ProjectLess::operator()(Project* left, Project* right) const
+{
+    if (left->Id() < right->Id()) return true;
+    if (left->Id() > right->Id()) return false;
+    return left->Name() < right->Name();
+}
+
 void LoadImportedModules(Project* project, otava::symbols::Module* module, otava::symbols::Module* importedModule, otava::symbols::ModuleMapper& moduleMapper, 
     const std::string& config)
 {
@@ -222,13 +229,29 @@ void Project::MapFiles()
 
 bool Project::UpToDate(const std::string& config) const
 {
+    if (!std::filesystem::exists(outputFilePath))
+    {
+        return false;
+    }
+    for (const auto& reference : referencedProjects)
+    {
+        if (!std::filesystem::exists(reference->OutputFilePath()) ||
+            std::filesystem::last_write_time(outputFilePath) < std::filesystem::last_write_time(reference->OutputFilePath()))
+        {
+            return false;
+        }
+    }
     for (const auto& module : modules)
     {
         if (module)
         {
-            const std::string& moduleSourceFilePath = GetModuleSourceFilePath(module->FileId());
+            const std::string& moduleSourceFilePath = module->FilePath();
             std::string moduleFilePath = otava::symbols::MakeModuleFilePath(root, config, module->Name());
             if (!std::filesystem::exists(moduleFilePath) || std::filesystem::last_write_time(moduleFilePath) < std::filesystem::last_write_time(moduleSourceFilePath))
+            {
+                return false;
+            }
+            if (std::filesystem::last_write_time(outputFilePath) < std::filesystem::last_write_time(moduleSourceFilePath))
             {
                 return false;
             }
@@ -240,6 +263,11 @@ bool Project::UpToDate(const std::string& config) const
 void Project::AddReferenceFilePath(const std::string& referenceFilePath)
 {
     referenceFilePaths.push_back(referenceFilePath);
+}
+
+void Project::AddReferencedProject(Project* referencedProject)
+{
+    referencedProjects.push_back(std::unique_ptr<Project>(referencedProject));
 }
 
 void Project::ResolveForwardDeclarationsAndAddDerivedClasses(otava::symbols::ModuleMapper& moduleMapper, const std::string& config)

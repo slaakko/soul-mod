@@ -120,6 +120,8 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
+      <StackReserveSize>16777216</StackReserveSize>
+      <StackCommitSize>16777216</StackCommitSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,6 +144,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
+      <StackReserveSize>16777216</StackReserveSize>
+      <StackCommitSize>16777216</StackCommitSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

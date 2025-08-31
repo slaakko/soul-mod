@@ -25,11 +25,23 @@ std::string MakeModuleFilePath(const std::string& root, const std::string& confi
 
 class ModuleMapper;
 
+struct ModuleLess
+{
+    bool operator()(Module* left, Module* right) const;
+};
+
+enum class ModuleKind : std::int8_t
+{
+    interfaceModule, implementationModule,
+};
+
 class Module
 {
 public:
     Module(const std::string& name_);
     ~Module();
+    void SetKind(ModuleKind kind_) { kind = kind_; }
+    ModuleKind Kind() const { return kind; }
     void SetFilePath(const std::string& filePath_);
     inline const std::string& FilePath() const { return filePath; }
     inline const std::string& Name() const { return name; }
@@ -39,8 +51,8 @@ public:
     void ResolveForwardDeclarations();
     void ResolveAllForwardDeclarations();
     void AddDerivedClasses();
-    void Write(const std::string& root, const std::string& config);
-    void Write(Writer& writer);
+    void Write(const std::string& root, const std::string& config, Context* context);
+    void Write(Writer& writer, Context* context);
     void ReadHeader(Reader& reader, ModuleMapper& moduleMapper);
     void CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config);
     void Init();
@@ -49,6 +61,8 @@ public:
     std::int32_t Id() const;
     inline std::int32_t Index() const { return index; }
     inline void SetIndex(std::int32_t index_) { index = index_; }
+    inline std::int32_t ImportIndex() const { return importIndex; }
+    inline void SetImportIndex(std::int32_t importIndex_) { importIndex = importIndex_; }
     inline SymbolTable* GetSymbolTable() { return &symbolTable; }
     inline EvaluationContext* GetEvaluationContext() { return &evaluationContext; }
     void AddExportModuleName(const std::string& exportModuleName);
@@ -69,9 +83,12 @@ public:
     void AddImplementationUnit(Module* implementationUnit);
     void LoadImplementationUnits(ModuleMapper& moduleMapper, const std::string& config);
     inline otava::ast::NodeIdFactory* GetNodeIdFactory() { return &nodeIdFactory; }
+    void ToXml(const std::string& xmlFilePath) const;
 private:
+    ModuleKind kind;
     std::int32_t fileId;
     std::int32_t index;
+    std::int32_t importIndex;
     std::string name;
     std::string filePath;
     std::vector<std::string> exportModuleNames;
@@ -84,14 +101,9 @@ private:
     std::vector<Module*> implementationUnits;
     std::vector<Module*> dependsOnModules;
     std::unique_ptr<otava::ast::File> astFile;
-    std::set<Module*> importSet;
+    std::set<Module*, ModuleLess> importSet;
     bool reading;
     otava::ast::NodeIdFactory nodeIdFactory;
-};
-
-struct ModuleNameLess
-{
-    bool operator()(Module* left, Module* right) const;
 };
 
 class ModuleMapper
@@ -99,6 +111,8 @@ class ModuleMapper
 public:
     ModuleMapper();
     void AddModule(Module* module);
+    std::string GetModuleFilePath(const std::string& moduleName, const std::string& config) const;
+    std::string GetProjectFilePath(const std::string& moduleName) const;
     Module* GetModule(const std::string& moduleName, const std::string& config);
     Module* LoadModule(const std::string& moduleName, const std::string& moduleFilePath, const std::string& config);
     void AddRoot(const std::string& root);
@@ -106,6 +120,7 @@ public:
     inline SymbolMap* GetSymbolMap() { return &symbolMap; }
     void SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_);
     FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() const;
+    int32_t ModuleCount() const;
 private:
     std::map<std::string, Module*> moduleMap;
     std::vector<std::unique_ptr<Module>> modules;

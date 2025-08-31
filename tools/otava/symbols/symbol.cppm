@@ -6,6 +6,7 @@
 export module otava.symbols.symbol;
 
 import std;
+import soul.xml.dom;
 import util.uuid;
 import soul.ast.source.pos;
 import otava.symbols.scope;
@@ -49,6 +50,8 @@ enum class SymbolGroupKind : std::int32_t
     all = functionSymbolGroup | typeSymbolGroup | variableSymbolGroup | enumConstantSymbolGroup | conceptSymbolGroup | blockSymbolGroup
 };
 
+std::string SymbolGroupStr(SymbolGroupKind group);
+
 constexpr SymbolGroupKind operator|(SymbolGroupKind left, SymbolGroupKind right)
 {
     return SymbolGroupKind(std::int32_t(left) | std::int32_t(right));
@@ -89,9 +92,11 @@ enum class SymbolKind : std::int32_t
     arrayTypeBegin, arrayTypeEnd,
     defaultBool, defaultSByte, defaultByte, defaultShort, defaultUShort, defaultInt, defaultUInt, defaultLong, defaultULong, defaultFloat, defaultDouble,
     defaultChar, defaultChar16, defaultChar32,
-    functionGroupTypeSymbol, friendSymbol, namespaceTypeSymbol,
+    functionGroupTypeSymbol, classGroupTypeSymbol, aliasGroupTypeSymbol, friendSymbol, namespaceTypeSymbol,
     max
 };
+
+std::string SymbolKindToString(SymbolKind kind);
 
 enum class SymbolGroupKind : std::int32_t;
 
@@ -125,6 +130,8 @@ public:
     virtual void Read(Reader& reader);
     virtual void Resolve(SymbolTable& symbolTable);
     virtual void Accept(Visitor& visitor) = 0;
+    virtual bool IsExportSymbol(Context* context) const { return true; }
+    virtual bool IsExportMapSymbol(Context* context)  const { return IsExportSymbol(context); }
     virtual Symbol* GetSingleSymbol() { return this; }
     virtual std::string SymbolDocKindStr() const = 0;
     inline Symbol* Parent() { return parent; }
@@ -147,6 +154,7 @@ public:
     inline bool IsFloatingValueSymbol() const { return kind == SymbolKind::floatingValueSymbol; }
     inline bool IsStringValueSymbol() const { return kind == SymbolKind::stringValueSymbol; }
     inline bool IsCharValueSymbol() const { return kind == SymbolKind::charValueSymbol; }
+    inline bool IsSymbolValueSymbol() const { return kind == SymbolKind::symbolValueSymbol; }
     inline bool IsAliasTypeSymbol() const { return kind == SymbolKind::aliasTypeSymbol || IsAliasTypeTemplateSpecializationSymbol(); }
     inline bool IsAliasGroupSymbol() const { return kind == SymbolKind::aliasGroupSymbol; }
     inline bool IsClassGroupSymbol() const { return kind == SymbolKind::classGroupSymbol; }
@@ -180,6 +188,8 @@ public:
     bool IsValueSymbol() const;
     inline bool IsForwardDeclarationSymbol() const { return IsForwardClassDeclarationSymbol() || IsForwardEnumDeclarationSymbol(); }
     inline bool IsFunctionGroupTypeSymbol() const { return kind == SymbolKind::functionGroupTypeSymbol; }
+    inline bool IsClassGroupTypeSymbol() const { return kind == SymbolKind::classGroupTypeSymbol; }
+    inline bool IsAliasGroupTypeSymbol() const { return kind == SymbolKind::aliasGroupTypeSymbol; }
     inline bool IsNestedTypeSymbol() const { return kind == SymbolKind::nestedTypeSymbol; }
     inline bool IsDependentTypeSymbol()  const { return kind == SymbolKind::dependentTypeSymbol; }
     bool IsDefaultCtor() const;
@@ -191,6 +201,7 @@ public:
     SymbolGroupKind GetSymbolGroupKind() const;
     void* IrObject(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
     bool IsExtern() const;
+    virtual soul::xml::Element* ToXml() const;
 private:
     SymbolKind kind;
     util::uuid id;

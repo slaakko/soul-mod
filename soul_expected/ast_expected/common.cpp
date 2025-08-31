@@ -196,12 +196,12 @@ void TokenMap::AddUsingToken(Token* usingToken)
     usingTokenMap[usingToken->Name()] = usingToken;
 }
 
-void TokenMap::AddToken(Token* token)
+std::expected<bool, int> TokenMap::AddToken(Token* token)
 {
     auto it = tokenFullNameMap.find(token->FullName());
     if (it != tokenFullNameMap.end())
     {
-        throw std::runtime_error("token name '" + token->FullName() + "' not unique");
+        return std::unexpected<int>(util::AllocateError("token name '" + token->FullName() + "' not unique"));
     }
     tokenFullNameMap[token->FullName()] = token;
     std::vector<Token*>& tokens = tokenMap[token->Name()];
@@ -209,6 +209,7 @@ void TokenMap::AddToken(Token* token)
     {
         tokens.push_back(token);
     }
+    return std::expected<bool, int>(true);
 }
 
 std::vector<Token*> TokenMap::GetTokens(const std::string& tokenName) const

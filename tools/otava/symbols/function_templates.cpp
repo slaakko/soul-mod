@@ -188,6 +188,10 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
         instantiationScope.PopParentScope();
         instantiationScope.PopParentScope();
         context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+        for (const auto& boundTemplateParameter : boundTemplateParameters)
+        {
+            context->GetSymbolTable()->UnmapType(boundTemplateParameter.get());
+        }
         return specialization;
     }
     else 
@@ -285,6 +289,10 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
         instantiationScope.PopParentScope();
         instantiationScope.PopParentScope();
         context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+        for (const auto& boundTemplateParameter : boundTemplateParameters)
+        {
+            context->GetSymbolTable()->UnmapType(boundTemplateParameter.get());
+        }
         return specialization;
     }
     return nullptr;

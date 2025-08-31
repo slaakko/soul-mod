@@ -1234,7 +1234,8 @@ std::expected<bool, int> GenerateLexer(soul_expected::ast::slg::SlgFile* slgFile
                 for (const auto& token : tokenCollection->Tokens())
                 {
                     tokens.AddToken(token.get());
-                    lexerFile->GetTokenMap()->AddToken(token.get());
+                    auto rv = lexerFile->GetTokenMap()->AddToken(token.get());
+                    if (!rv) return rv;
                 }
                 break;
             }

@@ -3,29 +3,32 @@
 // Distributed under the MIT license
 // =================================
 
-export module soul.slg.token.file.parser;
+export module soul.common.token.file.parser;
 
 [interface]import soul.ast.slg;
+[interface]import soul.ast.common;
 [implementation]import soul.cpp.token;
 [implementation]import soul.cpp.op.token;
 [implementation]import soul.punctuation.token;
 [implementation]import soul.tool.token;
 [implementation]import soul.common.common.parser;
 [implementation]import soul.common.token.parser;
-[implementation]import soul.lex;
+[implementation]import soul.lex.slg;
+[implementation]import soul.lex.spg;
 
 parser TokenFileParser
 {
     lexer soul::lex::slg::SlgLexer<char32_t>;
+    lexer soul::lex::spg::SpgLexer<char32_t>; 
 
     main;
     using CommonParser.QualifiedId;
 
-    TokenFile(var std::unique_ptr<soul::ast::slg::TokenFile> tokenFile, var std::unique_ptr<soul::ast::slg::TokenCollection> tokenCollection) : soul::ast::slg::TokenFile*
+    TokenFile(var std::unique_ptr<soul::ast::common::TokenFile> tokenFile, var std::unique_ptr<soul::ast::common::TokenCollection> tokenCollection) : soul::ast::common::TokenFile*
         ::= 
         (   
-            TOKENS{ tokenFile.reset(new soul::ast::slg::TokenFile(lexer.FileName())); }
-            QualifiedId:tokenCollectionName{ tokenCollection.reset(new soul::ast::slg::TokenCollection(tokenCollectionName)); }
+            TOKENS{ tokenFile.reset(new soul::ast::common::TokenFile(lexer.FileName())); }
+            QualifiedId:tokenCollectionName{ tokenCollection.reset(new soul::ast::common::TokenCollection(tokenCollectionName)); }
 			LBRACE
 			(Token:token{ tokenCollection->AddToken(token); } % COMMA)?
 			RBRACE
@@ -36,7 +39,7 @@ parser TokenFileParser
         }
         ;
 
-    Token(var std::string name, var std::string info) : soul::ast::slg::Token*
+    Token(var std::string name, var std::string info) : soul::ast::common::Token*
         ::= 
         (
             LPAREN 
@@ -58,7 +61,7 @@ parser TokenFileParser
             RPAREN
         )
         {
-            return new soul::ast::slg::Token(name, info);
+            return new soul::ast::common::Token(name, info);
         }
         ;
 }

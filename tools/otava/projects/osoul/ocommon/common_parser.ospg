@@ -1,2 +1,7 @@
 project common.parser;
 parser <common.parser>;
+parser <token_file.parser>;
+tokens <../otoken/soul.cpp.op.token>;
+tokens <../otoken/soul.cpp.token>;
+tokens <../otoken/soul.punctuation.token>;
+tokens <../otoken/soul.tool.token>;

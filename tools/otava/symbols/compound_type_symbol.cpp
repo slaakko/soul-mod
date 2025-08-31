@@ -12,6 +12,7 @@ import otava.symbols.visitor;
 import otava.symbols.symbol.table;
 import otava.symbols.classes;
 import otava.symbols.context;
+import util;
 
 namespace otava::symbols {
 
@@ -51,17 +52,27 @@ void CompoundTypeSymbol::Read(Reader& reader)
     TypeSymbol::Read(reader);
     reader.GetBinaryStreamReader().ReadUuid(baseTypeId);
     otava::symbols::Read(reader, derivations);
+    reader.GetSymbolTable()->MapType(this);
 }
 
 void CompoundTypeSymbol::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol::Resolve(symbolTable);
     baseType = symbolTable.GetType(baseTypeId);
+    if (!baseType)
+    {
+        std::cout << "CompoundTypeSymbol::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+    }
 }
 
 void CompoundTypeSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+bool CompoundTypeSymbol::IsExportSymbol(Context* context) const
+{
+    return baseType->IsExportSymbol(context);
 }
 
 int CompoundTypeSymbol::PointerCount() const

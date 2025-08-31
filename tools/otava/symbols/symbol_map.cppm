@@ -7,15 +7,15 @@ export module otava.symbols.symbol_map;
 
 import std;
 import util.uuid;
+import otava.symbols.symbol;
 
 export namespace otava::symbols {
-
-class Symbol;
 
 class SymbolMap
 {
 public:
-    Symbol* GetSymbol(const util::uuid& symbolId) const;
+    Symbol* GetSymbolNoThrow(const util::uuid& symbolId) const;
+    Symbol* GetSymbol(Module* module, SymbolKind symbolKind, const util::uuid& symbolId) const;
     void AddSymbol(Symbol* symbol);
 private:
     std::map<util::uuid, Symbol*> symbolMap;

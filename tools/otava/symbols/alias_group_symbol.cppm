@@ -6,13 +6,13 @@
 export module otava.symbols.alias.group.symbol;
 
 import std;
-import otava.symbols.type.symbol;
+import otava.symbols.symbol;
 
 export namespace otava::symbols {
 
 class AliasTypeSymbol;
 
-class AliasGroupSymbol : public TypeSymbol
+class AliasGroupSymbol : public Symbol
 {
 public:
     AliasGroupSymbol(const std::u32string& name_);

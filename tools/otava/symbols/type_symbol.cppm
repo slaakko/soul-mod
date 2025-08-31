@@ -115,6 +115,40 @@ private:
     util::uuid functionGroupSymbolId;
 };
 
+class ClassGroupTypeSymbol : public TypeSymbol
+{
+public:
+    ClassGroupTypeSymbol(const std::u32string& name_);
+    ClassGroupTypeSymbol(ClassGroupSymbol* classGroupSymbol_);
+    std::string SymbolKindStr() const override { return "class group type symbol"; }
+    std::string SymbolDocKindStr() const override { return "class_group_type"; }
+    ClassGroupSymbol* ClassGroup() const { return classGroupSymbol; }
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
+    void Accept(Visitor& visitor) override;
+private:
+    ClassGroupSymbol* classGroupSymbol;
+    util::uuid classGroupSymbolId;
+};
+
+class AliasGroupTypeSymbol : public TypeSymbol
+{
+public:
+    AliasGroupTypeSymbol(const std::u32string& name_);
+    AliasGroupTypeSymbol(AliasGroupSymbol* aliasGroupSymbol_);
+    std::string SymbolKindStr() const override { return "alias group type symbol"; }
+    std::string SymbolDocKindStr() const override { return "alias_group_type"; }
+    AliasGroupSymbol* AliasGroup() const { return aliasGroupSymbol; }
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
+    void Accept(Visitor& visitor) override;
+private:
+    AliasGroupSymbol* aliasGroupSymbol;
+    util::uuid aliasGroupSymbolId;
+};
+
 class GenericTypeSymbol : public TypeSymbol
 {
 public:

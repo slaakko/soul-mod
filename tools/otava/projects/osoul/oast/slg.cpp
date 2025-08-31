@@ -9,78 +9,17 @@ import util;
 
 namespace soul::ast::slg {
 
-File::File(FileKind kind_, const std::string& filePath_) : kind(kind_), filePath(filePath_), external(false)
+Keyword::Keyword(const soul::ast::SourcePos& sourcePos_, const std::string& str_, const std::string& tokenName_, std::int64_t tokenId_) : 
+    sourcePos(sourcePos_), str(str_), tokenName(tokenName_), tokenId(tokenId_), collection(nullptr)
 {
 }
 
-File::~File()
+Keyword::Keyword(const soul::ast::SourcePos& sourcePos_, const std::string& str_, const std::string& tokenName_) : 
+    sourcePos(sourcePos_), str(str_), tokenName(tokenName_), tokenId(-1), collection(nullptr)
 {
 }
 
-Collection::Collection(CollectionKind kind_, const std::string& name_) : kind(kind_), name(name_), file(nullptr)
-{
-}
-
-Collection::~Collection()
-{
-}
-
-Token::Token(std::int64_t id_, const std::string& name_, const std::string& info_) : id(id_), name(name_), info(info_), collection(nullptr)
-{
-}
-
-Token::Token(const std::string& name_, const std::string& info_) : id(-1), name(name_), info(info_), collection(nullptr)
-{
-}
-
-TokenCollection::TokenCollection(const std::string& name_) : Collection(CollectionKind::tokenCollection, name_), initialized(false), id(std::hash<std::string>()(Name()) & 0x7FFFFFFF)
-{
-}
-
-void TokenCollection::AddToken(Token* token)
-{
-    if (token->Id() == -1)
-    {
-        std::int64_t tokenId = (std::int64_t(Id()) << 32) | (std::int64_t(tokens.size()) + 1);
-        token->SetId(tokenId);
-    }
-    tokens.push_back(std::unique_ptr<Token>(token));
-    tokenMap[token->Id()] = token;
-    token->SetCollection(this);
-}
-
-Token* TokenCollection::GetToken(std::int64_t id) const
-{
-    auto it = tokenMap.find(id);
-    if (it != tokenMap.cend())
-    {
-        return it->second;
-    }
-    else
-    {
-        return nullptr;
-    }
-}
-
-TokenFile::TokenFile(const std::string& filePath_) : File(FileKind::tokenFile, filePath_)
-{
-}
-
-void TokenFile::SetTokenCollection(TokenCollection* tokenCollection_)
-{
-    tokenCollection.reset(tokenCollection_);
-    tokenCollection->SetFile(this);
-}
-
-Keyword::Keyword(const std::string& str_, const std::string& tokenName_, std::int64_t tokenId_) : str(str_), tokenName(tokenName_), tokenId(tokenId_), collection(nullptr)
-{
-}
-
-Keyword::Keyword(const std::string& str_, const std::string& tokenName_) : str(str_), tokenName(tokenName_), tokenId(-1), collection(nullptr)
-{
-}
-
-KeywordCollection::KeywordCollection(const std::string& name_) : Collection(CollectionKind::keywordCollection, name_)
+KeywordCollection::KeywordCollection(const std::string& name_) : soul::ast::common::Collection(CollectionKind::keywordCollection, name_)
 {
 }
 
@@ -90,7 +29,7 @@ void KeywordCollection::AddKeyword(Keyword* keyword)
     keyword->SetCollection(this);
 }
 
-KeywordFile::KeywordFile(const std::string& filePath_) : File(FileKind::keywordFile, filePath_)
+KeywordFile::KeywordFile(const std::string& filePath_) : soul::ast::common::File(soul::ast::common::FileKind::keywordFile, filePath_)
 {
 }
 
@@ -111,12 +50,12 @@ Expression::Expression(const std::string& id_, const std::string& value_, int li
 
 const std::string& Expression::FileName() const
 {
-    Collection* collection = GetCollection();
-    File* file = collection->GetFile();
+    soul::ast::common::Collection* collection = GetCollection();
+    soul::ast::common::File* file = collection->GetFile();
     return file->FilePath();
 }
 
-ExpressionCollection::ExpressionCollection(const std::string& name_) : Collection(CollectionKind::expressionCollection, name_)
+ExpressionCollection::ExpressionCollection(const std::string& name_) : soul::ast::common::Collection(CollectionKind::expressionCollection, name_)
 {
 }
 
@@ -126,7 +65,7 @@ void ExpressionCollection::AddExpression(Expression* expression)
     expression->SetCollection(this);
 }
 
-ExpressionFile::ExpressionFile(const std::string& filePath_) : File(FileKind::expressionFile, filePath_)
+ExpressionFile::ExpressionFile(const std::string& filePath_) : soul::ast::common::File(soul::ast::common::FileKind::expressionFile, filePath_)
 {
 }
 
@@ -168,7 +107,7 @@ Action* Actions::GetAction(int id) const
     }
 }
 
-Lexer::Lexer(const std::string& name_) : Collection(CollectionKind::lexer, name_)
+Lexer::Lexer(const std::string& name_) : soul::ast::common::Collection(CollectionKind::lexer, name_)
 {
 }
 
@@ -194,7 +133,7 @@ void Lexer::SetVariableClassName(const std::string& variableClassName_)
     variableClassName = variableClassName_;
 }
 
-LexerFile::LexerFile(const std::string& filePath_) : File(FileKind::lexerFile, filePath_)
+LexerFile::LexerFile(const std::string& filePath_) : soul::ast::common::File(soul::ast::common::FileKind::lexerFile, filePath_)
 {
 }
 
@@ -239,7 +178,8 @@ LexerFileDeclaration::LexerFileDeclaration(const std::string& filePath_) : SlgFi
 {
 }
 
-SlgFile::SlgFile(const std::string& filePath_, const std::string& projectName_) : File(FileKind::slgFile, filePath_), projectName(projectName_)
+SlgFile::SlgFile(const std::string& filePath_, const std::string& projectName_) : 
+    soul::ast::common::File(soul::ast::common::FileKind::slgFile, filePath_), projectName(projectName_)
 {
 }
 
@@ -248,15 +188,15 @@ void SlgFile::AddDeclaration(SlgFileDeclaration* declaration)
     declarations.push_back(std::unique_ptr<SlgFileDeclaration>(declaration));
 }
 
-std::expected<bool, int> SlgFile::AddTokenFile(TokenFile* tokenFile)
+std::expected<bool, int> SlgFile::AddTokenFile(soul::ast::common::TokenFile* tokenFile)
 {
-    tokenFiles.push_back(std::unique_ptr<TokenFile>(tokenFile));
+    tokenFiles.push_back(std::unique_ptr<soul::ast::common::TokenFile>(tokenFile));
     auto it = collectionMap.find(tokenFile->GetTokenCollection()->Name());
     if (it != collectionMap.cend())
     {
         return std::unexpected<int>(util::AllocateError("token collection '" + tokenFile->GetTokenCollection()->Name() + "' already added to SLG file '" + FilePath() + "'"));
     }
-    collectionMap[tokenFile->GetTokenCollection()->Name()] = static_cast<Collection*>(tokenFile->GetTokenCollection());
+    collectionMap[tokenFile->GetTokenCollection()->Name()] = static_cast<soul::ast::common::Collection*>(tokenFile->GetTokenCollection());
     collections.push_back(tokenFile->GetTokenCollection());
     return std::expected<bool, int>(true);
 }
@@ -270,7 +210,7 @@ std::expected<bool, int> SlgFile::AddKeywordFile(KeywordFile* keywordFile)
         return std::unexpected<int>(util::AllocateError("keyword collection '" + keywordFile->GetKeywordCollection()->Name() + "' already added to SLG file '" +
             FilePath() + "'"));
     }
-    collectionMap[keywordFile->GetKeywordCollection()->Name()] = static_cast<Collection*>(keywordFile->GetKeywordCollection());
+    collectionMap[keywordFile->GetKeywordCollection()->Name()] = static_cast<soul::ast::common::Collection*>(keywordFile->GetKeywordCollection());
     collections.push_back(keywordFile->GetKeywordCollection());
     return std::expected<bool, int>(true);
 }
@@ -284,7 +224,7 @@ std::expected<bool, int> SlgFile::AddExpressionFile(ExpressionFile* expressionFi
         return std::unexpected<int>(util::AllocateError("expression collection '" + expressionFile->GetExpressionCollection()->Name() + "' already added to SLG file '" +
             FilePath() + "'"));
     }
-    collectionMap[expressionFile->GetExpressionCollection()->Name()] = static_cast<Collection*>(expressionFile->GetExpressionCollection());
+    collectionMap[expressionFile->GetExpressionCollection()->Name()] = static_cast<soul::ast::common::Collection*>(expressionFile->GetExpressionCollection());
     collections.push_back(expressionFile->GetExpressionCollection());
     return std::expected<bool, int>(true);
 }
@@ -297,17 +237,17 @@ std::expected<bool, int> SlgFile::AddLexerFile(LexerFile* lexerFile)
     {
         return std::unexpected<int>(util::AllocateError("lexer '" + lexerFile->GetLexer()->Name() + "' already added to SLG file '" + FilePath() + "'"));
     }
-    collectionMap[lexerFile->GetLexer()->Name()] = static_cast<Collection*>(lexerFile->GetLexer());
+    collectionMap[lexerFile->GetLexer()->Name()] = static_cast<soul::ast::common::Collection*>(lexerFile->GetLexer());
     collections.push_back(lexerFile->GetLexer());
     return std::expected<bool, int>(true);
 }
 
-std::expected<Collection*, int> SlgFile::GetCollection(const std::string& name) const
+std::expected<soul::ast::common::Collection*, int> SlgFile::GetCollection(const std::string& name) const
 {
     auto it = collectionMap.find(name);
     if (it != collectionMap.cend())
     {
-        return std::expected<Collection*, int>(it->second);
+        return std::expected<soul::ast::common::Collection*, int>(it->second);
     }
     else
     {
@@ -319,7 +259,7 @@ Tokens::Tokens()
 {
 }
 
-void Tokens::AddToken(Token* token)
+void Tokens::AddToken(soul::ast::common::Token* token)
 {
     tokens.push_back(token);
 }
