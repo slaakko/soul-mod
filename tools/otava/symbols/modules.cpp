@@ -466,15 +466,19 @@ int32_t ModuleMapper::ModuleCount() const
     return modules.size();
 }
 
-#ifdef _WIN32
+thread_local ModuleMapper* moduleMapper = nullptr;
 
-__declspec(thread) Module* currentModule = nullptr;
+ModuleMapper* GetModuleMapper()
+{
+    return moduleMapper;
+}
 
-#else
+void SetModuleMapper(ModuleMapper* moduleMapper_)
+{
+    moduleMapper = moduleMapper_;
+}
 
-__thread Module* currentModule = nullptr;
-
-#endif 
+thread_local Module* currentModule = nullptr;
 
 Module* GetCurrentModule()
 {
@@ -488,10 +492,19 @@ void SetCurrentModule(Module* module)
 
 void NodeDestroyed(otava::ast::Node* node)
 {
-    Module* module = GetCurrentModule();
-    if (module)
+    Module* m = GetCurrentModule();
+    if (m)
     {
-        module->GetSymbolTable()->RemoveNode(node);
+        m->GetSymbolTable()->RemoveNode(node);
+    }
+}
+
+void SymbolDestroyed(Symbol* symbol)
+{
+    Module* m = GetCurrentModule();
+    if (m)
+    {
+        m->GetSymbolTable()->RemoveSymbol(symbol);
     }
 }
 

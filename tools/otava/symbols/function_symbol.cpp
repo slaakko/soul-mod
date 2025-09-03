@@ -791,10 +791,6 @@ void FunctionSymbol::Write(Writer& writer)
         writer.Write(ReturnValueParam());
     }
     writer.GetBinaryStreamWriter().Write(vtabIndex);
-    if (IsVirtual() && vtabIndex == -1)
-    {
-        int x = 0;
-    }
     if (IsConversion())
     {
         writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(GetConversionKind()));
@@ -1167,7 +1163,7 @@ std::string FunctionSymbol::IrName(Context* context) const
         digestSource.append(compileUnitId);
         if (returnType)
         {
-            digestSource.append(util::ToUtf8(returnType->FullName()));
+            digestSource.append(".").append(util::ToUtf8(returnType->FullName()));
         }
         irName.append("_").append(util::GetSha1MessageDigest(digestSource));
         if (GetFlag(FunctionSymbolFlags::fixedIrName))
@@ -1516,7 +1512,8 @@ soul::xml::Element* FunctionDefinitionSymbol::ToXml() const
 
 ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol,
     const soul::ast::SourcePos& sourcePos, Context* context) : 
-    FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, functionDefinitionSymbol->Name()), irName(functionDefinitionSymbol->IrName(context))
+    FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, functionDefinitionSymbol->Name()), 
+    irName(functionDefinitionSymbol->IrName(context))
 {
     SetDefIndex(functionDefinitionSymbol->DefIndex());
     for (ParameterSymbol* parameter : functionDefinitionSymbol->Parameters())

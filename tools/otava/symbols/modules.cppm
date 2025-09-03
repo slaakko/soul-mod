@@ -121,6 +121,7 @@ public:
     void SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_);
     FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() const;
     int32_t ModuleCount() const;
+    const std::vector<std::unique_ptr<Module>>& Modules() const { return modules; }
 private:
     std::map<std::string, Module*> moduleMap;
     std::vector<std::unique_ptr<Module>> modules;
@@ -131,8 +132,11 @@ private:
     FunctionDefinitionSymbolSet* functionDefinitionSymbolSet;
 };
 
+ModuleMapper* GetModuleMapper();
+void SetModuleMapper(ModuleMapper* moduleMapper_);
 Module* GetCurrentModule();
 void SetCurrentModule(Module* module);
 void NodeDestroyed(otava::ast::Node* node);
+void SymbolDestroyed(Symbol* symbol);
 
 } // namespace otava::symbols

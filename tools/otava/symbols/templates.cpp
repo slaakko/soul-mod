@@ -296,12 +296,12 @@ bool TemplateArgCanBeTypeId(otava::ast::Node* templateIdNode, int index)
 }
 
 ExplicitInstantiationSymbol::ExplicitInstantiationSymbol() : 
-    Symbol(SymbolKind::explicitInstantiationSymbol, U""), specialization(nullptr), destructor(nullptr)
+    Symbol(SymbolKind::explicitInstantiationSymbol, U"@explicit_instantiation"), specialization(nullptr), destructor(nullptr)
 {
 }
 
 ExplicitInstantiationSymbol::ExplicitInstantiationSymbol(ClassTemplateSpecializationSymbol* specialization_) : 
-    Symbol(SymbolKind::explicitInstantiationSymbol, U""), specialization(specialization_), destructor(nullptr)
+    Symbol(SymbolKind::explicitInstantiationSymbol, U"@explicit_instantiation"), specialization(specialization_), destructor(nullptr)
 {
 }
 

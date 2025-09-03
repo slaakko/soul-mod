@@ -138,7 +138,7 @@ class TokenMap
 public:
     TokenMap();
     void AddUsingToken(Token* usingToken);
-    void AddToken(Token* token);
+    std::expected<bool, int> AddToken(Token* token);
     std::vector<Token*> GetTokens(const std::string& tokenName) const;
     Token* GetToken(const std::string& tokenFullName) const;
     const Token* Any() const { return &any; }

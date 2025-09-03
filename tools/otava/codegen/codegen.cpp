@@ -356,6 +356,7 @@ private:
     std::string asmFileName;
     bool globalMain;
     std::vector<std::string> compileUnitInitFnNames;
+    std::set<std::string> emittedVTabNames;
 };
 
 CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::string& config_, bool verbose_, std::string& mainIrName_, int& mainFunctionParams_, 
@@ -428,9 +429,12 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
 {
     if (!cls->IsPolymorphic()) return;
     if (cls->VTabInitialized()) return;
-    context.SetFlag(otava::symbols::ContextFlags::generatingVTab);
     cls->SetVTabInitialized();
     cls->ComputeVTabName(&context);
+    std::string vtabName = cls->VTabName(&context);
+    if (emittedVTabNames.find(vtabName) != emittedVTabNames.end()) return;
+    emittedVTabNames.insert(vtabName);
+    context.SetFlag(otava::symbols::ContextFlags::generatingVTab);
     cls->MakeVTab(&context, sourcePos);
     otava::intermediate::Type* voidPtrIrType = emitter->MakePtrType(emitter->GetVoidType());
     otava::intermediate::Type* arrayType = emitter->MakeArrayType(cls->VTab().size() * 2 + otava::symbols::vtabClassIdElementCount, voidPtrIrType);
@@ -493,9 +497,8 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
         }
     }
     otava::intermediate::Value* arrayValue = emitter->EmitArrayValue(elements, static_cast<otava::intermediate::ArrayType*>(arrayType));
-    std::string vtabName = cls->VTabName(&context);
     otava::intermediate::Value* vtabVariable = emitter->EmitGlobalVariable(arrayType, vtabName, arrayValue);
-    emitter->SetVTabVariable(cls, vtabVariable);
+    emitter->SetVTabVariable(cls->FullName(), vtabVariable);
     context.ResetFlag(otava::symbols::ContextFlags::generatingVTab);
     for (const auto& boundVTabFunction : context.BoundVTabFunctions())
     {
@@ -746,10 +749,6 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         {
             otava::intermediate::Value* local = emitter->EmitLocal(type->IrType(*emitter, node.GetSourcePos(), &context));
             emitter->SetIrObject(localVariable, local);
-        }
-        else
-        {
-            otava::symbols::ThrowException("variable has no type", node.GetSourcePos(), &context);
         }
     }
     for (int i = 0; i < np; ++i)

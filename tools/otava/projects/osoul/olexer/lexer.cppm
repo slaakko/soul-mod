@@ -2,6 +2,7 @@ export module soul.lexer;
 
 export import soul.lexer.base;
 export import soul.lexer.classmap;
+export import soul.lexer.error;
 export import soul.lexer.file.map;
 export import soul.lexer.keyword;
 export import soul.lexer.lexeme;

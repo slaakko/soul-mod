@@ -47,7 +47,7 @@ std::expected<ClassMap<CharT>*, int> MakeClassMap(const std::string& classMapNam
     std::expected<int32_t, int> rv = rawReader.ReadInt();
     if (!rv) return std::unexpected<int>(rv.error());
     std::int32_t size = *rv;
-    std::int32_t* data = new std::int32_t[size];
+    std::int32_t* data = static_cast<std::int32_t*>(std::malloc(4 * size));
     util::DeflateStream compressedStream(util::CompressionMode::decompress, memoryStream);
     if (!compressedStream) return std::unexpected<int>(compressedStream.Error());
     util::BinaryStreamReader reader(compressedStream);
@@ -72,7 +72,7 @@ std::expected<ClassMap<CharT>*, int> MakeClassMap(const std::string& moduleFileN
     std::expected<int32_t, int> rv = rawReader.ReadInt();
     if (!rv) return std::unexpected<int>(rv.error());
     int32_t size = *rv;
-    std::int32_t* data = new std::int32_t[size];
+    std::int32_t* data = static_cast<std::int32_t*>(std::malloc(4 * size));
     util::DeflateStream compressedStream(util::CompressionMode::decompress, memoryStream);
     if (!compressedStream) return std::unexpected<int>(compressedStream.Error());
     util::BinaryStreamReader reader(compressedStream);

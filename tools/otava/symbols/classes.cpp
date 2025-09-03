@@ -530,18 +530,15 @@ std::string ClassTypeSymbol::IrName(Context* context) const
 {
     std::string irName;
     irName.append("class_").append(util::ToUtf8(Name()));
-    std::string fullName = util::ToUtf8(FullName());
-    irName.append("_").append(util::GetSha1MessageDigest(fullName));
+    std::string shaMaterial = util::ToUtf8(FullName());
+    irName.append("_").append(util::GetSha1MessageDigest(shaMaterial));
     return irName;
 }
 
 void ClassTypeSymbol::ComputeVTabName(Context* context)
 {
-    vtabName.append("vtab_").append(IrName(context));
-    if (IsClassTemplateSpecializationSymbol())
-    {
-        vtabName.append("_").append(context->GetBoundCompileUnit()->Id());
-    }
+    vtabName = "vtab_";
+    vtabName.append(IrName(context));
 }
 
 otava::intermediate::Type* ClassTypeSymbol::VPtrType(Emitter& emitter) const
@@ -553,13 +550,13 @@ otava::intermediate::Type* ClassTypeSymbol::VPtrType(Emitter& emitter) const
 
 otava::intermediate::Value* ClassTypeSymbol::GetVTabVariable(Emitter& emitter, Context* context)
 {
-    otava::intermediate::Value* vtabVariable = emitter.GetVTabVariable(this);
+    otava::intermediate::Value* vtabVariable = emitter.GetVTabVariable(FullName());
     if (!vtabVariable)
     {
         otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
         otava::intermediate::Type* arrayType = emitter.MakeArrayType(vtabSize * 2 + otava::symbols::vtabClassIdElementCount, voidPtrIrType);
         vtabVariable = emitter.EmitGlobalVariable(arrayType, VTabName(context), nullptr);
-        emitter.SetVTabVariable(this, vtabVariable);
+        emitter.SetVTabVariable(FullName(), vtabVariable);
     }
     return vtabVariable;
 }
@@ -1294,11 +1291,15 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
     destructorSymbol->SetParent(classTypeSymbol);
     destructorSymbol->SetFunctionKind(FunctionKind::destructor);
     destructorSymbol->SetAccess(Access::public_);
+    destructorSymbol->SetCompileUnitId(context->GetBoundCompileUnit()->Id());
+    destructorSymbol->SetFixedIrName(destructorSymbol->IrName(context));
     std::unique_ptr<FunctionDefinitionSymbol> destructorDefinitionSymbol(new FunctionDefinitionSymbol(U"@destructor"));
     destructorDefinitionSymbol->SetParent(classTypeSymbol);
     destructorDefinitionSymbol->SetFunctionKind(FunctionKind::destructor);
     destructorDefinitionSymbol->SetAccess(Access::public_);
     destructorDefinitionSymbol->SetDeclaration(destructorSymbol.get());
+    destructorDefinitionSymbol->SetCompileUnitId(context->GetBoundCompileUnit()->Id());
+    destructorDefinitionSymbol->SetFixedIrName(destructorSymbol->IrName(context));
     std::unique_ptr<BoundDtorTerminatorNode> terminator(new BoundDtorTerminatorNode(sourcePos));
     for (int i = nm - 1; i >= 0; --i)
     {

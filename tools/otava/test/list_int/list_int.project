@@ -1,0 +1,3 @@
+project list_int;
+target=program;
+source <list_int.cpp>;

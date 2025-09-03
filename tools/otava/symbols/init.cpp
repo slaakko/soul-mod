@@ -7,6 +7,7 @@ module otava.symbols.init;
 
 import otava.symbols.expression.binder;
 import otava.symbols.function.symbol;
+import otava.symbols.symbol;
 import otava.symbols.modules;
 import otava.ast.node;
 
@@ -18,6 +19,7 @@ void Init()
     InitFunction();
     otava::ast::SetNodeDestroyedFunc(otava::symbols::NodeDestroyed);
     otava::ast::MakeNodeFactoryCollection();
+    otava::symbols::SetSymbolDestroyedFunc(otava::symbols::SymbolDestroyed);
 }
 
 } // namespace otava::symbols

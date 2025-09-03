@@ -109,6 +109,32 @@ public:
     using VariableClassType = Machine::Variables;
     using PPHook = void (*)(LexerType* lexer, TokenType* token);
 
+    Lexer() :
+        flags(LexerFlags::none),
+        file(-1),
+        line(1),
+        current(tokens.end()),
+        token(this),
+        separatorChar('\0'),
+        start(),
+        end(),
+        pos(),
+        fileName(),
+        countLines(true),
+        classMap(nullptr),
+        tokenCollection(nullptr),
+        keywordMap(nullptr),
+        ruleNameMapPtr(nullptr),
+        farthestPos(GetPos()),
+        log(nullptr),
+        vars(),
+        state(this),
+        ppHook(nullptr),
+        skip(false),
+        commentTokenId(-1)
+    {
+    }
+
     Lexer(const CharT* start_, const CharT* end_, const std::string& fileName_) :
         flags(LexerFlags::none),
         file(-1),

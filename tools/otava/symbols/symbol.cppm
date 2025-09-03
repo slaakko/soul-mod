@@ -102,6 +102,10 @@ enum class SymbolGroupKind : std::int32_t;
 
 std::vector<SymbolGroupKind> SymbolGroupKindstoSymbolGroupKindVec(SymbolGroupKind symbolGroupKinds);
 
+using SymbolDestroyedFunc = void(*)(Symbol*);
+
+void SetSymbolDestroyedFunc(SymbolDestroyedFunc func);
+
 class Symbol
 {
 public:

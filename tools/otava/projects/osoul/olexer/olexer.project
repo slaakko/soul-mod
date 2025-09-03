@@ -4,6 +4,8 @@ reference <../../outil/outil.project>;
 reference <../oast/oast.project>;
 interface <base.cppm>;
 interface <classmap.cppm>;
+interface <error.cppm>;
+source <error.cpp>;
 interface <file_map.cppm>;
 source <file_map.cpp>;
 interface <keyword.cppm>;

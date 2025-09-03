@@ -334,7 +334,7 @@ int main(int argc, const char** argv)
                 std::set<otava::build::Project*, otava::build::ProjectLess> projectSet;
                 otava::build::Build(fileMap, solution.get(), config, optLevel, buildFlags, projectSet);
             }
-            else
+            else 
             {
                 throw std::runtime_error("file '" + file + "' has invalid extension: not .project or .solution");
             }

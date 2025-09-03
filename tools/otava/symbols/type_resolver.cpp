@@ -347,7 +347,7 @@ void TypeResolver::Visit(otava::ast::TypenameSpecifierNode& node)
 void TypeResolver::Visit(otava::ast::DeclTypeSpecifierNode& node)
 {
     std::unique_ptr<BoundExpressionNode> expr(BindExpression(node.Expression(), context));
-    type = expr->GetType();
+    type = expr->GetType()->PlainType(context);
 }
 
 void TypeResolver::Visit(otava::ast::QualifiedIdNode& node)

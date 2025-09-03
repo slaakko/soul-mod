@@ -1,0 +1,5 @@
+project decl_type;
+target=program;
+interface <foo.cppm>;
+source <foo.cpp>;
+source <main.cpp>;

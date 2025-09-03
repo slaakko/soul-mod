@@ -258,6 +258,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         util::set_rand_seed(seed);
     }
     otava::symbols::ModuleMapper moduleMapper;
+    otava::symbols::SetModuleMapper(&moduleMapper);
     otava::symbols::InstantiationQueue instantiationQueue;
     std::string projectFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(project->FilePath()), config), project->Name() + ".vcxproj"));
     std::string outputFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(project->FilePath()), config), project->Name()));
@@ -545,11 +546,13 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         }
         std::string asmFileName = otava::codegen::GenerateCode(
             context, config, (flags& BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, std::vector<std::string>());
+/*
         module->Write(project->Root(), config, &context);
         if ((flags & BuildFlags::verbose) != BuildFlags::none)
         {
             std::cout << filePath << " -> " << otava::symbols::MakeModuleFilePath(project->Root(), config, module->Name()) << std::endl;
         }
+*/
         asmFileNames.push_back(asmFileName);
         otava::symbols::BoundFunctionNode* initFn = context.GetBoundCompileUnit()->GetCompileUnitInitializationFunction();
         if (initFn)
@@ -619,6 +622,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     {
         std::cout << "project '" << project->Name() << "' built successfully" << std::endl;
     }
+    otava::symbols::SetModuleMapper(nullptr);
     otava::symbols::SetProjectReady(true);
 }
 

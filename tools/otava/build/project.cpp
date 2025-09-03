@@ -257,6 +257,13 @@ bool Project::UpToDate(const std::string& config) const
             }
         }
     }
+    for (const auto& sourceFilePath : sourceFilePaths)
+    {
+        if (std::filesystem::last_write_time(outputFilePath) < std::filesystem::last_write_time(sourceFilePath))
+        {
+            return false;
+        }
+    }
     return true;
 }
 

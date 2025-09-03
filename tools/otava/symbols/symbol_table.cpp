@@ -1112,6 +1112,22 @@ void SymbolTable::RemoveNode(otava::ast::Node* node)
     }
 }
 
+void SymbolTable::RemoveSymbol(Symbol* symbol)
+{
+    if (ProjectReady() || soul::lexer::parsing_error_thrown || ExceptionThrown() || otava::ast::ExceptionThrown() || otava::intermediate::ExceptionThrown()) return;
+    otava::ast::Node* node = nullptr;
+    auto it = symbolNodeMap.find(symbol);
+    if (it != symbolNodeMap.end())
+    {
+        node = it->second;
+        symbolNodeMap.erase(symbol);
+    }
+    if (node)
+    {
+        nodeSymbolMap.erase(node);
+    }
+}
+
 otava::ast::Node* SymbolTable::GetSpecifierNode(Symbol* symbol) const
 {
     auto it = allSpecifierNodeMap.find(symbol);
@@ -1192,6 +1208,13 @@ void SymbolTable::MapType(TypeSymbol* type)
 
 void SymbolTable::UnmapType(TypeSymbol* type)
 {
+    auto it = symbolNodeMap.find(type);
+    if (it != symbolNodeMap.end())
+    {
+        otava::ast::Node* node = it->second;
+        nodeSymbolMap.erase(node);
+    }
+    symbolNodeMap.erase(type);
     typeMap.erase(type->Id());
 }
 

@@ -99,6 +99,7 @@ public:
         std::swap(head, x.head);
         std::swap(tail, x.tail);
         std::swap(sz, x.sz);
+        return *this;
     }
     void assign(size_type n, const T& value);
 
@@ -162,7 +163,8 @@ public:
         }
         else
         {
-            head->set_prev(nullptr);
+            node_type* p = nullptr;
+            head->set_prev(p);
         }
     }
     void push_back(const T& x)
@@ -207,7 +209,8 @@ public:
         }
         else
         {
-            tail->set_next(nullptr);
+            node_type* p = nullptr;
+            tail->set_next(p);
         }
     }
 
@@ -216,6 +219,7 @@ public:
         if (position == end())
         {
             push_back(x);
+            return iterator(tail);
         }
         else
         {
@@ -223,6 +227,7 @@ public:
             if (p == head)
             {
                 push_front(x);
+                return iterator(head);
             }
             else
             {
@@ -232,6 +237,7 @@ public:
                 p->prev()->set_next(n);
                 p->set_prev(n);
                 ++sz;
+                return iterator(n);
             }
         }
     }
@@ -240,6 +246,7 @@ public:
         if (position == end())
         {
             push_back(std::move(x));
+            return iterator(tail);
         }
         else
         {
@@ -247,6 +254,7 @@ public:
             if (p == head)
             {
                 push_front(std::move(x));
+                return iterator(head);
             }
             else
             {
@@ -256,6 +264,7 @@ public:
                 p->prev()->set_next(n);
                 p->set_prev(n);
                 ++sz;
+                return iterator(n);
             }
         }
     }
@@ -266,17 +275,21 @@ public:
         if (p == head)
         {
             pop_front();
+            return iterator(head);
         }
         else if (p == tail)
         {
             pop_back();
+            return iterator(tail);
         }
         else
         {
+            iterator it(p->next());
             p->prev()->set_next(p->next());
             p->next()->set_prev(p->prev());
             delete p;
             --sz;
+            return it;
         }
     }
     iterator erase(const_iterator first, const_iterator last);

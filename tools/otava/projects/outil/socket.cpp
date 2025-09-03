@@ -30,7 +30,7 @@ class Sockets
 public:
     static Sockets& Instance();
     std::expected<bool, int> Init();
-    void Done();
+    ~Sockets();
 private:
     bool initialized;
     Sockets();
@@ -60,7 +60,7 @@ std::expected<bool, int> Sockets::Init()
     return std::expected<bool, int>(true);
 }
 
-void Sockets::Done()
+void Sockets::~Sockets()
 {
     if (initialized)
     {
@@ -225,11 +225,6 @@ std::expected<int, int> ReceiveSocket(std::int64_t socketHandle, std::uint8_t* b
         return std::unexpected<int>(AllocateError(errorMessage));
     }
     return std::expected<int, int>(result);
-}
-
-void DoneSocket()
-{
-    Sockets::Instance().Done();
 }
 
 TcpSocket::TcpSocket() : handle(-1), connected(false), shutdown(false), error(0)
@@ -436,11 +431,6 @@ std::expected<std::string, int> ReadStr(TcpSocket& socket)
     }
     std::string str(reinterpret_cast<const char*>(mem.get()), size);
     return std::expected<std::string, int>(str);
-}
-
-void DoneSockets()
-{
-    Sockets::Instance().Done();
 }
 
 } // namespace util

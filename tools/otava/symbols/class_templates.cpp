@@ -53,12 +53,13 @@ void ClassTemplateSpecializationSymbol::AddTemplateArgument(Symbol* templateArgu
 std::string ClassTemplateSpecializationSymbol::IrName(Context* context) const
 {
     std::string fullIrName = classTemplate->IrName(context);
-    std::string templateArgIrNames;
+    std::string shaMaterial;
     for (const auto& templateArg : templateArguments)
     {
-        templateArgIrNames.append(1, '_').append(templateArg->IrName(context));
+        shaMaterial.append(1, '.').append(templateArg->IrName(context));
     }
-    fullIrName.append(1, '_').append(util::GetSha1MessageDigest(templateArgIrNames));
+    shaMaterial.append(".").append(context->GetBoundCompileUnit()->Id());
+    fullIrName.append(1, '_').append(util::GetSha1MessageDigest(shaMaterial));
     return fullIrName;
 }
 

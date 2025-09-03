@@ -35,6 +35,13 @@ import util.sha1;
 
 namespace otava::symbols {
 
+SymbolDestroyedFunc symbolDestroyedFunc = nullptr;
+
+void SetSymbolDestroyedFunc(SymbolDestroyedFunc func)
+{
+    symbolDestroyedFunc = func;
+}
+
 std::string AccessStr(Access access)
 {
     switch (access)
@@ -274,6 +281,10 @@ Symbol::Symbol(SymbolKind kind_, const std::u32string& name_) : kind(kind_), id(
 
 Symbol::~Symbol()
 {
+    if (symbolDestroyedFunc)
+    {
+        symbolDestroyedFunc(this);
+    }
 }
 
 void Symbol::SetName(const std::u32string& name_)

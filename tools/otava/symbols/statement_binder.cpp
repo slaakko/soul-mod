@@ -1381,6 +1381,7 @@ void StatementBinder::BindStaticLocalVariable(VariableSymbol* variable, otava::a
             shaMaterial.append(".").append(util::ToUtf8(type->FullName()));
         }
     }
+    shaMaterial.append(".").append(context->GetBoundCompileUnit()->Id());
     std::string sha = util::GetSha1MessageDigest(shaMaterial);
     otava::ast::Node* atomicBoolType = MakeTypeNameNodes(sourcePos, U"std::atomic_bool");
     otava::ast::DeclSpecifierSequenceNode* declSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
@@ -1512,6 +1513,10 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
 
 FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
+    if (functionDefinitionSymbol->GroupName() == U"ParseTokenFile")
+    {
+        int x = 0;
+    }
     RemoveTemporaryAliasTypeSymbols(context);
     if (functionDefinitionSymbol->IsBound()) return functionDefinitionSymbol;
     if (functionDefinitionSymbol->IsTemplate()) return functionDefinitionSymbol;

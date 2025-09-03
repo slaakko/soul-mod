@@ -160,9 +160,9 @@ void Emitter::SetIrObject(void* symbol, otava::intermediate::Value* irObject)
     irObjectMap[symbol] = irObject;
 }
 
-otava::intermediate::Value* Emitter::GetVTabVariable(void* cls) const
+otava::intermediate::Value* Emitter::GetVTabVariable(const std::u32string& className) const
 {
-    auto it = vtabVariableMap.find(cls);
+    auto it = vtabVariableMap.find(className);
     if (it != vtabVariableMap.cend())
     {
         return it->second;
@@ -173,9 +173,9 @@ otava::intermediate::Value* Emitter::GetVTabVariable(void* cls) const
     }
 }
 
-void Emitter::SetVTabVariable(void* cls, otava::intermediate::Value* vtabVariable)
+void Emitter::SetVTabVariable(const std::u32string& className, otava::intermediate::Value* vtabVariable)
 {
-    vtabVariableMap[cls] = vtabVariable;
+    vtabVariableMap[className] = vtabVariable;
 }
 
 otava::intermediate::Value* Emitter::EmitClassPtrConversion(otava::intermediate::Value* classPtr, otava::intermediate::Value* delta, otava::intermediate::Type* destType)

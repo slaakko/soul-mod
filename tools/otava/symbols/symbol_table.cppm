@@ -188,6 +188,7 @@ public:
     otava::ast::Node* GetNodeNothrow(Symbol* symbol) const;
     otava::ast::Node* GetNode(Symbol* symbol) const;
     void RemoveNode(otava::ast::Node* node);
+    void RemoveSymbol(Symbol* symbol);
     otava::ast::Node* GetSpecifierNode(Symbol* symbol) const;
     void SetSpecifierNode(Symbol* symbol, otava::ast::Node* node);
     Symbol* GetSymbolNothrow(otava::ast::Node* node) const;

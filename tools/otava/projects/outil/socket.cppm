@@ -23,7 +23,6 @@ std::expected<bool, int> ShutdownSocket(std::int64_t socketHandle, ShutdownMode 
 std::expected<std::int64_t, int> ConnectSocket(const std::string& node, const std::string& service);
 std::expected<int, int> SendSocket(std::int64_t socketHandle, const std::uint8_t* buf, int len, int flags);
 std::expected<int, int> ReceiveSocket(std::int64_t socketHandle, std::uint8_t* buf, int len, int flags);
-void DoneSockets();
 
 class TcpSocket
 {

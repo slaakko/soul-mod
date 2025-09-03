@@ -37,7 +37,7 @@ class KeywordCollection : public soul::ast::common::Collection
 public:
     KeywordCollection(const std::string& name_);
     void AddKeyword(Keyword* keyword);
-    inline const std::vector<std::unique_ptr<Keyword>>& Keywords() const { return keywords; }
+    inline const std::vector<std::unique_ptr<Keyword>>& GetKeywords() const { return keywords; }
 private:
     std::vector<std::unique_ptr<Keyword>> keywords;
 };
@@ -80,7 +80,7 @@ class ExpressionCollection : public soul::ast::common::Collection
 public:
     ExpressionCollection(const std::string& name_);
     void AddExpression(Expression* expression);
-    inline const std::vector<std::unique_ptr<Expression>>& Expressions() const { return expressions; }
+    inline const std::vector<std::unique_ptr<Expression>>& GetExpressions() const { return expressions; }
 private:
     std::vector<std::unique_ptr<Expression>> expressions;
 };
@@ -105,7 +105,7 @@ public:
     inline soul::ast::common::Collection* GetCollection() const { return collection; }
     inline const std::string& Expr() const { return expr; }
     inline soul::ast::cpp::CompoundStatementNode* Code() const { return code.get(); }
-    inline int Action() const { return action; }
+    inline int GetAction() const { return action; }
     inline int Line() const { return line; }
     inline int NfaIndex() const { return nfaIndex; }
     inline void SetNfaIndex(int nfaIndex_) { nfaIndex = nfaIndex_; }
