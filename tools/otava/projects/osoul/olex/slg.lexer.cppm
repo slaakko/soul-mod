@@ -17298,7 +17298,8 @@ std::expected<soul::lexer::Lexer<SlgLexer<CharT>, CharT>, int> MakeLexer(const C
 }
 
 template<typename CharT>
-std::expected<soul::lexer::Lexer<SlgLexer<CharT>, CharT>, int> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const CharT* start, const CharT* end, const std::string& fileName)
+std::expected<soul::lexer::Lexer<SlgLexer<CharT>, CharT>, int> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, 
+    const CharT* start, const CharT* end, const std::string& fileName)
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<SlgLexer<CharT>, CharT>(start, end, fileName);

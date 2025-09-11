@@ -26,6 +26,23 @@ struct Keyword
 {
     inline Keyword() : str(nullptr), tokenID(INVALID_TOKEN) {}
     inline Keyword(const Char* str_, std::int64_t tokenID_) : str(str_), tokenID(tokenID_) {}
+    std::string ToAscii() const
+    {
+        std::string asciiStr;
+        const Char* i = str;
+        while (*i)
+        {
+            Char c = *i;
+            int a = static_cast<int>(c);
+            if (a >= 32 && a < 127)
+            {
+                char ca = static_cast<char>(a);
+                asciiStr.append(1, ca);
+            }
+            ++i;
+        }
+        return asciiStr;
+    }
     const Char* str;
     std::int64_t tokenID;
 };
@@ -54,6 +71,13 @@ public:
         else
         {
             return INVALID_TOKEN;
+        }
+    }
+    void Print()
+    {
+        for (const auto& p : keywordMap)
+        {
+            std::cout << p.first->ToAscii() << " : " << p.second << "\n";
         }
     }
 private:

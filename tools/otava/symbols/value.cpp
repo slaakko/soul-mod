@@ -391,7 +391,23 @@ void StringValue::Accept(Visitor& visitor)
 
 otava::intermediate::Value* StringValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    return emitter.EmitStringValue(value);
+    TypeSymbol* type = GetType()->DirectType(context)->FinalType(sourcePos, context);
+    if (type->IsConstCharPtrType() || type->IsBasicStringCharType(context))
+    {
+        return emitter.EmitStringValue(value);
+    }
+    else if (type->IsConstChar16PtrType() || type->IsBasicStringChar16Type(context))
+    {
+        return emitter.EmitString16Value(value);
+    }
+    else if (type->IsConstChar32PtrType() || type->IsBasicStringChar32Type(context))
+    {
+        return emitter.EmitString32Value(value);
+    }
+    else
+    {
+        ThrowException("unknown base type for string type '" + util::ToUtf8(type->FullName()) + "'");
+    }
 }
 
 CharValue::CharValue(TypeSymbol* type_) : Value(SymbolKind::charValueSymbol, U"", type_), value()

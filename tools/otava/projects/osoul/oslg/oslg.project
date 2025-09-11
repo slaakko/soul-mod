@@ -9,6 +9,8 @@ reference <../olex/olex.project>;
 reference <../ore/ore.project>;
 reference <../ocommon/ocommon.project>;
 reference <../ocpp/ocpp.project>;
+resource <../olex/soul.lex.re.classmap.rc>;
+resource <../olex/soul.lex.slg.classmap.rc>;
 interface <classmap.cppm>;
 source <classmap.cpp>;
 interface <code_modifier.cppm>;

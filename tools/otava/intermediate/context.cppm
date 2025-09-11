@@ -60,7 +60,7 @@ public:
     void AddArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
     void AddFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
     GlobalVariable* AddGlobalVariable(const soul::ast::Span& span, Type* type, const std::string& variableName, Value* initializer);
-    GlobalVariable* GetGlobalVariableForString(otava::intermediate::Value* stringValue);
+    GlobalVariable* GetGlobalVariableForString(otava::intermediate::Value* stringValue, Type* charType);
     void ResolveTypes();
     inline void ResolveData() { data.ResolveAddressValues(); }
     void ResolveType(TypeRef& typeRef);

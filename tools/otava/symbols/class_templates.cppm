@@ -46,6 +46,20 @@ public:
     FunctionSymbol* GetMatchingVirtualFunctionSpecialization(FunctionSymbol* newcomer, Context* context) const;
     bool ContainsVirtualFunctionSpecialization(FunctionSymbol* specialization) const;
     ClassGroupSymbol* Group() const override { return ClassTemplate()->Group(); }
+    bool IsBasicStringCharType(Context* context) override
+    {
+        return classTemplate->Name() == U"basic_string" &&
+            templateArguments.size() == 1 &&
+            (templateArguments.front()->IsCharTypeSymbol() || templateArguments.front()->IsChar8TypeSymbol());
+    }
+    bool IsBasicStringChar16Type(Context* context) override
+    { 
+        return classTemplate->Name() == U"basic_string" && templateArguments.size() == 1 && templateArguments.front()->IsChar16TypeSymbol(); 
+    }
+    bool IsBasicStringChar32Type(Context* context) override
+    { 
+        return classTemplate->Name() == U"basic_string" && templateArguments.size() == 1 && templateArguments.front()->IsChar32TypeSymbol(); 
+    }
 private:
     ClassTypeSymbol* classTemplate;
     std::vector<Symbol*> templateArguments;

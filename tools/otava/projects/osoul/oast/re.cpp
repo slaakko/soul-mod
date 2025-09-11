@@ -10,7 +10,7 @@ import util;
 
 namespace soul::ast::re {
 
-Symbol::Symbol(SymbolKind kind_) : kind(kind_), contained(false), dontSetContained(false)
+Symbol::Symbol(SymbolKind kind_) : name(), kind(kind_), contained(false), dontSetContained(false)
 {
 }
 
@@ -760,7 +760,8 @@ Nfa MakeNfa(LexerContext& lexerContext, Symbol* symbol)
     NfaState* end = lexerContext.MakeNfaState();
     end->SetAccept(true);
     start->AddEdge(NfaEdge(symbol, end));
-    return Nfa(start, end);
+    Nfa nfa(start, end);
+    return nfa;
 }
 
 Nfa Cat(const Nfa& left, const Nfa& right)
@@ -6870,7 +6871,7 @@ std::expected<Symbol*, int> LexerContext::MakeRange(char32_t start, char32_t end
     symbols.push_back(symbol);
     Symbol* s = symbol;
     rangeSymbols[range] = s;
-    return symbol;
+    return std::expected<Symbol*, int>(s);
 }
 
 Class* LexerContext::MakeClass()

@@ -519,13 +519,13 @@ std::expected<bool, int> WriteLexer(soul::ast::re::LexerContext& lexerContext, s
     if (!interfaceStream) return std::unexpected<int>(util::AllocateError("could not create file '" + interfaceFilePath + "'"));
     util::CodeFormatter interfaceFormatter(interfaceStream);
     std::expected<bool, int> rv = interfaceFormatter.WriteLine("// this file has been automatically generated from '" +
-        lexerContext.FileName() + "' using soul lexer generator eslg version " + util::SoulVersionStr());
+        lexerContext.FileName() + "' using soul lexer generator oslg version " + util::SoulVersionStr());
     if (!rv) return rv;
     interfaceFormatter.WriteLine();
     std::ofstream sourceStream(sourceFilePath);
     if (!sourceStream) return std::unexpected<int>(util::AllocateError("could not create file '" + sourceFilePath + "'"));
     util::CodeFormatter sourceFormatter(sourceStream);
-    rv = sourceFormatter.WriteLine("// this file has been automatically generated from '" + lexerContext.FileName() + "' using soul lexer generator eslg version " +
+    rv = sourceFormatter.WriteLine("// this file has been automatically generated from '" + lexerContext.FileName() + "' using soul lexer generator oslg version " +
         util::SoulVersionStr());
     if (!rv) return rv;
     sourceFormatter.WriteLine();
@@ -561,9 +561,7 @@ std::expected<bool, int> WriteLexer(soul::ast::re::LexerContext& lexerContext, s
     if (!rv) return rv;
     for (const auto& imprt : lexerFile->Imports())
     {
-        std::expected<soul::ast::common::Collection*, int> crv = slgFile->GetCollection(imprt->ModuleName());
-        if (!crv) return std::unexpected<int>(crv.error());
-        soul::ast::common::Collection* collection = *crv;
+        soul::ast::common::Collection* collection = slgFile->GetCollection(imprt->ModuleName());
         if (!collection)
         {
             rv = interfaceFormatter.WriteLine("import " + imprt->ModuleName() + ";");
@@ -714,10 +712,10 @@ std::expected<bool, int> WriteLexer(soul::ast::re::LexerContext& lexerContext, s
         std::map<std::int32_t, std::set<std::int32_t>> m;
         for (soul::ast::re::Class* cls : lexerContext.Partition())
         {
-            soul::ast::re::DfaState* next = state->Next(cls->Index());
-            if (next != nullptr)
+            soul::ast::re::DfaState* nxt = state->Next(cls->Index());
+            if (nxt != nullptr)
             {
-                m[next->Id()].insert(cls->Index());
+                m[nxt->Id()].insert(cls->Index());
             }
         }
         if (m.empty())
@@ -735,8 +733,8 @@ std::expected<bool, int> WriteLexer(soul::ast::re::LexerContext& lexerContext, s
             for (const auto& p : m)
             {
                 std::int32_t n = p.first;
-                const std::set<std::int32_t>& s = p.second;
-                for (std::int32_t k : s)
+                std::set<std::int32_t>* s = &p.second;
+                for (std::int32_t k : *s)
                 {
                     rv = interfaceFormatter.WriteLine("case " + std::to_string(k) + ":");
                     if (!rv) return rv;
@@ -1003,7 +1001,6 @@ std::expected<bool, int> WriteLexer(soul::ast::re::LexerContext& lexerContext, s
     {
         std::cout << "==> " << interfaceFilePath << "\n";
     }
-
     sourceFormatter.WriteLine();
     rv = sourceFormatter.WriteLine("std::mutex mtx;");
     if (!rv) return rv;
@@ -1232,9 +1229,7 @@ std::expected<bool, int> GenerateLexer(soul::ast::slg::SlgFile* slgFile, soul::a
     soul::ast::slg::Expressions expressions;
     for (const auto& imprt : lexerFile->Imports())
     {
-        std::expected<soul::ast::common::Collection*, int> crv = slgFile->GetCollection(imprt->ModuleName());
-        if (!crv) return std::unexpected<int>(crv.error());
-        soul::ast::common::Collection* collection = *crv;
+        soul::ast::common::Collection* collection = slgFile->GetCollection(imprt->ModuleName());
         if (collection)
         {
             switch (collection->Kind())

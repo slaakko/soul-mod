@@ -36,11 +36,15 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
-    inline bool IsBoolType() const override { return fundamentalTypeKind == FundamentalTypeKind::boolType; }
-    inline bool IsVoidType() const override { return fundamentalTypeKind == FundamentalTypeKind::voidType; }
-    inline bool IsNullPtrType() const override { return fundamentalTypeKind == FundamentalTypeKind::nullPtrType; }
-    inline bool IsDoubleType() const override { return fundamentalTypeKind == FundamentalTypeKind::doubleType; }
-    inline bool IsFloatType() const override { return fundamentalTypeKind == FundamentalTypeKind::floatType; }
+    bool IsBoolType() const override { return fundamentalTypeKind == FundamentalTypeKind::boolType; }
+    bool IsVoidType() const override { return fundamentalTypeKind == FundamentalTypeKind::voidType; }
+    bool IsNullPtrType() const override { return fundamentalTypeKind == FundamentalTypeKind::nullPtrType; }
+    bool IsDoubleType() const override { return fundamentalTypeKind == FundamentalTypeKind::doubleType; }
+    bool IsFloatType() const override { return fundamentalTypeKind == FundamentalTypeKind::floatType; }
+    bool IsCharTypeSymbol() const override { return fundamentalTypeKind == FundamentalTypeKind::charType; }
+    bool IsChar8TypeSymbol() const override { return fundamentalTypeKind == FundamentalTypeKind::char8Type; }
+    bool IsChar16TypeSymbol() const override { return fundamentalTypeKind == FundamentalTypeKind::char16Type; }
+    bool IsChar32TypeSymbol() const override { return fundamentalTypeKind == FundamentalTypeKind::char32Type; }
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     inline std::int32_t Score() const { return static_cast<std::int32_t>(fundamentalTypeKind); }
 private:

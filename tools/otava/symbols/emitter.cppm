@@ -84,6 +84,8 @@ public:
         return context->MakeStructureValue(soul::ast::Span(), fieldValues, structureType);
     }
     otava::intermediate::Value* EmitStringValue(const std::string& value);
+    otava::intermediate::Value* EmitString16Value(const std::string& value);
+    otava::intermediate::Value* EmitString32Value(const std::string& value);
     inline otava::intermediate::Value* EmitConversionValue(otava::intermediate::Type* type, otava::intermediate::Value* from)
     {
         return context->MakeConversionValue(soul::ast::Span(), type, from);

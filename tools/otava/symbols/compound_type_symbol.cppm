@@ -17,6 +17,7 @@ public:
     CompoundTypeSymbol(const std::u32string& name_);
     CompoundTypeSymbol(TypeSymbol* baseType_, const Derivations& derivations_);
     TypeSymbol* GetBaseType() override { return baseType; }
+    const TypeSymbol* GetBaseType() const override { return baseType; }
     std::string SymbolKindStr() const override { return "compound type symbol"; }
     std::string SymbolDocKindStr() const override { return "compound_type"; }
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
@@ -38,6 +39,9 @@ public:
     TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
     TypeSymbol* DirectType(Context* context) override;
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
+    bool IsBasicStringCharType(Context* context) override { return PointerCount() == 0 && PlainType(context)->IsBasicStringCharType(context); }
+    bool IsBasicStringChar16Type(Context* context) override { return PointerCount() == 0 && PlainType(context)->IsBasicStringChar16Type(context); }
+    bool IsBasicStringChar32Type(Context* context) override { return PointerCount() == 0 && PlainType(context)->IsBasicStringChar32Type(context); }
 private:
     TypeSymbol* baseType;
     Derivations derivations;

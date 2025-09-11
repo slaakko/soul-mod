@@ -248,7 +248,7 @@ public:
     std::expected<bool, int> AddLexerFile(LexerFile* lexerFile);
     inline const std::vector<std::unique_ptr<LexerFile>>& LexerFiles() const { return lexerFiles; }
     inline const std::vector<soul::ast::common::Collection*>& Collections() const { return collections; }
-    std::expected<soul::ast::common::Collection*, int> GetCollection(const std::string& name) const;
+    soul::ast::common::Collection* GetCollection(const std::string& name) const;
 private:
     std::string projectName;
     std::vector<std::unique_ptr<SlgFileDeclaration>> declarations;

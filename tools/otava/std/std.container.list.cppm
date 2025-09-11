@@ -1,6 +1,7 @@
 export module std.container.list;
 
 import std.type.fundamental;
+import std.iterator;
 
 export namespace std {
 
@@ -20,9 +21,9 @@ public:
     const_reference value() const { return val; }
     pointer value_ptr() { return &val; }
     const_pointer value_ptr() const { return &val; }
-    list_node<T>* next() { return nxt; }
+    list_node<T>* get_next() { return nxt; }
     void set_next(list_node<T>* nxt_) { nxt = nxt_; }
-    list_node<T>* prev() { return prv; }
+    list_node<T>* get_prev() { return prv; }
     void set_prev(list_node<T>* prv_) { prv = prv_; }
 private:
     value_type val;
@@ -40,6 +41,7 @@ public:
     using const_reference = const value_type&;
     using pointer = value_type*;
     using const_pointer = const value_type*;
+    using iterator_category = bidirectional_iterator_tag;
 
     list_iterator() : n(nullptr) {}
     list_iterator(node_type* n_) : n(n_) {}
@@ -47,10 +49,10 @@ public:
     const_reference operator*() const { return n->value(); }
     pointer operator->() { return n->value_ptr(); }
     const_pointer operator->() const { return n->value_ptr(); }
-    list_iterator& operator++() { n = n->next(); return *this; }
-    list_iterator operator++(int) { list_iterator p = *this; n = n->next(); return p; }
-    list_iterator& operator--() { n = n->prev(); return *this; }
-    list_iterator operator--(int) { list_iterator p = *this; n = n->prev(); return p; }
+    list_iterator& operator++() { n = n->get_next(); return *this; }
+    list_iterator operator++(int) { list_iterator p = *this; n = n->get_next(); return p; }
+    list_iterator& operator--() { n = n->get_prev(); return *this; }
+    list_iterator operator--(int) { list_iterator p = *this; n = n->get_prev(); return p; }
     node_type* node() const { return n; }
 private:
     NodeT* n;
@@ -112,7 +114,6 @@ public:
 
     bool empty() const { return head == nullptr; }
     size_type size() const { return sz; }
-    size_type max_size() const;
     void resize(size_type sz);
     void resize(size_type sz, const T& c);
 
@@ -154,7 +155,7 @@ public:
     void pop_front()
     {
         node_type* n = head;
-        head = head->next();
+        head = head->get_next();
         delete n;
         --sz;
         if (!head)
@@ -200,7 +201,7 @@ public:
     void pop_back()
     {
         node_type* n = tail;
-        tail = tail->prev();
+        tail = tail->get_prev();
         delete n;
         --sz;
         if (!tail)
@@ -233,8 +234,8 @@ public:
             {
                 node_type* n = new node_type(x);
                 n->set_next(p);
-                n->set_prev(p->prev());
-                p->prev()->set_next(n);
+                n->set_prev(p->get_prev());
+                p->get_prev()->set_next(n);
                 p->set_prev(n);
                 ++sz;
                 return iterator(n);
@@ -260,8 +261,8 @@ public:
             {
                 node_type* n = new node_type(std::move(x));
                 n->set_next(p);
-                n->set_prev(p->prev());
-                p->prev()->set_next(n);
+                n->set_prev(p->get_prev());
+                p->get_prev()->set_next(n);
                 p->set_prev(n);
                 ++sz;
                 return iterator(n);
@@ -284,9 +285,9 @@ public:
         }
         else
         {
-            iterator it(p->next());
-            p->prev()->set_next(p->next());
-            p->next()->set_prev(p->prev());
+            iterator it(p->get_next());
+            p->get_prev()->set_next(p->get_next());
+            p->get_next()->set_prev(p->get_prev());
             delete p;
             --sz;
             return it;
@@ -297,7 +298,7 @@ public:
     {
         while (head)
         {
-            node_type* n = head->next();
+            node_type* n = head->get_next();
             delete head;
             head = n;
         }

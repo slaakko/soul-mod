@@ -6,6 +6,7 @@
 export module soul.lexer.lexeme;
 
 import std;
+import util;
 
 export namespace soul::lexer {
 
@@ -15,6 +16,23 @@ struct Lexeme
     inline Lexeme() : begin(nullptr), end(nullptr) {}
     inline Lexeme(const Char* begin_, const Char* end_) : begin(begin_), end(end_) {}
     inline std::basic_string<Char> ToString() const { return std::basic_string<Char>(begin, end); }
+    std::string ToAscii() const
+    {
+        std::string asciiStr;
+        const Char* i = begin;
+        while (i != end)
+        {
+            Char c = *i;
+            int a = static_cast<int>(c);
+            if (a >= 32 && a < 127)
+            {
+                char ca = static_cast<char>(a);
+                asciiStr.append(1, ca);
+            }
+            ++i;
+        }
+        return asciiStr;
+    }
     inline int Length() const { return static_cast<int>(end - begin); }
     const Char* begin;
     const Char* end;

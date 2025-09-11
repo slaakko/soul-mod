@@ -23,13 +23,13 @@ BinaryResourcePtr::BinaryResourcePtr(const std::string& moduleName, const std::s
         return;
     }
     std::u16string moduleNameStr = *mrv;
-    mrv = ToUtf16(resourceName);
-    if (!mrv)
+    std::expected<std::u16string, int> rrv = ToUtf16(resourceName);
+    if (!rrv)
     {
-        error = mrv.error();
+        error = rrv.error();
         return;
     }
-    std::u16string resourceNameStr = *mrv;
+    std::u16string resourceNameStr = *rrv;
     void* moduleHandle = nullptr;
     if ((flags & ResourceFlags::loadLibraryAsDataFile) != ResourceFlags::none)
     {

@@ -23,6 +23,7 @@ class TypeSymbol : public ContainerSymbol
 public:
     TypeSymbol(SymbolKind kind_, const std::u32string& name_);
     virtual TypeSymbol* GetBaseType() { return this; }
+    virtual const TypeSymbol* GetBaseType() const { return this; }
     inline bool IsCompoundType() const { return Kind() == SymbolKind::compoundTypeSymbol; }
     bool IsAutoTypeSymbol() const;
     bool IsPointerType() const;
@@ -44,6 +45,18 @@ public:
     virtual bool IsIntegralType() const { return false; }
     virtual bool IsPolymorphic() const { return false; }
     virtual bool IsFunctionType() const { return false; }
+    virtual bool IsBasicStringCharType(Context* context) { return false; }
+    virtual bool IsBasicStringChar16Type(Context* context) { return false; }
+    virtual bool IsBasicStringChar32Type(Context* context) { return false; }
+    inline bool IsConstCharPtrType() const 
+    { 
+        return IsConstType() &&
+            IsPointerType() &&
+            PointerCount() == 1 &&
+            (GetBaseType()->IsCharTypeSymbol() || GetBaseType()->IsChar8TypeSymbol());
+    }
+    inline bool IsConstChar16PtrType() const { return IsConstType() && IsPointerType() && PointerCount() == 1 && GetBaseType()->IsChar16TypeSymbol(); }
+    inline bool IsConstChar32PtrType() const { return IsConstType() && IsPointerType() && PointerCount() == 1 && GetBaseType()->IsChar32TypeSymbol(); }
     inline bool IsFunctionPtrType() { return IsPointerType() && PointerCount() == 1 && GetBaseType()->IsFunctionType(); }
     virtual int PointerCount() const { return 0; }
     virtual const Derivations& GetDerivations() const;

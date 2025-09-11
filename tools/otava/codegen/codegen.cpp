@@ -428,8 +428,8 @@ void CodeGenerator::GenJumpingBoolCode()
 void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos)
 {
     if (!cls->IsPolymorphic()) return;
-    if (cls->VTabInitialized()) return;
-    cls->SetVTabInitialized();
+    if (cls->GetFlag(otava::symbols::ClassTypeSymbolFlags::vtabGenerated)) return;
+    cls->SetFlag(otava::symbols::ClassTypeSymbolFlags::vtabGenerated);
     cls->ComputeVTabName(&context);
     std::string vtabName = cls->VTabName(&context);
     if (emittedVTabNames.find(vtabName) != emittedVTabNames.end()) return;

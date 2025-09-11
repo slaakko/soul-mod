@@ -7,6 +7,7 @@ module otava.symbols.emitter;
 
 import otava.symbols.bound.tree;
 import otava.intermediate;
+import util;
 
 namespace otava::symbols {
 
@@ -109,7 +110,35 @@ otava::intermediate::Value* Emitter::EmitBool(bool value)
 otava::intermediate::Value* Emitter::EmitStringValue(const std::string& value)
 {
     otava::intermediate::Value* stringValue = context->MakeStringValue(soul::ast::Span(), value, false);
-    otava::intermediate::GlobalVariable* globalVar = context->GetGlobalVariableForString(stringValue);
+    otava::intermediate::GlobalVariable* globalVar = context->GetGlobalVariableForString(stringValue, GetByteType());
+    return globalVar;
+}
+
+otava::intermediate::Value* Emitter::EmitString16Value(const std::string& value)
+{
+    std::u16string str = util::ToUtf16(value);
+    std::vector<otava::intermediate::Value*> elements;
+    for (const char16_t x : str)
+    {
+        elements.push_back(EmitUShort(static_cast<uint16_t>(x)));
+    }
+    elements.push_back(EmitUShort(static_cast<uint16_t>(0)));
+    otava::intermediate::Value* string16Value = context->MakeStringArrayValue(soul::ast::Span(), 'w', elements);
+    otava::intermediate::GlobalVariable* globalVar = context->GetGlobalVariableForString(string16Value, GetUShortType());
+    return globalVar;
+}
+
+otava::intermediate::Value* Emitter::EmitString32Value(const std::string& value)
+{
+    std::u32string str = util::ToUtf32(value);
+    std::vector<otava::intermediate::Value*> elements;
+    for (const char32_t x : str)
+    {
+        elements.push_back(EmitUInt(static_cast<uint32_t>(x)));
+    }
+    elements.push_back(EmitUInt(static_cast<uint32_t>(0)));
+    otava::intermediate::Value* string16Value = context->MakeStringArrayValue(soul::ast::Span(), 'u', elements);
+    otava::intermediate::GlobalVariable* globalVar = context->GetGlobalVariableForString(string16Value, GetUIntType());
     return globalVar;
 }
 

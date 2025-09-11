@@ -1,0 +1,3 @@
+project u32;
+target=program;
+source <u32.cpp>;

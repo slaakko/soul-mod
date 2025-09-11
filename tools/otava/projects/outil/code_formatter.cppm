@@ -12,8 +12,9 @@ export namespace util {
 class CodeFormatter
 {
 public:
-    inline CodeFormatter(std::ostream& stream_) :
-        stream(stream_), indent(0), indentSize(4), atBeginningOfLine(true), line(1), start(false), preserveSpace(false), contentCount(0), logging(false), error(0) {
+    CodeFormatter(std::ostream& stream_) :
+        stream(stream_), indent(0), indentSize(4), atBeginningOfLine(true), line(1), start(false), preserveSpace(false), contentCount(0), logging(false), error(0) 
+    {
     }
     inline int Indent() const { return indent; }
     inline int IndentSize() const { return indentSize; }

@@ -401,7 +401,7 @@ public:
     inline Context* GetContext() const { return context; }
     inline void SetContext(Context* context_) { context = context_; }
     GlobalVariable* AddGlobalVariable(const soul::ast::Span& span, Type* type, const std::string& variableName, Value* initializer, Context* context);
-    GlobalVariable* GetGlobalVariableForString(Value* stringValue);
+    GlobalVariable* GetGlobalVariableForString(Value* stringValue, Type* charType);
     Value* GetBoolValue(bool value, const Types& types);
     Value* GetTrueValue(const Types& types);
     Value* GetFalseValue(const Types& types);

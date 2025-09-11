@@ -36,7 +36,6 @@ int main(int argc, const char** argv)
             return 1;
         }
         std::unique_ptr<soul_expected::xml::Document> doc = std::move(*d);
-        int x = 0;
     }
     Done();
 }

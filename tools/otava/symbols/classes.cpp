@@ -420,6 +420,9 @@ bool ClassTypeSymbol::IsTemplate() const
 
 void ClassTypeSymbol::MakeVTab(Context* context, const soul::ast::SourcePos& sourcePos)
 {
+    if (VTabInitialized()) return;
+    SetVTabInitialized();
+    ComputeVTabName(context);
     InitVTab(vtab, context, sourcePos);
     vtabSize = vtab.size();
 }

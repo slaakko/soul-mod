@@ -139,7 +139,9 @@ FunctionSymbol* DerivedToBaseArgumentConversion::Get(TypeSymbol* paramType, Type
     FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     int distance = 0;
-    if (paramType->PointerCount() == 1 && argType->PointerCount() == 1 && argType->GetBaseType()->HasBaseClass(paramType->GetBaseType(), distance))
+    if ((paramType->PointerCount() == 1 && argType->PointerCount() == 1 || 
+        paramType->IsReferenceType() && paramType->PointerCount() == 0 && argType->IsReferenceType() && argType->PointerCount() == 0) && 
+        argType->GetBaseType()->HasBaseClass(paramType->GetBaseType(), distance))
     {
         return new DerivedToBaseConversion(argType, paramType, distance, context);
     }
@@ -216,7 +218,10 @@ FunctionSymbol* BaseToDerivedArgumentConversion::Get(TypeSymbol* paramType, Type
     FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     int distance = 0;
-    if (paramType->PointerCount() == 1 && argType->PointerCount() == 1 && paramType->GetBaseType()->HasBaseClass(argType->GetBaseType(), distance))
+    if ((paramType->PointerCount() == 1 && argType->PointerCount() == 1 || 
+        paramType->IsReferenceType() && paramType->PointerCount() == 0 && 
+        argType->IsReferenceType() && argType->PointerCount() == 0) &&
+        paramType->GetBaseType()->HasBaseClass(argType->GetBaseType(), distance))
     {
         distance += 100;
         return new BaseToDerivedConversion(argType, paramType, distance, context);

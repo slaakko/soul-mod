@@ -110,6 +110,7 @@ public:
     using PPHook = void (*)(LexerType* lexer, TokenType* token);
 
     Lexer() :
+        LexerBase<CharT>(), 
         flags(LexerFlags::none),
         file(-1),
         line(1),
@@ -136,6 +137,7 @@ public:
     }
 
     Lexer(const CharT* start_, const CharT* end_, const std::string& fileName_) :
+        LexerBase<CharT>(),
         flags(LexerFlags::none),
         file(-1),
         line(1),
@@ -645,7 +647,7 @@ public:
     }
     std::expected<bool, int> Increment() override
     {
-        return ++ * this;
+        return ++*this;
     }
     void MoveToEnd() override
     {
@@ -909,7 +911,7 @@ private:
             ++pos;
         }
         token.id = soul::lexer::INVALID_TOKEN;
-        state = Machine::NextState(state, '\0', *this);
+        state = Machine::NextState(state, '\0', *static_cast<LexerBase<CharT>*>(this));
         std::int64_t p = -1;
         if (token.id != soul::lexer::INVALID_TOKEN && token.id != soul::lexer::CONTINUE_TOKEN)
         {

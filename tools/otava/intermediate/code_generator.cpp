@@ -2614,6 +2614,10 @@ void CodeGenerator::EmitDataValue(std::unique_ptr<otava::assembly::Value>&& data
 
 void CodeGenerator::Visit(GlobalVariable& globalVariable)
 {
+    if (globalVariable.Name() == "vtab_class_ReturnStatementNode_E9A62C2228EF34541A9990A53812CAF082212798")
+    {
+        int x = 0;
+    }
     if (data && dataInstruction)
     {
         data->AddInstruction(std::move(dataInstruction));
@@ -3235,6 +3239,7 @@ void CodeGenerator::Visit(ConversionValue& value)
 void CodeGenerator::Visit(SymbolValue& value)
 {
     EmitDataValue(std::unique_ptr<otava::assembly::Value>(new otava::assembly::Symbol(value.Symbol())), otava::assembly::OpCode::DQ);
+    currentOffset += 8;
 }
 
 void CodeGenerator::Error(const std::string& message)

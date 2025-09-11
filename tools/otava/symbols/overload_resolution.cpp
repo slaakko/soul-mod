@@ -1253,7 +1253,7 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
         std::vector<std::pair<Scope*, ScopeLookup>> scopeLookups;
         if ((flags & OverloadResolutionFlags::dontSearchArgumentScopes) != OverloadResolutionFlags::none)
         {
-            scopeLookups.push_back(std::make_pair(scope, ScopeLookup::thisScope));
+            scopeLookups.push_back(std::make_pair(scope, ScopeLookup::thisAndBaseScopes));
         }
         else
         {

@@ -262,13 +262,15 @@ public:
     void pop_back()
     {
         --sz;
-        elements[sz]->T::~T();
+        T* p = elements + sz;
+        p->T::~T();
     }
 
     iterator insert(const_iterator position, const T& x)
     {
-        reserve(sz + 1);
         size_type index = position - begin();
+        reserve(sz + 1);
+        position = begin() + index;
         iterator e = end();
         constructive_move_backward(e + 1, e, e - position);
         new (position) T(x);
@@ -277,8 +279,9 @@ public:
     }
     iterator insert(const_iterator position, T&& x)
     {
-        reserve(sz + 1);
         size_type index = position - begin();
+        reserve(sz + 1);
+        position = begin() + index;
         iterator e = end();
         constructive_move_backward(e + 1, e, e - position);
         new (position) T(std::move(x));
@@ -376,6 +379,10 @@ public:
     inline void clear()
     {
         destroy();
+    }
+    void print()
+    {
+        std::cout << "sz=" << sz << ", res=" << res << "\n";
     }
 private:
     void destroy()

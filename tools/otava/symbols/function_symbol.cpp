@@ -959,7 +959,8 @@ void FunctionSymbol::GenerateCode(Emitter& emitter, std::vector<BoundExpressionN
     }
 }
 
-void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, 
+    otava::symbols::Context* context)
 {
     TypeSymbol* thisPtrBaseType = args[0]->GetType()->GetBaseType();
     otava::intermediate::Type* irType = IrType(emitter, sourcePos, context);
@@ -1515,6 +1516,8 @@ ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDe
     FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, functionDefinitionSymbol->Name()), 
     irName(functionDefinitionSymbol->IrName(context))
 {
+    SetDeclarationFlags(functionDefinitionSymbol->GetDeclarationFlags());
+    SetVTabIndex(functionDefinitionSymbol->VTabIndex());
     SetDefIndex(functionDefinitionSymbol->DefIndex());
     for (ParameterSymbol* parameter : functionDefinitionSymbol->Parameters())
     {

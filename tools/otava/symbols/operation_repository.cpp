@@ -292,7 +292,7 @@ FunctionSymbol* PointerCopyAssignmentOperation::Get(std::vector<std::unique_ptr<
     BoundExpressionNode* arg = args[0].get();
     TypeSymbol* type = arg->GetType();
     if (type->PointerCount() <= 1) return nullptr;
-    TypeSymbol* pointerType = type->RemovePointer(context);
+    TypeSymbol* pointerType = type->RemovePointer(context)->RemoveReference(context);
     if (TypesEqual(args[1]->GetType(), pointerType->AddRValueRef(context)) || args[1]->BindToRvalueRef()) return nullptr;
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
@@ -359,7 +359,7 @@ FunctionSymbol* PointerMoveAssignmentOperation::Get(std::vector<std::unique_ptr<
     BoundExpressionNode* arg = args[0].get();
     TypeSymbol* type = arg->GetType();
     if (type->PointerCount() <= 1) return nullptr;
-    TypeSymbol* pointerType = type->RemovePointer(context);
+    TypeSymbol* pointerType = type->RemovePointer(context)->RemoveReference(context);
     if (!TypesEqual(args[1]->GetType(), pointerType->AddRValueRef(context)) && !args[1]->BindToRvalueRef()) return nullptr;
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
@@ -1176,13 +1176,23 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
             ParameterSymbol* thatParam = classCopyCtor->MemFunParameters(context)[1];
-            args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(thatParam, sourcePos, thatParam->GetType())));
-            std::vector<TypeSymbol*> templateArgs;
-            std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
-                context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, args, sourcePos, context);
-            BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
-            expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
-            context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
+            FunctionSymbol* thatConversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                baseClass->AddConst(context)->AddLValueRef(context), thatParam->GetType(), sourcePos, context);
+            if (thatConversion)
+            {
+                BoundExpressionNode* thatPtr = new BoundParameterNode(thatParam, sourcePos, thatParam->GetType());
+                args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thatPtr, thatConversion, sourcePos)));
+                std::vector<TypeSymbol*> templateArgs;
+                std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
+                    context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, args, sourcePos, context);
+                BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
+                expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
+                context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
+            }
+            else
+            {
+                ThrowException("base class conversion not found", sourcePos, context);
+            }
         }
         else
         {
@@ -1356,18 +1366,23 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
             ParameterSymbol* thatParam = classMoveCtor->MemFunParameters(context)[1];
-            std::vector<std::unique_ptr<BoundExpressionNode>> moveArgs;
-            moveArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(thatParam, sourcePos, thatParam->GetType())));
-            Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
-            std::vector<TypeSymbol*> templateArgs;
-            std::unique_ptr<BoundFunctionCallNode> moveThat(ResolveOverloadThrow(
-                stdScope, U"move", templateArgs, moveArgs, sourcePos, context));
-            args.push_back(std::unique_ptr<BoundExpressionNode>(moveThat.release()));
-            std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
-                context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, args, sourcePos, context);
-            BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
-            expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
-            context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
+            FunctionSymbol* thatParamConversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                baseClass->AddRValueRef(context), thatParam->GetType(), sourcePos, context);
+            if (thatParamConversion)
+            {
+                BoundExpressionNode* thatPtr = new BoundParameterNode(thatParam, sourcePos, thatParam->GetType());
+                args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thatPtr, thatParamConversion, sourcePos)));
+                std::vector<TypeSymbol*> templateArgs;
+                std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
+                    context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, args, sourcePos, context);
+                BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
+                expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
+                context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
+            }
+            else
+            {
+                ThrowException("base class conversion not found", sourcePos, context);
+            }
         }
         else
         {
@@ -1414,18 +1429,25 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
         BoundVariableNode* boundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
         boundMemberVariable->SetThisPtr(new BoundParameterNode(classMoveCtor->ThisParam(context), sourcePos, classMoveCtor->ThisParam(context)->GetReferredType(context)));
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
+        std::vector<TypeSymbol*> templateArgs;
         args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos, boundMemberVariable->GetType()->AddPointer(context))));
         ParameterSymbol* thatParam = classMoveCtor->MemFunParameters(context)[1];
-        std::vector<std::unique_ptr<BoundExpressionNode>> moveArgs;
         BoundVariableNode* thatBoundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
         thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(
             new BoundParameterNode(thatParam, sourcePos, thatParam->GetReferredType(context)), sourcePos, thatParam->GetType()->RemoveReference(context)->AddPointer(context)));
-        moveArgs.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
-        Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
-        std::vector<TypeSymbol*> templateArgs;
-        std::unique_ptr<BoundFunctionCallNode> moveThat(ResolveOverloadThrow(
-            stdScope, U"move", templateArgs, moveArgs, sourcePos, context));
-        args.push_back(std::unique_ptr<BoundExpressionNode>(moveThat.release()));
+        if (thatBoundMemberVariable->GetType()->IsFunctionPtrType())
+        {
+            args.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
+        }
+        else
+        {
+            std::vector<std::unique_ptr<BoundExpressionNode>> moveArgs;
+            moveArgs.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
+            Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+            std::unique_ptr<BoundFunctionCallNode> moveThat(ResolveOverloadThrow(
+                stdScope, U"move", templateArgs, moveArgs, sourcePos, context));
+            args.push_back(std::unique_ptr<BoundExpressionNode>(moveThat.release()));
+        }
         std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(classType->GetScope(), U"@constructor", templateArgs, args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
         expressionStatement->SetExpr(memberConstructorCall.release(), sourcePos, context);
@@ -1540,13 +1562,23 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
             ParameterSymbol* thatParam = classCopyAssignment->MemFunParameters(context)[1];
-            args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(thatParam, sourcePos, thatParam->GetType())));
-            std::vector<TypeSymbol*> templateArgs;
-            std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
-                context->GetSymbolTable()->CurrentScope(), U"operator=", templateArgs, args, sourcePos, context);
-            BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
-            expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
-            context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
+            BoundExpressionNode* thatPtr = new BoundParameterNode(thatParam, sourcePos, thatParam->GetType());
+            FunctionSymbol* thatConversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                baseClass->AddConst(context)->AddLValueRef(context), thatParam->GetType(), sourcePos, context);
+            if (thatConversion)
+            {
+                args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thatPtr, thatConversion, sourcePos)));
+                std::vector<TypeSymbol*> templateArgs;
+                std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
+                    context->GetSymbolTable()->CurrentScope(), U"operator=", templateArgs, args, sourcePos, context);
+                BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
+                expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
+                context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
+            }
+            else
+            {
+                ThrowException("base class conversion not found", sourcePos, context);
+            }
         }
         else
         {
@@ -1687,8 +1719,11 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
             ParameterSymbol* thatParam = classMoveAssignment->MemFunParameters(context)[1];
+            BoundExpressionNode* thatPtr = new BoundParameterNode(thatParam, sourcePos, thatParam->GetType());
+            FunctionSymbol* thatConversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                baseClass->AddRValueRef(context), thatParam->GetType(), sourcePos, context);
             std::vector<std::unique_ptr<BoundExpressionNode>> moveArgs;
-            moveArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(thatParam, sourcePos, thatParam->GetType())));
+            moveArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thatPtr, thatConversion, sourcePos)));
             Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
             std::vector<TypeSymbol*> templateArgs;
             std::unique_ptr<BoundFunctionCallNode> moveThat(ResolveOverloadThrow(

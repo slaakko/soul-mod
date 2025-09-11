@@ -39,8 +39,8 @@ public:
     inline void SetContained() { if (!dontSetContained) contained = true; }
     inline void DontSetContained() { dontSetContained = true; }
 private:
-    SymbolKind kind;
     std::string name;
+    SymbolKind kind;
     bool contained;
     bool dontSetContained;
 };

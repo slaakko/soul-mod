@@ -82,9 +82,9 @@ GlobalVariable* Context::AddGlobalVariable(const soul::ast::Span& span, Type* ty
     return data.AddGlobalVariable(span, type, variableName, initializer, this);
 }
 
-GlobalVariable* Context::GetGlobalVariableForString(otava::intermediate::Value* stringValue)
+GlobalVariable* Context::GetGlobalVariableForString(otava::intermediate::Value* stringValue, Type* charType)
 {
-    return data.GetGlobalVariableForString(stringValue);
+    return data.GetGlobalVariableForString(stringValue, charType);
 }
 
 void Context::ResolveTypes()

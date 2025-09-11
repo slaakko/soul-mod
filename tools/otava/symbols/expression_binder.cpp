@@ -944,7 +944,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
     Symbol* symbol = nullptr;
     if (qualifiedScope)
     {
-        symbol = scope->Lookup(node.Str(), groups, ScopeLookup::thisScope, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+        symbol = scope->Lookup(node.Str(), groups, ScopeLookup::thisAndBaseScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
     }
     if (!symbol)
     {
@@ -969,7 +969,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
         groups = SymbolGroupKind::functionSymbolGroup;
         if (qualifiedScope)
         {
-            symbol = scope->Lookup(node.Str(), groups, ScopeLookup::thisScope, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+            symbol = scope->Lookup(node.Str(), groups, ScopeLookup::thisAndBaseScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
         }
         if (!symbol)
         {
@@ -1462,7 +1462,7 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
             ThrowException(ex);
         }
         FunctionSymbol* functionSymbol = functionCall->GetFunctionSymbol();
-        if (functionSymbol->IsVirtual())
+        if (functionSymbol->IsVirtual() && !node.Subject()->IsQualifiedIdNode())
         {
             functionCall->SetFlag(BoundExpressionFlags::virtualCall);
             if (!functionCall->Args().empty())

@@ -24,6 +24,7 @@ class LexerBase
 public:
     using Self = LexerBase<CharT>;
     using TokenType = soul::lexer::Token<CharT, Self>;
+    LexerBase() {}
     virtual ~LexerBase() {}
     virtual void Retract() = 0;
     virtual std::int64_t GetKeywordToken(const Lexeme<CharT>& lexeme) const = 0;

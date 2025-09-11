@@ -421,6 +421,7 @@ void ExplicitInstantiationProcessor::Visit(otava::ast::ExplicitInstantiationNode
     if (type && type->IsClassTemplateSpecializationSymbol())
     {
         ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(type);
+        specialization->MakeVTab(context, node.GetSourcePos());
         ExplicitInstantiationSymbol* explicitInstantiationSymbol = context->GetSymbolTable()->GetExplicitInstantiation(specialization);
         if (!explicitInstantiationSymbol)
         {

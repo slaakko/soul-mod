@@ -242,16 +242,16 @@ std::expected<bool, int> SlgFile::AddLexerFile(LexerFile* lexerFile)
     return std::expected<bool, int>(true);
 }
 
-std::expected<soul::ast::common::Collection*, int> SlgFile::GetCollection(const std::string& name) const
+soul::ast::common::Collection* SlgFile::GetCollection(const std::string& name) const
 {
     auto it = collectionMap.find(name);
     if (it != collectionMap.cend())
     {
-        return std::expected<soul::ast::common::Collection*, int>(it->second);
+        return it->second;
     }
     else
     {
-        return std::unexpected<int>(util::AllocateError("collection '" + name + "' not found"));
+        return nullptr;
     }
 }
 

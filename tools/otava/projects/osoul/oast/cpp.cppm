@@ -38,6 +38,8 @@ enum class NodeKind
     storageClassSpecifierNode, typeIdNode, simpleDeclarationNode, namespaceAliasNode, usingDeclarationNode, usingDirectiveNode
 };
 
+std::string NodeKindStr(NodeKind kind);
+
 class Node
 {
 public:

@@ -51,6 +51,81 @@ std::string OperatorStr(Operator op)
     return "";
 }
 
+std::string NodeKindStr(NodeKind kind)
+{
+    switch (kind)
+    {
+        case NodeKind::exprListNode: return "exprListNode";
+        case NodeKind::thisNode: return "thisNode";
+        case NodeKind::idExprNode: return "idExprNode";
+        case NodeKind::indexExprNode: return "indexExprNode"; 
+        case NodeKind::invokeNode: return "invokeNode";
+        case NodeKind::memberAccessNode: return "memberAccessNode";
+        case NodeKind::ptrMemberAccessNode: return "ptrMemberAccessNode"; 
+        case NodeKind::postIncrementNode: return "postIncrementNode"; 
+        case NodeKind::postDecrementNode: return "postDecrementNode";
+        case NodeKind::staticCastNode: return "staticCastNode";
+        case NodeKind::dynamicCastNode: return "dynamicCastNode";
+        case NodeKind::reinterpretCastNode: return "reinterpretCastNode";
+        case NodeKind::constCastNode: return "constCastNode";
+        case NodeKind::postCastNode: return "postCastNode";
+        case NodeKind::typeIdExprNode: return "typeIdExprNode";
+        case NodeKind::preIncrementNode: return "preIncrementNode";
+        case NodeKind::preDecrementNode: return "preDecrementNode";
+        case NodeKind::unaryOpExprNode: return "unaryOpExprNode";
+        case NodeKind::sizeOfNode: return "sizeOfNode";
+        case NodeKind::castNode: return "castNode";
+        case NodeKind::binaryOpExprNode: return "binaryOpExprNode";
+        case NodeKind::conditionalNode: return "conditionalNode";
+        case NodeKind::throwExprNode: return "throwExprNode";
+        case NodeKind::newNode: return "newNode";
+        case NodeKind::deleteNode: return "deleteNode";
+        case NodeKind::parenExprNode: return "parenExprNode";
+        case NodeKind::literalNode: return "literalNode";
+        case NodeKind::labeledStatementNode: return "labeledStatementNode";
+        case NodeKind::caseStatementNode: return "caseStatementNode";
+        case NodeKind::defaultStatementNode: return "defaultStatementNode";
+        case NodeKind::emptyStatementNode: return "emptyStatementNode";
+        case NodeKind::expressionStatementNode: return "expressionStatementNode";
+        case NodeKind::compoundStatementNode: return "compoundStatementNode";
+        case NodeKind::ifStatementNode: return "ifStatementNode";
+        case NodeKind::switchStatementNode: return "switchStatementNode";
+        case NodeKind::whileStatementNode: return "whileStatementNode";
+        case NodeKind::doStatementNode: return "doStatementNode";
+        case NodeKind::forStatementNode: return "forStatementNode";
+        case NodeKind::breakStatementNode: return "breakStatementNode";
+        case NodeKind::continueStatementNode: return "continueStatementNode";
+        case NodeKind::gotoStatementNode: return "gotoStatementNode";
+        case NodeKind::returnStatementNode: return "returnStatementNode";
+        case NodeKind::conditionWithDeclaratorNode: return "conditionWithDeclaratorNode";
+        case NodeKind::forRangeDeclarationNode: return "forRangeDeclarationNode";
+        case NodeKind::rangeForStatementNode: return "rangeForStatementNode";
+        case NodeKind::declarationStatementNode: return "declarationStatementNode";
+        case NodeKind::exceptionDeclarationNode: return "exceptionDeclarationNode";
+        case NodeKind::handlerNode: return "handlerNode";
+        case NodeKind::tryStatementNode: return "tryStatementNode";
+        case NodeKind::ifdefStatementNode: return "ifdefStatementNode";
+        case NodeKind::endIfStatementNode: return "endIfStatementNode";
+        case NodeKind::assignInitNode: return "assignInitNode"; 
+        case NodeKind::initializerNode: return "initializerNode";
+        case NodeKind::initDeclaratorNode: return "initDeclaratorNode";
+        case NodeKind::initDeclaratorListNode: return "initDeclaratorListNode";
+        case NodeKind::typedefNode: return "typedefNode";
+        case NodeKind::typeSpecifierNode: return "typeSpecifierNode";
+        case NodeKind::constNode: return "constNode"; 
+        case NodeKind::volatileNode: return "volatileNode";
+        case NodeKind::typeNameNode: return "typeNameNode";
+        case NodeKind::typeNode: return "typeNode";
+        case NodeKind::storageClassSpecifierNode: return "storageClassSpecifierNode";
+        case NodeKind::typeIdNode: return "typeIdNode";
+        case NodeKind::simpleDeclarationNode: return "simpleDeclarationNode";
+        case NodeKind::namespaceAliasNode: return "namespaceAliasNode";
+        case NodeKind::usingDeclarationNode: return "usingDeclarationNode";
+        case NodeKind::usingDirectiveNode: return "usingDirectiveNode";
+    }
+    return std::string();
+}
+
 Node::Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : kind(kind_), sourcePos(sourcePos_), parent(nullptr)
 {
 }
@@ -2954,7 +3029,7 @@ void CodeEvaluationVisitor::Visit(ReturnStatementNode& node)
 
 void CodeEvaluationVisitor::Visit(TypeNameNode& node)
 {
-    Visitor::Visit(node);
+    DefaultVisitor::Visit(node);
     if (node.Name() == "pass")
     {
         hasPass = true;
@@ -2967,7 +3042,7 @@ void CodeEvaluationVisitor::Visit(TypeNameNode& node)
 
 void CodeEvaluationVisitor::Visit(IdExprNode& node)
 {
-    Visitor::Visit(node);
+    DefaultVisitor::Visit(node);
     if (node.Id() == "pass")
     {
         hasPass = true;

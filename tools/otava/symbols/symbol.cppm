@@ -138,6 +138,10 @@ public:
     virtual bool IsExportMapSymbol(Context* context)  const { return IsExportSymbol(context); }
     virtual Symbol* GetSingleSymbol() { return this; }
     virtual std::string SymbolDocKindStr() const = 0;
+    virtual bool IsCharTypeSymbol() const { return false; }
+    virtual bool IsChar8TypeSymbol() const { return false; }
+    virtual bool IsChar16TypeSymbol() const { return false; }
+    virtual bool IsChar32TypeSymbol() const { return false; }
     inline Symbol* Parent() { return parent; }
     inline const Symbol* Parent() const { return parent; }
     inline void SetParent(Symbol* parent_) { parent = parent_; }

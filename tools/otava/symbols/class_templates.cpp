@@ -438,6 +438,10 @@ void InstantiateVirtualFunctions(ClassTemplateSpecializationSymbol* specializati
         FunctionSymbol* instance = InstantiateMemFnOfClassTemplate(virtualMemFn, specialization, templateParameterMap, sourcePos, context);
         specialization->AddInstantiatedVirtualFunctionSpecialization(instance);
     }
+    if (!virtualFunctions.empty())
+    {
+        specialization->MakeVTab(context, sourcePos);
+    }
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
 }
 

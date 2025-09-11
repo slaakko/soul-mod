@@ -20,8 +20,8 @@ std::expected<bool, int> GenerateTokenModule(soul::ast::common::TokenFile* token
         }
         return std::expected<bool, int>(false);
     }
-    std::string interfaceFilePath;
-    interfaceFilePath = tokenFile->FilePath() + ".cppm";
+    std::string interfaceFilePath = tokenFile->FilePath();
+    interfaceFilePath.append(".cppm");
     std::ofstream interfaceFile(interfaceFilePath);
     if (!interfaceFile) return std::unexpected<int>(util::AllocateError("could not create file '" + interfaceFilePath + "'"));
     util::CodeFormatter formatter(interfaceFile);
