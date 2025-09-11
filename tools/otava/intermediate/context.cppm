@@ -56,7 +56,7 @@ public:
     std::string ErrorLines(const soul::ast::LineColLen& lineColLen);
     void SetCompileUnitInfo(const std::string& compileUnitId, MetadataRef* mdRef);
     void SetCompileUnitInfo(const std::string& compileUnitId_, const std::string& sourceFilePath);
-    void AddStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
+    void AddStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs, MetadataRef* mdRef);
     void AddArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
     void AddFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
     GlobalVariable* AddGlobalVariable(const soul::ast::Span& span, Type* type, const std::string& variableName, Value* initializer);

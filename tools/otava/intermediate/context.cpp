@@ -62,9 +62,9 @@ void Context::SetCompileUnitInfo(const std::string& compileUnitId_, const std::s
     compileUnit.SetInfo(compileUnitId_, sourceFileNameRef);
 }
 
-void Context::AddStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
+void Context::AddStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs, MetadataRef* mdRef)
 {
-    types.AddStructureType(span, typeId, fieldTypeRefs);
+    types.AddStructureType(span, typeId, fieldTypeRefs, mdRef);
 }
 
 void Context::AddArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef)

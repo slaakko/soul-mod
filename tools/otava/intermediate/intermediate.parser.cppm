@@ -11,11 +11,6 @@ import otava.intermediate.types;
 import otava.intermediate.code;
 import otava.intermediate.metadata;
 
-using namespace otava::intermediate::context;
-using namespace otava::intermediate::types;
-using namespace otava::intermediate::code;
-using namespace otava::intermediate::metadata;
-
 export namespace otava::intermediate::parser {
 
 template<typename LexerT>

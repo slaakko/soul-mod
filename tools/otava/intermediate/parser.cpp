@@ -34,6 +34,7 @@ void Parse(const std::string& filePath, Context& context, bool verbose)
     using LexerType = decltype(lexer);
     lexer.SetRuleNameMapPtr(otava::intermediate::parser::rules::GetRuleNameMapPtr());
     otava::intermediate::parser::IntermediateParser<LexerType>::Parse(lexer, &context);
+    context.GetTypes().ResolveComments();
     context.GetFileMap().AddFileContent(fileIndex, std::move(content), lexer.GetLineStartIndeces());
 }
 

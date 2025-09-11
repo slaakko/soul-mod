@@ -50,7 +50,7 @@ void Emitter::SetRegNumbers()
 
 otava::intermediate::Type* Emitter::MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes, const std::string& comment)
 {
-    std::vector< otava::intermediate::TypeRef> fieldTypeRefs;
+    std::vector<otava::intermediate::TypeRef> fieldTypeRefs;
     for (const auto& elementType : elementTypes)
     {
         fieldTypeRefs.push_back(elementType->GetTypeRef());

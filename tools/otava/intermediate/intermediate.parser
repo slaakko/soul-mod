@@ -81,8 +81,9 @@ parser IntermediateParser
             (TypeRef:first{ fieldTypeRefs.push_back(first); } 
             (COMMA TypeRef:next{ fieldTypeRefs.push_back(next); })*)? 
             RBRACE
+            (MetadataRef(context):mdRef?)
         {
-            context->AddStructureType(span, typeId, fieldTypeRefs);
+            context->AddStructureType(span, typeId, fieldTypeRefs, mdRef);
         }
         ;
 

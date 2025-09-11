@@ -22,6 +22,7 @@ class Visitor;
 class ArrayType;
 class StructureType;
 class FwdDeclaredStructureType;
+class MetadataRef;
 
 const std::int32_t voidTypeId = 0;
 const std::int32_t boolTypeId = 1;
@@ -306,12 +307,16 @@ public:
     Value* MakeDefaultValue(Context& context) const override;
     inline const std::string& Comment() const { return comment; }
     void SetComment(const std::string& comment_);
+    inline void SetMetadataRef(MetadataRef* metadataRef_) { metadataRef = metadataRef_; }
+    inline MetadataRef* GetMetadataRef() const { return metadataRef; }
+    void ResolveComment();
 private:
     void ComputeSizeAndOffsets() const;
     std::vector<TypeRef> fieldTypeRefs;
     mutable bool sizeAndOffsetsComputed;
     mutable std::int64_t size;
     mutable std::vector<std::int64_t> fieldOffsets;
+    MetadataRef* metadataRef;
     std::string comment;
 };
 
@@ -404,7 +409,7 @@ public:
     Types& operator=(const Types&) = delete;
     inline Context* GetContext() const { return context; }
     inline void SetContext(Context* context_) { context = context_; }
-    void AddStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
+    void AddStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs, MetadataRef* mdRef);
     void AddArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
     void AddFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
     void Resolve(Context* context);
@@ -434,6 +439,7 @@ public:
     FwdDeclaredStructureType* MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId, const std::string& comment);
     void AddFwdDependentType(FwdDeclaredStructureType* fwdType, Type* type);
     void ResolveForwardReferences(const util::uuid& id, StructureType* structureType);
+    void ResolveComments();
     inline std::int32_t NextTypeId() { return nextTypeId++; }
     void Write(util::CodeFormatter& formatter);
 private:

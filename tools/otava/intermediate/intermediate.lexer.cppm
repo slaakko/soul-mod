@@ -9,10 +9,6 @@ import soul.ast.common;
 import util;
 import otava.intermediate.token;
 
-using namespace soul;
-using namespace soul::lexer;
-using namespace otava::intermediate::token;
-
 export namespace otava::intermediate::lexer {
 
 std::mutex& MakeLexerMtx();
@@ -2043,7 +2039,7 @@ struct IntermediateLexer
             case 1:
             {
                 lexer.Retract();
-                return CLSID;
+                return otava::intermediate::token::CLSID;
                 break;
             }
             case 2:
@@ -2051,116 +2047,116 @@ struct IntermediateLexer
                 lexer.Retract();
                 auto &token = lexer.CurrentToken();
                 std::int64_t kw = lexer.GetKeywordToken(token.match);
-                if (kw == INVALID_TOKEN) return ID;
+                if (kw == soul::lexer::INVALID_TOKEN) return otava::intermediate::token::ID;
                 else return kw;
                 break;
             }
             case 3:
             {
                 lexer.Retract();
-                return TYPEID;
+                return otava::intermediate::token::TYPEID;
                 break;
             }
             case 4:
             {
                 lexer.Retract();
-                return STRING;
+                return otava::intermediate::token::STRING;
                 break;
             }
             case 5:
             {
                 lexer.Retract();
-                return NUMBER;
+                return otava::intermediate::token::NUMBER;
                 break;
             }
             case 6:
             {
                 lexer.Retract();
-                return HEXNUM;
+                return otava::intermediate::token::HEXNUM;
                 break;
             }
             case 7:
             {
                 lexer.Retract();
-                return LPAREN;
+                return otava::intermediate::token::LPAREN;
                 break;
             }
             case 8:
             {
                 lexer.Retract();
-                return RPAREN;
+                return otava::intermediate::token::RPAREN;
                 break;
             }
             case 9:
             {
                 lexer.Retract();
-                return COMMA;
+                return otava::intermediate::token::COMMA;
                 break;
             }
             case 10:
             {
                 lexer.Retract();
-                return LBRACE;
+                return otava::intermediate::token::LBRACE;
                 break;
             }
             case 11:
             {
                 lexer.Retract();
-                return RBRACE;
+                return otava::intermediate::token::RBRACE;
                 break;
             }
             case 12:
             {
                 lexer.Retract();
-                return AST;
+                return otava::intermediate::token::AST;
                 break;
             }
             case 13:
             {
                 lexer.Retract();
-                return COLON;
+                return otava::intermediate::token::COLON;
                 break;
             }
             case 14:
             {
                 lexer.Retract();
-                return SEMICOLON;
+                return otava::intermediate::token::SEMICOLON;
                 break;
             }
             case 15:
             {
                 lexer.Retract();
-                return LBRACKET;
+                return otava::intermediate::token::LBRACKET;
                 break;
             }
             case 16:
             {
                 lexer.Retract();
-                return RBRACKET;
+                return otava::intermediate::token::RBRACKET;
                 break;
             }
             case 17:
             {
                 lexer.Retract();
-                return ASSIGN;
+                return otava::intermediate::token::ASSIGN;
                 break;
             }
             case 18:
             {
                 lexer.Retract();
-                return AT;
+                return otava::intermediate::token::AT;
                 break;
             }
             case 19:
             {
                 lexer.Retract();
-                return DOLLAR;
+                return otava::intermediate::token::DOLLAR;
                 break;
             }
             case 20:
             {
                 lexer.Retract();
-                return EXCLAMATION;
+                return otava::intermediate::token::EXCLAMATION;
                 break;
             }
         }

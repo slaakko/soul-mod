@@ -1,0 +1,3 @@
+project rb_tree_find;
+target=program;
+source <main.cpp>;

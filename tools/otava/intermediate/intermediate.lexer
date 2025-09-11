@@ -15,7 +15,7 @@ lexer IntermediateLexer
     {
         "{separators}" {}
         "{clsid}"  { return CLSID; }
-        "{id}" { auto& token = lexer.CurrentToken(); std::int64_t kw = lexer.GetKeywordToken(token.match); if (kw == INVALID_TOKEN) return ID; else return kw; }
+        "{id}" { auto& token = lexer.CurrentToken(); std::int64_t kw = lexer.GetKeywordToken(token.match); if (kw == soul::lexer::INVALID_TOKEN) return ID; else return kw; }
         "{typeidentifier}" { return TYPEID; }
         "{string}" { return STRING; }
         "{number}" { return NUMBER; }

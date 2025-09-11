@@ -322,7 +322,8 @@ TypeRef::TypeRef(const soul::ast::Span& span_, std::int32_t id_) : span(span_), 
 }
 
 StructureType::StructureType(const soul::ast::Span& span_, std::int32_t typeId_, const std::vector<TypeRef>& fieldTypeRefs_) :
-    Type(span_, TypeKind::structureType, typeId_), fieldTypeRefs(fieldTypeRefs_), sizeAndOffsetsComputed(false), size(0)
+    Type(span_, TypeKind::structureType, typeId_), fieldTypeRefs(fieldTypeRefs_), sizeAndOffsetsComputed(false), size(0), 
+    metadataRef(nullptr)
 {
 }
 
@@ -403,6 +404,27 @@ std::int64_t StructureType::GetFieldOffset(std::int64_t index) const
     return fieldOffsets[index];
 }
 
+void StructureType::ResolveComment()
+{
+    if (metadataRef)
+    {
+        MetadataStruct* metadataStruct = metadataRef->GetMetadataStruct();
+        if (metadataStruct)
+        {
+            MetadataItem* metadataItem = metadataStruct->GetItem("fullName");
+            if (metadataItem)
+            {
+                if (metadataItem->IsMetadataString())
+                {
+                    MetadataString* metadataString = static_cast<MetadataString*>(metadataItem);
+                    SetComment(metadataString->Value());
+                }
+            }
+        }
+    }
+
+}
+
 void StructureType::WriteDeclaration(util::CodeFormatter& formatter)
 {
     Type::WriteDeclaration(formatter);
@@ -418,6 +440,10 @@ void StructureType::WriteDeclaration(util::CodeFormatter& formatter)
         fieldType->Write(formatter);
     }
     formatter.Write(" }");
+    if (metadataRef)
+    {
+        formatter.Write(" !" + std::to_string(metadataRef->NodeId()));
+    }
     if (!comment.empty())
     {
         formatter.Write(" // " + comment);
@@ -690,9 +716,11 @@ void Types::Init()
     doubleType.SetDefaultValue(context->GetDoubleValue(0.0));
 }
 
-void Types::AddStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
+void Types::AddStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs, MetadataRef* mdRef)
 {
-    types.push_back(std::unique_ptr<Type>(new StructureType(span, typeId, fieldTypeRefs)));
+    StructureType* structureType = new StructureType(span, typeId, fieldTypeRefs);
+    structureType->SetMetadataRef(mdRef);
+    types.push_back(std::unique_ptr<Type>(structureType));
 }
 
 void Types::AddArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef)
@@ -923,6 +951,18 @@ void Types::ResolveForwardReferences(const util::uuid& id, StructureType* struct
                 dependentType->ReplaceForwardReference(fwdType, structureType, context);
             }
             fwdDeclarationMap.erase(id);
+        }
+    }
+}
+
+void Types::ResolveComments()
+{
+    for (const auto& type : types)
+    {
+        if (type->IsStructureType())
+        {
+            StructureType* structureType = static_cast<StructureType*>(type.get());
+            structureType->ResolveComment();
         }
     }
 }

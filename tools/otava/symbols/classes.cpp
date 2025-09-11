@@ -668,8 +668,12 @@ otava::intermediate::Type* ClassTypeSymbol::IrType(Emitter& emitter, const soul:
             TypeSymbol* type = objectLayout[i];
             elementTypes.push_back(type->IrType(emitter, sourcePos, context));
         }
+        otava::intermediate::MetadataStruct* metadataStruct = emitter.CreateMetadataStruct();
+        metadataStruct->AddItem("fullName", emitter.CreateMetadataString(util::ToUtf8(FullName())));
+        otava::intermediate::MetadataRef* metadataRef = emitter.CreateMetadataRef(metadataStruct->Id());
         otava::intermediate::Type* type = emitter.MakeStructureType(elementTypes, util::ToUtf8(FullName()));
         otava::intermediate::StructureType* structureType = static_cast<otava::intermediate::StructureType*>(type);
+        structureType->SetMetadataRef(metadataRef);
         irType = type;
         emitter.SetType(Id(), irType);
         emitter.ResolveForwardReferences(Id(), structureType);

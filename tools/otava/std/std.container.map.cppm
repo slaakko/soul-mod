@@ -12,6 +12,7 @@ class map
 {
 public:
     using key_type = Key;
+    using const_key_type = const Key;
     using mapped_type = T;
     using value_type = std::pair<const Key, T>;
     using key_compare = Compare;
@@ -21,7 +22,7 @@ public:
     using const_reference = const value_type&;
     using size_type = int64_t;
     using difference_type = int64_t;
-    using tree_type = std::rb_tree<key_type, value_type, std::select_first<key_type, mapped_type>, key_compare>;
+    using tree_type = std::rb_tree<key_type, value_type, std::select_first<const_key_type, mapped_type>, key_compare>;
     using iterator = tree_type::iterator;
     using const_iterator = tree_type::const_iterator;
     
