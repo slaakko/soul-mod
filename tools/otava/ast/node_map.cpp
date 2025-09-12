@@ -5,6 +5,8 @@
 
 module otava.ast.node.map;
 
+import otava.ast.error;
+
 namespace otava::ast {
 
 NodeMap::NodeMap()
@@ -25,6 +27,7 @@ Node* NodeMap::GetNode(std::int64_t nodeId) const
     }
     else
     {
+        otava::ast::SetExceptionThrown();
         throw std::runtime_error("otava.ast.node_map: node id " + std::to_string(nodeId) + " not found");
     }
 }

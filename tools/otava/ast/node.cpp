@@ -5,6 +5,7 @@
 
 module otava.ast.node;
 
+import otava.ast.error;
 import otava.ast.attribute;
 import otava.ast.classes;
 import otava.ast.concepts;
@@ -141,11 +142,13 @@ Node::~Node()
 
 void Node::AddNode(Node* node)
 {
+    otava::ast::SetExceptionThrown();
     throw std::runtime_error("cannot add node to this kind of node");
 }
 
 void Node::Clear()
 {
+    otava::ast::SetExceptionThrown();
     throw std::runtime_error("cannot clear this kind of node");
 }
 
@@ -675,6 +678,7 @@ Node* NodeFactoryCollection::CreateNode(NodeKind nodeKind, const soul::ast::Sour
     }
     else
     {
+        otava::ast::SetExceptionThrown();
         throw std::runtime_error("factory for node kind '" + NodeKindStr(nodeKind) + "' not registered");
     }
 }

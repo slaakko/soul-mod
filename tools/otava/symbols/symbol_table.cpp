@@ -1057,10 +1057,6 @@ void SymbolTable::MapNode(otava::ast::Node* node, Symbol* symbol, MapKind kind)
             nodeSymbolMap[node] = symbol;
             allNodeSymbolMap[node] = symbol;
         }
-        else
-        {
-            int c = 0;
-        }
     }
     if ((kind & MapKind::symbolToNode) != MapKind::none)
     {
@@ -1620,7 +1616,7 @@ FunctionDefinitionSymbol* SymbolTable::AddOrGetFunctionDefinition(Scope* scope, 
         }
     }
     functionDefinition->ClearTemporaryParameters();
-    MapNode(node, functionDefinition.get(), MapKind::nodeToSymbol);
+    MapNode(node, functionDefinition.get());
     if (context->MemFunDefSymbolIndex() != -1)
     {
         functionDefinition->SetDefIndex(context->MemFunDefSymbolIndex());

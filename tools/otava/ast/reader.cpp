@@ -6,6 +6,7 @@
 module otava.ast.reader;
 
 import otava.ast.node.map;
+import otava.ast.error;
 
 namespace otava::ast {
 
@@ -61,6 +62,7 @@ Node* Reader::ReadNode()
         node->Read(*this);
         if (node->Id() == -1)
         {
+            otava::ast::SetExceptionThrown();
             throw std::runtime_error("otava.ast.Reader: node id not set");
         }
         nodeMap->AddNode(node);
