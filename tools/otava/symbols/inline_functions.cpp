@@ -54,7 +54,16 @@ FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::S
     }
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
-    otava::ast::Node* node = context->GetSymbolTable()->GetNode(fn)->Clone();
+    otava::ast::Node* node = context->GetSymbolTable()->GetNodeNothrow(fn);
+    if (node)
+    {
+        node = node->Clone();
+    }
+    else
+    {
+        std::cout << "warning: function '" << util::ToUtf8(fn->FullName()) + "' not inlined because node not found" << "\n";
+        return fn;
+    }
     if (node->IsFunctionDefinitionNode())
     {
         otava::ast::FunctionDefinitionNode* functionDefinitionNode = static_cast<otava::ast::FunctionDefinitionNode*>(node);

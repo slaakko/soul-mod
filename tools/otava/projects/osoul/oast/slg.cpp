@@ -149,8 +149,8 @@ void LexerFile::AddImport(soul::ast::common::Import* imp)
 
 void LexerFile::SetLexer(Lexer* lexer_)
 {
-    lexer.reset(lexer_);
-    lexer->SetFile(this);
+    lxr.reset(lexer_);
+    lxr->SetFile(this);
 }
 
 SlgFileDeclaration::SlgFileDeclaration(SlgFileDeclarationKind kind_, const std::string& filePath_) : kind(kind_), filePath(filePath_)

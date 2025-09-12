@@ -11,13 +11,13 @@ template<typename E>
 class unexpected
 {
 public:
-    constexpr unexpected(const unexpected&) = default;
-    constexpr unexpected(unexpected&&) = default;
-    constexpr explicit unexpected(const E& e_) : e(e_) {}
-    constexpr explicit unexpected(E&& e_) : e(move(e_)) {}
-    constexpr const E& error() const noexcept { return e; }
-    constexpr E& error() noexcept { return e; }
-    constexpr void swap(unexpected<E>& other) noexcept
+    unexpected(const unexpected&) = default;
+    unexpected(unexpected&&) = default;
+    explicit unexpected(const E& e_) : e(e_) {}
+    explicit unexpected(E&& e_) : e(move(e_)) {}
+    const E& error() const noexcept { return e; }
+    E& error() noexcept { return e; }
+    void swap(unexpected<E>& other) noexcept
     {
         std::swap(e, other.e);
     }

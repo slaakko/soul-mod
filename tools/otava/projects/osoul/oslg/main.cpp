@@ -106,6 +106,12 @@ int main(int argc, const char** argv)
             files.push_back(std::move(*rv));
         }
     }
+    if (files.empty())
+    {
+        std::cerr << "no files given" << "\n";
+        PrintHelp();
+        return 1;
+    }
     soul::lexer::FileMap fileMap;
     for (const std::string& file : files)
     {

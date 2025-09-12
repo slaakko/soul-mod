@@ -264,7 +264,7 @@ public:
     void SetBase(const std::string& base_);
     NfaState* MakeNfaState();
     std::expected<NfaState*, int> GetNfaState(int id) const;
-    inline const std::vector<NfaState*>& NfaStates() const { return nfaStates; }
+    const std::vector<NfaState*>& NfaStates() const { return nfaStates; }
     DfaState* MakeDfaState(const std::vector<int>& nfaStates);
     std::expected<Symbol*, int> MakeChar(char32_t c);
     inline Symbol* MakeAny() { return &any; }
@@ -291,8 +291,8 @@ public:
     inline void SetKeywords(soul::ast::slg::Keywords* keywords_) { keywords = keywords_; }
     inline soul::ast::slg::Expressions* GetExpressions() const { return expressions; }
     inline void SetExpressions(soul::ast::slg::Expressions* expressions_) { expressions = expressions_; }
-    inline soul::ast::slg::Lexer* GetLexer() const { return lexer; }
-    inline void SetLexer(soul::ast::slg::Lexer* lexer_) { lexer = lexer_; }
+    inline soul::ast::slg::Lexer* GetLexer() const { return lxr; }
+    inline void SetLexer(soul::ast::slg::Lexer* lexer_) { lxr = lexer_; }
     int AddNfa(Nfa* nfa);
     std::expected<Nfa*, int> GetNfa(int index) const;
     inline int MasterNfaIndex() const { return masterNfaIndex; }
@@ -330,7 +330,7 @@ private:
     soul::ast::slg::Tokens* tokens;
     soul::ast::slg::Keywords* keywords;
     soul::ast::slg::Expressions* expressions;
-    soul::ast::slg::Lexer* lexer;
+    soul::ast::slg::Lexer* lxr;
     soul::ast::slg::Expression* currentExpression;
     ExprParser* exprParser;
     std::vector<std::unique_ptr<Nfa>> nfas;

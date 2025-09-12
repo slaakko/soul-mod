@@ -1053,7 +1053,7 @@ ExprParser::~ExprParser()
 LexerContext::LexerContext() :
     nextNfaStateId(0), nextDfaStateId(0), ruleIndex(-1), classIndex(0), any(), epsilon(eps),
     asciiIdStart(new Class(classIndex)), asciiIdCont(new Class(classIndex + 1)), unicodeIdStart(new Class(classIndex + 2)), unicodeIdCont(new Class(classIndex + 3)),
-    tokens(nullptr), keywords(nullptr), expressions(nullptr), lexer(nullptr), currentExpression(nullptr), exprParser(nullptr), masterNfaIndex(-1), error(0),
+    tokens(nullptr), keywords(nullptr), expressions(nullptr), lxr(nullptr), currentExpression(nullptr), exprParser(nullptr), masterNfaIndex(-1), error(0),
     verbose(false), debug(false)
 {
     classIndex += 4;

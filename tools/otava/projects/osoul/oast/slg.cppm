@@ -179,12 +179,12 @@ public:
     void AddImport(soul::ast::common::Import* imp);
     inline const std::vector<std::unique_ptr<soul::ast::common::Import>>& Imports() const { return imports; }
     void SetLexer(Lexer* lexer_);
-    inline Lexer* GetLexer() const { return lexer.get(); }
+    inline Lexer* GetLexer() const { return lxr.get(); }
     inline soul::ast::common::TokenMap* GetTokenMap() { return &tokenMap; }
 private:
     std::unique_ptr<soul::ast::common::ExportModule> exportModule;
     std::vector<std::unique_ptr<soul::ast::common::Import>> imports;
-    std::unique_ptr<Lexer> lexer;
+    std::unique_ptr<Lexer> lxr;
     soul::ast::common::TokenMap tokenMap;
 };
 

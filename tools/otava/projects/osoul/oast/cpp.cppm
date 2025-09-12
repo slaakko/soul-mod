@@ -651,7 +651,7 @@ class ForRangeDeclarationNode : public Node
 {
 public:
     ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_);
-    inline SimpleDeclarationNode* Declaration() const { return declaration.get(); }
+    SimpleDeclarationNode* Declaration() const { return declaration.get(); }
     inline const std::string& Declarator() const { return declarator; }
     void SetDeclarator(const std::string& declarator_);
     Node* Clone() const override;

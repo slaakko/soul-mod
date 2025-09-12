@@ -14,6 +14,7 @@ import soul.lexer.token.parser;
 import soul.lexer.base;
 import soul.lexer.parsing.log;
 import soul.lexer.token;
+import soul.lexer.keyword;
 import soul.ast.lexer.pos.pair;
 import soul.ast.span;
 
