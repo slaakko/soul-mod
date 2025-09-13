@@ -260,8 +260,20 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     otava::symbols::ModuleMapper moduleMapper;
     otava::symbols::SetModuleMapper(&moduleMapper);
     otava::symbols::InstantiationQueue instantiationQueue;
-    std::string projectFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(project->FilePath()), config), project->Name() + ".vcxproj"));
-    std::string outputFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(project->FilePath()), config), project->Name()));
+    std::string projectFilePath;
+    std::string outputFilePath;
+    if (config == "release")
+    {
+        projectFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(project->FilePath()), config),
+            std::to_string(otava::symbols::GetOptLevel(optLevel, true))), project->Name() + ".vcxproj"));
+        outputFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(project->FilePath()), config), 
+            std::to_string(otava::symbols::GetOptLevel(optLevel, true))), project->Name()));
+    }
+    else
+    {
+        projectFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(project->FilePath()), config), project->Name() + ".vcxproj"));
+        outputFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(project->FilePath()), config), project->Name()));
+    }
     if (project->GetTarget() == otava::build::Target::program)
     {
         outputFilePath.append(".exe");
@@ -290,8 +302,17 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     {
         cppFileNames.push_back(cppFileName);
         libraryDirs = util::GetFullPath(util::Path::Combine(util::SoulRoot(), "lib"));
-        libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools/otava/std"), config)));
-        libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::SoulRoot(), "tools/otava/lib")));
+        if (config == "release")
+        {
+            libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools/otava/std"), config),
+                std::to_string(otava::symbols::GetOptLevel(optLevel, true)))));
+            libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::SoulRoot(), "tools/otava/lib")));
+        }
+        else
+        {
+            libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools/otava/std"), config)));
+            libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::SoulRoot(), "tools/otava/lib")));
+        }
     }
     project->AddRoots(moduleMapper);
     otava::symbols::Module projectModule(project->Name() + ".#project");
@@ -340,8 +361,17 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     {
         std::string projectFilePath = util::GetFullPath(util::Path::Combine(project->Root(), path));
         std::unique_ptr<Project> projectReference = otava::build::ParseProjectFile(projectFilePath);
-        std::string outputFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(projectReference->FilePath()), config), 
-            projectReference->Name()));
+        std::string outputFilePath;
+        if (config == "release")
+        {
+            outputFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(projectReference->FilePath()), 
+                config), std::to_string(otava::symbols::GetOptLevel(optLevel, true))), projectReference->Name()));
+        }
+        else
+        {
+            outputFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(projectReference->FilePath()), config),
+                projectReference->Name()));
+        }
         if (projectReference->GetTarget() == otava::build::Target::program)
         {
             outputFilePath.append(".exe");
@@ -364,7 +394,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     }
     if ((flags & BuildFlags::rebuild) == BuildFlags::none)
     {
-        if (project->UpToDate(config))
+        if (project->UpToDate(config, optLevel))
         {
             if ((flags & BuildFlags::verbose) != BuildFlags::none)
             {
@@ -377,7 +407,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     {
         std::cout << "> building project '" << project->Name() << "'..." << "\n";
     }
-    project->LoadModules(moduleMapper, config);
+    project->LoadModules(moduleMapper, config, optLevel);
     importIndex = moduleMapper.ModuleCount();
     if (project->GetTarget() == Target::program)
     {
@@ -441,7 +471,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         module->SetFilePath(filePath);
         otava::symbols::SetCurrentModule(module);
         otava::ast::SetNodeIdFactory(module->GetNodeIdFactory());
-        module->Import(moduleMapper, config);
+        module->Import(moduleMapper, config, optLevel);
         module->GetSymbolTable()->ResolveForwardDeclarations();
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
@@ -456,23 +486,23 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         }
         module->SetFile(new otava::ast::File(util::Path::GetFileName(filePath), node.release()));
         module->SetImplementationUnitNames(implementationNameMap[module->Name()]);
-        projectModule.Import(module, moduleMapper, config);
+        projectModule.Import(module, moduleMapper, config, optLevel);
         project->Index().imp(module->GetSymbolTable()->ClassIndex(), true);
         if ((flags & BuildFlags::symbolXml) != BuildFlags::none)
         {
-            std::string dirPath = util::Path::Combine(util::Path::GetDirectoryName(module->FilePath()), config);
+            std::string dirPath = util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(module->FilePath()), config), std::to_string(optLevel));
             std::filesystem::create_directories(dirPath);
-            std::string xmlFilePath = util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(module->FilePath()), config), 
-                util::Path::GetFileName(module->FilePath()) + ".xml");
+            std::string xmlFilePath = util::Path::Combine(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(module->FilePath()), config), 
+                std::to_string(optLevel)), util::Path::GetFileName(module->FilePath()) + ".xml");
             module->ToXml(xmlFilePath);
         }
         moduleMapper.AddModule(project->ReleaseModule(file));
         std::string asmFileName = otava::codegen::GenerateCode(
-            context, config, (flags & BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, std::vector<std::string>());
-        module->Write(project->Root(), config, &context);
+            context, config, optLevel, (flags & BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, std::vector<std::string>());
+        module->Write(project->Root(), config, optLevel, &context);
         if ((flags & BuildFlags::verbose) != BuildFlags::none)
         {
-            std::cout << filePath << " -> " << otava::symbols::MakeModuleFilePath(project->Root(), config, module->Name()) << std::endl;
+            std::cout << filePath << " -> " << otava::symbols::MakeModuleFilePath(project->Root(), config, optLevel, module->Name()) << std::endl;
         }
         asmFileNames.push_back(asmFileName);
         otava::symbols::BoundFunctionNode* initFn = context.GetBoundCompileUnit()->GetCompileUnitInitializationFunction();
@@ -524,7 +554,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         module->SetFilePath(filePath);
         otava::symbols::SetCurrentModule(module);
         otava::ast::SetNodeIdFactory(module->GetNodeIdFactory());
-        module->Import(moduleMapper, config);
+        module->Import(moduleMapper, config, optLevel);
         module->GetSymbolTable()->ResolveForwardDeclarations();
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
@@ -540,19 +570,12 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         project->Index().imp(module->GetSymbolTable()->ClassIndex(), true);
         if (!interfaceUnitName.empty())
         {
-            otava::symbols::Module* interfaceUnitModule = moduleMapper.GetModule(interfaceUnitName, config);
+            otava::symbols::Module* interfaceUnitModule = moduleMapper.GetModule(interfaceUnitName, config, optLevel);
             interfaceUnitModule->AddImplementationUnit(module);
             moduleMapper.AddModule(project->ReleaseModule(file));
         }
         std::string asmFileName = otava::codegen::GenerateCode(
-            context, config, (flags& BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, std::vector<std::string>());
-/*
-        module->Write(project->Root(), config, &context);
-        if ((flags & BuildFlags::verbose) != BuildFlags::none)
-        {
-            std::cout << filePath << " -> " << otava::symbols::MakeModuleFilePath(project->Root(), config, module->Name()) << std::endl;
-        }
-*/
+            context, config, optLevel, (flags& BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, std::vector<std::string>());
         asmFileNames.push_back(asmFileName);
         otava::symbols::BoundFunctionNode* initFn = context.GetBoundCompileUnit()->GetCompileUnitInitializationFunction();
         if (initFn)
@@ -582,7 +605,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
             allCompileUnitInitFunctionNames.push_back(fileName);
         }
         std::string mainAsmFileName = GenerateMainUnit(moduleMapper, util::Path::Combine(util::Path::GetDirectoryName(projectFilePath), cppFileName), 
-            mainFunctionIrName, mainFunctionParams, allCompileUnitInitFunctionNames, config);
+            mainFunctionIrName, mainFunctionParams, allCompileUnitInitFunctionNames, config, optLevel);
         asmFileNames.push_back(mainAsmFileName);
         projectTarget = ProjectTarget::program;
         classIndexFilePath = util::Path::Combine(util::Path::GetDirectoryName(projectFilePath), "class_index.bin");
@@ -614,7 +637,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         }
     }
     MakeProjectFile(project, projectFilePath, asmFileNames, cppFileNames, resourceFileNames,
-        libraryDirs, project->ReferencedProjects(), config, classIndexFilePath, projectTarget, (flags& BuildFlags::verbose) != BuildFlags::none);
+        libraryDirs, project->ReferencedProjects(), config, optLevel, classIndexFilePath, projectTarget, (flags& BuildFlags::verbose) != BuildFlags::none);
     MSBuild(projectFilePath, config);
     std::string projectFilesPath = util::GetFullPath(util::Path::Combine(project->Root(), project->Name() + ".files"));
     WriteFilesFile(projectFilesPath, files);
@@ -626,9 +649,9 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     otava::symbols::SetProjectReady(true);
 }
 
-otava::symbols::Module* GetModule(otava::symbols::ModuleMapper& moduleMapper, const std::string& moduleName, const std::string& config)
+otava::symbols::Module* GetModule(otava::symbols::ModuleMapper& moduleMapper, const std::string& moduleName, const std::string& config, int optLevel)
 {
-    return moduleMapper.GetModule(moduleName, config);
+    return moduleMapper.GetModule(moduleName, config, optLevel);
 }
 
 void Visit(Solution* solution, Project* project, std::vector<Project*>& topologicalOrder, std::set<Project*>& visited)

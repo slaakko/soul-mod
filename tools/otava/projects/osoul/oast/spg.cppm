@@ -511,9 +511,9 @@ class ParserFile : public soul::ast::common::File
 public:
     ParserFile(const std::string& filePath_);
     std::expected<bool, int> SetExportModule(soul::ast::common::ExportModule* exportModule_);
-    inline soul::ast::common::ExportModule* ExportModule() const { return exportModule.get(); }
+    inline soul::ast::common::ExportModule* GetExportModule() const { return exportModule.get(); }
     void AddImport(soul::ast::common::Import* imprt);
-    inline const std::vector<std::unique_ptr<soul::ast::common::Import>>& Imports() const { return imports; }
+    const std::vector<std::unique_ptr<soul::ast::common::Import>>& Imports() const { return imports; }
     void AddParser(soul::ast::spg::GrammarParser* parser);
     inline const std::vector<std::unique_ptr<soul::ast::spg::GrammarParser>>& Parsers() const { return parsers; }
     inline bool IsExternal() const { return external; }
@@ -538,11 +538,12 @@ public:
     void AddParserFile(ParserFile* parserFile);
     inline const std::vector<std::unique_ptr<ParserFile>>& ParserFiles() const { return parserFiles; }
     void AddTokenFile(soul::ast::common::TokenFile* tokenFile);
-    inline const std::vector<std::unique_ptr<soul::ast::common::TokenFile>>& TokenFiles() const { return tokenFiles; }
+    const std::vector<std::unique_ptr<soul::ast::common::TokenFile>>& TokenFiles() const { return tokenFiles; }
     bool AddParser(GrammarParser* parser);
     GrammarParser* GetParser(const std::string& name) const;
     void AddRule(RuleParser* rule);
-    inline const std::vector<RuleParser*>& Rules() const { return rules; }
+    const std::vector<RuleParser*>& Rules() const { return rules; }
+    soul::ast::common::TokenCollection* GetTokenCollection(const std::string& tokenCollectionName) const;
     void Accept(soul::ast::common::Visitor& visitor) override;
 private:
     std::string projectName;

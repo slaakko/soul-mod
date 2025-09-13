@@ -109,7 +109,7 @@ export namespace soul::spg::token::parser {
                     if (!u) return std::unexpected<int>(u.error());
                     return std::unexpected<int>(util::AllocateError("invalid character set literal at " + fileName + ":" + std::to_string(token->line) + ": " + *u));
                 }
-                return new soul::ast::spg::CharSetParser(sourcePos, set.release());
+                return std::expected<soul::ast::spg::Parser*, int>(static_cast<soul::ast::spg::Parser*>(new soul::ast::spg::CharSetParser(sourcePos, set.release())));
             }
             else
             {
@@ -150,7 +150,7 @@ export namespace soul::spg::token::parser {
             if (!u) return std::unexpected<int>(u.error());
             return std::unexpected<int>(util::AllocateError("invalid string literal at " + fileName + ":" + std::to_string(token->line) + ": " + *u));
         }
-        return std::expected<soul::ast::spg::Parser*, int>(new soul::ast::spg::StringParser(sourcePos, stringLiteral));
+        return std::expected<soul::ast::spg::Parser*, int>(static_cast<soul::ast::spg::Parser*>(new soul::ast::spg::StringParser(sourcePos, stringLiteral)));
     }
 
 } // namespace soul::spg::token::parser

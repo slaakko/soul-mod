@@ -93,6 +93,8 @@ class TypeSymbol;
 class ClassTemplateSpecializationSymbol;
 class Emitter;
 
+int GetOptLevel(int level, bool release);
+
 class Context
 {
 public:

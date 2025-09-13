@@ -29,7 +29,7 @@ bool ProjectLess::operator()(Project* left, Project* right) const
 }
 
 void LoadImportedModules(Project* project, otava::symbols::Module* module, otava::symbols::Module* importedModule, otava::symbols::ModuleMapper& moduleMapper, 
-    const std::string& config)
+    const std::string& config, int optLevel)
 {
     for (const std::string& importedModuleName : importedModule->ImportModuleNames())
     {
@@ -38,7 +38,7 @@ void LoadImportedModules(Project* project, otava::symbols::Module* module, otava
         {
             module->AddImportedModule(projectModule);
             module->AddDependsOnModule(projectModule);
-            LoadImportedModules(project, module, projectModule, moduleMapper, config);
+            LoadImportedModules(project, module, projectModule, moduleMapper, config, optLevel);
             if (project->GetTarget() == Target::program)
             {
                 project->Index().imp(projectModule->GetSymbolTable()->ClassIndex(), true);
@@ -46,11 +46,11 @@ void LoadImportedModules(Project* project, otava::symbols::Module* module, otava
         }
         else
         {
-            otava::symbols::Module* childModule = moduleMapper.GetModule(importedModuleName, config);
+            otava::symbols::Module* childModule = moduleMapper.GetModule(importedModuleName, config, optLevel);
             module->AddImportedModule(childModule);
             module->AddDependsOnModule(childModule);
-            module->Import(childModule, moduleMapper, config);
-            LoadImportedModules(project, module, childModule, moduleMapper, config);
+            module->Import(childModule, moduleMapper, config, optLevel);
+            LoadImportedModules(project, module, childModule, moduleMapper, config, optLevel);
             if (project->GetTarget() == Target::program)
             {
                 project->Index().imp(childModule->GetSymbolTable()->ClassIndex(), true);
@@ -111,7 +111,7 @@ void Project::InitModules()
     MapFiles();
 }
 
-void Project::LoadModules(otava::symbols::ModuleMapper& moduleMapper, const std::string& config)
+void Project::LoadModules(otava::symbols::ModuleMapper& moduleMapper, const std::string& config, int optLevel)
 {
     if (loaded) return;
     loaded = true;
@@ -146,17 +146,17 @@ void Project::LoadModules(otava::symbols::ModuleMapper& moduleMapper, const std:
             bool loaded = false;
             if (!importedModule)
             {
-                importedModule = moduleMapper.GetModule(importedModuleName, config);
+                importedModule = moduleMapper.GetModule(importedModuleName, config, optLevel);
                 loaded = true;
             }
             module->AddImportedModule(importedModule);
             module->AddDependsOnModule(importedModule);
-            LoadImportedModules(this, module.get(), importedModule, moduleMapper, config);
+            LoadImportedModules(this, module.get(), importedModule, moduleMapper, config, optLevel);
             if (loaded)
             {
                 for (otava::symbols::Module* exportedModule : importedModule->ExportedModules())
                 {
-                    module->Import(exportedModule, moduleMapper, config);
+                    module->Import(exportedModule, moduleMapper, config, optLevel);
                     if (GetTarget() == Target::program)
                     {
                         index.imp(module->GetSymbolTable()->ClassIndex(), true);
@@ -227,7 +227,7 @@ void Project::MapFiles()
     }
 }
 
-bool Project::UpToDate(const std::string& config) const
+bool Project::UpToDate(const std::string& config, int optLevel) const
 {
     if (!std::filesystem::exists(outputFilePath))
     {
@@ -246,7 +246,7 @@ bool Project::UpToDate(const std::string& config) const
         if (module)
         {
             const std::string& moduleSourceFilePath = module->FilePath();
-            std::string moduleFilePath = otava::symbols::MakeModuleFilePath(root, config, module->Name());
+            std::string moduleFilePath = otava::symbols::MakeModuleFilePath(root, config, optLevel, module->Name());
             if (!std::filesystem::exists(moduleFilePath) || std::filesystem::last_write_time(moduleFilePath) < std::filesystem::last_write_time(moduleSourceFilePath))
             {
                 return false;
@@ -277,13 +277,13 @@ void Project::AddReferencedProject(Project* referencedProject)
     referencedProjects.push_back(std::unique_ptr<Project>(referencedProject));
 }
 
-void Project::ResolveForwardDeclarationsAndAddDerivedClasses(otava::symbols::ModuleMapper& moduleMapper, const std::string& config)
+void Project::ResolveForwardDeclarationsAndAddDerivedClasses(otava::symbols::ModuleMapper& moduleMapper, const std::string& config, int optLevel)
 {
     otava::symbols::Module projectModule(Name() + ".#project");
     for (const auto& moduleName : moduleNames)
     {
-        otava::symbols::Module* module = moduleMapper.GetModule(moduleName, config);
-        projectModule.Import(module, moduleMapper, config);
+        otava::symbols::Module* module = moduleMapper.GetModule(moduleName, config, optLevel);
+        projectModule.Import(module, moduleMapper, config, optLevel);
     }
     projectModule.ResolveForwardDeclarations();
     projectModule.AddDerivedClasses();

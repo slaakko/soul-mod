@@ -66,15 +66,15 @@ public:
     inline const std::vector<std::int32_t>& SourceFiles() const { return sourceFiles; }
     const std::string& GetModuleSourceFilePath(std::int32_t fileId) const;
     void InitModules();
-    void LoadModules(otava::symbols::ModuleMapper& moduleMapper, const std::string& config);
-    bool UpToDate(const std::string& config) const;
+    void LoadModules(otava::symbols::ModuleMapper& moduleMapper, const std::string& config, int optLevel);
+    bool UpToDate(const std::string& config, int optLevel) const;
     inline bool Scanned() const { return scanned; }
     inline void SetScanned() { scanned = true; }
     inline const std::vector<std::unique_ptr<otava::symbols::Module>>& Modules() const { return modules; }
     inline const std::vector<std::string>& ModuleNames() const { return moduleNames; }
     inline const std::vector<Define>& Defines() const { return defines; }
     void AddDefine(const std::string& symbol, std::int64_t value);
-    void ResolveForwardDeclarationsAndAddDerivedClasses(otava::symbols::ModuleMapper& moduleMapper, const std::string& config);
+    void ResolveForwardDeclarationsAndAddDerivedClasses(otava::symbols::ModuleMapper& moduleMapper, const std::string& config, int optLevel);
     inline void SetTarget(Target target_) { target = target_; }
     inline Target GetTarget() const { return target; }
     inline info::class_index& Index() { return index; }

@@ -277,8 +277,8 @@ void BlockExit::Execute(otava::symbols::Emitter& emitter, const soul::ast::Sourc
 class CodeGenerator : public otava::symbols::DefaultBoundTreeVisitor
 {
 public:
-    CodeGenerator(otava::symbols::Context& context_, const std::string& config_, bool verbose_, std::string& mainIrName_, int& mainFunctionParams_, bool globalMain,
-        const std::vector<std::string>& compileUnitInitFnNames_);
+    CodeGenerator(otava::symbols::Context& context_, const std::string& config_, int optLevel_, bool verbose_, std::string& mainIrName_, 
+        int& mainFunctionParams_, bool globalMain, const std::vector<std::string>& compileUnitInitFnNames_);
     void Reset();
     const std::string& GetAsmFileName() const { return asmFileName; }
     void Visit(otava::symbols::BoundCompileUnitNode& node) override;
@@ -330,6 +330,7 @@ private:
     otava::symbols::Context& context;
     otava::symbols::Emitter* emitter;
     std::string config;
+    int optLevel;
     bool verbose;
     std::string& mainIrName;
     int& mainFunctionParams;
@@ -359,23 +360,44 @@ private:
     std::set<std::string> emittedVTabNames;
 };
 
-CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::string& config_, bool verbose_, std::string& mainIrName_, int& mainFunctionParams_, 
-    bool globalMain_, const std::vector<std::string>& compileUnitInitFnNames_) :
-    context(context_), emitter(context.GetEmitter()), config(config_), verbose(verbose_), mainIrName(mainIrName_), mainFunctionParams(mainFunctionParams_),
+CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::string& config_, int optLevel_, bool verbose_, std::string& mainIrName_, 
+    int& mainFunctionParams_, bool globalMain_, const std::vector<std::string>& compileUnitInitFnNames_) :
+    context(context_), emitter(context.GetEmitter()), config(config_), optLevel(optLevel_), verbose(verbose_), 
+    mainIrName(mainIrName_), mainFunctionParams(mainFunctionParams_),
     functionDefinition(nullptr), entryBlock(nullptr), trueBlock(nullptr), falseBlock(nullptr), defaultBlock(nullptr), breakBlock(nullptr), 
     breakBlockId(-1), continueBlock(nullptr), continueBlockId(-1), genJumpingBoolCode(false), lastInstructionWasRet(false), 
     prevWasTerminator(false), basicBlockOpen(false), destructorCallGenerated(false), sequenceSecond(nullptr), currentBlockId(-1), globalMain(globalMain_),
     compileUnitInitFnNames(compileUnitInitFnNames_), latestRet(nullptr), boundFunction(nullptr), currentBlock(nullptr)
 {
-    std::string intermediateCodeFilePath = util::GetFullPath(
-        util::Path::Combine(
-            util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config),
-            util::Path::GetFileName(context.FileName()) + ".i"));
+    std::string intermediateCodeFilePath;
+    if (config == "release")
+    {
+        intermediateCodeFilePath = util::GetFullPath(
+            util::Path::Combine(
+                util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config), 
+                    std::to_string(otava::symbols::GetOptLevel(optLevel, true))), util::Path::GetFileName(context.FileName()) + ".i"));
+    }
+    else
+    {
+        intermediateCodeFilePath = util::GetFullPath(
+            util::Path::Combine(
+                util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config),
+                util::Path::GetFileName(context.FileName()) + ".i"));
+    }
     emitter->SetFilePath(intermediateCodeFilePath);
     std::filesystem::create_directories(util::Path::GetDirectoryName(intermediateCodeFilePath));
-    optimizedIntermediateFilePath = util::GetFullPath(
-        util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config),
-            util::Path::GetFileName(context.FileName()) + ".opt.i"));
+    if (config == "release")
+    {
+        optimizedIntermediateFilePath = util::GetFullPath(
+            util::Path::Combine(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config), 
+                std::to_string(otava::symbols::GetOptLevel(optLevel, true))), util::Path::GetFileName(context.FileName()) + ".opt.i"));
+    }
+    else
+    {
+        optimizedIntermediateFilePath = util::GetFullPath(
+            util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config),
+                util::Path::GetFileName(context.FileName()) + ".opt.i"));
+    }
 }
 
 void CodeGenerator::Reset()
@@ -642,10 +664,21 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
     otava::intermediate::Context* finalContext = &intermediateContext;
     otava::intermediate::Parse(emitter->FilePath(), intermediateContext, verbose);
     otava::intermediate::Verify(intermediateContext);
-    std::string assemblyFilePath = util::GetFullPath(
-        util::Path::Combine(
-            util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config),
-            util::Path::GetFileName(context.FileName()) + ".asm"));
+    std::string assemblyFilePath;
+    if (config == "release")
+    {
+        assemblyFilePath = util::GetFullPath(
+            util::Path::Combine(
+                util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config), std::to_string(otava::symbols::GetOptLevel(optLevel, true))),
+                util::Path::GetFileName(context.FileName()) + ".asm"));
+    }
+    else
+    {
+        assemblyFilePath = util::GetFullPath(
+            util::Path::Combine(
+                util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config),
+                util::Path::GetFileName(context.FileName()) + ".asm"));
+    }
     std::unique_ptr<otava::intermediate::CodeGenerator> codeGenerator;
     if (context.ReleaseConfig())
     {
@@ -1422,10 +1455,10 @@ void CodeGenerator::Visit(otava::symbols::BoundGlobalVariableDefinitionNode& nod
     emitter->SetIrObject(variable, irVariable);
 }
 
-std::string GenerateCode(otava::symbols::Context& context, const std::string& config, bool verbose, std::string& mainIrName, int& mainFunctionParams, bool globalMain,
-    const std::vector<std::string>& compileUnitInitFnNames)
+std::string GenerateCode(otava::symbols::Context& context, const std::string& config, int optLevel, bool verbose, std::string& mainIrName, 
+    int& mainFunctionParams, bool globalMain, const std::vector<std::string>& compileUnitInitFnNames)
 {
-    CodeGenerator codeGenerator(context, config, verbose, mainIrName, mainFunctionParams, globalMain, compileUnitInitFnNames);
+    CodeGenerator codeGenerator(context, config, optLevel, verbose, mainIrName, mainFunctionParams, globalMain, compileUnitInitFnNames);
     context.GetBoundCompileUnit()->Accept(codeGenerator);
     return codeGenerator.GetAsmFileName();
 }

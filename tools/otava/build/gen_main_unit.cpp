@@ -132,9 +132,9 @@ std::string GenerateMainWrapper(otava::symbols::Context* context, int numParams)
 }
 
 std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const std::string& mainFilePath, const std::string& mainFunctionIrName, int numParams, 
-    const std::vector<std::string>& compileUnitInitFnNames, const std::string& config)
+    const std::vector<std::string>& compileUnitInitFnNames, const std::string& config, int optLevel)
 {
-    otava::symbols::Module* core = moduleMapper.GetModule("std.core", config);
+    otava::symbols::Module* core = moduleMapper.GetModule("std.core", config, optLevel);
     otava::symbols::Module main("main");
     std::unique_ptr<otava::symbols::SymbolTable> symbolTable(new otava::symbols::SymbolTable());
     symbolTable->SetModule(&main);
@@ -144,7 +144,14 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     context.SetEmitter(&emitter);
     context.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
     context.SetSymbolTable(symbolTable.get());
-    context.SetFileName((std::filesystem::path(mainFilePath).parent_path().parent_path() / std::filesystem::path(mainFilePath).filename()).generic_string());
+    if (config == "release")
+    {
+        context.SetFileName((std::filesystem::path(mainFilePath).parent_path().parent_path().parent_path() / std::filesystem::path(mainFilePath).filename()).generic_string());
+    }
+    else
+    {
+        context.SetFileName((std::filesystem::path(mainFilePath).parent_path().parent_path() / std::filesystem::path(mainFilePath).filename()).generic_string());
+    }
     context.GetBoundCompileUnit()->SetId("main_unit");
     otava::symbols::FunctionSymbol* globalInitFn = context.GetSymbolTable()->AddFunction(U"__global_init__", std::vector<otava::symbols::TypeSymbol*>(), nullptr, 
         otava::symbols::FunctionKind::function, otava::symbols::FunctionQualifiers::none, otava::symbols::DeclarationFlags::none, &context);
@@ -165,7 +172,7 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     }
     std::string mainWrapperIrName = GenerateMainWrapper(&context, numParams);
     int np = numParams;
-    std::string asmFilename = otava::codegen::GenerateCode(context, config, true, mainWrapperIrName, np, true, compileUnitInitFnNames);
+    std::string asmFilename = otava::codegen::GenerateCode(context, config, optLevel, true, mainWrapperIrName, np, true, compileUnitInitFnNames);
     std::ofstream mainFile(mainFilePath);
     util::CodeFormatter formatter(mainFile);
     formatter.WriteLine("extern \"C\" void ort_init();");

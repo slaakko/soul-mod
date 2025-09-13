@@ -19,6 +19,25 @@ import otava.symbols.operation.repository;
 
 namespace otava::symbols {
 
+int GetOptLevel(int level, bool release)
+{
+    if (release)
+    {
+        if (level== -1)
+        {
+            return 2;
+        }
+        else
+        {
+            return level;
+        }
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 Context::Context() : 
     symbolTable(nullptr), 
     lexer(nullptr), 
@@ -138,21 +157,7 @@ void Context::PushResetFlag(ContextFlags flag)
 
 int Context::OptLevel() const
 {
-    if (ReleaseConfig())
-    {
-        if (optLevel == -1)
-        {
-            return 2;
-        }
-        else
-        {
-            return optLevel;
-        }
-    }
-    else
-    {
-        return 0;
-    }
+    return GetOptLevel(optLevel, ReleaseConfig());
 }
 
 bool Context::IsConstructorNameNode(otava::ast::Node* node) const

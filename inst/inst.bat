@@ -15,4 +15,5 @@ soul_inst -v ..\soul\xml\xpath\*.classmap.compressed ..\rc
 soul_inst -v ..\soul\xml\xpath\*.classmap.rc ..\rc
 soul_inst -v ..\soul\xml\serialization\*.classmap.compressed ..\rc
 soul_inst -v ..\soul\xml\serialization\*.classmap.rc ..\rc
-soul_inst -v ..\tools\otava\projects\osoul\oslg\release\oslg.exe ..\bin
+soul_inst -v ..\tools\otava\projects\osoul\oslg\release\2\oslg.exe ..\bin
+soul_inst -v ..\tools\otava\projects\osoul\ospg\release\2\ospg.exe ..\bin

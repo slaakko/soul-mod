@@ -6,6 +6,7 @@
 module otava.build.project_file;
 
 import otava.build_project;
+import otava.symbols;
 import soul.xml.dom;
 import util.code.formatter;
 import util.uuid;
@@ -22,16 +23,25 @@ void MakeResourceFile(const std::string& resourceFilePath, const std::string& cl
 
 void MakeProjectFile(Project* project, const std::string& projectFilePath, const std::vector<std::string> asmFiles, const std::vector<std::string>& cppFiles, 
     const std::vector<std::string>& resourceFiles, 
-    const std::string& libraryDirs, const std::vector<std::unique_ptr<Project>>& referencedProjects, const std::string& config, const std::string& classIndexFilePath,
-    ProjectTarget target, bool verbose)
+    const std::string& libraryDirs, const std::vector<std::unique_ptr<Project>>& referencedProjects, const std::string& config, int optLevel, 
+    const std::string& classIndexFilePath, ProjectTarget target, bool verbose)
 {
     std::string references;
     if (!referencedProjects.empty())
     {
         for (const auto& referencedProject : referencedProjects)
         {
-            std::string reference = util::Path::Combine(util::Path::Combine(referencedProject->Root(), config), referencedProject->Name() + ".lib");
-            references.append(";").append(reference);
+            if (config == "release")
+            {
+                std::string releaseReference = util::Path::Combine(util::Path::Combine(util::Path::Combine(referencedProject->Root(), config),
+                    std::to_string(otava::symbols::GetOptLevel(optLevel, true))), referencedProject->Name() + ".lib");
+                references.append(";").append(releaseReference);
+            }
+            else
+            {
+                std::string debugReference = util::Path::Combine(util::Path::Combine(referencedProject->Root(), config), referencedProject->Name() + ".lib");
+                references.append(";").append(debugReference);
+            }
         }
     }
     if (target == ProjectTarget::program && !classIndexFilePath.empty())

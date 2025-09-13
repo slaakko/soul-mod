@@ -21,7 +21,7 @@ class Reader;
 class Visitor;
 class FunctionDefinitionSymbolSet;
 
-std::string MakeModuleFilePath(const std::string& root, const std::string& config, const std::string& moduleName);
+std::string MakeModuleFilePath(const std::string& root, const std::string& config, int optLevel, const std::string& moduleName);
 
 class ModuleMapper;
 
@@ -46,15 +46,15 @@ public:
     inline const std::string& FilePath() const { return filePath; }
     inline const std::string& Name() const { return name; }
     void Accept(Visitor& visitor);
-    void Import(ModuleMapper& moduleMapper, const std::string& config);
-    void Import(Module* that, ModuleMapper& moduleMapper, const std::string& config);
+    void Import(ModuleMapper& moduleMapper, const std::string& config, int optLevel);
+    void Import(Module* that, ModuleMapper& moduleMapper, const std::string& config, int optLevel);
     void ResolveForwardDeclarations();
     void ResolveAllForwardDeclarations();
     void AddDerivedClasses();
-    void Write(const std::string& root, const std::string& config, Context* context);
+    void Write(const std::string& root, const std::string& config, int optLevel, Context* context);
     void Write(Writer& writer, Context* context);
     void ReadHeader(Reader& reader, ModuleMapper& moduleMapper);
-    void CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config);
+    void CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config, int optLevel);
     void Init();
     inline std::int32_t FileId() const { return fileId; }
     inline void SetFileId(std::int32_t fileId_) { fileId = fileId_; }
@@ -81,7 +81,7 @@ public:
     void SetImplementationUnitNames(const std::vector<std::string>& names);
     inline const std::vector<Module*>& ImplementationUnits() const { return implementationUnits; }
     void AddImplementationUnit(Module* implementationUnit);
-    void LoadImplementationUnits(ModuleMapper& moduleMapper, const std::string& config);
+    void LoadImplementationUnits(ModuleMapper& moduleMapper, const std::string& config, int optLevel);
     inline otava::ast::NodeIdFactory* GetNodeIdFactory() { return &nodeIdFactory; }
     void ToXml(const std::string& xmlFilePath) const;
 private:
@@ -111,10 +111,10 @@ class ModuleMapper
 public:
     ModuleMapper();
     void AddModule(Module* module);
-    std::string GetModuleFilePath(const std::string& moduleName, const std::string& config) const;
+    std::string GetModuleFilePath(const std::string& moduleName, const std::string& config, int optLevel) const;
     std::string GetProjectFilePath(const std::string& moduleName) const;
-    Module* GetModule(const std::string& moduleName, const std::string& config);
-    Module* LoadModule(const std::string& moduleName, const std::string& moduleFilePath, const std::string& config);
+    Module* GetModule(const std::string& moduleName, const std::string& config, int optLevel);
+    Module* LoadModule(const std::string& moduleName, const std::string& moduleFilePath, const std::string& config, int optLevel);
     void AddRoot(const std::string& root);
     inline otava::ast::NodeMap* GetNodeMap() { return &nodeMap; }
     inline SymbolMap* GetSymbolMap() { return &symbolMap; }

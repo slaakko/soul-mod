@@ -1161,6 +1161,19 @@ GrammarParser* SpgFile::GetParser(const std::string& name) const
     }
 }
 
+soul::ast::common::TokenCollection* SpgFile::GetTokenCollection(const std::string& tokenCollectionName) const
+{
+    auto it = tokenCollectionMap.find(tokenCollectionName);
+    if (it != tokenCollectionMap.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 Visitor::Visitor() : soul::ast::common::Visitor(soul::ast::common::VisitorKind::spgVisitor)
 {
 }
