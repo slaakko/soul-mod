@@ -82,14 +82,19 @@ private:
     std::string ruleName;
     soul::ast::common::TokenMap* tokenMap;
     soul::lexer::FileMap& fileMap;
+    bool print;
 };
 
 CodeModifierVisitor::CodeModifierVisitor(
     bool ptrType_, const std::vector<NonterminalInfo>& nonterminalInfos_, soul::ast::cpp::TypeIdNode* returnType_, bool noDebugSupport_,
     const std::string& ruleName_, soul::ast::common::TokenMap* tokenMap_, soul::lexer::FileMap& fileMap_) :
     ptrType(ptrType_), nonterminalInfos(nonterminalInfos_), returnType(returnType_), noDebugSupport(noDebugSupport_), ruleName(ruleName_), tokenMap(tokenMap_),
-    fileMap(fileMap_)
+    fileMap(fileMap_), print(false)
 {
+    if (ruleName == "Export")
+    {
+        print = true;
+    }
 }
 
 void CodeModifierVisitor::Visit(soul::ast::cpp::IdExprNode& node)
@@ -135,6 +140,10 @@ void CodeModifierVisitor::Visit(soul::ast::cpp::TypeNameNode& node)
     soul::ast::cpp::DefaultVisitor::Visit(node);
     for (const auto& info : nonterminalInfos)
     {
+        if (print)
+        {
+            std::cout << "INFO=" << info.nonterminalParser->InstanceName() << ", NODE=" << node.Name() << "\n";
+        }
         if (node.Name() == info.nonterminalParser->InstanceName())
         {
             if (info.ptrType)
