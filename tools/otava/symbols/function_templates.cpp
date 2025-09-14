@@ -192,6 +192,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
         {
             context->GetSymbolTable()->UnmapType(boundTemplateParameter.get());
         }
+        specialization->SetSkip();
         return specialization;
     }
     else 
@@ -293,6 +294,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
         {
             context->GetSymbolTable()->UnmapType(boundTemplateParameter.get());
         }
+        specialization->SetSkip();
         return specialization;
     }
     return nullptr;
