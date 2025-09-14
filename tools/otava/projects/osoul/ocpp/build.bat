@@ -1,2 +1,2 @@
 @echo off
-oespgd -vox cpp_parsers.ospg
+ospg -vox cpp_parsers.ospg
