@@ -14,7 +14,7 @@ export namespace soul::spg {
 struct NonterminalInfo
 {
     NonterminalInfo(soul::ast::spg::NonterminalParser* nonterminalParser_, bool ptrType_);
-    soul::ast::spg::NonterminalParser*  ;
+    soul::ast::spg::NonterminalParser* nonterminalParser;
     bool ptrType;
     int count;
     std::vector<soul::ast::SourcePos> sourcePositions;

@@ -1,11 +1,30 @@
-import operator_bool;
+import std;
+
+class Visitor
+{
+public:
+    Visitor(bool valid_) : valid(valid_) {}
+    bool Valid() const { return valid; }
+    explicit inline operator bool() const { return Valid(); }
+private:
+    bool valid;
+};
+
+class Derived : public Visitor
+{
+public:
+    Derived(bool valid_) : Visitor(valid_) {} 
+};
 
 int main()
 {
-    cont c;
-    if (c)
+    Derived derived(false);
+    if (!derived)
     {
-        return 1;
+        std::cout << "not valid\n";
     }
-    return 0;
+    else
+    {
+        std::cout << "valid\n";
+    }
 }

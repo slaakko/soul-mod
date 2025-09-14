@@ -937,6 +937,7 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
     int n = functionMatch.function->MemFunArity(context);
     for (int i = 0; i < n; ++i)
     {
+        context->SetArgIndex(i);
         BoundExpressionNode* arg = nullptr;
         TypeSymbol* argType = nullptr;
         std::unique_ptr<BoundExpressionNode> defaultArg;

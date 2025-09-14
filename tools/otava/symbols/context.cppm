@@ -61,7 +61,8 @@ enum class ContextFlags : std::int64_t
     suppress_warning = static_cast<std::int64_t>(1) << 32,
     resolveDependentTypes = static_cast<std::int64_t>(1) << 33,
     processingAliasDeclation = static_cast<std::int64_t>(1) << 34,
-    leaveBoundFunction = static_cast<std::int64_t>(1) << 35
+    leaveBoundFunction = static_cast<std::int64_t>(1) << 35,
+    skipFirstPtrToBooleanConversion = static_cast<std::int64_t>(1) << 36
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -184,6 +185,8 @@ public:
     inline void SetFunctionsInlined(int functionsInlined_) { functionsInlined = functionsInlined_; }
     inline Emitter* GetEmitter() { return emitter; }
     inline void SetEmitter(Emitter* emitter_) { emitter = emitter_; }
+    inline int ArgIndex() const { return argIndex; }
+    void SetArgIndex(int argIndex_) { argIndex = argIndex_; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -222,6 +225,7 @@ private:
     int totalFunctionsCompiled;
     int functionCallsInlined;
     int functionsInlined;
+    int argIndex;
 };
 
 } // namespace otava::symbols

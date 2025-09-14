@@ -713,6 +713,14 @@ FunctionSymbol* ClassTypeSymbol::GetConversionFunction(TypeSymbol* type) const
             return conversionFunction;
         }
     }
+    for (ClassTypeSymbol* baseClass : baseClasses)
+    {
+        FunctionSymbol* baseClassConversionFn = baseClass->GetConversionFunction(type);
+        if (baseClassConversionFn)
+        {
+            return baseClassConversionFn;
+        }
+    }
     return nullptr;
 }
 

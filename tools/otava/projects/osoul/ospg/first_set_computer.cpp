@@ -303,7 +303,7 @@ std::expected<bool, int> ComputeFirstSets(soul::ast::spg::SpgFile* spgFile, bool
         }
         FirstSetComputer firstSetComputer;
         spgFile->Accept(firstSetComputer);
-        if (!firstSetComputer) return std::unexpected<int>(firstSetComputer.Error());
+        if (!firstSetComputer.Valid()) return std::unexpected<int>(firstSetComputer.Error());
         changed = firstSetComputer.Changed();
         ++round;
     }

@@ -578,6 +578,7 @@ public:
 FunctionSymbol* PtrToBooleanArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, 
     FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    if (context->GetFlag(ContextFlags::skipFirstPtrToBooleanConversion) && context->ArgIndex() == 0) return nullptr;
     TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::boolType);
     if (argType->IsPointerType() && TypesEqual(paramType, boolType))
     {

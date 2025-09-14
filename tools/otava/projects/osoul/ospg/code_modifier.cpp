@@ -91,10 +91,6 @@ CodeModifierVisitor::CodeModifierVisitor(
     ptrType(ptrType_), nonterminalInfos(nonterminalInfos_), returnType(returnType_), noDebugSupport(noDebugSupport_), ruleName(ruleName_), tokenMap(tokenMap_),
     fileMap(fileMap_), print(false)
 {
-    if (ruleName == "Export")
-    {
-        print = true;
-    }
 }
 
 void CodeModifierVisitor::Visit(soul::ast::cpp::IdExprNode& node)
@@ -140,10 +136,6 @@ void CodeModifierVisitor::Visit(soul::ast::cpp::TypeNameNode& node)
     soul::ast::cpp::DefaultVisitor::Visit(node);
     for (const auto& info : nonterminalInfos)
     {
-        if (print)
-        {
-            std::cout << "INFO=" << info.nonterminalParser->InstanceName() << ", NODE=" << node.Name() << "\n";
-        }
         if (node.Name() == info.nonterminalParser->InstanceName())
         {
             if (info.ptrType)

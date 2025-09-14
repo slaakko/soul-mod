@@ -570,9 +570,11 @@ void ExpressionBinder::BindUnaryOp(otava::ast::NodeKind op, const soul::ast::Sou
     }
     if (!functionCall)
     {
+        context->PushSetFlag(ContextFlags::skipFirstPtrToBooleanConversion);
         TypeSymbol* type = args[0]->GetType()->AddPointer(context);
         args[0].reset(new BoundAddressOfNode(args[0].release(), sourcePos, type));
         functionCall = ResolveOverload(scope, groupName, templateArgs, args, sourcePos, context, ex2);
+        context->PopFlags();
         if (functionCall)
         {
             if (ex2.Warning())

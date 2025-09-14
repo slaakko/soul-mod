@@ -62,7 +62,8 @@ Context::Context() :
     totalFunctionsCompiled(0),
     functionCallsInlined(0),
     functionsInlined(0),
-    emitter(nullptr)
+    emitter(nullptr),
+    argIndex(0)
 {
 }
 
