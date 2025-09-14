@@ -1,4 +1,4 @@
-// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/olex/spg.lexer' using soul lexer generator eslg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/olex/spg.lexer' using soul lexer generator oslg version 5.0.0
 
 export module soul.lex.spg;
 
@@ -224,7 +224,7 @@ struct SpgLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                std::int64_t tokenId = GetTokenId(46, lexer);
+                std::int64_t tokenId = GetTokenId(45, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -245,7 +245,7 @@ struct SpgLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                std::int64_t tokenId = GetTokenId(45, lexer);
+                std::int64_t tokenId = GetTokenId(46, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;

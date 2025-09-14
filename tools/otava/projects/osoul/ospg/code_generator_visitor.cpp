@@ -2150,7 +2150,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
             }
         }
         nonterminalInfos.clear();
-        for (auto nonterminal : parser.Nonterminals())
+        for (const auto* nonterminal : parser.Nonterminals())
         {
             bool found = false;
             for (const auto& info : nonterminalInfos)

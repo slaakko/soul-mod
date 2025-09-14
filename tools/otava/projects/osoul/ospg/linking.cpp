@@ -294,6 +294,7 @@ void LinkingVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     currentParserFile = &parserFile;
     if (stage == LinkingStage::makeTokenMap)
     {
+        std::cout << ">make token map" << "\n";
         int n = static_cast<int>(parserFile.Imports().size());
         for (int i = 0; i < n; ++i)
         {
@@ -333,7 +334,7 @@ std::expected<bool, int> Link(soul::ast::spg::SpgFile* spgFile, bool verbose, so
 {
     if (verbose)
     {
-        std::cout << "linking..." << std::endl;
+        std::cout << "linking..." << "\n";
     }
     LinkingVisitor visitor(spgFile, fileMap);
     visitor.SetStage(LinkingStage::makeTokenMap);

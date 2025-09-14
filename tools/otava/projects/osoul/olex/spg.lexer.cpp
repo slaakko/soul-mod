@@ -1,4 +1,4 @@
-// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/olex/spg.lexer' using soul lexer generator eslg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/olex/spg.lexer' using soul lexer generator oslg version 5.0.0
 
 module soul.lex.spg;
 
@@ -214,6 +214,7 @@ soul::lexer::KeywordMap<char>* GetKeywords<char>()
          { "any", soul::tool::token::ANY },
          { "var", soul::tool::token::VAR },
          { "project", soul::tool::token::PROJECT },
+         { "tokens", soul::tool::token::TOKENS },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char> keywordMap(keywords);
@@ -282,6 +283,7 @@ soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
          { u8"any", soul::tool::token::ANY },
          { u8"var", soul::tool::token::VAR },
          { u8"project", soul::tool::token::PROJECT },
+         { u8"tokens", soul::tool::token::TOKENS },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char8_t> keywordMap(keywords);
@@ -350,6 +352,7 @@ soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
          { u"any", soul::tool::token::ANY },
          { u"var", soul::tool::token::VAR },
          { u"project", soul::tool::token::PROJECT },
+         { u"tokens", soul::tool::token::TOKENS },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char16_t> keywordMap(keywords);
@@ -418,6 +421,7 @@ soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
          { U"any", soul::tool::token::ANY },
          { U"var", soul::tool::token::VAR },
          { U"project", soul::tool::token::PROJECT },
+         { U"tokens", soul::tool::token::TOKENS },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char32_t> keywordMap(keywords);

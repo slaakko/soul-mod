@@ -45,6 +45,7 @@ std::expected<std::unique_ptr<soul::ast::spg::SpgFile>, int> ParseSpgFile(const 
     vars->matchFilePath = true;
     std::expected<std::unique_ptr<soul::ast::spg::SpgFile>, int> spgFileRv = soul::spg::spg::file::parser::SpgFileParser<LexerType>::Parse(lexer);
     if (!spgFileRv) return spgFileRv;
+
     fileMap.AddFileContent(file, std::move(content), std::move(lexer.GetLineStartIndeces()));
     return spgFileRv;
 }

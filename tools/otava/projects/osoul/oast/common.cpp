@@ -187,7 +187,7 @@ void TokenFile::Accept(soul::ast::common::Visitor& visitor)
     visitor.Visit(*this);
 }
 
-TokenMap::TokenMap() : any(-1, "*", "<any>"), epsilon(-2, "#", "<epsilon>")
+TokenMap::TokenMap() : any(-1, "*", "<any>"), epsilon(-2, "#", "<epsilon>"), usingTokenMap(), tokenMap(), tokenFullNameMap()
 {
 }
 

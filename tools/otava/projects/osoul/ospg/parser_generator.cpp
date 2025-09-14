@@ -21,15 +21,15 @@ std::expected<bool, int> GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile
     {
         std::cout << "generating rule name module..." << "\n";
     }
-    std::filesystem::path spgFilePath = spgFile->FilePath();
-    std::filesystem::path root = spgFilePath.parent_path();
-    std::filesystem::path interfaceFilePath;
-    interfaceFilePath = root / (spgFilePath.stem().generic_string() + "_rules.cppm");
-    std::ofstream interfaceFile(interfaceFilePath.generic_string());
-    if (!interfaceFile) return std::unexpected<int>(util::AllocateError("could not create file '" + interfaceFilePath.generic_string() + "'"));
+    std::string filePath = spgFile->FilePath();
+    std::string root = util::Path::GetDirectoryName(filePath);
+    auto prv = util::GetFullPath(util::Path::Combine(root, util::Path::GetFileNameWithoutExtension(filePath) + "_rules.cppm"));
+    if (!prv) return std::unexpected<int>(prv.error());
+    std::string interfaceFilePath = *prv;
+    std::ofstream interfaceFile(interfaceFilePath);
+    if (!interfaceFile) return std::unexpected<int>(util::AllocateError("could not create file '" + interfaceFilePath + "'"));
     util::CodeFormatter interfaceFormatter(interfaceFile);
     std::string moduleName = spgFile->ProjectName() + ".rules";
-    std::string includeGuard;
     std::expected<bool, int> rv = interfaceFormatter.WriteLine("export module " + moduleName + ";");
     if (!rv) return rv;
     interfaceFormatter.WriteLine();
@@ -46,12 +46,14 @@ std::expected<bool, int> GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile
     if (!rv) return rv;
     if (verbose)
     {
-        std::cout << "==> " << interfaceFilePath.generic_string() << "\n";
+        std::cout << "==> " << interfaceFilePath << "\n";
     }
 
-    std::filesystem::path implementationFilePath = root / (spgFilePath.stem().generic_string() + "_rules.cpp");
-    std::ofstream implementationFile(implementationFilePath.generic_string());
-    if (!implementationFile) return std::unexpected<int>(util::AllocateError("could not create file '" + implementationFilePath.generic_string() + "'"));
+    auto irv = util::GetFullPath(util::Path::Combine(root, util::Path::GetFileNameWithoutExtension(filePath) + "_rules.cpp"));
+    if (!irv) return std::unexpected<int>(irv.error());
+    std::string implementationFilePath = *irv;
+    std::ofstream implementationFile(implementationFilePath);
+    if (!implementationFile) return std::unexpected<int>(util::AllocateError("could not create file '" + implementationFilePath + "'"));
     util::CodeFormatter implementationFormatter(implementationFile);
     rv = implementationFormatter.WriteLine("module " + moduleName + ";");
     if (!rv) return rv;
@@ -99,7 +101,7 @@ std::expected<bool, int> GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile
     if (!rv) return rv;
     if (verbose)
     {
-        std::cout << "==> " << implementationFilePath.generic_string() << "\n";
+        std::cout << "==> " << implementationFilePath << "\n";
     }
     return std::expected<bool, int>(true);
 }
@@ -113,32 +115,32 @@ std::expected<bool, int> GenerateParsers(soul::ast::spg::SpgFile* spgFile, soul:
     {
         switch (declaration->GetFileKind())
         {
-        case soul::ast::common::FileKind::parserFile:
-        {
-            soul::ast::spg::ParserFileDeclaration* parserFileDeclaration = static_cast<soul::ast::spg::ParserFileDeclaration*>(declaration.get());
-            std::expected<std::string, int> fp = util::GetFullPath(util::Path::Combine(root, parserFileDeclaration->FilePath()));
-            if (!fp) return std::unexpected<int>(fp.error());
-            std::string parserFilePath = *fp;
-            std::expected<std::unique_ptr<soul::ast::spg::ParserFile>, int> rv = soul::spg::ParseParserFile(
-                parserFilePath, parserFileDeclaration->GetSourcePos(), fileMap, verbose, parserFileDeclaration->External());
-            if (!rv) return std::unexpected<int>(rv.error());
-            std::unique_ptr<soul::ast::spg::ParserFile> parserFile = std::move(*rv);
-            spgFile->AddParserFile(parserFile.release());
-            break;
-        }
-        case soul::ast::common::FileKind::tokenFile:
-        {
-            soul::ast::spg::TokenFileDeclaration* tokenFileDeclaration = static_cast<soul::ast::spg::TokenFileDeclaration*>(declaration.get());
-            auto rv = util::GetFullPath(util::Path::Combine(root, tokenFileDeclaration->FilePath()));
-            if (!rv) return std::unexpected<int>(rv.error());
-            std::string tokenFilePath = *rv;
-            auto prv = soul::spg::ParseTokenFile(tokenFilePath, tokenFileDeclaration->GetSourcePos(), verbose,
-                tokenFileDeclaration->External(), fileMap);
-            if (!prv) return std::unexpected<int>(prv.error());
-            std::unique_ptr<soul::ast::common::TokenFile> tokenFile = std::move(*prv);
-            spgFile->AddTokenFile(tokenFile.release());
-            break;
-        }
+            case soul::ast::common::FileKind::parserFile:
+            {
+                soul::ast::spg::ParserFileDeclaration* parserFileDeclaration = static_cast<soul::ast::spg::ParserFileDeclaration*>(declaration.get());
+                std::expected<std::string, int> fp = util::GetFullPath(util::Path::Combine(root, parserFileDeclaration->FilePath()));
+                if (!fp) return std::unexpected<int>(fp.error());
+                std::string parserFilePath = *fp;
+                std::expected<std::unique_ptr<soul::ast::spg::ParserFile>, int> rv = soul::spg::ParseParserFile(
+                    parserFilePath, parserFileDeclaration->GetSourcePos(), fileMap, verbose, parserFileDeclaration->External());
+                if (!rv) return std::unexpected<int>(rv.error());
+                std::unique_ptr<soul::ast::spg::ParserFile> parserFile = std::move(*rv);
+                spgFile->AddParserFile(parserFile.release());
+                break;
+            }
+            case soul::ast::common::FileKind::tokenFile:
+            {
+                soul::ast::spg::TokenFileDeclaration* tokenFileDeclaration = static_cast<soul::ast::spg::TokenFileDeclaration*>(declaration.get());
+                auto rv = util::GetFullPath(util::Path::Combine(root, tokenFileDeclaration->FilePath()));
+                if (!rv) return std::unexpected<int>(rv.error());
+                std::string tokenFilePath = *rv;
+                auto prv = soul::spg::ParseTokenFile(tokenFilePath, tokenFileDeclaration->GetSourcePos(), verbose,
+                    tokenFileDeclaration->External(), fileMap);
+                if (!prv) return std::unexpected<int>(prv.error());
+                std::unique_ptr<soul::ast::common::TokenFile> tokenFile = std::move(*prv);
+                spgFile->AddTokenFile(tokenFile.release());
+                break;
+            }
         }
     }
     std::expected<bool, int> rv = Link(spgFile, verbose, fileMap);

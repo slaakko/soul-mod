@@ -518,7 +518,7 @@ public:
     inline const std::vector<std::unique_ptr<soul::ast::spg::GrammarParser>>& Parsers() const { return parsers; }
     inline bool IsExternal() const { return external; }
     inline void SetExternal() { external = true; }
-    inline soul::ast::common::TokenMap* GetTokenMap() { return &tokenMap; }
+    soul::ast::common::TokenMap* GetTokenMap() { return &tokenMap; }
     void Accept(soul::ast::common::Visitor& visitor) override;
 private:
     std::unique_ptr<soul::ast::common::ExportModule> exportModule;

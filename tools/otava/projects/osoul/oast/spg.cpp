@@ -1068,7 +1068,7 @@ TokenFileDeclaration::TokenFileDeclaration(const soul::ast::SourcePos& sourcePos
 {
 }
 
-ParserFile::ParserFile(const std::string& filePath_) : soul::ast::common::File(soul::ast::common::FileKind::parserFile, filePath_), external(false)
+ParserFile::ParserFile(const std::string& filePath_) : soul::ast::common::File(soul::ast::common::FileKind::parserFile, filePath_), external(false), tokenMap()
 {
 }
 

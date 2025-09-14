@@ -400,7 +400,8 @@ void InvokeNode::Replace(Node* node, Node* replacement)
     }
 }
 
-MemberAccessNode::MemberAccessNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* member_) : UnaryNode(NodeKind::memberAccessNode, sourcePos_, child_), member(member_)
+MemberAccessNode::MemberAccessNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* member_) : 
+    UnaryNode(NodeKind::memberAccessNode, sourcePos_, child_), member(member_)
 {
     member->SetParent(this);
 }
@@ -2629,6 +2630,14 @@ Node* UsingDirectiveNode::Clone() const
 void UsingDirectiveNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+Visitor::Visitor()
+{
+}
+
+Visitor::~Visitor()
+{
 }
 
 DefaultVisitor::DefaultVisitor() : error(0)

@@ -50,7 +50,7 @@ public:
     File(FileKind kind_, const std::string& filePath_);
     virtual ~File();
     inline FileKind Kind() const { return kind; }
-    inline const std::string& FilePath() const { return filePath; }
+    const std::string& FilePath() const { return filePath; }
     inline bool IsExternal() const { return external; }
     inline void SetExternal() { external = true; }
     virtual void Accept(Visitor& visitor);
