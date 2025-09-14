@@ -901,6 +901,7 @@ void RuleParser::AddParamOrVariable(ParamVar* paramVar)
 void RuleParser::SetDefinition(Parser* definition_)
 {
     definition.reset(definition_);
+    definition->SetParent(this);
 }
 
 void RuleParser::SetReturnType(soul::ast::cpp::TypeIdNode* returnType_)

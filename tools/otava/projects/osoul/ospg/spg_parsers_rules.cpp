@@ -1,6 +1,6 @@
-module osoul.spg.parsers.rules;
+module soul.spg.parsers.rules;
 
-namespace osoul::spg::parsers::rules {
+namespace soul::spg::parsers::rules {
 
 std::mutex ruleMtx;
 
@@ -148,4 +148,4 @@ std::map<std::int64_t, std::string>* GetRuleNameMapPtr()
     return &ruleNameMap;
 }
 
-} // osoul::spg::parsers::rules
+} // soul::spg::parsers::rules

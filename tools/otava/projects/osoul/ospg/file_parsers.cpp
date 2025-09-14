@@ -11,7 +11,7 @@ import soul.lexer;
 import soul.lex.spg;
 import soul.spg.spg.file.parser;
 import soul.spg.parser.file.parser;
-import osoul.spg.parsers.rules;
+import soul.spg.parsers.rules;
 import soul.common.token.file.parser;
 import common.parser.rules;
 
@@ -38,7 +38,7 @@ std::expected<std::unique_ptr<soul::ast::spg::SpgFile>, int> ParseSpgFile(const 
     auto rv = soul::lex::spg::MakeLexer(content.c_str(), content.c_str() + content.length(), spgFilePath);
     if (!rv) return std::unexpected<int>(rv.error());
     auto& lexer = std::move(*rv);
-    lexer.SetRuleNameMapPtr(osoul::spg::parsers::rules::GetRuleNameMapPtr());
+    lexer.SetRuleNameMapPtr(soul::spg::parsers::rules::GetRuleNameMapPtr());
     lexer.SetFile(file);
     using LexerType = decltype(lexer);
     auto vars = static_cast<soul::lexer::Lexer<soul::lex::spg::SpgLexer<char32_t>, char32_t>::VariableClassType*>(lexer.GetVariables());
@@ -75,7 +75,7 @@ std::expected<std::unique_ptr<soul::ast::spg::ParserFile>, int>  ParseParserFile
     auto rv = soul::lex::spg::MakeLexer(content.c_str(), content.c_str() + content.length(), parserFilePath);
     if (!rv) return std::unexpected<int>(rv.error());
     auto& lexer = std::move(*rv);
-    lexer.SetRuleNameMapPtr(osoul::spg::parsers::rules::GetRuleNameMapPtr());
+    lexer.SetRuleNameMapPtr(soul::spg::parsers::rules::GetRuleNameMapPtr());
     lexer.SetFile(file);
     using LexerType = decltype(lexer);
     soul::ast::cpp::Context context;

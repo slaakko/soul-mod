@@ -1,8 +1,8 @@
-export module osoul.spg.parsers.rules;
+export module soul.spg.parsers.rules;
 
 import std;
 
-export namespace osoul::spg::parsers::rules {
+export namespace soul::spg::parsers::rules {
 
 std::map<std::int64_t, std::string>* GetRuleNameMapPtr();
 
