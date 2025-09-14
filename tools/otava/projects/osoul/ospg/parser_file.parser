@@ -27,7 +27,7 @@ parser ParserFileParser
     lexer soul::lex::spg::SpgLexer<char32_t>;
 
     main;
-    using CommonParser.ExportModule;
+    using CommonParser.Export;
     using CommonParser.Import;
     using CommonParser.QualifiedId;
     using CommonParser.ParserKeyword;
@@ -41,7 +41,7 @@ parser ParserFileParser
         ::= 
         (
             empty{ parserFile.reset(new soul::ast::spg::ParserFile(lexer.FileName())); }
-            ExportModule:exportModuleDeclaration
+            Export:exportModuleDeclaration
             { 
                 auto rv = parserFile->SetExportModule(exportModuleDeclaration); 
                 if (!rv) return std::unexpected<int>(rv.error());

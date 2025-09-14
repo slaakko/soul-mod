@@ -41,7 +41,7 @@ parser CommonParser
         }
 		;
 
-	ExportModule(var std::unique_ptr<soul::ast::common::ExportModule> exp) : soul::ast::common::ExportModule*
+	Export(var std::unique_ptr<soul::ast::common::ExportModule> exp) : soul::ast::common::ExportModule*
 		::= 
 		(
 			ExportKeyword:exportKeyword ModuleKeyword:moduleKeyword QualifiedId:moduleName{ exp.reset(new soul::ast::common::ExportModule(moduleName)); } SEMICOLON

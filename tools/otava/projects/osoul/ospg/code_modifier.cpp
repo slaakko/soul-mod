@@ -131,12 +131,10 @@ void CodeModifierVisitor::Visit(soul::ast::cpp::IdExprNode& node)
 
 void CodeModifierVisitor::Visit(soul::ast::cpp::TypeNameNode& node)
 {
-    std::cout << ">modify type name" << "\n";
     if (!Valid()) return;
     soul::ast::cpp::DefaultVisitor::Visit(node);
     for (const auto& info : nonterminalInfos)
     {
-        std::cout << ">modify type name, into: " << info.nonterminalParser->Name() << "\n";
         if (node.Name() == info.nonterminalParser->InstanceName())
         {
             if (info.ptrType)
@@ -151,9 +149,7 @@ void CodeModifierVisitor::Visit(soul::ast::cpp::TypeNameNode& node)
                 node.SetName(info.nonterminalParser->InstanceName() + "->value");
             }
         }
-        std::cout << "<modify type name, into: " << info.nonterminalParser->Name() << "\n";
     }
-    std::cout << ">modify type name, token map" << "\n";
     if (tokenMap)
     {
         std::vector<soul::ast::common::Token*> tokens = tokenMap->GetTokens(node.Name());
@@ -162,19 +158,16 @@ void CodeModifierVisitor::Visit(soul::ast::cpp::TypeNameNode& node)
             soul::ast::common::Token* token = tokens.front();
             node.SetName(token->FullCppId());
         }
-        std::cout << "<modify type name, token map" << "\n";
     }
     else
     {
         SetError(util::AllocateError("code modifier has no token map"));
         return;
     }
-    std::cout << "<modify type name" << "\n";
 }
 
 void CodeModifierVisitor::Visit(soul::ast::cpp::ReturnStatementNode& node)
 {
-    std::cout << ">modify return" << "\n";
     if (!Valid()) return;
     UnexpectedMatcher unexpectedMatcher;
     node.Accept(unexpectedMatcher);
@@ -183,7 +176,6 @@ void CodeModifierVisitor::Visit(soul::ast::cpp::ReturnStatementNode& node)
     soul::ast::cpp::DefaultVisitor::Visit(node);
     if (node.Expr())
     {
-        std::cout << ">modify return expr" << "\n";
         std::vector<soul::ast::cpp::Node*> matchArgs;
         matchArgs.push_back(new soul::ast::cpp::LiteralNode(sourcePos, "true"));
         if (!ptrType)
@@ -213,14 +205,12 @@ void CodeModifierVisitor::Visit(soul::ast::cpp::ReturnStatementNode& node)
         {
             matchArgs.push_back(node.Expr()->Clone());
         }
-        std::cout << ">modify return expr 1" << "\n";
         soul::ast::cpp::InvokeNode* invokeMatch =
             new soul::ast::cpp::InvokeNode(sourcePos, new soul::ast::cpp::IdExprNode(sourcePos, "soul::parser::Match"));
         for (auto* arg : matchArgs)
         {
             invokeMatch->Add(arg);
         }
-        std::cout << ">modify return expr 2" << "\n";
         if (!noDebugSupport)
         {
             soul::ast::cpp::StatementNode* parent = static_cast<soul::ast::cpp::StatementNode*>(node.Parent());
@@ -266,18 +256,14 @@ void CodeModifierVisitor::Visit(soul::ast::cpp::ReturnStatementNode& node)
             return;
         }
     }
-    std::cout << "<modify return" << "\n";
 }
 
 std::expected<bool, int> ModifyCode(soul::ast::cpp::CompoundStatementNode* code, bool ptrType, const std::string& nonterminalName,
     const std::vector<NonterminalInfo>& nonterminalInfos, soul::ast::cpp::TypeIdNode* returnType, bool noDebugSupport, const std::string& currentRuleName,
     soul::ast::common::TokenMap* tokenMap, soul::lexer::FileMap& fileMap)
 {
-    std::cout << ">modify" << "\n";
     CodeModifierVisitor visitor(ptrType, nonterminalInfos, returnType, noDebugSupport, currentRuleName, tokenMap, fileMap);
-    std::cout << ">modify visitor" << "\n";
     code->Accept(visitor);
-    std::cout << "<modify" << "\n";
     if (!visitor) return std::unexpected<int>(visitor.Error());
     return std::expected<bool, int>(true);
 }

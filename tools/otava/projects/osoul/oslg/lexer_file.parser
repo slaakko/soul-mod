@@ -25,7 +25,7 @@ parser LexerFileParser
 
     main;
     using CommonParser.QualifiedId;
-    using CommonParser.ExportModule;
+    using CommonParser.Export;
     using CommonParser.Import;
     using CommonParser.ExprString;
     using CommonParser.LexerKeyword;
@@ -37,7 +37,7 @@ parser LexerFileParser
         ::= 
         (
             empty{ lexerFile.reset(new soul::ast::slg::LexerFile(lexer.FileName())); }
-            ExportModule:exportModule{ lexerFile->SetExportModule(exportModule); }
+            Export:exportModule{ lexerFile->SetExportModule(exportModule); }
             Imports(lexerFile.get()):imports
             LexerKeyword:lexerKeyword
             ID
