@@ -8,6 +8,7 @@ reference <../olexer/olexer.project>;
 reference <../olex/olex.project>;
 reference <../ocommon/ocommon.project>;
 reference <../ocpp/ocpp.project>;
+reference <../../oxml/odom/odom.project>;
 resource <../olex/soul.lex.spg.classmap.rc>;
 interface <array_generator.cppm>;
 source <array_generator.cpp>;

@@ -49,6 +49,8 @@ void PrintHelp()
     std::cout << "  Write ASTs as XML." << std::endl;
     std::cout << "--seed | -s" << std::endl;
     std::cout << "  Initialize uuid seed from hash code of the file path of each project." << std::endl;
+    std::cout << "--symbol-xml | -y" << std::endl;
+    std::cout << "  Write symbols as XML" << std::endl;
 }
 
 std::string Version()
@@ -58,6 +60,8 @@ std::string Version()
 
 int main(int argc, const char** argv)
 {
+
+
     try
     {
         std::cout << "****************************************" << "\n";

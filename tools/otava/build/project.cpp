@@ -115,6 +115,9 @@ void Project::LoadModules(otava::symbols::ModuleMapper& moduleMapper, const std:
 {
     if (loaded) return;
     loaded = true;
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << ">project '" << Name() << "' loading modules" << "\n";
+#endif
     for (const auto& module : modules)
     {
         if (module)
@@ -126,6 +129,9 @@ void Project::LoadModules(otava::symbols::ModuleMapper& moduleMapper, const std:
     for (const auto& module : modules)
     {
         if (!module) continue;
+#ifdef DEBUG_WRITE_MAPS
+        std::cout << ">" << module->Name() << "\n";
+#endif
         for (const auto& exportedModuleName : module->ExportModuleNames())
         {
             otava::symbols::Module* exportedModule = GetModule(exportedModuleName);
@@ -164,7 +170,13 @@ void Project::LoadModules(otava::symbols::ModuleMapper& moduleMapper, const std:
                 }
             }
         }
+#ifdef DEBUG_WRITE_MAPS
+        std::cout << "<" << module->Name() << "\n";
+#endif
     }
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << "<project '" << Name() << "' modules loaded" << "\n";
+#endif
 }
 
 void Project::SetModule(std::int32_t fileId, otava::symbols::Module* module)

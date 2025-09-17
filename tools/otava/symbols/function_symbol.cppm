@@ -60,7 +60,7 @@ std::string MakeFunctionQualifierStr(FunctionQualifiers qualifiers);
 enum class FunctionSymbolFlags : std::int32_t
 {
     none = 0, bound = 1 << 0, specialization = 1 << 1, trivialDestructor = 1 << 2, returnsClass = 1 << 3, conversion = 1 << 4, fixedIrName = 1 << 5, inline_ = 1 << 6,
-    generated = 1 << 7, skip = 1 << 8
+    generated = 1 << 7
 };
 
 constexpr FunctionSymbolFlags operator|(FunctionSymbolFlags left, FunctionSymbolFlags right)
@@ -137,8 +137,6 @@ public:
     inline void SetConversion() { SetFlag(FunctionSymbolFlags::conversion); }
     inline bool IsConversionMemFn() const { return GetFunctionKind() == FunctionKind::conversionMemFn; }
     inline void SetConversionMemFn() { SetFunctionKind(FunctionKind::conversionMemFn); }
-    inline bool Skip() const { return GetFlag(FunctionSymbolFlags::skip); }
-    inline void SetSkip() { SetFlag(FunctionSymbolFlags::skip); }
     virtual bool IsArrayElementAccess() const { return false; }
     TemplateDeclarationSymbol* ParentTemplateDeclaration() const;
     void SetReturnType(TypeSymbol* returnType_, Context* context);

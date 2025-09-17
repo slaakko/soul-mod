@@ -152,4 +152,17 @@ uuid ParseUuid(const std::string& str)
     return id;
 }
 
+void Rotate(uuid& id, int index)
+{
+    std::rotate(id.begin(), id.begin() + index, id.end());
+}
+
+void Xor(uuid& id, const uuid& that)
+{
+    for (int i = 0; i < id.static_size(); ++i)
+    {
+        id.data[i] ^= that.data[i];
+    }
+}
+
 } // namespace util

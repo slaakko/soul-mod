@@ -7,11 +7,10 @@ module soul.spg.xml.printer;
 
 import util;
 import soul.ast.spg;
-//import soul.xml.dom_expected;
+import soul.xml.dom;
 
 namespace soul::spg {
 
-/*
 class XmlPrinter : public soul::ast::spg::DefaultVisitor
 {
 public:
@@ -421,13 +420,11 @@ void XmlPrinter::Visit(soul::ast::spg::ParserFile& parserFile)
     }
 }
 
-*/
-
 std::expected<bool, int> PrintXml(soul::ast::spg::SpgFile* spgFile, bool verbose, bool opt)
 {
-    //XmlPrinter printer(verbose, opt);
-    //spgFile->Accept(printer);
-    //if (!printer) return std::unexpected<int>(printer.Error());
+    XmlPrinter printer(verbose, opt);
+    spgFile->Accept(printer);
+    if (!printer) return std::unexpected<int>(printer.Error());
     return std::expected<bool, int>(true);
 }
 

@@ -47,4 +47,7 @@ inline uuid random_uuid()
     return uuid::random();
 }
 
+void Rotate(uuid& id, int index);
+void Xor(uuid& id, const uuid& that);
+
 } // namespace util

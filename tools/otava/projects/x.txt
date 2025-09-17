@@ -1,0 +1,5 @@
+22a3e1b2-6f1a-c03e-4eb8-534f8528715f aliasType stack<LexerState<char32_t, LexerBase<char32_t>>>::size_type
+2d5f8c5f-1f18-d7fd-59f0-6af0f9178fc9 aliasType stack<LexerState<char32_t, LexerBase<char32_t>>>::const_reference
+d7aa956d-ca3a-b4f1-f7e0-ac1bdc4ad9a7 aliasType stack<LexerState<char32_t, LexerBase<char32_t>>>::reference
+69e96c4e-973e-6b0c-5e6d-5164cf0d263d aliasType stack<LexerState<char32_t, LexerBase<char32_t>>>::container_type
+7fce28b0-1808-29e1-797c-f56f2de0938b aliasType stack<LexerState<char32_t, LexerBase<char32_t>>>::value_type
