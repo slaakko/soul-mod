@@ -23,6 +23,13 @@ import util;
 
 namespace otava::symbols {
 
+util::uuid MakeTemplateParameterId(const util::uuid& id, const std::u32string& name)
+{
+    util::uuid x = id;
+    util::Xor(x, util::ToUuid(name));
+    return x;
+}
+
 TypenameConstraintSymbol::TypenameConstraintSymbol() : TypeSymbol(SymbolKind::typenameConstraintSymbol, std::u32string(U"typename"))
 {
 }
@@ -42,8 +49,9 @@ TemplateParameterSymbol::TemplateParameterSymbol(const std::u32string& name_) :
 {
 }
 
-TemplateParameterSymbol::TemplateParameterSymbol(Symbol* constraint_, const std::u32string& name_, int index_, otava::ast::Node* defaultTemplateArgNode_) :
-    TypeSymbol(SymbolKind::templateParameterSymbol, name_), 
+TemplateParameterSymbol::TemplateParameterSymbol(Symbol* constraint_, const std::u32string& name_, const util::uuid& id_, int index_, 
+    otava::ast::Node* defaultTemplateArgNode_) :
+    TypeSymbol(SymbolKind::templateParameterSymbol, MakeTemplateParameterId(id_, name_), name_), 
     constraint(constraint_),
     index(index_), 
     defaultTemplateArgNode(defaultTemplateArgNode_), 
@@ -94,6 +102,7 @@ void TemplateParameterSymbol::Read(Reader& reader)
 void TemplateParameterSymbol::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol::Resolve(symbolTable);
+    symbolTable.MapType(this);
     if (constraintId != util::nil_uuid())
     {
         constraint = symbolTable.GetConstraint(constraintId);
@@ -315,11 +324,8 @@ void ExplicitInstantiationSymbol::AddFunctionDefinitionSymbol(FunctionDefinition
     }
     ExplicitlyInstantiatedFunctionDefinitionSymbol* explicitlyInstantiatedSymbol = new ExplicitlyInstantiatedFunctionDefinitionSymbol(functionDefinitionSymbol, sourcePos, context);
     explicitlyInstantiatedSymbol->SetFunctionKind(functionDefinitionSymbol->GetFunctionKind());
-    while (functionDefinitionSymbol->DefIndex() >= functionDefinitionSymbols.size())
-    {
-        functionDefinitionSymbols.push_back(nullptr);
-    }
-    functionDefinitionSymbols[functionDefinitionSymbol->DefIndex()] = std::unique_ptr<ExplicitlyInstantiatedFunctionDefinitionSymbol>(explicitlyInstantiatedSymbol);
+    functionDefinitionSymbols.push_back(std::unique_ptr<ExplicitlyInstantiatedFunctionDefinitionSymbol>(explicitlyInstantiatedSymbol));
+    functionDefinitionSymbolMap[functionDefinitionSymbol->DefIndex()] = explicitlyInstantiatedSymbol;
     if (explicitlyInstantiatedSymbol->GetFunctionKind() == FunctionKind::destructor)
     {
         destructor = explicitlyInstantiatedSymbol;
@@ -328,9 +334,17 @@ void ExplicitInstantiationSymbol::AddFunctionDefinitionSymbol(FunctionDefinition
 
 FunctionDefinitionSymbol* ExplicitInstantiationSymbol::GetFunctionDefinitionSymbol(int index)  const
 {
-    FunctionDefinitionSymbol* functionDefinitionSymbol = functionDefinitionSymbols[index].get();
-    functionDefinitionSymbol->SetParent(specialization);
-    return functionDefinitionSymbol;
+    auto it = functionDefinitionSymbolMap.find(index);
+    if (it != functionDefinitionSymbolMap.end())
+    {
+        FunctionDefinitionSymbol* functionDefinitionSymbol = it->second;
+        functionDefinitionSymbol->SetParent(specialization);
+        return functionDefinitionSymbol;
+    }
+    else
+    {
+        ThrowException("explicitly instantiated function " + std::to_string(index) + " not found");
+    }
 }
 
 FunctionDefinitionSymbol* ExplicitInstantiationSymbol::Destructor() const
@@ -347,10 +361,10 @@ void ExplicitInstantiationSymbol::Write(Writer& writer)
     Symbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(specialization->Id());
     std::int32_t n = functionDefinitionSymbols.size();
-    writer.GetBinaryStreamWriter().Write(n);
-    for (auto& funDefSymbol : functionDefinitionSymbols)
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(n);
+    for (auto& fnDefSymbol : functionDefinitionSymbols)
     {
-        writer.Write(funDefSymbol.get());
+        writer.Write(fnDefSymbol.get());
     }
 }
 
@@ -358,22 +372,19 @@ void ExplicitInstantiationSymbol::Read(Reader& reader)
 {
     Symbol::Read(reader);
     reader.GetBinaryStreamReader().ReadUuid(specializationId);
-    std::int32_t n = reader.GetBinaryStreamReader().ReadInt();
+    std::int32_t n = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (std::int32_t i = 0; i < n; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
         if (symbol->IsExplicitlyInstantiatedFunctionDefinitionSymbol())
         {
             ExplicitlyInstantiatedFunctionDefinitionSymbol* explicitlyInstantiatedSymbol = static_cast<ExplicitlyInstantiatedFunctionDefinitionSymbol*>(symbol);
-            while (explicitlyInstantiatedSymbol->DefIndex() >= functionDefinitionSymbols.size())
-            {
-                functionDefinitionSymbols.push_back(nullptr);
-            }
-            functionDefinitionSymbols[explicitlyInstantiatedSymbol->DefIndex()].reset(explicitlyInstantiatedSymbol);
+            functionDefinitionSymbols.push_back(std::unique_ptr<ExplicitlyInstantiatedFunctionDefinitionSymbol>(explicitlyInstantiatedSymbol));
             if (explicitlyInstantiatedSymbol->GetFunctionKind() == FunctionKind::destructor)
             {
                 destructor = explicitlyInstantiatedSymbol;
             }
+            functionDefinitionSymbolMap[explicitlyInstantiatedSymbol->DefIndex()] = explicitlyInstantiatedSymbol;
         }
         else
         {
@@ -432,14 +443,15 @@ void ExplicitInstantiationProcessor::Visit(otava::ast::ExplicitInstantiationNode
                 ClassTypeSymbol* classTemplate = static_cast<ClassTypeSymbol*>(classTemplateType);
                 bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
                 context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
-                for (const auto& memFunDefSymbol : classTemplate->MemFunDefSymbols())
+                for (const auto& memFnDefSymbolPair : classTemplate->MemFnDefSymbolMap())
                 {
+                    FunctionDefinitionSymbol* memFnDefSymbol = memFnDefSymbolPair.second;
                     std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
-                    FunctionSymbol* instantiatedFunctionSymbol = InstantiateMemFnOfClassTemplate(memFunDefSymbol, specialization, templateParameterMap, node.GetSourcePos(), context);
+                    FunctionSymbol* instantiatedFunctionSymbol = InstantiateMemFnOfClassTemplate(memFnDefSymbol, specialization, templateParameterMap, node.GetSourcePos(), context);
                     if (instantiatedFunctionSymbol->IsFunctionDefinitionSymbol())
                     {
-                        FunctionDefinitionSymbol* instantiatedMemFunDefSymbol = static_cast<FunctionDefinitionSymbol*>(instantiatedFunctionSymbol);
-                        explicitInstantiationSymbol->AddFunctionDefinitionSymbol(instantiatedMemFunDefSymbol, node.GetSourcePos(), context);
+                        FunctionDefinitionSymbol* instantiatedMemFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(instantiatedFunctionSymbol);
+                        explicitInstantiationSymbol->AddFunctionDefinitionSymbol(instantiatedMemFnDefSymbol, node.GetSourcePos(), context);
                     }
                     else
                     {

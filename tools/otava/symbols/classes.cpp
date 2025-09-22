@@ -13,6 +13,7 @@ import otava.symbols.exception;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.modules;
 import otava.symbols.symbol.table;
+import otava.symbols.symbol_map;
 import otava.symbols.templates;
 import otava.symbols.visitor;
 import otava.symbols.writer;
@@ -111,7 +112,8 @@ ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) :
     vptrIndex(-1),
     deltaIndex(-1),
     group(nullptr),
-    copyCtor(nullptr)
+    copyCtor(nullptr),
+    nextMemFnDefIndex(0)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -127,8 +129,28 @@ ClassTypeSymbol::ClassTypeSymbol(SymbolKind kind_, const std::u32string& name_) 
     specializationId(),
     vtabSize(0),
     vptrIndex(-1),
+    deltaIndex(-1),
     group(nullptr),
-    copyCtor(nullptr)
+    copyCtor(nullptr),
+    nextMemFnDefIndex(0)
+{
+    GetScope()->SetKind(ScopeKind::classScope);
+}
+
+ClassTypeSymbol::ClassTypeSymbol(SymbolKind kind_, const util::uuid& id_, const std::u32string& name_) : 
+    TypeSymbol(kind_, id_, name_),
+    flags(ClassTypeSymbolFlags::none),
+    classKind(ClassKind::class_),
+    specialization(nullptr),
+    level(0),
+    irType(nullptr),
+    currentFunctionIndex(1),
+    specializationId(),
+    vtabSize(0),
+    vptrIndex(-1),
+    group(nullptr),
+    copyCtor(nullptr),
+    nextMemFnDefIndex(0)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -213,6 +235,19 @@ bool ClassTypeSymbol::IsTemplateParameterInstantiation(Context* context, std::se
     return false;
 }
 
+void ClassTypeSymbol::SetSpecialization(TypeSymbol* specialization_, Context* context)
+{
+    specialization = specialization_;
+    if (specialization)
+    {
+        context->GetSymbolTable()->MapType(specialization);
+        if (specialization->IsClassTemplateSpecializationSymbol())
+        {
+            context->GetSymbolTable()->MapClassTemplateSpecialization(static_cast<ClassTemplateSpecializationSymbol*>(specialization));
+        }
+    }
+}
+
 void ClassTypeSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -258,6 +293,16 @@ void ClassTypeSymbol::Write(Writer& writer)
         groupId = group->Id();
     }
     writer.GetBinaryStreamWriter().Write(groupId);
+    std::uint32_t nmfnds = memFnDefSymbolMap.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(nmfnds);
+    for (const auto& memFnDefSymbolPair : memFnDefSymbolMap)
+    {
+        int32_t index = memFnDefSymbolPair.first;
+        writer.GetBinaryStreamWriter().Write(index);
+        FunctionDefinitionSymbol* mfnds = memFnDefSymbolPair.second;
+        writer.GetBinaryStreamWriter().Write(mfnds->Id());
+    }
+    writer.GetBinaryStreamWriter().Write(nextMemFnDefIndex);
 }
 
 void ClassTypeSymbol::Read(Reader& reader)
@@ -294,6 +339,15 @@ void ClassTypeSymbol::Read(Reader& reader)
     deltaIndex = reader.GetBinaryStreamReader().ReadInt();
     vtabName = reader.GetBinaryStreamReader().ReadUtf8String();
     reader.GetBinaryStreamReader().ReadUuid(groupId);
+    std::uint32_t nmfnds = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < nmfnds; ++i)
+    {
+        util::uuid mfnid;
+        int32_t memFnDefSymboIndex = reader.GetBinaryStreamReader().ReadInt();
+        reader.GetBinaryStreamReader().ReadUuid(mfnid);
+        memFnDefSymbolIdMap[memFnDefSymboIndex] = mfnid;
+    }
+    nextMemFnDefIndex = reader.GetBinaryStreamReader().ReadInt();
 }
 
 void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
@@ -341,6 +395,15 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
     {
         group = symbolTable.GetClassGroup(groupId);
     }
+    memFnDefSymbolMap.clear();
+    for (const auto& mfIndexSymbolIdPair : memFnDefSymbolIdMap)
+    {
+        int32_t index = mfIndexSymbolIdPair.first;
+        util::uuid mfnid = mfIndexSymbolIdPair.second;
+        FunctionDefinitionSymbol* mfn = symbolTable.GetFunctionDefinition(mfnid);
+        memFnDefSymbolMap[index] = mfn;
+    }
+    memFnDefSymbolIdMap.clear();
 }
 
 bool ClassTypeSymbol::IsPolymorphic() const
@@ -371,6 +434,7 @@ void ClassTypeSymbol::MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Co
     }
     if (ObjectLayoutComputed()) return;
     SetObjectLayoutComputed();
+    objectLayout.clear();
     for (const auto& baseClass : baseClasses)
     {
         baseClass->MakeObjectLayout(sourcePos, context);
@@ -601,23 +665,26 @@ int ClassTypeSymbol::Arity()
     }
 }
 
-void ClassTypeSymbol::AddMemFunDefSymbol(FunctionDefinitionSymbol* memFunDefSymbol)
+void ClassTypeSymbol::SetMemFnDefSymbol(FunctionDefinitionSymbol* memFnDefSymbol)
 {
-    if (std::find(memFunDefSymbols.begin(), memFunDefSymbols.end(), memFunDefSymbol) == memFunDefSymbols.end())
+    if (memFnDefSymbol->DefIndex() == -1)
     {
-        if (memFunDefSymbol->DefIndex() == -1)
-        {
-            memFunDefSymbol->SetDefIndex(memFunDefSymbols.size());
-            memFunDefSymbols.push_back(memFunDefSymbol);
-        }
-        else
-        {
-            while (memFunDefSymbol->DefIndex() >= memFunDefSymbols.size())
-            {
-                memFunDefSymbols.push_back(nullptr);
-            }
-            memFunDefSymbols[memFunDefSymbol->DefIndex()] = memFunDefSymbol;
-        }
+        memFnDefSymbol->SetDefIndex(nextMemFnDefIndex++);
+    }
+    memFnDefSymbolMap[memFnDefSymbol->DefIndex()] = memFnDefSymbol;
+    nextMemFnDefIndex = std::max(nextMemFnDefIndex, memFnDefSymbol->DefIndex() + 1);
+}
+
+FunctionDefinitionSymbol* ClassTypeSymbol::GetMemFnDefSymbol(int32_t defIndex) const
+{
+    auto it = memFnDefSymbolMap.find(defIndex);
+    if (it != memFnDefSymbolMap.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        return nullptr;
     }
 }
 
@@ -648,8 +715,8 @@ void ClassTypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
     }
     if (symbol->IsFunctionDefinitionSymbol())
     {
-        FunctionDefinitionSymbol* memFunDefSymbol = static_cast<FunctionDefinitionSymbol*>(symbol);
-        AddMemFunDefSymbol(memFunDefSymbol);
+        FunctionDefinitionSymbol* memFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(symbol);
+        SetMemFnDefSymbol(memFnDefSymbol);
     }
 }
 

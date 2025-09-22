@@ -26,7 +26,6 @@ public:
     inline void SetContext(Context* context_) { context = context_; }
     inline void SetSymbolTable(SymbolTable* symbolTable_) { symbolTable = symbolTable_; }
     inline SymbolTable* GetSymbolTable() const { return symbolTable; }
-    inline void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
     void SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_);
     FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() const;
 private:
@@ -35,7 +34,6 @@ private:
     util::BinaryStreamReader binaryStreamReader;
     Context* context;
     SymbolTable* symbolTable;
-    SymbolMap* symbolMap;
     FunctionDefinitionSymbolSet* functionDefinitionSymbolSet;
 };
 

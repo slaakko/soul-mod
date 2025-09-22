@@ -6,10 +6,12 @@
 export module otava.symbols.class_templates;
 
 import std;
+import util.uuid;
 import otava.ast.node;
 import otava.ast.templates;
 import otava.symbols.classes;
 import otava.symbols.templates;
+import otava.symbols.type.symbol;
 
 export namespace otava::symbols {
 
@@ -20,6 +22,7 @@ class ClassTemplateSpecializationSymbol : public ClassTypeSymbol
 {
 public:
     ClassTemplateSpecializationSymbol(const std::u32string& name_);
+    ClassTemplateSpecializationSymbol(const util::uuid& id_, const std::u32string& name_);
     inline bool Instantiated() const { return instantiated; }
     inline void SetInstantiated() { instantiated = true; }
     std::string SymbolKindStr() const override { return "specialization symbol"; }
@@ -71,6 +74,8 @@ private:
     std::vector<FunctionSymbol*> instantiatedVirtualFunctionSpecializations;
     std::vector<util::uuid> instantiatedVirtualFunctionSpecializationIds;
 };
+
+util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments);
 
 struct MemFunKey
 {

@@ -12,6 +12,7 @@ import otava.symbols.emitter;
 import otava.symbols.enums;
 import otava.symbols.modules;
 import otava.symbols.symbol.table;
+import otava.symbols.symbol_map;
 import otava.symbols.type.symbol;
 import otava.symbols.writer;
 import otava.symbols.reader;

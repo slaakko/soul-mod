@@ -30,7 +30,7 @@ class TemplateParameterSymbol : public TypeSymbol
 {
 public:
     TemplateParameterSymbol(const std::u32string& name_);
-    TemplateParameterSymbol(Symbol* constraint_, const std::u32string& name_, int index_, otava::ast::Node* defaultTemplateArgNode_);
+    TemplateParameterSymbol(Symbol* constraint_, const std::u32string& name_, const util::uuid& id_, int index_, otava::ast::Node* defaultTemplateArgNode_);
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::string SymbolKindStr() const override { return "template parameter symbol"; }
     std::string SymbolDocKindStr() const override { return "template_paremeter"; }
@@ -106,6 +106,7 @@ private:
     ClassTemplateSpecializationSymbol* specialization;
     util::uuid specializationId;
     std::vector<std::unique_ptr<ExplicitlyInstantiatedFunctionDefinitionSymbol>> functionDefinitionSymbols;
+    std::map<std::int32_t, ExplicitlyInstantiatedFunctionDefinitionSymbol*> functionDefinitionSymbolMap;
     FunctionDefinitionSymbol* destructor;
 };
 

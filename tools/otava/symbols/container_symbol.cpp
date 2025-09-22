@@ -28,6 +28,11 @@ ContainerSymbol::ContainerSymbol(SymbolKind kind_, const std::u32string& name_) 
     scope.SetContainerSymbol(this);
 }
 
+ContainerSymbol::ContainerSymbol(SymbolKind kind_, const util::uuid& id_, const std::u32string& name_) : Symbol(kind_, id_, name_)
+{
+    scope.SetContainerSymbol(this);
+}
+
 void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     symbol->SetParent(this);
@@ -128,10 +133,9 @@ void ContainerSymbol::Write(Writer& writer)
     Symbol::Write(writer);
     std::uint32_t count = symbols.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
-    for (std::uint32_t i = 0; i < count; ++i)
+    for (const auto& symbol : symbols)
     {
-        Symbol* symbol = symbols[i].get();
-        writer.Write(symbol);
+        writer.Write(symbol.get());
     }
 }
 

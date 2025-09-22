@@ -5,6 +5,7 @@
 
 module otava.symbols.alias.type.symbol;
 
+import util;
 import otava.symbols.context;
 import otava.symbols.type.resolver;
 import otava.symbols.symbol.table;
@@ -35,6 +36,10 @@ AliasTypeSymbol::AliasTypeSymbol(const std::u32string& name_, TypeSymbol* referr
 
 void AliasTypeSymbol::Write(Writer& writer)
 {
+    if (Parent() && Parent()->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>" && Name() == U"value_type")
+    {
+        //std::cout << "write: " <<util::ToUtf8(FullName()) << "=" << util::ToString(Parent()->Id()) << ", " << util::ToString(Id()) << "\n";
+    }
     TypeSymbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(referredType->Id());
 }
@@ -47,6 +52,10 @@ void AliasTypeSymbol::Read(Reader& reader)
 
 void AliasTypeSymbol::Resolve(SymbolTable& symbolTable)
 {
+    if (Parent() && Parent()->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>" && Name() == U"value_type")
+    {
+        //std::cout << "resolve: " << util::ToUtf8(FullName()) << "=" << util::ToString(Parent()->Id()) << ", " << util::ToString(Id()) << "\n";
+    }
     TypeSymbol::Resolve(symbolTable);
     referredType = symbolTable.GetTypeNoThrow(referredTypeId);
 }
@@ -58,8 +67,7 @@ void AliasTypeSymbol::Accept(Visitor& visitor)
 
 bool AliasTypeSymbol::IsExportSymbol(Context* context) const
 {
-    if (!referredType->IsExportSymbol(context)) return false;
-    return true;
+    return TypeSymbol::IsExportSymbol(context);
 }
 
 bool AliasTypeSymbol::IsExportMapSymbol(Context* context) const
@@ -158,6 +166,7 @@ void ProcessAliasDeclaration(otava::ast::Node* aliasDeclarationNode, Context* co
         {
             aliasType->SetReferredType(type);
         }
+        context->GetSymbolTable()->MapNode(aliasDeclarationNode, aliasType);
     }
     else
     {

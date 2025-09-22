@@ -11,6 +11,7 @@ import util;
 export namespace otava::symbols {
 
 class Symbol;
+class Context;
 
 class Writer
 {
@@ -18,13 +19,13 @@ public:
     Writer(const std::string& fileName);
     inline util::BinaryStreamWriter& GetBinaryStreamWriter() { return binaryStreamWriter; }
     void Write(Symbol* symbol);
-    void SetDump(bool dump_) { dump = dump_; }
-    bool Dump() const { return dump; }
+    inline Context* GetContext() { return context; }
+    inline void SetContext(Context* context_) { context = context_; }
 private:
     util::FileStream fileStream;
     util::BufferedStream bufferedStream;
     util::BinaryStreamWriter binaryStreamWriter;
-    bool dump;
+    Context* context;
 };
 
 } // namespace otava::symbols

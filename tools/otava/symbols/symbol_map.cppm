@@ -14,6 +14,8 @@ export namespace otava::symbols {
 class SymbolMap
 {
 public:
+    SymbolMap();
+    void Import(SymbolMap& that);
     Symbol* GetSymbolNoThrow(const util::uuid& symbolId) const;
     Symbol* GetSymbol(Module* module, SymbolKind symbolKind, const util::uuid& symbolId) const;
     void AddSymbol(Symbol* symbol);

@@ -1006,7 +1006,12 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
                 {
                     classType->MapFunction(functionDefinitionSymbol);
                 }
-                classType->AddMemFunDefSymbol(functionDefinitionSymbol);
+                if (context->MemFunDefSymbolIndex() != -1 && functionDefinitionSymbol->DefIndex() == -1)
+                {
+                    functionDefinitionSymbol->SetDefIndex(context->MemFunDefSymbolIndex());
+                    context->SetMemFunDefSymbolIndex(-1);
+                }
+                classType->SetMemFnDefSymbol(functionDefinitionSymbol);
                 context->GetSymbolTable()->MapFunctionDefinition(functionDefinitionSymbol);
             }
         }

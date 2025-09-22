@@ -12,7 +12,7 @@ import otava.symbols.compound.type.symbol;
 namespace otava::symbols {
 
 Writer::Writer(const std::string& fileName) : 
-    fileStream(fileName, util::OpenMode::binary | util::OpenMode::write), bufferedStream(fileStream), binaryStreamWriter(bufferedStream), dump(false)
+    fileStream(fileName, util::OpenMode::binary | util::OpenMode::write), bufferedStream(fileStream), binaryStreamWriter(bufferedStream), context(nullptr)
 {
 }
 

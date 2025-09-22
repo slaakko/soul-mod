@@ -11,7 +11,6 @@ import otava.ast;
 import otava.symbols.derivations;
 import otava.symbols.lookup;
 import otava.symbols.specialization.compare;
-import otava.symbols.symbol_map;
 import otava.symbols.array.type.compare;
 import otava.symbols.function.type.compare;
 import otava.symbols.type_compare;
@@ -19,6 +18,8 @@ import util.uuid;
 import class_info_index;
 
 export namespace otava::symbols {
+
+const int maxTemplateParameters = 16;
 
 enum class FunctionKind;
 enum class FunctionQualifiers;
@@ -86,6 +87,7 @@ class Visitor;
 class ConversionTable;
 class FunctionDefinitionSymbolSet;
 class DependentTypeSymbol;
+class SymbolMap;
 
 enum class SymbolGroupKind : std::int32_t;
 
@@ -110,7 +112,7 @@ public:
     void Resolve(Context* context);
     void Accept(Visitor& visitor);
     void WriteMaps(Writer& writer, Context* context);
-    void ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolMap* symbolMap);
+    void ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap);
     TypeSymbol* GetFundamentalTypeSymbol(FundamentalTypeKind kind);
     inline Symbol* GetTypenameConstraintSymbol() { return typenameConstraintSymbol; }
     inline void SetTypenameConstraintSymbol(Symbol* typenameConstraintSymbol_) { typenameConstraintSymbol = typenameConstraintSymbol_; }
@@ -233,8 +235,7 @@ public:
     inline const std::set<ClassTypeSymbol*>& Classes() const { return allClasses; }
     inline void SetNodeMap(otava::ast::NodeMap* nodeMap_) { nodeMap = nodeMap_; }
     inline otava::ast::NodeMap* GetNodeMap() { return nodeMap; }
-    inline void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
-    inline SymbolMap* GetSymbolMap() { return symbolMap; }
+    inline SymbolMap* GetSymbolMap() { return symbolMap.get(); }
     inline ConversionTable& GetConversionTable() { return *conversionTable; }
     inline const ConversionTable& GetConversionTable() const { return *conversionTable; }
     inline Linkage CurrentLinkage() const { return currentLinkage; }
@@ -245,11 +246,17 @@ public:
     void MapExplicitInstantiation(ExplicitInstantiationSymbol* explicitInstantition);
     const info::class_index& ClassIndex() const { return index; }
     info::class_index& ClassIndex() { return index; }
-    void AddClassTemplateSpecializationToSet(ClassTemplateSpecializationSymbol* sp);
+    ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(const util::uuid& id) const;
+    void AddClassTemplateSpecialization(ClassTemplateSpecializationSymbol* sp);
+    void MapClassTemplateSpecialization(ClassTemplateSpecializationSymbol* sp);
+    void AddChangedClassTemplateSpecialization(ClassTemplateSpecializationSymbol* sp);
+    void UnmapClassTemplateSpecialization(ClassTemplateSpecializationSymbol* sp);
     void AddAliasTypeTemplateSpecializationToSet(AliasTypeTemplateSpecializationSymbol* at);
     void AddArrayTypeToSet(ArrayTypeSymbol* a);
     void ImportAfterResolve();
     void ToXml(const std::string& xmlFilePath) const;
+    void InitTemplateParameterIds();
+    const util::uuid& GetTemplateParameterId(int index) const;
 private:
     void CreateFundamentalTypes();
     void AddFundamentalType(FundamentalTypeKind kind);
@@ -282,8 +289,9 @@ private:
     Module* module;
     std::unique_ptr<NamespaceSymbol> globalNs;
     std::vector<std::unique_ptr<Symbol>> classTemplateSpecializations;
+    std::set<ClassTemplateSpecializationSymbol*> changedClassTemplateSpecializations;
     std::vector<std::unique_ptr<Symbol>> aliasTypeTemplateSpecializations;
-    std::set<ClassTemplateSpecializationSymbol*, ClassTemplateSpecializationLess> classTemplateSpecializationSet;
+    std::map<util::uuid, ClassTemplateSpecializationSymbol*> classTemplateSpecializationMap;
     std::set<AliasTypeTemplateSpecializationSymbol*, AliasTypeTemplateSpecializationLess> aliasTypeTemplateSpecializationSet;
     std::vector<std::unique_ptr<Symbol>> arrayTypes;
     std::set<ArrayTypeSymbol*, ArrayTypeLess> arrayTypeSet;
@@ -330,7 +338,7 @@ private:
     Access currentAccess;
     std::stack<Access> accessStack;
     otava::ast::NodeMap* nodeMap;
-    SymbolMap* symbolMap;
+    std::unique_ptr<SymbolMap> symbolMap;
     std::set<ClassTypeSymbol*> classes;
     std::set<ClassTypeSymbol*> allClasses;
     int classLevel;
@@ -340,6 +348,7 @@ private:
     std::vector<ParameterSymbol*> returnValueParametersToResolve;
     info::class_index index;
     std::vector<const SymbolTable*> importAfterResolve;
+    std::vector<util::uuid> templateParameterIds;
 };
 
 } // namespace otava::symbols

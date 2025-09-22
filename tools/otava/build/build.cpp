@@ -251,6 +251,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     if (projectSet.find(project) != projectSet.end()) return;
     projectSet.insert(project);
     otava::symbols::SetProjectReady(false);
+    util::uuid projectId = otava::symbols::MakeProjectId(project->Name());
     if ((flags & BuildFlags::seed) != BuildFlags::none)
     {
         std::uint64_t seed = std::hash<std::string>()(project->FilePath());
@@ -316,6 +317,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     }
     project->AddRoots(moduleMapper);
     otava::symbols::Module projectModule(project->Name() + ".#project");
+    projectModule.SetProjectId(projectId);
     projectModule.SetImportIndex(importIndex);
     otava::ast::SetNodeIdFactory(projectModule.GetNodeIdFactory());
     projectModule.GetNodeIdFactory()->SetModuleId(projectModule.Id());
@@ -333,6 +335,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
             otava::symbols::Module* interfaceModule = project->GetModule(file);
             interfaceModule->SetFilePath(filePath);
             interfaceModule->SetKind(otava::symbols::ModuleKind::interfaceModule);
+            interfaceModule->SetProjectId(projectId);
         }
         for (std::int32_t file : project->SourceFiles())
         {
@@ -342,6 +345,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
             otava::symbols::Module* implementationModule = project->GetModule(file);
             implementationModule->SetFilePath(filePath);
             implementationModule->SetKind(otava::symbols::ModuleKind::implementationModule);
+            implementationModule->SetProjectId(projectId);
             implementationNameMap[interfaceUnitName].push_back(implementationModule->Name());
         }
     }
@@ -486,14 +490,32 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         }
         module->SetFile(new otava::ast::File(util::Path::GetFileName(filePath), node.release()));
         module->SetImplementationUnitNames(implementationNameMap[module->Name()]);
-        projectModule.Import(module, moduleMapper, config, optLevel);
+        //projectModule.Import(module, moduleMapper, config, optLevel);
         project->Index().imp(module->GetSymbolTable()->ClassIndex(), true);
         if ((flags & BuildFlags::symbolXml) != BuildFlags::none)
         {
-            std::string dirPath = util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(module->FilePath()), config), std::to_string(optLevel));
+            std::string dirPath;
+            if (config == "release")
+            {
+                dirPath = util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(module->FilePath()), config),
+                    std::to_string(otava::symbols::GetOptLevel(optLevel, true)));
+            }
+            else
+            {
+                dirPath = util::Path::Combine(util::Path::GetDirectoryName(module->FilePath()), config);
+            }
             std::filesystem::create_directories(dirPath);
-            std::string xmlFilePath = util::Path::Combine(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(module->FilePath()), config), 
-                std::to_string(optLevel)), util::Path::GetFileName(module->FilePath()) + ".xml");
+            std::string xmlFilePath;
+            if (config == "release")
+            {
+                xmlFilePath = util::Path::Combine(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(module->FilePath()), config),
+                    std::to_string(otava::symbols::GetOptLevel(optLevel, true))), util::Path::GetFileName(module->FilePath()) + ".xml");
+            }
+            else
+            {
+                xmlFilePath = util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(module->FilePath()), config),
+                    util::Path::GetFileName(module->FilePath()) + ".xml");
+            }
             module->ToXml(xmlFilePath);
         }
         moduleMapper.AddModule(project->ReleaseModule(file));

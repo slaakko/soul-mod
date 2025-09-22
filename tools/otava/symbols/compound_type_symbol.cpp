@@ -72,7 +72,7 @@ void CompoundTypeSymbol::Accept(Visitor& visitor)
 
 bool CompoundTypeSymbol::IsExportSymbol(Context* context) const
 {
-    return baseType->IsExportSymbol(context);
+    return TypeSymbol::IsExportSymbol(context);
 }
 
 int CompoundTypeSymbol::PointerCount() const

@@ -614,6 +614,10 @@ bool FindClassTemplateMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExp
             }
         }
     }
+    if (n == 0)
+    {
+        return false;
+    }
     functionMatch.argumentMatches.resize(numArgumentMatches);
     std::vector<Symbol*> targetTemplateArguments;
     for (int i = 0; i < n; ++i)

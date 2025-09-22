@@ -12,6 +12,18 @@ import util;
 
 namespace otava::symbols {
 
+SymbolMap::SymbolMap()
+{
+}
+
+void SymbolMap::Import(SymbolMap& that)
+{
+    for (const auto& symbol : that.symbolMap)
+    {
+        symbolMap.insert(symbol);
+    }
+}
+
 Symbol* SymbolMap::GetSymbolNoThrow(const util::uuid& symbolId) const
 {
     auto it = symbolMap.find(symbolId);

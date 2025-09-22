@@ -59,6 +59,21 @@ void VariableSymbol::Write(Writer& writer)
         writer.GetBinaryStreamWriter().Write(value->Id());
     }
     writer.GetBinaryStreamWriter().Write(layoutIndex);
+    bool templateDeclaration = false;
+    const Symbol* parent = Parent();
+    if (parent)
+    {
+        parent = parent->Parent();
+        if (parent && parent->IsTemplateDeclarationSymbol())
+        {
+            templateDeclaration = true;
+        }
+    }
+    std::set<const Symbol*> visited;
+    if (IsMemberVariable() && !IsStatic() && !templateDeclaration && !IsTemplateParameterInstantiation(writer.GetContext(), visited) && layoutIndex == -1)
+    {
+        int x = 0;
+    }
 }
 
 void VariableSymbol::Read(Reader& reader)
@@ -157,8 +172,19 @@ bool VariableSymbol::IsTemplateParameterInstantiation(Context* context, std::set
         TypeSymbol* type = GetType();
         if (type)
         {
-            return type->IsTemplateParameterInstantiation(context, visited);
+            if (type->IsTemplateParameterInstantiation(context, visited))
+            {
+                return true;
+            }
         }
+        //const Symbol* parent = Parent();
+        //if (parent)
+        //{
+        //    if (parent->IsTemplateParameterInstantiation(context, visited))
+        //    {
+        //        return true;
+        //    }
+        //}
     }
     return false;
 }

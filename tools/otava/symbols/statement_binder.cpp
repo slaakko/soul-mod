@@ -1513,11 +1513,6 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
 
 FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
-    if (functionDefinitionSymbol->GroupName() == U"Visit" && functionDefinitionSymbol->Declaration() && functionDefinitionSymbol->Declaration()->Parent()->Name() == U"CodeEvaluationVisitor")
-    {
-        if (functionDefinitionSymbol->Parameters().size() > 0 && functionDefinitionSymbol->Parameters()[0]->GetType()->Name() == U"IdExprNode&")
-        int x = 0;
-    }
     RemoveTemporaryAliasTypeSymbols(context);
     if (functionDefinitionSymbol->IsBound()) return functionDefinitionSymbol;
     if (functionDefinitionSymbol->IsTemplate()) return functionDefinitionSymbol;

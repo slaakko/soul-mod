@@ -395,6 +395,11 @@ void StructureType::ComputeSizeAndOffsets() const
     }
 }
 
+Type* StructureType::FieldType(int i) const
+{
+    return fieldTypeRefs[i].GetType();
+}
+
 std::int64_t StructureType::GetFieldOffset(std::int64_t index) const
 {
     if (!sizeAndOffsetsComputed)
@@ -664,11 +669,18 @@ Type* GetElemType(Value* ptr, Value* index, const soul::ast::Span& span, Context
         Type* aggregateType = ptrType->BaseType();
         if (aggregateType->IsStructureType())
         {
+            StructureType* structureType = static_cast<StructureType*>(aggregateType);
             if (index->IsLongValue())
             {
                 std::int64_t idx = static_cast<LongValue*>(index)->GetValue();
-                StructureType* structureType = static_cast<StructureType*>(aggregateType);
-                return context->MakePtrType(structureType->FieldType(static_cast<int>(idx)));
+                if (idx >= 0 && idx < structureType->FieldCount())
+                {
+                    return context->MakePtrType(structureType->FieldType(static_cast<int>(idx)));
+                }
+                else
+                {
+                    Error("invalid structure element type index", span, context);
+                }
             }
             else
             {

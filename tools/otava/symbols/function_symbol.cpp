@@ -255,7 +255,7 @@ void ParameterSymbol::Resolve(SymbolTable& symbolTable)
     type = symbolTable.GetType(typeId);
     if (!type)
     {
-        std::cout << "ParameterSymbol::Resolve(): warning: type of parameter '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+        std::cout << "ParameterSymbol::Resolve(): warning: type of parameter '" + util::ToUtf8(Name()) + "' not resolved" << "\n";
     }
     if (defaultValueNodeId != -1)
     {
@@ -872,7 +872,7 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable)
         returnType = symbolTable.GetType(returnTypeId);
         if (!returnType)
         {
-            std::cout << "FunctionSymbol::Resolve(): warning: return type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+            std::cout << "FunctionSymbol::Resolve(): warning: return type of '" + util::ToUtf8(Name()) + "' not resolved" << "\n";
         }
         if (ReturnsClass())
         {
@@ -886,7 +886,7 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable)
             conversionParamType = symbolTable.GetType(conversionParamTypeId);
             if (!conversionParamType)
             {
-                std::cout << "FunctionSymbol::Resolve(): warning: conversion parameter type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+                std::cout << "FunctionSymbol::Resolve(): warning: conversion parameter type of '" + util::ToUtf8(Name()) + "' not resolved" << "\n";
             }
         }
         if (conversionArgTypeId != util::nil_uuid())
@@ -894,10 +894,11 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable)
             conversionArgType = symbolTable.GetType(conversionArgTypeId);
             if (!conversionArgType)
             {
-                std::cout << "FunctionSymbol::Resolve(): warning: conversion argument type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+                std::cout << "FunctionSymbol::Resolve(): warning: conversion argument type of '" + util::ToUtf8(Name()) + "' not resolved" << "\n";
             }
         }
     }
+    specialization.clear();
     for (const auto& id : specializationIds)
     {
         TypeSymbol* type = symbolTable.GetType(id);
@@ -907,7 +908,7 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable)
         }
         else
         {
-            std::cout << "FunctionSymbol::Resolve(): warning: specialization type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+            std::cout << "FunctionSymbol::Resolve(): warning: specialization type of '" + util::ToUtf8(Name()) + "' not resolved" << "\n";
         }
     }
 }

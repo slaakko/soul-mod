@@ -39,8 +39,8 @@ public:
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     TypeSymbol* ConversionParamType() const override { return type; }
     TypeSymbol* ConversionArgType() const override { return type; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    std::int32_t ConversionDistance() const override { return 255; }
+    ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
+    std::int32_t ConversionDistance() const override { return 0; }
     bool IsIdentityConversion() const override { return true; }
 private:
     TypeSymbol* type;
@@ -808,21 +808,22 @@ FunctionSymbol* UnderlyingTypeEnumTypeToArgumentConversion::Get(TypeSymbol* para
 class FunctionToFunctionPtrConversion : public FunctionSymbol
 {
 public:
-    FunctionToFunctionPtrConversion(TypeSymbol* functionPtrType_, FunctionSymbol* function_, Context* context);
+    FunctionToFunctionPtrConversion(TypeSymbol* functionPtrType_, FunctionSymbol* function_, int32_t distance_, Context* context);
     TypeSymbol* ConversionParamType() const override { return functionPtrType; }
     TypeSymbol* ConversionArgType() const override { return functionType; }
     ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
-    std::int32_t ConversionDistance() const override { return 1; }
+    std::int32_t ConversionDistance() const override { return distance; }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
 private:
     TypeSymbol* functionPtrType;
     TypeSymbol* functionType;
     FunctionSymbol* function;
+    std::int32_t distance;
 };
 
-FunctionToFunctionPtrConversion::FunctionToFunctionPtrConversion(TypeSymbol* functionPtrType_, FunctionSymbol* function_, Context* context) : 
-    FunctionSymbol(U"@conversion"), functionPtrType(functionPtrType_), functionType(function_->GetFunctionType(context)), function(function_)
+FunctionToFunctionPtrConversion::FunctionToFunctionPtrConversion(TypeSymbol* functionPtrType_, FunctionSymbol* function_, int32_t distance_, Context* context) : 
+    FunctionSymbol(U"@conversion"), functionPtrType(functionPtrType_), functionType(function_->GetFunctionType(context)), function(function_), distance(distance_)
 {
     SetConversion();
     SetAccess(Access::public_);
@@ -880,7 +881,7 @@ FunctionSymbol* FunctionToFunctionPtrArgumentConversion::Get(TypeSymbol* paramTy
                         leftType, rightType, sourcePos, context);
                     if (conversion)
                     {
-                        return new FunctionToFunctionPtrConversion(paramType, functionSymbol, context);
+                        return new FunctionToFunctionPtrConversion(paramType, functionSymbol, 1 + conversion->ConversionDistance(), context);
                     }
                 }
             }
@@ -915,7 +916,7 @@ FunctionSymbol* FunctionToFunctionPtrArgumentConversion::Get(TypeSymbol* paramTy
                         {
                             functionDefinitionSymbol = InstantiateFunctionTemplate(functionDefinitionSymbol, functionMatch.templateParameterMap, sourcePos, context);
                         }
-                        return new FunctionToFunctionPtrConversion(paramType, functionDefinitionSymbol, context);
+                        return new FunctionToFunctionPtrConversion(paramType, functionDefinitionSymbol, 1 + conversion->ConversionDistance(), context);
                     }
                 }
             }

@@ -106,17 +106,44 @@ using SymbolDestroyedFunc = void(*)(Symbol*);
 
 void SetSymbolDestroyedFunc(SymbolDestroyedFunc func);
 
+enum class SymbolFlags : std::uint8_t
+{
+    none = 0, project = 1 << 0
+};
+
+constexpr SymbolFlags operator|(SymbolFlags left, SymbolFlags right)
+{
+    return SymbolFlags(std::uint8_t(left) | std::uint8_t(right));
+}
+
+constexpr SymbolFlags operator&(SymbolFlags left, SymbolFlags right)
+{
+    return SymbolFlags(std::uint8_t(left) & std::uint8_t(right));
+}
+
+constexpr SymbolFlags operator~(SymbolFlags flags)
+{
+    return SymbolFlags(~std::uint8_t(flags));
+}
+
 class Symbol
 {
 public:
     Symbol(SymbolKind kind_, const std::u32string& name_);
+    Symbol(SymbolKind kind_, const util::uuid& id_, const std::u32string& name_);
     virtual ~Symbol();
     inline SymbolKind Kind() const { return kind; }
     inline const util::uuid& Id() const { return id; }
+    void SetId(const util::uuid& id_) { id = id_; }
     inline const std::u32string& Name() const { return name; }
     void SetName(const std::u32string& name_);
     inline Access GetAccess() const { return access; }
     inline void SetAccess(Access access_) { access = access_; }
+    inline bool GetFlag(SymbolFlags flag) const { return (flags & flag) != SymbolFlags::none; }
+    inline void SetFlag(SymbolFlags flag) { flags = flags | flag; }
+    inline void ResetFlag(SymbolFlags flag) { flags = flags & ~flag; }
+    inline bool IsProject() const { return GetFlag(SymbolFlags::project); }
+    inline void SetProject() { SetFlag(SymbolFlags::project); }
     inline void SetDeclarationFlags(DeclarationFlags declarationFlags_) { declarationFlags = declarationFlags_; }
     inline DeclarationFlags GetDeclarationFlags() const { return declarationFlags; }
     virtual const std::u32string& SimpleName() const { return Name(); }
@@ -134,7 +161,7 @@ public:
     virtual void Read(Reader& reader);
     virtual void Resolve(SymbolTable& symbolTable);
     virtual void Accept(Visitor& visitor) = 0;
-    virtual bool IsExportSymbol(Context* context) const { return true; }
+    virtual bool IsExportSymbol(Context* context) const { return IsProject(); }
     virtual bool IsExportMapSymbol(Context* context)  const { return IsExportSymbol(context); }
     virtual Symbol* GetSingleSymbol() { return this; }
     virtual std::string SymbolDocKindStr() const = 0;
@@ -212,6 +239,7 @@ public:
     virtual soul::xml::Element* ToXml() const;
 private:
     SymbolKind kind;
+    SymbolFlags flags;
     util::uuid id;
     std::u32string name;
     Symbol* parent;

@@ -7,7 +7,9 @@ module otava.symbols.reader;
 
 import otava.symbols.modules;
 import otava.symbols.symbol;
+import otava.symbols.class_templates;
 import otava.symbols.symbol.table;
+import otava.symbols.symbol_map;
 import otava.symbols.symbol.factory;
 
 namespace otava::symbols {
@@ -17,8 +19,7 @@ Reader::Reader(const std::string& fileName) :
     bufferedStream(fileStream), 
     binaryStreamReader(bufferedStream), 
     context(nullptr), 
-    symbolTable(nullptr),
-    symbolMap(nullptr)
+    symbolTable(nullptr)
 {
 }
 
@@ -34,7 +35,7 @@ Symbol* Reader::ReadSymbol()
         std::u32string name = binaryStreamReader.ReadUtf32String();
         Symbol* symbol = CreateSymbol(kind, name, symbolTable);
         symbol->Read(*this);
-        symbolMap->AddSymbol(symbol);
+        symbolTable->GetSymbolMap()->AddSymbol(symbol);
         return symbol;
     }
 }

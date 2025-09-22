@@ -49,6 +49,14 @@ bool ModuleLess::operator()(Module* left, Module* right) const
     return left->Id() < right->Id();
 }
 
+util::uuid MakeProjectId(const std::string& projectName)
+{
+    std::uint64_t hashCode = std::hash<std::string>()(projectName);
+    util::uuid projectId;
+    util::IntsToUuid(hashCode, 0, projectId);
+    return projectId;
+}
+
 Module::Module(const std::string& name_) : 
     kind(ModuleKind::interfaceModule), name(name_), symbolTable(), evaluationContext(symbolTable), fileId(-1), index(-1), importIndex(-1), reading(false)
 {
@@ -57,6 +65,11 @@ Module::Module(const std::string& name_) :
 
 Module::~Module()
 {
+}
+
+void Module::SetProjectId(const util::uuid& projectId_)
+{
+    projectId = projectId_;
 }
 
 std::int32_t Module::Id() const
@@ -217,6 +230,7 @@ void Module::Write(const std::string& root, const std::string& config, int optLe
 {
     std::string moduleFilePath = MakeModuleFilePath(root, config, optLevel, name);
     Writer writer(moduleFilePath);
+    writer.SetContext(context);
     Write(writer, context);
 }
 
@@ -291,6 +305,7 @@ void Module::Write(Writer& writer, Context* context)
     writer.GetBinaryStreamWriter().Write(static_cast<std::int8_t>(kind));
     writer.GetBinaryStreamWriter().Write(name);
     writer.GetBinaryStreamWriter().Write(filePath);
+    writer.GetBinaryStreamWriter().Write(projectId);
     writer.GetBinaryStreamWriter().Write(importIndex);
     std::uint32_t expCount = exportModuleNames.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(expCount);
@@ -328,6 +343,7 @@ void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
     kind = static_cast<ModuleKind>(reader.GetBinaryStreamReader().ReadSByte());
     name = reader.GetBinaryStreamReader().ReadUtf8String();
     filePath = reader.GetBinaryStreamReader().ReadUtf8String();
+    reader.GetBinaryStreamReader().ReadUuid(projectId);
     importIndex = reader.GetBinaryStreamReader().ReadInt();
     std::uint32_t expCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (std::uint32_t i = 0; i < expCount; ++i)
@@ -349,21 +365,61 @@ void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
 void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config, int optLevel)
 {
     reader.SetSymbolTable(&symbolTable);
-    reader.SetSymbolMap(moduleMapper.GetSymbolMap());
     reader.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
     symbolTable.SetNodeMap(moduleMapper.GetNodeMap());
-    symbolTable.SetSymbolMap(moduleMapper.GetSymbolMap());
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << ">module '" << Name() << "' read symbol table" << "\n";
+#endif
     symbolTable.Read(reader);
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << "<module '" << Name() << "' read symbol table" << "\n";
+#endif
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << ">module '" << Name() << "' read evaluation context" << "\n";
+#endif
     evaluationContext.Read(reader);
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << "<module '" << Name() << "' read evaluation context" << "\n";
+#endif
     otava::ast::Reader astReader(&reader.GetBinaryStreamReader());
     astReader.SetNodeMap(moduleMapper.GetNodeMap());
     astFile.reset(new otava::ast::File());
     astFile->Read(astReader);
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << ">module '" << Name() << "' import" << "\n";
+#endif
     Import(moduleMapper, config, optLevel);
-    symbolTable.ReadMaps(reader, moduleMapper.GetNodeMap(), moduleMapper.GetSymbolMap());
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << "<module '" << Name() << "' import" << "\n";
+#endif
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << ">module '" << Name() << "' read maps" << "\n";
+#endif
+    symbolTable.ReadMaps(reader, moduleMapper.GetNodeMap());
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << "<module '" << Name() << "' read maps" << "\n";
+#endif
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << ">module '" << Name() << "' resolve symbols" << "\n";
+#endif
     symbolTable.Resolve(reader.GetContext());
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << "<module '" << Name() << "' resolve symbols" << "\n";
+#endif
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << ">module '" << Name() << "' resolve evaluation context" << "\n";
+#endif
     evaluationContext.Resolve(symbolTable);
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << "<module '" << Name() << "' resolve evaluation context" << "\n";
+#endif
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << ">module '" << Name() << "' import after resolve" << "\n";
+#endif
     symbolTable.ImportAfterResolve();
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << "<module '" << Name() << "' import after resolve" << "\n";
+#endif
     reading = false;
 }
 
@@ -420,6 +476,9 @@ std::string ModuleMapper::GetModuleFilePath(const std::string& moduleName, const
 
 Module* ModuleMapper::GetModule(const std::string& moduleName, const std::string& config, int optLevel)
 {
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << ">module mapper get module '" << moduleName << "'" << "\n";
+#endif
     std::lock_guard<std::recursive_mutex> lock(mtx);
     auto it = moduleMap.find(moduleName);
     if (it != moduleMap.cend())
@@ -443,20 +502,44 @@ Module* ModuleMapper::GetModule(const std::string& moduleName, const std::string
 
 Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::string& moduleFilePath, const std::string& config, int optLevel)
 {
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << ">module mapper load module '" << moduleName << "'" << "\n";
+#endif
     Reader reader(moduleFilePath);
     std::unique_ptr<Module> module(new Module(moduleName));
     module->SetFilePath(moduleFilePath);
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << ">module mapper read header '" << moduleName << "'" << "\n";
+#endif
     module->ReadHeader(reader, *this);
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << "<module mapper read header '" << moduleName << "'" << "\n";
+#endif
     Module* modulePtr = module.get();
     moduleMap[moduleName] = modulePtr;
     for (const std::string& importedModuleName : module->ImportModuleNames())
     {
+#ifdef DEBUG_WRITE_MAPS
+        std::cout << ">module mapper import '" << moduleName << "' <- '" << importedModuleName << "'" << "\n";
+#endif
         Module* importedModule = GetModule(importedModuleName, config, optLevel);
         module->AddImportedModule(importedModule);
+#ifdef DEBUG_WRITE_MAPS
+        std::cout << "<module mapper import '" << moduleName << "' <- '" << importedModuleName << "'" << "\n";
+#endif
     }
     SetCurrentModule(module.get());
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << ">module mapper complete read '" << moduleName << "'" << "\n";
+#endif
     module->CompleteRead(reader, *this, config, optLevel);
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << "<module mapper complete read '" << moduleName << "'" << "\n";
+#endif
     modules.push_back(std::move(module));
+#ifdef DEBUG_WRITE_MAPS
+    std::cout << ">module mapper load module '" << moduleName << "'" << "\n";
+#endif
     return modulePtr;
 }
 

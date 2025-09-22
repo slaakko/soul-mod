@@ -34,8 +34,16 @@ import util.sha1;
 
 namespace otava::symbols {
 
-ClassTemplateSpecializationSymbol::ClassTemplateSpecializationSymbol(const std::u32string& name_) : 
-    ClassTypeSymbol(SymbolKind::classTemplateSpecializationSymbol, name_), classTemplate(nullptr), instantiated(false), destructor(nullptr), instantiatingDestructor(false)
+ClassTemplateSpecializationSymbol::ClassTemplateSpecializationSymbol(const std::u32string& name_) :
+    ClassTypeSymbol(SymbolKind::classTemplateSpecializationSymbol, name_),
+    classTemplate(nullptr), instantiated(false), destructor(nullptr), instantiatingDestructor(false)
+{
+    GetScope()->SetKind(ScopeKind::classScope);
+}
+
+ClassTemplateSpecializationSymbol::ClassTemplateSpecializationSymbol(const util::uuid& id_, const std::u32string& name_) : 
+    ClassTypeSymbol(SymbolKind::classTemplateSpecializationSymbol, id_, name_), 
+    classTemplate(nullptr), instantiated(false), destructor(nullptr), instantiatingDestructor(false)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -100,7 +108,7 @@ void ClassTemplateSpecializationSymbol::Write(Writer& writer)
 void ClassTemplateSpecializationSymbol::Read(Reader& reader)
 {
     ClassTypeSymbol::Read(reader);
-    reader.GetSymbolTable()->AddClassTemplateSpecializationToSet(this);
+    ids.clear();
     instantiated = reader.GetBinaryStreamReader().ReadBool();
     util::uuid id;
     reader.GetBinaryStreamReader().ReadUuid(id);
@@ -114,6 +122,7 @@ void ClassTemplateSpecializationSymbol::Read(Reader& reader)
         ids.push_back(std::make_pair(id, isType));
     }
     reader.GetBinaryStreamReader().ReadUuid(destructorId);
+    instantiatedVirtualFunctionSpecializationIds.clear();
     std::uint32_t nfids = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (std::uint32_t i = 0; i < nfids; ++i)
     {
@@ -163,7 +172,6 @@ void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable)
                 instantiatedVirtualFunctionSpecializations.push_back(vf);
             }
         }
-        symbolTable.AddClassTemplateSpecializationToSet(this);
     }
     else
     {
@@ -283,6 +291,19 @@ bool ClassTemplateSpecializationSymbol::ContainsVirtualFunctionSpecialization(Fu
         if (instance == specialization) return true;
     }
     return false;
+}
+
+util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments)
+{
+    util::uuid id = classTemplate->Id();
+    int n = static_cast<int>(templateArguments.size());
+    for (int i = 0; i < n; ++i)
+    {
+        util::uuid argId = templateArguments[i]->Id();
+        util::Rotate(argId, i);
+        util::Xor(id, argId);
+    }
+    return id;
 }
 
 std::u32string MakeSpecializationName(TypeSymbol* templateSymbol, const std::vector<Symbol*>& templateArguments)
@@ -462,7 +483,8 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
     int arity = templateDeclaration->Arity();
     ClassTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, templateArgs);
     int m = templateArgs.size();
-    if (specialization->Instantiated() && arity == m)
+    bool wasInstantiated = specialization->Instantiated();
+    if (wasInstantiated && arity == m)
     {
         return specialization;
     }
@@ -510,7 +532,19 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
                 context->GetSymbolTable()->BeginScope(&instantiationScope);
                 templateArg = ResolveType(defaultTemplateArgNode, DeclarationFlags::none, context);
                 context->GetSymbolTable()->EndScope();
-                specialization->AddTemplateArgument(templateArg);
+                if (specialization->TemplateArguments().size() < arity)
+                {
+                    specialization->AddTemplateArgument(templateArg);
+                    context->GetSymbolTable()->UnmapClassTemplateSpecialization(specialization);
+                    std::string oldId = util::ToString(specialization->Id());
+                    specialization->SetId(MakeClassTemplateSpecializationSymbolId(specialization->ClassTemplate(), specialization->TemplateArguments()));
+                    context->GetSymbolTable()->MapClassTemplateSpecialization(specialization);
+                    if (specialization->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>")
+                    {
+                        //std::cout << context->GetModule()->Name() << ": change id: " <<
+                          //  util::ToUtf8(specialization->Name()) << "=" << util::ToString(specialization->Id()) << "\n" << "old id=" << oldId << "\n";
+                    }
+                }
             }
             else
             {
@@ -548,11 +582,26 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
         boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
         instantiationScope.Install(boundTemplateParameter);
     }
+    if (wasInstantiated)
+    {
+        context->GetSymbolTable()->EndScope();
+        specialization->GetScope()->ClearParentScopes();
+        for (const auto& boundTemplateParameter : boundTemplateParameters)
+        {
+            context->GetSymbolTable()->UnmapType(boundTemplateParameter.get());
+        }
+        return specialization;
+    }
+    specialization->SetNextMemFnDefIndex(classTemplate->NextMemFnDefIndex());
     context->GetSymbolTable()->BeginScope(&instantiationScope);
     Instantiator instantiator(context, &instantiationScope);
     try
     {
         context->PushSetFlag(ContextFlags::dontBind | ContextFlags::skipFunctionDefinitions);
+        if (specialization->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>")
+        {
+            std::cout << context->GetSymbolTable()->GetModule()->Name() << ": instantiate: " << util::ToUtf8(specialization->Name()) << "=" << util::ToString(specialization->Id()) << "\n";
+        }
         classNode->Accept(instantiator);
         std::vector<ClassTypeSymbol*> baseClasses = instantiator.GetBaseClasses();
         for (ClassTypeSymbol* baseClass : baseClasses)
@@ -579,6 +628,11 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
     for (const auto& boundTemplateParameter : boundTemplateParameters)
     {
         context->GetSymbolTable()->UnmapType(boundTemplateParameter.get());
+    }
+    if (!specialization->IsProject())
+    {
+        specialization->SetProject();
+        context->GetSymbolTable()->AddChangedClassTemplateSpecialization(specialization);
     }
     return specialization;
 }
@@ -683,6 +737,16 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
             {
                 ThrowException(util::ToUtf8(memFn->Name()) + ": otava.symbols.class_templates: function definition symbol expected", sourcePos, context);
             }
+        }
+    }
+    if (memFn->IsFunctionDefinitionSymbol())
+    {
+        FunctionDefinitionSymbol* memFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(memFn);
+        std::int32_t memFnDefIndex = memFnDefSymbol->DefIndex();
+        FunctionDefinitionSymbol* memFnSpecialization = classTemplateSpecialization->GetMemFnDefSymbol(memFnDefIndex);
+        if (memFnSpecialization)
+        {
+            return memFnSpecialization;
         }
     }
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
@@ -806,6 +870,7 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                         context->PopBoundFunction();
                         instantiationScope.PopParentScope();
                         functionDefinition->GetScope()->ClearParentScopes();
+                        context->GetSymbolTable()->MapClassTemplateSpecialization(classTemplateSpecialization);
                     }
                     else
                     {

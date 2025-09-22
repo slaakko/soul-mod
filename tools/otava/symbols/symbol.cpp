@@ -275,7 +275,13 @@ std::string SymbolKindToString(SymbolKind kind)
     return "symbol";
 }
 
-Symbol::Symbol(SymbolKind kind_, const std::u32string& name_) : kind(kind_), id(util::random_uuid()), name(name_), parent(nullptr), access(Access::none)
+Symbol::Symbol(SymbolKind kind_, const std::u32string& name_) : kind(kind_), flags(SymbolFlags::project), id(util::random_uuid()), 
+    name(name_), parent(nullptr), access(Access::none)
+{
+}
+
+Symbol::Symbol(SymbolKind kind_, const util::uuid& id_, const std::u32string& name_) : kind(kind_), flags(SymbolFlags::project), id(id_), 
+    name(name_), parent(nullptr), access(Access::none)
 {
 }
 
@@ -339,6 +345,7 @@ std::unique_ptr<Symbol> Symbol::RemoveSymbol(Symbol* symbol)
 void Symbol::Write(Writer& writer)
 {
     writer.GetBinaryStreamWriter().Write(id);
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(flags & ~SymbolFlags::project));
     otava::symbols::Write(writer, declarationFlags);
     writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(access));
 }
@@ -346,6 +353,7 @@ void Symbol::Write(Writer& writer)
 void Symbol::Read(Reader& reader)
 {
     reader.GetBinaryStreamReader().ReadUuid(id);
+    flags = static_cast<SymbolFlags>(reader.GetBinaryStreamReader().ReadByte());
     otava::symbols::Read(reader, declarationFlags);
     access = static_cast<Access>(reader.GetBinaryStreamReader().ReadByte());
 }

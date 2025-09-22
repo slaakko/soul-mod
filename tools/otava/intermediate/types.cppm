@@ -300,7 +300,7 @@ public:
     bool IsWeakType() const override;
     inline int FieldCount() const { return fieldTypeRefs.size(); }
     inline const std::vector<TypeRef>& FieldTypeRefs() const { return fieldTypeRefs; }
-    inline Type* FieldType(int i) const { return fieldTypeRefs[i].GetType(); }
+    Type* FieldType(int i) const;
     std::int64_t GetFieldOffset(std::int64_t index) const;
     void WriteDeclaration(util::CodeFormatter& formatter) override;
     void ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context) override;

@@ -415,6 +415,7 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, const std::vector<Ty
             {
                 if (std::find(viableFunctions.begin(), viableFunctions.end(), function) == viableFunctions.end())
                 {
+                    if (function->Skip()) continue;
                     viableFunctions.push_back(function);
                 }
             }
@@ -425,6 +426,7 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, const std::vector<Ty
             {
                 continue;
             }
+            if (functionDefinition->Skip()) continue;
             if (arity >= functionDefinition->MinMemFunArity(context) && arity <= functionDefinition->MemFunArity(context))
             {
                 if (std::find(viableFunctions.begin(), viableFunctions.end(), functionDefinition) == viableFunctions.end())

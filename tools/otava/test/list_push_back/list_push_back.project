@@ -1,0 +1,3 @@
+project list_push_back;
+target=program;
+source <list_push_back.cpp>;

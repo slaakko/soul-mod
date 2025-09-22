@@ -25,13 +25,13 @@ public:
     explicit stack(Container&& that) : c(std::move(that.c))
     {
     }
-    bool empty() const { return c.empty(); }
-    size_type size() const { return c.size(); }
-    reference top() { return c.back(); }
-    const_reference top() const { return c.back(); }
-    void push(const value_type& x) { c.push_back(x); }
-    void push(value_type&& x) { c.push_back(std::move(x)); }
-    void pop() { c.pop_back(); }
+    inline bool empty() const { return c.empty(); }
+    inline size_type size() const { return c.size(); }
+    inline reference top() { return c.back(); }
+    inline const_reference top() const { return c.back(); }
+    inline void push(const value_type& x) { c.push_back(x); }
+    inline void push(value_type&& x) { c.push_back(std::move(x)); }
+    inline void pop() { c.pop_back(); }
 };
 
 } // namespace std

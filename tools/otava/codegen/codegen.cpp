@@ -644,8 +644,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
     }
     node.Sort();
     emitter->SetCompileUnitInfo(node.Id(), context.FileName());
-    int n = node.BoundNodes().size();
-    for (int i = 0; i < n; ++i)
+    for (int i = 0; i < node.BoundNodes().size(); ++i)
     {
         otava::symbols::BoundNode* boundNode = node.BoundNodes()[i].get();
         Reset();
@@ -708,6 +707,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundClassNode& node)
 {
     otava::symbols::ClassTypeSymbol* cls = node.GetClass();
+    cls->MakeObjectLayout(soul::ast::SourcePos(), &context);
     GenerateVTab(cls, node.GetSourcePos());
 }
 

@@ -6,6 +6,7 @@
 export module otava.symbols.modules;
 
 import std;
+import util.uuid;
 import otava.symbols.symbol.table;
 import otava.symbols.compound.type.symbol;
 import otava.symbols.value;
@@ -35,11 +36,15 @@ enum class ModuleKind : std::int8_t
     interfaceModule, implementationModule,
 };
 
+util::uuid MakeProjectId(const std::string& projectName);
+
 class Module
 {
 public:
     Module(const std::string& name_);
     ~Module();
+    void SetProjectId(const util::uuid& projectId_);
+    const util::uuid& GetProjectId() const { return projectId; }
     void SetKind(ModuleKind kind_) { kind = kind_; }
     ModuleKind Kind() const { return kind; }
     void SetFilePath(const std::string& filePath_);
@@ -86,6 +91,7 @@ public:
     void ToXml(const std::string& xmlFilePath) const;
 private:
     ModuleKind kind;
+    util::uuid projectId;
     std::int32_t fileId;
     std::int32_t index;
     std::int32_t importIndex;

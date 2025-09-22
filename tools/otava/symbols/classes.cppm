@@ -52,7 +52,8 @@ enum class ClassKind
 
 enum class ClassTypeSymbolFlags : std::int32_t
 {
-    none = 0, objectLayoutComputed = 1 << 0, hasUserDefinedDestructor = 1 << 1, hasUserDefinedConstructor = 1 << 2, vtabInitialized = 1 << 3, vtabGenerated = 1 << 4
+    none = 0, objectLayoutComputed = 1 << 0, hasUserDefinedDestructor = 1 << 1, hasUserDefinedConstructor = 1 << 2, vtabInitialized = 1 << 3, vtabGenerated = 1 << 4,
+    resolved = 1 << 5
 };
 
 constexpr ClassTypeSymbolFlags operator|(ClassTypeSymbolFlags left, ClassTypeSymbolFlags right)
@@ -75,11 +76,12 @@ class ClassTypeSymbol : public TypeSymbol
 public:
     ClassTypeSymbol(const std::u32string& name_);
     ClassTypeSymbol(SymbolKind kind_, const std::u32string& name_);
+    ClassTypeSymbol(SymbolKind kind_, const util::uuid& id_, const std::u32string& name_);
     int Arity();
     inline ClassKind GetClassKind() const { return classKind; }
     inline void SetClassKind(ClassKind classKind_) { classKind = classKind_; }
     inline TypeSymbol* Specialization() const { return specialization; }
-    inline void SetSpecialization(TypeSymbol* specialization_) { specialization = specialization_; }
+    void SetSpecialization(TypeSymbol* specialization_, Context* context);
     std::string SymbolKindStr() const override { return "class type symbol"; }
     std::string SymbolDocKindStr() const override { return "class"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
@@ -114,9 +116,12 @@ public:
     bool IsPolymorphic() const override;
     inline const std::vector<VariableSymbol*>& MemberVariables() const { return memberVariables; }
     inline const std::vector<FunctionSymbol*>& MemberFunctions() const { return memberFunctions; }
-    inline const std::vector<FunctionDefinitionSymbol*>& MemFunDefSymbols() const { return memFunDefSymbols; }
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    void AddMemFunDefSymbol(FunctionDefinitionSymbol* memFunDefSymbol);
+    void SetMemFnDefSymbol(FunctionDefinitionSymbol* memFnDefSymbol);
+    FunctionDefinitionSymbol* GetMemFnDefSymbol(int32_t defIndex) const;
+    const std::map<std::int32_t, FunctionDefinitionSymbol*>& MemFnDefSymbolMap() const { return memFnDefSymbolMap; }
+    inline void SetNextMemFnDefIndex(int32_t defIndex) { nextMemFnDefIndex = std::max(defIndex, nextMemFnDefIndex); }
+    inline int32_t NextMemFnDefIndex() const { return nextMemFnDefIndex; }
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     inline const std::vector<TypeSymbol*>& ObjectLayout() const { return objectLayout; }
     void MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Context* context);
@@ -157,7 +162,8 @@ private:
     std::vector<VariableSymbol*> memberVariables;
     std::vector<VariableSymbol*> staticMemberVariables;
     std::vector<FunctionSymbol*> memberFunctions;
-    std::vector<FunctionDefinitionSymbol*> memFunDefSymbols;
+    std::map<std::int32_t, FunctionDefinitionSymbol*> memFnDefSymbolMap;
+    std::map<std::int32_t, util::uuid> memFnDefSymbolIdMap;
     std::vector<TypeSymbol*> objectLayout;
     std::vector<util::uuid> objectLayoutIds;
     otava::intermediate::Type* irType;
@@ -174,6 +180,7 @@ private:
     std::string vtabName;
     FunctionSymbol* copyCtor;
     std::vector<std::unique_ptr<Symbol>> tempVars;
+    int32_t nextMemFnDefIndex;
 };
 
 class ForwardClassDeclarationSymbol : public TypeSymbol

@@ -23,6 +23,10 @@ TypeSymbol::TypeSymbol(SymbolKind kind_, const std::u32string& name_) : Containe
 {
 }
 
+TypeSymbol::TypeSymbol(SymbolKind kind_, const util::uuid& id_, const std::u32string& name_) : ContainerSymbol(kind_, id_, name_)
+{
+}
+
 bool TypeSymbol::IsAutoTypeSymbol() const
 {
     if (IsFundamentalTypeSymbol())
