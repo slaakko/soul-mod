@@ -484,8 +484,11 @@ bool ClassTypeSymbol::IsTemplate() const
 
 void ClassTypeSymbol::MakeVTab(Context* context, const soul::ast::SourcePos& sourcePos)
 {
-    if (VTabInitialized()) return;
-    SetVTabInitialized();
+    if (!IsClassTemplateSpecializationSymbol())
+    {
+        if (VTabInitialized()) return;
+        SetVTabInitialized();
+    }
     ComputeVTabName(context);
     InitVTab(vtab, context, sourcePos);
     vtabSize = vtab.size();
@@ -514,6 +517,7 @@ bool Overrides(FunctionSymbol* f, FunctionSymbol* g)
 void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos)
 {
     if (!IsPolymorphic()) return;
+    vtab.clear();
     if (!baseClasses.empty())
     {
         for (ClassTypeSymbol* baseClass : baseClasses)
@@ -829,7 +833,7 @@ void ClassTypeSymbol::GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Co
 
 std::pair<bool, std::int64_t> ClassTypeSymbol::Delta(ClassTypeSymbol* base, Emitter& emitter, Context* context)
 {
-    if (base == this) return std::make_pair(true, 0);
+    if (TypesEqual(base, this)) return std::make_pair(true, 0);
     int64_t delta = 0;
     for (ClassTypeSymbol* bc : BaseClasses())
     {

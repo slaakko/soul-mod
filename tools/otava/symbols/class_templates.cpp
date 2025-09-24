@@ -293,17 +293,29 @@ bool ClassTemplateSpecializationSymbol::ContainsVirtualFunctionSpecialization(Fu
     return false;
 }
 
-util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments)
+util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, int level, SymbolTable& symbolTable)
 {
     util::uuid id = classTemplate->Id();
     int n = static_cast<int>(templateArguments.size());
     for (int i = 0; i < n; ++i)
     {
-        util::uuid argId = templateArguments[i]->Id();
-        util::Rotate(argId, i);
+        Symbol* arg = templateArguments[i];
+        util::uuid argId = arg->Id();
+        if (arg->IsClassTemplateSpecializationSymbol())
+        {
+            ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(arg);
+            argId = MakeClassTemplateSpecializationSymbolId(sp->ClassTemplate(), sp->TemplateArguments(), level + 1, symbolTable);
+        }
+        util::Rotate(argId, (i + level + 1) & (util::uuid::static_size() - 1));
         util::Xor(id, argId);
     }
+    util::Xor(id, symbolTable.GetLevelId(level));
     return id;
+}
+
+util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, SymbolTable& symbolTable)
+{
+    return MakeClassTemplateSpecializationSymbolId(classTemplate, templateArguments, 0, symbolTable);
 }
 
 std::u32string MakeSpecializationName(TypeSymbol* templateSymbol, const std::vector<Symbol*>& templateArguments)
@@ -537,7 +549,8 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
                     specialization->AddTemplateArgument(templateArg);
                     context->GetSymbolTable()->UnmapClassTemplateSpecialization(specialization);
                     std::string oldId = util::ToString(specialization->Id());
-                    specialization->SetId(MakeClassTemplateSpecializationSymbolId(specialization->ClassTemplate(), specialization->TemplateArguments()));
+                    specialization->SetId(MakeClassTemplateSpecializationSymbolId(specialization->ClassTemplate(), specialization->TemplateArguments(), 
+                        *context->GetSymbolTable()));
                     context->GetSymbolTable()->MapClassTemplateSpecialization(specialization);
                     if (specialization->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>")
                     {
@@ -600,7 +613,7 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
         context->PushSetFlag(ContextFlags::dontBind | ContextFlags::skipFunctionDefinitions);
         if (specialization->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>")
         {
-            std::cout << context->GetSymbolTable()->GetModule()->Name() << ": instantiate: " << util::ToUtf8(specialization->Name()) << "=" << util::ToString(specialization->Id()) << "\n";
+            //std::cout << context->GetSymbolTable()->GetModule()->Name() << ": instantiate: " << util::ToUtf8(specialization->Name()) << "=" << util::ToString(specialization->Id()) << "\n";
         }
         classNode->Accept(instantiator);
         std::vector<ClassTypeSymbol*> baseClasses = instantiator.GetBaseClasses();
@@ -913,6 +926,10 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
         ClassTypeSymbol* parentClass = memFn->ParentClassType();
         if (parentClass)
         {
+            if (parentClass->IsClassTemplateSpecializationSymbol())
+            {
+                parentClass = static_cast<ClassTemplateSpecializationSymbol*>(parentClass)->ClassTemplate();
+            }
             TemplateDeclarationSymbol* templateDeclaration = parentClass->ParentTemplateDeclaration();
             if (templateDeclaration)
             {
@@ -981,7 +998,7 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                     }
                     else
                     {
-                        ThrowException("otava.symbols.function_templates: function symbol expected", node->GetSourcePos(), context);
+                        ThrowException("otava.symbols.class_templates: function symbol expected", node->GetSourcePos(), context);
                     }
                     instantiationScope.PopParentScope();
                 }

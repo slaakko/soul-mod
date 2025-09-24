@@ -1141,7 +1141,7 @@ void StatementBinder::Visit(otava::ast::SimpleDeclarationNode& node)
                 if (initializer && initializer->GetType())
                 {
                     TypeSymbol* initializerType = initializer->GetType()->DirectType(context)->FinalType(node.GetSourcePos(), context);
-                    if (variable->GetDeclaredType()->GetBaseType()->IsAutoTypeSymbol() && !variable->GetDeclaredType()->GetDerivations().IsEmpty())
+                    if (variable->GetDeclaredType()->GetBaseType()->IsAutoTypeSymbol() && variable->GetDeclaredType()->GetDerivations() != Derivations::none)
                     {
                         initializerType = context->GetSymbolTable()->MakeCompoundType(initializerType->GetBaseType(), variable->GetDeclaredType()->GetDerivations());
                     }

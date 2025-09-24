@@ -42,7 +42,7 @@ bool TypeSymbol::IsPointerType() const
     if (IsCompoundTypeSymbol())
     {
         const CompoundTypeSymbol* compoundTypeSymbol = static_cast<const CompoundTypeSymbol*>(this);
-        return HasDerivation(compoundTypeSymbol->GetDerivations(), Derivation::pointerDerivation);
+        return otava::symbols::PointerCount(compoundTypeSymbol->GetDerivations()) > 0;
     }
     return false;
 }
@@ -57,7 +57,7 @@ bool TypeSymbol::IsConstType() const
     if (IsCompoundTypeSymbol())
     {
         const CompoundTypeSymbol* compoundTypeSymbol = static_cast<const CompoundTypeSymbol*>(this);
-        return HasDerivation(compoundTypeSymbol->GetDerivations(), Derivation::constDerivation);
+        return HasDerivation(compoundTypeSymbol->GetDerivations(), Derivations::constDerivation);
     }
     return false;
 }
@@ -67,7 +67,7 @@ bool TypeSymbol::IsLValueRefType() const
     if (IsCompoundTypeSymbol())
     {
         const CompoundTypeSymbol* compoundTypeSymbol = static_cast<const CompoundTypeSymbol*>(this);
-        return HasDerivation(compoundTypeSymbol->GetDerivations(), Derivation::lvalueRefDerivation);
+        return HasDerivation(compoundTypeSymbol->GetDerivations(), Derivations::lvalueRefDerivation);
     }
     return false;
 }
@@ -77,7 +77,7 @@ bool TypeSymbol::IsRValueRefType() const
     if (IsCompoundTypeSymbol())
     {
         const CompoundTypeSymbol* compoundTypeSymbol = static_cast<const CompoundTypeSymbol*>(this);
-        return HasDerivation(compoundTypeSymbol->GetDerivations(), Derivation::rvalueRefDerivation);
+        return HasDerivation(compoundTypeSymbol->GetDerivations(), Derivations::rvalueRefDerivation);
     }
     return false;
 }
@@ -90,8 +90,7 @@ bool TypeSymbol::IsReferenceType() const
 TypeSymbol* TypeSymbol::AddConst(Context* context)
 {
     SymbolTable* symbolTable = context->GetSymbolTable();
-    Derivations derivations;
-    derivations.vec.push_back(Derivation::constDerivation);
+    Derivations derivations = Derivations::constDerivation;
     return symbolTable->MakeCompoundType(this, derivations);
 }
 
@@ -109,8 +108,8 @@ TypeSymbol* TypeSymbol::RemoveConst(Context* context)
 TypeSymbol* TypeSymbol::AddPointer(Context* context)
 {
     SymbolTable* symbolTable = context->GetSymbolTable();
-    Derivations derivations;
-    derivations.vec.push_back(Derivation::pointerDerivation);
+    Derivations derivations = Derivations::none;
+    derivations = otava::symbols::SetPointerCount(derivations, 1);
     return symbolTable->MakeCompoundType(this, derivations);
 }
 
@@ -128,8 +127,7 @@ TypeSymbol* TypeSymbol::RemovePointer(Context* context)
 TypeSymbol* TypeSymbol::AddLValueRef(Context* context)
 {
     SymbolTable* symbolTable = context->GetSymbolTable();
-    Derivations derivations;
-    derivations.vec.push_back(Derivation::lvalueRefDerivation);
+    Derivations derivations = Derivations::lvalueRefDerivation;
     return symbolTable->MakeCompoundType(this, derivations);
 }
 
@@ -147,8 +145,7 @@ TypeSymbol* TypeSymbol::RemoveLValueRef(Context* context)
 TypeSymbol* TypeSymbol::AddRValueRef(Context* context)
 {
     SymbolTable* symbolTable = context->GetSymbolTable();
-    Derivations derivations;
-    derivations.vec.push_back(Derivation::rvalueRefDerivation);
+    Derivations derivations = Derivations::rvalueRefDerivation;
     return symbolTable->MakeCompoundType(this, derivations);
 }
 
@@ -192,13 +189,7 @@ TypeSymbol* TypeSymbol::RemoveRefOrPtr(Context* context)
     return this;
 }
 
-const Derivations& TypeSymbol::GetDerivations() const
-{
-    static Derivations emptyDerivations;
-    return emptyDerivations;
-}
-
-TypeSymbol* TypeSymbol::RemoveDerivations(const Derivations& derivations, Context* context) 
+TypeSymbol* TypeSymbol::RemoveDerivations(Derivations derivations, Context* context) 
 {
     if (IsPointerType()) return nullptr;
     return this;

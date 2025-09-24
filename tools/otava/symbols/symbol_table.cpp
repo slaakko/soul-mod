@@ -206,11 +206,13 @@ void SymbolTable::Init()
 {
     if (module->Name() == "std.type.fundamental")
     {
+        InitCompoundTypeIds();
+        InitTemplateParameterIds();
+        InitLevelIds();
         CreateFundamentalTypes();
         AddFundamentalTypeOperations();
         CreateCoreSymbols();
         module->GetEvaluationContext()->Init();
-        InitTemplateParameterIds();
     }
 }
 
@@ -253,6 +255,8 @@ void SymbolTable::Import(const SymbolTable& that, FunctionDefinitionSymbolSet* f
     ImportClassIndex(that);
     AddImportAfterResolve(&that);
     templateParameterIds = that.templateParameterIds;
+    compoundTypeIds = that.compoundTypeIds;
+    levelIds = that.levelIds;
 #ifdef DEBUG_WRITE_MAPS
     std::cout << "<import symbol table '" << module->Name() << "' <- '" << that.GetModule()->Name() << "'\n";
 #endif
@@ -303,21 +307,7 @@ void SymbolTable::ImportCompoundTypeMap(const SymbolTable& that, Context* contex
 {
     for (const auto& p : that.compoundTypeMap)
     {
-        TypeSymbol* type = p.first;
-        if (type->IsExportSymbol(context))
-        {
-            MapType(type);
-            const std::vector<CompoundTypeSymbol*>& vec = p.second;
-            std::vector<CompoundTypeSymbol*>& v = compoundTypeMap[type];
-            for (CompoundTypeSymbol* compound : vec)
-            {
-                MapType(compound);
-                if (std::find(v.begin(), v.end(), compound) == v.end())
-                {
-                    v.push_back(compound);
-                }
-            }
-        }
+        compoundTypeMap.insert(p);
     }
 }
 
@@ -650,6 +640,18 @@ void SymbolTable::Write(Writer& writer, Context* context)
         {
             writer.GetBinaryStreamWriter().Write(templateParameterIds[i]);
         }
+        int cn = compoundTypeIds.size();
+        writer.GetBinaryStreamWriter().Write(cn);
+        for (int i = 0; i < cn; ++i)
+        {
+            writer.GetBinaryStreamWriter().Write(compoundTypeIds[i]);
+        }
+        int ln = levelIds.size();
+        writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(ln));
+        for (int i = 0; i < ln; ++i)
+        {
+            writer.GetBinaryStreamWriter().Write(levelIds[i]);
+        }
     }
     globalNs->Write(writer);
     std::uint32_t scount = classTemplateSpecializations.size();
@@ -748,6 +750,22 @@ void SymbolTable::Read(Reader& reader)
             util::uuid id;
             reader.GetBinaryStreamReader().ReadUuid(id);
             templateParameterIds.push_back(id);
+        }
+        compoundTypeIds.clear();
+        int cn = reader.GetBinaryStreamReader().ReadInt();
+        for (int i = 0; i < cn; ++i)
+        {
+            util::uuid id;
+            reader.GetBinaryStreamReader().ReadUuid(id);
+            compoundTypeIds.push_back(id);
+        }
+        levelIds.clear();
+        int ln = reader.GetBinaryStreamReader().ReadByte();
+        for (int i = 0; i < ln; ++i)
+        {
+            util::uuid id;
+            reader.GetBinaryStreamReader().ReadUuid(id);
+            levelIds.push_back(id);
         }
     }
     globalNs->Read(reader);
@@ -922,6 +940,10 @@ void SymbolTable::Resolve(Context* context)
     {
         MapType(static_cast<TypeSymbol*>(specialization.get()));
     }
+    for (auto& compoundType : compoundTypes)
+    {
+        MapCompoundType(compoundType.get());
+    }
     for (auto& arrayType : arrayTypes)
     {
         MapType(static_cast<TypeSymbol*>(arrayType.get()));
@@ -929,10 +951,6 @@ void SymbolTable::Resolve(Context* context)
     for (auto& dependentTypeSymbol : dependentTypeSymbols)
     {
         MapType(static_cast<TypeSymbol*>(dependentTypeSymbol.get()));
-    }
-    for (auto& compoundType : compoundTypes)
-    {
-        MapType(compoundType.get());
     }
     globalNs->Resolve(*this);
     for (const auto& specialization : classTemplateSpecializations)
@@ -968,25 +986,9 @@ void SymbolTable::Resolve(Context* context)
     {
         instantiation->Resolve(*this);
     }
-    int index = 0;
     for (auto& compoundType : compoundTypes)
     {
         compoundType->Resolve(*this);
-        bool found = false;
-        std::vector<CompoundTypeSymbol*>& compoundTypeVec = compoundTypeMap[compoundType->BaseType()];
-        for (CompoundTypeSymbol* ct : compoundTypeVec)
-        {
-            if (ct == compoundType.get())
-            {
-                found = true;
-                break;
-            }
-        }
-        if (!found)
-        {
-            compoundTypeVec.push_back(compoundType.get());
-        }
-        ++index;
     }
     conversionTable->Make();
 }
@@ -1754,7 +1756,7 @@ ParameterSymbol* SymbolTable::CreateParameter(const std::u32string& name, otava:
     return parameterSymbol;
 }
 
-TypeSymbol* SymbolTable::MakeCompoundType(TypeSymbol* baseType, const Derivations& derivations)
+TypeSymbol* SymbolTable::MakeCompoundType(TypeSymbol* baseType, Derivations derivations)
 {
     MapType(baseType);
     Derivations drv = derivations;
@@ -1764,67 +1766,83 @@ TypeSymbol* SymbolTable::MakeCompoundType(TypeSymbol* baseType, const Derivation
         drv = Merge(drv, compoundTypeSymbol->GetDerivations());
         baseType = compoundTypeSymbol->BaseType();
     }
-    if (drv.IsEmpty())
+    if (drv == Derivations::none)
     {
         return baseType;
     }
-    std::vector<CompoundTypeSymbol*>& compoundTypeVec = compoundTypeMap[baseType];
-    for (const auto& compoundType : compoundTypeVec)
+    util::uuid id = MakeCompoundTypeId(baseType, drv, *this);
+    CompoundTypeSymbol* compoundType = GetCompoundType(id);
+    if (compoundType)
     {
-        if (compoundType->GetDerivations() == drv)
-        {
-            return compoundType;
-        }
+        return compoundType;
     }
-    CompoundTypeSymbol* compoundType = new CompoundTypeSymbol(baseType, drv);
-    symbolMap->AddSymbol(compoundType);
-    compoundTypeVec.push_back(compoundType);
-    compoundTypes.push_back(std::unique_ptr<CompoundTypeSymbol>(compoundType));
-    MapType(compoundType);
+    CompoundTypeSymbol* compoundTypeSymbol = new CompoundTypeSymbol(baseType, drv, id);
+    AddCompoundType(compoundTypeSymbol);
+    MapCompoundType(compoundTypeSymbol);
+    symbolMap->AddSymbol(compoundTypeSymbol);
     if (AddToRecomputeNameSet())
     {
-        AddToRecomputeNameSet(compoundType);
+        AddToRecomputeNameSet(compoundTypeSymbol);
     }
-    return compoundType;
+    return compoundTypeSymbol;
+}
+
+void SymbolTable::AddCompoundType(CompoundTypeSymbol* compoundType)
+{
+    compoundTypes.push_back(std::unique_ptr<CompoundTypeSymbol>(compoundType));
+}
+
+void SymbolTable::MapCompoundType(CompoundTypeSymbol* compoundType)
+{
+    compoundTypeMap[compoundType->Id()] = compoundType;
+    MapType(compoundType);
+}
+
+CompoundTypeSymbol* SymbolTable::GetCompoundType(const util::uuid& compoundTypeId) const
+{
+    auto it = compoundTypeMap.find(compoundTypeId);
+    if (it != compoundTypeMap.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 TypeSymbol* SymbolTable::MakeConstCharPtrType()
 {
-    Derivations derivations;
-    derivations.vec.push_back(Derivation::constDerivation);
-    derivations.vec.push_back(Derivation::pointerDerivation);
+    Derivations derivations = Derivations::constDerivation;
+    derivations = SetPointerCount(derivations, 1);
     return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::charType), derivations);
 }
 
 TypeSymbol* SymbolTable::MakeConstChar8PtrType()
 {
-    Derivations derivations;
-    derivations.vec.push_back(Derivation::constDerivation);
-    derivations.vec.push_back(Derivation::pointerDerivation);
+    Derivations derivations = Derivations::constDerivation;
+    derivations = SetPointerCount(derivations, 1);
     return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::char8Type), derivations);
 }
 
 TypeSymbol* SymbolTable::MakeConstChar16PtrType()
 {
-    Derivations derivations;
-    derivations.vec.push_back(Derivation::constDerivation);
-    derivations.vec.push_back(Derivation::pointerDerivation);
+    Derivations derivations = Derivations::constDerivation;
+    derivations = SetPointerCount(derivations, 1);
     return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::char16Type), derivations);
 }
 
 TypeSymbol* SymbolTable::MakeConstChar32PtrType()
 {
-    Derivations derivations;
-    derivations.vec.push_back(Derivation::constDerivation);
-    derivations.vec.push_back(Derivation::pointerDerivation);
+    Derivations derivations = Derivations::constDerivation;
+    derivations = SetPointerCount(derivations, 1);
     return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::char32Type), derivations);
 }
 
 TypeSymbol* SymbolTable::MakeConstWCharPtrType()
 {
-    Derivations derivations;
-    derivations.vec.push_back(Derivation::constDerivation);
-    derivations.vec.push_back(Derivation::pointerDerivation);
+    Derivations derivations = Derivations::constDerivation;
+    derivations = SetPointerCount(derivations, 1);
     return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::wcharType), derivations);
 }
 
@@ -1906,13 +1924,25 @@ ConceptSymbol* SymbolTable::AddConcept(const std::u32string& name, otava::ast::N
 
 ClassTemplateSpecializationSymbol* SymbolTable::MakeClassTemplateSpecialization(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments)
 {
-    util::uuid id = MakeClassTemplateSpecializationSymbolId(classTemplate, templateArguments);
+    util::uuid id = MakeClassTemplateSpecializationSymbolId(classTemplate, templateArguments, *this);
     auto it = classTemplateSpecializationMap.find(id);
     if (it != classTemplateSpecializationMap.end())
     {
+        /*
+        if (it->second->Name() == U"rb_node<pair<const basic_string<char>, RuleParser*>>")
+        {
+            //std::cout << util::ToUtf8(it->second->Name()) << "=" << util::ToString(it->second->Id()) << "\n";
+        }
+        */
         return it->second;
     }
     std::unique_ptr<ClassTemplateSpecializationSymbol> symbol(new ClassTemplateSpecializationSymbol(id, MakeSpecializationName(classTemplate, templateArguments)));
+    /*
+    if (symbol->Name() == U"rb_node<pair<const basic_string<char>, RuleParser*>>")
+    {
+        //std::cout << util::ToUtf8(symbol->Name()) << "=" << util::ToString(symbol->Id()) << "\n";
+    }
+    */
     symbolMap->AddSymbol(symbol.get());
     symbol->SetClassTemplate(classTemplate);
     for (Symbol* templateArg : templateArguments)
@@ -1920,10 +1950,6 @@ ClassTemplateSpecializationSymbol* SymbolTable::MakeClassTemplateSpecialization(
         symbol->AddTemplateArgument(templateArg);
     }
     ClassTemplateSpecializationSymbol* sp = symbol.release();
-    if (sp->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>")
-    {
-        //std::cout << GetModule()->Name() << ": create: " << util::ToUtf8(sp->Name()) << "=" << util::ToString(sp->Id()) << "\n";
-    }
     AddClassTemplateSpecialization(sp);
     MapClassTemplateSpecialization(sp);
     return sp;
@@ -2382,6 +2408,22 @@ void SymbolTable::InitTemplateParameterIds()
     }
 }
 
+void SymbolTable::InitCompoundTypeIds()
+{
+    for (int i = 0; i < numCompoundTypeIds; ++i)
+    {
+        compoundTypeIds.push_back(util::uuid::random());
+    }
+}
+
+void SymbolTable::InitLevelIds()
+{
+    for (int i = 0; i < maxLevels; ++i)
+    {
+        levelIds.push_back(util::uuid::random());
+    }
+}
+
 const util::uuid& SymbolTable::GetTemplateParameterId(int index) const
 {
     if (index >= 0 && index < templateParameterIds.size())
@@ -2391,6 +2433,30 @@ const util::uuid& SymbolTable::GetTemplateParameterId(int index) const
     else
     {
         ThrowException("too many template parameters (max=" + std::to_string(templateParameterIds.size()) + ")");
+    }
+}
+
+const util::uuid& SymbolTable::GetCompoundTypeId(int index) const
+{
+    if (index >= 0 && index < compoundTypeIds.size())
+    {
+        return compoundTypeIds[index];
+    }
+    else
+    {
+        ThrowException("invalid compound type id index (max=" + std::to_string(compoundTypeIds.size()) + ")");
+    }
+}
+
+const util::uuid& SymbolTable::GetLevelId(int level) const
+{ 
+    if (level >= 0 && level < levelIds.size())
+    {
+        return levelIds[level];
+    }
+    else
+    {
+        ThrowException("invalid level id index (max=" + std::to_string(levelIds.size()) + ")");
     }
 }
 

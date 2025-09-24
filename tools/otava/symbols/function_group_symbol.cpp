@@ -287,11 +287,11 @@ int MatchFunctionTemplate(FunctionSymbol* function, const std::vector<TypeSymbol
                 if (templateArg->IsCompoundTypeSymbol())
                 {
                     CompoundTypeSymbol* templateArgCompoundType = static_cast<CompoundTypeSymbol*>(templateArg);
-                    const Derivations& argDerivations = templateArgCompoundType->GetDerivations();
+                    Derivations argDerivations = templateArgCompoundType->GetDerivations();
                     if (specializationType->IsCompoundTypeSymbol())
                     {
                         CompoundTypeSymbol* specializationCompoundType = static_cast<CompoundTypeSymbol*>(specializationType);
-                        const Derivations& specializationDerivations = specializationCompoundType->GetDerivations();
+                        Derivations specializationDerivations = specializationCompoundType->GetDerivations();
                         int numMatchingDerivations = CountMatchingDerivations(argDerivations, specializationDerivations);
                         if (numMatchingDerivations > 0)
                         {

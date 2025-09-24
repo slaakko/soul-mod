@@ -20,6 +20,8 @@ import class_info_index;
 export namespace otava::symbols {
 
 const int maxTemplateParameters = 16;
+const int numCompoundTypeIds = 256;
+const int maxLevels = 16;
 
 enum class FunctionKind;
 enum class FunctionQualifiers;
@@ -162,7 +164,10 @@ public:
     AliasTypeSymbol* AddAliasType(otava::ast::Node* idNnode, otava::ast::Node* aliasTypeNode, TypeSymbol* type, Context* context);
     void AddUsingDeclaration(otava::ast::Node* node, Symbol* symbol, Context* context);
     void AddUsingDirective(NamespaceSymbol* ns, otava::ast::Node* node, Context* context);
-    TypeSymbol* MakeCompoundType(TypeSymbol* baseType, const Derivations& derivations);
+    TypeSymbol* MakeCompoundType(TypeSymbol* baseType, Derivations derivations);
+    void AddCompoundType(CompoundTypeSymbol* compoundType);
+    void MapCompoundType(CompoundTypeSymbol* compoundType);
+    CompoundTypeSymbol* GetCompoundType(const util::uuid& compoundTypeId) const;
     TypeSymbol* MakeConstCharPtrType();
     TypeSymbol* MakeConstChar8PtrType();
     TypeSymbol* MakeConstChar16PtrType();
@@ -256,7 +261,11 @@ public:
     void ImportAfterResolve();
     void ToXml(const std::string& xmlFilePath) const;
     void InitTemplateParameterIds();
+    void InitCompoundTypeIds();
+    void InitLevelIds();
     const util::uuid& GetTemplateParameterId(int index) const;
+    const util::uuid& GetCompoundTypeId(int index) const;
+    const util::uuid& GetLevelId(int level) const;
 private:
     void CreateFundamentalTypes();
     void AddFundamentalType(FundamentalTypeKind kind);
@@ -297,7 +306,7 @@ private:
     std::set<ArrayTypeSymbol*, ArrayTypeLess> arrayTypeSet;
     std::set<DependentTypeSymbol*> dependentTypeSet;
     std::vector<std::unique_ptr<CompoundTypeSymbol>> compoundTypes;
-    std::map<TypeSymbol*, std::vector<CompoundTypeSymbol*>, TypeIdLess> compoundTypeMap;
+    std::map<util::uuid, CompoundTypeSymbol*> compoundTypeMap;
     std::vector<std::unique_ptr<ExplicitInstantiationSymbol>> explicitInstantiations;
     std::map<ClassTemplateSpecializationSymbol*, ExplicitInstantiationSymbol*, ClassTemplateNameLess> explicitInstantiationMap;
     std::vector<std::unique_ptr<FunctionGroupTypeSymbol>> functionGroupTypes;
@@ -349,6 +358,8 @@ private:
     info::class_index index;
     std::vector<const SymbolTable*> importAfterResolve;
     std::vector<util::uuid> templateParameterIds;
+    std::vector<util::uuid> compoundTypeIds;
+    std::vector<util::uuid> levelIds;
 };
 
 } // namespace otava::symbols

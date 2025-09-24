@@ -75,7 +75,7 @@ private:
     std::vector<util::uuid> instantiatedVirtualFunctionSpecializationIds;
 };
 
-util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments);
+util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, SymbolTable& symbolTable);
 
 struct MemFunKey
 {

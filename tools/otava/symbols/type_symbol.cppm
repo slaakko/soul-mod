@@ -60,8 +60,8 @@ public:
     inline bool IsConstChar32PtrType() const { return IsConstType() && IsPointerType() && PointerCount() == 1 && GetBaseType()->IsChar32TypeSymbol(); }
     inline bool IsFunctionPtrType() { return IsPointerType() && PointerCount() == 1 && GetBaseType()->IsFunctionType(); }
     virtual int PointerCount() const { return 0; }
-    virtual const Derivations& GetDerivations() const;
-    virtual TypeSymbol* RemoveDerivations(const Derivations& sourceDerivations, Context* context);
+    virtual Derivations GetDerivations() const { return Derivations::none; }
+    virtual TypeSymbol* RemoveDerivations(Derivations sourceDerivations, Context* context);
     virtual TypeSymbol* Unify(TypeSymbol* argType, Context* context);
     virtual TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) { return nullptr; }
     virtual bool IsComplete(std::set<const TypeSymbol*>& visited) const { return true; }

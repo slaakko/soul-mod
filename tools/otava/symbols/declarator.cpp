@@ -345,8 +345,7 @@ void DeclaratorProcessor::Visit(otava::ast::OverrideNode& node)
 
 void DeclaratorProcessor::Visit(otava::ast::LvalueRefNode& node)
 {
-    Derivations derivations;
-    derivations.vec.push_back(Derivation::lvalueRefDerivation);
+    Derivations derivations = Derivations::lvalueRefDerivation;
     if (baseType)
     {
         baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
@@ -355,10 +354,10 @@ void DeclaratorProcessor::Visit(otava::ast::LvalueRefNode& node)
 
 void DeclaratorProcessor::Visit(otava::ast::RvalueRefNode& node)
 {
-    Derivations derivations;
+    Derivations derivations = Derivations::none;
     if (!baseType || !baseType->IsLValueRefType())
     {
-        derivations.vec.push_back(Derivation::rvalueRefDerivation);
+        derivations = derivations | Derivations::rvalueRefDerivation;
     }
     if (baseType)
     {
@@ -368,8 +367,8 @@ void DeclaratorProcessor::Visit(otava::ast::RvalueRefNode& node)
 
 void DeclaratorProcessor::Visit(otava::ast::PtrNode& node)
 {
-    Derivations derivations;
-    derivations.vec.push_back(Derivation::pointerDerivation);
+    Derivations derivations = Derivations::none;
+    derivations = otava::symbols::SetPointerCount(derivations, 1);
     if (baseType)
     {
         baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);

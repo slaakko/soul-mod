@@ -176,14 +176,17 @@ int Match(Symbol* templateArg, TypeSymbol* specialization, int index, TemplateMa
     if (templateArg->IsCompoundTypeSymbol())
     {
         CompoundTypeSymbol* templateArgType = static_cast<CompoundTypeSymbol*>(templateArg);
-        const Derivations& argDerivations = templateArgType->GetDerivations();
+        Derivations argDerivations = templateArgType->GetDerivations();
         CompoundTypeSymbol* specializationArgType = GetCompoundSpecializationArgType(specialization, index);
-        const Derivations& specializationDerivations = specializationArgType->GetDerivations();
-        int numMatchingDerivations = CountMatchingDerivations(argDerivations, specializationDerivations);
-        if (numMatchingDerivations > 0)
+        if (specializationArgType)
         {
-            info.kind = TemplateMatchKind::partialSpecialization;
-            return numMatchingDerivations;
+            Derivations specializationDerivations = specializationArgType->GetDerivations();
+            int numMatchingDerivations = CountMatchingDerivations(argDerivations, specializationDerivations);
+            if (numMatchingDerivations > 0)
+            {
+                info.kind = TemplateMatchKind::partialSpecialization;
+                return numMatchingDerivations;
+            }
         }
     }
     else if (templateArg->IsClassTemplateSpecializationSymbol())
@@ -277,7 +280,7 @@ ClassTypeSymbol* ClassGroupSymbol::GetBestMatchingClass(const std::vector<Symbol
             TypeSymbol* specialization = cls->Specialization();
             if (specialization)
             {
-                int score = 0;
+                int score = -1;
                 TemplateMatchInfo info;
                 for (int i = 0; i < arity; ++i)
                 {
@@ -285,7 +288,7 @@ ClassTypeSymbol* ClassGroupSymbol::GetBestMatchingClass(const std::vector<Symbol
                     int matchValue = Match(templateArg, specialization, i, info, context);
                     if (matchValue >= 0)
                     {
-                        score += matchValue;
+                        score += 2 * matchValue;
                     }
                 }
                 info.matchValue = score;

@@ -10,225 +10,109 @@ import otava.symbols.writer;
 
 namespace otava::symbols {
 
-Derivations Merge(const Derivations& left, const Derivations& right)
+Derivations Merge(Derivations left, Derivations right)
 {
-    Derivations merged;
-    if (HasDerivation(left, Derivation::constDerivation))
+    Derivations merged = Derivations::none;
+    if (HasDerivation(left, Derivations::constDerivation))
     {
-        merged.vec.push_back(Derivation::constDerivation);
+        merged = merged | Derivations::constDerivation;
     }
-    else if (HasDerivation(right, Derivation::constDerivation))
+    else if (HasDerivation(right, Derivations::constDerivation))
     {
-        merged.vec.push_back(Derivation::constDerivation);
+        merged = merged | Derivations::constDerivation;
     }
-    if (HasDerivation(left, Derivation::volatileDerivation))
+    if (HasDerivation(left, Derivations::volatileDerivation))
     {
-        merged.vec.push_back(Derivation::volatileDerivation);
+        merged = merged | Derivations::volatileDerivation;
     }
-    else if (HasDerivation(right, Derivation::volatileDerivation))
+    else if (HasDerivation(right, Derivations::volatileDerivation))
     {
-        merged.vec.push_back(Derivation::volatileDerivation);
+        merged = merged | Derivations::volatileDerivation;
     }
     int leftPointerCount = PointerCount(left);
     int rightPointerCount = PointerCount(right);
-    int pointerCount = leftPointerCount + rightPointerCount;
-    if (pointerCount > 0)
+    int pointerCount = leftPointerCount +  rightPointerCount;
+    merged = SetPointerCount(merged, pointerCount);
+    if (HasDerivation(left, Derivations::lvalueRefDerivation))
     {
-        for (int i = 0; i < pointerCount; ++i)
-        {
-            merged.vec.push_back(Derivation::pointerDerivation);
-        }
+        merged = merged | Derivations::lvalueRefDerivation;
     }
-    if (HasDerivation(left, Derivation::lvalueRefDerivation))
+    else if (HasDerivation(right, Derivations::lvalueRefDerivation))
     {
-        merged.vec.push_back(Derivation::lvalueRefDerivation);
+        merged = merged | Derivations::lvalueRefDerivation;
     }
-    else if (HasDerivation(right, Derivation::lvalueRefDerivation))
+    if (HasDerivation(left, Derivations::rvalueRefDerivation))
     {
-        merged.vec.push_back(Derivation::lvalueRefDerivation);
+        merged = merged | Derivations::rvalueRefDerivation;
     }
-    if (HasDerivation(left, Derivation::rvalueRefDerivation))
+    else if (HasDerivation(right, Derivations::rvalueRefDerivation))
     {
-        merged.vec.push_back(Derivation::rvalueRefDerivation);
-    }
-    else if (HasDerivation(right, Derivation::rvalueRefDerivation))
-    {
-        merged.vec.push_back(Derivation::rvalueRefDerivation);
+        merged = merged | Derivations::rvalueRefDerivation;
     }
     return merged;
 }
 
-bool HasDerivation(const Derivations& derivations, Derivation derivation)
+Derivations UnifyDerivations(Derivations left, Derivations right)
 {
-    return std::find(derivations.vec.cbegin(), derivations.vec.cend(), derivation) != derivations.vec.cend();
-}
-
-int PointerCount(const Derivations& derivations)
-{
-    return static_cast<int>(std::count(derivations.vec.cbegin(), derivations.vec.cend(), Derivation::pointerDerivation));
-}
-
-Derivations Plain(const Derivations& derivations)
-{
-    Derivations modifiedDerivations;
-    for (const auto& derivation : derivations.vec)
+    Derivations result = Derivations::none;
+    if (HasDerivation(left, Derivations::constDerivation) || HasDerivation(right, Derivations::constDerivation))
     {
-        if (derivation == Derivation::pointerDerivation)
-        {
-            modifiedDerivations.vec.push_back(derivation);
-        }
-    }
-    return modifiedDerivations;
-}
-
-Derivations RemoveConst(const Derivations& derivations)
-{
-    Derivations modifiedDerivations;
-    bool first = true;
-    for (const auto& derivation : derivations.vec)
-    {
-        if (first && derivation == Derivation::constDerivation)
-        {
-            first = false;
-        }
-        else
-        {
-            modifiedDerivations.vec.push_back(derivation);
-        }
-    }
-    return modifiedDerivations;
-}
-
-Derivations RemovePointer(const Derivations& derivations)
-{
-    Derivations modifiedDerivations;
-    bool first = true;
-    for (const auto& derivation : derivations.vec)
-    {
-        if (first && derivation == Derivation::pointerDerivation)
-        {
-            first = false;
-        }
-        else
-        {
-            modifiedDerivations.vec.push_back(derivation);
-        }
-    }
-    return modifiedDerivations;
-}
-
-Derivations RemoveLValueRef(const Derivations& derivations)
-{
-    Derivations modifiedDerivations;
-    bool first = true;
-    for (const auto& derivation : derivations.vec)
-    {
-        if (first && derivation == Derivation::lvalueRefDerivation)
-        {
-            first = false;
-        }
-        else
-        {
-            modifiedDerivations.vec.push_back(derivation);
-        }
-    }
-    return modifiedDerivations;
-}
-
-Derivations RemoveRValueRef(const Derivations& derivations)
-{
-    Derivations modifiedDerivations;
-    bool first = true;
-    for (const auto& derivation : derivations.vec)
-    {
-        if (first && derivation == Derivation::rvalueRefDerivation)
-        {
-            first = false;
-        }
-        else
-        {
-            modifiedDerivations.vec.push_back(derivation);
-        }
-    }
-    return modifiedDerivations;
-}
-
-Derivations UnifyDerivations(const Derivations& left, const Derivations& right)
-{
-    Derivations result;
-    if (HasDerivation(left, Derivation::constDerivation) || HasDerivation(right, Derivation::constDerivation))
-    {
-        result.vec.push_back(Derivation::constDerivation);
+        result = result | Derivations::constDerivation;
     }
     int pointerCount = PointerCount(left) + PointerCount(right);
-    for (int i = 0; i < pointerCount; ++i)
+    result = SetPointerCount(result, pointerCount);
+    if (HasDerivation(left, Derivations::lvalueRefDerivation))
     {
-        result.vec.push_back(Derivation::pointerDerivation);
+        result = result | Derivations::lvalueRefDerivation;
     }
-    if (HasDerivation(left, Derivation::lvalueRefDerivation))
+    else if (HasDerivation(left, Derivations::rvalueRefDerivation))
     {
-        result.vec.push_back(Derivation::lvalueRefDerivation);
+        result = result | Derivations::rvalueRefDerivation;
     }
-    else if (HasDerivation(left, Derivation::rvalueRefDerivation))
+    else if (HasDerivation(right, Derivations::lvalueRefDerivation))
     {
-        result.vec.push_back(Derivation::rvalueRefDerivation);
+        result = result | Derivations::lvalueRefDerivation;
     }
-    else if (HasDerivation(right, Derivation::lvalueRefDerivation))
+    else if (HasDerivation(right, Derivations::rvalueRefDerivation))
     {
-        result.vec.push_back(Derivation::lvalueRefDerivation);
-    }
-    else if (HasDerivation(right, Derivation::rvalueRefDerivation))
-    {
-        result.vec.push_back(Derivation::rvalueRefDerivation);
+        result = result | Derivations::rvalueRefDerivation;
     }
     return result;
 }
 
-int CountMatchingDerivations(const Derivations& left, const Derivations& right)
+int CountMatchingDerivations(Derivations left, Derivations right)
 {
     int matchingDerivationsCount = 0;
-    if (HasDerivation(left, Derivation::constDerivation) && HasDerivation(right, Derivation::constDerivation))
+    if (HasDerivation(left, Derivations::constDerivation) && HasDerivation(right, Derivations::constDerivation))
     {
         ++matchingDerivationsCount;
     }
-    if (!HasDerivation(left, Derivation::constDerivation) && !HasDerivation(right, Derivation::constDerivation))
+    if (HasDerivation(left, Derivations::volatileDerivation) && HasDerivation(right, Derivations::volatileDerivation))
     {
         ++matchingDerivationsCount;
     }
     int leftPointerCount = PointerCount(left);
     int rightPointerCount = PointerCount(right);
     matchingDerivationsCount += std::min(leftPointerCount, rightPointerCount);
-    if (HasDerivation(left, Derivation::lvalueRefDerivation) && HasDerivation(right, Derivation::lvalueRefDerivation))
+    if (HasDerivation(left, Derivations::lvalueRefDerivation) && HasDerivation(right, Derivations::lvalueRefDerivation))
     {
         ++matchingDerivationsCount;
     }
-    else if (HasDerivation(left, Derivation::rvalueRefDerivation) && HasDerivation(right, Derivation::rvalueRefDerivation))
+    else if (HasDerivation(left, Derivations::rvalueRefDerivation) && HasDerivation(right, Derivations::rvalueRefDerivation))
     {
         ++matchingDerivationsCount;
     }
     return matchingDerivationsCount;
 }
 
-void Write(Writer& writer, const Derivations& derivations)
+void Write(Writer& writer, Derivations derivations)
 {
-    std::uint8_t count = static_cast<std::uint8_t>(derivations.vec.size());
-    writer.GetBinaryStreamWriter().Write(count);
-    for (const auto d : derivations.vec)
-    {
-        writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(d));
-    }
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(derivations));
 }
 
 void Read(Reader& reader, Derivations& derivations)
 {
-    derivations.vec.clear();
-    std::uint8_t count = reader.GetBinaryStreamReader().ReadByte();
-    for (std::uint8_t i = 0; i < count; ++i)
-    {
-        std::uint8_t b = reader.GetBinaryStreamReader().ReadByte();
-        Derivation d = static_cast<Derivation>(b);
-        derivations.vec.push_back(d);
-    }
+    derivations = static_cast<Derivations>(reader.GetBinaryStreamReader().ReadByte());
 }
 
 } // namespace otava::symbols

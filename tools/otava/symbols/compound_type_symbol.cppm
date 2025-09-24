@@ -15,7 +15,7 @@ class CompoundTypeSymbol : public TypeSymbol
 {
 public:
     CompoundTypeSymbol(const std::u32string& name_);
-    CompoundTypeSymbol(TypeSymbol* baseType_, const Derivations& derivations_);
+    CompoundTypeSymbol(TypeSymbol* baseType_, Derivations derivations_, const util::uuid& id_);
     TypeSymbol* GetBaseType() override { return baseType; }
     const TypeSymbol* GetBaseType() const override { return baseType; }
     std::string SymbolKindStr() const override { return "compound type symbol"; }
@@ -25,8 +25,8 @@ public:
     bool IsVoidPtrType() const override { return baseType->IsVoidType(); }
     int PointerCount() const override;
     inline TypeSymbol* BaseType() const { return baseType; }
-    const Derivations& GetDerivations() const override { return derivations; }
-    TypeSymbol* RemoveDerivations(const Derivations& sourceDerivations, Context* context) override;
+    Derivations GetDerivations() const override { return derivations; }
+    TypeSymbol* RemoveDerivations(Derivations sourceDerivations, Context* context) override;
     TypeSymbol* Unify(TypeSymbol* argType, Context* context) override;
     TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
     std::string IrName(Context* context) const override;
@@ -48,6 +48,7 @@ private:
     util::uuid baseTypeId;
 };
 
-std::u32string MakeCompoundTypeName(TypeSymbol* baseType, const Derivations& derivations);
+std::u32string MakeCompoundTypeName(TypeSymbol* baseType, Derivations derivations);
+util::uuid MakeCompoundTypeId(TypeSymbol* baseType, Derivations derivations, SymbolTable& symbolTable);
 
 } // namespace otava::symbols

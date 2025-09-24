@@ -23,7 +23,7 @@ public:
     inline void SetReturnType(TypeSymbol* returnType_) { returnType = returnType_; }
     inline const std::vector<TypeSymbol*>& ParameterTypes() const { return parameterTypes; }
     void AddParameterType(TypeSymbol* parameterType);
-    inline int PtrIndex() const override { return ptrIndex; }
+    int PtrIndex() const override { return ptrIndex; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;

@@ -1200,8 +1200,8 @@ std::unique_ptr<BoundFunctionCallNode> ResolveIOManipFn(Scope* scope, const std:
         if (ioManipFnCall)
         {
             FunctionTypeSymbol* functionType = ioManipFnCall->GetFunctionSymbol()->GetFunctionType(context);
-            Derivations derivations;
-            derivations.vec.push_back(Derivation::pointerDerivation);
+            Derivations derivations = Derivations::none;
+            derivations = otava::symbols::SetPointerCount(derivations, 1);
             TypeSymbol* functionPtrType = context->GetSymbolTable()->MakeCompoundType(functionType, derivations);
             std::unique_ptr<BoundExpressionNode> ioManipArg(new BoundAddressOfNode(ioManipFnCall.release(), sourcePos, functionPtrType));
             std::vector<std::unique_ptr<BoundExpressionNode>> operatorPutOrGetArgs;

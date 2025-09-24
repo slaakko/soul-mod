@@ -38,6 +38,7 @@ import otava.symbols.function.templates;
 import otava.symbols.inline_functions;
 import otava.symbols.operation.repository;
 import otava.symbols.emitter;
+import otava.symbols.modules;
 import otava.ast.identifier;
 import otava.ast.punctuation;
 import otava.ast.expression;

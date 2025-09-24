@@ -17,12 +17,13 @@ import util;
 namespace otava::symbols {
 
 CompoundTypeSymbol::CompoundTypeSymbol(const std::u32string& name_) :
-    TypeSymbol(SymbolKind::compoundTypeSymbol, name_), baseType(nullptr), derivations(), baseTypeId(util::nil_uuid())
+    TypeSymbol(SymbolKind::compoundTypeSymbol, util::nil_uuid(), name_), baseType(nullptr), derivations(), baseTypeId(util::nil_uuid())
 {
 }
 
-CompoundTypeSymbol::CompoundTypeSymbol(TypeSymbol* baseType_, const Derivations& derivations_) :
-    TypeSymbol(SymbolKind::compoundTypeSymbol, MakeCompoundTypeName(baseType_, derivations_)), baseType(baseType_), derivations(derivations_), baseTypeId(util::nil_uuid())
+CompoundTypeSymbol::CompoundTypeSymbol(TypeSymbol* baseType_, Derivations derivations_, const util::uuid& id_) :
+    TypeSymbol(SymbolKind::compoundTypeSymbol, id_, MakeCompoundTypeName(baseType_, derivations_)), 
+    baseType(baseType_), derivations(derivations_), baseTypeId(util::nil_uuid())
 {
 }
 
@@ -84,62 +85,49 @@ std::string CompoundTypeSymbol::IrName(Context* context) const
 {
     std::string irName = baseType->IrName(context);
     irName.append(1, '_');
-    for (const auto& derivation : derivations.vec)
+    if (HasDerivation(derivations, Derivations::constDerivation))
     {
-        switch (derivation)
-        {
-            case Derivation::constDerivation:
-            {
-                irName.append(1, 'C');
-                break;
-            }
-            case Derivation::volatileDerivation:
-            {
-                irName.append(1, 'V');
-                break;
-            }
-            case Derivation::lvalueRefDerivation:
-            {
-                irName.append(1, 'L');
-                break;
-            }
-            case Derivation::rvalueRefDerivation:
-            {
-                irName.append(1, 'R');
-                break;
-            }
-            case Derivation::pointerDerivation:
-            {
-                irName.append(1, 'P');
-                break;
-            }
-        }
+        irName.append(1, 'C');
+    }
+    if (HasDerivation(derivations, Derivations::volatileDerivation))
+    {
+        irName.append(1, 'V');
+    }
+    if (HasDerivation(derivations, Derivations::lvalueRefDerivation))
+    {
+        irName.append(1, 'L');
+    }
+    if (HasDerivation(derivations, Derivations::rvalueRefDerivation))
+    {
+        irName.append(1, 'R');
+    }
+    int pointerCount = otava::symbols::PointerCount(derivations);
+    if (pointerCount > 0)
+    {
+        irName.append(pointerCount, 'P');
     }
     return irName;
 }
 
-TypeSymbol* CompoundTypeSymbol::RemoveDerivations(const Derivations& sourceDerivations, Context* context) 
+TypeSymbol* CompoundTypeSymbol::RemoveDerivations(Derivations sourceDerivations, Context* context) 
 {
-    Derivations resultDerivations;
-    if (!HasDerivation(sourceDerivations, Derivation::constDerivation) && HasDerivation(derivations, Derivation::constDerivation))
+    Derivations resultDerivations = Derivations::none;
+    if (!HasDerivation(sourceDerivations, Derivations::constDerivation) && HasDerivation(derivations, Derivations::constDerivation))
     {
-        resultDerivations.vec.push_back(Derivation::constDerivation);
+        resultDerivations = resultDerivations | Derivations::constDerivation;
     }
     int pointerDiff = otava::symbols::PointerCount(derivations) - otava::symbols::PointerCount(sourceDerivations);
     if (pointerDiff != 0)
     {
-        for (int i = 0; i < pointerDiff; ++i)
-        {
-            resultDerivations.vec.push_back(Derivation::pointerDerivation);
-        }
+        resultDerivations = otava::symbols::SetPointerCount(resultDerivations, pointerDiff);
     }
-    if (!HasDerivation(sourceDerivations, Derivation::lvalueRefDerivation) && HasDerivation(derivations, Derivation::lvalueRefDerivation))
+    if (!HasDerivation(sourceDerivations, Derivations::lvalueRefDerivation) && HasDerivation(derivations, Derivations::lvalueRefDerivation))
     {
-        resultDerivations.vec.push_back(Derivation::lvalueRefDerivation);
+        resultDerivations = resultDerivations | Derivations::lvalueRefDerivation;
     }
-    else if (!HasDerivation(sourceDerivations, Derivation::rvalueRefDerivation) && HasDerivation(derivations, Derivation::rvalueRefDerivation))
+    else if (!HasDerivation(sourceDerivations, Derivations::rvalueRefDerivation) && HasDerivation(derivations, Derivations::rvalueRefDerivation))
     {
-        resultDerivations.vec.push_back(Derivation::rvalueRefDerivation);
+        resultDerivations = resultDerivations | Derivations::rvalueRefDerivation;
     }
     return context->GetSymbolTable()->MakeCompoundType(baseType, resultDerivations);
 }
@@ -162,18 +150,18 @@ otava::intermediate::Type* CompoundTypeSymbol::IrType(Emitter& emitter, const so
     if (!type)
     {
         type = baseType->IrType(emitter, sourcePos, context);
-        for (const auto& derivation : derivations.vec)
+        int pointerCount = otava::symbols::PointerCount(derivations);
+        for (int i = 0; i < pointerCount; ++i)
         {
-            switch (derivation)
-            {
-                case Derivation::pointerDerivation:
-                case Derivation::lvalueRefDerivation:
-                case Derivation::rvalueRefDerivation:
-                {
-                    type = emitter.MakePtrType(type);
-                    break;
-                }
-            }
+            type = emitter.MakePtrType(type);
+        }
+        if (otava::symbols::HasDerivation(derivations, Derivations::lvalueRefDerivation))
+        {
+            type = emitter.MakePtrType(type);
+        }
+        if (otava::symbols::HasDerivation(derivations, Derivations::rvalueRefDerivation))
+        {
+            type = emitter.MakePtrType(type);
         }
         emitter.SetType(Id(), type);
     }
@@ -209,14 +197,14 @@ bool CompoundTypeSymbol::IsTemplateParameterInstantiation(Context* context, std:
     return false;
 }
 
-std::u32string MakeCompoundTypeName(TypeSymbol* baseType, const Derivations& derivations)
+std::u32string MakeCompoundTypeName(TypeSymbol* baseType, Derivations derivations)
 {
     std::u32string name;
-    if (HasDerivation(derivations, Derivation::constDerivation))
+    if (HasDerivation(derivations, Derivations::constDerivation))
     {
         name.append(U"const ");
     }
-    if (HasDerivation(derivations, Derivation::volatileDerivation))
+    if (HasDerivation(derivations, Derivations::volatileDerivation))
     {
         name.append(U"volatile ");
     }
@@ -234,7 +222,7 @@ std::u32string MakeCompoundTypeName(TypeSymbol* baseType, const Derivations& der
             name.insert(baseType->PtrIndex(), ptrStr);
         }
     }
-    if (HasDerivation(derivations, Derivation::lvalueRefDerivation))
+    if (HasDerivation(derivations, Derivations::lvalueRefDerivation))
     {
         if (baseType->PtrIndex() == -1)
         {
@@ -245,7 +233,7 @@ std::u32string MakeCompoundTypeName(TypeSymbol* baseType, const Derivations& der
             name.insert(baseType->PtrIndex(), U"&");
         }
     }
-    else if (HasDerivation(derivations, Derivation::rvalueRefDerivation))
+    else if (HasDerivation(derivations, Derivations::rvalueRefDerivation))
     {
         if (baseType->PtrIndex() == -1)
         {
@@ -257,6 +245,14 @@ std::u32string MakeCompoundTypeName(TypeSymbol* baseType, const Derivations& der
         }
     }
     return name;
+}
+
+util::uuid MakeCompoundTypeId(TypeSymbol* baseType, Derivations derivations, SymbolTable& symbolTable)
+{
+    util::uuid id = baseType->Id();
+    util::uuid derivationsId = symbolTable.GetCompoundTypeId(static_cast<int>(derivations));
+    util::Xor(id, derivationsId);
+    return id;
 }
 
 } // namespace otava::symbols

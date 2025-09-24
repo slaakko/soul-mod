@@ -330,16 +330,16 @@ TypeSymbol* DeclarationProcessor::ResolveBaseType(otava::ast::Node* node)
     }
     if (baseType)
     {
-        Derivations derivations;
+        Derivations derivations = Derivations::none;
         if ((flags & DeclarationFlags::constFlag) != DeclarationFlags::none)
         {
-            derivations.vec.push_back(Derivation::constDerivation);
+            derivations = derivations | Derivations::constDerivation;
         }
         if ((flags & DeclarationFlags::volatileFlag) != DeclarationFlags::none)
         {
-            derivations.vec.push_back(Derivation::volatileDerivation);
+            derivations = derivations | Derivations::volatileDerivation;
         }
-        if (!derivations.IsEmpty())
+        if (derivations != Derivations::none)
         {
             baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
         }

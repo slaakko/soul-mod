@@ -126,31 +126,28 @@ void TypeResolver::ResolveType()
 {
     if (typeResolved) return;
     typeResolved = true;
-    Derivations derivations;
+    Derivations derivations = Derivations::none;
     if ((flags & DeclarationFlags::constFlag) != DeclarationFlags::none)
     {
-        derivations.vec.push_back(Derivation::constDerivation);
+        derivations = derivations | Derivations::constDerivation;
     }
     if ((flags & DeclarationFlags::volatileFlag) != DeclarationFlags::none)
     {
-        derivations.vec.push_back(Derivation::volatileDerivation);
+        derivations = derivations | Derivations::volatileDerivation;
     }
     if (pointerCount > 0)
     {
-        for (int i = 0; i < pointerCount; ++i)
-        {
-            derivations.vec.push_back(Derivation::pointerDerivation);
-        }
+        derivations = otava::symbols::SetPointerCount(derivations, pointerCount);
     }
     if ((flags & DeclarationFlags::lvalueRefFlag) != DeclarationFlags::none)
     {
-        derivations.vec.push_back(Derivation::lvalueRefDerivation);
+        derivations = derivations | Derivations::lvalueRefDerivation;
     }
     else if ((flags & DeclarationFlags::rvalueRefFlag) != DeclarationFlags::none)
     {
-        derivations.vec.push_back(Derivation::rvalueRefDerivation);
+        derivations = derivations | Derivations::rvalueRefDerivation;
     }
-    if (!derivations.IsEmpty() && type)
+    if (derivations != Derivations::none && type)
     {
         type = context->GetSymbolTable()->MakeCompoundType(type, derivations);
     }
