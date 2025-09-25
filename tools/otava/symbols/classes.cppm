@@ -88,7 +88,7 @@ public:
     TemplateDeclarationSymbol* ParentTemplateDeclaration() const;
     bool IsTemplate() const;
     void MakeVTab(Context* context, const soul::ast::SourcePos& sourcePos);
-    void InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos);
+    void InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos, bool clear);
     inline const std::vector<FunctionSymbol*>& VTab() const { return vtab; }
     std::string IrName(Context* context) const override;
     inline const std::string& VTabName(Context* context) const { return vtabName; }

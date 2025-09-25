@@ -1,0 +1,14 @@
+project oxml_processor;
+target=library;
+reference <../../outil/outil.project>;
+reference <../../osoul/oast/oast.project>;
+reference <../../osoul/olexer/olexer.project>;
+interface <attribute.cppm>;
+source <attribute.cpp>;
+interface <content_handler.cppm>;
+source <content_handler.cpp>;
+interface <entity.cppm>;
+source <entity.cpp>;
+interface <processor.cppm>;
+source <processor.cpp>;
+interface <xml_processor.cppm>;

@@ -490,7 +490,7 @@ void ClassTypeSymbol::MakeVTab(Context* context, const soul::ast::SourcePos& sou
         SetVTabInitialized();
     }
     ComputeVTabName(context);
-    InitVTab(vtab, context, sourcePos);
+    InitVTab(vtab, context, sourcePos, IsClassTemplateSpecializationSymbol());
     vtabSize = vtab.size();
 }
 
@@ -514,15 +514,18 @@ bool Overrides(FunctionSymbol* f, FunctionSymbol* g)
     return false;
 }
 
-void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos)
+void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos, bool clear)
 {
     if (!IsPolymorphic()) return;
-    vtab.clear();
+    if (clear)
+    {
+        vtab.clear();
+    }
     if (!baseClasses.empty())
     {
         for (ClassTypeSymbol* baseClass : baseClasses)
         {
-            baseClass->InitVTab(vtab, context, sourcePos);
+            baseClass->InitVTab(vtab, context, sourcePos, false);
         }
     }
     std::vector<FunctionSymbol*> virtualFunctions;
