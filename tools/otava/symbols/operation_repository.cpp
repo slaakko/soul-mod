@@ -952,7 +952,7 @@ FunctionSymbol* ClassDefaultCtorOperation::Get(std::vector<std::unique_ptr<Bound
     if (type->PointerCount() != 1 || !type->RemovePointer(context)->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
-    FunctionSymbol* defaultCtor = classType->GetFunction(defaultCtorIndex);
+    FunctionSymbol* defaultCtor = classType->GetFunctionByIndex(defaultCtorIndex);
     if (defaultCtor)
     {
         return defaultCtor;
@@ -1135,7 +1135,7 @@ FunctionSymbol* ClassCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundExp
     if (TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) || args[1]->BindToRvalueRef()) return nullptr;
     int distance = 0;
     if (!TypesEqual(args[1]->GetType()->GetBaseType(), classType) && !args[1]->GetType()->GetBaseType()->HasBaseClass(classType, distance)) return nullptr;
-    FunctionSymbol* copyCtor = classType->GetFunction(copyCtorIndex);
+    FunctionSymbol* copyCtor = classType->GetFunctionByIndex(copyCtorIndex);
     if (copyCtor)
     {
         return copyCtor;
@@ -1325,7 +1325,7 @@ FunctionSymbol* ClassMoveCtorOperation::Get(std::vector<std::unique_ptr<BoundExp
     if (!TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) && !args[1]->BindToRvalueRef()) return nullptr;
     int distance = 0;
     if (!TypesEqual(args[1]->GetType()->GetBaseType(), classType) && !args[1]->GetType()->GetBaseType()->HasBaseClass(classType, distance)) return nullptr;
-    FunctionSymbol* moveCtor = classType->GetFunction(moveCtorIndex);
+    FunctionSymbol* moveCtor = classType->GetFunctionByIndex(moveCtorIndex);
     if (moveCtor)
     {
         return moveCtor;
@@ -1525,7 +1525,7 @@ FunctionSymbol* ClassCopyAssignmentOperation::Get(std::vector<std::unique_ptr<Bo
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
     if (TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) || args[1]->BindToRvalueRef()) return nullptr;
-    FunctionSymbol* copyAssignment = classType->GetFunction(copyAssignmentIndex);
+    FunctionSymbol* copyAssignment = classType->GetFunctionByIndex(copyAssignmentIndex);
     if (copyAssignment)
     {
         return copyAssignment;
@@ -1682,7 +1682,7 @@ FunctionSymbol* ClassMoveAssignmentOperation::Get(std::vector<std::unique_ptr<Bo
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
     if (!TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) && !args[1]->BindToRvalueRef()) return nullptr;
-    FunctionSymbol* moveAssignment = classType->GetFunction(moveAssignmentIndex);
+    FunctionSymbol* moveAssignment = classType->GetFunctionByIndex(moveAssignmentIndex);
     if (moveAssignment)
     {
         return moveAssignment;

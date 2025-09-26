@@ -87,6 +87,7 @@ class ArrayDeclarator : public Declarator
 public:
     ArrayDeclarator(const std::u32string& name_, otava::ast::Node* node_, std::int64_t size_);
     inline std::int64_t Size() const { return size; }
+    inline void SetSize(std::int64_t size_) { size = size_; }
 private:
     std::int64_t size;
 };

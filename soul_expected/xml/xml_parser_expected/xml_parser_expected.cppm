@@ -5,5 +5,6 @@
 
 export module soul_expected.xml.parser_expected;
 
+export import soul_expected.xml.parser;
 export import soul_expected.xml.document.parser;
 export import soul_expected.xml.parser.rules;

@@ -60,7 +60,7 @@ Node* Reader::ReadNode()
         Node* node = CreateNode(kind, sourcePos);
         node->SetId(-1);
         node->Read(*this);
-        if (node->Id() == -1)
+        if (node->InternalId() == -1)
         {
             otava::ast::SetExceptionThrown();
             throw std::runtime_error("otava.ast.Reader: node id not set");

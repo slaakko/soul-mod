@@ -11,5 +11,6 @@ export import soul.lexer.lexing.util;
 export import soul.lexer.parsing.log;
 export import soul.lexer.token;
 export import soul.lexer.token.parser;
+export import soul.lexer.trivial;
 export import soul.lexer.variables;
 export import soul.lexer.xml.parsing.log;

@@ -25,7 +25,8 @@ ArrayGeneratorVisitor::ArrayGeneratorVisitor(util::CodeFormatter& formatter_, in
 void ArrayGeneratorVisitor::Visit(soul::ast::spg::StringParser& parser)
 {
     if (!Valid()) return;
-    std::string s = "s" + std::to_string(sn++);
+    std::string s = "s" + std::to_string(sn);
+    ++sn;
     parser.SetArrayName(s);
     std::expected<bool, int> rv = formatter.Write("static constexpr std::int32_t " + s + "[] = {");
     if (!rv)
@@ -68,7 +69,8 @@ void ArrayGeneratorVisitor::Visit(soul::ast::spg::StringParser& parser)
 void ArrayGeneratorVisitor::Visit(soul::ast::spg::CharSetParser& parser)
 {
     if (!Valid()) return;
-    std::string s = "s" + std::to_string(sn++);
+    std::string s = "s" + std::to_string(sn);
+    ++sn;
     parser.SetArrayName(s);
     std::expected<bool, int> rv = formatter.Write("static constexpr soul::ast::spg::Range " + s + "[] = {");
     if (!rv)

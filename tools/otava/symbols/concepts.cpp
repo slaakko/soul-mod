@@ -37,7 +37,7 @@ void ConstraintExprSymbol::Accept(Visitor& visitor)
 void ConstraintExprSymbol::Write(Writer& writer)
 {
     Symbol::Write(writer);
-    writer.GetBinaryStreamWriter().Write(constraintExprNode->Id());
+    writer.GetBinaryStreamWriter().Write(constraintExprNode->InternalId());
 }
 
 void ConstraintExprSymbol::Read(Reader& reader)

@@ -481,7 +481,7 @@ void SymbolTable::WriteMaps(Writer& writer, Context* context)
     {
         otava::ast::Node* node = m.first;
         Symbol* symbol = m.second;
-        std::int64_t nodeId = node->Id();
+        std::int64_t nodeId = node->InternalId();
         if (node->IsInternallyMapped())
         {
             nodeId = -1;
@@ -511,7 +511,7 @@ void SymbolTable::WriteMaps(Writer& writer, Context* context)
         writer.GetBinaryStreamWriter().Write(static_cast<std::int32_t>(symbol->Kind()));
         writer.GetBinaryStreamWriter().Write(util::ToUtf8(symbol->FullName()));
     #endif
-        std::int64_t nodeId = node->Id();
+        std::int64_t nodeId = node->InternalId();
         if (node->IsInternallyMapped())
         {
             nodeId = -1;
@@ -530,7 +530,7 @@ void SymbolTable::WriteMaps(Writer& writer, Context* context)
     {
         const util::uuid& uuid = spec.first->Id();
         writer.GetBinaryStreamWriter().Write(uuid);
-        std::int64_t nodeId = spec.second->Id();
+        std::int64_t nodeId = spec.second->InternalId();
         writer.GetBinaryStreamWriter().Write(nodeId);
     }
     std::uint32_t nc = classes.size();
@@ -1644,6 +1644,7 @@ FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, const std::
     }
     FunctionGroupSymbol* functionGroup = currentScope->GroupScope()->GetOrInsertFunctionGroup(groupName, node->GetSourcePos(), context);
     FunctionSymbol* functionSymbol = new FunctionSymbol(name);
+    functionSymbol->SetNodeId(node->NodeId());
     symbolMap->AddSymbol(functionSymbol);
     functionSymbol->SetAccess(CurrentAccess());
     functionSymbol->SetFunctionKind(kind);
@@ -1690,6 +1691,10 @@ FunctionDefinitionSymbol* SymbolTable::AddOrGetFunctionDefinition(Scope* scope, 
     }
     FunctionGroupSymbol* functionGroup = scope->GroupScope()->GetOrInsertFunctionGroup(groupName, node->GetSourcePos(), context);
     std::unique_ptr<FunctionDefinitionSymbol> functionDefinition(new FunctionDefinitionSymbol(name));
+    if (functionNode)
+    {
+        functionDefinition->SetNodeId(functionNode->NodeId());
+    }
     symbolMap->AddSymbol(functionDefinition.get());
     functionDefinition->SetGroup(functionGroup);
     functionDefinition->SetDeclarationFlags(declarationFlags);

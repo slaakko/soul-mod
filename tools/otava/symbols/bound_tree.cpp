@@ -373,14 +373,19 @@ void BoundCompileUnitNode::AddBoundNode(std::unique_ptr<BoundNode>&& node, Conte
 
 void BoundCompileUnitNode::AddBoundNodeForClass(ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    if (cls->Name() == U"LexerBase<char32_t>")
+    {
+        int x = 0;
+    }
     std::set<const Symbol*> visited;
     if (cls->IsTemplateParameterInstantiation(context, visited)) return;
-    for (const auto& prev : boundClasses)
-    {
-        if (prev == cls) return;
-    }
-    boundClasses.push_back(cls);
+    if (boundClasses.find(cls) != boundClasses.end()) return;
+    boundClasses.insert(cls);
     AddBoundNode(std::unique_ptr<BoundNode>(new BoundClassNode(cls, sourcePos)), context);
+    for (const auto& base : cls->BaseClasses())
+    {
+        AddBoundNodeForClass(base, sourcePos, context);
+    }
 }
 
 void BoundCompileUnitNode::Sort()

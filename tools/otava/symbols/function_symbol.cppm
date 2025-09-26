@@ -121,6 +121,8 @@ public:
     int MemFunArity(Context* context) const;
     int MinArity() const;
     int MinMemFunArity(Context* context) const;
+    inline std::int32_t NodeId() const { return nodeId; }
+    inline void SetNodeId(std::int32_t nodeId_) { nodeId = nodeId_; }
     inline bool HasDefaultParams() const { return MinArity() < Arity(); }
     std::string SymbolKindStr() const override { return "function symbol"; }
     std::string SymbolDocKindStr() const override { return "function"; }
@@ -254,6 +256,7 @@ private:
     FunctionGroupSymbol* group;
     std::vector<std::unique_ptr<ParameterSymbol>> temporaryParams;
     std::string compileUnitId;
+    std::int32_t nodeId;
 };
 
 class FunctionDefinitionSymbol : public FunctionSymbol

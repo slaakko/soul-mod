@@ -739,7 +739,7 @@ void VerifierVisitor::Visit(ElemAddrInstruction& inst)
             std::int64_t index = inst.IndexValue()->GetIntegerValue();
             if (index < 0 || index >= structureType->FieldCount())
             {
-                Error("code verification error: invalid index", inst.Span(), GetContext());
+                Error("code verification error: invalid structure field index", inst.Span(), GetContext());
             }
         }
     }
@@ -753,7 +753,7 @@ void VerifierVisitor::Visit(ElemAddrInstruction& inst)
             std::int64_t index = inst.IndexValue()->GetIntegerValue();
             if (index < 0 || index > arrayType->ElementCount())
             {
-                Error("code verification error: invalid index", inst.Span(), GetContext());
+                Error("code verification error: invalid array element index", inst.Span(), GetContext());
             }
         }
     }

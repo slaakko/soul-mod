@@ -23,7 +23,7 @@ std::u32string MakeArrayTypeName(TypeSymbol* elementType, std::int64_t size)
     return arrayTypeName;
 }
 
-ArrayTypeSymbol::ArrayTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::arrayTypeSymbol, name_), bound(false)
+ArrayTypeSymbol::ArrayTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::arrayTypeSymbol, name_), elementType(), size(-1), bound(false)
 {
     GetScope()->SetKind(ScopeKind::arrayScope);
 }
@@ -32,6 +32,10 @@ ArrayTypeSymbol::ArrayTypeSymbol(TypeSymbol* elementType_, std::int64_t size_) :
     TypeSymbol(SymbolKind::arrayTypeSymbol, MakeArrayTypeName(elementType_, size_)), elementType(elementType_), size(size_), bound(false)
 {
     GetScope()->SetKind(ScopeKind::arrayScope);
+    if (size == -1)
+    {
+        int x = 0;
+    }
 }
 
 bool ArrayTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const

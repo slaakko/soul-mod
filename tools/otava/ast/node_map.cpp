@@ -15,7 +15,7 @@ NodeMap::NodeMap()
 
 void NodeMap::AddNode(Node* node)
 {
-    nodeMap[node->Id()] = node;
+    nodeMap[node->InternalId()] = node;
 }
 
 Node* NodeMap::GetNode(std::int64_t nodeId) const

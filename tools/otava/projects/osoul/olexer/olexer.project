@@ -17,6 +17,7 @@ interface <parsing_log.cppm>;
 source <parsing_log.cpp>;
 interface <token.cppm>;
 interface <token_parser.cppm>;
+interface <trivial_lexer.cppm>;
 interface <variables.cppm>;
 source <variables.cpp>;
 interface <xml_parsing_log.cppm>;

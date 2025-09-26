@@ -83,7 +83,7 @@ void TemplateParameterSymbol::Write(Writer& writer)
     writer.GetBinaryStreamWriter().Write(hasDefaultTemplateArg);
     if (hasDefaultTemplateArg)
     {
-        writer.GetBinaryStreamWriter().Write(defaultTemplateArgNode->Id());
+        writer.GetBinaryStreamWriter().Write(defaultTemplateArgNode->InternalId());
     }
 }
 

@@ -1,0 +1,14 @@
+project oxml_parser;
+target=library;
+reference <../../outil/outil.project>;
+reference <../../osoul/oast/oast.project>;
+reference <../../osoul/olexer/olexer.project>;
+reference <../../osoul/oparser/oparser.project>;
+reference <../oxml_processor/oxml_processor.project>;
+interface <xml_document.parser.cppm>;
+source <xml_document.parser.cpp>;
+interface <xml_parser_intf.cppm>;
+source <xml_parser_intf.cpp>;
+interface <xml_parser_rules.cppm>;
+source <xml_parser_rules.cpp>;
+interface <xml_parser.cppm>;

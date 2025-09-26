@@ -126,8 +126,9 @@ public:
     inline const std::vector<TypeSymbol*>& ObjectLayout() const { return objectLayout; }
     void MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Context* context);
     void MapFunction(FunctionSymbol* function);
-    FunctionSymbol* GetFunction(std::int32_t functionIndex) const;
+    FunctionSymbol* GetFunctionByIndex(std::int32_t functionIndex) const;
     std::int32_t NextFunctionIndex();
+    FunctionSymbol* GetFunctionByNodeId(std::int32_t nodeId) const;
     inline bool GetFlag(ClassTypeSymbolFlags flag) const { return (flags & flag) != ClassTypeSymbolFlags::none; }
     inline void SetFlag(ClassTypeSymbolFlags flag) { flags = flags | flag; }
     inline void ResetFlag(ClassTypeSymbolFlags flag) { flags = flags & ~flag; }
@@ -167,8 +168,9 @@ private:
     std::vector<TypeSymbol*> objectLayout;
     std::vector<util::uuid> objectLayoutIds;
     otava::intermediate::Type* irType;
-    std::map<std::int32_t, FunctionSymbol*> functionMap;
+    std::map<std::int32_t, FunctionSymbol*> functionIndexMap;
     std::map<std::int32_t, util::uuid> functionIdMap;
+    std::map<std::int32_t, FunctionSymbol*> functionNodeIdMap;
     std::int32_t currentFunctionIndex;
     std::vector<FunctionSymbol*> vtab;
     std::int32_t vtabSize;

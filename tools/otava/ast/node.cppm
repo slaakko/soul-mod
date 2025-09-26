@@ -28,6 +28,7 @@ using NodeDestroyedFunc = void(*)(Node*);
 void SetNodeDestroyedFunc(NodeDestroyedFunc func);
 
 constexpr std::int32_t internallyMappedFlag = 0x40000000;
+constexpr std::int32_t destructorNodeId = 0x20000000;
 
 enum class NodeKind : std::uint16_t
 {
@@ -110,7 +111,8 @@ public:
     virtual void Clear();
     inline Node* Parent() const { return parent; }
     inline void SetParent(Node* parent_) { parent = parent_; }
-    inline std::int64_t Id() const { return id & ~internallyMappedFlag; }
+    inline std::int32_t NodeId() const { return id & 0xFFFFFFFF; }
+    inline std::int64_t InternalId() const { return id & ~internallyMappedFlag; }
     inline bool IsInternallyMapped() const { return (id & internallyMappedFlag) != 0; }
     inline bool IsImportDeclarationNode() const { return kind == NodeKind::importDeclarationNode; }
     inline bool IsClassNode() const { return kind == NodeKind::classNode; }

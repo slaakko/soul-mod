@@ -537,6 +537,7 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
     if (functionSymbol->IsVirtual())
     {
         functionCall->SetFlag(BoundExpressionFlags::virtualCall);
+        context->GetBoundCompileUnit()->AddBoundNodeForClass(functionSymbol->ParentClassType(), sourcePos, context);
     }
     VariableSymbol* classTemporary = nullptr;
     if (functionSymbol->ReturnsClass())
@@ -593,6 +594,7 @@ void ExpressionBinder::BindUnaryOp(otava::ast::NodeKind op, const soul::ast::Sou
     if (functionSymbol->IsVirtual())
     {
         functionCall->SetFlag(BoundExpressionFlags::virtualCall);
+        context->GetBoundCompileUnit()->AddBoundNodeForClass(functionSymbol->ParentClassType(), sourcePos, context);
     }
     VariableSymbol* classTemporary = nullptr;
     if (functionSymbol->ReturnsClass())
@@ -1468,6 +1470,7 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
         if (functionSymbol->IsVirtual() && !node.Subject()->IsQualifiedIdNode())
         {
             functionCall->SetFlag(BoundExpressionFlags::virtualCall);
+            context->GetBoundCompileUnit()->AddBoundNodeForClass(functionSymbol->ParentClassType(), node.GetSourcePos(), context);
             if (!functionCall->Args().empty())
             {
                 BoundExpressionNode* firstArg = functionCall->Args()[0].get();

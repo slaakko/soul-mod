@@ -222,7 +222,7 @@ private:
     std::unique_ptr<FunctionTemplateRepository> functionTemplateRepository;
     std::unique_ptr<ClassTemplateRepository> classTemplateRepository;
     std::unique_ptr<InlineFunctionRepository> inlineFunctionRepository;
-    std::vector<ClassTypeSymbol*> boundClasses;
+    std::set<ClassTypeSymbol*> boundClasses;
     std::unique_ptr<BoundFunctionNode> compileUnitInitializationFunction;
     std::vector<ClassTypeSymbol*> generateDestructorList;
 };

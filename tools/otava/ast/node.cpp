@@ -726,15 +726,7 @@ std::int64_t NodeIdFactory::GetNextNodeId()
     return nextNodeId;
 }
 
-#ifdef _WIN32
-
-__declspec(thread) NodeIdFactory* nodeIdFactory = nullptr;
-
-#else
-
-__thread NodeIdFactory* nodeIdFactory = nullptr;
-
-#endif
+thread_local NodeIdFactory* nodeIdFactory = nullptr;
 
 void SetNodeIdFactory(NodeIdFactory* factory)
 {

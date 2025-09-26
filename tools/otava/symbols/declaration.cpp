@@ -43,6 +43,45 @@ import util;
 
 namespace otava::symbols {
 
+struct ArraySizeComputer : public otava::ast::DefaultVisitor
+{
+    ArraySizeComputer();
+    void Visit(otava::ast::InitDeclaratorNode& node);
+    void Visit(otava::ast::AssignmentInitNode& node);
+    void Visit(otava::ast::BracedInitListNode& node);
+    std::int64_t size;
+};
+
+ArraySizeComputer::ArraySizeComputer() : size(-1)
+{
+}
+
+void ArraySizeComputer::Visit(otava::ast::InitDeclaratorNode& node)
+{
+    node.Right()->Accept(*this);
+}
+
+void ArraySizeComputer::Visit(otava::ast::AssignmentInitNode& node)
+{
+    node.Child()->Accept(*this);
+}
+
+void ArraySizeComputer::Visit(otava::ast::BracedInitListNode& node)
+{
+    size = node.Items().size();
+}
+
+std::int64_t GetSizeFromInitializer(otava::ast::Node* node)
+{
+    if (node->Parent())
+    {
+        ArraySizeComputer visitor;
+        node->Parent()->Accept(visitor);
+        return visitor.size;
+    }
+    return -1;
+}
+
 class NoReturnAttributeMatcher : public otava::ast::DefaultVisitor
 {
 public:
@@ -662,6 +701,11 @@ VariableSymbol* ProcessSimpleDeclarator(SimpleDeclarator* simpleDeclarator, Type
 
 VariableSymbol* ProcessArrayDeclarator(ArrayDeclarator* arrayDeclarator, TypeSymbol* elementType, DeclarationFlags flags, Context* context)
 {
+    if (arrayDeclarator->Size() == -1)
+    {
+        otava::ast::Node* node = arrayDeclarator->Node();
+        arrayDeclarator->SetSize(GetSizeFromInitializer(node));
+    }
     ArrayTypeSymbol* arrayTypeSymbol = context->GetSymbolTable()->MakeArrayType(elementType, arrayDeclarator->Size());
     arrayTypeSymbol->Bind(arrayDeclarator->Node()->GetSourcePos(), context);
     VariableSymbol* variable = context->GetSymbolTable()->AddVariable(arrayDeclarator->Name(), arrayDeclarator->Node(), arrayTypeSymbol, nullptr, nullptr, flags, context);
@@ -1002,7 +1046,7 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
                 }
                 functionDefinitionSymbol->SetIndex(functionIndex);
                 functionDefinitionNode->SetIndex(functionIndex);
-                if (!classType->GetFunction(functionIndex))
+                if (!classType->GetFunctionByIndex(functionIndex))
                 {
                     classType->MapFunction(functionDefinitionSymbol);
                 }

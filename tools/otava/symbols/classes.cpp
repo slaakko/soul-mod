@@ -276,9 +276,9 @@ void ClassTypeSymbol::Write(Writer& writer)
     {
         writer.GetBinaryStreamWriter().Write(type->Id());
     }
-    std::uint32_t nfm = functionMap.size();
+    std::uint32_t nfm = functionIndexMap.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(nfm);
-    for (const auto& fn : functionMap)
+    for (const auto& fn : functionIndexMap)
     {
         writer.GetBinaryStreamWriter().Write(fn.first);
         writer.GetBinaryStreamWriter().Write(fn.second->Id());
@@ -389,7 +389,7 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
         {
             function = symbolTable.GetFunctionDefinition(fnIndexId.second);
         }
-        functionMap[fnIndexId.first] = function;
+        functionIndexMap[fnIndexId.first] = function;
     }
     if (groupId != util::nil_uuid())
     {
@@ -516,6 +516,10 @@ bool Overrides(FunctionSymbol* f, FunctionSymbol* g)
 
 void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos, bool clear)
 {
+    if (Name() == U"LexerBase<char32_t>")
+    {
+        int x = 0;
+    }
     if (!IsPolymorphic()) return;
     if (clear)
     {
@@ -531,6 +535,10 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
     std::vector<FunctionSymbol*> virtualFunctions;
     for (const auto& function : memberFunctions)
     {
+        if (function->NodeId() == 1075374279)
+        {
+            int x = 0;
+        }
         FunctionSymbol* fn = function;
         if (function->IsFunctionDefinitionSymbol())
         {
@@ -548,6 +556,10 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
             {
                 if (FunctionMatches(fn, existing, context))
                 {
+                    if (existing->VTabIndex() != -1)
+                    {
+                        fn->SetVTabIndex(existing->VTabIndex());
+                    }
                     found = true;
                     break;
                 }
@@ -719,6 +731,7 @@ void ClassTypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
         {
             conversionFunctions.push_back(functionSymbol);
         }
+        MapFunction(functionSymbol);
     }
     if (symbol->IsFunctionDefinitionSymbol())
     {
@@ -762,13 +775,27 @@ std::int32_t ClassTypeSymbol::NextFunctionIndex()
 
 void ClassTypeSymbol::MapFunction(FunctionSymbol* function)
 {
-    functionMap[function->Index()] = function;
+    functionIndexMap[function->Index()] = function;
+    functionNodeIdMap[function->NodeId()] = function;
 }
 
-FunctionSymbol* ClassTypeSymbol::GetFunction(std::int32_t functionIndex) const
+FunctionSymbol* ClassTypeSymbol::GetFunctionByIndex(std::int32_t functionIndex) const
 {
-    auto it = functionMap.find(functionIndex);
-    if (it != functionMap.cend())
+    auto it = functionIndexMap.find(functionIndex);
+    if (it != functionIndexMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+FunctionSymbol* ClassTypeSymbol::GetFunctionByNodeId(std::int32_t nodeId) const
+{
+    auto it = functionNodeIdMap.find(nodeId);
+    if (it != functionNodeIdMap.end())
     {
         return it->second;
     }
@@ -1377,6 +1404,7 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
     }
     bool hasNonTrivialDestructor = false;
     std::unique_ptr<FunctionSymbol> destructorSymbol(new FunctionSymbol(U"@destructor"));
+    destructorSymbol->SetNodeId(otava::ast::destructorNodeId);
     destructorSymbol->SetParent(classTypeSymbol);
     destructorSymbol->SetFunctionKind(FunctionKind::destructor);
     destructorSymbol->SetAccess(Access::public_);
