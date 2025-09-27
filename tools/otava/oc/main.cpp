@@ -17,12 +17,7 @@ import otava.symbols.type.symbol;
 import otava.parser.recorded.parse;
 import otava.opt;
 import soul.lexer.file.map;
-import util.init.done;
-import util.unicode;
-import util.path;
-import util.text.util;
-import util.rand;
-import util.uuid;
+import util;
 
 void PrintHelp()
 {
@@ -60,8 +55,6 @@ std::string Version()
 
 int main(int argc, const char** argv)
 {
-
-
     try
     {
         std::cout << "****************************************" << "\n";

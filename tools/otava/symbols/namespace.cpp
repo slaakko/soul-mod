@@ -166,7 +166,7 @@ void EndNamespace(otava::ast::Node* node, int level, Context* context)
 {
     if (!context->GetSymbolTable()->CurrentScope()->GetSymbol()->IsNamespaceSymbol())
     {
-        ThrowException("cpp20.symbols.namespace: EndNamespace(): namespace scope expected", node->GetSourcePos(), context);
+        ThrowException("otava.symbols.namespace: EndNamespace(): namespace scope expected", node->GetSourcePos(), context);
     }
     context->GetSymbolTable()->EndNamespace(level);
 }

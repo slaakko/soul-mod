@@ -365,6 +365,7 @@ void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
 void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config, int optLevel)
 {
     reader.SetSymbolTable(&symbolTable);
+    symbolTable.SetSymbolMap(moduleMapper.GetSymbolMap());
     reader.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
     symbolTable.SetNodeMap(moduleMapper.GetNodeMap());
 #ifdef DEBUG_WRITE_MAPS

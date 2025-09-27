@@ -85,7 +85,7 @@ std::expected<bool, int> Any::Print(CodeFormatter& formatter)
     return std::expected<bool, int>(true);
 }
 
-Range::Range() : Symbol(SymbolKind::rangeSymbol), start(), end()
+Range::Range() : Symbol(SymbolKind::rangeSymbol), start(), end(), error(0)
 {
 }
 

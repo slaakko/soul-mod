@@ -36,10 +36,6 @@ AliasTypeSymbol::AliasTypeSymbol(const std::u32string& name_, TypeSymbol* referr
 
 void AliasTypeSymbol::Write(Writer& writer)
 {
-    if (Parent() && Parent()->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>" && Name() == U"value_type")
-    {
-        //std::cout << "write: " <<util::ToUtf8(FullName()) << "=" << util::ToString(Parent()->Id()) << ", " << util::ToString(Id()) << "\n";
-    }
     TypeSymbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(referredType->Id());
 }
@@ -52,10 +48,6 @@ void AliasTypeSymbol::Read(Reader& reader)
 
 void AliasTypeSymbol::Resolve(SymbolTable& symbolTable)
 {
-    if (Parent() && Parent()->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>" && Name() == U"value_type")
-    {
-        //std::cout << "resolve: " << util::ToUtf8(FullName()) << "=" << util::ToString(Parent()->Id()) << ", " << util::ToString(Id()) << "\n";
-    }
     TypeSymbol::Resolve(symbolTable);
     referredType = symbolTable.GetTypeNoThrow(referredTypeId);
 }

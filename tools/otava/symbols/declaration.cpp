@@ -68,7 +68,13 @@ void ArraySizeComputer::Visit(otava::ast::AssignmentInitNode& node)
 
 void ArraySizeComputer::Visit(otava::ast::BracedInitListNode& node)
 {
-    size = node.Items().size();
+    std::int64_t count = 0;
+    for (const auto& element : node.Items())
+    {
+        if (element->IsLBraceNode() || element->IsRBraceNode()) continue;
+        ++count;
+    }
+    size = count;
 }
 
 std::int64_t GetSizeFromInitializer(otava::ast::Node* node)

@@ -151,7 +151,7 @@ public:
             if (currentPos == recordedPosPair.end)
             {
                 current = tokens.end() - 1; // set current to last token whose id is END_TOKEN
-                auto token = tokens.back();
+                auto& token = tokens.back();
                 pos = token.match.end;
             }
             else

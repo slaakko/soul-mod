@@ -177,14 +177,6 @@ bool VariableSymbol::IsTemplateParameterInstantiation(Context* context, std::set
                 return true;
             }
         }
-        //const Symbol* parent = Parent();
-        //if (parent)
-        //{
-        //    if (parent->IsTemplateParameterInstantiation(context, visited))
-        //    {
-        //        return true;
-        //    }
-        //}
     }
     return false;
 }

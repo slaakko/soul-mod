@@ -86,7 +86,7 @@ public:
     void Visit(StringArrayValue& value) override;
     void Visit(ConversionValue& value) override;
     void Visit(SymbolValue& value) override;
-    void Error(const std::string& message);
+    [[noreturn]] void Error(const std::string& message);
     void WriteOutputFile(bool verbose);
     inline void ResetLeader() { leader = false; }
     virtual int ExitLabelId() const;

@@ -73,7 +73,7 @@ bool ClassTemplateNameLess::operator()(ClassTemplateSpecializationSymbol* left, 
 
 SymbolTable::SymbolTable() :
     module(nullptr),
-    symbolMap(new SymbolMap()),
+    symbolMap(nullptr),
     globalNs(new NamespaceSymbol(std::u32string())), 
     currentScope(globalNs->GetScope()), 
     typenameConstraintSymbol(nullptr),
@@ -199,7 +199,6 @@ void SymbolTable::AddClass(ClassTypeSymbol* cls)
 {
     classes.insert(cls);
     allClasses.insert(cls);
-    symbolMap->AddSymbol(cls);
 }
 
 void SymbolTable::Init()
@@ -225,7 +224,6 @@ void SymbolTable::Import(const SymbolTable& that, FunctionDefinitionSymbolSet* f
     context.SetSymbolTable(this);
     context.SetFunctionDefinitionSymbolSet(functionDefinitionSymbolSet);
     globalNs->Import(that.globalNs.get(), &context);
-    symbolMap->Import(*that.symbolMap);
     ImportSpecializations(that);
     ImportArrayTypes(that);
     ImportDependentTypes(that);
@@ -658,22 +656,12 @@ void SymbolTable::Write(Writer& writer, Context* context)
     writer.GetBinaryStreamWriter().WriteULEB128UInt(scount);
     for (const auto& specialization : classTemplateSpecializations)
     {
-        std::string idstr = util::ToString(specialization->Id());
-        if (specialization->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>")
-        {
-            //std::cout << module->Name() << "> write: " << util::ToUtf8(specialization->Name()) << "=" << idstr << "\n";
-        }
         writer.Write(specialization.get());
     }
     std::uint32_t cscount = changedClassTemplateSpecializations.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(cscount);
     for (const auto& specialization : changedClassTemplateSpecializations)
     {
-        std::string idstr = util::ToString(specialization->Id());
-        if (specialization->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>")
-        {
-            //std::cout << module->Name() << "> write: " << util::ToUtf8(specialization->Name()) << "=" << idstr << "\n";
-        }
         writer.Write(specialization);
     }
     std::uint32_t acount = aliasTypeTemplateSpecializations.size();
@@ -776,10 +764,6 @@ void SymbolTable::Read(Reader& reader)
         if (symbol->IsClassTemplateSpecializationSymbol())
         {
             ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(symbol);
-            if (specialization->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>")
-            {
-                //std::cout << ">" << module->Name() << "> read: " << util::ToUtf8(specialization->Name()) << "=" << util::ToString(specialization->Id()) << "\n";
-            }
             classTemplateSpecializations.push_back(std::unique_ptr<ClassTemplateSpecializationSymbol>(specialization));
         }
         else
@@ -795,10 +779,6 @@ void SymbolTable::Read(Reader& reader)
         if (symbol->IsClassTemplateSpecializationSymbol())
         {
             ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(symbol);
-            if (specialization->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>")
-            {
-                //std::cout << ">" << module->Name() << "> read: " << util::ToUtf8(specialization->Name()) << "=" << util::ToString(specialization->Id()) << "\n";
-            }
             classTemplateSpecializations.push_back(std::unique_ptr<ClassTemplateSpecializationSymbol>(specialization));
         }
         else
@@ -1135,7 +1115,6 @@ void SymbolTable::MapNode(otava::ast::Node* node, Symbol* symbol, MapKind kind)
 {
     if (!node) return;
     if (!symbol) return;
-    symbolMap->AddSymbol(symbol);
     Symbol* prevSymbol = nullptr;
     if (symbol->IsFunctionSymbol() && !symbol->IsFunctionDefinitionSymbol())
     {
@@ -1159,10 +1138,6 @@ void SymbolTable::MapNode(otava::ast::Node* node, Symbol* symbol, MapKind kind)
         ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(symbol->Parent());
         specialization->SetProject();
         AddChangedClassTemplateSpecialization(specialization);
-    }
-    if (symbol->Parent() && symbol->Parent()->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>")
-    {
-        //std::cout << "map: " << util::ToUtf8(symbol->FullName()) << "=" << util::ToString(symbol->Id()) << ", parent=" << util::ToString(symbol->Parent()->Id()) << "\n";
     }
 }
 
@@ -1301,7 +1276,6 @@ TypeSymbol* SymbolTable::GetType(const util::uuid& id) const
 void SymbolTable::MapType(TypeSymbol* type)
 {
     typeMap[type->Id()] = type;
-    symbolMap->AddSymbol(type);
 }
 
 void SymbolTable::UnmapType(TypeSymbol* type)
@@ -1321,7 +1295,6 @@ VariableSymbol* SymbolTable::AddVariable(const std::u32string& name, otava::ast:
 {
     VariableGroupSymbol* variableGroup = currentScope->GroupScope()->GetOrInsertVariableGroup(name, node->GetSourcePos(), context);
     VariableSymbol* variableSymbol = new VariableSymbol(name);
-    symbolMap->AddSymbol(variableSymbol);
     variableSymbol->SetAccess(CurrentAccess());
     variableSymbol->SetDeclaredType(declaredType);
     variableSymbol->SetInitializerType(initializerType);
@@ -1337,7 +1310,6 @@ AliasTypeSymbol* SymbolTable::AddAliasType(otava::ast::Node* idNode, otava::ast:
     std::u32string id = idNode->Str();
     AliasGroupSymbol* aliasGroup = currentScope->GroupScope()->GetOrInsertAliasGroup(id, idNode->GetSourcePos(), context);
     AliasTypeSymbol* aliasTypeSymbol = new AliasTypeSymbol(id, type);
-    symbolMap->AddSymbol(aliasTypeSymbol);
     aliasTypeSymbol->SetAccess(currentAccess);
     currentScope->SymbolScope()->AddSymbol(aliasTypeSymbol, idNode->GetSourcePos(), context);
     aliasGroup->AddAliasTypeSymbol(aliasTypeSymbol);
@@ -1421,7 +1393,6 @@ void SymbolTable::BeginClass(const std::u32string& name, ClassKind classKind, Ty
     Symbol* symbol = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, node->GetSourcePos(), context, LookupFlags::dontResolveSingle);
     ClassGroupSymbol* classGroup = currentScope->GroupScope()->GetOrInsertClassGroup(name, node->GetSourcePos(), context);
     ClassTypeSymbol* classTypeSymbol = new ClassTypeSymbol(name);
-    symbolMap->AddSymbol(classTypeSymbol);
     classTypeSymbol->SetLevel(classLevel++);
     AddClass(classTypeSymbol);
     classTypeSymbol->SetAccess(CurrentAccess());
@@ -1500,7 +1471,6 @@ void SymbolTable::BeginEnumeratedType(const std::u32string& name, EnumTypeKind k
         ThrowException("enumerated type '" + util::ToUtf8(name) + "' not unique", node->GetSourcePos(), context);
     }
     EnumeratedTypeSymbol* enumTypeSymbol = new EnumeratedTypeSymbol(name);
-    symbolMap->AddSymbol(enumTypeSymbol);
     enumTypeSymbol->SetAccess(CurrentAccess());
     enumTypeSymbol->SetEnumTypeKind(kind);
     enumTypeSymbol->SetUnderlyingType(underlyingType);
@@ -1568,7 +1538,6 @@ void SymbolTable::AddEnumerator(const std::u32string& name, Value* value, otava:
 BlockSymbol* SymbolTable::BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context)
 {
     BlockSymbol* blockSymbol = new BlockSymbol();
-    symbolMap->AddSymbol(blockSymbol);
     currentScope->SymbolScope()->AddSymbol(blockSymbol, sourcePos, context);
     BeginScopeGeneric(blockSymbol->GetScope(), context);
     return blockSymbol;
@@ -1597,7 +1566,6 @@ void SymbolTable::RemoveBlock()
 void SymbolTable::BeginTemplateDeclaration(otava::ast::Node* node, Context* context)
 {
     TemplateDeclarationSymbol* templateDeclarationSymbol = new TemplateDeclarationSymbol();
-    symbolMap->AddSymbol(templateDeclarationSymbol);
     currentScope->SymbolScope()->AddSymbol(templateDeclarationSymbol, node->GetSourcePos(), context);
     BeginScope(templateDeclarationSymbol->GetScope());
 }
@@ -1621,7 +1589,6 @@ void SymbolTable::AddTemplateParameter(const std::u32string& name, otava::ast::N
     Context* context)
 {
     TemplateParameterSymbol* templateParameterSymbol = new TemplateParameterSymbol(constraint, name, GetTemplateParameterId(index), index, defaultTemplateArgNode);
-    symbolMap->AddSymbol(templateParameterSymbol);
     if (parameter)
     {
         templateParameterSymbol->AddSymbol(parameter, node->GetSourcePos(), context);
@@ -1644,8 +1611,6 @@ FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, const std::
     }
     FunctionGroupSymbol* functionGroup = currentScope->GroupScope()->GetOrInsertFunctionGroup(groupName, node->GetSourcePos(), context);
     FunctionSymbol* functionSymbol = new FunctionSymbol(name);
-    functionSymbol->SetNodeId(node->NodeId());
-    symbolMap->AddSymbol(functionSymbol);
     functionSymbol->SetAccess(CurrentAccess());
     functionSymbol->SetFunctionKind(kind);
     functionSymbol->SetFunctionQualifiers(qualifiers);
@@ -1691,11 +1656,6 @@ FunctionDefinitionSymbol* SymbolTable::AddOrGetFunctionDefinition(Scope* scope, 
     }
     FunctionGroupSymbol* functionGroup = scope->GroupScope()->GetOrInsertFunctionGroup(groupName, node->GetSourcePos(), context);
     std::unique_ptr<FunctionDefinitionSymbol> functionDefinition(new FunctionDefinitionSymbol(name));
-    if (functionNode)
-    {
-        functionDefinition->SetNodeId(functionNode->NodeId());
-    }
-    symbolMap->AddSymbol(functionDefinition.get());
     functionDefinition->SetGroup(functionGroup);
     functionDefinition->SetDeclarationFlags(declarationFlags);
     if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || 
@@ -1753,7 +1713,6 @@ FunctionDefinitionSymbol* SymbolTable::AddOrGetFunctionDefinition(Scope* scope, 
 ParameterSymbol* SymbolTable::CreateParameter(const std::u32string& name, otava::ast::Node* node, TypeSymbol* type, Context* context)
 {
     ParameterSymbol* parameterSymbol = new ParameterSymbol(name, type);
-    symbolMap->AddSymbol(parameterSymbol);
     if (node)
     {
         MapNode(node, parameterSymbol);
@@ -1784,7 +1743,6 @@ TypeSymbol* SymbolTable::MakeCompoundType(TypeSymbol* baseType, Derivations deri
     CompoundTypeSymbol* compoundTypeSymbol = new CompoundTypeSymbol(baseType, drv, id);
     AddCompoundType(compoundTypeSymbol);
     MapCompoundType(compoundTypeSymbol);
-    symbolMap->AddSymbol(compoundTypeSymbol);
     if (AddToRecomputeNameSet())
     {
         AddToRecomputeNameSet(compoundTypeSymbol);
@@ -1854,7 +1812,6 @@ TypeSymbol* SymbolTable::MakeConstWCharPtrType()
 FunctionTypeSymbol* SymbolTable::MakeFunctionTypeSymbol(FunctionSymbol* functionSymbol)
 {
     std::unique_ptr<FunctionTypeSymbol> symbol(new FunctionTypeSymbol());
-    symbolMap->AddSymbol(symbol.get());
     int n = functionSymbol->Parameters().size();
     for (int i = 0; i < n; ++i)
     {
@@ -1882,7 +1839,6 @@ FunctionGroupTypeSymbol* SymbolTable::MakeFunctionGroupTypeSymbol(FunctionGroupS
         return it->second;
     }
     FunctionGroupTypeSymbol* functionGroupType = new FunctionGroupTypeSymbol(functionGroup);
-    symbolMap->AddSymbol(functionGroupType);
     functionGroupTypeMap[functionGroup] = functionGroupType;
     functionGroupTypes.push_back(std::unique_ptr<FunctionGroupTypeSymbol>(functionGroupType));
     return functionGroupType;
@@ -1896,7 +1852,6 @@ ClassGroupTypeSymbol* SymbolTable::MakeClassGroupTypeSymbol(ClassGroupSymbol* cl
         return it->second;
     }
     ClassGroupTypeSymbol* classGroupType = new ClassGroupTypeSymbol(classGroup);
-    symbolMap->AddSymbol(classGroupType);
     classGroupTypeMap[classGroup] = classGroupType;
     classGroupTypes.push_back(std::unique_ptr<ClassGroupTypeSymbol>(classGroupType));
     return classGroupType;
@@ -1910,7 +1865,6 @@ AliasGroupTypeSymbol* SymbolTable::MakeAliasGroupTypeSymbol(AliasGroupSymbol* al
         return it->second;
     }
     AliasGroupTypeSymbol* aliasGroupType = new AliasGroupTypeSymbol(aliasGroup);
-    symbolMap->AddSymbol(aliasGroupType);
     aliasGroupTypeMap[aliasGroup] = aliasGroupType;
     aliasGroupTypes.push_back(std::unique_ptr<AliasGroupTypeSymbol>(aliasGroupType));
     return aliasGroupType;
@@ -1920,7 +1874,6 @@ ConceptSymbol* SymbolTable::AddConcept(const std::u32string& name, otava::ast::N
 {
     ConceptGroupSymbol* conceptGroup = currentScope->GroupScope()->GetOrInsertConceptGroup(name, node->GetSourcePos(), context);
     ConceptSymbol* conceptSymbol = new ConceptSymbol(name);
-    symbolMap->AddSymbol(conceptSymbol);
     conceptGroup->AddConcept(conceptSymbol);
     currentScope->SymbolScope()->AddSymbol(conceptSymbol, node->GetSourcePos(), context);
     MapNode(node, conceptSymbol);
@@ -1933,22 +1886,9 @@ ClassTemplateSpecializationSymbol* SymbolTable::MakeClassTemplateSpecialization(
     auto it = classTemplateSpecializationMap.find(id);
     if (it != classTemplateSpecializationMap.end())
     {
-        /*
-        if (it->second->Name() == U"rb_node<pair<const basic_string<char>, RuleParser*>>")
-        {
-            //std::cout << util::ToUtf8(it->second->Name()) << "=" << util::ToString(it->second->Id()) << "\n";
-        }
-        */
         return it->second;
     }
     std::unique_ptr<ClassTemplateSpecializationSymbol> symbol(new ClassTemplateSpecializationSymbol(id, MakeSpecializationName(classTemplate, templateArguments)));
-    /*
-    if (symbol->Name() == U"rb_node<pair<const basic_string<char>, RuleParser*>>")
-    {
-        //std::cout << util::ToUtf8(symbol->Name()) << "=" << util::ToString(symbol->Id()) << "\n";
-    }
-    */
-    symbolMap->AddSymbol(symbol.get());
     symbol->SetClassTemplate(classTemplate);
     for (Symbol* templateArg : templateArguments)
     {
@@ -1963,7 +1903,6 @@ ClassTemplateSpecializationSymbol* SymbolTable::MakeClassTemplateSpecialization(
 AliasTypeTemplateSpecializationSymbol* SymbolTable::MakeAliasTypeTemplateSpecialization(TypeSymbol* aliasTypeTemplate, const std::vector<Symbol*>& templateArguments)
 {
     std::unique_ptr<AliasTypeTemplateSpecializationSymbol> symbol(new AliasTypeTemplateSpecializationSymbol(MakeSpecializationName(aliasTypeTemplate, templateArguments)));
-    symbolMap->AddSymbol(symbol.get());
     symbol->SetAliasTypeTemplate(aliasTypeTemplate);
     for (Symbol* templateArg : templateArguments)
     {
@@ -1990,7 +1929,6 @@ ArrayTypeSymbol* SymbolTable::MakeArrayType(TypeSymbol* elementType, std::int64_
         return *it;
     }
     ArrayTypeSymbol* sym = symbol.get();
-    symbolMap->AddSymbol(sym);
     arrayTypeSet.insert(sym);
     arrayTypes.push_back(std::move(symbol));
     MapType(sym);
@@ -2000,7 +1938,6 @@ ArrayTypeSymbol* SymbolTable::MakeArrayType(TypeSymbol* elementType, std::int64_
 DependentTypeSymbol* SymbolTable::MakeDependentTypeSymbol(otava::ast::Node* node)
 {
     DependentTypeSymbol* dependentTypeSymbol = new DependentTypeSymbol(node);
-    symbolMap->AddSymbol(dependentTypeSymbol);
     dependentTypeSet.insert(dependentTypeSymbol);
     MapType(dependentTypeSymbol);
     dependentTypeSymbols.push_back(std::unique_ptr<DependentTypeSymbol>(dependentTypeSymbol));
@@ -2036,7 +1973,6 @@ void SymbolTable::CreateFundamentalTypes()
 void SymbolTable::AddFundamentalType(FundamentalTypeKind kind)
 {
     FundamentalTypeSymbol* fundamentalTypeSymbol = new FundamentalTypeSymbol(kind);
-    symbolMap->AddSymbol(fundamentalTypeSymbol);
     Context context;
     context.SetSymbolTable(this);
     globalNs->AddSymbol(fundamentalTypeSymbol, soul::ast::SourcePos(), &context);

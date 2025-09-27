@@ -65,7 +65,7 @@ void Method::ValidatePositional(util::JsonArray* params)
     {
         if (params->Count() < MinArity() || params->Count() > Arity())
         {
-            JsonRpcException(invalidParams, "method '" + Name() + "': wrong arity: " + std::to_string(Arity()) + " parameters expected, " +
+            JsonRpcException ex(invalidParams, "method '" + Name() + "': wrong arity: " + std::to_string(Arity()) + " parameters expected, " +
                 std::to_string(params->Count()) + " arguments supplied");
         }
         int n = params->Count();

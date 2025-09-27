@@ -11,7 +11,7 @@ import soul_expected.ast.source.pos;
 namespace soul_expected::lexer {
 
 ParsingException::ParsingException(const std::string& message_, const std::string& fileName_, const soul_expected::ast::SourcePos& sourcePos_) :
-    std::runtime_error(message_), message(message_), fileName(fileName_), sourcePos(sourcePos)
+    std::runtime_error(message_), message(message_), fileName(fileName_), sourcePos(sourcePos_)
 {
 }
 

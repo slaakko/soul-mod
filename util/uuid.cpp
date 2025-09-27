@@ -10,7 +10,7 @@ import util.rand;
 
 namespace util {
 
-uuid::uuid()
+uuid::uuid() : data()
 {
     for (auto& byte : data)
     {

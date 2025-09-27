@@ -240,7 +240,8 @@ public:
     inline const std::set<ClassTypeSymbol*>& Classes() const { return allClasses; }
     inline void SetNodeMap(otava::ast::NodeMap* nodeMap_) { nodeMap = nodeMap_; }
     inline otava::ast::NodeMap* GetNodeMap() { return nodeMap; }
-    inline SymbolMap* GetSymbolMap() { return symbolMap.get(); }
+    inline void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
+    inline SymbolMap* GetSymbolMap() const { return symbolMap; }
     inline ConversionTable& GetConversionTable() { return *conversionTable; }
     inline const ConversionTable& GetConversionTable() const { return *conversionTable; }
     inline Linkage CurrentLinkage() const { return currentLinkage; }
@@ -347,7 +348,7 @@ private:
     Access currentAccess;
     std::stack<Access> accessStack;
     otava::ast::NodeMap* nodeMap;
-    std::unique_ptr<SymbolMap> symbolMap;
+    SymbolMap* symbolMap;
     std::set<ClassTypeSymbol*> classes;
     std::set<ClassTypeSymbol*> allClasses;
     int classLevel;

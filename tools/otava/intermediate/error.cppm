@@ -24,8 +24,8 @@ private:
 class Context;
 
 bool ExceptionThrown();
-void Error(const std::string& message, const soul::ast::Span& span, Context* context);
-void Error(const std::string& message, const soul::ast::Span& span, Context* context, const soul::ast::Span& refSpan);
+[[noreturn]] void Error(const std::string& message, const soul::ast::Span& span, Context* context);
+[[noreturn]] void Error(const std::string& message, const soul::ast::Span& span, Context* context, const soul::ast::Span& refSpan);
 void Warning(const std::string& message, const soul::ast::Span& span, Context* context);
 
 } // otava::intermediate

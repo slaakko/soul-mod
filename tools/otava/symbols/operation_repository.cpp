@@ -1815,9 +1815,8 @@ FunctionPtrApply::FunctionPtrApply(FunctionTypeSymbol* functionType_, const soul
 void FunctionPtrApply::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    otava::intermediate::Value* callee = nullptr;
     args[0]->Load(emitter, OperationFlags::none, sourcePos, context);
-    callee = emitter.Stack().Pop();
+    otava::intermediate::Value* callee = emitter.Stack().Pop();
     int na = args.size() - 1;
     for (int i = 0; i < na; ++i)
     {

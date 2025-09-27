@@ -20,6 +20,7 @@ IntermediateError::IntermediateError(const std::string& message_) : std::runtime
 {
 }
 
+[[noreturn]]
 void Error(const std::string& message, const soul::ast::Span& span, Context* context)
 {
     exceptionThrown = true;
@@ -47,6 +48,7 @@ void Error(const std::string& message, const soul::ast::Span& span, Context* con
     }
 }
 
+[[noreturn]]
 void Error(const std::string& message, const soul::ast::Span& span, Context* context, const soul::ast::Span& refSpan)
 {
     exceptionThrown = true;

@@ -320,6 +320,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     projectModule.SetProjectId(projectId);
     projectModule.SetImportIndex(importIndex);
     otava::ast::SetNodeIdFactory(projectModule.GetNodeIdFactory());
+    projectModule.GetSymbolTable()->SetSymbolMap(moduleMapper.GetSymbolMap());
     projectModule.GetNodeIdFactory()->SetModuleId(projectModule.Id());
     std::map<std::string, std::vector<std::string>> implementationNameMap;
     project->InitModules();
@@ -466,6 +467,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         }
         context.SetOptLevel(optLevel);
         context.SetFileMap(&project->GetFileMap());
+        context.SetInstantiationQueue(&instantiationQueue);
         context.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
         std::string compileUnitId = "compile_unit_" + util::GetSha1MessageDigest(filePath);
         context.GetBoundCompileUnit()->SetId(compileUnitId);
@@ -475,11 +477,11 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         module->SetFilePath(filePath);
         otava::symbols::SetCurrentModule(module);
         otava::ast::SetNodeIdFactory(module->GetNodeIdFactory());
+        module->GetSymbolTable()->SetSymbolMap(moduleMapper.GetSymbolMap());
         module->Import(moduleMapper, config, optLevel);
         module->GetSymbolTable()->ResolveForwardDeclarations();
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
-        context.SetInstantiationQueue(&instantiationQueue);
         using LexerType = decltype(lexer);
         std::unique_ptr<otava::ast::Node> node = otava::parser::translation::unit::TranslationUnitParser<LexerType>::Parse(lexer, &context);
         otava::symbols::GenerateDestructors(context.GetBoundCompileUnit(), &context);
@@ -576,6 +578,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         module->SetFilePath(filePath);
         otava::symbols::SetCurrentModule(module);
         otava::ast::SetNodeIdFactory(module->GetNodeIdFactory());
+        module->GetSymbolTable()->SetSymbolMap(moduleMapper.GetSymbolMap());
         module->Import(moduleMapper, config, optLevel);
         module->GetSymbolTable()->ResolveForwardDeclarations();
         context.SetLexer(&lexer);

@@ -199,7 +199,7 @@ void EndTemplateDeclaration(otava::ast::Node* node, Context* context)
     Symbol* symbol = context->GetSymbolTable()->CurrentScope()->GetSymbol();
     if (!symbol->IsTemplateDeclarationSymbol())
     {
-        ThrowException("cpp20.symbols.templates: EndTemplateDeclaration(): template scope expected", node->GetSourcePos(), context);
+        ThrowException("otava.symbols.templates: EndTemplateDeclaration(): template scope expected", node->GetSourcePos(), context);
     }
     context->PopFlags();
     context->GetSymbolTable()->EndTemplateDeclaration();

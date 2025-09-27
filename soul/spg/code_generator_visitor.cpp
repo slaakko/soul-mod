@@ -14,7 +14,7 @@ namespace soul::spg {
 
 CodeGeneratorVisitor::CodeGeneratorVisitor(soul::ast::spg::SpgFile* spgFile_, bool verbose_, bool noDebugSupport_, const std::string& version_, soul::lexer::FileMap& fileMap_) :
     spgFile(spgFile_), verbose(verbose_), noDebugSupport(noDebugSupport_), version(version_), formatter(nullptr),
-    stage(CodeGenerationStage::generateInterface), currentParser(nullptr), parentMatchNumber(0), setParentMatchNumber(-1), sn(0), fileMap(fileMap_)
+    stage(CodeGenerationStage::generateInterface), currentParser(nullptr), currentRule(nullptr), parentMatchNumber(0), setParentMatchNumber(-1), sn(0), fileMap(fileMap_)
 {
 }
 

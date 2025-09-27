@@ -516,10 +516,6 @@ bool Overrides(FunctionSymbol* f, FunctionSymbol* g)
 
 void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos, bool clear)
 {
-    if (Name() == U"LexerBase<char32_t>")
-    {
-        int x = 0;
-    }
     if (!IsPolymorphic()) return;
     if (clear)
     {
@@ -535,10 +531,6 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
     std::vector<FunctionSymbol*> virtualFunctions;
     for (const auto& function : memberFunctions)
     {
-        if (function->NodeId() == 1075374279)
-        {
-            int x = 0;
-        }
         FunctionSymbol* fn = function;
         if (function->IsFunctionDefinitionSymbol())
         {
@@ -776,7 +768,6 @@ std::int32_t ClassTypeSymbol::NextFunctionIndex()
 void ClassTypeSymbol::MapFunction(FunctionSymbol* function)
 {
     functionIndexMap[function->Index()] = function;
-    functionNodeIdMap[function->NodeId()] = function;
 }
 
 FunctionSymbol* ClassTypeSymbol::GetFunctionByIndex(std::int32_t functionIndex) const
@@ -1404,7 +1395,6 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
     }
     bool hasNonTrivialDestructor = false;
     std::unique_ptr<FunctionSymbol> destructorSymbol(new FunctionSymbol(U"@destructor"));
-    destructorSymbol->SetNodeId(otava::ast::destructorNodeId);
     destructorSymbol->SetParent(classTypeSymbol);
     destructorSymbol->SetFunctionKind(FunctionKind::destructor);
     destructorSymbol->SetAccess(Access::public_);

@@ -366,8 +366,7 @@ FunctionSymbol::FunctionSymbol(const std::u32string& name_) :
     conversionParamType(nullptr), 
     conversionArgType(nullptr),
     conversionDistance(0),
-    group(nullptr),
-    nodeId(-1)
+    group(nullptr)
 {
     GetScope()->SetKind(ScopeKind::functionScope);
 }
@@ -389,7 +388,7 @@ FunctionSymbol::FunctionSymbol(SymbolKind kind_, const std::u32string& name_) :
     conversionParamType(nullptr),
     conversionArgType(nullptr),
     conversionDistance(0),
-    nodeId(-1)
+    group(nullptr)
 {
     GetScope()->SetKind(ScopeKind::functionScope);
 }
@@ -779,7 +778,6 @@ void FunctionSymbol::Write(Writer& writer)
     writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(qualifiers));
     writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(linkage));
     writer.GetBinaryStreamWriter().Write(index);
-    writer.GetBinaryStreamWriter().Write(nodeId);
     writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(flags));
     if (returnType)
     {
@@ -836,7 +834,6 @@ void FunctionSymbol::Read(Reader& reader)
     qualifiers = static_cast<FunctionQualifiers>(reader.GetBinaryStreamReader().ReadByte());
     linkage = static_cast<Linkage>(reader.GetBinaryStreamReader().ReadByte());
     index = reader.GetBinaryStreamReader().ReadInt();
-    nodeId = reader.GetBinaryStreamReader().ReadInt();
     flags = static_cast<FunctionSymbolFlags>(reader.GetBinaryStreamReader().ReadByte());
     reader.GetBinaryStreamReader().ReadUuid(returnTypeId);
     if (ReturnsClass())
@@ -866,7 +863,6 @@ void FunctionSymbol::Read(Reader& reader)
         reader.GetBinaryStreamReader().ReadUuid(sid);
         specializationIds.push_back(sid);
     }
-    reader.GetSymbolTable()->MapFunction(this);
 }
 
 void FunctionSymbol::Resolve(SymbolTable& symbolTable)
@@ -1326,7 +1322,6 @@ void FunctionDefinitionSymbol::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(declarationId);
     defIndex = reader.GetBinaryStreamReader().ReadInt();
     irName = reader.GetBinaryStreamReader().ReadUtf8String();
-    reader.GetSymbolTable()->MapFunctionDefinition(this);
 }
 
 void FunctionDefinitionSymbol::Accept(Visitor& visitor) 

@@ -552,11 +552,6 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
                     specialization->SetId(MakeClassTemplateSpecializationSymbolId(specialization->ClassTemplate(), specialization->TemplateArguments(), 
                         *context->GetSymbolTable()));
                     context->GetSymbolTable()->MapClassTemplateSpecialization(specialization);
-                    if (specialization->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>")
-                    {
-                        //std::cout << context->GetModule()->Name() << ": change id: " <<
-                          //  util::ToUtf8(specialization->Name()) << "=" << util::ToString(specialization->Id()) << "\n" << "old id=" << oldId << "\n";
-                    }
                 }
             }
             else

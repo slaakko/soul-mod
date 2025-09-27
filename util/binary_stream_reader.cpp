@@ -148,7 +148,7 @@ std::uint32_t BinaryStreamReader::ReadULEB128UInt()
     while (true)
     {
         std::uint8_t b = ReadByte();
-        result |= static_cast<std::uint32_t>(((b & 0x7F) << shift));
+        result |= static_cast<std::uint32_t>(b & 0x7F) << shift;
         if ((b & 0x80) == 0) break;
         shift += static_cast<std::uint32_t>(7);
     }
@@ -162,7 +162,7 @@ std::uint64_t BinaryStreamReader::ReadULEB128ULong()
     while (true)
     {
         std::uint8_t b = ReadByte();
-        result |= ((b & 0x7F) << shift);
+        result |= static_cast<std::uint64_t>(b & 0x7F) << shift;
         if ((b & 0x80) == 0) break;
         shift += 7;
     }
@@ -177,7 +177,7 @@ std::int32_t BinaryStreamReader::ReadSLEB128Int()
     do
     {
         b = ReadByte();
-        result |= (b & 0x7F) << shift;
+        result |= static_cast<int32_t>(b & 0x7F) << shift;
         shift += 7;
     } while ((b & 0x80) != 0);
     if ((shift < 32) && (b & 0x40) != 0)
@@ -195,7 +195,7 @@ std::int64_t BinaryStreamReader::ReadSLEB128Long()
     do
     {
         b = ReadByte();
-        result |= (b & 0x7F) << shift;
+        result |= static_cast<std::int64_t>((b & 0x7F) << shift);
         shift += 7;
     } while ((b & 0x80) != 0);
     if ((shift < 64) && (b & 0x40) != 0)
