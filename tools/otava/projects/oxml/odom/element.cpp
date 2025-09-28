@@ -14,12 +14,20 @@ Element::Element(const soul::ast::SourcePos& sourcePos_, const std::string& name
 {
 }
 
+Element::~Element()
+{
+    for (auto& p : attributeMap)
+    {
+        delete p.second;
+    }
+}
+
 AttributeNode* Element::GetAttributeNode(const std::string& attributeName) const
 {
     auto it = attributeMap.find(attributeName);
     if (it != attributeMap.cend())
     {
-        return it->second.get();
+        return it->second;
     }
     else
     {
@@ -42,7 +50,12 @@ std::string Element::GetAttribute(const std::string& name) const
 
 void Element::AddAttribute(AttributeNode* attributeNode)
 {
-    attributeMap[attributeNode->Name()] = std::unique_ptr<AttributeNode>(attributeNode);
+    AttributeNode* prev = GetAttributeNode(attributeNode->Name());
+    if (prev)
+    {
+        delete prev;
+    }
+    attributeMap[attributeNode->Name()] = attributeNode;
 }
 
 void Element::SetAttribute(const soul::ast::SourcePos& sourcePos, const std::string& name, const std::string& value)
@@ -175,7 +188,7 @@ void Element::WalkAttribute(NodeOperation& operation)
 {
     for (const auto& attribute : attributeMap)
     {
-        operation.Apply(attribute.second.get());
+        operation.Apply(attribute.second);
     }
 }
 

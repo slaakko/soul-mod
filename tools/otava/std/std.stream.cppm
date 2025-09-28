@@ -175,7 +175,7 @@ basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, double x)
 template<typename CharT>
 basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, const void* x)
 {
-    unsigned long long value = *static_cast<const unsigned long long*>(x);
+    unsigned long long value = static_cast<unsigned long long>(x);
     return s << value;
 }
 

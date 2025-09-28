@@ -474,7 +474,7 @@ FunctionSymbol* VoidPtrToUInt64ArgumentConversion::Get(TypeSymbol* paramType, Ty
     FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     TypeSymbol* uint64Type = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType);
-    if (argType->IsVoidPtrType() && TypesEqual(paramType, uint64Type))
+    if (argType->PlainType(context)->IsVoidPtrType() && TypesEqual(paramType->PlainType(context), uint64Type))
     {
         return new VoidPtrToUInt64Conversion(argType, paramType, context);
     }

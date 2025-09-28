@@ -1,0 +1,7 @@
+project dom_test;
+target=program;
+reference <../../projects/oxml/odom/odom.project>;
+reference <../../projects/outil/outil.project>;
+reference <../../projects/osoul/oast/oast.project>;
+reference <../../projects/osoul/olexer/olexer.project>;
+source <main.cpp>;

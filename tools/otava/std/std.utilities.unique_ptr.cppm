@@ -1,6 +1,7 @@
 export module std.utilities.unique_ptr;
 
 import std.type.fundamental;
+import std.basic_string;
 
 export namespace std {
 

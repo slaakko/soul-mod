@@ -15,7 +15,8 @@ class Element : public ParentNode
 {
 public:
     Element(const soul::ast::SourcePos& sourcePos_, const std::string& name_);
-    inline const std::map<std::string, std::unique_ptr<AttributeNode>>& Attributes() const { return attributeMap; }
+    ~Element();
+    inline const std::map<std::string, AttributeNode*>& Attributes() const { return attributeMap; }
     AttributeNode* GetAttributeNode(const std::string& attributeName) const;
     std::string GetAttribute(const std::string& name) const;
     void AddAttribute(AttributeNode* attributeNode);
@@ -28,7 +29,7 @@ public:
 private:
     std::expected<bool, int> WriteAttributes(util::CodeFormatter& formatter);
     bool HasMultilineContent() const;
-    std::map<std::string, std::unique_ptr<AttributeNode>> attributeMap;
+    std::map<std::string, AttributeNode*> attributeMap;
 };
 
 Element* MakeElement(const std::string& name);
