@@ -41,7 +41,7 @@ private:
     soul::xml::Element* currentElement;
 };
 
-XmlPrinter::XmlPrinter(bool verbose_, bool opt_) : verbose(verbose_), opt(opt_)
+XmlPrinter::XmlPrinter(bool verbose_, bool opt_) : verbose(verbose_), opt(opt_), currentElement(nullptr)
 {
 }
 

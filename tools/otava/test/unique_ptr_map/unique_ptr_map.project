@@ -1,0 +1,3 @@
+project unique_ptr_map;
+target=program;
+source <main.cpp>;

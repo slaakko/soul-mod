@@ -1,2 +1,2 @@
 @echo off
-ospg -vox re.ospg
+ospg -vo re.ospg

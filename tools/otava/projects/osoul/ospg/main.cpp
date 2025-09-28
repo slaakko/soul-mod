@@ -34,9 +34,6 @@ void PrintHelp()
     std::cout << "--optimize | -o" << "\n";
     std::cout << "  Do switch optimization." << "\n";
     std::cout << "\n";
-    std::cout << "--xml | -x" << "\n";
-    std::cout << "  Generate XML info documents." << "\n";
-    std::cout << "\n";
 }
 
 int main(int argc, const char** argv)
@@ -44,7 +41,6 @@ int main(int argc, const char** argv)
     bool verbose = false;
     bool noDebugSupport = false;
     bool optimize = false;
-    bool xml = false;
     std::vector<std::string> files;
     for (int i = 1; i < argc; ++i)
     {
@@ -67,10 +63,6 @@ int main(int argc, const char** argv)
             else if (arg == "--optimize")
             {
                 optimize = true;
-            }
-            else if (arg == "--xml")
-            {
-                xml = true;
             }
             else
             {
@@ -105,11 +97,6 @@ int main(int argc, const char** argv)
                         optimize = true;
                         break;
                     }
-                    case 'x':
-                    {
-                        xml = true;
-                        break;
-                    }
                     default:
                     {
                         std::cerr << "unknown option '-" << std::string(1, o) << "'" << "\n";
@@ -139,7 +126,7 @@ int main(int argc, const char** argv)
             return 1;
         }
         std::unique_ptr<soul::ast::spg::SpgFile> spgFile = std::move(*rv);
-        std::expected<bool, int> grv = soul::spg::GenerateParsers(spgFile.get(), fileMap, verbose, noDebugSupport, optimize, xml, Version());
+        std::expected<bool, int> grv = soul::spg::GenerateParsers(spgFile.get(), fileMap, verbose, noDebugSupport, optimize, false, Version());
         if (!grv)
         {
             std::cerr << util::GetErrorMessage(grv.error()) << "\n";
