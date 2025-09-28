@@ -1,2 +1,2 @@
 @echo off
-ospg -vo slg_parsers.ospg
+ospg -vox slg_parsers.ospg
