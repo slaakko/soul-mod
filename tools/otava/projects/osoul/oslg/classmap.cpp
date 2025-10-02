@@ -50,8 +50,7 @@ std::expected<bool, int> MakeResourceFile(const std::string& root, const std::st
     std::ofstream resourceFile(resourceFileName);
     if (!resourceFile) return std::unexpected<int>(util::AllocateError("could not create file '" + resourceFileName + "'"));
     util::CodeFormatter formatter(resourceFile);
-    std::expected<bool, int> rv = formatter.WriteLine(classMapName + " RCDATA \"" + compressedClassMapFileName + "\"");
-    if (!rv) return rv;
+    formatter.WriteLine(classMapName + " RCDATA \"" + compressedClassMapFileName + "\"");
     if (verbose)
     {
         std::cout << "==> " << resourceFileName << "\n";

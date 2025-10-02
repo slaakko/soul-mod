@@ -28,12 +28,7 @@ void ArrayGeneratorVisitor::Visit(soul::ast::spg::StringParser& parser)
     std::string s = "s" + std::to_string(sn);
     ++sn;
     parser.SetArrayName(s);
-    std::expected<bool, int> rv = formatter.Write("static constexpr std::int32_t " + s + "[] = {");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter.Write("static constexpr std::int32_t " + s + "[] = {");
     bool first = true;
     for (char32_t c : parser.Str())
     {
@@ -43,26 +38,11 @@ void ArrayGeneratorVisitor::Visit(soul::ast::spg::StringParser& parser)
         }
         else
         {
-            rv = formatter.Write(", ");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter.Write(", ");
         }
-        rv = formatter.Write(std::to_string(static_cast<std::int32_t>(c)));
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter.Write(std::to_string(static_cast<std::int32_t>(c)));
     }
-    rv = formatter.WriteLine("};");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter.WriteLine("};");
     formatter.WriteLine();
 }
 
@@ -72,12 +52,7 @@ void ArrayGeneratorVisitor::Visit(soul::ast::spg::CharSetParser& parser)
     std::string s = "s" + std::to_string(sn);
     ++sn;
     parser.SetArrayName(s);
-    std::expected<bool, int> rv = formatter.Write("static constexpr soul::ast::spg::Range " + s + "[] = {");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter.Write("static constexpr soul::ast::spg::Range " + s + "[] = {");
     bool first = true;
     for (const soul::ast::spg::Range& range : parser.GetCharSet()->Ranges())
     {
@@ -87,26 +62,11 @@ void ArrayGeneratorVisitor::Visit(soul::ast::spg::CharSetParser& parser)
         }
         else
         {
-            rv = formatter.Write(", ");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter.Write(", ");
         }
-        rv = formatter.Write("{ " + std::to_string(range.first) + ", " + std::to_string(range.last) + " }");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter.Write("{ " + std::to_string(range.first) + ", " + std::to_string(range.last) + " }");
     }
-    rv = formatter.WriteLine("};");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter.WriteLine("};");
     formatter.WriteLine();
 }
 

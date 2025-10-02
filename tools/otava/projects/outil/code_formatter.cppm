@@ -20,8 +20,8 @@ public:
     inline int IndentSize() const { return indentSize; }
     inline void SetIndentSize(int indentSize_) { indentSize = indentSize_; }
     inline int CurrentIndent() const { return indentSize * indent; }
-    std::expected<bool, int> Write(const std::string& text);
-    std::expected<bool, int> WriteLine(const std::string& text);
+    void Write(const std::string& text);
+    void WriteLine(const std::string& text);
     void NewLine();
     inline void WriteLine() { NewLine(); }
     void Flush();

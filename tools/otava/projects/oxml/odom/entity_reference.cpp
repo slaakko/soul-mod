@@ -24,13 +24,12 @@ void EntityReference::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int>  EntityReference::Write(util::CodeFormatter& formatter)
+std::expected<bool, int> EntityReference::Write(util::CodeFormatter& formatter)
 {
-    auto rv = formatter.Write("&");
-    if (!rv) return rv;
-    rv = formatter.Write(Data());
-    if (!rv) return rv;
-    return formatter.Write(";");
+    formatter.Write("&");
+    formatter.Write(Data());
+    formatter.Write(";");
+    return std::expected<bool, int>(true);
 }
 
 EntityReference* MakeEntityReference(const std::string& entityRef)

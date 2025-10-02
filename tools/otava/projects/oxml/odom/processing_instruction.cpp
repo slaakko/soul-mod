@@ -26,7 +26,8 @@ void ProcessingInstruction::Accept(Visitor& visitor)
 
 std::expected<bool, int> ProcessingInstruction::Write(util::CodeFormatter& formatter)
 {
-    return formatter.WriteLine("<?" + target + " " + data + "?>");
+    formatter.WriteLine("<?" + target + " " + data + "?>");
+    return std::expected<bool, int>(true);
 }
 
 ProcessingInstruction* MakeProcessingInstruction(const std::string& target, const std::string& data)

@@ -132,8 +132,7 @@ std::expected<bool, int> Document::Write(util::CodeFormatter& formatter)
 {
     if (!xmlVersion.empty() && !xmlEncoding.empty())
     {
-        std::expected<bool, int> rv = formatter.WriteLine("<?xml version=\"" + xmlVersion + "\" encoding=\"" + xmlEncoding + "\"?>");
-        if (!rv) return rv;
+        formatter.WriteLine("<?xml version=\"" + xmlVersion + "\" encoding=\"" + xmlEncoding + "\"?>");
     }
     return ParentNode::Write(formatter);
 }

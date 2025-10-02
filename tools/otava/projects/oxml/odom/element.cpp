@@ -99,17 +99,14 @@ std::expected<bool, int> Element::Write(util::CodeFormatter& formatter)
     {
         if (attributeMap.empty())
         {
-            auto rv = formatter.Write("<" + Name() + ">");
-            if (!rv) return rv;
+            formatter.Write("<" + Name() + ">");
         }
         else
         {
-            auto rv = formatter.Write("<" + Name());
+            formatter.Write("<" + Name());
+            std::expected<bool, int> rv = WriteAttributes(formatter);
             if (!rv) return rv;
-            rv = WriteAttributes(formatter);
-            if (!rv) return rv;
-            rv = formatter.Write(">");
-            if (!rv) return rv;
+            formatter.Write(">");
         }
 
         bool prevPreserveSpace = formatter.PreserveSpace();
@@ -128,18 +125,15 @@ std::expected<bool, int> Element::Write(util::CodeFormatter& formatter)
         if (!preserveSpace)
         {
             formatter.DecIndent();
-            rv = formatter.WriteLine("</" + Name() + ">");
-            if (!rv) return rv;
+            formatter.WriteLine("</" + Name() + ">");
         }
         else if (prevPreserveSpace)
         {
-            rv = formatter.Write("</" + Name() + ">");
-            if (!rv) return rv;
+            formatter.Write("</" + Name() + ">");
         }
         else
         {
-            rv = formatter.WriteLine("</" + Name() + ">");
-            if (!rv) return rv;
+            formatter.WriteLine("</" + Name() + ">");
         }
         formatter.SetPreserveSpace(prevPreserveSpace);
     }
@@ -147,17 +141,14 @@ std::expected<bool, int> Element::Write(util::CodeFormatter& formatter)
     {
         if (attributeMap.empty())
         {
-            auto rv = formatter.WriteLine("<" + Name() + "/>");
-            if (!rv) return rv;
+            formatter.WriteLine("<" + Name() + "/>");
         }
         else
         {
-            auto rv = formatter.Write("<" + Name());
+            formatter.Write("<" + Name());
+            std::expected<bool, int> rv = WriteAttributes(formatter);
             if (!rv) return rv;
-            rv = WriteAttributes(formatter);
-            if (!rv) return rv;
-            rv = formatter.WriteLine("/>");
-            if (!rv) return rv;
+            formatter.WriteLine("/>");
         }
     }
     return std::expected<bool, int>(true);

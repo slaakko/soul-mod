@@ -56,7 +56,8 @@ std::expected<bool, int> CharacterData::Write(util::CodeFormatter& formatter)
 {
     auto e = XmlCharDataEscape(data);
     if (!e) return std::unexpected<int>(e.error());
-    return formatter.Write(*e);
+    formatter.Write(*e);
+    return std::expected<bool, int>(true);
 }
 
 bool CharacterData::ValueContainsNewLine() const

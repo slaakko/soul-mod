@@ -51,7 +51,7 @@ public:
     virtual ~Node();
     virtual Node* Clone() const = 0;
     virtual void Accept(Visitor& visitor) = 0;
-    virtual std::expected<bool, int> Write(CodeFormatter& formatter) = 0;
+    virtual void Write(CodeFormatter& formatter) = 0;
     virtual void Add(Node* node) {}
     virtual std::string ToString() const { return std::string(); }
     virtual void Replace(Node* node, Node* replacement) {}
@@ -89,7 +89,7 @@ public:
     ExprListNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
     void Add(Node* node) override;
     void Replace(Node* node, Node* replacement) override;
@@ -105,7 +105,7 @@ public:
     ThisNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override { return "this"; }
 };
 
@@ -117,7 +117,7 @@ public:
     void SetId(const std::string& id_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override { return id; }
 private:
     std::string id;
@@ -130,7 +130,7 @@ public:
     inline Node* Index() const { return index.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 private:
     std::unique_ptr<Node> index;
@@ -142,7 +142,7 @@ public:
     InvokeNode(const soul::ast::SourcePos& sourcePos_, Node* child_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     void Add(Node* node) override;
     void Replace(Node* node, Node* replacement) override;
     inline const std::vector<std::unique_ptr<Node>>& Args() const { return args; }
@@ -158,7 +158,7 @@ public:
     inline Node* Member() const { return member.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 private:
     std::unique_ptr<Node> member;
@@ -171,7 +171,7 @@ public:
     inline Node* Member() const { return member.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 private:
     std::unique_ptr<Node> member;
@@ -183,7 +183,7 @@ public:
     PostIncrementNode(const soul::ast::SourcePos& sourcePos_, Node* child_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 };
 
@@ -193,7 +193,7 @@ public:
     PostDecrementNode(const soul::ast::SourcePos& sourcePos_, Node* child_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 };
 
@@ -209,7 +209,7 @@ public:
     StaticCastNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override { return "static_cast"; }
 };
 
@@ -219,7 +219,7 @@ public:
     DynamicCastNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override { return "dynamic_cast"; }
 };
 
@@ -229,7 +229,7 @@ public:
     ReinterpretCastNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override { return "reinterpret_cast"; }
 };
 
@@ -239,7 +239,7 @@ public:
     ConstCastNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override { return "const_cast"; }
 };
 
@@ -251,7 +251,7 @@ public:
     inline Node* Type() const { return type.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 private:
     std::unique_ptr<CppCastNode> cppCastNode;
@@ -264,7 +264,7 @@ public:
     TypeIdExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 };
 
@@ -274,7 +274,7 @@ public:
     PreIncrementNode(const soul::ast::SourcePos& sourcePos_, Node* child_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 };
 
@@ -284,7 +284,7 @@ public:
     PreDecrementNode(const soul::ast::SourcePos& sourcePos_, Node* child_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 };
 
@@ -295,7 +295,7 @@ public:
     inline Operator Op() const { return op; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 private:
     Operator op;
@@ -307,7 +307,7 @@ public:
     SizeOfNode(const soul::ast::SourcePos& sourcePos_, Node* child_, bool parens_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 private:
     bool parens;
@@ -320,7 +320,7 @@ public:
     inline Node* Type() const { return type.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 private:
     std::unique_ptr<Node> type;
@@ -333,7 +333,7 @@ public:
     inline Operator Op() const { return op; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 private:
     Operator op;
@@ -345,7 +345,7 @@ public:
     ConditionalNode(const soul::ast::SourcePos& sourcePos_, Node* condition_, Node* thenExpr_, Node* elseExpr_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     inline Node* Condition() const { return condition.get(); }
     inline Node* ThenExpr() const { return thenExpr.get(); }
     inline Node* ElseExpr() const { return elseExpr.get(); }
@@ -374,7 +374,7 @@ public:
     inline const std::vector<std::unique_ptr<Node>>& Initializer() const { return initializer; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 private:
     bool global;
@@ -394,7 +394,7 @@ public:
     inline bool IsArray() const { return isArray; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 private:
     bool global;
@@ -407,7 +407,7 @@ public:
     ParenExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 };
 
@@ -418,7 +418,7 @@ public:
     inline const std::string& Rep() const { return rep; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override { return rep; }
 private:
     std::string rep;
@@ -439,7 +439,7 @@ public:
     inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 private:
     std::string label;
     std::unique_ptr<StatementNode> stmt;
@@ -453,7 +453,7 @@ public:
     inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 private:
     std::unique_ptr<Node> caseExpr;
     std::unique_ptr<StatementNode> stmt;
@@ -466,7 +466,7 @@ public:
     inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 private:
     std::unique_ptr<StatementNode> stmt;
 };
@@ -477,7 +477,7 @@ public:
     EmptyStatementNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 };
 
 class ExpressionStatementNode : public StatementNode
@@ -487,7 +487,7 @@ public:
     inline Node* Expr() const { return expr.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 private:
     std::unique_ptr<Node> expr;
 };
@@ -503,7 +503,7 @@ public:
     bool IsCompoundStatementNode() const override { return true; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 private:
     std::vector<std::unique_ptr<StatementNode>> statements;
 };
@@ -517,7 +517,7 @@ public:
     inline StatementNode* ElseStmt() const { return elseStmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 private:
     std::unique_ptr<Node> cond;
     std::unique_ptr<StatementNode> thenStmt;
@@ -532,7 +532,7 @@ public:
     inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 private:
     std::unique_ptr<Node> cond;
     std::unique_ptr<StatementNode> stmt;
@@ -546,7 +546,7 @@ public:
     inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 private:
     std::unique_ptr<Node> cond;
     std::unique_ptr<StatementNode> stmt;
@@ -560,7 +560,7 @@ public:
     inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 private:
     std::unique_ptr<Node> cond;
     std::unique_ptr<StatementNode> stmt;
@@ -576,7 +576,7 @@ public:
     inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 private:
     std::unique_ptr<Node> init;
     std::unique_ptr<Node> cond;
@@ -590,7 +590,7 @@ public:
     BreakStatementNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 };
 
 class ContinueStatementNode : public StatementNode
@@ -599,7 +599,7 @@ public:
     ContinueStatementNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 };
 
 class GotoStatementNode : public StatementNode
@@ -609,7 +609,7 @@ public:
     inline const std::string& Target() const { return target; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 private:
     std::string target;
 };
@@ -622,7 +622,7 @@ public:
     void SetExpr(Node* expr_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 private:
     std::unique_ptr<Node> expr;
 };
@@ -635,7 +635,7 @@ public:
     ConditionWithDeclaratorNode(const soul::ast::SourcePos& sourcePos_, TypeIdNode* type_, const std::string& declarator_, Node* expression_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     inline TypeIdNode* Type() const { return type.get(); }
     inline const std::string& Declarator() const { return declarator; }
     inline Node* Expression() const { return expression.get(); }
@@ -656,7 +656,7 @@ public:
     void SetDeclarator(const std::string& declarator_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 private:
     std::unique_ptr<SimpleDeclarationNode> declaration;
     std::string declarator;
@@ -671,7 +671,7 @@ public:
     inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 private:
     std::unique_ptr<ForRangeDeclarationNode> declaration;
     std::unique_ptr<Node> container;
@@ -685,7 +685,7 @@ public:
     inline Node* Declaration() const { return declaration.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 private:
     std::unique_ptr<Node> declaration;
 };
@@ -696,7 +696,7 @@ public:
     IfdefStatementNode(const soul::ast::SourcePos& sourcePos_, Node* symbol_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     inline Node* Symbol() const { return symbol.get(); }
 private:
     std::unique_ptr<Node> symbol;
@@ -708,7 +708,7 @@ public:
     EndIfStatementNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
 };
 
 class AssignInitNode : public Node
@@ -720,7 +720,7 @@ public:
     void Add(AssignInitNode* subInit);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 private:
     std::unique_ptr<Node> assignmentExpr;
@@ -734,7 +734,7 @@ public:
     inline AssignInitNode* GetAssignInit() const { return assignInit.get(); }
     inline const std::vector<std::unique_ptr<Node>>& GetExpressionList() const { return expressionList; }
     void Add(Node* expr) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -749,7 +749,7 @@ public:
     InitDeclaratorNode(const soul::ast::SourcePos& sourcePos_, const std::string& declarator_, InitializerNode* initializer_);
     inline const std::string& Declarator() const { return declarator; }
     inline InitializerNode* GetInitializer() const { return initializer.get(); }
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -764,7 +764,7 @@ public:
     InitDeclaratorListNode(const soul::ast::SourcePos& sourcePos_);
     inline const std::vector<std::unique_ptr<InitDeclaratorNode>>& InitDeclarators() const { return initDeclarators; }
     void Add(InitDeclaratorNode* initDeclarator);
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -788,7 +788,7 @@ public:
     TypedefNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 };
 
@@ -799,7 +799,7 @@ public:
     TypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, NodeKind kind_, const std::string& name_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override { return Name(); }
 };
 
@@ -828,7 +828,7 @@ public:
     inline bool IsTemplate() const { return isTemplate; }
     inline void SetTemplate() { isTemplate = true; }
     std::string ToString() const override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     void Accept(Visitor& visitor) override;
     Node* Clone() const override;
 private:
@@ -843,7 +843,7 @@ public:
     void Add(TypeSpecifierNode* typeSpecifier);
     const std::vector<std::unique_ptr<TypeSpecifierNode>>& TypeSpecifiers() const { return typeSpecifiers; }
     std::string ToString() const override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 private:
@@ -856,7 +856,7 @@ public:
     StorageClassSpecifierNode(const soul::ast::SourcePos& sourcePos_, const std::string& name_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
 };
 
@@ -870,8 +870,8 @@ public:
     void SetDeclarator(const std::string& declarator_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
-    std::expected<bool, int> WriteNonPtrType(CodeFormatter& formatter);
+    void Write(CodeFormatter& formatter) override;
+    void WriteNonPtrType(CodeFormatter& formatter);
     std::string ToString() const override;
     bool IsPtrType() const;
 private:
@@ -887,7 +887,7 @@ public:
     inline const std::vector<std::unique_ptr<DeclSpecifierNode>>& DeclSpecifiers() const { return declSpecifiers; }
     void SetInitDeclaratorList(InitDeclaratorListNode* initDeclaratorList_);
     inline InitDeclaratorListNode* GetInitDeclaratorList() const { return initDeclaratorList.get(); }
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     void Accept(Visitor& visitor) override;
     Node* Clone() const override;
 private:
@@ -908,7 +908,7 @@ class NamespaceAliasNode : public UsingObjectNode
 {
 public:
     NamespaceAliasNode(const soul::ast::SourcePos& sourcePos_, const std::string& aliasName_, const std::string& namespaceName_);
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 private:
@@ -921,7 +921,7 @@ class UsingDeclarationNode : public UsingObjectNode
 public:
     UsingDeclarationNode(const soul::ast::SourcePos& sourcePos_, const std::string& usingId_);
     inline const std::string& UsingId() const { return usingId; }
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 private:
@@ -933,7 +933,7 @@ class UsingDirectiveNode : public UsingObjectNode
 public:
     UsingDirectiveNode(const soul::ast::SourcePos& sourcePos_, const std::string& usingNs_);
     inline const std::string& UsingNs() const { return usingNs; }
-    std::expected<bool, int> Write(CodeFormatter& formatter) override;
+    void Write(CodeFormatter& formatter) override;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 private:

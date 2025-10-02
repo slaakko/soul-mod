@@ -980,7 +980,6 @@ long long stoll(const string& str, size_t* idx = nullptr, int base = 10);
 unsigned long long stoull(const string& str, size_t* idx = nullptr, int base = 10);
 float stof(const string& str, size_t* idx = nullptr);
 double stod(const string& str, size_t* idx = nullptr);
-long double stold(const string& str, size_t* idx = nullptr);
 
 int stoi(const wstring& str, size_t* idx = nullptr, int base = 10);
 long stol(const wstring& str, size_t* idx = nullptr, int base = 10);

@@ -629,6 +629,26 @@ double ort_pow(double x, int exponent)
     return std::pow(x, exponent);
 }
 
+float ort_remainder(float x, float y)
+{
+    return std::remainder(x, y);
+}
+
+double ort_remainderd(double x, double y)
+{
+    return std::remainder(x, y);
+}
+
+float ort_stof(const char* s, std::size_t* pos)
+{
+    return std::stof(s, pos);
+}
+
+double ort_stod(const char* s, std::size_t* pos)
+{
+    return std::stod(s, pos);
+}
+
 void ort_exit(int exitCode)
 {
     std::exit(exitCode);

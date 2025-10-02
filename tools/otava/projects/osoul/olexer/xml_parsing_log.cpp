@@ -71,7 +71,8 @@ std::expected<bool, int> XmlParsingLog::WriteElement(const std::string& elementN
 
 std::expected<bool, int> XmlParsingLog::Write(const std::string& s)
 {
-    return formatter.WriteLine(s);
+    formatter.WriteLine(s);
+    return std::expected<bool, int>(true);
 }
 
 } // namespace soul::lexer

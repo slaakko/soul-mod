@@ -184,10 +184,9 @@ void ExprListNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> ExprListNode::Write(CodeFormatter& formatter)
+void ExprListNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("(");
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write("(");
     bool first = true;
     for (const auto& expr : exprs)
     {
@@ -197,13 +196,11 @@ std::expected<bool, int> ExprListNode::Write(CodeFormatter& formatter)
         }
         else
         {
-            rv = formatter.Write(", ");
-            if (!rv) return std::unexpected<int>(rv.error());
+            formatter.Write(", ");
         }
-        rv = expr->Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        expr->Write(formatter);
     }
-    return formatter.Write(")");
+    formatter.Write(")");
 }
 
 std::string ExprListNode::ToString() const
@@ -258,9 +255,9 @@ void ThisNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> ThisNode::Write(CodeFormatter& formatter)
+void ThisNode::Write(CodeFormatter& formatter)
 {
-    return formatter.Write("this");
+    formatter.Write("this");
 }
 
 IdExprNode::IdExprNode(const soul::ast::SourcePos& sourcePos_, const std::string& id_) : Node(NodeKind::idExprNode, sourcePos_), id(id_)
@@ -282,9 +279,9 @@ void IdExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> IdExprNode::Write(CodeFormatter& formatter)
+void IdExprNode::Write(CodeFormatter& formatter)
 {
-    return formatter.Write(id);
+    formatter.Write(id);
 }
 
 IndexExprNode::IndexExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* index_) : UnaryNode(NodeKind::indexExprNode, sourcePos_, child_), index(index_)
@@ -302,15 +299,12 @@ void IndexExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> IndexExprNode::Write(CodeFormatter& formatter)
+void IndexExprNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = Child()->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write("[");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = index->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    return formatter.Write("]");
+    Child()->Write(formatter);
+    formatter.Write("[");
+    index->Write(formatter);
+    formatter.Write("]");
 }
 
 std::string IndexExprNode::ToString() const
@@ -337,12 +331,10 @@ void InvokeNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> InvokeNode::Write(CodeFormatter& formatter)
+void InvokeNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = Child()->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write("(");
-    if (!rv) return std::unexpected<int>(rv.error());
+    Child()->Write(formatter);
+    formatter.Write("(");
     bool first = true;
     for (const auto& arg : args)
     {
@@ -352,13 +344,11 @@ std::expected<bool, int> InvokeNode::Write(CodeFormatter& formatter)
         }
         else
         {
-            rv = formatter.Write(", ");
-            if (!rv) return std::unexpected<int>(rv.error());
+            formatter.Write(", ");
         }
-        rv = arg->Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        arg->Write(formatter);
     }
-    return formatter.Write(")");
+    formatter.Write(")");
 }
 
 std::string InvokeNode::ToString() const
@@ -416,13 +406,11 @@ void MemberAccessNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> MemberAccessNode::Write(CodeFormatter& formatter)
+void MemberAccessNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = Child()->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(".");
-    if (!rv) return std::unexpected<int>(rv.error());
-    return member->Write(formatter);
+    Child()->Write(formatter);
+    formatter.Write(".");
+    member->Write(formatter);
 }
 
 std::string MemberAccessNode::ToString() const
@@ -446,13 +434,11 @@ void PtrMemberAccessNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> PtrMemberAccessNode::Write(CodeFormatter& formatter)
+void PtrMemberAccessNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = Child()->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write("->");
-    if (!rv) return std::unexpected<int>(rv.error());
-    return member->Write(formatter);
+    Child()->Write(formatter);
+    formatter.Write("->");
+    member->Write(formatter);
 }
 
 std::string PtrMemberAccessNode::ToString() const
@@ -474,11 +460,10 @@ void PostIncrementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> PostIncrementNode::Write(CodeFormatter& formatter)
+void PostIncrementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = Child()->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    return formatter.Write("++");
+    Child()->Write(formatter);
+    formatter.Write("++");
 }
 
 std::string PostIncrementNode::ToString() const
@@ -500,11 +485,10 @@ void PostDecrementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> PostDecrementNode::Write(CodeFormatter& formatter)
+void PostDecrementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = Child()->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    return formatter.Write("--");
+    Child()->Write(formatter);
+    formatter.Write("--");
 }
 
 std::string PostDecrementNode::ToString() const
@@ -530,9 +514,9 @@ void StaticCastNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> StaticCastNode::Write(CodeFormatter& formatter)
+void StaticCastNode::Write(CodeFormatter& formatter)
 {
-    return formatter.Write("static_cast");
+    formatter.Write("static_cast");
 }
 
 DynamicCastNode::DynamicCastNode(const soul::ast::SourcePos& sourcePos_) : CppCastNode(NodeKind::dynamicCastNode, sourcePos_)
@@ -549,9 +533,9 @@ void DynamicCastNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> DynamicCastNode::Write(CodeFormatter& formatter)
+void DynamicCastNode::Write(CodeFormatter& formatter)
 {
-    return formatter.Write("dynamic_cast");
+    formatter.Write("dynamic_cast");
 }
 
 ReinterpretCastNode::ReinterpretCastNode(const soul::ast::SourcePos& sourcePos_) : CppCastNode(NodeKind::reinterpretCastNode, sourcePos_)
@@ -568,9 +552,9 @@ void ReinterpretCastNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> ReinterpretCastNode::Write(CodeFormatter& formatter)
+void ReinterpretCastNode::Write(CodeFormatter& formatter)
 {
-    return formatter.Write("reinterpret_cast");
+    formatter.Write("reinterpret_cast");
 }
 
 ConstCastNode::ConstCastNode(const soul::ast::SourcePos& sourcePos_) : CppCastNode(NodeKind::constCastNode, sourcePos_)
@@ -587,9 +571,9 @@ void ConstCastNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> ConstCastNode::Write(CodeFormatter& formatter)
+void ConstCastNode::Write(CodeFormatter& formatter)
 {
-    return formatter.Write("const_cast");
+    formatter.Write("const_cast");
 }
 
 PostCastNode::PostCastNode(const soul::ast::SourcePos& sourcePos_, CppCastNode* cppCastNode_, Node* type_, Node* child_) :
@@ -609,18 +593,14 @@ void PostCastNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> PostCastNode::Write(CodeFormatter& formatter)
+void PostCastNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = cppCastNode->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write("<");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = type->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(">(");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = Child()->Write(formatter);
-    return formatter.Write(")");
+    cppCastNode->Write(formatter);
+    formatter.Write("<");
+    type->Write(formatter);
+    formatter.Write(">(");
+    Child()->Write(formatter);
+    formatter.Write(")");
 }
 
 std::string PostCastNode::ToString() const
@@ -649,13 +629,11 @@ void TypeIdExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> TypeIdExprNode::Write(CodeFormatter& formatter)
+void TypeIdExprNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("typeid(");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = Child()->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    return formatter.Write(")");
+    formatter.Write("typeid(");
+    Child()->Write(formatter);
+    formatter.Write(")");
 }
 
 std::string TypeIdExprNode::ToString() const
@@ -677,11 +655,10 @@ void PreIncrementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> PreIncrementNode::Write(CodeFormatter& formatter)
+void PreIncrementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("++");
-    if (!rv) return std::unexpected<int>(rv.error());
-    return Child()->Write(formatter);
+    formatter.Write("++");
+    Child()->Write(formatter);
 }
 
 std::string PreIncrementNode::ToString() const
@@ -703,11 +680,10 @@ void PreDecrementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> PreDecrementNode::Write(CodeFormatter& formatter)
+void PreDecrementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("--");
-    if (!rv) return std::unexpected<int>(rv.error());
-    return Child()->Write(formatter);
+    formatter.Write("--");
+    Child()->Write(formatter);
 }
 
 std::string PreDecrementNode::ToString() const
@@ -729,11 +705,10 @@ void UnaryOpExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> UnaryOpExprNode::Write(CodeFormatter& formatter)
+void UnaryOpExprNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write(OperatorStr(op));
-    if (!rv) return std::unexpected<int>(rv.error());
-    return Child()->Write(formatter);
+    formatter.Write(OperatorStr(op));
+    Child()->Write(formatter);
 }
 
 std::string UnaryOpExprNode::ToString() const
@@ -755,28 +730,22 @@ void SizeOfNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> SizeOfNode::Write(CodeFormatter& formatter)
+void SizeOfNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("sizeof");
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write("sizeof");
     if (parens)
     {
-        rv = formatter.Write("(");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write("(");
     }
     else
     {
-        rv = formatter.Write(" ");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write(" ");
     }
-    rv = Child()->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
+    Child()->Write(formatter);
     if (parens)
     {
-        rv = formatter.Write(")");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write(")");
     }
-    return std::expected<bool, int>(true);
 }
 
 std::string SizeOfNode::ToString() const
@@ -813,15 +782,12 @@ void CastNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> CastNode::Write(CodeFormatter& formatter)
+void CastNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("(");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = type->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(")");
-    if (!rv) return std::unexpected<int>(rv.error());
-    return Child()->Write(formatter);
+    formatter.Write("(");
+    type->Write(formatter);
+    formatter.Write(")");
+    Child()->Write(formatter);
 }
 
 std::string CastNode::ToString() const
@@ -844,17 +810,13 @@ void BinaryOpExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> BinaryOpExprNode::Write(CodeFormatter& formatter)
+void BinaryOpExprNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = Left()->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(" ");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(OperatorStr(op));
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(" ");
-    if (!rv) return std::unexpected<int>(rv.error());
-    return Right()->Write(formatter);
+    Left()->Write(formatter);
+    formatter.Write(" ");
+    formatter.Write(OperatorStr(op));
+    formatter.Write(" ");
+    Right()->Write(formatter);
 }
 
 std::string BinaryOpExprNode::ToString() const
@@ -880,16 +842,13 @@ void ConditionalNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> ConditionalNode::Write(CodeFormatter& formatter)
+void ConditionalNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = condition->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(" ? ");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = thenExpr->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(" : ");
-    return elseExpr->Write(formatter);
+    condition->Write(formatter);
+    formatter.Write(" ? ");
+    thenExpr->Write(formatter);
+    formatter.Write(" : ");
+    elseExpr->Write(formatter);
 }
 
 std::string ConditionalNode::ToString() const
@@ -947,19 +906,16 @@ void NewNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> NewNode::Write(CodeFormatter& formatter)
+void NewNode::Write(CodeFormatter& formatter)
 {
     if (global)
     {
-        std::expected<bool, int> rv = formatter.Write("::");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write("::");
     }
-    std::expected<bool, int> rv = formatter.Write("new");
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write("new");
     if (!placement.empty())
     {
-        rv = formatter.Write("(");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write("(");
         bool first = true;
         for (const auto& node : placement)
         {
@@ -969,33 +925,25 @@ std::expected<bool, int> NewNode::Write(CodeFormatter& formatter)
             }
             else
             {
-                rv = formatter.Write(", ");
-                if (!rv) return std::unexpected<int>(rv.error());
+                formatter.Write(", ");
             }
-            rv = node->Write(formatter);
-            if (!rv) return std::unexpected<int>(rv.error());
+            node->Write(formatter);
         }
-        rv = formatter.Write(")");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write(")");
     }
     if (parens)
     {
-        rv = formatter.Write("(");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write("(");
     }
-    rv = formatter.Write(" ");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = typeId->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write(" ");
+    typeId->Write(formatter);
     if (parens)
     {
-        rv = formatter.Write(")");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write(")");
     }
     if (!initializer.empty())
     {
-        rv = formatter.Write("(");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write("(");
         bool first = true;
         for (const auto& node : initializer)
         {
@@ -1005,16 +953,16 @@ std::expected<bool, int> NewNode::Write(CodeFormatter& formatter)
             }
             else
             {
-                rv = formatter.Write(", ");
-                if (!rv) return std::unexpected<int>(rv.error());
+                formatter.Write(", ");
             }
-            rv = node->Write(formatter);
-            if (!rv) return std::unexpected<int>(rv.error());
+            node->Write(formatter);
         }
-        rv = formatter.Write(")");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write(")");
     }
-    return std::expected<bool, int>(true);
+    else
+    {
+        formatter.Write("()");
+    }
 }
 
 std::string NewNode::ToString() const
@@ -1089,23 +1037,19 @@ void DeleteNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> DeleteNode::Write(CodeFormatter& formatter)
+void DeleteNode::Write(CodeFormatter& formatter)
 {
     if (global)
     {
-        std::expected<bool, int> rv = formatter.Write("::");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write("::");
     }
-    std::expected<bool, int> rv = formatter.Write("delete");
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write("delete");
     if (isArray)
     {
-        rv = formatter.Write("[]");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write("[]");
     }
-    rv = formatter.Write(" ");
-    if (!rv) return std::unexpected<int>(rv.error());
-    return Child()->Write(formatter);
+    formatter.Write(" ");
+    Child()->Write(formatter);
 }
 
 std::string DeleteNode::ToString() const
@@ -1139,13 +1083,11 @@ void ParenExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> ParenExprNode::Write(CodeFormatter& formatter)
+void ParenExprNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("(");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = Child()->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    return formatter.Write(")");
+    formatter.Write("(");
+    Child()->Write(formatter);
+    formatter.Write(")");
 }
 
 std::string ParenExprNode::ToString() const
@@ -1167,9 +1109,9 @@ void LiteralNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> LiteralNode::Write(CodeFormatter& formatter)
+void LiteralNode::Write(CodeFormatter& formatter)
 {
-    return formatter.Write(rep);
+    formatter.Write(rep);
 }
 
 StatementNode::StatementNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : Node(kind_, sourcePos_)
@@ -1192,13 +1134,11 @@ void LabeledStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> LabeledStatementNode::Write(CodeFormatter& formatter)
+void LabeledStatementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int >rv = formatter.Write(label);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(" : ");
-    if (!rv) return std::unexpected<int>(rv.error());
-    return stmt->Write(formatter);
+    formatter.Write(label);
+    formatter.Write(" : ");
+    stmt->Write(formatter);
 }
 
 CaseStatementNode::CaseStatementNode(const soul::ast::SourcePos& sourcePos_, Node* caseExpr_, StatementNode* stmt_) :
@@ -1218,15 +1158,12 @@ void CaseStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> CaseStatementNode::Write(CodeFormatter& formatter)
+void CaseStatementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("case ");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = caseExpr->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(": ");
-    if (!rv) return std::unexpected<int>(rv.error());
-    return stmt->Write(formatter);
+    formatter.Write("case ");
+    caseExpr->Write(formatter);
+    formatter.Write(": ");
+    stmt->Write(formatter);
 }
 
 DefaultStatementNode::DefaultStatementNode(const soul::ast::SourcePos& sourcePos_, StatementNode* stmt_) : StatementNode(NodeKind::defaultStatementNode, sourcePos_), stmt(stmt_)
@@ -1244,11 +1181,10 @@ void DefaultStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> DefaultStatementNode::Write(CodeFormatter& formatter)
+void DefaultStatementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("default: ");
-    if (!rv) return std::unexpected<int>(rv.error());
-    return stmt->Write(formatter);
+    formatter.Write("default: ");
+    stmt->Write(formatter);
 }
 
 EmptyStatementNode::EmptyStatementNode(const soul::ast::SourcePos& sourcePos_) : StatementNode(NodeKind::emptyStatementNode, sourcePos_)
@@ -1265,9 +1201,9 @@ void EmptyStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> EmptyStatementNode::Write(CodeFormatter& formatter)
+void EmptyStatementNode::Write(CodeFormatter& formatter)
 {
-    return formatter.WriteLine(";");
+    formatter.WriteLine(";");
 }
 
 ExpressionStatementNode::ExpressionStatementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_) : StatementNode(NodeKind::expressionStatementNode, sourcePos_), expr(expr_)
@@ -1285,11 +1221,10 @@ void ExpressionStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> ExpressionStatementNode::Write(CodeFormatter& formatter)
+void ExpressionStatementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = expr->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    return formatter.WriteLine(";");
+    expr->Write(formatter);
+    formatter.WriteLine(";");
 }
 
 CompoundStatementNode::CompoundStatementNode(const soul::ast::SourcePos& sourcePos_) : StatementNode(NodeKind::compoundStatementNode, sourcePos_)
@@ -1335,18 +1270,16 @@ void CompoundStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> CompoundStatementNode::Write(CodeFormatter& formatter)
+void CompoundStatementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.WriteLine("{");
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.WriteLine("{");
     formatter.IncIndent();
     for (const auto& stmt : statements)
     {
-        rv = stmt->Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        stmt->Write(formatter);
     }
     formatter.DecIndent();
-    return formatter.WriteLine("}");
+    formatter.WriteLine("}");
 }
 
 IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* thenStmt_, StatementNode* elseStmt_) :
@@ -1375,42 +1308,33 @@ void IfStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> IfStatementNode::Write(CodeFormatter& formatter)
+void IfStatementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("if (");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = cond->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(")");
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write("if (");
+    cond->Write(formatter);
+    formatter.Write(")");
     if (thenStmt->IsCompoundStatementNode())
     {
         formatter.NewLine();
     }
     else
     {
-        rv = formatter.Write(" ");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write(" ");
     }
-    rv = thenStmt->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
+    thenStmt->Write(formatter);
     if (elseStmt)
     {
-        rv = formatter.Write("else");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write("else");
         if (elseStmt->IsCompoundStatementNode())
         {
             formatter.NewLine();
         }
         else
         {
-            rv = formatter.Write(" ");
-            if (!rv) return std::unexpected<int>(rv.error());
+            formatter.Write(" ");
         }
-        rv = elseStmt->Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        elseStmt->Write(formatter);
     }
-    return std::expected<bool, int>(true);
 }
 
 SwitchStatementNode::SwitchStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* stmt_) :
@@ -1430,15 +1354,12 @@ void SwitchStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> SwitchStatementNode::Write(CodeFormatter& formatter)
+void SwitchStatementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("switch (");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = cond->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.WriteLine(")");
-    if (!rv) return std::unexpected<int>(rv.error());
-    return stmt->Write(formatter);
+    formatter.Write("switch (");
+    cond->Write(formatter);
+    formatter.WriteLine(")");
+    stmt->Write(formatter);
 }
 
 WhileStatementNode::WhileStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* stmt_) :
@@ -1458,24 +1379,20 @@ void WhileStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> WhileStatementNode::Write(CodeFormatter& formatter)
+void WhileStatementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("while (");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = cond->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(")");
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write("while (");
+    cond->Write(formatter);
+    formatter.Write(")");
     if (stmt->IsCompoundStatementNode())
     {
         formatter.NewLine();
     }
     else
     {
-        rv = formatter.Write(" ");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write(" ");
     }
-    return stmt->Write(formatter);
+    stmt->Write(formatter);
 }
 
 DoStatementNode::DoStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* stmt_) :
@@ -1495,26 +1412,21 @@ void DoStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> DoStatementNode::Write(CodeFormatter& formatter)
+void DoStatementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("do");
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write("do");
     if (stmt->IsCompoundStatementNode())
     {
         formatter.NewLine();
     }
     else
     {
-        rv = formatter.Write(" ");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write(" ");
     }
-    rv = stmt->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write("while (");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = cond->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    return formatter.WriteLine(");");
+    stmt->Write(formatter);
+    formatter.Write("while (");
+    cond->Write(formatter);
+    formatter.WriteLine(");");
 }
 
 ForStatementNode::ForStatementNode(const soul::ast::SourcePos& sourcePos_, Node* init_, Node* cond_, Node* iter_, StatementNode* stmt_) :
@@ -1560,41 +1472,33 @@ void ForStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> ForStatementNode::Write(CodeFormatter& formatter)
+void ForStatementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("for (");
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write("for (");
     if (init)
     {
-        rv = init->Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        init->Write(formatter);
     }
-    rv = formatter.Write("; ");
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write("; ");
     if (cond)
     {
-        rv = cond->Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        cond->Write(formatter);
     }
-    rv = formatter.Write("; ");
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write("; ");
     if (iter)
     {
-        rv = iter->Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        iter->Write(formatter);
     }
-    rv = formatter.Write(")");
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write(")");
     if (stmt->IsCompoundStatementNode())
     {
         formatter.NewLine();
     }
     else
     {
-        rv = formatter.Write(" ");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write(" ");
     }
-    return stmt->Write(formatter);
+    stmt->Write(formatter);
 }
 
 BreakStatementNode::BreakStatementNode(const soul::ast::SourcePos& sourcePos_) : StatementNode(NodeKind::breakStatementNode, sourcePos_)
@@ -1611,9 +1515,9 @@ void BreakStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> BreakStatementNode::Write(CodeFormatter& formatter)
+void BreakStatementNode::Write(CodeFormatter& formatter)
 {
-    return formatter.WriteLine("break;");
+    formatter.WriteLine("break;");
 }
 
 ContinueStatementNode::ContinueStatementNode(const soul::ast::SourcePos& sourcePos_) : StatementNode(NodeKind::continueStatementNode, sourcePos_)
@@ -1630,9 +1534,9 @@ void ContinueStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> ContinueStatementNode::Write(CodeFormatter& formatter)
+void ContinueStatementNode::Write(CodeFormatter& formatter)
 {
-    return formatter.WriteLine("continue;");
+    formatter.WriteLine("continue;");
 }
 
 GotoStatementNode::GotoStatementNode(const soul::ast::SourcePos& sourcePos_, const std::string& target_) : StatementNode(NodeKind::gotoStatementNode, sourcePos_), target(target_)
@@ -1649,13 +1553,11 @@ void GotoStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> GotoStatementNode::Write(CodeFormatter& formatter)
+void GotoStatementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("goto ");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(target);
-    if (!rv) return std::unexpected<int>(rv.error());
-    return formatter.WriteLine(";");
+    formatter.Write("goto ");
+    formatter.Write(target);
+    formatter.WriteLine(";");
 }
 
 ReturnStatementNode::ReturnStatementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_) : StatementNode(NodeKind::returnStatementNode, sourcePos_), expr(expr_)
@@ -1686,18 +1588,15 @@ void ReturnStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> ReturnStatementNode::Write(CodeFormatter& formatter)
+void ReturnStatementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("return");
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write("return");
     if (expr)
     {
-        rv = formatter.Write(" ");
-        if (!rv) return std::unexpected<int>(rv.error());
-        rv = expr->Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write(" ");
+        expr->Write(formatter);
     }
-    return formatter.WriteLine(";");
+    formatter.WriteLine(";");
 }
 
 ConditionWithDeclaratorNode::ConditionWithDeclaratorNode(const soul::ast::SourcePos& sourcePos_, TypeIdNode* type_, const std::string& declarator_, Node* expression_) :
@@ -1717,13 +1616,11 @@ void ConditionWithDeclaratorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> ConditionWithDeclaratorNode::Write(CodeFormatter& formatter)
+void ConditionWithDeclaratorNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = type->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(" " + declarator + " = ");
-    if (!rv) return std::unexpected<int>(rv.error());
-    return expression->Write(formatter);
+    type->Write(formatter);
+    formatter.Write(" " + declarator + " = ");
+    expression->Write(formatter);
 }
 
 ForRangeDeclarationNode::ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_) :
@@ -1749,13 +1646,11 @@ void ForRangeDeclarationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> ForRangeDeclarationNode::Write(CodeFormatter& formatter)
+void ForRangeDeclarationNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = declaration->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(" ");
-    if (!rv) return std::unexpected<int>(rv.error());
-    return formatter.Write(declarator);
+    declaration->Write(formatter);
+    formatter.Write(" ");
+    formatter.Write(declarator);
 }
 
 RangeForStatementNode::RangeForStatementNode(const soul::ast::SourcePos& sourcePos_, ForRangeDeclarationNode* declaration_, Node* container_, StatementNode* stmt_) :
@@ -1776,28 +1671,22 @@ void RangeForStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> RangeForStatementNode::Write(CodeFormatter& formatter)
+void RangeForStatementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("for (");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = declaration->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(" : ");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = container->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = formatter.Write(")");
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write("for (");
+    declaration->Write(formatter);
+    formatter.Write(" : ");
+    container->Write(formatter);
+    formatter.Write(")");
     if (stmt->IsCompoundStatementNode())
     {
         formatter.NewLine();
     }
     else
     {
-        rv = formatter.Write(" ");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write(" ");
     }
-    return stmt->Write(formatter);
+    stmt->Write(formatter);
 }
 
 DeclarationStatementNode::DeclarationStatementNode(const soul::ast::SourcePos& sourcePos_, Node* declaration_) :
@@ -1816,11 +1705,10 @@ void DeclarationStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> DeclarationStatementNode::Write(CodeFormatter& formatter)
+void DeclarationStatementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = declaration->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
-    return formatter.WriteLine(";");
+    declaration->Write(formatter);
+    formatter.WriteLine(";");
 }
 
 IfdefStatementNode::IfdefStatementNode(const soul::ast::SourcePos& sourcePos_, Node* symbol_) : StatementNode(NodeKind::ifdefStatementNode, sourcePos_), symbol(symbol_)
@@ -1838,14 +1726,11 @@ void IfdefStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> IfdefStatementNode::Write(CodeFormatter& formatter)
+void IfdefStatementNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("#ifdef ");
-    if (!rv) return std::unexpected<int>(rv.error());
-    rv = symbol->Write(formatter);
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write("#ifdef ");
+    symbol->Write(formatter);
     formatter.WriteLine();
-    return std::expected<bool, int>(true);
 }
 
 EndIfStatementNode::EndIfStatementNode(const soul::ast::SourcePos& sourcePos_) : StatementNode(NodeKind::endIfStatementNode, sourcePos_)
@@ -1862,9 +1747,9 @@ void EndIfStatementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> EndIfStatementNode::Write(CodeFormatter& formatter)
+void EndIfStatementNode::Write(CodeFormatter& formatter)
 {
-    return formatter.WriteLine("#endif");
+    formatter.WriteLine("#endif");
 }
 
 AssignInitNode::AssignInitNode(const soul::ast::SourcePos& sourcePos_, Node* assignmentExpr_) : Node(NodeKind::assignInitNode, sourcePos_), assignmentExpr(assignmentExpr_)
@@ -1881,17 +1766,15 @@ void AssignInitNode::Add(AssignInitNode* subInit)
     subInits.push_back(std::unique_ptr<AssignInitNode>(subInit));
 }
 
-std::expected<bool, int> AssignInitNode::Write(CodeFormatter& formatter)
+void AssignInitNode::Write(CodeFormatter& formatter)
 {
     if (assignmentExpr)
     {
-        std::expected<bool, int> rv = assignmentExpr->Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        assignmentExpr->Write(formatter);
     }
     else
     {
-        std::expected<bool, int> rv = formatter.Write("{ ");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write("{ ");
         bool first = true;
         for (const auto& subInit : subInits)
         {
@@ -1901,16 +1784,12 @@ std::expected<bool, int> AssignInitNode::Write(CodeFormatter& formatter)
             }
             else
             {
-                rv = formatter.Write(", ");
-                if (!rv) return std::unexpected<int>(rv.error());
+                formatter.Write(", ");
             }
-            rv = subInit->Write(formatter);
-            if (!rv) return std::unexpected<int>(rv.error());
+            subInit->Write(formatter);
         }
-        rv = formatter.Write(" }");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write(" }");
     }
-    return std::expected<bool, int>(true);
 }
 
 std::string AssignInitNode::ToString() const
@@ -1975,19 +1854,16 @@ void InitializerNode::Add(Node* expr)
     expressionList.push_back(std::unique_ptr<Node>(expr));
 }
 
-std::expected<bool, int> InitializerNode::Write(CodeFormatter& formatter)
+void InitializerNode::Write(CodeFormatter& formatter)
 {
     if (assignInit)
     {
-        std::expected<bool, int> rv = formatter.Write(" = ");
-        if (!rv) return std::unexpected<int>(rv.error());
-        rv = assignInit->Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write(" = ");
+        assignInit->Write(formatter);
     }
     else if (!expressionList.empty())
     {
-        std::expected<bool, int> rv = formatter.Write("(");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write("(");
         bool first = true;
         for (const auto& expr : expressionList)
         {
@@ -1997,16 +1873,12 @@ std::expected<bool, int> InitializerNode::Write(CodeFormatter& formatter)
             }
             else
             {
-                rv = formatter.Write(", ");
-                if (!rv) return std::unexpected<int>(rv.error());
+                formatter.Write(", ");
             }
-            rv = expr->Write(formatter);
-            if (!rv) return std::unexpected<int>(rv.error());
+            expr->Write(formatter);
         }
-        rv = formatter.Write(")");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write(")");
     }
-    return std::expected<bool, int>(true);
 }
 
 std::string InitializerNode::ToString() const
@@ -2066,16 +1938,13 @@ InitDeclaratorNode::InitDeclaratorNode(const soul::ast::SourcePos& sourcePos_, c
     }
 }
 
-std::expected<bool, int> InitDeclaratorNode::Write(CodeFormatter& formatter)
+void InitDeclaratorNode::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write(declarator);
-    if (!rv) return std::unexpected<int>(rv.error());
+    formatter.Write(declarator);
     if (initializer)
     {
-        rv = initializer->Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        initializer->Write(formatter);
     }
-    return std::expected<bool, int>(true);
 }
 
 std::string InitDeclaratorNode::ToString() const
@@ -2114,7 +1983,7 @@ void InitDeclaratorListNode::Add(InitDeclaratorNode* initDeclarator)
     initDeclarators.push_back(std::unique_ptr<InitDeclaratorNode>(initDeclarator));
 }
 
-std::expected<bool, int> InitDeclaratorListNode::Write(CodeFormatter& formatter)
+void InitDeclaratorListNode::Write(CodeFormatter& formatter)
 {
     bool first = true;
     for (const auto& initDeclarator : initDeclarators)
@@ -2125,13 +1994,10 @@ std::expected<bool, int> InitDeclaratorListNode::Write(CodeFormatter& formatter)
         }
         else
         {
-            std::expected<bool, int> rv = formatter.Write(", ");
-            if (!rv) return std::unexpected<int>(rv.error());
+            formatter.Write(", ");
         }
-        std::expected<bool, int> rv = initDeclarator->Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        initDeclarator->Write(formatter);
     }
-    return std::expected<bool, int>(true);
 }
 
 std::string InitDeclaratorListNode::ToString() const
@@ -2191,9 +2057,9 @@ void TypedefNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> TypedefNode::Write(CodeFormatter& formatter)
+void TypedefNode::Write(CodeFormatter& formatter)
 {
-    return formatter.Write(Name());
+    formatter.Write(Name());
 }
 
 std::string TypedefNode::ToString() const
@@ -2221,9 +2087,9 @@ void TypeSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> TypeSpecifierNode::Write(CodeFormatter& formatter)
+void TypeSpecifierNode::Write(CodeFormatter& formatter)
 {
-    return formatter.Write(Name());
+    formatter.Write(Name());
 }
 
 ConstNode::ConstNode(const soul::ast::SourcePos& sourcePos_) : TypeSpecifierNode(sourcePos_, NodeKind::constNode, "const")
@@ -2289,9 +2155,9 @@ std::string TypeNameNode::ToString() const
     return str;
 }
 
-std::expected<bool, int> TypeNameNode::Write(CodeFormatter& formatter)
+void TypeNameNode::Write(CodeFormatter& formatter)
 {
-    return formatter.Write(ToString());
+    formatter.Write(ToString());
 }
 
 Node* TypeNameNode::Clone() const
@@ -2342,9 +2208,9 @@ std::string TypeNode::ToString() const
     return str;
 }
 
-std::expected<bool, int> TypeNode::Write(CodeFormatter& formatter)
+void TypeNode::Write(CodeFormatter& formatter)
 {
-    return formatter.Write(ToString());
+    formatter.Write(ToString());
 }
 
 Node* TypeNode::Clone() const
@@ -2377,9 +2243,9 @@ void StorageClassSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> StorageClassSpecifierNode::Write(CodeFormatter& formatter)
+void StorageClassSpecifierNode::Write(CodeFormatter& formatter)
 {
-    return formatter.Write(Name());
+    formatter.Write(Name());
 }
 
 std::string StorageClassSpecifierNode::ToString() const
@@ -2418,7 +2284,7 @@ void TypeIdNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-std::expected<bool, int> TypeIdNode::Write(CodeFormatter& formatter)
+void TypeIdNode::Write(CodeFormatter& formatter)
 {
     bool first = true;
     for (const auto& typeSpecifier : typeSpecifiers)
@@ -2429,16 +2295,14 @@ std::expected<bool, int> TypeIdNode::Write(CodeFormatter& formatter)
         }
         else
         {
-            std::expected<bool, int> rv = formatter.Write(" ");
-            if (!rv) return std::unexpected<int>(rv.error());
+            formatter.Write(" ");
         }
-        std::expected<bool, int> rv = typeSpecifier->Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        typeSpecifier->Write(formatter);
     }
-    return formatter.Write(declarator);
+    formatter.Write(declarator);
 }
 
-std::expected<bool, int> TypeIdNode::WriteNonPtrType(CodeFormatter& formatter)
+void TypeIdNode::WriteNonPtrType(CodeFormatter& formatter)
 {
     if (IsPtrType())
     {
@@ -2451,24 +2315,19 @@ std::expected<bool, int> TypeIdNode::WriteNonPtrType(CodeFormatter& formatter)
             }
             else
             {
-                std::expected<bool, int> rv = formatter.Write(" ");
-                if (!rv) return std::unexpected<int>(rv.error());
+                formatter.Write(" ");
             }
-            std::expected<bool, int> rv = typeSpecifier->Write(formatter);
-            if (!rv) return std::unexpected<int>(rv.error());
+            typeSpecifier->Write(formatter);
         }
         if (!declarator.empty())
         {
-            std::expected<bool, int> rv = formatter.Write(declarator.substr(0, declarator.size() - 1));
-            if (!rv) return std::unexpected<int>(rv.error());
+            formatter.Write(declarator.substr(0, declarator.size() - 1));
         }
     }
     else
     {
-        std::expected<bool, int> rv = Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        Write(formatter);
     }
-    return std::expected<bool, int>(true);
 }
 
 std::string TypeIdNode::ToString() const
@@ -2519,7 +2378,7 @@ void SimpleDeclarationNode::SetInitDeclaratorList(InitDeclaratorListNode* initDe
     initDeclaratorList->SetParent(this);
 }
 
-std::expected<bool, int> SimpleDeclarationNode::Write(CodeFormatter& formatter)
+void SimpleDeclarationNode::Write(CodeFormatter& formatter)
 {
     bool first = true;
     for (const auto& declSpecifier : declSpecifiers)
@@ -2530,23 +2389,18 @@ std::expected<bool, int> SimpleDeclarationNode::Write(CodeFormatter& formatter)
         }
         else
         {
-            std::expected<bool, int> rv = formatter.Write(" ");
-            if (!rv) return std::unexpected<int>(rv.error());
+            formatter.Write(" ");
         }
-        std::expected<bool, int> rv = declSpecifier->Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        declSpecifier->Write(formatter);
     }
     if (!declSpecifiers.empty())
     {
-        std::expected<bool, int> rv = formatter.Write(" ");
-        if (!rv) return std::unexpected<int>(rv.error());
+        formatter.Write(" ");
     }
     if (initDeclaratorList)
     {
-        std::expected<bool, int> rv = initDeclaratorList->Write(formatter);
-        if (!rv) return std::unexpected<int>(rv.error());
+        initDeclaratorList->Write(formatter);
     }
-    return std::expected<bool, int>(true);
 }
 
 Node* SimpleDeclarationNode::Clone() const
@@ -2577,9 +2431,9 @@ NamespaceAliasNode::NamespaceAliasNode(const soul::ast::SourcePos& sourcePos_, c
 {
 }
 
-std::expected<bool, int> NamespaceAliasNode::Write(CodeFormatter& formatter)
+void NamespaceAliasNode::Write(CodeFormatter& formatter)
 {
-    return formatter.WriteLine("namespace " + aliasName + " = " + namespaceName + ";");
+    formatter.WriteLine("namespace " + aliasName + " = " + namespaceName + ";");
 }
 
 Node* NamespaceAliasNode::Clone() const
@@ -2597,9 +2451,9 @@ UsingDeclarationNode::UsingDeclarationNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
-std::expected<bool, int> UsingDeclarationNode::Write(CodeFormatter& formatter)
+void UsingDeclarationNode::Write(CodeFormatter& formatter)
 {
-    return formatter.WriteLine("using " + usingId + ";");
+    formatter.WriteLine("using " + usingId + ";");
 }
 
 Node* UsingDeclarationNode::Clone() const
@@ -2617,9 +2471,9 @@ UsingDirectiveNode::UsingDirectiveNode(const soul::ast::SourcePos& sourcePos_, c
 {
 }
 
-std::expected<bool, int> UsingDirectiveNode::Write(CodeFormatter& formatter)
+void UsingDirectiveNode::Write(CodeFormatter& formatter)
 {
-    return formatter.WriteLine("using namespace " + usingNs + ";");
+    formatter.WriteLine("using namespace " + usingNs + ";");
 }
 
 Node* UsingDirectiveNode::Clone() const

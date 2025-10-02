@@ -1771,7 +1771,7 @@ void ExpressionBinder::Visit(otava::ast::NewExprNode& node)
         }
     }
     std::vector<TypeSymbol*> templateArgs;
-    std::unique_ptr<BoundFunctionCallNode> opNewCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"operator new", templateArgs, args, node.GetSourcePos(), 
+    std::unique_ptr<BoundFunctionCallNode> opNewCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"operator new", templateArgs, args, node.GetSourcePos(),
         context);
     TypeSymbol* voidPtrType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::voidType)->AddPointer(context);
     VariableSymbol* tempVarSymbol = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->CreateTemporary(type->AddPointer(context));
@@ -1796,10 +1796,17 @@ void ExpressionBinder::Visit(otava::ast::NewExprNode& node)
     std::unique_ptr<BoundVariableNode> tempVar2(new BoundVariableNode(tempVarSymbol, node.GetSourcePos()));
     constructObjectArgs.push_back(std::unique_ptr<BoundExpressionNode>(tempVar2.release()));
     NewInitializerBinder initializerAdder(context, constructObjectArgs);
-    node.Initializer()->Accept(initializerAdder);
-    std::unique_ptr<BoundFunctionCallNode> constructObjectCall = ResolveOverloadThrow(
-        context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, constructObjectArgs, node.GetSourcePos(), context);
-    boundExpression = new BoundConstructExpressionNode(allocation.release(), constructObjectCall.release(), tempVarSymbol->GetType(), hasPlacement, node.GetSourcePos());
+    if (node.Initializer())
+    {
+        node.Initializer()->Accept(initializerAdder);
+        std::unique_ptr<BoundFunctionCallNode> constructObjectCall = ResolveOverloadThrow(
+            context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, constructObjectArgs, node.GetSourcePos(), context);
+        boundExpression = new BoundConstructExpressionNode(allocation.release(), constructObjectCall.release(), tempVarSymbol->GetType(), hasPlacement, node.GetSourcePos());
+    }
+    else
+    {
+        ThrowException("initializer not found", node.GetSourcePos(), context);
+    }
 }
 
 void ExpressionBinder::Visit(otava::ast::DeletePtrNode& node)

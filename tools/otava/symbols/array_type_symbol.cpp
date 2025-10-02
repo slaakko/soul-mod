@@ -32,10 +32,6 @@ ArrayTypeSymbol::ArrayTypeSymbol(TypeSymbol* elementType_, std::int64_t size_) :
     TypeSymbol(SymbolKind::arrayTypeSymbol, MakeArrayTypeName(elementType_, size_)), elementType(elementType_), size(size_), bound(false)
 {
     GetScope()->SetKind(ScopeKind::arrayScope);
-    if (size == -1)
-    {
-        int x = 0;
-    }
 }
 
 bool ArrayTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const

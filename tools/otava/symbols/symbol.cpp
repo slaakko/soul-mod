@@ -233,6 +233,7 @@ std::string SymbolKindToString(SymbolKind kind)
         case SymbolKind::fundamentalTypeBitcast: return "fundamentalTypeBitcast";
         case SymbolKind::fundamentalTypeIntToFloat: return "fundamentalTypeIntToFloat";
         case SymbolKind::fundamentalTypeFloatToInt: return "fundamentalTypeFloatToInt";
+        case SymbolKind::fundamentalTypeBoolToInt: return "fundamentalTypeBoolToInt";
         case SymbolKind::fundamentalTypeDefaultCtor: return "fundamentalTypeDefaultCtor";
         case SymbolKind::fundamentalTypeCopyCtor: return "fundamentalTypeCopyCtor";
         case SymbolKind::fundamentalTypeCopyCtorLiteral: return "fundamentalTypeCopyCtorLiteral";
@@ -484,6 +485,7 @@ bool Symbol::CanInstall() const
         case SymbolKind::fundamentalTypeBitcast:
         case SymbolKind::fundamentalTypeIntToFloat:
         case SymbolKind::fundamentalTypeFloatToInt:
+        case SymbolKind::fundamentalTypeBoolToInt:
         case SymbolKind::fundamentalTypeBoolean:
         case SymbolKind::fundamentalTypeDefaultCtor:
         case SymbolKind::fundamentalTypeCopyCtor:
@@ -593,6 +595,7 @@ bool Symbol::IsFunctionSymbol() const
         case SymbolKind::fundamentalTypeBitcast:
         case SymbolKind::fundamentalTypeIntToFloat:
         case SymbolKind::fundamentalTypeFloatToInt:
+        case SymbolKind::fundamentalTypeBoolToInt:
         case SymbolKind::fundamentalTypeBoolean:
         case SymbolKind::fundamentalTypeDefaultCtor:
         case SymbolKind::fundamentalTypeCopyCtor:

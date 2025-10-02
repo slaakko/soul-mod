@@ -606,10 +606,6 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
     try
     {
         context->PushSetFlag(ContextFlags::dontBind | ContextFlags::skipFunctionDefinitions);
-        if (specialization->Name() == U"stack<LexerState<char32_t, LexerBase<char32_t>>>")
-        {
-            //std::cout << context->GetSymbolTable()->GetModule()->Name() << ": instantiate: " << util::ToUtf8(specialization->Name()) << "=" << util::ToString(specialization->Id()) << "\n";
-        }
         classNode->Accept(instantiator);
         std::vector<ClassTypeSymbol*> baseClasses = instantiator.GetBaseClasses();
         for (ClassTypeSymbol* baseClass : baseClasses)

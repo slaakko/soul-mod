@@ -48,8 +48,7 @@ std::expected<bool, int> CharSymbol::Print(CodeFormatter& formatter)
 {
     if (chr == eps)
     {
-        std::expected<bool, int> rv = formatter.Write("EPS");
-        if (!rv) return rv;
+        formatter.Write("EPS");
     }
     else
     {
@@ -57,8 +56,7 @@ std::expected<bool, int> CharSymbol::Print(CodeFormatter& formatter)
         if (!rv) return std::unexpected<int>(rv.error());
         std::expected<std::string, int> urv = util::ToUtf8(*rv);
         if (!urv) return std::unexpected<int>(urv.error());
-        std::expected<bool, int> frv = formatter.Write(*urv);
-        if (!frv) return frv;
+        formatter.Write(*urv);
     }
     return std::expected<bool, int>(true);
 }
@@ -80,8 +78,7 @@ void Any::Accept(Visitor& visitor)
 
 std::expected<bool, int> Any::Print(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write(".");
-    if (!rv) return rv;
+    formatter.Write(".");
     return std::expected<bool, int>(true);
 }
 
@@ -122,16 +119,13 @@ std::expected<bool, int> Range::Print(CodeFormatter& formatter)
     if (!rv) return std::unexpected<int>(rv.error());
     std::expected<std::string, int> u = util::ToUtf8(*rv);
     if (!u) return std::unexpected<int>(u.error());
-    std::expected<bool, int> frv = formatter.Write(*u);
-    if (!frv) return frv;
-    frv = formatter.Write("-");
-    if (!frv) return frv;
+    formatter.Write(*u);
+    formatter.Write("-");
     rv = util::CharStr(end);
     if (!rv) return std::unexpected<int>(rv.error());
     u = util::ToUtf8(*rv);
     if (!u) return std::unexpected<int>(u.error());
-    frv = formatter.Write(*u);
-    if (!frv) return frv;
+    formatter.Write(*u);
     return std::expected<bool, int>(true);
 }
 
@@ -411,16 +405,13 @@ void Class::AddChar(char32_t c)
 
 std::expected<bool, int> Class::Print(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("CLASS " + Name() + ": ");
-    if (!rv) return rv;
+    formatter.Write("CLASS " + Name() + ": ");
     if (ranges.empty())
     {
-        rv = formatter.Write("[");
-        if (!rv) return rv;
+        formatter.Write("[");
         if (inverse)
         {
-            rv = formatter.Write("^");
-            if (!rv) return rv;
+            formatter.Write("^");
         }
         bool first = true;
         for (Symbol* symbol : symbols)
@@ -431,19 +422,16 @@ std::expected<bool, int> Class::Print(CodeFormatter& formatter)
             }
             else
             {
-                rv = formatter.Write(", ");
-                if (!rv) return rv;
+                formatter.Write(", ");
             }
-            rv = symbol->Print(formatter);
+            std::expected<bool, int> rv = symbol->Print(formatter);
             if (!rv) return rv;
         }
-        rv = formatter.WriteLine("]");
-        if (!rv) return rv;
+        formatter.WriteLine("]");
     }
     else
     {
-        rv = formatter.Write("{");
-        if (!rv) return rv;
+        formatter.Write("{");
         bool first = true;
         for (auto& range : ranges)
         {
@@ -453,14 +441,12 @@ std::expected<bool, int> Class::Print(CodeFormatter& formatter)
             }
             else
             {
-                rv = formatter.Write(", ");
-                if (!rv) return rv;
+                formatter.Write(", ");
             }
-            rv = range.Print(formatter);
+            std::expected<bool, int> rv = range.Print(formatter);
             if (!rv) return rv;
         }
-        rv = formatter.WriteLine("}");
-        if (!rv) return rv;
+        formatter.WriteLine("}");
     }
     return std::expected<bool, int>(true);
 }
@@ -674,7 +660,8 @@ std::expected<bool, int> NfaEdge::Print(CodeFormatter& formatter)
 {
     std::expected<bool, int> rv = symbol->Print(formatter);
     if (!rv) return rv;
-    return formatter.WriteLine("-> " + std::to_string(next->Id()));
+    formatter.WriteLine("-> " + std::to_string(next->Id()));
+    return std::expected<bool, int>(true);
 }
 
 NfaState::NfaState(int id_, int ruleIndex_) : id(id_), ruleIndex(ruleIndex_), accept(false)
@@ -734,12 +721,11 @@ std::expected<bool, int> NfaState::Print(CodeFormatter& formatter)
             str.append(" ").append(std::to_string(p->Id()));
         }
     }
-    std::expected<bool, int> rv = formatter.WriteLine(str);
-    if (!rv) return rv;
+    formatter.WriteLine(str);
     formatter.IncIndent();
     for (NfaEdge& edge : edges)
     {
-        rv = edge.Print(formatter);
+        std::expected<bool, int> rv = edge.Print(formatter);
         if (!rv) return rv;
     }
     formatter.DecIndent();
@@ -886,18 +872,16 @@ std::expected<bool, int> DfaState::Print(LexerContext& context, CodeFormatter& f
     {
         str.append(" : RULE=" + std::to_string(ruleIndex));
     }
-    std::expected<bool, int> rv = formatter.WriteLine(str);
-    if (!rv) return rv;
+    formatter.WriteLine(str);
     formatter.IncIndent();
     int n = static_cast<int>(next.size());
     for (int i = 0; i < n; ++i)
     {
         if (next[i])
         {
-            rv = context.Partition()[i]->Print(formatter);
+            std::expected<bool, int> rv = context.Partition()[i]->Print(formatter);
             if (!rv) return rv;
-            rv = formatter.WriteLine("-> " + std::to_string(next[i]->Id()));
-            if (!rv) return rv;
+            formatter.WriteLine("-> " + std::to_string(next[i]->Id()));
         }
     }
     formatter.DecIndent();
@@ -933,11 +917,10 @@ std::expected<bool, int> Dfa::Finalize(LexerContext& lexerContext)
 
 std::expected<bool, int> Dfa::Print(LexerContext& lexerContext, CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.WriteLine("DFA:");
-    if (!rv) return rv;
+    formatter.WriteLine("DFA:");
     for (DfaState* state : states)
     {
-        rv = state->Print(lexerContext, formatter);
+        std::expected<bool, int> rv = state->Print(lexerContext, formatter);
         if (!rv) return rv;
     }
     formatter.WriteLine();

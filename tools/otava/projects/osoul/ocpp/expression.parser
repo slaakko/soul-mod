@@ -575,9 +575,9 @@ parser ExpressionParser
                 newExprNode.reset(new soul::ast::cpp::NewNode(*sp, global)); 
             }
             empty{ newExprNode->BeginAddToPlacement(); } NewPlacement(context, newExprNode.get()):placement? empty{ newExprNode->EndAddToPlacement(); }
-            (NewTypeId(context):newTypeId{ newExprNode->SetParens(false); newExprNode->SetTypeId(newTypeId); } | LPAREN TypeId(context):ti RPAREN
-            { 
-                newExprNode->SetParens(true); newExprNode->SetTypeId(ti); }
+            (
+                NewTypeId(context):newTypeId{ newExprNode->SetParens(false); newExprNode->SetTypeId(newTypeId); } 
+            |   LPAREN TypeId(context):ti RPAREN { newExprNode->SetParens(true); newExprNode->SetTypeId(ti); }
             )
             empty{ newExprNode->BeginAddToInitializer(); } NewInitializer(context, newExprNode.get()):initializer? empty{ newExprNode->EndAddToInitializer(); }
         )

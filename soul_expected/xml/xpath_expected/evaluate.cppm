@@ -6,6 +6,7 @@
 export module soul_expected.xml.xpath.evaluate;
 
 import std;
+import soul_expected.xml.dom_expected;
 import soul_expected.xml.xpath.object;
 import soul_expected.xml.xpath.expr;
 import soul_expected.xml.node;

@@ -1,0 +1,3 @@
+project bool_to_int;
+target=program;
+source <bool_to_int.cpp>;

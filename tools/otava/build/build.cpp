@@ -258,6 +258,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         util::reset_rng();
         util::set_rand_seed(seed);
     }
+    otava::symbols::ModuleMapper* prevModuleMapper = otava::symbols::GetModuleMapper();
     otava::symbols::ModuleMapper moduleMapper;
     otava::symbols::SetModuleMapper(&moduleMapper);
     otava::symbols::InstantiationQueue instantiationQueue;
@@ -670,7 +671,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     {
         std::cout << "project '" << project->Name() << "' built successfully" << std::endl;
     }
-    otava::symbols::SetModuleMapper(nullptr);
+    otava::symbols::SetModuleMapper(prevModuleMapper);
     otava::symbols::SetProjectReady(true);
 }
 

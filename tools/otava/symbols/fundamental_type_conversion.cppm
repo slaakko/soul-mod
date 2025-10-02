@@ -71,6 +71,11 @@ struct FundamentalTypeFloatToInt
     static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
 };
 
+struct FundamentalTypeBoolToInt
+{
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
+};
+
 template<class Op>
 struct FundamentalTypeConversion : public FunctionSymbol
 {
@@ -192,6 +197,13 @@ class FundamentalTypeFloatToIntConversion : public FundamentalTypeConversion<Fun
 public:
     FundamentalTypeFloatToIntConversion();
     FundamentalTypeFloatToIntConversion(std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
+};
+
+class FundamentalTypeBoolToIntConversion : public FundamentalTypeConversion<FundamentalTypeBoolToInt>
+{
+public:
+    FundamentalTypeBoolToIntConversion();
+    FundamentalTypeBoolToIntConversion(TypeSymbol* boolType, TypeSymbol* destType, Context* context);
 };
 
 class FundamentalTypeBooleanConversion : public FunctionSymbol

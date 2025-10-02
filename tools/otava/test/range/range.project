@@ -1,0 +1,3 @@
+project range;
+target=program;
+source <main.cpp>;

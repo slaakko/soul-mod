@@ -24,11 +24,10 @@ void CDataSection::Accept(Visitor& visitor)
 
 std::expected<bool, int> CDataSection::Write(util::CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("<![CDATA[");
-    if (!rv) return rv;
-    rv = formatter.Write(Data());
-    if (!rv) return rv;
-    return formatter.Write("]]>");
+    formatter.Write("<![CDATA[");
+    formatter.Write(Data());
+    formatter.Write("]]>");
+    return std::expected<bool, int>(true);
 }
 
 CDataSection* MakeCDataSection(const std::string& text)

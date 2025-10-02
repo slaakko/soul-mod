@@ -1,0 +1,13 @@
+project oxpath_test;
+target=program;
+reference <../../outil/outil.project>;
+reference <../../osoul/oast/oast.project>;
+reference <../../osoul/olexer/olexer.project>;
+reference <../../osoul/oparser/oparser.project>;
+reference <../oxml_processor/oxml_processor.project>;
+reference <../oxml_parser/oxml_parser.project>;
+reference <../odom/odom.project>;
+reference <../odom_parser/odom_parser.project>;
+reference <../oxpath/oxpath.project>;
+source <main.cpp>;
+resource <../oxpath/soul.xml.xpath.lexer.classmap.rc>;

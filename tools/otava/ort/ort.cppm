@@ -84,4 +84,8 @@ export extern "C" int ort_send_socket(std::int64_t socket, const std::uint8_t* b
 export extern "C" int ort_recv_socket(std::int64_t socket, std::uint8_t* buf, int len, int flags);
 export extern "C" bool ort_get_path_to_executable(char* buf, int bufSize);
 export extern "C" double ort_pow(double x, int exponent);
+export extern "C" float ort_remainder(float x, float y);
+export extern "C" double ort_remainderd(double x, double y);
+export extern "C" float ort_stof(const char* s, std::size_t* pos);
+export extern "C" double ort_stod(const char* s, std::size_t* pos);
 export extern "C" void ort_exit(int exitCode);

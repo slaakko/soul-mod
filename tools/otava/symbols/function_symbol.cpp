@@ -272,6 +272,27 @@ void ParameterSymbol::Accept(Visitor& visitor)
 TypeSymbol* ParameterSymbol::GetReferredType(Context* context) const
 {
     TypeSymbol* referredType = type->GetBaseType();
+    if (context->GetFlag(ContextFlags::resolveNestedTypes) && referredType->IsNestedTypeSymbol())
+    {
+        if (context->TemplateParameterMap())
+        {
+            if (referredType->Parent()->IsTemplateParameterSymbol())
+            {
+                TemplateParameterSymbol* templateParam = static_cast<TemplateParameterSymbol*>(referredType->Parent());
+                auto it = context->TemplateParameterMap()->find(templateParam);
+                if (it != context->TemplateParameterMap()->end())
+                {
+                    TypeSymbol* type = it->second;
+                    Symbol* symbol = type->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, context->GetSourcePos(), context,
+                        LookupFlags::none);
+                    if (symbol && symbol->IsTypeSymbol())
+                    {
+                        referredType = static_cast<TypeSymbol*>(symbol);
+                    }
+                }
+            }
+        }
+    }
     while (referredType->IsAliasTypeSymbol())
     {
         AliasTypeSymbol* aliasType = static_cast<AliasTypeSymbol*>(referredType);

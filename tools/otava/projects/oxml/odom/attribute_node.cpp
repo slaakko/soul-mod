@@ -85,11 +85,11 @@ void AttributeNode::SetValue(const std::string& value_)
 
 std::expected<bool, int> AttributeNode::Write(util::CodeFormatter& formatter)
 {
-    auto rv = formatter.Write(" " + Name() + "=");
-    if (!rv) return rv;
+    formatter.Write(" " + Name() + "=");
     auto v = MakeXmlAttrValue(value);
     if (!v) return std::unexpected<int>(v.error());
-    return formatter.Write(*v);
+    formatter.Write(*v);
+    return std::expected<bool, int>(true);
 }
 
 AttributeNode* MakeAttribute(const std::string& name, const std::string& value)

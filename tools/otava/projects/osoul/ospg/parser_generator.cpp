@@ -30,20 +30,15 @@ std::expected<bool, int> GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile
     if (!interfaceFile) return std::unexpected<int>(util::AllocateError("could not create file '" + interfaceFilePath + "'"));
     util::CodeFormatter interfaceFormatter(interfaceFile);
     std::string moduleName = spgFile->ProjectName() + ".rules";
-    std::expected<bool, int> rv = interfaceFormatter.WriteLine("export module " + moduleName + ";");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("export module " + moduleName + ";");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("import std;");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("import std;");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("export namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("export namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("std::map<std::int64_t, std::string>* GetRuleNameMapPtr();");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("std::map<std::int64_t, std::string>* GetRuleNameMapPtr();");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("} // " + soul::ast::common::ToNamespaceName(moduleName));
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("} // " + soul::ast::common::ToNamespaceName(moduleName));
     if (verbose)
     {
         std::cout << "==> " << interfaceFilePath << "\n";
@@ -55,50 +50,37 @@ std::expected<bool, int> GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile
     std::ofstream implementationFile(implementationFilePath);
     if (!implementationFile) return std::unexpected<int>(util::AllocateError("could not create file '" + implementationFilePath + "'"));
     util::CodeFormatter implementationFormatter(implementationFile);
-    rv = implementationFormatter.WriteLine("module " + moduleName + ";");
-    if (!rv) return rv;
+    implementationFormatter.WriteLine("module " + moduleName + ";");
     implementationFormatter.WriteLine();
-    rv = implementationFormatter.WriteLine("namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
-    if (!rv) return rv;
+    implementationFormatter.WriteLine("namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
     implementationFormatter.WriteLine();
-    rv = implementationFormatter.WriteLine("std::mutex ruleMtx;");
-    if (!rv) return rv;
+    implementationFormatter.WriteLine("std::mutex ruleMtx;");
     implementationFormatter.WriteLine();
-    rv = implementationFormatter.WriteLine("std::map<std::int64_t, std::string>* GetRuleNameMapPtr()");
-    if (!rv) return rv;
-    rv = implementationFormatter.WriteLine("{");
-    if (!rv) return rv;
+    implementationFormatter.WriteLine("std::map<std::int64_t, std::string>* GetRuleNameMapPtr()");
+    implementationFormatter.WriteLine("{");
     implementationFormatter.IncIndent();
-    rv = implementationFormatter.WriteLine("std::lock_guard<std::mutex> lock(ruleMtx);");
-    if (!rv) return rv;
-    rv = implementationFormatter.WriteLine("static std::map<std::int64_t, std::string> ruleNameMap = {");
-    if (!rv) return rv;
+    implementationFormatter.WriteLine("std::lock_guard<std::mutex> lock(ruleMtx);");
+    implementationFormatter.WriteLine("static std::map<std::int64_t, std::string> ruleNameMap = {");
     implementationFormatter.IncIndent();
     int n = static_cast<int>(spgFile->Rules().size());
     for (int i = 0; i < n; ++i)
     {
         soul::ast::spg::RuleParser* rule = spgFile->Rules()[i];
         std::string ruleName = rule->Grammar()->Name() + "." + rule->Name();
-        rv = implementationFormatter.Write("{ " + std::to_string(rule->Id()) + ", \"" + ruleName + "\" }");
-        if (!rv) return rv;
+        implementationFormatter.Write("{ " + std::to_string(rule->Id()) + ", \"" + ruleName + "\" }");
         if (i != n - 1)
         {
-            rv = implementationFormatter.Write(",");
-            if (!rv) return rv;
+            implementationFormatter.Write(",");
         }
         implementationFormatter.WriteLine();
     }
     implementationFormatter.DecIndent();
-    rv = implementationFormatter.WriteLine("};");
-    if (!rv) return rv;
-    rv = implementationFormatter.WriteLine("return &ruleNameMap;");
-    if (!rv) return rv;
+    implementationFormatter.WriteLine("};");
+    implementationFormatter.WriteLine("return &ruleNameMap;");
     implementationFormatter.DecIndent();
-    rv = implementationFormatter.WriteLine("}");
-    if (!rv) return rv;
+    implementationFormatter.WriteLine("}");
     implementationFormatter.WriteLine();
-    rv = implementationFormatter.WriteLine("} // " + soul::ast::common::ToNamespaceName(moduleName));
-    if (!rv) return rv;
+    implementationFormatter.WriteLine("} // " + soul::ast::common::ToNamespaceName(moduleName));
     if (verbose)
     {
         std::cout << "==> " << implementationFilePath << "\n";

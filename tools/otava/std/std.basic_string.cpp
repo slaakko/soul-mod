@@ -565,4 +565,14 @@ unsigned long long stoull(const string& str, size_t* idx, int base)
     return 0;
 }
 
+float stof(const string& str, size_t* idx = nullptr)
+{
+    return ort_stof(str.c_str(), idx);
+}
+
+double stod(const string& str, size_t* idx = nullptr)
+{
+    return ort_stod(str.c_str(), idx);
+}
+
 } // namespace std

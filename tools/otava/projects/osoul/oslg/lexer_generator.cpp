@@ -41,8 +41,7 @@ std::expected<bool, int> MakeNfas(soul::ast::re::LexerContext& lexerContext)
         util::CodeFormatter formatter(nfaFile);
         for (soul::ast::re::NfaState* state : lexerContext.NfaStates())
         {
-            std::expected<bool, int> rv = state->Print(formatter);
-            if (!rv) return rv;
+            state->Print(formatter);
         }
         if (lexerContext.Verbose())
         {
@@ -310,13 +309,11 @@ std::expected<bool, int> MakeClassMap(soul::ast::re::LexerContext& lexerContext,
             return std::unexpected<int>(util::AllocateError("could not create file '" + classMapFilePath + "'"));
         }
         util::CodeFormatter formatter(classMapFile);
-        std::expected<bool, int> rv = formatter.WriteLine("CLASSMAP:");
-        if (!rv) return rv;
+        formatter.WriteLine("CLASSMAP:");
         int32_t i = 0;
         for (std::int32_t x : classMapVec)
         {
-            rv = formatter.WriteLine(std::to_string(i) + " : " + std::to_string(x));
-            if (!rv) return rv;
+            formatter.WriteLine(std::to_string(i) + " : " + std::to_string(x));
             ++i;
         }
         if (lexerContext.Verbose())
@@ -386,8 +383,7 @@ std::expected<bool, int> MakeDfa(soul::ast::re::LexerContext& lexerContext)
             return std::unexpected<int>(util::AllocateError("could not create file '" + dfaFilePath + "'"));
         }
         util::CodeFormatter formatter(dfaFile);
-        std::expected<bool, int> rv = lexerContext.GetDfa().Print(lexerContext, formatter);
-        if (!rv) return rv;
+        lexerContext.GetDfa().Print(lexerContext, formatter);
         if (lexerContext.Verbose())
         {
             std::cout << "==> " << dfaFilePath << "\n";
@@ -447,34 +443,25 @@ std::expected<bool, int> WriteVariables(soul::ast::re::LexerContext& lexerContex
     soul::ast::slg::Lexer* lexer = lexerContext.GetLexer();
     std::string variableClassName = lexer->Name() + "_Variables";
     lexer->SetVariableClassName(variableClassName);
-    std::expected<bool, int> rv = interfaceFormatter.WriteLine("struct " + variableClassName + " : public soul::lexer::Variables");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("struct " + variableClassName + " : public soul::lexer::Variables");
+    interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    rv = interfaceFormatter.WriteLine(variableClassName + "();");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine(variableClassName + "();");
     bool hasVariables = false;
     for (const auto& var : lexer->Variables())
     {
-        rv = var->Type()->Write(interfaceFormatter);
-        if (!rv) return rv;
-        rv = interfaceFormatter.Write(" ");
-        if (!rv) return rv;
-        rv = interfaceFormatter.WriteLine(var->Name() + ";");
-        if (!rv) return rv;
+        var->Type()->Write(interfaceFormatter);
+        interfaceFormatter.Write(" ");
+        interfaceFormatter.WriteLine(var->Name() + ";");
         hasVariables = true;
     }
     interfaceFormatter.DecIndent();
-    rv = interfaceFormatter.WriteLine("};");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("};");
     sourceFormatter.WriteLine();
-    rv = sourceFormatter.Write(variableClassName + "::" + variableClassName + "()");
-    if (!rv) return rv;
+    sourceFormatter.Write(variableClassName + "::" + variableClassName + "()");
     if (hasVariables)
     {
-        rv = sourceFormatter.Write(" :");
-        if (!rv) return rv;
+        sourceFormatter.Write(" :");
     }
     sourceFormatter.WriteLine();
     sourceFormatter.IncIndent();
@@ -487,21 +474,17 @@ std::expected<bool, int> WriteVariables(soul::ast::re::LexerContext& lexerContex
         }
         else
         {
-            rv = sourceFormatter.Write(", ");
-            if (!rv) return rv;
+            sourceFormatter.Write(", ");
         }
-        rv = sourceFormatter.Write(var->Name() + "()");
-        if (!rv) return rv;
+        sourceFormatter.Write(var->Name() + "()");
     }
     if (hasVariables)
     {
         sourceFormatter.WriteLine();
     }
     sourceFormatter.DecIndent();
-    rv = sourceFormatter.WriteLine("{");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("}");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("{");
+    sourceFormatter.WriteLine("}");
     return std::expected<bool, int>(true);
 }
 
@@ -518,16 +501,14 @@ std::expected<bool, int> WriteLexer(soul::ast::re::LexerContext& lexerContext, s
     std::ofstream interfaceStream(interfaceFilePath);
     if (!interfaceStream) return std::unexpected<int>(util::AllocateError("could not create file '" + interfaceFilePath + "'"));
     util::CodeFormatter interfaceFormatter(interfaceStream);
-    std::expected<bool, int> rv = interfaceFormatter.WriteLine("// this file has been automatically generated from '" +
+    interfaceFormatter.WriteLine("// this file has been automatically generated from '" +
         lexerContext.FileName() + "' using soul lexer generator oslg version " + util::SoulVersionStr());
-    if (!rv) return rv;
     interfaceFormatter.WriteLine();
     std::ofstream sourceStream(sourceFilePath);
     if (!sourceStream) return std::unexpected<int>(util::AllocateError("could not create file '" + sourceFilePath + "'"));
     util::CodeFormatter sourceFormatter(sourceStream);
-    rv = sourceFormatter.WriteLine("// this file has been automatically generated from '" + lexerContext.FileName() + "' using soul lexer generator oslg version " +
+    sourceFormatter.WriteLine("// this file has been automatically generated from '" + lexerContext.FileName() + "' using soul lexer generator oslg version " +
         util::SoulVersionStr());
-    if (!rv) return rv;
     sourceFormatter.WriteLine();
     soul::ast::slg::Lexer* lexer = lexerContext.GetLexer();
     soul::ast::common::File* file = lexer->GetFile();
@@ -543,171 +524,112 @@ std::expected<bool, int> WriteLexer(soul::ast::re::LexerContext& lexerContext, s
     {
         return std::unexpected<int>(util::AllocateError("lexer file expected"));
     }
-    rv = sourceFormatter.WriteLine("module " + moduleName + ";");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("module " + moduleName + ";");
     sourceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("export module " + moduleName + ";");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("export module " + moduleName + ";");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("import std;");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("import soul.lexer;");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("import soul.ast.slg;");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("import soul.ast.common;");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("import util;");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("import std;");
+    interfaceFormatter.WriteLine("import soul.lexer;");
+    interfaceFormatter.WriteLine("import soul.ast.slg;");
+    interfaceFormatter.WriteLine("import soul.ast.common;");
+    interfaceFormatter.WriteLine("import util;");
     for (const auto& imprt : lexerFile->Imports())
     {
         soul::ast::common::Collection* collection = slgFile->GetCollection(imprt->ModuleName());
         if (!collection)
         {
-            rv = interfaceFormatter.WriteLine("import " + imprt->ModuleName() + ";");
-            if (!rv) return rv;
+            interfaceFormatter.WriteLine("import " + imprt->ModuleName() + ";");
         }
         else if (collection->Kind() == soul::ast::common::CollectionKind::tokenCollection)
         {
-            rv = interfaceFormatter.WriteLine("import " + collection->Name() + ";");
-            if (!rv) return rv;
+            interfaceFormatter.WriteLine("import " + collection->Name() + ";");
         }
     }
     interfaceFormatter.WriteLine();
     sourceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("export namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("export namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("std::mutex& MakeLexerMtx();");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("std::mutex& MakeLexerMtx();");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("template<typename CharT>");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("struct " + lexer->Name() + ";");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("template<typename CharT>");
+    interfaceFormatter.WriteLine("struct " + lexer->Name() + ";");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("template<typename CharT>");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("std::expected<soul::lexer::Lexer<" + lexer->Name() + "<CharT>, CharT>, int> MakeLexer(" +
+    interfaceFormatter.WriteLine("template<typename CharT>");
+    interfaceFormatter.WriteLine("std::expected<soul::lexer::Lexer<" + lexer->Name() + "<CharT>, CharT>, int> MakeLexer(" +
         "const CharT* start, const CharT* end, const std::string& fileName);");
-    if (!rv) return rv;
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("template<typename CharT>");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("std::expected<soul::lexer::Lexer<" + lexer->Name() + "<CharT>, CharT>, int> MakeLexer(" +
+    interfaceFormatter.WriteLine("template<typename CharT>");
+    interfaceFormatter.WriteLine("std::expected<soul::lexer::Lexer<" + lexer->Name() + "<CharT>, CharT>, int> MakeLexer(" +
         "const std::string& moduleFileName, util::ResourceFlags resourceFlags, const CharT* start, const CharT* end, const std::string& fileName);");
-    if (!rv) return rv;
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("soul::ast::common::TokenCollection* GetTokens();");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("soul::ast::common::TokenCollection* GetTokens();");
     interfaceFormatter.WriteLine();
-    rv = sourceFormatter.WriteLine("namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
     sourceFormatter.WriteLine();
-    rv = sourceFormatter.WriteLine("soul::ast::common::TokenCollection* GetTokens()");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("soul::ast::common::TokenCollection* GetTokens()");
+    sourceFormatter.WriteLine("{");
     sourceFormatter.IncIndent();
-    rv = sourceFormatter.WriteLine("static soul::ast::common::TokenCollection tokens(\"" + moduleName + ".tokens\");");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("if (!tokens.Initialized())");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("static soul::ast::common::TokenCollection tokens(\"" + moduleName + ".tokens\");");
+    sourceFormatter.WriteLine("if (!tokens.Initialized())");
+    sourceFormatter.WriteLine("{");
     sourceFormatter.IncIndent();
-    rv = sourceFormatter.WriteLine("tokens.SetInitialized();");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("tokens.SetInitialized();");
     soul::ast::slg::Tokens* tokens = lexerContext.GetTokens();
     for (const auto* token : tokens->GetTokens())
     {
-        rv = sourceFormatter.WriteLine("tokens.AddToken(new soul::ast::common::Token(" + token->FullCppId() + ", \"" + token->Name() + "\", \"" + token->Info() + "\"));");
-        if (!rv) return rv;
+        sourceFormatter.WriteLine("tokens.AddToken(new soul::ast::common::Token(" + token->FullCppId() + ", \"" + token->Name() + "\", \"" + token->Info() + "\"));");
     }
     sourceFormatter.DecIndent();
-    rv = sourceFormatter.WriteLine("}");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("return &tokens;");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("}");
+    sourceFormatter.WriteLine("return &tokens;");
     sourceFormatter.DecIndent();
-    rv = sourceFormatter.WriteLine("}");
-    if (!rv) return rv;
-    rv = WriteVariables(lexerContext, interfaceFormatter, sourceFormatter);
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("}");
+    WriteVariables(lexerContext, interfaceFormatter, sourceFormatter);
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("template<typename CharT>");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("struct " + lexer->Name());
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("template<typename CharT>");
+    interfaceFormatter.WriteLine("struct " + lexer->Name());
+    interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    rv = interfaceFormatter.WriteLine("using Variables = " + lexer->VariableClassName() + ";");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("using Variables = " + lexer->VariableClassName() + ";");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("static std::int32_t NextState(std::int32_t state, CharT chr, soul::lexer::LexerBase<CharT>& lexer)");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("static std::int32_t NextState(std::int32_t state, CharT chr, soul::lexer::LexerBase<CharT>& lexer)");
+    interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    rv = interfaceFormatter.WriteLine("soul::lexer::ClassMap<CharT>* classmap = lexer.GetClassMap();");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("std::int32_t cls = classmap->GetClass(chr);");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("switch (state)");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("soul::lexer::ClassMap<CharT>* classmap = lexer.GetClassMap();");
+    interfaceFormatter.WriteLine("std::int32_t cls = classmap->GetClass(chr);");
+    interfaceFormatter.WriteLine("switch (state)");
+    interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
     for (const auto* state : lexerContext.GetDfa().States())
     {
-        rv = interfaceFormatter.WriteLine("case " + std::to_string(state->Id()) + ":");
-        if (!rv) return rv;
-        rv = interfaceFormatter.WriteLine("{");
-        if (!rv) return rv;
+        interfaceFormatter.WriteLine("case " + std::to_string(state->Id()) + ":");
+        interfaceFormatter.WriteLine("{");
         interfaceFormatter.IncIndent();
         if (state->Accept())
         {
-            rv = interfaceFormatter.WriteLine("auto& token = lexer.CurrentToken();");
-            if (!rv) return rv;
-            rv = interfaceFormatter.WriteLine("auto prevMatch = token.match;");
-            if (!rv) return rv;
-            rv = interfaceFormatter.WriteLine("token.match = lexer.CurrentLexeme();");
-            if (!rv) return rv;
-            rv = interfaceFormatter.WriteLine("std::int64_t tokenId = GetTokenId(" + std::to_string(state->RuleIndex()) + ", lexer);");
-            if (!rv) return rv;
-            rv = interfaceFormatter.WriteLine("if (tokenId == soul::lexer::CONTINUE_TOKEN)");
-            if (!rv) return rv;
-            rv = interfaceFormatter.WriteLine("{");
-            if (!rv) return rv;
+            interfaceFormatter.WriteLine("auto& token = lexer.CurrentToken();");
+            interfaceFormatter.WriteLine("auto prevMatch = token.match;");
+            interfaceFormatter.WriteLine("token.match = lexer.CurrentLexeme();");
+            interfaceFormatter.WriteLine("std::int64_t tokenId = GetTokenId(" + std::to_string(state->RuleIndex()) + ", lexer);");
+            interfaceFormatter.WriteLine("if (tokenId == soul::lexer::CONTINUE_TOKEN)");
+            interfaceFormatter.WriteLine("{");
             interfaceFormatter.IncIndent();
-            rv = interfaceFormatter.WriteLine("token.id = soul::lexer::CONTINUE_TOKEN;");
-            if (!rv) return rv;
-            rv = interfaceFormatter.WriteLine("return -1;");
-            if (!rv) return rv;
+            interfaceFormatter.WriteLine("token.id = soul::lexer::CONTINUE_TOKEN;");
+            interfaceFormatter.WriteLine("return -1;");
             interfaceFormatter.DecIndent();
-            rv = interfaceFormatter.WriteLine("}");
-            if (!rv) return rv;
-            rv = interfaceFormatter.WriteLine("else if (tokenId != soul::lexer::INVALID_TOKEN)");
-            if (!rv) return rv;
-            rv = interfaceFormatter.WriteLine("{");
-            if (!rv) return rv;
+            interfaceFormatter.WriteLine("}");
+            interfaceFormatter.WriteLine("else if (tokenId != soul::lexer::INVALID_TOKEN)");
+            interfaceFormatter.WriteLine("{");
             interfaceFormatter.IncIndent();
-            rv = interfaceFormatter.WriteLine("token.id = tokenId;");
-            if (!rv) return rv;
+            interfaceFormatter.WriteLine("token.id = tokenId;");
             interfaceFormatter.DecIndent();
-            rv = interfaceFormatter.WriteLine("}");
-            if (!rv) return rv;
-            rv = interfaceFormatter.WriteLine("else");
-            if (!rv) return rv;
-            rv = interfaceFormatter.WriteLine("{");
-            if (!rv) return rv;
+            interfaceFormatter.WriteLine("}");
+            interfaceFormatter.WriteLine("else");
+            interfaceFormatter.WriteLine("{");
             interfaceFormatter.IncIndent();
-            rv = interfaceFormatter.WriteLine("token.match = prevMatch;");
-            if (!rv) return rv;
+            interfaceFormatter.WriteLine("token.match = prevMatch;");
             interfaceFormatter.DecIndent();
-            rv = interfaceFormatter.WriteLine("}");
-            if (!rv) return rv;
+            interfaceFormatter.WriteLine("}");
         }
         std::map<std::int32_t, std::set<std::int32_t>> m;
         for (soul::ast::re::Class* cls : lexerContext.Partition())
@@ -720,15 +642,12 @@ std::expected<bool, int> WriteLexer(soul::ast::re::LexerContext& lexerContext, s
         }
         if (m.empty())
         {
-            rv = interfaceFormatter.WriteLine("return -1;");
-            if (!rv) return rv;
+            interfaceFormatter.WriteLine("return -1;");
         }
         else
         {
-            rv = interfaceFormatter.WriteLine("switch (cls)");
-            if (!rv) return rv;
-            rv = interfaceFormatter.WriteLine("{");
-            if (!rv) return rv;
+            interfaceFormatter.WriteLine("switch (cls)");
+            interfaceFormatter.WriteLine("{");
             interfaceFormatter.IncIndent();
             for (const auto& p : m)
             {
@@ -736,69 +655,51 @@ std::expected<bool, int> WriteLexer(soul::ast::re::LexerContext& lexerContext, s
                 std::set<std::int32_t>* s = &p.second;
                 for (std::int32_t k : *s)
                 {
-                    rv = interfaceFormatter.WriteLine("case " + std::to_string(k) + ":");
-                    if (!rv) return rv;
+                    interfaceFormatter.WriteLine("case " + std::to_string(k) + ":");
                 }
-                rv = interfaceFormatter.WriteLine("{");
-                if (!rv) return rv;
+                interfaceFormatter.WriteLine("{");
                 interfaceFormatter.IncIndent();
-                rv = interfaceFormatter.WriteLine("return " + std::to_string(n) + ";");
-                if (!rv) return rv;
+                interfaceFormatter.WriteLine("return " + std::to_string(n) + ";");
                 interfaceFormatter.DecIndent();
-                rv = interfaceFormatter.WriteLine("}");
-                if (!rv) return rv;
+                interfaceFormatter.WriteLine("}");
             }
-            rv = interfaceFormatter.WriteLine("default:");
-            if (!rv) return rv;
-            rv = interfaceFormatter.WriteLine("{");
-            if (!rv) return rv;
+            interfaceFormatter.WriteLine("default:");
+            interfaceFormatter.WriteLine("{");
             interfaceFormatter.IncIndent();
-            rv = interfaceFormatter.WriteLine("return -1;");
-            if (!rv) return rv;
+            interfaceFormatter.WriteLine("return -1;");
             interfaceFormatter.DecIndent();
-            rv = interfaceFormatter.WriteLine("}");
-            if (!rv) return rv;
+            interfaceFormatter.WriteLine("}");
             interfaceFormatter.DecIndent();
-            rv = interfaceFormatter.WriteLine("}");
-            if (!rv) return rv;
+            interfaceFormatter.WriteLine("}");
         }
         interfaceFormatter.DecIndent();
-        rv = interfaceFormatter.WriteLine("}");
-        if (!rv) return rv;
+        interfaceFormatter.WriteLine("}");
     }
     interfaceFormatter.DecIndent();
-    rv = interfaceFormatter.WriteLine("}");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("return -1;");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("}");
+    interfaceFormatter.WriteLine("return -1;");
     interfaceFormatter.DecIndent();
-    rv = interfaceFormatter.WriteLine("}");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("}");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("static std::int64_t GetTokenId(std::int32_t ruleIndex, soul::lexer::LexerBase<CharT>& lexer)");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("static std::int64_t GetTokenId(std::int32_t ruleIndex, soul::lexer::LexerBase<CharT>& lexer)");
+    interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    rv = interfaceFormatter.WriteLine("switch (ruleIndex)");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("switch (ruleIndex)");
+    interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
     for (const auto& rule : lexer->Rules())
     {
-        rv = interfaceFormatter.WriteLine("case " + std::to_string(rule->Index()) + ":");
-        if (!rv) return rv;
+        interfaceFormatter.WriteLine("case " + std::to_string(rule->Index()) + ":");
         soul::ast::common::TokenMap* tokenMap = lexerFile->GetTokenMap();
         if (tokenMap)
         {
-            rv = ModifyCode(rule->Code(), *tokenMap, lexerFile, fileMap);
+            std::expected<bool, int> rv = ModifyCode(rule->Code(), *tokenMap, lexerFile, fileMap);
+            if (!rv) return rv;
         }
         else
         {
             return std::unexpected<int>(util::AllocateError("token map not set"));
         }
-        if (!rv) return rv;
         soul::ast::SourcePos sourcePos;
         rule->Code()->InsertFront(
             new soul::ast::cpp::ExpressionStatementNode(sourcePos,
@@ -834,189 +735,117 @@ std::expected<bool, int> WriteLexer(soul::ast::re::LexerContext& lexerContext, s
             }
         }
         rule->Code()->Add(new soul::ast::cpp::BreakStatementNode(sourcePos));
-        rv = rule->Code()->Write(interfaceFormatter);
-        if (!rv) return rv;
+        rule->Code()->Write(interfaceFormatter);
     }
     interfaceFormatter.DecIndent();
-    rv = interfaceFormatter.WriteLine("}");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("return soul::lexer::CONTINUE_TOKEN;");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("}");
+    interfaceFormatter.WriteLine("return soul::lexer::CONTINUE_TOKEN;");
     interfaceFormatter.DecIndent();
-    rv = interfaceFormatter.WriteLine("}");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("}");
     interfaceFormatter.DecIndent();
-    rv = interfaceFormatter.WriteLine("};");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("};");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("template<typename CharT>");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("std::expected<soul::lexer::ClassMap<CharT>*, int> GetClassMap()");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("template<typename CharT>");
+    interfaceFormatter.WriteLine("std::expected<soul::lexer::ClassMap<CharT>*, int> GetClassMap()");
+    interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    rv = interfaceFormatter.WriteLine("static soul::lexer::ClassMap<CharT>* classmap;");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("if (!classmap)");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("static soul::lexer::ClassMap<CharT>* classmap;");
+    interfaceFormatter.WriteLine("if (!classmap)");
+    interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    rv = interfaceFormatter.WriteLine("std::expected<soul::lexer::ClassMap<CharT>*, int> rv = soul::lexer::MakeClassMap<CharT>(\"" + moduleName + ".classmap\");");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("if (!rv) return std::unexpected<int>(rv.error());");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("classmap = *rv;");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("std::expected<soul::lexer::ClassMap<CharT>*, int> rv = soul::lexer::MakeClassMap<CharT>(\"" + moduleName + ".classmap\");");
+    interfaceFormatter.WriteLine("if (!rv) return std::unexpected<int>(rv.error());");
+    interfaceFormatter.WriteLine("classmap = *rv;");
     interfaceFormatter.DecIndent();
-    rv = interfaceFormatter.WriteLine("}");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("return classmap;");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("}");
+    interfaceFormatter.WriteLine("return classmap;");
     interfaceFormatter.DecIndent();
-    rv = interfaceFormatter.WriteLine("}");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("}");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("template<typename CharT>");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("std::expected<soul::lexer::ClassMap<CharT>*, int> GetClassMap(const std::string & moduleFileName, util::ResourceFlags resourceFlags)");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("template<typename CharT>");
+    interfaceFormatter.WriteLine("std::expected<soul::lexer::ClassMap<CharT>*, int> GetClassMap(const std::string & moduleFileName, util::ResourceFlags resourceFlags)");
+    interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    rv = interfaceFormatter.WriteLine("static soul::lexer::ClassMap<CharT>* classmap;");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("if (!classmap)");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("static soul::lexer::ClassMap<CharT>* classmap;");
+    interfaceFormatter.WriteLine("if (!classmap)");
+    interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    rv = interfaceFormatter.WriteLine("std::expected<soul::lexer::ClassMap<CharT>*, int> rv = soul::lexer::MakeClassMap<CharT>(moduleFileName, \"" +
+    interfaceFormatter.WriteLine("std::expected<soul::lexer::ClassMap<CharT>*, int> rv = soul::lexer::MakeClassMap<CharT>(moduleFileName, \"" +
         moduleName + ".classmap\", resourceFlags);");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("if (!rv) return std::unexpected<int>(rv.error());");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("classmap = *rv;");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("if (!rv) return std::unexpected<int>(rv.error());");
+    interfaceFormatter.WriteLine("classmap = *rv;");
     interfaceFormatter.DecIndent();
-    rv = interfaceFormatter.WriteLine("}");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("return classmap;");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("}");
+    interfaceFormatter.WriteLine("return classmap;");
     interfaceFormatter.DecIndent();
-    rv = interfaceFormatter.WriteLine("}");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("}");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("template<typename CharT>");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("soul::lexer::KeywordMap<CharT>* GetKeywords();");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("template<typename CharT>");
+    interfaceFormatter.WriteLine("soul::lexer::KeywordMap<CharT>* GetKeywords();");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("template<>");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char>* GetKeywords<char>();");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("template<>");
+    interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char>* GetKeywords<char>();");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("template<>");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>();");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("template<>");
+    interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>();");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("template<>");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>();");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("template<>");
+    interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>();");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("template<>");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>();");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("template<>");
+    interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>();");
     interfaceFormatter.WriteLine();
 
-    rv = interfaceFormatter.WriteLine("template<typename CharT>");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("std::expected<soul::lexer::Lexer<" + lexer->Name() + "<CharT>, CharT>, int> MakeLexer(const CharT* start, const CharT* end, const std::string& fileName)");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("template<typename CharT>");
+    interfaceFormatter.WriteLine("std::expected<soul::lexer::Lexer<" + lexer->Name() + "<CharT>, CharT>, int> MakeLexer(const CharT* start, const CharT* end, const std::string& fileName)");
+    interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    rv = interfaceFormatter.WriteLine("std::lock_guard<std::mutex> lock(MakeLexerMtx());");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("auto lexer = soul::lexer::Lexer<" + lexer->Name() + "<CharT>, CharT>(start, end, fileName);");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("std::expected<soul::lexer::ClassMap<CharT>*, int> rv = GetClassMap<CharT>();");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("if (!rv) return std::unexpected<int>(rv.error());");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("lexer.SetClassMap(*rv);");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("lexer.SetTokenCollection(GetTokens());");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("lexer.SetKeywordMap(GetKeywords<CharT>());");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("return lexer;");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("std::lock_guard<std::mutex> lock(MakeLexerMtx());");
+    interfaceFormatter.WriteLine("auto lexer = soul::lexer::Lexer<" + lexer->Name() + "<CharT>, CharT>(start, end, fileName);");
+    interfaceFormatter.WriteLine("std::expected<soul::lexer::ClassMap<CharT>*, int> rv = GetClassMap<CharT>();");
+    interfaceFormatter.WriteLine("if (!rv) return std::unexpected<int>(rv.error());");
+    interfaceFormatter.WriteLine("lexer.SetClassMap(*rv);");
+    interfaceFormatter.WriteLine("lexer.SetTokenCollection(GetTokens());");
+    interfaceFormatter.WriteLine("lexer.SetKeywordMap(GetKeywords<CharT>());");
+    interfaceFormatter.WriteLine("return lexer;");
     interfaceFormatter.DecIndent();
-    rv = interfaceFormatter.WriteLine("}");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("}");
     interfaceFormatter.WriteLine();
 
-    rv = interfaceFormatter.WriteLine("template<typename CharT>");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("std::expected<soul::lexer::Lexer<" + lexer->Name() +
+    interfaceFormatter.WriteLine("template<typename CharT>");
+    interfaceFormatter.WriteLine("std::expected<soul::lexer::Lexer<" + lexer->Name() +
         "<CharT>, CharT>, int> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const CharT* start, const CharT* end, const std::string& fileName)");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    rv = interfaceFormatter.WriteLine("std::lock_guard<std::mutex> lock(MakeLexerMtx());");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("auto lexer = soul::lexer::Lexer<" + lexer->Name() + "<CharT>, CharT>(start, end, fileName);");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("std::expected<soul::lexer::ClassMap<CharT>*, int> rv = GetClassMap<CharT>(moduleFileName, resourceFlags);");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("if (!rv) return std::unexpected<int>(rv.error());");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("lexer.SetClassMap(*rv);");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("lexer.SetTokenCollection(GetTokens());");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("lexer.SetKeywordMap(GetKeywords<CharT>());");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("return lexer;");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("std::lock_guard<std::mutex> lock(MakeLexerMtx());");
+    interfaceFormatter.WriteLine("auto lexer = soul::lexer::Lexer<" + lexer->Name() + "<CharT>, CharT>(start, end, fileName);");
+    interfaceFormatter.WriteLine("std::expected<soul::lexer::ClassMap<CharT>*, int> rv = GetClassMap<CharT>(moduleFileName, resourceFlags);");
+    interfaceFormatter.WriteLine("if (!rv) return std::unexpected<int>(rv.error());");
+    interfaceFormatter.WriteLine("lexer.SetClassMap(*rv);");
+    interfaceFormatter.WriteLine("lexer.SetTokenCollection(GetTokens());");
+    interfaceFormatter.WriteLine("lexer.SetKeywordMap(GetKeywords<CharT>());");
+    interfaceFormatter.WriteLine("return lexer;");
     interfaceFormatter.DecIndent();
-    rv = interfaceFormatter.WriteLine("}");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("}");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("template class " + lexer->Name() + "<char32_t>;");
-    if (!rv) return rv;
-    rv = interfaceFormatter.WriteLine("template class soul::lexer::Lexer<" + lexer->Name() + "<char32_t>, char32_t>;");
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("template class " + lexer->Name() + "<char32_t>;");
+    interfaceFormatter.WriteLine("template class soul::lexer::Lexer<" + lexer->Name() + "<char32_t>, char32_t>;");
     interfaceFormatter.WriteLine();
-    rv = interfaceFormatter.WriteLine("} // namespace " + soul::ast::common::ToNamespaceName(moduleName));
-    if (!rv) return rv;
+    interfaceFormatter.WriteLine("} // namespace " + soul::ast::common::ToNamespaceName(moduleName));
     if (verbose)
     {
         std::cout << "==> " << interfaceFilePath << "\n";
     }
     sourceFormatter.WriteLine();
-    rv = sourceFormatter.WriteLine("std::mutex mtx;");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("std::mutex mtx;");
     sourceFormatter.WriteLine();
-    rv = sourceFormatter.WriteLine("std::mutex& MakeLexerMtx() { return mtx; }");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("std::mutex& MakeLexerMtx() { return mtx; }");
     sourceFormatter.WriteLine();
-    rv = sourceFormatter.WriteLine("template<>");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("soul::lexer::KeywordMap<char>* GetKeywords<char>()");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("template<>");
+    sourceFormatter.WriteLine("soul::lexer::KeywordMap<char>* GetKeywords<char>()");
+    sourceFormatter.WriteLine("{");
     sourceFormatter.IncIndent();
-    rv = sourceFormatter.WriteLine("static const soul::lexer::Keyword<char> keywords[] = {");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("static const soul::lexer::Keyword<char> keywords[] = {");
     sourceFormatter.IncIndent();
     bool first = true;
     auto keywords = lexerContext.GetKeywords();
@@ -1029,43 +858,31 @@ std::expected<bool, int> WriteLexer(soul::ast::re::LexerContext& lexerContext, s
         }
         else
         {
-            rv = sourceFormatter.WriteLine(",");
-            if (!rv) return rv;
+            sourceFormatter.WriteLine(",");
         }
         auto kwrv = GetTokenCppId(lexerFile, fileMap, keyword->GetSourcePos(), keyword->TokenName());
         if (!kwrv) return std::unexpected<int>(kwrv.error());
-        rv = sourceFormatter.Write(" { \"" + keyword->Str() + "\", " + *kwrv + " }");
-        if (!rv) return rv;
+        sourceFormatter.Write(" { \"" + keyword->Str() + "\", " + *kwrv + " }");
         hasKw = true;
     }
     if (hasKw)
     {
-        rv = sourceFormatter.WriteLine(",");
-        if (!rv) return rv;
+        sourceFormatter.WriteLine(",");
     }
-    rv = sourceFormatter.WriteLine(" { nullptr, -1 }");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine(" { nullptr, -1 }");
     sourceFormatter.DecIndent();
-    rv = sourceFormatter.WriteLine("};");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("static soul::lexer::KeywordMap<char> keywordMap(keywords);");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("return &keywordMap;");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("};");
+    sourceFormatter.WriteLine("static soul::lexer::KeywordMap<char> keywordMap(keywords);");
+    sourceFormatter.WriteLine("return &keywordMap;");
     sourceFormatter.DecIndent();
-    rv = sourceFormatter.WriteLine("}");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("}");
 
     sourceFormatter.WriteLine();
-    rv = sourceFormatter.WriteLine("template<>");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("template<>");
+    sourceFormatter.WriteLine("soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()");
+    sourceFormatter.WriteLine("{");
     sourceFormatter.IncIndent();
-    rv = sourceFormatter.WriteLine("static const soul::lexer::Keyword<char8_t> keywords[] = {");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("static const soul::lexer::Keyword<char8_t> keywords[] = {");
     sourceFormatter.IncIndent();
     bool first8 = true;
     bool hasKw8 = false;
@@ -1078,42 +895,30 @@ std::expected<bool, int> WriteLexer(soul::ast::re::LexerContext& lexerContext, s
         }
         else
         {
-            rv = sourceFormatter.WriteLine(",");
-            if (!rv) return rv;
+            sourceFormatter.WriteLine(",");
         }
         auto kwrv = GetTokenCppId(lexerFile, fileMap, keyword->GetSourcePos(), keyword->TokenName());
         if (!kwrv) return std::unexpected<int>(kwrv.error());
-        rv = sourceFormatter.Write(" { u8\"" + keyword->Str() + "\", " + *kwrv + " }");
-        if (!rv) return rv;
+        sourceFormatter.Write(" { u8\"" + keyword->Str() + "\", " + *kwrv + " }");
         hasKw8 = true;
     }
     if (hasKw8)
     {
-        rv = sourceFormatter.WriteLine(",");
-        if (!rv) return rv;
+        sourceFormatter.WriteLine(",");
     }
-    rv = sourceFormatter.WriteLine(" { nullptr, -1 }");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine(" { nullptr, -1 }");
     sourceFormatter.DecIndent();
-    rv = sourceFormatter.WriteLine("};");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("static soul::lexer::KeywordMap<char8_t> keywordMap(keywords);");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("return &keywordMap;");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("};");
+    sourceFormatter.WriteLine("static soul::lexer::KeywordMap<char8_t> keywordMap(keywords);");
+    sourceFormatter.WriteLine("return &keywordMap;");
     sourceFormatter.DecIndent();
-    rv = sourceFormatter.WriteLine("}");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("}");
     sourceFormatter.WriteLine();
-    rv = sourceFormatter.WriteLine("template<>");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("template<>");
+    sourceFormatter.WriteLine("soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()");
+    sourceFormatter.WriteLine("{");
     sourceFormatter.IncIndent();
-    rv = sourceFormatter.WriteLine("static const soul::lexer::Keyword<char16_t> keywords[] = {");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("static const soul::lexer::Keyword<char16_t> keywords[] = {");
     sourceFormatter.IncIndent();
     bool first16 = true;
     bool hasKw16 = false;
@@ -1126,43 +931,31 @@ std::expected<bool, int> WriteLexer(soul::ast::re::LexerContext& lexerContext, s
         }
         else
         {
-            rv = sourceFormatter.WriteLine(",");
-            if (!rv) return rv;
+            sourceFormatter.WriteLine(",");
         }
         auto kwrv = GetTokenCppId(lexerFile, fileMap, keyword->GetSourcePos(), keyword->TokenName());
         if (!kwrv) return std::unexpected<int>(kwrv.error());
-        rv = sourceFormatter.Write(" { u\"" + keyword->Str() + "\", " + *kwrv + " }");
-        if (!rv) return rv;
+        sourceFormatter.Write(" { u\"" + keyword->Str() + "\", " + *kwrv + " }");
         hasKw16 = true;
     }
     if (hasKw16)
     {
-        rv = sourceFormatter.WriteLine(",");
-        if (!rv) return rv;
+        sourceFormatter.WriteLine(",");
     }
-    rv = sourceFormatter.WriteLine(" { nullptr, -1 }");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine(" { nullptr, -1 }");
     sourceFormatter.DecIndent();
-    rv = sourceFormatter.WriteLine("};");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("static soul::lexer::KeywordMap<char16_t> keywordMap(keywords);");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("return &keywordMap;");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("};");
+    sourceFormatter.WriteLine("static soul::lexer::KeywordMap<char16_t> keywordMap(keywords);");
+    sourceFormatter.WriteLine("return &keywordMap;");
     sourceFormatter.DecIndent();
-    rv = sourceFormatter.WriteLine("}");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("}");
 
     sourceFormatter.WriteLine();
-    rv = sourceFormatter.WriteLine("template<>");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("{");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("template<>");
+    sourceFormatter.WriteLine("soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()");
+    sourceFormatter.WriteLine("{");
     sourceFormatter.IncIndent();
-    rv = sourceFormatter.WriteLine("static const soul::lexer::Keyword<char32_t> keywords[] = {");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("static const soul::lexer::Keyword<char32_t> keywords[] = {");
     sourceFormatter.IncIndent();
     bool first32 = true;
     bool hasKw32 = false;
@@ -1175,36 +968,27 @@ std::expected<bool, int> WriteLexer(soul::ast::re::LexerContext& lexerContext, s
         }
         else
         {
-            rv = sourceFormatter.WriteLine(",");
-            if (!rv) return rv;
+            sourceFormatter.WriteLine(",");
         }
         auto kwrv = GetTokenCppId(lexerFile, fileMap, keyword->GetSourcePos(), keyword->TokenName());
         if (!kwrv) return std::unexpected<int>(kwrv.error());
-        rv = sourceFormatter.Write(" { U\"" + keyword->Str() + "\", " + *kwrv + " }");
-        if (!rv) return rv;
+        sourceFormatter.Write(" { U\"" + keyword->Str() + "\", " + *kwrv + " }");
         hasKw32 = true;
     }
     if (hasKw32)
     {
-        rv = sourceFormatter.WriteLine(",");
-        if (!rv) return rv;
+        sourceFormatter.WriteLine(",");
     }
-    rv = sourceFormatter.WriteLine(" { nullptr, -1 }");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine(" { nullptr, -1 }");
     sourceFormatter.DecIndent();
-    rv = sourceFormatter.WriteLine("};");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("static soul::lexer::KeywordMap<char32_t> keywordMap(keywords);");
-    if (!rv) return rv;
-    rv = sourceFormatter.WriteLine("return &keywordMap;");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("};");
+    sourceFormatter.WriteLine("static soul::lexer::KeywordMap<char32_t> keywordMap(keywords);");
+    sourceFormatter.WriteLine("return &keywordMap;");
     sourceFormatter.DecIndent();
-    rv = sourceFormatter.WriteLine("}");
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("}");
 
     sourceFormatter.WriteLine();
-    rv = sourceFormatter.WriteLine("} // namespace " + soul::ast::common::ToNamespaceName(moduleName));
-    if (!rv) return rv;
+    sourceFormatter.WriteLine("} // namespace " + soul::ast::common::ToNamespaceName(moduleName));
 
     if (verbose)
     {

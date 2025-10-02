@@ -822,7 +822,8 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* function
             case DeclaratorKind::arrayDeclarator:
             {
                 ArrayDeclarator* arrayDeclarator = static_cast<ArrayDeclarator*>(declarator);
-                VariableSymbol* variable = ProcessArrayDeclarator(arrayDeclarator, declaration.type, declaration.flags, context);
+                ArrayTypeSymbol* arrayType = static_cast<ArrayTypeSymbol*>(declaration.type);
+                VariableSymbol* variable = ProcessArrayDeclarator(arrayDeclarator, arrayType->ElementType(), declaration.flags, context);
                 if (declaration.value)
                 {
                     variable->SetValue(declaration.value);

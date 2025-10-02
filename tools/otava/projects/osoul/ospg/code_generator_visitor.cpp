@@ -25,116 +25,36 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ChoiceParser& parser)
     if (stage == CodeGenerationStage::generateImplementation)
     {
         int prevSetParentMatchNumber0 = setParentMatchNumber;
-        std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(false);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(false);");
         setParentMatchNumber = parentMatchNumber;
-        rv = formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("std::int64_t save = lexer.GetPos();");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("std::int64_t save = lexer.GetPos();");
         parser.Left()->Accept(*this);
         if (!Valid()) return;
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("if (!match.hit)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
+        formatter->WriteLine("if (!match.hit)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
         int prevSetParentMatchNumber1 = setParentMatchNumber;
-        rv = formatter->WriteLine("soul::parser::Match match(false);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(false);");
         setParentMatchNumber = parentMatchNumber;
-        rv = formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("lexer.SetPos(save);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("lexer.SetPos(save);");
+        formatter->WriteLine("{");
         formatter->IncIndent();
         parser.Right()->Accept(*this);
         if (!Valid()) return;
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         setParentMatchNumber = prevSetParentMatchNumber1;
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         setParentMatchNumber = prevSetParentMatchNumber0;
     }
 }
@@ -143,31 +63,11 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::SwitchParser& parser)
 {
     if (!Valid()) return;
     int prevSetParentMatchNumber0 = setParentMatchNumber;
-    std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(false);");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("soul::parser::Match match(false);");
     setParentMatchNumber = parentMatchNumber;
-    rv = formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("switch (*lexer)");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("{");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+    formatter->WriteLine("switch (*lexer)");
+    formatter->WriteLine("{");
     formatter->IncIndent();
     for (const auto& caseParser : parser.CaseParsers())
     {
@@ -175,12 +75,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::SwitchParser& parser)
         if (!Valid()) return;
     }
     formatter->DecIndent();
-    rv = formatter->WriteLine("}");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("}");
     setParentMatchNumber = prevSetParentMatchNumber0;
 }
 
@@ -191,62 +86,22 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::CaseParser& parser)
     {
         if (!token->IsEpsilon() && !token->IsAny())
         {
-            std::expected<bool, int> rv = formatter->WriteLine("case " + token->FullCppId() + ":");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter->WriteLine("case " + token->FullCppId() + ":");
         }
     }
-    std::expected<bool, int> rv = formatter->WriteLine("{");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("{");
     formatter->IncIndent();
     parser.Child()->Accept(*this);
     if (!Valid()) return;
-    rv = formatter->WriteLine("if (match.hit)");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("{");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("if (match.hit)");
+    formatter->WriteLine("{");
     formatter->IncIndent();
-    rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
     formatter->DecIndent();
-    rv = formatter->WriteLine("}");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("break;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("}");
+    formatter->WriteLine("break;");
     formatter->DecIndent();
-    rv = formatter->WriteLine("}");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("}");
 }
 
 void CodeGeneratorVisitor::Visit(soul::ast::spg::SequenceParser& parser)
@@ -254,105 +109,35 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::SequenceParser& parser)
     if (!Valid()) return;
     if (stage == CodeGenerationStage::generateImplementation)
     {
-        std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(false);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(false);");
         int prevSetParentMatchNumber0 = setParentMatchNumber;
         setParentMatchNumber = parentMatchNumber;
-        rv = formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("{");
         formatter->IncIndent();
         parser.Left()->Accept(*this);
         if (!Valid()) return;
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("if (match.hit)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
+        formatter->WriteLine("if (match.hit)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("soul::parser::Match match(false);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(false);");
         int prevSetParentMatchNumber1 = setParentMatchNumber;
         setParentMatchNumber = parentMatchNumber;
-        rv = formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("{");
         formatter->IncIndent();
         parser.Right()->Accept(*this);
         if (!Valid()) return;
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         setParentMatchNumber = prevSetParentMatchNumber1;
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         setParentMatchNumber = prevSetParentMatchNumber0;
     }
 }
@@ -362,155 +147,45 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::DifferenceParser& parser)
     if (!Valid()) return;
     if (stage == CodeGenerationStage::generateImplementation)
     {
-        std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(false);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(false);");
         int prevSetParentMatchNumber0 = setParentMatchNumber;
         setParentMatchNumber = parentMatchNumber;
-        rv = formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("std::int64_t save = lexer.GetPos();");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("std::int64_t save = lexer.GetPos();");
+        formatter->WriteLine("{");
         formatter->IncIndent();
         parser.Left()->Accept(*this);
         if (!Valid()) return;
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("if (match.hit)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
+        formatter->WriteLine("if (match.hit)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("soul::parser::Match match(false);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(false);");
         int prevSetParentMatchNumber1 = setParentMatchNumber;
         setParentMatchNumber = parentMatchNumber;
-        rv = formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("std::int64_t tmp = lexer.GetPos();");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("lexer.SetPos(save);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("save = tmp;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("std::int64_t tmp = lexer.GetPos();");
+        formatter->WriteLine("lexer.SetPos(save);");
+        formatter->WriteLine("save = tmp;");
         parser.Right()->Accept(*this);
         if (!Valid()) return;
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         setParentMatchNumber = prevSetParentMatchNumber1;
-        rv = formatter->WriteLine("if (!match.hit)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("if (!match.hit)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("lexer.SetPos(save);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("lexer.SetPos(save);");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = soul::parser::Match(!match.hit, match.value);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = soul::parser::Match(!match.hit, match.value);");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         setParentMatchNumber = prevSetParentMatchNumber0;
     }
 }
@@ -530,106 +205,31 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::LookaheadParser& parser)
     if (!Valid()) return;
     if (stage == CodeGenerationStage::generateImplementation)
     {
-        std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(true);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("std::int64_t save = lexer.GetPos();");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(true);");
+        formatter->WriteLine("std::int64_t save = lexer.GetPos();");
         int prevSetParentMatchNumber = setParentMatchNumber;
         setParentMatchNumber = parentMatchNumber;
-        rv = formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("{");
         formatter->IncIndent();
         parser.Child()->Accept(*this);
         if (!Valid()) return;
-        rv = formatter->WriteLine("if (match.hit)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("if (match.hit)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("lexer.SetPos(save);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
+        formatter->WriteLine("lexer.SetPos(save);");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("else");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
+        formatter->WriteLine("else");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = soul::parser::Match(false);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("lexer.SetPos(save);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = soul::parser::Match(false);");
+        formatter->WriteLine("lexer.SetPos(save);");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         setParentMatchNumber = prevSetParentMatchNumber;
     }
 }
@@ -639,134 +239,39 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::KleeneParser& parser)
     if (!Valid()) return;
     if (stage == CodeGenerationStage::generateImplementation)
     {
-        std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(true);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(true);");
         int prevSetParentMatchNumber = setParentMatchNumber;
         setParentMatchNumber = parentMatchNumber;
-        rv = formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("while (true)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("while (true)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("std::int64_t save = lexer.GetPos();");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("std::int64_t save = lexer.GetPos();");
+        formatter->WriteLine("{");
         formatter->IncIndent();
         parser.Child()->Accept(*this);
         if (!Valid()) return;
-        rv = formatter->WriteLine("if (match.hit)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("if (match.hit)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("else");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
+        formatter->WriteLine("else");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("lexer.SetPos(save);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("break;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("lexer.SetPos(save);");
+        formatter->WriteLine("break;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         setParentMatchNumber = prevSetParentMatchNumber;
     }
 }
@@ -776,176 +281,51 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::PositiveParser& parser)
     if (!Valid()) return;
     if (stage == CodeGenerationStage::generateImplementation)
     {
-        std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(false);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(false);");
         int prevSetParentMatchNumber0 = setParentMatchNumber;
         setParentMatchNumber = parentMatchNumber;
-        rv = formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("{");
         formatter->IncIndent();
         parser.Child()->Accept(*this);
         if (!Valid()) return;
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("if (match.hit)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
+        formatter->WriteLine("if (match.hit)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("soul::parser::Match match(true);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(true);");
         int prevSetParentMatchNumber1 = setParentMatchNumber;
         setParentMatchNumber = parentMatchNumber;
-        rv = formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("while (true)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("while (true)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("std::int64_t save = lexer.GetPos();");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("std::int64_t save = lexer.GetPos();");
+        formatter->WriteLine("{");
         formatter->IncIndent();
         parser.Child()->Accept(*this);
         if (!Valid()) return;
-        rv = formatter->WriteLine("if (match.hit)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("if (match.hit)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("else");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
+        formatter->WriteLine("else");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("lexer.SetPos(save);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("break;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("lexer.SetPos(save);");
+        formatter->WriteLine("break;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         setParentMatchNumber = prevSetParentMatchNumber1;
         setParentMatchNumber = prevSetParentMatchNumber0;
     }
@@ -956,94 +336,29 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::OptionalParser& parser)
     if (!Valid()) return;
     if (stage == CodeGenerationStage::generateImplementation)
     {
-        std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(true);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("std::int64_t save = lexer.GetPos();");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(true);");
+        formatter->WriteLine("std::int64_t save = lexer.GetPos();");
         int prevSetParentMatchNumber = setParentMatchNumber;
         setParentMatchNumber = parentMatchNumber;
-        rv = formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("{");
         formatter->IncIndent();
         parser.Child()->Accept(*this);
         if (!Valid()) return;
-        rv = formatter->WriteLine("if (match.hit)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("if (match.hit)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("else");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
+        formatter->WriteLine("else");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("lexer.SetPos(save);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("lexer.SetPos(save);");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         setParentMatchNumber = prevSetParentMatchNumber;
     }
 }
@@ -1053,73 +368,23 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ExpectationParser& parser)
     if (!Valid()) return;
     if (stage == CodeGenerationStage::generateImplementation)
     {
-        std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(true);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(true);");
         int prevSetParentMatchNumber0 = setParentMatchNumber;
         setParentMatchNumber = parentMatchNumber;
-        rv = formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("std::int64_t pos = lexer.GetPos();");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("std::int64_t pos = lexer.GetPos();");
         parser.Child()->Accept(*this);
         if (!Valid()) return;
-        rv = formatter->WriteLine("if (match.hit)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("if (match.hit)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("else");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
+        formatter->WriteLine("else");
+        formatter->WriteLine("{");
         formatter->IncIndent();
         if (parser.Child()->IsNonterminalParser())
         {
@@ -1130,47 +395,22 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ExpectationParser& parser)
             {
                 ruleInfo = rule->Name();
             }
-            rv = formatter->WriteLine("return lexer.ExpectationFailure(pos, \"" + ruleInfo + "\");");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter->WriteLine("return lexer.ExpectationFailure(pos, \"" + ruleInfo + "\");");
         }
         else if (parser.Child()->IsTokenParser())
         {
             soul::ast::spg::TokenParser* tokenParser = static_cast<soul::ast::spg::TokenParser*>(parser.Child());
-            rv = formatter->WriteLine("return lexer.ExpectationFailure(pos, lexer.GetTokenInfo(" + tokenParser->GetToken()->FullCppId() + "));");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter->WriteLine("return lexer.ExpectationFailure(pos, lexer.GetTokenInfo(" + tokenParser->GetToken()->FullCppId() + "));");
         }
         else
         {
             std::string parserName = parser.Child()->Name();
-            rv = formatter->WriteLine("return lexer.ExpectationFailure(pos, \"" + parserName + "\");");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter->WriteLine("return lexer.ExpectationFailure(pos, \"" + parserName + "\");");
         }
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         setParentMatchNumber = prevSetParentMatchNumber0;
     }
 }
@@ -1179,32 +419,12 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ActionParser& parser)
 {
     if (!Valid()) return;
     int prevSetParentMatchNumber = setParentMatchNumber;
-    std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(false);");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("soul::parser::Match match(false);");
     setParentMatchNumber = parentMatchNumber;
-    rv = formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("{");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+    formatter->WriteLine("{");
     formatter->IncIndent();
-    rv = formatter->WriteLine("std::int64_t pos = lexer.GetPos();");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("std::int64_t pos = lexer.GetPos();");
     soul::ast::cpp::CodeEvaluationVisitor codeEvaluationVisitor;
     parser.SuccessCode()->Accept(codeEvaluationVisitor);
     if (!codeEvaluationVisitor)
@@ -1220,30 +440,15 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ActionParser& parser)
     bool hasVars = codeEvaluationVisitor.HasVars();
     if (hasPass)
     {
-        rv = formatter->WriteLine("bool pass = true;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("bool pass = true;");
     }
     if (hasVars)
     {
-        rv = formatter->WriteLine("auto vars = static_cast<typename LexerT::VariableClassType*>(lexer.GetVariables());");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("auto vars = static_cast<typename LexerT::VariableClassType*>(lexer.GetVariables());");
     }
     parser.Child()->Accept(*this);
     if (!Valid()) return;
-    rv = formatter->WriteLine("if (match.hit)");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("if (match.hit)");
     bool nonterminalValue = parser.Child()->IsNonterminalParser();
     bool ptrType = false;
     if (currentRule->ReturnType() != nullptr)
@@ -1263,76 +468,31 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ActionParser& parser)
     }
     soul::spg::parsing::util::CountNonterminals(parser.SuccessCode(), nonterminalInfos);
     soul::ast::common::TokenMap* tokenMap = parser.GetTokenMap();
-    rv = ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name(), tokenMap, fileMap);
+    std::expected<bool, int> rv = ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name(), tokenMap, fileMap);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    rv = parser.SuccessCode()->Write(*formatter);
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    parser.SuccessCode()->Write(*formatter);
     if (parser.FailureCode())
     {
-        rv = formatter->WriteLine("else");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = parser.FailureCode()->Write(*formatter);
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("else");
+        parser.FailureCode()->Write(*formatter);
     }
     if (hasPass)
     {
-        rv = formatter->WriteLine("if (match.hit && !pass)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("if (match.hit && !pass)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("match = soul::parser::Match(false);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("match = soul::parser::Match(false);");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
     }
-    rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
     setParentMatchNumber = prevSetParentMatchNumber;
     formatter->DecIndent();
-    rv = formatter->WriteLine("}");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("}");
 }
 
 void CodeGeneratorVisitor::Visit(soul::ast::spg::NonterminalParser& parser)
@@ -1344,98 +504,33 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::NonterminalParser& parser)
         soul::ast::spg::GrammarParser* grammar = rule->Grammar();
         soul::ast::spg::ParserFile* parserFile = grammar->GetParserFile();
         std::string ruleName = parserFile->GetExportModule()->NamespaceName() + "::" + grammar->Name() + "<LexerT>::" + rule->Name();
-        std::expected<bool, int> rv = formatter->Write("std::expected<soul::parser::Match, int> m = " + ruleName + "(lexer");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->Write("std::expected<soul::parser::Match, int> m = " + ruleName + "(lexer");
         if (parser.Arguments())
         {
             for (const auto& arg : parser.Arguments()->Exprs())
             {
-                rv = formatter->Write(", ");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = arg->Write(*formatter);
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->Write(", ");
+                arg->Write(*formatter);
             }
         }
-        rv = formatter->WriteLine(");");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("if (!m) return std::unexpected<int>(m.error());");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("soul::parser::Match match = *m;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine(");");
+        formatter->WriteLine("if (!m) return std::unexpected<int>(m.error());");
+        formatter->WriteLine("soul::parser::Match match = *m;");
         soul::ast::spg::RuleParser* calledRule = parser.Rule();
         if (calledRule->ReturnType() != nullptr)
         {
-            rv = formatter->Write(parser.InstanceName() + ".reset(");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter->Write(parser.InstanceName() + ".reset(");
             if (calledRule->ReturnType()->IsPtrType())
             {
-                rv = formatter->Write("static_cast<");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = calledRule->ReturnType()->Write(*formatter);
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = formatter->WriteLine(">(match.value));");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->Write("static_cast<");
+                calledRule->ReturnType()->Write(*formatter);
+                formatter->WriteLine(">(match.value));");
             }
             else
             {
-                rv = formatter->Write("static_cast<soul::parser::Value<");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = calledRule->ReturnType()->Write(*formatter);
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = formatter->WriteLine(">*>(match.value));");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->Write("static_cast<soul::parser::Value<");
+                calledRule->ReturnType()->Write(*formatter);
+                formatter->WriteLine(">*>(match.value));");
             }
         }
     }
@@ -1446,12 +541,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::EmptyParser& parser)
     if (!Valid()) return;
     if (stage == CodeGenerationStage::generateImplementation)
     {
-        std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(true);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(true);");
     }
 }
 
@@ -1460,50 +550,15 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::AnyParser& parser)
     if (!Valid()) return;
     if (stage == CodeGenerationStage::generateImplementation)
     {
-        std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(false);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("if (*lexer != soul::lexer::END_TOKEN)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(false);");
+        formatter->WriteLine("if (*lexer != soul::lexer::END_TOKEN)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("auto a = ++lexer;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("if (!a) return std::unexpected<int>(a.error());");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("match.hit = true;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("auto a = ++lexer;");
+        formatter->WriteLine("if (!a) return std::unexpected<int>(a.error());");
+        formatter->WriteLine("match.hit = true;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
     }
 }
 
@@ -1512,195 +567,55 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::TokenParser& parser)
     if (!Valid()) return;
     if (stage == CodeGenerationStage::generateImplementation)
     {
-        std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(false);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("if (*lexer == " + parser.GetToken()->FullCppId() + ")");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(false);");
+        formatter->WriteLine("if (*lexer == " + parser.GetToken()->FullCppId() + ")");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("auto a = ++lexer;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("if (!a) return std::unexpected<int>(a.error());");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("match.hit = true;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("auto a = ++lexer;");
+        formatter->WriteLine("if (!a) return std::unexpected<int>(a.error());");
+        formatter->WriteLine("match.hit = true;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
     }
 }
 
 void CodeGeneratorVisitor::Visit(soul::ast::spg::CharParser& parser)
 {
     if (!Valid()) return;
-    std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(false);");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("if (*lexer == " + std::to_string(static_cast<std::int32_t>(parser.Chr())) + ")");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("{");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("soul::parser::Match match(false);");
+    formatter->WriteLine("if (*lexer == " + std::to_string(static_cast<std::int32_t>(parser.Chr())) + ")");
+    formatter->WriteLine("{");
     formatter->IncIndent();
-    rv = formatter->WriteLine("auto a = ++lexer;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("if (!a) return std::unexpected<int>(a.error());");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("match.hit = true;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("auto a = ++lexer;");
+    formatter->WriteLine("if (!a) return std::unexpected<int>(a.error());");
+    formatter->WriteLine("match.hit = true;");
     formatter->DecIndent();
-    rv = formatter->WriteLine("}");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("}");
 }
 
 void CodeGeneratorVisitor::Visit(soul::ast::spg::StringParser& parser)
 {
     if (!Valid()) return;
-    std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(true);");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("for (std::int32_t i : " + parser.ArrayName() + ")");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("{");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("soul::parser::Match match(true);");
+    formatter->WriteLine("for (std::int32_t i : " + parser.ArrayName() + ")");
+    formatter->WriteLine("{");
     formatter->IncIndent();
-    rv = formatter->WriteLine("if (*lexer == i)");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("{");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("if (*lexer == i)");
+    formatter->WriteLine("{");
     formatter->IncIndent();
-    rv = formatter->WriteLine("auto a = ++lexer;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("if (!a) return std::unexpected<int>(a.error());");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("auto a = ++lexer;");
+    formatter->WriteLine("if (!a) return std::unexpected<int>(a.error());");
     formatter->DecIndent();
-    rv = formatter->WriteLine("}");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("else");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("{");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("}");
+    formatter->WriteLine("else");
+    formatter->WriteLine("{");
     formatter->IncIndent();
-    rv = formatter->WriteLine("match.hit = false;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("break;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("match.hit = false;");
+    formatter->WriteLine("break;");
     formatter->DecIndent();
-    rv = formatter->WriteLine("}");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("}");
     formatter->DecIndent();
-    rv = formatter->WriteLine("}");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("}");
 }
 
 void CodeGeneratorVisitor::Visit(soul::ast::spg::CharSetParser& parser)
@@ -1708,169 +623,44 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::CharSetParser& parser)
     if (!Valid()) return;
     if (parser.GetCharSet()->Inverse())
     {
-        std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(lexer.Pos() != lexer.End());");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("for (const soul::ast::spg::Range& range : " + parser.ArrayName() + ")");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(lexer.Pos() != lexer.End());");
+        formatter->WriteLine("for (const soul::ast::spg::Range& range : " + parser.ArrayName() + ")");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("if (*lexer >= range.first && *lexer <= range.last)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("if (*lexer >= range.first && *lexer <= range.last)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("match.hit = false;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("break;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("match.hit = false;");
+        formatter->WriteLine("break;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("if (match.hit)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
+        formatter->WriteLine("if (match.hit)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("auto a = ++lexer;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("if (!a) return std::unexpected<int>(a.error());");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("auto a = ++lexer;");
+        formatter->WriteLine("if (!a) return std::unexpected<int>(a.error());");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
     }
     else
     {
-        std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(false);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("for (const soul::ast::spg::Range& range : " + parser.ArrayName() + ")");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(false);");
+        formatter->WriteLine("for (const soul::ast::spg::Range& range : " + parser.ArrayName() + ")");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("if (*lexer >= range.first && *lexer <= range.last)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("if (*lexer >= range.first && *lexer <= range.last)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("match.hit = true;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("auto a = ++lexer;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("if (!a) return std::unexpected<int>(a.error());");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("break;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("match.hit = true;");
+        formatter->WriteLine("auto a = ++lexer;");
+        formatter->WriteLine("if (!a) return std::unexpected<int>(a.error());");
+        formatter->WriteLine("break;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
     }
 }
 
@@ -1879,42 +669,17 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GroupParser& parser)
     if (!Valid()) return;
     if (stage == CodeGenerationStage::generateImplementation)
     {
-        std::expected<bool, int> rv = formatter->WriteLine("soul::parser::Match match(false);");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match match(false);");
         int prevSetParentMatchNumber = setParentMatchNumber;
         setParentMatchNumber = parentMatchNumber;
-        rv = formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("{");
         formatter->IncIndent();
         parser.Child()->Accept(*this);
         if (!Valid()) return;
-        rv = formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         setParentMatchNumber = prevSetParentMatchNumber;
     }
 }
@@ -1927,45 +692,15 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
     currentRule = &parser;
     if (stage == CodeGenerationStage::generateInterface)
     {
-        std::expected<bool, int> rv = formatter->Write("static std::expected<soul::parser::Match, int> " + parser.Name() + "(LexerT& lexer");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->Write("static std::expected<soul::parser::Match, int> " + parser.Name() + "(LexerT& lexer");
         for (const auto& param : parser.Params())
         {
-            rv = formatter->Write(", ");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = param->Type()->Write(*formatter);
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->Write(" ");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->Write(param->Name());
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter->Write(", ");
+            param->Type()->Write(*formatter);
+            formatter->Write(" ");
+            formatter->Write(param->Name());
         }
-        rv = formatter->WriteLine(");");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine(");");
     }
     else if (stage == CodeGenerationStage::generateImplementation)
     {
@@ -1981,172 +716,47 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
         {
             formatter->WriteLine();
         }
-        std::expected<bool, int> rv = formatter->WriteLine("template<typename LexerT>");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->Write("std::expected<soul::parser::Match, int> " + parser.Grammar()->Name() + "<LexerT>::" + parser.Name() + "(LexerT& lexer");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("template<typename LexerT>");
+        formatter->Write("std::expected<soul::parser::Match, int> " + parser.Grammar()->Name() + "<LexerT>::" + parser.Name() + "(LexerT& lexer");
         for (const auto& param : parser.Params())
         {
-            rv = formatter->Write(", ");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = param->Type()->Write(*formatter);
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->Write(" ");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->Write(param->Name());
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter->Write(", ");
+            param->Type()->Write(*formatter);
+            formatter->Write(" ");
+            formatter->Write(param->Name());
         }
-        rv = formatter->WriteLine(")");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine(")");
+        formatter->WriteLine("{");
         formatter->IncIndent();
         if (!noDebugSupport)
         {
-            rv = formatter->WriteLine("#ifdef SOUL_PARSER_DEBUG_SUPPORT");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->WriteLine("std::int64_t parser_debug_match_pos = 0;");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->WriteLine("bool parser_debug_write_to_log = lexer.Log() != nullptr;");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->WriteLine("if (parser_debug_write_to_log)");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->WriteLine("{");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter->WriteLine("#ifdef SOUL_PARSER_DEBUG_SUPPORT");
+            formatter->WriteLine("std::int64_t parser_debug_match_pos = 0;");
+            formatter->WriteLine("bool parser_debug_write_to_log = lexer.Log() != nullptr;");
+            formatter->WriteLine("if (parser_debug_write_to_log)");
+            formatter->WriteLine("{");
             formatter->IncIndent();
-            rv = formatter->WriteLine("parser_debug_match_pos = lexer.GetPos();");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->WriteLine("soul::lexer::WriteBeginRuleToLog(lexer, \"" + parser.Name() + "\");");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter->WriteLine("parser_debug_match_pos = lexer.GetPos();");
+            formatter->WriteLine("soul::lexer::WriteBeginRuleToLog(lexer, \"" + parser.Name() + "\");");
             formatter->DecIndent();
-            rv = formatter->WriteLine("}");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->WriteLine("#endif");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter->WriteLine("}");
+            formatter->WriteLine("#endif");
         }
-        rv = formatter->WriteLine("soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, " + std::to_string(parser.Id()) + ");");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, " + std::to_string(parser.Id()) + ");");
         for (const auto& variable : parser.Vars())
         {
-            rv = variable->Type()->Write(*formatter);
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->Write(" ");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->Write(variable->Name());
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->Write(" = ");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            variable->Type()->Write(*formatter);
+            formatter->Write(" ");
+            formatter->Write(variable->Name());
+            formatter->Write(" = ");
             if (variable->Type()->IsPtrType())
             {
-                rv = formatter->WriteLine("nullptr;");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine("nullptr;");
             }
             else
             {
-                rv = variable->Type()->Write(*formatter);
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = formatter->WriteLine("();");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                variable->Type()->Write(*formatter);
+                formatter->WriteLine("();");
             }
         }
         nonterminalInfos.clear();
@@ -2172,144 +782,44 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
             {
                 if (calledRule->ReturnType()->IsPtrType())
                 {
-                    rv = formatter->Write("std::unique_ptr<");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = calledRule->ReturnType()->WriteNonPtrType(*formatter);
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = formatter->Write(">");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->Write("std::unique_ptr<");
+                    calledRule->ReturnType()->WriteNonPtrType(*formatter);
+                    formatter->Write(">");
                     nonterminalInfos.push_back(NonterminalInfo(nonterminal, true));
                 }
                 else
                 {
-                    rv = formatter->Write("std::unique_ptr<soul::parser::Value<");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = calledRule->ReturnType()->Write(*formatter);
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = formatter->Write(">>");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->Write("std::unique_ptr<soul::parser::Value<");
+                    calledRule->ReturnType()->Write(*formatter);
+                    formatter->Write(">>");
                     nonterminalInfos.push_back(NonterminalInfo(nonterminal, false));
                 }
-                rv = formatter->WriteLine(" " + nonterminal->InstanceName() + ";");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine(" " + nonterminal->InstanceName() + ";");
             }
         }
         parser.Definition()->Accept(*this);
         if (!Valid()) return;
         if (!noDebugSupport)
         {
-            rv = formatter->WriteLine("#ifdef SOUL_PARSER_DEBUG_SUPPORT");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->WriteLine("if (parser_debug_write_to_log)");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->WriteLine("{");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter->WriteLine("#ifdef SOUL_PARSER_DEBUG_SUPPORT");
+            formatter->WriteLine("if (parser_debug_write_to_log)");
+            formatter->WriteLine("{");
             formatter->IncIndent();
-            rv = formatter->WriteLine("if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, \"" + parser.Name() + "\");");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->WriteLine("else soul::lexer::WriteFailureToLog(lexer, \"" + parser.Name() + "\");");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter->WriteLine("if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, \"" + parser.Name() + "\");");
+            formatter->WriteLine("else soul::lexer::WriteFailureToLog(lexer, \"" + parser.Name() + "\");");
             formatter->DecIndent();
-            rv = formatter->WriteLine("}");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
-            rv = formatter->WriteLine("#endif");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter->WriteLine("}");
+            formatter->WriteLine("#endif");
         }
-        rv = formatter->WriteLine("if (!match.hit)");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("if (!match.hit)");
+        formatter->WriteLine("{");
         formatter->IncIndent();
-        rv = formatter->WriteLine("match.value = nullptr;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("match.value = nullptr;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("return match;");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
+        formatter->WriteLine("return match;");
         formatter->DecIndent();
-        rv = formatter->WriteLine("}");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("}");
         for (const auto& info : nonterminalInfos)
         {
             if (info.ptrType && info.count > 1)
@@ -2354,24 +864,9 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
     currentParser = &parser;
     if (stage == CodeGenerationStage::generateInterface)
     {
-        std::expected<bool, int> rv = formatter->WriteLine("template<typename LexerT>");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("struct " + parser.Name());
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
-        rv = formatter->WriteLine("{");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("template<typename LexerT>");
+        formatter->WriteLine("struct " + parser.Name());
+        formatter->WriteLine("{");
         formatter->IncIndent();
         if (parser.Main())
         {
@@ -2380,103 +875,33 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
                 const std::unique_ptr<soul::ast::spg::RuleParser>& startRule = parser.Rules().front();
                 if (startRule->ReturnType() != nullptr)
                 {
-                    rv = formatter->Write("static ");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->Write("static ");
                     if (startRule->ReturnType()->IsPtrType())
                     {
-                        rv = formatter->Write("std::expected<std::unique_ptr<");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
-                        rv = startRule->ReturnType()->WriteNonPtrType(*formatter);
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
-                        rv = formatter->Write(">, int>");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
+                        formatter->Write("std::expected<std::unique_ptr<");
+                        startRule->ReturnType()->WriteNonPtrType(*formatter);
+                        formatter->Write(">, int>");
                     }
                     else
                     {
-                        rv = formatter->Write("std::expected<");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
-                        rv = startRule->ReturnType()->Write(*formatter);
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
-                        rv = formatter->Write(", int>");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
+                        formatter->Write("std::expected<");
+                        startRule->ReturnType()->Write(*formatter);
+                        formatter->Write(", int>");
                     }
-                    rv = formatter->Write(" Parse(LexerT& lexer");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->Write(" Parse(LexerT& lexer");
                 }
                 else
                 {
-                    rv = formatter->Write("static void Parse(LexerT& lexer");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->Write("static void Parse(LexerT& lexer");
                 }
                 for (const auto& param : startRule->Params())
                 {
-                    rv = formatter->Write(", ");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = param->Type()->Write(*formatter);
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = formatter->Write(" ");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = formatter->Write(param->Name());
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->Write(", ");
+                    param->Type()->Write(*formatter);
+                    formatter->Write(" ");
+                    formatter->Write(param->Name());
                 }
-                rv = formatter->WriteLine(");");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine(");");
             }
         }
         for (const auto& rule : parser.Rules())
@@ -2485,12 +910,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
             if (!Valid()) return;
         }
         formatter->DecIndent();
-        rv = formatter->WriteLine("};");
-        if (!rv)
-        {
-            SetError(rv.error());
-            return;
-        }
+        formatter->WriteLine("};");
     }
     else if (stage == CodeGenerationStage::generateImplementation)
     {
@@ -2498,264 +918,79 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
         {
             if (!parser.Rules().empty())
             {
-                std::expected<bool, int> rv = formatter->WriteLine("template<typename LexerT>");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine("template<typename LexerT>");
                 const std::unique_ptr<soul::ast::spg::RuleParser>& startRule = parser.Rules().front();
                 if (startRule->ReturnType() != nullptr)
                 {
                     if (startRule->ReturnType()->IsPtrType())
                     {
-                        rv = formatter->Write("std::expected<std::unique_ptr<");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
-                        rv = startRule->ReturnType()->WriteNonPtrType(*formatter);
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
-                        rv = formatter->Write(">, int>");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
+                        formatter->Write("std::expected<std::unique_ptr<");
+                        startRule->ReturnType()->WriteNonPtrType(*formatter);
+                        formatter->Write(">, int>");
                     }
                     else
                     {
-                        rv = formatter->Write("std::expected<");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
-                        rv = startRule->ReturnType()->Write(*formatter);
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
-                        rv = formatter->Write(", int>");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
+                        formatter->Write("std::expected<");
+                        startRule->ReturnType()->Write(*formatter);
+                        formatter->Write(", int>");
                     }
-                    rv = formatter->Write(" " + parser.Name() + "<LexerT>::Parse(LexerT& lexer");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->Write(" " + parser.Name() + "<LexerT>::Parse(LexerT& lexer");
                 }
                 else
                 {
-                    rv = formatter->Write("void " + parser.Name() + "<LexerT>::Parse(LexerT& lexer");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->Write("void " + parser.Name() + "<LexerT>::Parse(LexerT& lexer");
                 }
                 for (const auto& param : startRule->Params())
                 {
-                    rv = formatter->Write(", ");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = param->Type()->Write(*formatter);
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = formatter->Write(" ");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = formatter->Write(param->Name());
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->Write(", ");
+                    param->Type()->Write(*formatter);
+                    formatter->Write(" ");
+                    formatter->Write(param->Name());
                 }
-                rv = formatter->WriteLine(")");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = formatter->WriteLine("{");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine(")");
+                formatter->WriteLine("{");
                 formatter->IncIndent();
                 soul::ast::spg::RuleParser* rule = startRule.get();
                 if (rule->ReturnType() != nullptr)
                 {
-                    rv = formatter->Write("std::unique_ptr<");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->Write("std::unique_ptr<");
                     if (rule->ReturnType()->IsPtrType())
                     {
-                        rv = rule->ReturnType()->WriteNonPtrType(*formatter);
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
-                        rv = formatter->Write(">");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
+                        rule->ReturnType()->WriteNonPtrType(*formatter);
+                        formatter->Write(">");
                     }
                     else
                     {
-                        rv = formatter->Write("soul::parser::Value<");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
-                        rv = rule->ReturnType()->Write(*formatter);
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
-                        rv = formatter->Write(">>");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
+                        formatter->Write("soul::parser::Value<");
+                        rule->ReturnType()->Write(*formatter);
+                        formatter->Write(">>");
                     }
-                    rv = formatter->WriteLine(" value;");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->WriteLine(" value;");
                 }
                 if (!noDebugSupport)
                 {
-                    rv = formatter->WriteLine("#ifdef SOUL_PARSER_DEBUG_SUPPORT");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = formatter->WriteLine("if (lexer.Log())");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = formatter->WriteLine("{");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->WriteLine("#ifdef SOUL_PARSER_DEBUG_SUPPORT");
+                    formatter->WriteLine("if (lexer.Log())");
+                    formatter->WriteLine("{");
                     formatter->IncIndent();
-                    rv = formatter->WriteLine("lexer.Log()->WriteBeginRule(\"parse\");");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = formatter->WriteLine("lexer.Log()->IncIndent();");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->WriteLine("lexer.Log()->WriteBeginRule(\"parse\");");
+                    formatter->WriteLine("lexer.Log()->IncIndent();");
                     formatter->DecIndent();
-                    rv = formatter->WriteLine("}");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = formatter->WriteLine("#endif");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->WriteLine("}");
+                    formatter->WriteLine("#endif");
                 }
-                rv = formatter->WriteLine("auto a = ++lexer;");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = formatter->WriteLine("if (!a) return std::unexpected<int>(a.error());");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine("auto a = ++lexer;");
+                formatter->WriteLine("if (!a) return std::unexpected<int>(a.error());");
                 std::string ruleName = rule->Grammar()->Name() + "<LexerT>::" + rule->Name();
-                rv = formatter->Write("std::expected<soul::parser::Match, int> m = " + ruleName + "(lexer");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->Write("std::expected<soul::parser::Match, int> m = " + ruleName + "(lexer");
                 for (const auto& param : startRule->Params())
                 {
-                    rv = formatter->Write(", ");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = formatter->Write(param->Name());
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->Write(", ");
+                    formatter->Write(param->Name());
                 }
-                rv = formatter->WriteLine(");");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = formatter->WriteLine("if (!m) return std::unexpected<int>(m.error());");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = formatter->WriteLine("soul::parser::Match match = *m;");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine(");");
+                formatter->WriteLine("if (!m) return std::unexpected<int>(m.error());");
+                formatter->WriteLine("soul::parser::Match match = *m;");
                 soul::ast::spg::RuleParser* calledRule = rule;
                 if (!calledRule)
                 {
@@ -2764,266 +999,91 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
                 }
                 if (calledRule->ReturnType() != nullptr)
                 {
-                    rv = formatter->Write("value.reset(");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->Write("value.reset(");
                     if (calledRule->ReturnType()->IsPtrType())
                     {
-                        rv = formatter->Write("static_cast<");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
-                        rv = calledRule->ReturnType()->Write(*formatter);
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
-                        rv = formatter->WriteLine(">(match.value));");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
+                        formatter->Write("static_cast<");
+                        calledRule->ReturnType()->Write(*formatter);
+                        formatter->WriteLine(">(match.value));");
                     }
                     else
                     {
-                        rv = formatter->Write("static_cast<soul::parser::Value<");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
-                        rv = calledRule->ReturnType()->Write(*formatter);
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
-                        rv = formatter->WriteLine(">*>(match.value));");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
+                        formatter->Write("static_cast<soul::parser::Value<");
+                        calledRule->ReturnType()->Write(*formatter);
+                        formatter->WriteLine(">*>(match.value));");
                     }
                 }
                 if (!noDebugSupport)
                 {
-                    rv = formatter->WriteLine("#ifdef SOUL_PARSER_DEBUG_SUPPORT");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = formatter->WriteLine("if (lexer.Log())");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = formatter->WriteLine("{");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->WriteLine("#ifdef SOUL_PARSER_DEBUG_SUPPORT");
+                    formatter->WriteLine("if (lexer.Log())");
+                    formatter->WriteLine("{");
                     formatter->IncIndent();
-                    rv = formatter->WriteLine("lexer.Log()->DecIndent();");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = formatter->WriteLine("lexer.Log()->WriteEndRule(\"parse\");");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->WriteLine("lexer.Log()->DecIndent();");
+                    formatter->WriteLine("lexer.Log()->WriteEndRule(\"parse\");");
                     formatter->DecIndent();
-                    rv = formatter->WriteLine("}");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
-                    rv = formatter->WriteLine("#endif");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->WriteLine("}");
+                    formatter->WriteLine("#endif");
                 }
-                rv = formatter->WriteLine("if (match.hit)");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = formatter->WriteLine("{");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine("if (match.hit)");
+                formatter->WriteLine("{");
                 formatter->IncIndent();
-                rv = formatter->WriteLine("if (*lexer == soul::lexer::END_TOKEN)");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = formatter->WriteLine("{");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine("if (*lexer == soul::lexer::END_TOKEN)");
+                formatter->WriteLine("{");
                 formatter->IncIndent();
                 if (startRule->ReturnType())
                 {
                     if (startRule->ReturnType()->IsPtrType())
                     {
-                        rv = formatter->WriteLine("return value;");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
+                        formatter->WriteLine("return value;");
                     }
                     else
                     {
-                        rv = formatter->WriteLine("return value->value;");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
+                        formatter->WriteLine("return value->value;");
                     }
                 }
                 else
                 {
-                    rv = formatter->WriteLine("return;");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->WriteLine("return;");
                 }
                 formatter->DecIndent();
-                rv = formatter->WriteLine("}");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = formatter->WriteLine("else");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = formatter->WriteLine("{");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine("}");
+                formatter->WriteLine("else");
+                formatter->WriteLine("{");
                 formatter->IncIndent();
-                rv = formatter->WriteLine("return lexer.FarthestError();");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine("return lexer.FarthestError();");
                 formatter->DecIndent();
-                rv = formatter->WriteLine("}");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine("}");
                 formatter->DecIndent();
-                rv = formatter->WriteLine("}");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = formatter->WriteLine("else");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
-                rv = formatter->WriteLine("{");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine("}");
+                formatter->WriteLine("else");
+                formatter->WriteLine("{");
                 formatter->IncIndent();
                 std::string ruleInfo = rule->Info();
                 if (ruleInfo.empty())
                 {
                     ruleInfo = rule->Name();
                 }
-                rv = formatter->WriteLine("return lexer.FarthestError();");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine("return lexer.FarthestError();");
                 formatter->DecIndent();
-                rv = formatter->WriteLine("}");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine("}");
                 if (startRule->ReturnType())
                 {
                     if (startRule->ReturnType()->IsPtrType())
                     {
-                        rv = formatter->WriteLine("return value;");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
+                        formatter->WriteLine("return value;");
                     }
                     else
                     {
-                        rv = formatter->WriteLine("return value->value;");
-                        if (!rv)
-                        {
-                            SetError(rv.error());
-                            return;
-                        }
+                        formatter->WriteLine("return value->value;");
                     }
                 }
                 else
                 {
-                    rv = formatter->WriteLine("return;");
-                    if (!rv)
-                    {
-                        SetError(rv.error());
-                        return;
-                    }
+                    formatter->WriteLine("return;");
                 }
                 formatter->DecIndent();
-                rv = formatter->WriteLine("}");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine("}");
                 formatter->WriteLine();
             }
         }
@@ -3060,61 +1120,26 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     formatter = &interfaceFormatter;
 
     formatter->WriteLine();
-    std::expected<bool, int> rv = formatter->WriteLine("// this file has been automatically generated from '" + parserFile.FilePath() +
+    formatter->WriteLine("// this file has been automatically generated from '" + parserFile.FilePath() +
         "' using soul parser generator ospg version " + version);
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
     formatter->WriteLine();
     soul::ast::common::ExportModule* mod = parserFile.GetExportModule();
-    rv = formatter->WriteLine("export module " + mod->ModuleName() + ";");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("export module " + mod->ModuleName() + ";");
     formatter->WriteLine();
-    rv = formatter->WriteLine("import std;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("import soul.lexer;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("import soul.parser;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("import std;");
+    formatter->WriteLine("import soul.lexer;");
+    formatter->WriteLine("import soul.parser;");
     bool hasInterfaceImports = false;
     for (const auto& imprt : parserFile.Imports())
     {
         if (imprt->Prefix() == soul::ast::common::ImportPrefix::interfacePrefix)
         {
             hasInterfaceImports = true;
-            rv = formatter->WriteLine("import " + imprt->ModuleName() + ";");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter->WriteLine("import " + imprt->ModuleName() + ";");
         }
     }
     formatter->WriteLine();
-    rv = formatter->WriteLine("export namespace " + soul::ast::common::ToNamespaceName(mod->ModuleName()) + " {");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("export namespace " + soul::ast::common::ToNamespaceName(mod->ModuleName()) + " {");
     formatter->WriteLine();
     bool first = true;
     for (const auto& parser : parserFile.Parsers())
@@ -3131,12 +1156,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
         if (!Valid()) return;
     }
     formatter->WriteLine();
-    rv = formatter->WriteLine("} // namespace " + soul::ast::common::ToNamespaceName(mod->ModuleName()));
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("} // namespace " + soul::ast::common::ToNamespaceName(mod->ModuleName()));
     if (verbose)
     {
         std::cout << "==> " << interfaceFileName << "\n";
@@ -3154,59 +1174,24 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     formatter = &implementationFormatter;
 
     formatter->WriteLine();
-    rv = formatter->WriteLine("// this file has been automatically generated from '" + parserFile.FilePath() + "' using soul parser generator ospg version " + version);
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("// this file has been automatically generated from '" + parserFile.FilePath() + "' using soul parser generator ospg version " + version);
     formatter->WriteLine();
-    rv = formatter->WriteLine("module " + mod->ModuleName() + ";");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("module " + mod->ModuleName() + ";");
     formatter->WriteLine();
-    rv = formatter->WriteLine("import util;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("import soul.ast.spg;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
-    rv = formatter->WriteLine("import soul.ast.common;");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("import util;");
+    formatter->WriteLine("import soul.ast.spg;");
+    formatter->WriteLine("import soul.ast.common;");
     for (const auto& imprt : parserFile.Imports())
     {
         if (imprt->Prefix() == soul::ast::common::ImportPrefix::implementationPrefix)
         {
-            rv = formatter->WriteLine("import " + imprt->ModuleName() + ";");
-            if (!rv)
-            {
-                SetError(rv.error());
-                return;
-            }
+            formatter->WriteLine("import " + imprt->ModuleName() + ";");
         }
     }
     formatter->WriteLine();
-    rv = formatter->WriteLine("namespace " + soul::ast::common::ToNamespaceName(mod->ModuleName()) + " {");
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("namespace " + soul::ast::common::ToNamespaceName(mod->ModuleName()) + " {");
     formatter->WriteLine();
-    rv = GenerateArrays(parserFile, *formatter, sn);
+    std::expected<bool, int >rv = GenerateArrays(parserFile, *formatter, sn);
     if (!rv)
     {
         SetError(rv.error());
@@ -3237,12 +1222,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
                     }
                 }
                 hasLexers = true;
-                rv = formatter->WriteLine("template struct " + parser->Name() + "<soul::lexer::Lexer<" + lexer->ToString() + ", " + charTypeName + ">>;");
-                if (!rv)
-                {
-                    SetError(rv.error());
-                    return;
-                }
+                formatter->WriteLine("template struct " + parser->Name() + "<soul::lexer::Lexer<" + lexer->ToString() + ", " + charTypeName + ">>;");
             }
         }
     }
@@ -3250,12 +1230,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     {
         formatter->WriteLine();
     }
-    rv = formatter->WriteLine("} // namespace " + soul::ast::common::ToNamespaceName(mod->ModuleName()));
-    if (!rv)
-    {
-        SetError(rv.error());
-        return;
-    }
+    formatter->WriteLine("} // namespace " + soul::ast::common::ToNamespaceName(mod->ModuleName()));
     if (verbose)
     {
         std::cout << "==> " << implementationFileName << "\n";

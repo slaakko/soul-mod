@@ -14,4 +14,6 @@ rt_init::rt_init()
     stderr = static_cast<FILE*>(&stderr_);
 }
 
+rt_init init_rt;
+
 } // namespace std

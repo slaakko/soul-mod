@@ -6,6 +6,7 @@
 module otava.symbols.declarator;
 
 import otava.ast.visitor;
+import otava.symbols.array.type.symbol;
 import otava.symbols.classes;
 import otava.symbols.context;
 import otava.symbols.declaration;
@@ -20,6 +21,7 @@ import otava.symbols.symbol.table;
 import otava.symbols.type.resolver;
 import otava.symbols.value;
 import otava.symbols.exception;
+import otava.symbols.modules;
 import util.unicode;
 
 namespace otava::symbols {
@@ -283,6 +285,7 @@ void DeclaratorProcessor::Visit(otava::ast::InitDeclaratorNode& node)
     node.Left()->Accept(*this);
     if (node.Right())
     {
+        context->SetDeclaredInitializerType(declaration.type);
         Value* value = Evaluate(node.Right(), context);
         declaration.value = value;
         declaration.initializer = node.Right();
@@ -854,7 +857,9 @@ void DeclaratorProcessor::Visit(otava::ast::ArrayDeclaratorNode& node)
             ThrowException("integer value expected", node.GetSourcePos(), context);
         }
     }
-    declaration = Declaration(flags, baseType, new ArrayDeclarator(arrayName, &node, size));
+    ArrayTypeSymbol* arrayType = context->GetSymbolTable()->MakeArrayType(baseType, size);
+    arrayType->Bind(node.GetSourcePos(), context);
+    declaration = Declaration(flags, arrayType, new ArrayDeclarator(arrayName, &node, size));
 }
 
 std::unique_ptr<DeclarationList> ProcessInitDeclaratorList(TypeSymbol* baseType, otava::ast::Node* declarationNode, otava::ast::Node* initDeclaratorList, DeclarationFlags flags, Context* context)

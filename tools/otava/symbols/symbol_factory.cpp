@@ -371,6 +371,10 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         {
             return new FundamentalTypeFloatToIntConversion();
         }
+        case SymbolKind::fundamentalTypeBoolToInt:
+        {
+            return new FundamentalTypeBoolToIntConversion();
+        }
         case SymbolKind::fundamentalTypeDefaultCtor:
         {
             return new FundamentalTypeDefaultCtor();

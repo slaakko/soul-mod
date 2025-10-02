@@ -24,11 +24,10 @@ void Comment::Accept(Visitor& visitor)
 
 std::expected<bool, int> Comment::Write(util::CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.Write("<!-- ");
-    if (!rv) return rv;
-    rv = formatter.Write(Data());
-    if (!rv) return rv;
-    return formatter.Write(" -->");
+    formatter.Write("<!-- ");
+    formatter.Write(Data());
+    formatter.Write(" -->");
+    return std::expected<bool, int>(true);
 }
 
 Comment* MakeComment(const std::string& comment)

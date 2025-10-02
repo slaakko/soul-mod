@@ -70,7 +70,8 @@ std::expected<bool, int> JsonValue::Write(CodeFormatter& formatter)
     std::expected<std::string, int> rv = ToString();
     if (!rv) return std::unexpected<int>(rv.error());
     std::string str = *rv;
-    return formatter.Write(str);
+    formatter.Write(str);
+    return std::expected<bool, int>(true);
 }
 
 JsonString::JsonString() : JsonValue(JsonValueType::string), value()
@@ -417,8 +418,7 @@ std::expected<std::string, int> JsonObject::ToString() const
 
 std::expected<bool, int> JsonObject::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.WriteLine("{");
-    if (!rv) return rv;
+    formatter.WriteLine("{");
     formatter.IncIndent();
     JsonValueType lastItemType = JsonValueType::object;
     bool first = true;
@@ -432,13 +432,11 @@ std::expected<bool, int> JsonObject::Write(CodeFormatter& formatter)
         }
         else
         {
-            rv = formatter.WriteLine(",");
-            if (!rv) return rv;
+            formatter.WriteLine(",");
         }
-        rv = s.Write(formatter);
+        auto rv = s.Write(formatter);
         if (!rv) return rv;
-        rv = formatter.Write(": ");
-        if (!rv) return rv;
+        formatter.Write(": ");
         if (v->IsObject())
         {
             formatter.WriteLine();
@@ -465,8 +463,7 @@ std::expected<bool, int> JsonObject::Write(CodeFormatter& formatter)
     {
         formatter.WriteLine();
     }
-    rv = formatter.WriteLine("}");
-    if (!rv) return rv;
+    formatter.WriteLine("}");
     return std::expected<bool, int>(true);
 }
 
@@ -530,8 +527,7 @@ std::expected<std::string, int> JsonArray::ToString() const
 
 std::expected<bool, int> JsonArray::Write(CodeFormatter& formatter)
 {
-    std::expected<bool, int> rv = formatter.WriteLine("[");
-    if (!rv) return rv;
+    formatter.WriteLine("[");
     formatter.IncIndent();
     JsonValueType lastItemType = JsonValueType::array;
     bool first = true;
@@ -543,10 +539,9 @@ std::expected<bool, int> JsonArray::Write(CodeFormatter& formatter)
         }
         else
         {
-            rv = formatter.WriteLine(",");
-            if (!rv) return rv;
+            formatter.WriteLine(",");
         }
-        rv = item->Write(formatter);
+        std::expected<bool, int> rv = item->Write(formatter);
         if (!rv) return rv;
         lastItemType = item->Type();
     }
@@ -555,8 +550,7 @@ std::expected<bool, int> JsonArray::Write(CodeFormatter& formatter)
     {
         formatter.WriteLine();
     }
-    rv = formatter.WriteLine("]");
-    if (!rv) return rv;
+    formatter.WriteLine("]");
     return std::expected<bool, int>(true);
 }
 
@@ -571,7 +565,7 @@ JsonValue* JsonNull::Clone() const
 
 std::expected<std::string, int> JsonNull::ToString() const
 {
-    return std::expected < std::string, int>("null");
+    return std::expected<std::string, int>("null");
 }
 
 } // namespace util

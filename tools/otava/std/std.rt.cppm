@@ -103,6 +103,10 @@ extern "C" int ort_send_socket(std::int64_t socket, const std::uint8_t* buf, int
 extern "C" int ort_recv_socket(std::int64_t socket, std::uint8_t* buf, int len, int flags);
 extern "C" bool ort_get_path_to_executable(char* buf, int bufSize);
 extern "C" double ort_pow(double x, int exponent);
+extern "C" float ort_remainder(float x, float y);
+extern "C" double ort_remainderd(double x, double y);
+extern "C" float ort_stof(const char* s, std::size_t* idx);
+extern "C" double ort_stod(const char* s, std::size_t* idx);
 extern "C" void ort_exit(int exitCode);
 
 using FILE = void;
@@ -224,6 +228,16 @@ inline const char* getenv(const char* env)
 inline double pow(double x, int exponent)
 {
     return ort_pow(x, exponent);
+}
+
+inline float remainder(float x, float y)
+{
+    return ort_remainder(x, y);
+}
+
+inline double remainder(double x, double y)
+{
+    return ort_remainderd(x, y);
 }
 
 inline void exit(int exitCode)
