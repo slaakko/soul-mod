@@ -9,4 +9,5 @@ project <ore/ore.project>;
 project <ocpp/ocpp.project>;
 project <ocommon/ocommon.project>;
 project <oslg/oslg.project>;
+project <../oxml/odom/odom.project>;
 project <ospg/ospg.project>;

@@ -4161,8 +4161,8 @@ std::expected<soul::parser::Match, int> XPathParser<LexerT>::PrimaryExpr(LexerT&
             }
             break;
         }
-        case soul::xml::xpath::token::DQ_STRING:
         case soul::xml::xpath::token::SQ_STRING:
+        case soul::xml::xpath::token::DQ_STRING:
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch9 = &match;

@@ -258,20 +258,24 @@ bool Project::UpToDate(const std::string& config, int optLevel) const
         if (module)
         {
             const std::string& moduleSourceFilePath = module->FilePath();
-            std::string moduleFilePath = otava::symbols::MakeModuleFilePath(root, config, optLevel, module->Name());
-            if (!std::filesystem::exists(moduleFilePath) || std::filesystem::last_write_time(moduleFilePath) < std::filesystem::last_write_time(moduleSourceFilePath))
+            if (module->Kind() == otava::symbols::ModuleKind::interfaceModule)
             {
-                return false;
-            }
-            if (std::filesystem::last_write_time(outputFilePath) < std::filesystem::last_write_time(moduleSourceFilePath))
-            {
-                return false;
+                std::string moduleFilePath = otava::symbols::MakeModuleFilePath(root, config, optLevel, module->Name());
+                if (!std::filesystem::exists(moduleFilePath) || std::filesystem::last_write_time(moduleFilePath) < std::filesystem::last_write_time(moduleSourceFilePath))
+                {
+                    return false;
+                }
+                if (std::filesystem::last_write_time(outputFilePath) < std::filesystem::last_write_time(moduleSourceFilePath))
+                {
+                    return false;
+                }
             }
         }
     }
-    for (const auto& sourceFilePath : sourceFilePaths)
+    for (const auto& sourceFileName : sourceFilePaths)
     {
-        if (std::filesystem::last_write_time(outputFilePath) < std::filesystem::last_write_time(sourceFilePath))
+        std::string sourceFilePath = util::Path::Combine(util::Path::GetDirectoryName(FilePath()), sourceFileName);
+        if (!std::filesystem::exists(sourceFilePath) || std::filesystem::last_write_time(outputFilePath) < std::filesystem::last_write_time(sourceFilePath))
         {
             return false;
         }
