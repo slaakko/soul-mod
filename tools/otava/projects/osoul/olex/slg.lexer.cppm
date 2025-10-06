@@ -1,4 +1,4 @@
-// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/olex/slg.lexer' using soul lexer generator eslg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/osoul/olex/slg.lexer' using soul lexer generator oslg version 5.0.0
 
 export module soul.lex.slg;
 
@@ -224,7 +224,7 @@ struct SlgLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                std::int64_t tokenId = GetTokenId(45, lexer);
+                std::int64_t tokenId = GetTokenId(44, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -245,7 +245,7 @@ struct SlgLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                std::int64_t tokenId = GetTokenId(44, lexer);
+                std::int64_t tokenId = GetTokenId(45, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -17298,8 +17298,7 @@ std::expected<soul::lexer::Lexer<SlgLexer<CharT>, CharT>, int> MakeLexer(const C
 }
 
 template<typename CharT>
-std::expected<soul::lexer::Lexer<SlgLexer<CharT>, CharT>, int> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, 
-    const CharT* start, const CharT* end, const std::string& fileName)
+std::expected<soul::lexer::Lexer<SlgLexer<CharT>, CharT>, int> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const CharT* start, const CharT* end, const std::string& fileName)
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<SlgLexer<CharT>, CharT>(start, end, fileName);

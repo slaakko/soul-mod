@@ -39,12 +39,12 @@
     </group>
    </action>
   </rule>
-  <rule first="{#, ID, SEMICOLON, LBRACKET}" name="Import">
-   <action first="{#, ID, SEMICOLON, LBRACKET}">
-    <group first="{#, ID, SEMICOLON, LBRACKET}">
-     <sequence first="{#, ID, SEMICOLON, LBRACKET}">
-      <sequence first="{#, ID, LBRACKET}">
-       <sequence first="{#, ID, LBRACKET}">
+  <rule first="{#, LBRACKET, SEMICOLON, ID}" name="Import">
+   <action first="{#, LBRACKET, SEMICOLON, ID}">
+    <group first="{#, LBRACKET, SEMICOLON, ID}">
+     <sequence first="{#, LBRACKET, SEMICOLON, ID}">
+      <sequence first="{#, LBRACKET, ID}">
+       <sequence first="{#, LBRACKET, ID}">
         <group first="{#, LBRACKET}">
          <choice first="{#, LBRACKET}">
           <action first="{LBRACKET}">

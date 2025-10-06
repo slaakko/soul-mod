@@ -5,11 +5,11 @@
     <token first="{ID}" name="ID"/>
    </action>
   </rule>
-  <rule first="{#, COLON_COLON, ID}" name="QualifiedCppId">
-   <action first="{#, COLON_COLON, ID}">
-    <group first="{#, COLON_COLON, ID}">
-     <sequence first="{#, COLON_COLON, ID}">
-      <sequence first="{#, COLON_COLON, ID}">
+  <rule first="{#, ID, COLON_COLON}" name="QualifiedCppId">
+   <action first="{#, ID, COLON_COLON}">
+    <group first="{#, ID, COLON_COLON}">
+     <sequence first="{#, ID, COLON_COLON}">
+      <sequence first="{#, ID, COLON_COLON}">
        <optional first="{#, COLON_COLON}">
         <group first="{COLON_COLON}">
          <action first="{COLON_COLON}">

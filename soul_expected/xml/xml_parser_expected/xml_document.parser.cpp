@@ -244,7 +244,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Document(Lex
                         soul_expected::parser::Match match(false);
                         soul_expected::parser::Match* parentMatch6 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Prolog(lexer, processor);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Prolog(lexer, processor);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             *parentMatch6 = match;
@@ -258,7 +258,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Document(Lex
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch7 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Element(lexer, processor);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Element(lexer, processor);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch7 = match;
@@ -279,7 +279,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Document(Lex
                         {
                             std::int64_t save = lexer.GetPos();
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Misc(lexer, processor);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Misc(lexer, processor);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 if (match.hit)
@@ -353,7 +353,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Prolog(Lexer
                 std::int64_t save = lexer.GetPos();
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::XmlDecl(lexer, processor);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::XmlDecl(lexer, processor);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     if (match.hit)
@@ -379,7 +379,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Prolog(Lexer
                         {
                             std::int64_t save = lexer.GetPos();
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Misc(lexer, processor);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Misc(lexer, processor);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 if (match.hit)
@@ -415,7 +415,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Prolog(Lexer
                         soul_expected::parser::Match match(false);
                         soul_expected::parser::Match* parentMatch9 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::DocTypeDecl(lexer, processor);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::DocTypeDecl(lexer, processor);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             *parentMatch9 = match;
@@ -432,7 +432,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Prolog(Lexer
                                     {
                                         std::int64_t save = lexer.GetPos();
                                         {
-                                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Misc(lexer, processor);
+                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Misc(lexer, processor);
                                             if (!m) return std::unexpected<int>(m.error());
                                             soul_expected::parser::Match match = *m;
                                             if (match.hit)
@@ -534,7 +534,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::XmlDecl(Lexe
                             soul_expected::parser::Match match(false);
                             soul_expected::parser::Match* parentMatch6 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::VersionInfo(lexer, processor);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::VersionInfo(lexer, processor);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 *parentMatch6 = match;
@@ -552,7 +552,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::XmlDecl(Lexe
                             std::int64_t save = lexer.GetPos();
                             soul_expected::parser::Match* parentMatch8 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::EncodingDecl(lexer, processor);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::EncodingDecl(lexer, processor);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 if (match.hit)
@@ -579,7 +579,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::XmlDecl(Lexe
                         std::int64_t save = lexer.GetPos();
                         soul_expected::parser::Match* parentMatch10 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::StandaloneDecl(lexer, processor);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::StandaloneDecl(lexer, processor);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             if (match.hit)
@@ -606,7 +606,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::XmlDecl(Lexe
                     std::int64_t save = lexer.GetPos();
                     soul_expected::parser::Match* parentMatch12 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         if (match.hit)
@@ -688,7 +688,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::VersionInfo(
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch3 = match;
@@ -723,7 +723,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::VersionInfo(
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch5 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Eq(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Eq(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch5 = match;
@@ -737,7 +737,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::VersionInfo(
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch6 = &match;
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::VersionNumber(lexer, processor);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::VersionNumber(lexer, processor);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch6 = match;
@@ -857,7 +857,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Eq(LexerT& l
             std::int64_t save = lexer.GetPos();
             soul_expected::parser::Match* parentMatch2 = &match;
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 if (match.hit)
@@ -898,7 +898,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Eq(LexerT& l
             std::int64_t save = lexer.GetPos();
             soul_expected::parser::Match* parentMatch5 = &match;
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 if (match.hit)
@@ -945,7 +945,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::VersionNumbe
     soul_expected::parser::Match* parentMatch0 = &match;
     {
         std::int64_t save = lexer.GetPos();
-        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::VersionNumDQ(lexer, processor);
+        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::VersionNumDQ(lexer, processor);
         if (!m) return std::unexpected<int>(m.error());
         soul_expected::parser::Match match = *m;
         *parentMatch0 = match;
@@ -955,7 +955,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::VersionNumbe
             soul_expected::parser::Match* parentMatch1 = &match;
             lexer.SetPos(save);
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::VersionNumSQ(lexer, processor);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::VersionNumSQ(lexer, processor);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch1 = match;
@@ -1010,7 +1010,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::VersionNumDQ
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::VersionNum(lexer, processor);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::VersionNum(lexer, processor);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch2 = match;
@@ -1082,7 +1082,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::VersionNumSQ
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::VersionNum(lexer, processor);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::VersionNum(lexer, processor);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch2 = match;
@@ -1337,7 +1337,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EncodingDecl
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch3 = match;
@@ -1372,7 +1372,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EncodingDecl
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch5 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Eq(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Eq(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch5 = match;
@@ -1386,7 +1386,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EncodingDecl
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch6 = &match;
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::EncodingName(lexer, processor);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::EncodingName(lexer, processor);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch6 = match;
@@ -1426,7 +1426,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EncodingName
     soul_expected::parser::Match* parentMatch0 = &match;
     {
         std::int64_t save = lexer.GetPos();
-        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::EncNameDQ(lexer, processor);
+        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::EncNameDQ(lexer, processor);
         if (!m) return std::unexpected<int>(m.error());
         soul_expected::parser::Match match = *m;
         *parentMatch0 = match;
@@ -1436,7 +1436,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EncodingName
             soul_expected::parser::Match* parentMatch1 = &match;
             lexer.SetPos(save);
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::EncNameSQ(lexer, processor);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::EncNameSQ(lexer, processor);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch1 = match;
@@ -1491,7 +1491,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EncNameDQ(Le
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::EncName(lexer, processor);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::EncName(lexer, processor);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch2 = match;
@@ -1563,7 +1563,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EncNameSQ(Le
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::EncName(lexer, processor);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::EncName(lexer, processor);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch2 = match;
@@ -1760,7 +1760,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::StandaloneDe
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch3 = match;
@@ -1795,7 +1795,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::StandaloneDe
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch5 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Eq(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Eq(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch5 = match;
@@ -1813,7 +1813,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::StandaloneDe
                 soul_expected::parser::Match* parentMatch7 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::YesNo(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::YesNo(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     yn.reset(static_cast<soul_expected::parser::Value<bool>*>(match.value));
@@ -2056,7 +2056,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Misc(LexerT&
         soul_expected::parser::Match* parentMatch1 = &match;
         {
             std::int64_t save = lexer.GetPos();
-            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Comment(lexer, processor);
+            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Comment(lexer, processor);
             if (!m) return std::unexpected<int>(m.error());
             soul_expected::parser::Match match = *m;
             *parentMatch1 = match;
@@ -2066,7 +2066,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Misc(LexerT&
                 soul_expected::parser::Match* parentMatch2 = &match;
                 lexer.SetPos(save);
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::PI(lexer, processor);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::PI(lexer, processor);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch2 = match;
@@ -2081,7 +2081,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Misc(LexerT&
             soul_expected::parser::Match* parentMatch3 = &match;
             lexer.SetPos(save);
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch3 = match;
@@ -2186,7 +2186,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Comment(Lexe
                                                 soul_expected::parser::Match* parentMatch10 = &match;
                                                 std::int64_t save = lexer.GetPos();
                                                 {
-                                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Char(lexer);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Char(lexer);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     chr.reset(static_cast<soul_expected::parser::Value<char32_t>*>(match.value));
@@ -2420,7 +2420,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PI(LexerT& l
                         soul_expected::parser::Match match(false);
                         soul_expected::parser::Match* parentMatch6 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::PITarget(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::PITarget(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             target.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -2445,7 +2445,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PI(LexerT& l
                                 soul_expected::parser::Match match(false);
                                 soul_expected::parser::Match* parentMatch10 = &match;
                                 {
-                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                     if (!m) return std::unexpected<int>(m.error());
                                     soul_expected::parser::Match match = *m;
                                     *parentMatch10 = match;
@@ -2476,7 +2476,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PI(LexerT& l
                                                                 soul_expected::parser::Match* parentMatch16 = &match;
                                                                 std::int64_t save = lexer.GetPos();
                                                                 {
-                                                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Char(lexer);
+                                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Char(lexer);
                                                                     if (!m) return std::unexpected<int>(m.error());
                                                                     soul_expected::parser::Match match = *m;
                                                                     chr.reset(static_cast<soul_expected::parser::Value<char32_t>*>(match.value));
@@ -2628,7 +2628,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PITarget(Lex
             soul_expected::parser::Match* parentMatch2 = &match;
             std::int64_t save = lexer.GetPos();
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 name.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -2642,7 +2642,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PITarget(Lex
                     std::int64_t tmp = lexer.GetPos();
                     lexer.SetPos(save);
                     save = tmp;
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Xml(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Xml(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch3 = match;
@@ -2710,7 +2710,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Name(LexerT&
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::NameStartChar(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::NameStartChar(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     nameStartChar.reset(static_cast<soul_expected::parser::Value<char32_t>*>(match.value));
@@ -2741,7 +2741,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Name(LexerT&
                                     soul_expected::parser::Match* parentMatch7 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
-                                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::NameChar(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::NameChar(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         nameChar.reset(static_cast<soul_expected::parser::Value<char32_t>*>(match.value));
@@ -2884,7 +2884,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NameChar(Lex
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::NameStartChar(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::NameStartChar(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 nameStartChar.reset(static_cast<soul_expected::parser::Value<char32_t>*>(match.value));
@@ -3093,7 +3093,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Element(Lexe
                             soul_expected::parser::Match* parentMatch6 = &match;
                             {
                                 std::int64_t pos = lexer.GetPos();
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 name.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -3132,7 +3132,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Element(Lexe
                                         soul_expected::parser::Match match(false);
                                         soul_expected::parser::Match* parentMatch10 = &match;
                                         {
-                                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                             if (!m) return std::unexpected<int>(m.error());
                                             soul_expected::parser::Match match = *m;
                                             *parentMatch10 = match;
@@ -3142,7 +3142,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Element(Lexe
                                             soul_expected::parser::Match match(false);
                                             soul_expected::parser::Match* parentMatch11 = &match;
                                             {
-                                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Attribute(lexer, processor);
+                                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Attribute(lexer, processor);
                                                 if (!m) return std::unexpected<int>(m.error());
                                                 soul_expected::parser::Match match = *m;
                                                 *parentMatch11 = match;
@@ -3178,7 +3178,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Element(Lexe
                     std::int64_t save = lexer.GetPos();
                     soul_expected::parser::Match* parentMatch13 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         if (match.hit)
@@ -3273,7 +3273,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Element(Lexe
                                         soul_expected::parser::Match match(false);
                                         soul_expected::parser::Match* parentMatch22 = &match;
                                         {
-                                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Content(lexer, processor);
+                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Content(lexer, processor);
                                             if (!m) return std::unexpected<int>(m.error());
                                             soul_expected::parser::Match match = *m;
                                             *parentMatch22 = match;
@@ -3287,7 +3287,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Element(Lexe
                                     soul_expected::parser::Match match(false);
                                     soul_expected::parser::Match* parentMatch23 = &match;
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::ETag(lexer, processor);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::ETag(lexer, processor);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         *parentMatch23 = match;
@@ -3354,7 +3354,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Attribute(Le
                     soul_expected::parser::Match* parentMatch4 = &match;
                     {
                         std::int64_t pos = lexer.GetPos();
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         attName.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -3373,7 +3373,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Attribute(Le
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch5 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Eq(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Eq(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch5 = match;
@@ -3387,7 +3387,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Attribute(Le
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch6 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::AttValue(lexer, processor);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::AttValue(lexer, processor);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     attValue.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -3441,7 +3441,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttValue(Lex
         soul_expected::parser::Match* parentMatch1 = &match;
         {
             std::int64_t pos = lexer.GetPos();
-            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::AttValueDQ(lexer, processor);
+            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::AttValueDQ(lexer, processor);
             if (!m) return std::unexpected<int>(m.error());
             soul_expected::parser::Match match = *m;
             attValueDQ.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -3467,7 +3467,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttValue(Lex
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::AttValueSQ(lexer, processor);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::AttValueSQ(lexer, processor);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     attValueSQ.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -3601,7 +3601,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttValueDQ(L
                                                 soul_expected::parser::Match* parentMatch10 = &match;
                                                 lexer.SetPos(save);
                                                 {
-                                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Reference(lexer, processor);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Reference(lexer, processor);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     *parentMatch10 = match;
@@ -3777,7 +3777,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttValueSQ(L
                                                 soul_expected::parser::Match* parentMatch10 = &match;
                                                 lexer.SetPos(save);
                                                 {
-                                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Reference(lexer, processor);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Reference(lexer, processor);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     *parentMatch10 = match;
@@ -3870,7 +3870,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Reference(Le
     soul_expected::parser::Match* parentMatch0 = &match;
     {
         std::int64_t save = lexer.GetPos();
-        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::CharRef(lexer, processor);
+        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::CharRef(lexer, processor);
         if (!m) return std::unexpected<int>(m.error());
         soul_expected::parser::Match match = *m;
         *parentMatch0 = match;
@@ -3880,7 +3880,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Reference(Le
             soul_expected::parser::Match* parentMatch1 = &match;
             lexer.SetPos(save);
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::EntityRef(lexer, processor);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::EntityRef(lexer, processor);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch1 = match;
@@ -3956,7 +3956,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::CharRef(Lexe
                         soul_expected::parser::Match match(false);
                         soul_expected::parser::Match* parentMatch5 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::DecCodePoint(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::DecCodePoint(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             decCodePoint.reset(static_cast<soul_expected::parser::Value<std::int32_t>*>(match.value));
@@ -4026,7 +4026,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::CharRef(Lexe
                                 soul_expected::parser::Match match(false);
                                 soul_expected::parser::Match* parentMatch11 = &match;
                                 {
-                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::HexCodePoint(lexer);
+                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::HexCodePoint(lexer);
                                     if (!m) return std::unexpected<int>(m.error());
                                     soul_expected::parser::Match match = *m;
                                     hexCodePoint.reset(static_cast<soul_expected::parser::Value<std::int32_t>*>(match.value));
@@ -4419,7 +4419,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EntityRef(Le
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch4 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         name.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -4493,7 +4493,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Content(Lexe
             std::int64_t save = lexer.GetPos();
             soul_expected::parser::Match* parentMatch2 = &match;
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::CharData(lexer, processor);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::CharData(lexer, processor);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 if (match.hit)
@@ -4544,7 +4544,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Content(Lexe
                                                     soul_expected::parser::Match* parentMatch11 = &match;
                                                     {
                                                         std::int64_t save = lexer.GetPos();
-                                                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Element(lexer, processor);
+                                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Element(lexer, processor);
                                                         if (!m) return std::unexpected<int>(m.error());
                                                         soul_expected::parser::Match match = *m;
                                                         *parentMatch11 = match;
@@ -4554,7 +4554,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Content(Lexe
                                                             soul_expected::parser::Match* parentMatch12 = &match;
                                                             lexer.SetPos(save);
                                                             {
-                                                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Reference(lexer, processor);
+                                                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Reference(lexer, processor);
                                                                 if (!m) return std::unexpected<int>(m.error());
                                                                 soul_expected::parser::Match match = *m;
                                                                 *parentMatch12 = match;
@@ -4569,7 +4569,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Content(Lexe
                                                         soul_expected::parser::Match* parentMatch13 = &match;
                                                         lexer.SetPos(save);
                                                         {
-                                                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::CDSect(lexer, processor);
+                                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::CDSect(lexer, processor);
                                                             if (!m) return std::unexpected<int>(m.error());
                                                             soul_expected::parser::Match match = *m;
                                                             *parentMatch13 = match;
@@ -4584,7 +4584,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Content(Lexe
                                                     soul_expected::parser::Match* parentMatch14 = &match;
                                                     lexer.SetPos(save);
                                                     {
-                                                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::PI(lexer, processor);
+                                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::PI(lexer, processor);
                                                         if (!m) return std::unexpected<int>(m.error());
                                                         soul_expected::parser::Match match = *m;
                                                         *parentMatch14 = match;
@@ -4599,7 +4599,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Content(Lexe
                                                 soul_expected::parser::Match* parentMatch15 = &match;
                                                 lexer.SetPos(save);
                                                 {
-                                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Comment(lexer, processor);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Comment(lexer, processor);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     *parentMatch15 = match;
@@ -4620,7 +4620,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Content(Lexe
                                         std::int64_t save = lexer.GetPos();
                                         soul_expected::parser::Match* parentMatch17 = &match;
                                         {
-                                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::CharData(lexer, processor);
+                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::CharData(lexer, processor);
                                             if (!m) return std::unexpected<int>(m.error());
                                             soul_expected::parser::Match match = *m;
                                             if (match.hit)
@@ -4733,7 +4733,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::CharData(Lex
                                     soul_expected::parser::Match* parentMatch9 = &match;
                                     std::int64_t save = lexer.GetPos();
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::CharDataChar(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::CharDataChar(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         charDataChar.reset(static_cast<soul_expected::parser::Value<char32_t>*>(match.value));
@@ -4803,7 +4803,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::CharData(Lex
                                             soul_expected::parser::Match* parentMatch15 = &match;
                                             std::int64_t save = lexer.GetPos();
                                             {
-                                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::CharDataChar(lexer);
+                                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::CharDataChar(lexer);
                                                 if (!m) return std::unexpected<int>(m.error());
                                                 soul_expected::parser::Match match = *m;
                                                 charDataChar.reset(static_cast<soul_expected::parser::Value<char32_t>*>(match.value));
@@ -5032,7 +5032,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::CDSect(Lexer
                                                 soul_expected::parser::Match* parentMatch10 = &match;
                                                 std::int64_t save = lexer.GetPos();
                                                 {
-                                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Char(lexer);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Char(lexer);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     chr.reset(static_cast<soul_expected::parser::Value<char32_t>*>(match.value));
@@ -5200,7 +5200,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::ETag(LexerT&
                             soul_expected::parser::Match* parentMatch6 = &match;
                             {
                                 std::int64_t pos = lexer.GetPos();
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 name.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -5227,7 +5227,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::ETag(LexerT&
                         std::int64_t save = lexer.GetPos();
                         soul_expected::parser::Match* parentMatch8 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             if (match.hit)
@@ -5340,7 +5340,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::DocTypeDecl(
                                 soul_expected::parser::Match match(false);
                                 soul_expected::parser::Match* parentMatch7 = &match;
                                 {
-                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                     if (!m) return std::unexpected<int>(m.error());
                                     soul_expected::parser::Match match = *m;
                                     *parentMatch7 = match;
@@ -5354,7 +5354,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::DocTypeDecl(
                             soul_expected::parser::Match match(false);
                             soul_expected::parser::Match* parentMatch8 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 rootElementName.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -5379,7 +5379,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::DocTypeDecl(
                                     soul_expected::parser::Match match(false);
                                     soul_expected::parser::Match* parentMatch12 = &match;
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         *parentMatch12 = match;
@@ -5389,7 +5389,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::DocTypeDecl(
                                         soul_expected::parser::Match match(false);
                                         soul_expected::parser::Match* parentMatch13 = &match;
                                         {
-                                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::ExternalID(lexer);
+                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::ExternalID(lexer);
                                             if (!m) return std::unexpected<int>(m.error());
                                             soul_expected::parser::Match match = *m;
                                             *parentMatch13 = match;
@@ -5422,7 +5422,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::DocTypeDecl(
                         std::int64_t save = lexer.GetPos();
                         soul_expected::parser::Match* parentMatch15 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             if (match.hit)
@@ -5475,7 +5475,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::DocTypeDecl(
                                         soul_expected::parser::Match match(false);
                                         soul_expected::parser::Match* parentMatch22 = &match;
                                         {
-                                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::IntSubset(lexer, processor);
+                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::IntSubset(lexer, processor);
                                             if (!m) return std::unexpected<int>(m.error());
                                             soul_expected::parser::Match match = *m;
                                             *parentMatch22 = match;
@@ -5511,7 +5511,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::DocTypeDecl(
                                     std::int64_t save = lexer.GetPos();
                                     soul_expected::parser::Match* parentMatch25 = &match;
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         if (match.hit)
@@ -5623,7 +5623,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::ExternalID(L
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch4 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch4 = match;
@@ -5637,7 +5637,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::ExternalID(L
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch5 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::SystemLiteral(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::SystemLiteral(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch5 = match;
@@ -5689,7 +5689,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::ExternalID(L
                                     soul_expected::parser::Match match(false);
                                     soul_expected::parser::Match* parentMatch12 = &match;
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         *parentMatch12 = match;
@@ -5703,7 +5703,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::ExternalID(L
                                 soul_expected::parser::Match match(false);
                                 soul_expected::parser::Match* parentMatch13 = &match;
                                 {
-                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::PubidLiteral(lexer);
+                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::PubidLiteral(lexer);
                                     if (!m) return std::unexpected<int>(m.error());
                                     soul_expected::parser::Match match = *m;
                                     *parentMatch13 = match;
@@ -5717,7 +5717,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::ExternalID(L
                             soul_expected::parser::Match match(false);
                             soul_expected::parser::Match* parentMatch14 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 *parentMatch14 = match;
@@ -5731,7 +5731,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::ExternalID(L
                         soul_expected::parser::Match match(false);
                         soul_expected::parser::Match* parentMatch15 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::SystemLiteral(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::SystemLiteral(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             *parentMatch15 = match;
@@ -5996,7 +5996,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PubidLiteral
                         {
                             std::int64_t save = lexer.GetPos();
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::PubidChar(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::PubidChar(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 if (match.hit)
@@ -6074,7 +6074,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PubidLiteral
                                             soul_expected::parser::Match* parentMatch12 = &match;
                                             std::int64_t save = lexer.GetPos();
                                             {
-                                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::PubidChar(lexer);
+                                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::PubidChar(lexer);
                                                 if (!m) return std::unexpected<int>(m.error());
                                                 soul_expected::parser::Match match = *m;
                                                 *parentMatch12 = match;
@@ -6276,7 +6276,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::IntSubset(Le
                     soul_expected::parser::Match* parentMatch2 = &match;
                     {
                         std::int64_t save = lexer.GetPos();
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::MarkupDecl(lexer, processor);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::MarkupDecl(lexer, processor);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch2 = match;
@@ -6286,7 +6286,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::IntSubset(Le
                             soul_expected::parser::Match* parentMatch3 = &match;
                             lexer.SetPos(save);
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::DeclSep(lexer, processor);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::DeclSep(lexer, processor);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 *parentMatch3 = match;
@@ -6355,7 +6355,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::MarkupDecl(L
                     soul_expected::parser::Match* parentMatch4 = &match;
                     {
                         std::int64_t save = lexer.GetPos();
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::ElementDecl(lexer, processor);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::ElementDecl(lexer, processor);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch4 = match;
@@ -6365,7 +6365,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::MarkupDecl(L
                             soul_expected::parser::Match* parentMatch5 = &match;
                             lexer.SetPos(save);
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::AttlistDecl(lexer, processor);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::AttlistDecl(lexer, processor);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 *parentMatch5 = match;
@@ -6380,7 +6380,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::MarkupDecl(L
                         soul_expected::parser::Match* parentMatch6 = &match;
                         lexer.SetPos(save);
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::EntityDecl(lexer, processor);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::EntityDecl(lexer, processor);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             *parentMatch6 = match;
@@ -6395,7 +6395,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::MarkupDecl(L
                     soul_expected::parser::Match* parentMatch7 = &match;
                     lexer.SetPos(save);
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::NotationDecl(lexer, processor);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::NotationDecl(lexer, processor);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch7 = match;
@@ -6410,7 +6410,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::MarkupDecl(L
                 soul_expected::parser::Match* parentMatch8 = &match;
                 lexer.SetPos(save);
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::PI(lexer, processor);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::PI(lexer, processor);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch8 = match;
@@ -6425,7 +6425,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::MarkupDecl(L
             soul_expected::parser::Match* parentMatch9 = &match;
             lexer.SetPos(save);
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Comment(lexer, processor);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Comment(lexer, processor);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch9 = match;
@@ -6500,7 +6500,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::ElementDecl(
                             soul_expected::parser::Match match(false);
                             soul_expected::parser::Match* parentMatch6 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 *parentMatch6 = match;
@@ -6514,7 +6514,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::ElementDecl(
                         soul_expected::parser::Match match(false);
                         soul_expected::parser::Match* parentMatch7 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             elementName.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -6529,7 +6529,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::ElementDecl(
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch8 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch8 = match;
@@ -6543,7 +6543,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::ElementDecl(
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch9 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::ContentSpec(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::ContentSpec(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch9 = match;
@@ -6561,7 +6561,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::ElementDecl(
                 std::int64_t save = lexer.GetPos();
                 soul_expected::parser::Match* parentMatch11 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     if (match.hit)
@@ -6681,7 +6681,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::ContentSpec(
                 soul_expected::parser::Match* parentMatch4 = &match;
                 lexer.SetPos(save);
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Mixed(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Mixed(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch4 = match;
@@ -6696,7 +6696,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::ContentSpec(
             soul_expected::parser::Match* parentMatch5 = &match;
             lexer.SetPos(save);
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Children(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Children(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch5 = match;
@@ -6769,7 +6769,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Mixed(LexerT
                                 std::int64_t save = lexer.GetPos();
                                 soul_expected::parser::Match* parentMatch7 = &match;
                                 {
-                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                     if (!m) return std::unexpected<int>(m.error());
                                     soul_expected::parser::Match match = *m;
                                     if (match.hit)
@@ -6840,7 +6840,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Mixed(LexerT
                                                     std::int64_t save = lexer.GetPos();
                                                     soul_expected::parser::Match* parentMatch15 = &match;
                                                     {
-                                                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                                         if (!m) return std::unexpected<int>(m.error());
                                                         soul_expected::parser::Match match = *m;
                                                         if (match.hit)
@@ -6881,7 +6881,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Mixed(LexerT
                                                     std::int64_t save = lexer.GetPos();
                                                     soul_expected::parser::Match* parentMatch18 = &match;
                                                     {
-                                                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                                         if (!m) return std::unexpected<int>(m.error());
                                                         soul_expected::parser::Match match = *m;
                                                         if (match.hit)
@@ -6904,7 +6904,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Mixed(LexerT
                                             soul_expected::parser::Match match(false);
                                             soul_expected::parser::Match* parentMatch19 = &match;
                                             {
-                                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                                                 if (!m) return std::unexpected<int>(m.error());
                                                 soul_expected::parser::Match match = *m;
                                                 name.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -6941,7 +6941,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Mixed(LexerT
                     std::int64_t save = lexer.GetPos();
                     soul_expected::parser::Match* parentMatch21 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         if (match.hit)
@@ -7019,7 +7019,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Mixed(LexerT
                                     std::int64_t save = lexer.GetPos();
                                     soul_expected::parser::Match* parentMatch29 = &match;
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         if (match.hit)
@@ -7071,7 +7071,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Mixed(LexerT
                             std::int64_t save = lexer.GetPos();
                             soul_expected::parser::Match* parentMatch32 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 if (match.hit)
@@ -7170,7 +7170,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Choice(Lexer
                             std::int64_t save = lexer.GetPos();
                             soul_expected::parser::Match* parentMatch6 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 if (match.hit)
@@ -7193,7 +7193,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Choice(Lexer
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch7 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::CP(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::CP(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch7 = match;
@@ -7226,7 +7226,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Choice(Lexer
                                         std::int64_t save = lexer.GetPos();
                                         soul_expected::parser::Match* parentMatch14 = &match;
                                         {
-                                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                             if (!m) return std::unexpected<int>(m.error());
                                             soul_expected::parser::Match match = *m;
                                             if (match.hit)
@@ -7267,7 +7267,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Choice(Lexer
                                         std::int64_t save = lexer.GetPos();
                                         soul_expected::parser::Match* parentMatch17 = &match;
                                         {
-                                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                             if (!m) return std::unexpected<int>(m.error());
                                             soul_expected::parser::Match match = *m;
                                             if (match.hit)
@@ -7290,7 +7290,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Choice(Lexer
                                 soul_expected::parser::Match match(false);
                                 soul_expected::parser::Match* parentMatch18 = &match;
                                 {
-                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::CP(lexer);
+                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::CP(lexer);
                                     if (!m) return std::unexpected<int>(m.error());
                                     soul_expected::parser::Match match = *m;
                                     *parentMatch18 = match;
@@ -7325,7 +7325,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Choice(Lexer
                                                 std::int64_t save = lexer.GetPos();
                                                 soul_expected::parser::Match* parentMatch24 = &match;
                                                 {
-                                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     if (match.hit)
@@ -7366,7 +7366,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Choice(Lexer
                                                 std::int64_t save = lexer.GetPos();
                                                 soul_expected::parser::Match* parentMatch27 = &match;
                                                 {
-                                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     if (match.hit)
@@ -7389,7 +7389,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Choice(Lexer
                                         soul_expected::parser::Match match(false);
                                         soul_expected::parser::Match* parentMatch28 = &match;
                                         {
-                                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::CP(lexer);
+                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::CP(lexer);
                                             if (!m) return std::unexpected<int>(m.error());
                                             soul_expected::parser::Match match = *m;
                                             *parentMatch28 = match;
@@ -7425,7 +7425,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Choice(Lexer
                 std::int64_t save = lexer.GetPos();
                 soul_expected::parser::Match* parentMatch30 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     if (match.hit)
@@ -7501,7 +7501,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::CP(LexerT& l
                 soul_expected::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t save = lexer.GetPos();
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     name.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -7512,7 +7512,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::CP(LexerT& l
                         soul_expected::parser::Match* parentMatch4 = &match;
                         lexer.SetPos(save);
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Choice(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Choice(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             *parentMatch4 = match;
@@ -7527,7 +7527,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::CP(LexerT& l
                     soul_expected::parser::Match* parentMatch5 = &match;
                     lexer.SetPos(save);
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Seq(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Seq(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch5 = match;
@@ -7679,7 +7679,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Seq(LexerT& 
                             std::int64_t save = lexer.GetPos();
                             soul_expected::parser::Match* parentMatch6 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 if (match.hit)
@@ -7702,7 +7702,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Seq(LexerT& 
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch7 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::CP(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::CP(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch7 = match;
@@ -7739,7 +7739,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Seq(LexerT& 
                                                 std::int64_t save = lexer.GetPos();
                                                 soul_expected::parser::Match* parentMatch14 = &match;
                                                 {
-                                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     if (match.hit)
@@ -7780,7 +7780,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Seq(LexerT& 
                                                 std::int64_t save = lexer.GetPos();
                                                 soul_expected::parser::Match* parentMatch17 = &match;
                                                 {
-                                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     if (match.hit)
@@ -7803,7 +7803,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Seq(LexerT& 
                                         soul_expected::parser::Match match(false);
                                         soul_expected::parser::Match* parentMatch18 = &match;
                                         {
-                                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::CP(lexer);
+                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::CP(lexer);
                                             if (!m) return std::unexpected<int>(m.error());
                                             soul_expected::parser::Match match = *m;
                                             *parentMatch18 = match;
@@ -7839,7 +7839,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Seq(LexerT& 
                 std::int64_t save = lexer.GetPos();
                 soul_expected::parser::Match* parentMatch20 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     if (match.hit)
@@ -7910,7 +7910,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Children(Lex
             soul_expected::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t save = lexer.GetPos();
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Choice(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Choice(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch2 = match;
@@ -7920,7 +7920,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Children(Lex
                     soul_expected::parser::Match* parentMatch3 = &match;
                     lexer.SetPos(save);
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Seq(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Seq(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch3 = match;
@@ -8076,7 +8076,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttlistDecl(
                         soul_expected::parser::Match match(false);
                         soul_expected::parser::Match* parentMatch5 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             *parentMatch5 = match;
@@ -8090,7 +8090,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttlistDecl(
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch6 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         name.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -8112,7 +8112,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttlistDecl(
                         {
                             std::int64_t save = lexer.GetPos();
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::AttDef(lexer, processor);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::AttDef(lexer, processor);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 if (match.hit)
@@ -8142,7 +8142,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttlistDecl(
                 std::int64_t save = lexer.GetPos();
                 soul_expected::parser::Match* parentMatch10 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     if (match.hit)
@@ -8219,7 +8219,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttDef(Lexer
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch4 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch4 = match;
@@ -8229,7 +8229,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttDef(Lexer
                         soul_expected::parser::Match match(false);
                         soul_expected::parser::Match* parentMatch5 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             name.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -8244,7 +8244,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttDef(Lexer
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch6 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch6 = match;
@@ -8258,7 +8258,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttDef(Lexer
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch7 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::AttType(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::AttType(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch7 = match;
@@ -8272,7 +8272,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttDef(Lexer
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch8 = &match;
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch8 = match;
@@ -8286,7 +8286,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttDef(Lexer
         soul_expected::parser::Match match(false);
         soul_expected::parser::Match* parentMatch9 = &match;
         {
-            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::DefaultDecl(lexer, processor);
+            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::DefaultDecl(lexer, processor);
             if (!m) return std::unexpected<int>(m.error());
             soul_expected::parser::Match match = *m;
             *parentMatch9 = match;
@@ -8328,7 +8328,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttType(Lexe
         soul_expected::parser::Match* parentMatch1 = &match;
         {
             std::int64_t save = lexer.GetPos();
-            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::StringType(lexer);
+            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::StringType(lexer);
             if (!m) return std::unexpected<int>(m.error());
             soul_expected::parser::Match match = *m;
             *parentMatch1 = match;
@@ -8338,7 +8338,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttType(Lexe
                 soul_expected::parser::Match* parentMatch2 = &match;
                 lexer.SetPos(save);
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::TokenizedType(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::TokenizedType(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch2 = match;
@@ -8353,7 +8353,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::AttType(Lexe
             soul_expected::parser::Match* parentMatch3 = &match;
             lexer.SetPos(save);
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::EnumeratedType(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::EnumeratedType(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch3 = match;
@@ -8654,7 +8654,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EnumeratedTy
     soul_expected::parser::Match* parentMatch0 = &match;
     {
         std::int64_t save = lexer.GetPos();
-        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::NotationType(lexer);
+        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::NotationType(lexer);
         if (!m) return std::unexpected<int>(m.error());
         soul_expected::parser::Match match = *m;
         *parentMatch0 = match;
@@ -8664,7 +8664,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EnumeratedTy
             soul_expected::parser::Match* parentMatch1 = &match;
             lexer.SetPos(save);
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Enumeration(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Enumeration(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch1 = match;
@@ -8743,7 +8743,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NotationType
                                 soul_expected::parser::Match match(false);
                                 soul_expected::parser::Match* parentMatch7 = &match;
                                 {
-                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                     if (!m) return std::unexpected<int>(m.error());
                                     soul_expected::parser::Match match = *m;
                                     *parentMatch7 = match;
@@ -8779,7 +8779,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NotationType
                             std::int64_t save = lexer.GetPos();
                             soul_expected::parser::Match* parentMatch10 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 if (match.hit)
@@ -8802,7 +8802,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NotationType
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch11 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         f.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -8840,7 +8840,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NotationType
                                                 std::int64_t save = lexer.GetPos();
                                                 soul_expected::parser::Match* parentMatch18 = &match;
                                                 {
-                                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     if (match.hit)
@@ -8881,7 +8881,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NotationType
                                                 std::int64_t save = lexer.GetPos();
                                                 soul_expected::parser::Match* parentMatch21 = &match;
                                                 {
-                                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     if (match.hit)
@@ -8904,7 +8904,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NotationType
                                         soul_expected::parser::Match match(false);
                                         soul_expected::parser::Match* parentMatch22 = &match;
                                         {
-                                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                                             if (!m) return std::unexpected<int>(m.error());
                                             soul_expected::parser::Match match = *m;
                                             n.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -8941,7 +8941,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NotationType
                 std::int64_t save = lexer.GetPos();
                 soul_expected::parser::Match* parentMatch24 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     if (match.hit)
@@ -9035,7 +9035,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Enumeration(
                             std::int64_t save = lexer.GetPos();
                             soul_expected::parser::Match* parentMatch6 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 if (match.hit)
@@ -9058,7 +9058,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Enumeration(
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch7 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Nmtoken(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Nmtoken(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch7 = match;
@@ -9095,7 +9095,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Enumeration(
                                                 std::int64_t save = lexer.GetPos();
                                                 soul_expected::parser::Match* parentMatch14 = &match;
                                                 {
-                                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     if (match.hit)
@@ -9136,7 +9136,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Enumeration(
                                                 std::int64_t save = lexer.GetPos();
                                                 soul_expected::parser::Match* parentMatch17 = &match;
                                                 {
-                                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     if (match.hit)
@@ -9159,7 +9159,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Enumeration(
                                         soul_expected::parser::Match match(false);
                                         soul_expected::parser::Match* parentMatch18 = &match;
                                         {
-                                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Nmtoken(lexer);
+                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Nmtoken(lexer);
                                             if (!m) return std::unexpected<int>(m.error());
                                             soul_expected::parser::Match match = *m;
                                             *parentMatch18 = match;
@@ -9195,7 +9195,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Enumeration(
                 std::int64_t save = lexer.GetPos();
                 soul_expected::parser::Match* parentMatch20 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     if (match.hit)
@@ -9260,7 +9260,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Nmtoken(Lexe
     soul_expected::parser::Match match(false);
     soul_expected::parser::Match* parentMatch0 = &match;
     {
-        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::NameChar(lexer);
+        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::NameChar(lexer);
         if (!m) return std::unexpected<int>(m.error());
         soul_expected::parser::Match match = *m;
         nameChar.reset(static_cast<soul_expected::parser::Value<char32_t>*>(match.value));
@@ -9274,7 +9274,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::Nmtoken(Lexe
         {
             std::int64_t save = lexer.GetPos();
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::NameChar(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::NameChar(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 nameChar.reset(static_cast<soul_expected::parser::Value<char32_t>*>(match.value));
@@ -9410,7 +9410,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::DefaultDecl(
                                     soul_expected::parser::Match match(false);
                                     soul_expected::parser::Match* parentMatch9 = &match;
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         *parentMatch9 = match;
@@ -9435,7 +9435,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::DefaultDecl(
                         soul_expected::parser::Match match(false);
                         soul_expected::parser::Match* parentMatch10 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::AttValue(lexer, processor);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::AttValue(lexer, processor);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             attValue.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -9481,7 +9481,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EntityDecl(L
     soul_expected::parser::Match* parentMatch0 = &match;
     {
         std::int64_t save = lexer.GetPos();
-        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::GEDecl(lexer, processor);
+        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::GEDecl(lexer, processor);
         if (!m) return std::unexpected<int>(m.error());
         soul_expected::parser::Match match = *m;
         *parentMatch0 = match;
@@ -9491,7 +9491,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EntityDecl(L
             soul_expected::parser::Match* parentMatch1 = &match;
             lexer.SetPos(save);
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::PEDecl(lexer, processor);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::PEDecl(lexer, processor);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch1 = match;
@@ -9566,7 +9566,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::GEDecl(Lexer
                             soul_expected::parser::Match match(false);
                             soul_expected::parser::Match* parentMatch6 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 *parentMatch6 = match;
@@ -9580,7 +9580,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::GEDecl(Lexer
                         soul_expected::parser::Match match(false);
                         soul_expected::parser::Match* parentMatch7 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             entityName.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -9595,7 +9595,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::GEDecl(Lexer
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch8 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch8 = match;
@@ -9609,7 +9609,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::GEDecl(Lexer
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch9 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::EntityDef(lexer, processor);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::EntityDef(lexer, processor);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch9 = match;
@@ -9627,7 +9627,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::GEDecl(Lexer
                 std::int64_t save = lexer.GetPos();
                 soul_expected::parser::Match* parentMatch11 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     if (match.hit)
@@ -9692,7 +9692,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EntityDef(Le
     soul_expected::parser::Match* parentMatch0 = &match;
     {
         std::int64_t save = lexer.GetPos();
-        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::EntityValue(lexer, processor);
+        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::EntityValue(lexer, processor);
         if (!m) return std::unexpected<int>(m.error());
         soul_expected::parser::Match match = *m;
         *parentMatch0 = match;
@@ -9708,7 +9708,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EntityDef(Le
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch3 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::ExternalID(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::ExternalID(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch3 = match;
@@ -9722,7 +9722,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EntityDef(Le
                             std::int64_t save = lexer.GetPos();
                             soul_expected::parser::Match* parentMatch5 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::NDataDecl(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::NDataDecl(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 if (match.hit)
@@ -9835,7 +9835,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EntityValue(
                                                 soul_expected::parser::Match* parentMatch8 = &match;
                                                 lexer.SetPos(save);
                                                 {
-                                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::PEReference(lexer, processor);
+                                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::PEReference(lexer, processor);
                                                     if (!m) return std::unexpected<int>(m.error());
                                                     soul_expected::parser::Match match = *m;
                                                     *parentMatch8 = match;
@@ -9850,7 +9850,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EntityValue(
                                             soul_expected::parser::Match* parentMatch9 = &match;
                                             lexer.SetPos(save);
                                             {
-                                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Reference(lexer, processor);
+                                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Reference(lexer, processor);
                                                 if (!m) return std::unexpected<int>(m.error());
                                                 soul_expected::parser::Match match = *m;
                                                 *parentMatch9 = match;
@@ -9960,7 +9960,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EntityValue(
                                                         soul_expected::parser::Match* parentMatch19 = &match;
                                                         lexer.SetPos(save);
                                                         {
-                                                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::PEReference(lexer, processor);
+                                                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::PEReference(lexer, processor);
                                                             if (!m) return std::unexpected<int>(m.error());
                                                             soul_expected::parser::Match match = *m;
                                                             *parentMatch19 = match;
@@ -9975,7 +9975,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::EntityValue(
                                                     soul_expected::parser::Match* parentMatch20 = &match;
                                                     lexer.SetPos(save);
                                                     {
-                                                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Reference(lexer, processor);
+                                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Reference(lexer, processor);
                                                         if (!m) return std::unexpected<int>(m.error());
                                                         soul_expected::parser::Match match = *m;
                                                         *parentMatch20 = match;
@@ -10072,7 +10072,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PEReference(
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 name.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -10171,7 +10171,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PEDecl(Lexer
                                     soul_expected::parser::Match match(false);
                                     soul_expected::parser::Match* parentMatch8 = &match;
                                     {
-                                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                         if (!m) return std::unexpected<int>(m.error());
                                         soul_expected::parser::Match match = *m;
                                         *parentMatch8 = match;
@@ -10203,7 +10203,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PEDecl(Lexer
                             soul_expected::parser::Match match(false);
                             soul_expected::parser::Match* parentMatch10 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 *parentMatch10 = match;
@@ -10217,7 +10217,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PEDecl(Lexer
                         soul_expected::parser::Match match(false);
                         soul_expected::parser::Match* parentMatch11 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             peName.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -10232,7 +10232,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PEDecl(Lexer
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch12 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch12 = match;
@@ -10246,7 +10246,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PEDecl(Lexer
                 soul_expected::parser::Match match(false);
                 soul_expected::parser::Match* parentMatch13 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::PEDef(lexer, processor);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::PEDef(lexer, processor);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     *parentMatch13 = match;
@@ -10264,7 +10264,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PEDecl(Lexer
                 std::int64_t save = lexer.GetPos();
                 soul_expected::parser::Match* parentMatch15 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     if (match.hit)
@@ -10329,7 +10329,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PEDef(LexerT
     soul_expected::parser::Match* parentMatch0 = &match;
     {
         std::int64_t save = lexer.GetPos();
-        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::EntityValue(lexer, processor);
+        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::EntityValue(lexer, processor);
         if (!m) return std::unexpected<int>(m.error());
         soul_expected::parser::Match match = *m;
         *parentMatch0 = match;
@@ -10339,7 +10339,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PEDef(LexerT
             soul_expected::parser::Match* parentMatch1 = &match;
             lexer.SetPos(save);
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::ExternalID(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::ExternalID(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch1 = match;
@@ -10384,7 +10384,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NDataDecl(Le
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch2 = match;
@@ -10419,7 +10419,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NDataDecl(Le
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch4 = &match;
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch4 = match;
@@ -10433,7 +10433,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NDataDecl(Le
         soul_expected::parser::Match match(false);
         soul_expected::parser::Match* parentMatch5 = &match;
         {
-            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
             if (!m) return std::unexpected<int>(m.error());
             soul_expected::parser::Match match = *m;
             name.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -10508,7 +10508,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NotationDecl
                             soul_expected::parser::Match match(false);
                             soul_expected::parser::Match* parentMatch6 = &match;
                             {
-                                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                                 if (!m) return std::unexpected<int>(m.error());
                                 soul_expected::parser::Match match = *m;
                                 *parentMatch6 = match;
@@ -10522,7 +10522,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NotationDecl
                         soul_expected::parser::Match match(false);
                         soul_expected::parser::Match* parentMatch7 = &match;
                         {
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::Name(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::Name(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             name.reset(static_cast<soul_expected::parser::Value<std::string>*>(match.value));
@@ -10537,7 +10537,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NotationDecl
                     soul_expected::parser::Match match(false);
                     soul_expected::parser::Match* parentMatch8 = &match;
                     {
-                        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                         if (!m) return std::unexpected<int>(m.error());
                         soul_expected::parser::Match match = *m;
                         *parentMatch8 = match;
@@ -10558,7 +10558,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NotationDecl
                         soul_expected::parser::Match* parentMatch11 = &match;
                         {
                             std::int64_t save = lexer.GetPos();
-                            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::ExternalID(lexer);
+                            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::ExternalID(lexer);
                             if (!m) return std::unexpected<int>(m.error());
                             soul_expected::parser::Match match = *m;
                             *parentMatch11 = match;
@@ -10568,7 +10568,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NotationDecl
                                 soul_expected::parser::Match* parentMatch12 = &match;
                                 lexer.SetPos(save);
                                 {
-                                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::PublicID(lexer);
+                                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::PublicID(lexer);
                                     if (!m) return std::unexpected<int>(m.error());
                                     soul_expected::parser::Match match = *m;
                                     *parentMatch12 = match;
@@ -10593,7 +10593,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::NotationDecl
                 std::int64_t save = lexer.GetPos();
                 soul_expected::parser::Match* parentMatch14 = &match;
                 {
-                    std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                    std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                     if (!m) return std::unexpected<int>(m.error());
                     soul_expected::parser::Match match = *m;
                     if (match.hit)
@@ -10658,7 +10658,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::DeclSep(Lexe
     soul_expected::parser::Match* parentMatch0 = &match;
     {
         std::int64_t save = lexer.GetPos();
-        std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::PEReference(lexer, processor);
+        std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::PEReference(lexer, processor);
         if (!m) return std::unexpected<int>(m.error());
         soul_expected::parser::Match match = *m;
         *parentMatch0 = match;
@@ -10668,7 +10668,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::DeclSep(Lexe
             soul_expected::parser::Match* parentMatch1 = &match;
             lexer.SetPos(save);
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch1 = match;
@@ -10730,7 +10730,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PublicID(Lex
             soul_expected::parser::Match match(false);
             soul_expected::parser::Match* parentMatch2 = &match;
             {
-                std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::S(lexer);
+                std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::S(lexer);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
                 *parentMatch2 = match;
@@ -10744,7 +10744,7 @@ std::expected<soul_expected::parser::Match, int> XmlParser<LexerT>::PublicID(Lex
         soul_expected::parser::Match match(false);
         soul_expected::parser::Match* parentMatch3 = &match;
         {
-            std::expected<soul_expected::parser::Match, int> m = XmlParser<LexerT>::PubidLiteral(lexer);
+            std::expected<soul_expected::parser::Match, int> m = soul_expected::xml::document::parser::XmlParser<LexerT>::PubidLiteral(lexer);
             if (!m) return std::unexpected<int>(m.error());
             soul_expected::parser::Match match = *m;
             *parentMatch3 = match;

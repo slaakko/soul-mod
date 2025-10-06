@@ -14,7 +14,7 @@ template<typename LexerT>
 struct CommonParser
 {
     static std::expected<soul::parser::Match, int> QualifiedId(LexerT& lexer);
-    static std::expected<soul::parser::Match, int> ExportModule(LexerT& lexer);
+    static std::expected<soul::parser::Match, int> Export(LexerT& lexer);
     static std::expected<soul::parser::Match, int> Import(LexerT& lexer);
     static std::expected<soul::parser::Match, int> ImportPrefix(LexerT& lexer);
     static std::expected<soul::parser::Match, int> ExprString(LexerT& lexer);

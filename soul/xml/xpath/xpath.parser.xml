@@ -1,25 +1,25 @@
 <parserFile>
  <grammar name="XPathParser">
-  <rule first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" name="Expr">
-   <action first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-    <group first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-     <nonterminal first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="OrExpr"/>
+  <rule first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" name="Expr">
+   <action first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+    <group first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+     <nonterminal first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="OrExpr"/>
     </group>
    </action>
   </rule>
-  <rule first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" name="OrExpr">
-   <action first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-    <group first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-     <sequence first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-      <action first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-       <nonterminal first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="AndExpr"/>
+  <rule first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" name="OrExpr">
+   <action first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+    <group first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+     <sequence first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+      <action first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+       <nonterminal first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="AndExpr"/>
       </action>
       <kleene first="{#, NAME}">
        <group first="{NAME}">
         <sequence first="{NAME}">
          <nonterminal first="{NAME}" ruleName="OrKeyword"/>
-         <action first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-          <nonterminal first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="AndExpr"/>
+         <action first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+          <nonterminal first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="AndExpr"/>
          </action>
         </sequence>
        </group>
@@ -28,19 +28,19 @@
     </group>
    </action>
   </rule>
-  <rule first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" name="AndExpr">
-   <action first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-    <group first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-     <sequence first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-      <action first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-       <nonterminal first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="EqualityExpr"/>
+  <rule first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" name="AndExpr">
+   <action first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+    <group first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+     <sequence first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+      <action first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+       <nonterminal first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="EqualityExpr"/>
       </action>
       <kleene first="{#, NAME}">
        <group first="{NAME}">
         <sequence first="{NAME}">
          <nonterminal first="{NAME}" ruleName="AndKeyword"/>
-         <action first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-          <nonterminal first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="EqualityExpr"/>
+         <action first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+          <nonterminal first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="EqualityExpr"/>
          </action>
         </sequence>
        </group>
@@ -49,20 +49,20 @@
     </group>
    </action>
   </rule>
-  <rule first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" name="EqualityExpr">
-   <action first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-    <group first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-     <sequence first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-      <action first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-       <nonterminal first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="RelationalExpr"/>
+  <rule first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" name="EqualityExpr">
+   <action first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+    <group first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+     <sequence first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+      <action first="{#, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+       <nonterminal first="{#, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="RelationalExpr"/>
       </action>
-      <kleene first="{#, NEQ, EQ}">
-       <group first="{NEQ, EQ}">
-        <sequence first="{NEQ, EQ}">
-         <nonterminal first="{NEQ, EQ}" ruleName="EqualityOp"/>
-         <action first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-          <expectation first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-           <nonterminal first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="RelationalExpr"/>
+      <kleene first="{#, EQ, NEQ}">
+       <group first="{EQ, NEQ}">
+        <sequence first="{EQ, NEQ}">
+         <nonterminal first="{EQ, NEQ}" ruleName="EqualityOp"/>
+         <action first="{#, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+          <expectation first="{#, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+           <nonterminal first="{#, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="RelationalExpr"/>
           </expectation>
          </action>
         </sequence>
@@ -72,20 +72,20 @@
     </group>
    </action>
   </rule>
-  <rule first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" name="RelationalExpr">
-   <action first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-    <group first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-     <sequence first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-      <action first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-       <nonterminal first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="AdditiveExpr"/>
+  <rule first="{#, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" name="RelationalExpr">
+   <action first="{#, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+    <group first="{#, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+     <sequence first="{#, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+      <action first="{#, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+       <nonterminal first="{#, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="AdditiveExpr"/>
       </action>
-      <kleene first="{#, LESS, GREATER, LEQ, GEQ}">
-       <group first="{LESS, GREATER, LEQ, GEQ}">
-        <sequence first="{LESS, GREATER, LEQ, GEQ}">
-         <nonterminal first="{LESS, GREATER, LEQ, GEQ}" ruleName="RelationalOp"/>
-         <action first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-          <expectation first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-           <nonterminal first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="AdditiveExpr"/>
+      <kleene first="{#, LEQ, GEQ, LESS, GREATER}">
+       <group first="{LEQ, GEQ, LESS, GREATER}">
+        <sequence first="{LEQ, GEQ, LESS, GREATER}">
+         <nonterminal first="{LEQ, GEQ, LESS, GREATER}" ruleName="RelationalOp"/>
+         <action first="{#, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+          <expectation first="{#, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+           <nonterminal first="{#, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="AdditiveExpr"/>
           </expectation>
          </action>
         </sequence>
@@ -95,20 +95,20 @@
     </group>
    </action>
   </rule>
-  <rule first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" name="AdditiveExpr">
-   <action first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-    <group first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-     <sequence first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, PLUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-      <action first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-       <nonterminal first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="MultiplicativeExpr"/>
+  <rule first="{#, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" name="AdditiveExpr">
+   <action first="{#, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+    <group first="{#, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+     <sequence first="{#, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+      <action first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+       <nonterminal first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="MultiplicativeExpr"/>
       </action>
-      <kleene first="{#, MINUS, PLUS}">
-       <group first="{MINUS, PLUS}">
-        <sequence first="{MINUS, PLUS}">
-         <nonterminal first="{MINUS, PLUS}" ruleName="AdditiveOp"/>
-         <action first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-          <expectation first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-           <nonterminal first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="MultiplicativeExpr"/>
+      <kleene first="{#, PLUS, MINUS}">
+       <group first="{PLUS, MINUS}">
+        <sequence first="{PLUS, MINUS}">
+         <nonterminal first="{PLUS, MINUS}" ruleName="AdditiveOp"/>
+         <action first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+          <expectation first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+           <nonterminal first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="MultiplicativeExpr"/>
           </expectation>
          </action>
         </sequence>
@@ -118,20 +118,20 @@
     </group>
    </action>
   </rule>
-  <rule first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" name="MultiplicativeExpr">
-   <action first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-    <group first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-     <sequence first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-      <action first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-       <nonterminal first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="UnaryExpr"/>
+  <rule first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" name="MultiplicativeExpr">
+   <action first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+    <group first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+     <sequence first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+      <action first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+       <nonterminal first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="UnaryExpr"/>
       </action>
       <kleene first="{#, STAR, NAME}">
        <group first="{STAR, NAME}">
         <sequence first="{STAR, NAME}">
          <nonterminal first="{STAR, NAME}" ruleName="MultiplicativeOp"/>
-         <action first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-          <expectation first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-           <nonterminal first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="UnaryExpr"/>
+         <action first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+          <expectation first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+           <nonterminal first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="UnaryExpr"/>
           </expectation>
          </action>
         </sequence>
@@ -141,32 +141,32 @@
     </group>
    </action>
   </rule>
-  <rule first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" name="UnaryExpr">
-   <choice first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
+  <rule first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" name="UnaryExpr">
+   <choice first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
     <sequence first="{MINUS}">
      <token first="{MINUS}" name="MINUS"/>
-     <action first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-      <nonterminal first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, MINUS, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="UnaryExpr"/>
+     <action first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+      <nonterminal first="{#, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="UnaryExpr"/>
      </action>
     </sequence>
-    <action first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-     <nonterminal first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="UnionExpr"/>
+    <action first="{#, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+     <nonterminal first="{#, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="UnionExpr"/>
     </action>
    </choice>
   </rule>
-  <rule first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" name="UnionExpr">
-   <action first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-    <group first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-     <sequence first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, SLASH, DOT, STAR, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-      <action first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, SLASH, DOT, STAR, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-       <nonterminal first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, SLASH, DOT, STAR, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="PathExpr"/>
+  <rule first="{#, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" name="UnionExpr">
+   <action first="{#, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+    <group first="{#, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+     <sequence first="{#, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+      <action first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+       <nonterminal first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="PathExpr"/>
       </action>
       <kleene first="{#, UNION}">
        <group first="{UNION}">
         <sequence first="{UNION}">
          <token first="{UNION}" name="UNION"/>
-         <action first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, SLASH, DOT, STAR, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-          <nonterminal first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, SLASH, DOT, STAR, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="PathExpr"/>
+         <action first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+          <nonterminal first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="PathExpr"/>
          </action>
         </sequence>
        </group>
@@ -175,22 +175,22 @@
     </group>
    </action>
   </rule>
-  <rule first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, SLASH, DOT, STAR, NAME, DQ_STRING, NUMBER, SQ_STRING}" name="PathExpr">
-   <choice first="{#, DOLLAR, SLASH_SLASH, DOT_DOT, LBRACKET, LPAREN, AT, SLASH, DOT, STAR, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-    <group first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}">
-     <action first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}">
-      <group first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}">
-       <difference first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}">
-        <nonterminal first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}" ruleName="LocationPath"/>
+  <rule first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" name="PathExpr">
+   <choice first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+    <group first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+     <action first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+      <group first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+       <difference first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+        <nonterminal first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}" ruleName="LocationPath"/>
         <nonterminal first="{}" ruleName="FunctionCall"/>
        </difference>
       </group>
      </action>
     </group>
-    <group first="{DOLLAR, LPAREN, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-     <sequence first="{DOLLAR, LPAREN, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-      <action first="{DOLLAR, LPAREN, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-       <nonterminal first="{DOLLAR, LPAREN, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="FilterExpr"/>
+    <group first="{DOLLAR, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+     <sequence first="{DOLLAR, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+      <action first="{DOLLAR, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+       <nonterminal first="{DOLLAR, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="FilterExpr"/>
       </action>
       <action first="{#, SLASH_SLASH, SLASH}">
        <group first="{#, SLASH_SLASH, SLASH}">
@@ -200,7 +200,7 @@
            <group first="{SLASH_SLASH, SLASH}">
             <sequence first="{SLASH_SLASH, SLASH}">
              <nonterminal first="{SLASH_SLASH, SLASH}" ruleName="CombinePathOp"/>
-             <nonterminal first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}" ruleName="RelativeLocationPath"/>
+             <nonterminal first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}" ruleName="RelativeLocationPath"/>
             </sequence>
            </group>
           </action>
@@ -212,13 +212,13 @@
     </group>
    </choice>
   </rule>
-  <rule first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}" name="LocationPath">
-   <choice first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}">
+  <rule first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}" name="LocationPath">
+   <choice first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}">
     <action first="{SLASH_SLASH, SLASH}">
      <nonterminal first="{SLASH_SLASH, SLASH}" ruleName="AbsoluteLocationPath"/>
     </action>
-    <action first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}">
-     <nonterminal first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}" ruleName="RelativeLocationPath"/>
+    <action first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+     <nonterminal first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}" ruleName="RelativeLocationPath"/>
     </action>
    </choice>
   </rule>
@@ -233,10 +233,10 @@
        <action first="{SLASH}">
         <token first="{SLASH}" name="SLASH"/>
        </action>
-       <optional first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}">
-        <group first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}">
-         <action first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}">
-          <nonterminal first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}" ruleName="RelativeLocationPath"/>
+       <optional first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+        <group first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+         <action first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+          <nonterminal first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}" ruleName="RelativeLocationPath"/>
          </action>
         </group>
        </optional>
@@ -248,17 +248,17 @@
   <rule first="{SLASH_SLASH}" name="AbbreviatedAbsoluteLocationPath">
    <sequence first="{SLASH_SLASH}">
     <token first="{SLASH_SLASH}" name="SLASH_SLASH"/>
-    <action first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}">
-     <nonterminal first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}" ruleName="RelativeLocationPath"/>
+    <action first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+     <nonterminal first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}" ruleName="RelativeLocationPath"/>
     </action>
    </sequence>
   </rule>
-  <rule first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}" name="RelativeLocationPath">
-   <action first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}">
-    <group first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}">
-     <sequence first="{#, SLASH_SLASH, DOT_DOT, LBRACKET, AT, SLASH, DOT, STAR, NAME}">
-      <action first="{#, DOT_DOT, LBRACKET, AT, DOT, STAR, NAME}">
-       <nonterminal first="{#, DOT_DOT, LBRACKET, AT, DOT, STAR, NAME}" ruleName="Step"/>
+  <rule first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}" name="RelativeLocationPath">
+   <action first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+    <group first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+     <sequence first="{#, STAR, SLASH_SLASH, SLASH, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+      <action first="{#, STAR, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+       <nonterminal first="{#, STAR, DOT_DOT, DOT, AT, LBRACKET, NAME}" ruleName="Step"/>
       </action>
       <kleene first="{#, SLASH_SLASH, SLASH}">
        <group first="{SLASH_SLASH, SLASH}">
@@ -266,7 +266,7 @@
          <group first="{SLASH_SLASH, SLASH}">
           <sequence first="{SLASH_SLASH, SLASH}">
            <nonterminal first="{SLASH_SLASH, SLASH}" ruleName="CombinePathOp"/>
-           <nonterminal first="{#, DOT_DOT, LBRACKET, AT, DOT, STAR, NAME}" ruleName="Step"/>
+           <nonterminal first="{#, STAR, DOT_DOT, DOT, AT, LBRACKET, NAME}" ruleName="Step"/>
           </sequence>
          </group>
         </action>
@@ -276,12 +276,12 @@
     </group>
    </action>
   </rule>
-  <rule first="{#, DOT_DOT, LBRACKET, AT, DOT, STAR, NAME}" name="Step">
-   <action first="{#, DOT_DOT, LBRACKET, AT, DOT, STAR, NAME}">
-    <group first="{#, DOT_DOT, LBRACKET, AT, DOT, STAR, NAME}">
-     <choice first="{#, DOT_DOT, LBRACKET, AT, DOT, STAR, NAME}">
-      <sequence first="{#, LBRACKET, AT, STAR, NAME}">
-       <sequence first="{#, AT, STAR, NAME}">
+  <rule first="{#, STAR, DOT_DOT, DOT, AT, LBRACKET, NAME}" name="Step">
+   <action first="{#, STAR, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+    <group first="{#, STAR, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+     <choice first="{#, STAR, DOT_DOT, DOT, AT, LBRACKET, NAME}">
+      <sequence first="{#, STAR, AT, LBRACKET, NAME}">
+       <sequence first="{#, STAR, AT, NAME}">
         <nonterminal first="{#, AT, NAME}" ruleName="AxisSpecifier"/>
         <action first="{STAR, NAME}">
          <nonterminal first="{STAR, NAME}" ruleName="NodeTest"/>
@@ -453,7 +453,7 @@
      <sequence first="{LBRACKET}">
       <sequence first="{LBRACKET}">
        <token first="{LBRACKET}" name="LBRACKET"/>
-       <nonterminal first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="Expr"/>
+       <nonterminal first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="Expr"/>
       </sequence>
       <token first="{RBRACKET}" name="RBRACKET"/>
      </sequence>
@@ -481,18 +481,18 @@
          <token first="{LPAREN}" name="LPAREN"/>
         </action>
        </sequence>
-       <optional first="{#, DOLLAR, SLASH_SLASH, COMMA, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-        <group first="{#, DOLLAR, SLASH_SLASH, COMMA, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-         <list first="{#, DOLLAR, SLASH_SLASH, COMMA, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-          <sequence first="{#, DOLLAR, SLASH_SLASH, COMMA, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-           <action first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-            <nonterminal first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="Argument"/>
+       <optional first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, COMMA, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+        <group first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, COMMA, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+         <list first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, COMMA, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+          <sequence first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, COMMA, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+           <action first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+            <nonterminal first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="Argument"/>
            </action>
            <kleene first="{#, COMMA}">
             <sequence first="{COMMA}">
              <token first="{COMMA}" name="COMMA"/>
-             <action first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-              <nonterminal first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="Argument"/>
+             <action first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+              <nonterminal first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="Argument"/>
              </action>
             </sequence>
            </kleene>
@@ -516,17 +516,17 @@
     </group>
    </action>
   </rule>
-  <rule first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" name="Argument">
-   <action first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-    <nonterminal first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="Expr"/>
+  <rule first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" name="Argument">
+   <action first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+    <nonterminal first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="Expr"/>
    </action>
   </rule>
-  <rule first="{DOLLAR, LPAREN, NAME, DQ_STRING, NUMBER, SQ_STRING}" name="FilterExpr">
-   <action first="{DOLLAR, LPAREN, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-    <group first="{DOLLAR, LPAREN, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-     <sequence first="{DOLLAR, LPAREN, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-      <action first="{DOLLAR, LPAREN, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-       <nonterminal first="{DOLLAR, LPAREN, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="PrimaryExpr"/>
+  <rule first="{DOLLAR, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" name="FilterExpr">
+   <action first="{DOLLAR, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+    <group first="{DOLLAR, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+     <sequence first="{DOLLAR, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+      <action first="{DOLLAR, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+       <nonterminal first="{DOLLAR, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="PrimaryExpr"/>
       </action>
       <kleene first="{#, LBRACKET}">
        <group first="{LBRACKET}">
@@ -539,9 +539,9 @@
     </group>
    </action>
   </rule>
-  <rule first="{DOLLAR, LPAREN, NAME, DQ_STRING, NUMBER, SQ_STRING}" name="PrimaryExpr">
-   <choice first="{DOLLAR, LPAREN, NAME, DQ_STRING, NUMBER, SQ_STRING}">
-    <choice first="{DOLLAR, LPAREN, NAME, DQ_STRING, SQ_STRING}">
+  <rule first="{DOLLAR, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" name="PrimaryExpr">
+   <choice first="{DOLLAR, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}">
+    <choice first="{DOLLAR, LPAREN, DQ_STRING, SQ_STRING, NAME}">
      <choice first="{DOLLAR, LPAREN, NAME}">
       <choice first="{DOLLAR, NAME}">
        <action first="{NAME}">
@@ -556,7 +556,7 @@
         <sequence first="{LPAREN}">
          <sequence first="{LPAREN}">
           <token first="{LPAREN}" name="LPAREN"/>
-          <nonterminal first="{#, DOLLAR, SLASH_SLASH, LESS, DOT_DOT, LBRACKET, LPAREN, NEQ, AT, MINUS, EQ, PLUS, GREATER, SLASH, DOT, STAR, LEQ, GEQ, UNION, NAME, DQ_STRING, NUMBER, SQ_STRING}" ruleName="Expr"/>
+          <nonterminal first="{#, EQ, NEQ, LEQ, GEQ, LESS, GREATER, PLUS, MINUS, STAR, UNION, SLASH_SLASH, SLASH, DOT_DOT, DOT, DOLLAR, AT, LBRACKET, LPAREN, DQ_STRING, SQ_STRING, NUMBER, NAME}" ruleName="Expr"/>
          </sequence>
          <token first="{RPAREN}" name="RPAREN"/>
         </sequence>
@@ -587,8 +587,8 @@
     <token first="{NUMBER}" name="NUMBER"/>
    </action>
   </rule>
-  <rule first="{NEQ, EQ}" name="EqualityOp">
-   <choice first="{NEQ, EQ}">
+  <rule first="{EQ, NEQ}" name="EqualityOp">
+   <choice first="{EQ, NEQ}">
     <action first="{EQ}">
      <token first="{EQ}" name="EQ"/>
     </action>
@@ -597,9 +597,9 @@
     </action>
    </choice>
   </rule>
-  <rule first="{LESS, GREATER, LEQ, GEQ}" name="RelationalOp">
-   <choice first="{LESS, GREATER, LEQ, GEQ}">
-    <choice first="{LESS, GREATER, LEQ}">
+  <rule first="{LEQ, GEQ, LESS, GREATER}" name="RelationalOp">
+   <choice first="{LEQ, GEQ, LESS, GREATER}">
+    <choice first="{LEQ, LESS, GREATER}">
      <choice first="{LESS, GREATER}">
       <action first="{LESS}">
        <token first="{LESS}" name="LESS"/>
@@ -617,8 +617,8 @@
     </action>
    </choice>
   </rule>
-  <rule first="{MINUS, PLUS}" name="AdditiveOp">
-   <choice first="{MINUS, PLUS}">
+  <rule first="{PLUS, MINUS}" name="AdditiveOp">
+   <choice first="{PLUS, MINUS}">
     <action first="{PLUS}">
      <token first="{PLUS}" name="PLUS"/>
     </action>

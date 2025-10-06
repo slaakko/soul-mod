@@ -1,11 +1,11 @@
 <parserFile>
  <grammar name="ExpressionFileParser">
-  <rule first="{#, EXPRESSIONS, ID, LBRACE, RBRACE}" name="ExpressionFile">
-   <action first="{#, EXPRESSIONS, ID, LBRACE, RBRACE}">
-    <group first="{#, EXPRESSIONS, ID, LBRACE, RBRACE}">
-     <sequence first="{#, EXPRESSIONS, ID, LBRACE, RBRACE}">
-      <sequence first="{#, EXPRESSIONS, ID, LBRACE}">
-       <sequence first="{#, EXPRESSIONS, ID, LBRACE}">
+  <rule first="{#, LBRACE, RBRACE, EXPRESSIONS, ID}" name="ExpressionFile">
+   <action first="{#, LBRACE, RBRACE, EXPRESSIONS, ID}">
+    <group first="{#, LBRACE, RBRACE, EXPRESSIONS, ID}">
+     <sequence first="{#, LBRACE, RBRACE, EXPRESSIONS, ID}">
+      <sequence first="{#, LBRACE, EXPRESSIONS, ID}">
+       <sequence first="{#, LBRACE, EXPRESSIONS, ID}">
         <sequence first="{#, EXPRESSIONS, ID}">
          <sequence first="{#, EXPRESSIONS}">
           <action first="{#}">

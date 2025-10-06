@@ -161,7 +161,7 @@ std::expected<soul::parser::Match, int> CommonParser<LexerT>::QualifiedId(LexerT
 }
 
 template<typename LexerT>
-std::expected<soul::parser::Match, int> CommonParser<LexerT>::ExportModule(LexerT& lexer)
+std::expected<soul::parser::Match, int> CommonParser<LexerT>::Export(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -169,7 +169,7 @@ std::expected<soul::parser::Match, int> CommonParser<LexerT>::ExportModule(Lexer
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ExportModule");
+        soul::lexer::WriteBeginRuleToLog(lexer, "Export");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097986);
@@ -257,7 +257,7 @@ std::expected<soul::parser::Match, int> CommonParser<LexerT>::ExportModule(Lexer
         {
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExportModule");
+                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Export");
                 #endif
                 return soul::parser::Match(true, exp.release());
             }
@@ -267,8 +267,8 @@ std::expected<soul::parser::Match, int> CommonParser<LexerT>::ExportModule(Lexer
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)
     {
-        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExportModule");
-        else soul::lexer::WriteFailureToLog(lexer, "ExportModule");
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Export");
+        else soul::lexer::WriteFailureToLog(lexer, "Export");
     }
     #endif
     if (!match.hit)

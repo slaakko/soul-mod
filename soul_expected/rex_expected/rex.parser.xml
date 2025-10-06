@@ -1,25 +1,25 @@
 <parserFile>
  <grammar name="RexParser">
-  <rule first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}" name="RegularExpression">
-   <action first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-    <group first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-     <nonterminal first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}" ruleName="Alternative"/>
+  <rule first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}" name="RegularExpression">
+   <action first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+    <group first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+     <nonterminal first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}" ruleName="Alternative"/>
     </group>
    </action>
   </rule>
-  <rule first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}" name="Alternative">
-   <action first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-    <group first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-     <sequence first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-      <action first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-       <nonterminal first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}" ruleName="Catenation"/>
+  <rule first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}" name="Alternative">
+   <action first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+    <group first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+     <sequence first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+      <action first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+       <nonterminal first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}" ruleName="Catenation"/>
       </action>
       <kleene first="{#, ALT}">
        <group first="{ALT}">
         <sequence first="{ALT}">
          <token first="{ALT}" name="ALT"/>
-         <action first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-          <nonterminal first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}" ruleName="Catenation"/>
+         <action first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+          <nonterminal first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}" ruleName="Catenation"/>
          </action>
         </sequence>
        </group>
@@ -28,17 +28,17 @@
     </group>
    </action>
   </rule>
-  <rule first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}" name="Catenation">
-   <action first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-    <group first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-     <sequence first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-      <action first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-       <nonterminal first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}" ruleName="Repetition"/>
+  <rule first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}" name="Catenation">
+   <action first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+    <group first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+     <sequence first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+      <action first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+       <nonterminal first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}" ruleName="Repetition"/>
       </action>
-      <kleene first="{#, DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-       <group first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-        <action first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-         <nonterminal first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}" ruleName="Repetition"/>
+      <kleene first="{#, LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+       <group first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+        <action first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+         <nonterminal first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}" ruleName="Repetition"/>
         </action>
        </group>
       </kleene>
@@ -46,16 +46,16 @@
     </group>
    </action>
   </rule>
-  <rule first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}" name="Repetition">
-   <action first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-    <group first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-     <sequence first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-      <action first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-       <nonterminal first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}" ruleName="Primary"/>
+  <rule first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}" name="Repetition">
+   <action first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+    <group first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+     <sequence first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+      <action first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+       <nonterminal first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}" ruleName="Primary"/>
       </action>
-      <optional first="{#, QUEST, STAR, PLUS}">
-       <group first="{QUEST, STAR, PLUS}">
-        <choice first="{QUEST, STAR, PLUS}">
+      <optional first="{#, STAR, PLUS, QUEST}">
+       <group first="{STAR, PLUS, QUEST}">
+        <choice first="{STAR, PLUS, QUEST}">
          <choice first="{STAR, PLUS}">
           <action first="{STAR}">
            <token first="{STAR}" name="STAR"/>
@@ -74,20 +74,20 @@
     </group>
    </action>
   </rule>
-  <rule first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}" name="Primary">
-   <action first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-    <group first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-     <choice first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-      <choice first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LPAREN}">
-       <choice first="{ESCAPE, CHAR, MINUS, INVERSE, LPAREN}">
-        <choice first="{ESCAPE, MINUS, INVERSE, LPAREN}">
-         <choice first="{ESCAPE, INVERSE, LPAREN}">
-          <choice first="{ESCAPE, LPAREN}">
+  <rule first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}" name="Primary">
+   <action first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+    <group first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+     <choice first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+      <choice first="{LPAREN, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+       <choice first="{LPAREN, ESCAPE, INVERSE, MINUS, CHAR}">
+        <choice first="{LPAREN, ESCAPE, INVERSE, MINUS}">
+         <choice first="{LPAREN, ESCAPE, INVERSE}">
+          <choice first="{LPAREN, ESCAPE}">
            <sequence first="{LPAREN}">
             <sequence first="{LPAREN}">
              <token first="{LPAREN}" name="LPAREN"/>
-             <action first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}">
-              <nonterminal first="{DOT, ESCAPE, CHAR, MINUS, INVERSE, LBRACKET, LPAREN}" ruleName="Alternative"/>
+             <action first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+              <nonterminal first="{LPAREN, LBRACKET, DOT, ESCAPE, INVERSE, MINUS, CHAR}" ruleName="Alternative"/>
              </action>
             </sequence>
             <token first="{RPAREN}" name="RPAREN"/>
@@ -127,8 +127,8 @@
        <action first="{LBRACKET}">
         <token first="{LBRACKET}" name="LBRACKET"/>
        </action>
-       <group first="{#, QUEST, DOT, ESCAPE, CHAR, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
-        <sequence first="{#, QUEST, DOT, ESCAPE, CHAR, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
+       <group first="{#, LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+        <sequence first="{#, LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
          <optional first="{#, INVERSE}">
           <group first="{INVERSE}">
            <action first="{INVERSE}">
@@ -136,10 +136,10 @@
            </action>
           </group>
          </optional>
-         <kleene first="{#, QUEST, DOT, ESCAPE, CHAR, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
-          <group first="{QUEST, DOT, ESCAPE, CHAR, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
-           <action first="{QUEST, DOT, ESCAPE, CHAR, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
-            <nonterminal first="{QUEST, DOT, ESCAPE, CHAR, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}" ruleName="Range"/>
+         <kleene first="{#, LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+          <group first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+           <action first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+            <nonterminal first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS, CHAR}" ruleName="Range"/>
            </action>
           </group>
          </kleene>
@@ -153,17 +153,17 @@
     </group>
    </action>
   </rule>
-  <rule first="{QUEST, DOT, ESCAPE, CHAR, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}" name="Range">
-   <action first="{QUEST, DOT, ESCAPE, CHAR, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
-    <group first="{QUEST, DOT, ESCAPE, CHAR, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
-     <sequence first="{QUEST, DOT, ESCAPE, CHAR, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
-      <nonterminal first="{QUEST, DOT, ESCAPE, CHAR, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}" ruleName="Char"/>
+  <rule first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS, CHAR}" name="Range">
+   <action first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+    <group first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+     <sequence first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+      <nonterminal first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS, CHAR}" ruleName="Char"/>
       <group first="{#, MINUS}">
        <choice first="{#, MINUS}">
         <sequence first="{MINUS}">
          <token first="{MINUS}" name="MINUS"/>
-         <action first="{QUEST, DOT, ESCAPE, CHAR, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
-          <nonterminal first="{QUEST, DOT, ESCAPE, CHAR, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}" ruleName="Char"/>
+         <action first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+          <nonterminal first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS, CHAR}" ruleName="Char"/>
          </action>
         </sequence>
         <action first="{#}">
@@ -175,18 +175,18 @@
     </group>
    </action>
   </rule>
-  <rule first="{QUEST, DOT, ESCAPE, CHAR, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}" name="Char">
-   <choice first="{QUEST, DOT, ESCAPE, CHAR, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
-    <choice first="{QUEST, DOT, ESCAPE, MINUS, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
-     <choice first="{QUEST, DOT, ESCAPE, INVERSE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
-      <choice first="{QUEST, DOT, ESCAPE, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
-       <choice first="{QUEST, DOT, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
-        <choice first="{QUEST, RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
-         <choice first="{RPAREN, LBRACKET, STAR, LPAREN, ALT, PLUS}">
-          <choice first="{RPAREN, LBRACKET, STAR, LPAREN, ALT}">
-           <choice first="{RPAREN, LBRACKET, LPAREN, ALT}">
-            <choice first="{RPAREN, LBRACKET, LPAREN}">
-             <choice first="{RPAREN, LPAREN}">
+  <rule first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS, CHAR}" name="Char">
+   <choice first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS, CHAR}">
+    <choice first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE, MINUS}">
+     <choice first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE, INVERSE}">
+      <choice first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT, ESCAPE}">
+       <choice first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST, DOT}">
+        <choice first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS, QUEST}">
+         <choice first="{LPAREN, RPAREN, LBRACKET, ALT, STAR, PLUS}">
+          <choice first="{LPAREN, RPAREN, LBRACKET, ALT, STAR}">
+           <choice first="{LPAREN, RPAREN, LBRACKET, ALT}">
+            <choice first="{LPAREN, RPAREN, LBRACKET}">
+             <choice first="{LPAREN, RPAREN}">
               <action first="{LPAREN}">
                <token first="{LPAREN}" name="LPAREN"/>
               </action>

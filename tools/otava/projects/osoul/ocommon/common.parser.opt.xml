@@ -21,7 +21,7 @@
     </group>
    </action>
   </rule>
-  <rule first="{ID}" name="ExportModule">
+  <rule first="{ID}" name="Export">
    <action first="{ID}">
     <group first="{ID}">
      <sequence first="{ID}">

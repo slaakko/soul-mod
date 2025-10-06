@@ -1453,7 +1453,7 @@ soul::parser::Match RexParser<LexerT>::Char(LexerT& lexer)
                 }
                 if (match.hit)
                 {
-                    auto& token = lexer.GetToken(pos);
+                    auto token = lexer.GetToken(pos);
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");

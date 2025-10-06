@@ -12,13 +12,6 @@ import soul_expected.cpp.op.token;
 import soul_expected.punctuation.token;
 import soul_expected.tool.token;
 
-using namespace soul_expected;
-using namespace soul_expected::lexer;
-using namespace soul_expected::cpp::token;
-using namespace soul_expected::cpp::op::token;
-using namespace soul_expected::punctuation::token;
-using namespace soul_expected::tool::token;
-
 export namespace soul_expected::lex::re {
 
 std::mutex& MakeLexerMtx();
@@ -3169,91 +3162,91 @@ struct RegExLexer
             case 0:
             {
                 lexer.Retract();
-                return LPAREN;
+                return soul_expected::punctuation::token::LPAREN;
                 break;
             }
             case 1:
             {
                 lexer.Retract();
-                return RPAREN;
+                return soul_expected::punctuation::token::RPAREN;
                 break;
             }
             case 2:
             {
                 lexer.Retract();
-                return LBRACKET;
+                return soul_expected::punctuation::token::LBRACKET;
                 break;
             }
             case 3:
             {
                 lexer.Retract();
-                return RBRACKET;
+                return soul_expected::punctuation::token::RBRACKET;
                 break;
             }
             case 4:
             {
                 lexer.Retract();
-                return LBRACE;
+                return soul_expected::punctuation::token::LBRACE;
                 break;
             }
             case 5:
             {
                 lexer.Retract();
-                return RBRACE;
+                return soul_expected::punctuation::token::RBRACE;
                 break;
             }
             case 6:
             {
                 lexer.Retract();
-                return PIPE;
+                return soul_expected::punctuation::token::PIPE;
                 break;
             }
             case 7:
             {
                 lexer.Retract();
-                return STAR;
+                return soul_expected::cpp::op::token::STAR;
                 break;
             }
             case 8:
             {
                 lexer.Retract();
-                return PLUS;
+                return soul_expected::cpp::op::token::PLUS;
                 break;
             }
             case 9:
             {
                 lexer.Retract();
-                return QUEST;
+                return soul_expected::punctuation::token::QUEST;
                 break;
             }
             case 10:
             {
                 lexer.Retract();
-                return DOT;
+                return soul_expected::punctuation::token::DOT;
                 break;
             }
             case 11:
             {
                 lexer.Retract();
-                return CARET;
+                return soul_expected::punctuation::token::CARET;
                 break;
             }
             case 12:
             {
                 lexer.Retract();
-                return MINUS;
+                return soul_expected::cpp::op::token::MINUS;
                 break;
             }
             case 13:
             {
                 lexer.Retract();
-                return ESCAPE;
+                return soul_expected::tool::token::ESCAPE;
                 break;
             }
             case 14:
             {
                 lexer.Retract();
-                return CHARACTER;
+                return soul_expected::tool::token::CHARACTER;
                 break;
             }
         }
@@ -3267,7 +3260,7 @@ std::expected<soul_expected::lexer::ClassMap<CharT>*, int> GetClassMap()
     static soul_expected::lexer::ClassMap<CharT>* classmap;
     if (!classmap)
     {
-        std::expected<ClassMap<CharT>*, int> rv = soul_expected::lexer::MakeClassMap<CharT>("soul_expected.lex.re.classmap");
+        std::expected<soul_expected::lexer::ClassMap<CharT>*, int> rv = soul_expected::lexer::MakeClassMap<CharT>("soul_expected.lex.re.classmap");
         if (!rv) return std::unexpected<int>(rv.error());
         classmap = *rv;
     }
@@ -3280,7 +3273,7 @@ std::expected<soul_expected::lexer::ClassMap<CharT>*, int> GetClassMap(const std
     static soul_expected::lexer::ClassMap<CharT>* classmap;
     if (!classmap)
     {
-        std::expected<ClassMap<CharT>*, int> rv = soul_expected::lexer::MakeClassMap<CharT>(moduleFileName, "soul_expected.lex.re.classmap", resourceFlags);
+        std::expected<soul_expected::lexer::ClassMap<CharT>*, int> rv = soul_expected::lexer::MakeClassMap<CharT>(moduleFileName, "soul_expected.lex.re.classmap", resourceFlags);
         if (!rv) return std::unexpected<int>(rv.error());
         classmap = *rv;
     }

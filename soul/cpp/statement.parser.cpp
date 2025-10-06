@@ -51,8 +51,8 @@ soul::parser::Match StatementParser<LexerT>::Statement(LexerT& lexer)
             soul::parser::Match* parentMatch2 = &match;
             switch (*lexer)
             {
-                case soul::cpp::token::DEFAULT:
                 case soul::cpp::token::CASE:
+                case soul::cpp::token::DEFAULT:
                 case soul::cpp::token::ID:
                 {
                     soul::parser::Match match(false);
@@ -155,8 +155,8 @@ soul::parser::Match StatementParser<LexerT>::Statement(LexerT& lexer)
                     break;
                 }
                 case soul::cpp::token::WHILE:
-                case soul::cpp::token::FOR:
                 case soul::cpp::token::DO:
+                case soul::cpp::token::FOR:
                 {
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch7 = &match;
@@ -181,10 +181,10 @@ soul::parser::Match StatementParser<LexerT>::Statement(LexerT& lexer)
                     }
                     break;
                 }
-                case soul::cpp::token::RETURN:
                 case soul::cpp::token::BREAK:
-                case soul::cpp::token::GOTO:
                 case soul::cpp::token::CONTINUE:
+                case soul::cpp::token::RETURN:
+                case soul::cpp::token::GOTO:
                 {
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch8 = &match;
@@ -2433,143 +2433,63 @@ soul::parser::Match StatementParser<LexerT>::ForInitStatement(LexerT& lexer)
         std::int64_t save = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
-        switch (*lexer)
         {
-            case soul::punctuation::token::SEMICOLON:
+            std::int64_t save = lexer.GetPos();
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
             {
-                soul::parser::Match match(false);
-                soul::parser::Match* parentMatch2 = &match;
-                {
-                    std::int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = soul::cpp::statement::parser::StatementParser<LexerT>::EmptyStatement(lexer);
-                    emptyStatement.reset(static_cast<soul::ast::cpp::StatementNode*>(match.value));
-                    if (match.hit)
-                    {
-                        {
-                            #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                            if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ForInitStatement");
-                            #endif
-                            return soul::parser::Match(true, emptyStatement.release());
-                        }
-                    }
-                    *parentMatch2 = match;
-                }
+                std::int64_t pos = lexer.GetPos();
+                soul::parser::Match match = soul::cpp::statement::parser::StatementParser<LexerT>::EmptyStatement(lexer);
+                emptyStatement.reset(static_cast<soul::ast::cpp::StatementNode*>(match.value));
                 if (match.hit)
                 {
-                    *parentMatch1 = match;
+                    {
+                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ForInitStatement");
+                        #endif
+                        return soul::parser::Match(true, emptyStatement.release());
+                    }
                 }
-                break;
+                *parentMatch2 = match;
             }
-            case soul::cpp::op::token::OR_ASSIGN:
-            case soul::cpp::op::token::MUL_ASSIGN:
-            case soul::cpp::op::token::SHIFT_LEFT:
-            case soul::cpp::op::token::LEQ:
-            case soul::cpp::op::token::PLUS_ASSIGN:
-            case soul::cpp::op::token::MINUS_ASSIGN:
-            case soul::cpp::op::token::COLON_COLON:
-            case soul::cpp::op::token::DOT_STAR:
-            case soul::cpp::op::token::STAR:
-            case soul::cpp::token::CHAR:
-            case soul::cpp::op::token::SHIFT_LEFT_ASSIGN:
-            case soul::cpp::op::token::MINUS:
-            case soul::cpp::op::token::EQ:
-            case soul::cpp::op::token::SHIFT_RIGHT_ASSIGN:
-            case soul::cpp::op::token::ARROW_STAR:
-            case soul::cpp::op::token::NEQ:
-            case soul::cpp::op::token::DIV:
-            case soul::cpp::op::token::DIV_ASSIGN:
-            case soul::cpp::op::token::REM_ASSIGN:
-            case soul::cpp::token::CHAR8T:
-            case soul::cpp::token::CHAR16T:
-            case soul::cpp::op::token::GEQ:
-            case soul::cpp::op::token::ASSIGN:
-            case soul::cpp::op::token::PLUS:
-            case soul::cpp::op::token::XOR_ASSIGN:
-            case soul::cpp::op::token::DISJUNCTION:
-            case soul::cpp::op::token::AMP_AMP:
-            case soul::cpp::op::token::REM:
-            case soul::cpp::op::token::MINUS_MINUS:
-            case soul::cpp::op::token::AND_ASSIGN:
-            case soul::cpp::token::CHAR32T:
-            case soul::cpp::token::WCHART:
-            case soul::cpp::token::BOOL:
-            case soul::cpp::op::token::SHIFT_RIGHT:
-            case soul::cpp::op::token::PLUS_PLUS:
-            case soul::cpp::token::FLOAT:
-            case soul::cpp::token::CONST:
-            case soul::cpp::token::REINTERPRET_CAST:
-            case soul::cpp::token::TYPEID:
-            case soul::cpp::token::CHAR_LITERAL:
-            case soul::cpp::token::SIGNED:
-            case soul::cpp::token::STRING_LITERAL:
-            case soul::cpp::token::NULLPTR:
-            case soul::cpp::token::STATIC_CAST:
-            case soul::punctuation::token::DOT:
-            case soul::cpp::token::SIZEOF:
-            case soul::cpp::token::DOUBLE:
-            case soul::punctuation::token::LANGLE:
-            case soul::punctuation::token::COMMA:
-            case soul::cpp::token::NEW:
-            case soul::punctuation::token::ARROW:
-            case soul::punctuation::token::AMP:
-            case soul::punctuation::token::QUEST:
-            case soul::cpp::token::LONG:
-            case soul::cpp::token::UNSIGNED:
-            case soul::cpp::token::THIS:
-            case soul::cpp::token::TRUE:
-            case soul::punctuation::token::RANGLE:
-            case soul::cpp::token::CONST_CAST:
-            case soul::punctuation::token::EXCLAMATION:
-            case soul::cpp::token::VOID:
-            case soul::cpp::token::DYNAMIC_CAST:
-            case soul::cpp::token::FLOATING_LITERAL:
-            case soul::cpp::token::INTEGER_LITERAL:
-            case soul::punctuation::token::LBRACKET:
-            case soul::cpp::token::VOLATILE:
-            case soul::punctuation::token::LPAREN:
-            case soul::cpp::token::SHORT:
-            case soul::cpp::token::DELETE:
-            case soul::cpp::token::OPERATOR:
-            case soul::cpp::token::INT:
-            case soul::cpp::token::FALSE:
-            case soul::cpp::token::ID:
-            case soul::punctuation::token::PIPE:
-            case soul::punctuation::token::TILDE:
-            case soul::punctuation::token::CARET:
+            *parentMatch1 = match;
+            if (!match.hit)
             {
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
+                lexer.SetPos(save);
                 {
-                    std::int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = soul::cpp::statement::parser::StatementParser<LexerT>::ExpressionStatement(lexer);
-                    expressionStatement.reset(static_cast<soul::ast::cpp::StatementNode*>(match.value));
-                    if (match.hit)
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch4 = &match;
                     {
+                        std::int64_t pos = lexer.GetPos();
+                        soul::parser::Match match = soul::cpp::statement::parser::StatementParser<LexerT>::ExpressionStatement(lexer);
+                        expressionStatement.reset(static_cast<soul::ast::cpp::StatementNode*>(match.value));
+                        if (match.hit)
                         {
-                            #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                            if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ForInitStatement");
-                            #endif
-                            return soul::parser::Match(true, expressionStatement.release());
+                            {
+                                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ForInitStatement");
+                                #endif
+                                return soul::parser::Match(true, expressionStatement.release());
+                            }
                         }
+                        *parentMatch4 = match;
                     }
                     *parentMatch3 = match;
                 }
-                if (match.hit)
-                {
-                    *parentMatch1 = match;
-                }
-                break;
+                *parentMatch1 = match;
             }
         }
         *parentMatch0 = match;
         if (!match.hit)
         {
             soul::parser::Match match(false);
-            soul::parser::Match* parentMatch4 = &match;
+            soul::parser::Match* parentMatch5 = &match;
             lexer.SetPos(save);
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch5 = &match;
+                soul::parser::Match* parentMatch6 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = soul::cpp::declaration::parser::DeclarationParser<LexerT>::SimpleDeclaration(lexer);
@@ -2583,9 +2503,9 @@ soul::parser::Match StatementParser<LexerT>::ForInitStatement(LexerT& lexer)
                             return soul::parser::Match(true, simpleDeclaration.release());
                         }
                     }
-                    *parentMatch5 = match;
+                    *parentMatch6 = match;
                 }
-                *parentMatch4 = match;
+                *parentMatch5 = match;
             }
             *parentMatch0 = match;
         }

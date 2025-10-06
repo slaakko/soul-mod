@@ -9,10 +9,6 @@ import soul_expected.ast.common;
 import util_expected;
 import soul_expected.rex.token;
 
-using namespace soul_expected;
-using namespace soul_expected::lexer;
-using namespace soul_expected::rex::token;
-
 export namespace soul_expected::rex::lexer {
 
 std::mutex& MakeLexerMtx();
@@ -3105,79 +3101,79 @@ struct RexLexer
             case 0:
             {
                 lexer.Retract();
-                return LPAREN;
+                return soul_expected::rex::token::LPAREN;
                 break;
             }
             case 1:
             {
                 lexer.Retract();
-                return RPAREN;
+                return soul_expected::rex::token::RPAREN;
                 break;
             }
             case 2:
             {
                 lexer.Retract();
-                return LBRACKET;
+                return soul_expected::rex::token::LBRACKET;
                 break;
             }
             case 3:
             {
                 lexer.Retract();
-                return RBRACKET;
+                return soul_expected::rex::token::RBRACKET;
                 break;
             }
             case 4:
             {
                 lexer.Retract();
-                return ALT;
+                return soul_expected::rex::token::ALT;
                 break;
             }
             case 5:
             {
                 lexer.Retract();
-                return STAR;
+                return soul_expected::rex::token::STAR;
                 break;
             }
             case 6:
             {
                 lexer.Retract();
-                return PLUS;
+                return soul_expected::rex::token::PLUS;
                 break;
             }
             case 7:
             {
                 lexer.Retract();
-                return QUEST;
+                return soul_expected::rex::token::QUEST;
                 break;
             }
             case 8:
             {
                 lexer.Retract();
-                return DOT;
+                return soul_expected::rex::token::DOT;
                 break;
             }
             case 9:
             {
                 lexer.Retract();
-                return INVERSE;
+                return soul_expected::rex::token::INVERSE;
                 break;
             }
             case 10:
             {
                 lexer.Retract();
-                return MINUS;
+                return soul_expected::rex::token::MINUS;
                 break;
             }
             case 11:
             {
                 lexer.Retract();
-                return ESCAPE;
+                return soul_expected::rex::token::ESCAPE;
                 break;
             }
             case 12:
             {
                 lexer.Retract();
-                return CHAR;
+                return soul_expected::rex::token::CHAR;
                 break;
             }
         }
@@ -3191,7 +3187,7 @@ std::expected<soul_expected::lexer::ClassMap<CharT>*, int> GetClassMap()
     static soul_expected::lexer::ClassMap<CharT>* classmap;
     if (!classmap)
     {
-        std::expected<ClassMap<CharT>*, int> rv = soul_expected::lexer::MakeClassMap<CharT>("soul_expected.rex.lexer.classmap");
+        std::expected<soul_expected::lexer::ClassMap<CharT>*, int> rv = soul_expected::lexer::MakeClassMap<CharT>("soul_expected.rex.lexer.classmap");
         if (!rv) return std::unexpected<int>(rv.error());
         classmap = *rv;
     }
@@ -3204,7 +3200,7 @@ std::expected<soul_expected::lexer::ClassMap<CharT>*, int> GetClassMap(const std
     static soul_expected::lexer::ClassMap<CharT>* classmap;
     if (!classmap)
     {
-        std::expected<ClassMap<CharT>*, int> rv = soul_expected::lexer::MakeClassMap<CharT>(moduleFileName, "soul_expected.rex.lexer.classmap", resourceFlags);
+        std::expected<soul_expected::lexer::ClassMap<CharT>*, int> rv = soul_expected::lexer::MakeClassMap<CharT>(moduleFileName, "soul_expected.rex.lexer.classmap", resourceFlags);
         if (!rv) return std::unexpected<int>(rv.error());
         classmap = *rv;
     }

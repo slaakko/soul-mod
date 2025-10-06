@@ -13,10 +13,10 @@
        </sequence>
        <token first="{SEMICOLON}" name="SEMICOLON"/>
       </sequence>
-      <kleene first="{#, EXTERN, ID, SEMICOLON, FILEPATH, TOKENS}">
-       <group first="{#, EXTERN, ID, SEMICOLON, FILEPATH, TOKENS}">
-        <action first="{#, EXTERN, ID, SEMICOLON, FILEPATH, TOKENS}">
-         <nonterminal first="{#, EXTERN, ID, SEMICOLON, FILEPATH, TOKENS}" ruleName="SpgFileDeclaration"/>
+      <kleene first="{#, TOKENS, FILEPATH, EXTERN, ID, SEMICOLON}">
+       <group first="{#, TOKENS, FILEPATH, EXTERN, ID, SEMICOLON}">
+        <action first="{#, TOKENS, FILEPATH, EXTERN, ID, SEMICOLON}">
+         <nonterminal first="{#, TOKENS, FILEPATH, EXTERN, ID, SEMICOLON}" ruleName="SpgFileDeclaration"/>
         </action>
        </group>
       </kleene>
@@ -24,21 +24,21 @@
     </group>
    </action>
   </rule>
-  <rule first="{#, EXTERN, ID, SEMICOLON, FILEPATH, TOKENS}" name="SpgFileDeclaration">
-   <choice first="{#, EXTERN, ID, SEMICOLON, FILEPATH, TOKENS}">
-    <action first="{#, EXTERN, ID, SEMICOLON, FILEPATH}">
-     <nonterminal first="{#, EXTERN, ID, SEMICOLON, FILEPATH}" ruleName="ParserFileDeclaration"/>
+  <rule first="{#, TOKENS, FILEPATH, EXTERN, ID, SEMICOLON}" name="SpgFileDeclaration">
+   <choice first="{#, TOKENS, FILEPATH, EXTERN, ID, SEMICOLON}">
+    <action first="{#, FILEPATH, EXTERN, ID, SEMICOLON}">
+     <nonterminal first="{#, FILEPATH, EXTERN, ID, SEMICOLON}" ruleName="ParserFileDeclaration"/>
     </action>
-    <action first="{#, EXTERN, SEMICOLON, FILEPATH, TOKENS}">
-     <nonterminal first="{#, EXTERN, SEMICOLON, FILEPATH, TOKENS}" ruleName="TokenFileDeclaration"/>
+    <action first="{#, TOKENS, FILEPATH, EXTERN, SEMICOLON}">
+     <nonterminal first="{#, TOKENS, FILEPATH, EXTERN, SEMICOLON}" ruleName="TokenFileDeclaration"/>
     </action>
    </choice>
   </rule>
-  <rule first="{#, EXTERN, ID, SEMICOLON, FILEPATH}" name="ParserFileDeclaration">
-   <action first="{#, EXTERN, ID, SEMICOLON, FILEPATH}">
-    <group first="{#, EXTERN, ID, SEMICOLON, FILEPATH}">
-     <sequence first="{#, EXTERN, ID, SEMICOLON, FILEPATH}">
-      <sequence first="{#, EXTERN, ID, FILEPATH}">
+  <rule first="{#, FILEPATH, EXTERN, ID, SEMICOLON}" name="ParserFileDeclaration">
+   <action first="{#, FILEPATH, EXTERN, ID, SEMICOLON}">
+    <group first="{#, FILEPATH, EXTERN, ID, SEMICOLON}">
+     <sequence first="{#, FILEPATH, EXTERN, ID, SEMICOLON}">
+      <sequence first="{#, FILEPATH, EXTERN, ID}">
        <sequence first="{#, EXTERN, ID}">
         <group first="{#, EXTERN}">
          <choice first="{#, EXTERN}">
@@ -59,12 +59,12 @@
     </group>
    </action>
   </rule>
-  <rule first="{#, EXTERN, SEMICOLON, FILEPATH, TOKENS}" name="TokenFileDeclaration">
-   <action first="{#, EXTERN, SEMICOLON, FILEPATH, TOKENS}">
-    <group first="{#, EXTERN, SEMICOLON, FILEPATH, TOKENS}">
-     <sequence first="{#, EXTERN, SEMICOLON, FILEPATH, TOKENS}">
-      <sequence first="{#, EXTERN, FILEPATH, TOKENS}">
-       <sequence first="{#, EXTERN, TOKENS}">
+  <rule first="{#, TOKENS, FILEPATH, EXTERN, SEMICOLON}" name="TokenFileDeclaration">
+   <action first="{#, TOKENS, FILEPATH, EXTERN, SEMICOLON}">
+    <group first="{#, TOKENS, FILEPATH, EXTERN, SEMICOLON}">
+     <sequence first="{#, TOKENS, FILEPATH, EXTERN, SEMICOLON}">
+      <sequence first="{#, TOKENS, FILEPATH, EXTERN}">
+       <sequence first="{#, TOKENS, EXTERN}">
         <group first="{#, EXTERN}">
          <choice first="{#, EXTERN}">
           <action first="{EXTERN}">

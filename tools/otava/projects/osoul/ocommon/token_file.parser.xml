@@ -16,14 +16,14 @@
         </sequence>
         <token first="{LBRACE}" name="LBRACE"/>
        </sequence>
-       <optional first="{LPAREN, #}">
+       <optional first="{#, LPAREN}">
         <group first="{LPAREN}">
          <list first="{LPAREN}">
           <sequence first="{LPAREN}">
            <action first="{LPAREN}">
             <nonterminal first="{LPAREN}" ruleName="Token"/>
            </action>
-           <kleene first="{COMMA, #}">
+           <kleene first="{#, COMMA}">
             <sequence first="{COMMA}">
              <token first="{COMMA}" name="COMMA"/>
              <action first="{LPAREN}">

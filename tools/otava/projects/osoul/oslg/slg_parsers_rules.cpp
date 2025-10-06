@@ -29,7 +29,7 @@ std::map<std::int64_t, std::string>* GetRuleNameMapPtr()
         { 7800349797168185349, "SlgFileParser.ExpressionFileDeclaration" },
         { 7800349797168185350, "SlgFileParser.LexerFileDeclaration" },
         { 2231932063773097985, "CommonParser.QualifiedId" },
-        { 2231932063773097986, "CommonParser.ExportModule" },
+        { 2231932063773097986, "CommonParser.Export" },
         { 2231932063773097987, "CommonParser.Import" },
         { 2231932063773097988, "CommonParser.ImportPrefix" },
         { 2231932063773097989, "CommonParser.ExprString" },

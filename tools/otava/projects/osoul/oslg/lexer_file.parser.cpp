@@ -128,7 +128,7 @@ std::expected<soul::parser::Match, int> LexerFileParser<LexerT>::LexerFile(Lexer
                                             soul::parser::Match* parentMatch11 = &match;
                                             {
                                                 std::int64_t pos = lexer.GetPos();
-                                                std::expected<soul::parser::Match, int> m = soul::common::common::parser::CommonParser<LexerT>::ExportModule(lexer);
+                                                std::expected<soul::parser::Match, int> m = soul::common::common::parser::CommonParser<LexerT>::Export(lexer);
                                                 if (!m) return std::unexpected<int>(m.error());
                                                 soul::parser::Match match = *m;
                                                 exportModule.reset(static_cast<soul::ast::common::ExportModule*>(match.value));

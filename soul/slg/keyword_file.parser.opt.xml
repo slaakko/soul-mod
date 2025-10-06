@@ -1,18 +1,18 @@
 <parserFile>
  <grammar name="KeywordFileParser">
-  <rule first="{#, #, LBRACKET, ID, KEYWORDS, SEMICOLON, LPAREN, LBRACE, RBRACE}" name="KeywordFile">
-   <action first="{#, #, LBRACKET, ID, KEYWORDS, SEMICOLON, LPAREN, LBRACE, RBRACE}">
-    <group first="{#, #, LBRACKET, ID, KEYWORDS, SEMICOLON, LPAREN, LBRACE, RBRACE}">
-     <sequence first="{#, #, LBRACKET, ID, KEYWORDS, SEMICOLON, LPAREN, LBRACE, RBRACE}">
-      <sequence first="{#, #, LBRACKET, ID, KEYWORDS, SEMICOLON, LPAREN, LBRACE}">
-       <sequence first="{#, #, LBRACKET, ID, KEYWORDS, SEMICOLON, LBRACE}">
-        <sequence first="{#, #, LBRACKET, ID, KEYWORDS, SEMICOLON}">
-         <sequence first="{#, #, LBRACKET, ID, KEYWORDS, SEMICOLON}">
-          <sequence first="{#, #, LBRACKET, ID, SEMICOLON}">
+  <rule first="{#, LPAREN, LBRACE, RBRACE, LBRACKET, SEMICOLON, KEYWORDS, ID}" name="KeywordFile">
+   <action first="{#, LPAREN, LBRACE, RBRACE, LBRACKET, SEMICOLON, KEYWORDS, ID}">
+    <group first="{#, LPAREN, LBRACE, RBRACE, LBRACKET, SEMICOLON, KEYWORDS, ID}">
+     <sequence first="{#, LPAREN, LBRACE, RBRACE, LBRACKET, SEMICOLON, KEYWORDS, ID}">
+      <sequence first="{#, LPAREN, LBRACE, LBRACKET, SEMICOLON, KEYWORDS, ID}">
+       <sequence first="{#, LBRACE, LBRACKET, SEMICOLON, KEYWORDS, ID}">
+        <sequence first="{#, LBRACKET, SEMICOLON, KEYWORDS, ID}">
+         <sequence first="{#, LBRACKET, SEMICOLON, KEYWORDS, ID}">
+          <sequence first="{#, LBRACKET, SEMICOLON, ID}">
            <action first="{#}">
             <empty first="{#}"/>
            </action>
-           <nonterminal first="{#, #, LBRACKET, ID, SEMICOLON}" ruleName="Imports"/>
+           <nonterminal first="{#, LBRACKET, SEMICOLON, ID}" ruleName="Imports"/>
           </sequence>
           <token first="{KEYWORDS}" name="KEYWORDS"/>
          </sequence>
@@ -47,11 +47,11 @@
     </group>
    </action>
   </rule>
-  <rule first="{#, #, LBRACKET, ID, SEMICOLON}" name="Imports">
-   <kleene first="{#, #, LBRACKET, ID, SEMICOLON}">
-    <group first="{#, LBRACKET, ID, SEMICOLON}">
-     <action first="{#, LBRACKET, ID, SEMICOLON}">
-      <nonterminal first="{#, LBRACKET, ID, SEMICOLON}" ruleName="Import"/>
+  <rule first="{#, LBRACKET, SEMICOLON, ID}" name="Imports">
+   <kleene first="{#, LBRACKET, SEMICOLON, ID}">
+    <group first="{#, LBRACKET, SEMICOLON, ID}">
+     <action first="{#, LBRACKET, SEMICOLON, ID}">
+      <nonterminal first="{#, LBRACKET, SEMICOLON, ID}" ruleName="Import"/>
      </action>
     </group>
    </kleene>
