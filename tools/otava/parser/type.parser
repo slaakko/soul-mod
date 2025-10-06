@@ -58,7 +58,7 @@ parser TypeParser
         }
         ;
 
-    TypeSpecifierSeqReset(otava::symbols::Context* context) : Node*
+    TypeSpecifierSeqReset(otava::symbols::Context* context) : otava::ast::Node*
         ::= empty{ context->PushResetFlag(otava::symbols::ContextFlags::hasDefiningTypeSpecifier); }
             TypeSpecifierSeq(context):typeSpecifierSeq{ context->PopFlags(); return typeSpecifierSeq; } / { context->PopFlags(); }
         ;
@@ -71,7 +71,7 @@ parser TypeParser
             AbstractDeclarator(context):abstractDeclararator?
         )
         {
-            return new DefiningTypeIdNode(sourcePos, definingTypeSpecifierSeq, abstractDeclararator);
+            return new otava::ast::DefiningTypeIdNode(sourcePos, definingTypeSpecifierSeq, abstractDeclararator);
         }
         ;
 
@@ -90,7 +90,7 @@ parser TypeParser
         ;
 
 
-    DefiningTypeSpecifierReset(otava::symbols::Context* context) : Node*
+    DefiningTypeSpecifierReset(otava::symbols::Context* context) : otava::ast::Node*
         ::= empty{ context->PushResetFlag(otava::symbols::ContextFlags::hasDefiningTypeSpecifier); }
             DefiningTypeSpecifier(context):definingTypeSpecifier{ context->PopFlags(); return definingTypeSpecifier; } / { context->PopFlags(); }
         ;

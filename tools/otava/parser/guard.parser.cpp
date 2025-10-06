@@ -4,10 +4,9 @@
 module otava.parser.guard;
 
 import util;
+import soul.ast.common;
 import soul.ast.spg;
 import otava.lexer;
-
-using namespace otava::lexer;
 
 namespace otava::parser::guard {
 

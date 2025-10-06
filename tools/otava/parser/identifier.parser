@@ -108,7 +108,7 @@ parser IdentifierParser
         |   TypeIdentifierChecked(context):typeIdentifier{ return typeIdentifier; }
         ;
 
-    TypeIdentifierUnchecked(otava::symbols::Context* context, var std::unique_ptr<Node> identifier) : otava::ast::Node*
+    TypeIdentifierUnchecked(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> identifier) : otava::ast::Node*
         ::= Identifier(context):id
             { 
                 identifier.reset(id);

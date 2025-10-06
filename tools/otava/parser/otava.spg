@@ -1,4 +1,5 @@
 project otava.parser.spg;
+tokens <../token/otava.token>;
 parser <attribute.parser>;
 parser <class.parser>;
 parser <concept.parser>;

@@ -179,7 +179,7 @@ parser StatementParser
                 pass = false; 
             }
             lexer.BeginRecordedParse(compoundStatementNode->GetLexerPosPair()); 
-            Scope* functionScope = static_cast<Scope*>(compoundStatementNode->FunctionScope());
+            otava::symbols::Scope* functionScope = static_cast<otava::symbols::Scope*>(compoundStatementNode->FunctionScope());
             context->GetSymbolTable()->BeginScope(functionScope);
         }
         (
@@ -405,7 +405,7 @@ parser StatementParser
             Semicolon:semicolon
         )
         {
-            return new BreakStatementNode(sourcePos, attributes, semicolon, breakPos); 
+            return new otava::ast::BreakStatementNode(sourcePos, attributes, semicolon, breakPos); 
         }
         ;
 

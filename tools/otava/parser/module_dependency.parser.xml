@@ -1,12 +1,12 @@
 <parserFile>
  <grammar name="ModuleDependencyParser">
-  <rule first="{#, ALIGNAS, COLON, ID, LBRACKET, SEMICOLON}" name="ModuleUnit">
-   <action first="{#, ALIGNAS, COLON, ID, LBRACKET, SEMICOLON}">
-    <group first="{#, ALIGNAS, COLON, ID, LBRACKET, SEMICOLON}">
-     <choice first="{#, ALIGNAS, COLON, ID, LBRACKET, SEMICOLON}">
-      <choice first="{#, ALIGNAS, COLON, ID, LBRACKET, SEMICOLON}">
-       <sequence first="{#, ALIGNAS, COLON, ID, LBRACKET, SEMICOLON}">
-        <sequence first="{#, ALIGNAS, COLON, ID, LBRACKET, SEMICOLON}">
+  <rule first="{#, ALIGNAS, ID, COLON, LBRACKET, SEMICOLON}" name="ModuleUnit">
+   <action first="{#, ALIGNAS, ID, COLON, LBRACKET, SEMICOLON}">
+    <group first="{#, ALIGNAS, ID, COLON, LBRACKET, SEMICOLON}">
+     <choice first="{#, ALIGNAS, ID, COLON, LBRACKET, SEMICOLON}">
+      <choice first="{#, ALIGNAS, ID, COLON, LBRACKET, SEMICOLON}">
+       <sequence first="{#, ALIGNAS, ID, COLON, LBRACKET, SEMICOLON}">
+        <sequence first="{#, ALIGNAS, ID, COLON, LBRACKET, SEMICOLON}">
          <optional first="{#, ID}">
           <group first="{ID}">
            <action first="{ID}">
@@ -14,8 +14,8 @@
            </action>
           </group>
          </optional>
-         <action first="{#, ALIGNAS, COLON, ID, LBRACKET, SEMICOLON}">
-          <nonterminal first="{#, ALIGNAS, COLON, ID, LBRACKET, SEMICOLON}" ruleName="ModuleDeclaration"/>
+         <action first="{#, ALIGNAS, ID, COLON, LBRACKET, SEMICOLON}">
+          <nonterminal first="{#, ALIGNAS, ID, COLON, LBRACKET, SEMICOLON}" ruleName="ModuleDeclaration"/>
          </action>
         </sequence>
         <optional first="{#, ID}">

@@ -246,10 +246,8 @@ void WriteFilesFile(const std::string& projectFilesPath, const std::vector<std::
     }
 }
 
-void BuildSequentially(Project* project, const std::string& config, int optLevel, BuildFlags flags, std::set<Project*, ProjectLess>& projectSet)
+void BuildSequentially(Project* project, const std::string& config, int optLevel, BuildFlags flags)
 {
-    if (projectSet.find(project) != projectSet.end()) return;
-    projectSet.insert(project);
     otava::symbols::SetProjectReady(false);
     util::uuid projectId = otava::symbols::MakeProjectId(project->Name());
     if ((flags & BuildFlags::seed) != BuildFlags::none)
@@ -389,14 +387,6 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         projectReference->SetOutputFilePath(outputFilePath);
         projectReference->SetFileMap(&project->GetFileMap());
         project->AddReferencedProject(projectReference.release());
-    }
-    if ((flags & BuildFlags::all) != BuildFlags::none)
-    {
-        for (const auto& reference : project->ReferencedProjects())
-        {
-            if (project->Name() != "std" && reference->Name() == "std") continue;
-            BuildSequentially(reference.get(), config, optLevel, flags, projectSet);
-        }
     }
     if ((flags & BuildFlags::rebuild) == BuildFlags::none)
     {
@@ -697,7 +687,7 @@ void Visit(Solution* solution, Project* project, std::vector<Project*>& topologi
         else
         {
             otava::ast::SetExceptionThrown();
-            throw std::runtime_error("reference file path '" + referenceFilePath + "' in project '" + project->FilePath() + "' not found");
+            throw std::runtime_error("reference file path '" + referenceFilePath + "' in solution '" + solution->FilePath() + "' not found");
         }
     }
     visited.insert(project);
@@ -708,11 +698,11 @@ std::vector<Project*> MakeTopologicalOrder(Solution* solution)
 {
     std::set<Project*> visited;
     std::vector<Project*> topologicalOrder;
-    for (auto& project : solution->Projects())
+    for (Project* project : solution->Projects())
     {
-        if (visited.find(project.get()) == visited.cend())
+        if (visited.find(project) == visited.cend())
         {
-            Visit(solution, project.get(), topologicalOrder, visited);
+            Visit(solution, project, topologicalOrder, visited);
         }
     }
     return topologicalOrder;
@@ -723,35 +713,78 @@ void BuildSequentially(soul::lexer::FileMap& fileMap, Solution* solution, const 
 {
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
     {
-        std::cout << "> building solution '" << solution->Name() << "'..." << std::endl;
+        if (solution->IsProjectSolution())
+        {
+            std::cout << "> building project '" << solution->Name() << "' with dependencies..." << std::endl;
+        }
+        else
+        {
+            std::cout << "> building solution '" << solution->Name() << "'..." << std::endl;
+        }
     }
-    std::string root = util::Path::GetDirectoryName(solution->FilePath());
-    for (const auto& path : solution->ProjectFilePaths())
+    if (!solution->IsProjectSolution())
     {
-        std::string projectFilePath = util::GetFullPath(util::Path::Combine(root, path));
-        std::unique_ptr<Project> project = otava::build::ParseProjectFile(projectFilePath);
-        project->SetFileMap(&fileMap);
-        solution->AddProject(project.release());
+        std::string root = util::Path::GetDirectoryName(solution->FilePath());
+        for (const auto& path : solution->ProjectFilePaths())
+        {
+            std::string projectFilePath = util::GetFullPath(util::Path::Combine(root, path));
+            std::unique_ptr<Project> project = otava::build::ParseProjectFile(projectFilePath);
+            project->SetFileMap(&fileMap);
+            solution->AddProject(project.release());
+        }
     }
     std::vector<Project*> buildOrder = MakeTopologicalOrder(solution);
     for (Project* project : buildOrder)
     {
-        Build(project, config, optLevel, flags, projectSet);
+        Build(fileMap, project, config, optLevel, flags & ~BuildFlags::all, projectSet);
     }
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
     {
-        std::cout << "solution '" << solution->Name() << "' built successfully" << std::endl;
+        if (!solution->IsProjectSolution())
+        {
+            std::cout << "solution '" << solution->Name() << "' built successfully" << std::endl;
+        }
     }
 }
-
-void Build(Project* project, const std::string& config, int optLevel, BuildFlags flags, std::set<Project*, ProjectLess>& projectSet)
+void ProjectClosure(soul::lexer::FileMap& fileMap, Project* project, Solution* solution, std::set<std::string>& projectFilePaths)
 {
-    BuildSequentially(project, config, optLevel, flags, projectSet);
+    std::string root = util::Path::GetDirectoryName(project->FilePath());
+    for (const auto& referenceFilePath : project->ReferenceFilePaths())
+    {
+        std::string projectFilePath = util::GetFullPath(util::Path::Combine(root, referenceFilePath));
+        if (projectFilePaths.find(projectFilePath) != projectFilePaths.end()) continue;
+        projectFilePaths.insert(projectFilePath);
+        std::unique_ptr<Project> referencedProject = otava::build::ParseProjectFile(projectFilePath);
+        Project* reference = referencedProject.get();
+        if (project->Name() != "std" && reference->Name() == "std") continue;
+        reference->SetFileMap(&fileMap);
+        project->AddReferencedProject(referencedProject.release());
+        ProjectClosure(fileMap, reference, solution, projectFilePaths);
+    }
+    solution->AddProject(project, false);
+}
+
+void Build(soul::lexer::FileMap& fileMap, Project* project, const std::string& config, int optLevel, BuildFlags flags, std::set<Project*, ProjectLess>& projectSet)
+{
+    if ((flags & BuildFlags::all) != BuildFlags::none)
+    {
+        Solution solution(project->FilePath(), project->Name());
+        solution.SetProjectSolution();
+        std::set<std::string> projectFilePaths;
+        ProjectClosure(fileMap, project, &solution, projectFilePaths);
+        Build(fileMap, &solution, config, optLevel, flags & ~BuildFlags::all, projectSet);
+    }
+    else
+    {
+        if (projectSet.find(project) != projectSet.end()) return;
+        projectSet.insert(project);
+        BuildSequentially(project, config, optLevel, flags & ~BuildFlags::all);
+    }
 }
 
 void Build(soul::lexer::FileMap& fileMap, Solution* solution, const std::string& config, int optLevel, BuildFlags flags, std::set<Project*, ProjectLess>& projectSet)
 {
-    BuildSequentially(fileMap, solution, config, optLevel, flags, projectSet);
+    BuildSequentially(fileMap, solution, config, optLevel, flags & ~BuildFlags::all, projectSet);
 }
 
 } // namespace otava::build

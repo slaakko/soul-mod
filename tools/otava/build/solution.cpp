@@ -12,7 +12,7 @@ import otava.symbols.conversion.table;
 
 namespace otava::build {
 
-Solution::Solution(const std::string& filePath_, const std::string& name_) : filePath(filePath_), name(name_)
+Solution::Solution(const std::string& filePath_, const std::string& name_) : filePath(filePath_), name(name_), projectSolution(false)
 {
 }
 
@@ -23,7 +23,16 @@ void Solution::AddProjectFilePath(const std::string& projectFilePath)
 
 void Solution::AddProject(Project* project)
 {
-    projects.push_back(std::unique_ptr<Project>(project));
+    AddProject(project, true);
+}
+
+void Solution::AddProject(Project* project, bool own)
+{
+    if (own)
+    {
+        ownedProjects.push_back(std::unique_ptr<Project>(project));
+    }
+    projects.push_back(project);
     projectMap[project->FilePath()] = project;
 }
 

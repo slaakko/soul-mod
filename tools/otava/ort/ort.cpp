@@ -195,6 +195,11 @@ bool ort_isdigit(int c)
     return std::isdigit(c);
 }
 
+bool ort_isalnum(int c)
+{
+    return std::isalnum(c);
+}
+
 int ort_tolower(int c)
 {
     return std::tolower(c);

@@ -239,7 +239,7 @@ class StaticAssertDeclarationNode : public CompoundNode
 public:
     StaticAssertDeclarationNode(const soul::ast::SourcePos& sourcePos_);
     StaticAssertDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* staticAssert_, Node* constantExpr_, Node* comma_, Node* stringLiteral_, Node* semicolon_,
-        const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos rpPos_);
+        const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;

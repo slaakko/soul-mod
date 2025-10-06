@@ -69,6 +69,14 @@ private:
     std::vector<Range> ranges;
 };
 
+struct TokenIdLess
+{
+    inline bool operator()(const soul::ast::common::Token* left, const soul::ast::common::Token* right) const
+    {
+        return left->Id() < right->Id();
+    }
+};
+
 class TokenSet
 {
 public:
@@ -78,9 +86,9 @@ public:
     bool Contains(const soul::ast::common::Token* token) const;
     bool Intersects(const TokenSet& that) const;
     std::string ToString() const;
-    inline const std::set<const soul::ast::common::Token*>& Tokens() const { return tokens; }
+    inline const std::set<const soul::ast::common::Token*, TokenIdLess>& Tokens() const { return tokens; }
 private:
-    std::set<const soul::ast::common::Token*> tokens;
+    std::set<const soul::ast::common::Token*, TokenIdLess> tokens;
 };
 
 class Visitor;

@@ -4,6 +4,7 @@
 module otava.parser.enums;
 
 import util;
+import soul.ast.common;
 import soul.ast.spg;
 import soul.ast.source.pos;
 import soul.ast.lexer.pos.pair;
@@ -15,17 +16,6 @@ import otava.parser.type;
 import otava.symbols;
 import otava.token;
 import otava.lexer;
-
-using namespace soul::ast::source::pos;
-using namespace soul::ast::lexer::pos::pair;
-using namespace otava::parser::attribute;
-using namespace otava::parser::expression;
-using namespace otava::parser::identifier;
-using namespace otava::parser::punctuation;
-using namespace otava::parser::type;
-using namespace otava::symbols;
-using namespace otava::token;
-using namespace otava::lexer;
 
 namespace otava::parser::enums {
 
@@ -48,7 +38,7 @@ soul::parser::Match EnumParser<LexerT>::EnumName(LexerT& lexer, otava::symbols::
     soul::parser::Match* parentMatch0 = &match;
     {
         std::int64_t pos = lexer.GetPos();
-        soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer, context);
+        soul::parser::Match match = otava::parser::identifier::IdentifierParser<LexerT>::Identifier(lexer, context);
         identifier.reset(static_cast<otava::ast::Node*>(match.value));
         if (match.hit)
         {
@@ -114,7 +104,7 @@ soul::parser::Match EnumParser<LexerT>::EnumSpecifier(LexerT& lexer, otava::symb
                         soul::parser::Match* parentMatch5 = &match;
                         {
                             std::int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = EnumParser<LexerT>::EnumHead(lexer, context);
+                            soul::parser::Match match = otava::parser::enums::EnumParser<LexerT>::EnumHead(lexer, context);
                             enumHead.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
@@ -134,7 +124,7 @@ soul::parser::Match EnumParser<LexerT>::EnumSpecifier(LexerT& lexer, otava::symb
                             {
                                 std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(false);
-                                if (*lexer == LBRACE)
+                                if (*lexer == otava::token::LBRACE)
                                 {
                                     ++lexer;
                                     match.hit = true;
@@ -172,7 +162,7 @@ soul::parser::Match EnumParser<LexerT>::EnumSpecifier(LexerT& lexer, otava::symb
                                     soul::parser::Match* parentMatch12 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = EnumParser<LexerT>::EnumeratorList(lexer, context, enumSpecifierNode.get());
+                                        soul::parser::Match match = otava::parser::enums::EnumParser<LexerT>::EnumeratorList(lexer, context, enumSpecifierNode.get());
                                         if (match.hit)
                                         {
                                             otava::symbols::AddEnumerators(enumSpecifierNode.get(), context);
@@ -197,7 +187,7 @@ soul::parser::Match EnumParser<LexerT>::EnumSpecifier(LexerT& lexer, otava::symb
                                                 soul::parser::Match* parentMatch16 = &match;
                                                 {
                                                     std::int64_t pos = lexer.GetPos();
-                                                    soul::parser::Match match = PunctuationParser<LexerT>::Comma(lexer);
+                                                    soul::parser::Match match = otava::parser::punctuation::PunctuationParser<LexerT>::Comma(lexer);
                                                     comma.reset(static_cast<otava::ast::Node*>(match.value));
                                                     if (match.hit)
                                                     {
@@ -247,7 +237,7 @@ soul::parser::Match EnumParser<LexerT>::EnumSpecifier(LexerT& lexer, otava::symb
                     {
                         std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
-                        if (*lexer == RBRACE)
+                        if (*lexer == otava::token::RBRACE)
                         {
                             ++lexer;
                             match.hit = true;
@@ -332,7 +322,7 @@ soul::parser::Match EnumParser<LexerT>::EnumHead(LexerT& lexer, otava::symbols::
                         soul::parser::Match* parentMatch5 = &match;
                         {
                             std::int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = EnumParser<LexerT>::EnumKey(lexer);
+                            soul::parser::Match match = otava::parser::enums::EnumParser<LexerT>::EnumKey(lexer);
                             enumKey.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
@@ -351,7 +341,7 @@ soul::parser::Match EnumParser<LexerT>::EnumHead(LexerT& lexer, otava::symbols::
                             std::int64_t save = lexer.GetPos();
                             soul::parser::Match* parentMatch7 = &match;
                             {
-                                soul::parser::Match match = AttributeParser<LexerT>::AttributeSpecifierSeq(lexer, context);
+                                soul::parser::Match match = otava::parser::attribute::AttributeParser<LexerT>::AttributeSpecifierSeq(lexer, context);
                                 attributes.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
@@ -384,7 +374,7 @@ soul::parser::Match EnumParser<LexerT>::EnumHead(LexerT& lexer, otava::symbols::
                                 soul::parser::Match* parentMatch11 = &match;
                                 {
                                     std::int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = EnumParser<LexerT>::EnumHeadName(lexer, context);
+                                    soul::parser::Match match = otava::parser::enums::EnumParser<LexerT>::EnumHeadName(lexer, context);
                                     enumHeadName.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
                                     {
@@ -403,7 +393,7 @@ soul::parser::Match EnumParser<LexerT>::EnumHead(LexerT& lexer, otava::symbols::
                                         soul::parser::Match* parentMatch13 = &match;
                                         {
                                             std::int64_t pos = lexer.GetPos();
-                                            soul::parser::Match match = IdentifierParser<LexerT>::Unnamed(lexer);
+                                            soul::parser::Match match = otava::parser::identifier::IdentifierParser<LexerT>::Unnamed(lexer);
                                             unnamed.reset(static_cast<otava::ast::Node*>(match.value));
                                             if (match.hit)
                                             {
@@ -433,7 +423,7 @@ soul::parser::Match EnumParser<LexerT>::EnumHead(LexerT& lexer, otava::symbols::
                     std::int64_t save = lexer.GetPos();
                     soul::parser::Match* parentMatch15 = &match;
                     {
-                        soul::parser::Match match = EnumParser<LexerT>::EnumBase(lexer, context);
+                        soul::parser::Match match = otava::parser::enums::EnumParser<LexerT>::EnumBase(lexer, context);
                         enumBase.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -505,7 +495,7 @@ soul::parser::Match EnumParser<LexerT>::EnumKey(LexerT& lexer)
                 {
                     std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match(false);
-                    if (*lexer == ENUM)
+                    if (*lexer == otava::token::ENUM)
                     {
                         ++lexer;
                         match.hit = true;
@@ -528,7 +518,7 @@ soul::parser::Match EnumParser<LexerT>::EnumKey(LexerT& lexer)
                     {
                         std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
-                        if (*lexer == CLASS)
+                        if (*lexer == otava::token::CLASS)
                         {
                             ++lexer;
                             match.hit = true;
@@ -563,7 +553,7 @@ soul::parser::Match EnumParser<LexerT>::EnumKey(LexerT& lexer)
                         {
                             std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
-                            if (*lexer == ENUM)
+                            if (*lexer == otava::token::ENUM)
                             {
                                 ++lexer;
                                 match.hit = true;
@@ -586,7 +576,7 @@ soul::parser::Match EnumParser<LexerT>::EnumKey(LexerT& lexer)
                             {
                                 std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(false);
-                                if (*lexer == STRUCT)
+                                if (*lexer == otava::token::STRUCT)
                                 {
                                     ++lexer;
                                     match.hit = true;
@@ -623,7 +613,7 @@ soul::parser::Match EnumParser<LexerT>::EnumKey(LexerT& lexer)
                 {
                     std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match(false);
-                    if (*lexer == ENUM)
+                    if (*lexer == otava::token::ENUM)
                     {
                         ++lexer;
                         match.hit = true;
@@ -682,7 +672,7 @@ soul::parser::Match EnumParser<LexerT>::EnumHeadName(LexerT& lexer, otava::symbo
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
-            soul::parser::Match match = IdentifierParser<LexerT>::NestedNameSpecifier(lexer, context);
+            soul::parser::Match match = otava::parser::identifier::IdentifierParser<LexerT>::NestedNameSpecifier(lexer, context);
             nns.reset(static_cast<otava::ast::Node*>(match.value));
             *parentMatch1 = match;
         }
@@ -695,7 +685,7 @@ soul::parser::Match EnumParser<LexerT>::EnumHeadName(LexerT& lexer, otava::symbo
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer, context);
+                    soul::parser::Match match = otava::parser::identifier::IdentifierParser<LexerT>::Identifier(lexer, context);
                     identifier.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -703,7 +693,7 @@ soul::parser::Match EnumParser<LexerT>::EnumHeadName(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumHeadName");
                             #endif
-                            return soul::parser::Match(true, new QualifiedIdNode(lexer.GetSourcePos(pos), nns.release(), identifier.release()));
+                            return soul::parser::Match(true, new otava::ast::QualifiedIdNode(lexer.GetSourcePos(pos), nns.release(), identifier.release()));
                         }
                     }
                     *parentMatch3 = match;
@@ -723,7 +713,7 @@ soul::parser::Match EnumParser<LexerT>::EnumHeadName(LexerT& lexer, otava::symbo
                 soul::parser::Match* parentMatch5 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer, context);
+                    soul::parser::Match match = otava::parser::identifier::IdentifierParser<LexerT>::Identifier(lexer, context);
                     identifier2.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -769,7 +759,7 @@ soul::parser::Match EnumParser<LexerT>::EnumBase(LexerT& lexer, otava::symbols::
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993030);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
-    std::unique_ptr<Node> typeSpecifiers;
+    std::unique_ptr<otava::ast::Node> typeSpecifiers;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -785,7 +775,7 @@ soul::parser::Match EnumParser<LexerT>::EnumBase(LexerT& lexer, otava::symbols::
                 {
                     std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match(false);
-                    if (*lexer == COLON)
+                    if (*lexer == otava::token::COLON)
                     {
                         ++lexer;
                         match.hit = true;
@@ -803,8 +793,8 @@ soul::parser::Match EnumParser<LexerT>::EnumBase(LexerT& lexer, otava::symbols::
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch4 = &match;
                 {
-                    soul::parser::Match match = TypeParser<LexerT>::TypeSpecifierSeqReset(lexer, context);
-                    typeSpecifiers.reset(static_cast<Node*>(match.value));
+                    soul::parser::Match match = otava::parser::type::TypeParser<LexerT>::TypeSpecifierSeqReset(lexer, context);
+                    typeSpecifiers.reset(static_cast<otava::ast::Node*>(match.value));
                     *parentMatch4 = match;
                 }
                 *parentMatch2 = match;
@@ -859,7 +849,7 @@ soul::parser::Match EnumParser<LexerT>::EnumeratorList(LexerT& lexer, otava::sym
         soul::parser::Match* parentMatch1 = &match;
         {
             std::int64_t pos = lexer.GetPos();
-            soul::parser::Match match = EnumParser<LexerT>::EnumeratorDefinition(lexer, context);
+            soul::parser::Match match = otava::parser::enums::EnumParser<LexerT>::EnumeratorDefinition(lexer, context);
             first.reset(static_cast<otava::ast::Node*>(match.value));
             if (match.hit)
             {
@@ -891,7 +881,7 @@ soul::parser::Match EnumParser<LexerT>::EnumeratorList(LexerT& lexer, otava::sym
                                 soul::parser::Match* parentMatch6 = &match;
                                 {
                                     std::int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = PunctuationParser<LexerT>::Comma(lexer);
+                                    soul::parser::Match match = otava::parser::punctuation::PunctuationParser<LexerT>::Comma(lexer);
                                     comma.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
                                     {
@@ -910,7 +900,7 @@ soul::parser::Match EnumParser<LexerT>::EnumeratorList(LexerT& lexer, otava::sym
                                     soul::parser::Match* parentMatch8 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = EnumParser<LexerT>::EnumeratorDefinition(lexer, context);
+                                        soul::parser::Match match = otava::parser::enums::EnumParser<LexerT>::EnumeratorDefinition(lexer, context);
                                         next.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
                                         {
@@ -969,7 +959,7 @@ soul::parser::Match EnumParser<LexerT>::EnumeratorDefinition(LexerT& lexer, otav
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993032);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos assignPos = soul::ast::SourcePos();
-    std::unique_ptr<Node> value = std::unique_ptr<Node>();
+    std::unique_ptr<otava::ast::Node> value = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> enumerator;
     std::unique_ptr<otava::ast::Node> expr;
     soul::parser::Match match(false);
@@ -986,7 +976,7 @@ soul::parser::Match EnumParser<LexerT>::EnumeratorDefinition(LexerT& lexer, otav
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = EnumParser<LexerT>::Enumerator(lexer, context);
+                    soul::parser::Match match = otava::parser::enums::EnumParser<LexerT>::Enumerator(lexer, context);
                     enumerator.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -1016,7 +1006,7 @@ soul::parser::Match EnumParser<LexerT>::EnumeratorDefinition(LexerT& lexer, otav
                                 {
                                     std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match(false);
-                                    if (*lexer == ASSIGN)
+                                    if (*lexer == otava::token::ASSIGN)
                                     {
                                         ++lexer;
                                         match.hit = true;
@@ -1038,7 +1028,7 @@ soul::parser::Match EnumParser<LexerT>::EnumeratorDefinition(LexerT& lexer, otav
                                     soul::parser::Match* parentMatch10 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = ExpressionParser<LexerT>::ConstantExpression(lexer, context);
+                                        soul::parser::Match match = otava::parser::expression::ExpressionParser<LexerT>::ConstantExpression(lexer, context);
                                         expr.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
                                         {
@@ -1122,7 +1112,7 @@ soul::parser::Match EnumParser<LexerT>::Enumerator(LexerT& lexer, otava::symbols
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer, context);
+                    soul::parser::Match match = otava::parser::identifier::IdentifierParser<LexerT>::Identifier(lexer, context);
                     identifier.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -1141,7 +1131,7 @@ soul::parser::Match EnumParser<LexerT>::Enumerator(LexerT& lexer, otava::symbols
                     std::int64_t save = lexer.GetPos();
                     soul::parser::Match* parentMatch5 = &match;
                     {
-                        soul::parser::Match match = AttributeParser<LexerT>::AttributeSpecifierSeq(lexer, context);
+                        soul::parser::Match match = otava::parser::attribute::AttributeParser<LexerT>::AttributeSpecifierSeq(lexer, context);
                         attributes.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -1225,7 +1215,7 @@ soul::parser::Match EnumParser<LexerT>::OpaqueEnumDeclaration(LexerT& lexer, ota
                             soul::parser::Match* parentMatch6 = &match;
                             {
                                 std::int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = EnumParser<LexerT>::EnumKey(lexer);
+                                soul::parser::Match match = otava::parser::enums::EnumParser<LexerT>::EnumKey(lexer);
                                 enumKey.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
@@ -1244,7 +1234,7 @@ soul::parser::Match EnumParser<LexerT>::OpaqueEnumDeclaration(LexerT& lexer, ota
                                 std::int64_t save = lexer.GetPos();
                                 soul::parser::Match* parentMatch8 = &match;
                                 {
-                                    soul::parser::Match match = AttributeParser<LexerT>::AttributeSpecifierSeq(lexer, context);
+                                    soul::parser::Match match = otava::parser::attribute::AttributeParser<LexerT>::AttributeSpecifierSeq(lexer, context);
                                     attributes.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
                                     {
@@ -1266,7 +1256,7 @@ soul::parser::Match EnumParser<LexerT>::OpaqueEnumDeclaration(LexerT& lexer, ota
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch9 = &match;
                         {
-                            soul::parser::Match match = EnumParser<LexerT>::EnumHeadName(lexer, context);
+                            soul::parser::Match match = otava::parser::enums::EnumParser<LexerT>::EnumHeadName(lexer, context);
                             enumHeadName.reset(static_cast<otava::ast::Node*>(match.value));
                             *parentMatch9 = match;
                         }
@@ -1283,7 +1273,7 @@ soul::parser::Match EnumParser<LexerT>::OpaqueEnumDeclaration(LexerT& lexer, ota
                         std::int64_t save = lexer.GetPos();
                         soul::parser::Match* parentMatch11 = &match;
                         {
-                            soul::parser::Match match = EnumParser<LexerT>::EnumBase(lexer, context);
+                            soul::parser::Match match = otava::parser::enums::EnumParser<LexerT>::EnumBase(lexer, context);
                             enumBase.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
@@ -1305,7 +1295,7 @@ soul::parser::Match EnumParser<LexerT>::OpaqueEnumDeclaration(LexerT& lexer, ota
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch12 = &match;
                 {
-                    soul::parser::Match match = PunctuationParser<LexerT>::Semicolon(lexer);
+                    soul::parser::Match match = otava::parser::punctuation::PunctuationParser<LexerT>::Semicolon(lexer);
                     semicolon.reset(static_cast<otava::ast::Node*>(match.value));
                     *parentMatch12 = match;
                 }
@@ -1366,7 +1356,7 @@ soul::parser::Match EnumParser<LexerT>::ElaboratedEnumSpecifier(LexerT& lexer, o
         {
             std::int64_t pos = lexer.GetPos();
             soul::parser::Match match(false);
-            if (*lexer == ENUM)
+            if (*lexer == otava::token::ENUM)
             {
                 ++lexer;
                 match.hit = true;
@@ -1398,7 +1388,7 @@ soul::parser::Match EnumParser<LexerT>::ElaboratedEnumSpecifier(LexerT& lexer, o
                         soul::parser::Match* parentMatch6 = &match;
                         {
                             std::int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = IdentifierParser<LexerT>::NestedNameSpecifier(lexer, context);
+                            soul::parser::Match match = otava::parser::identifier::IdentifierParser<LexerT>::NestedNameSpecifier(lexer, context);
                             nns.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
@@ -1417,7 +1407,7 @@ soul::parser::Match EnumParser<LexerT>::ElaboratedEnumSpecifier(LexerT& lexer, o
                             soul::parser::Match* parentMatch8 = &match;
                             {
                                 std::int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer, context);
+                                soul::parser::Match match = otava::parser::identifier::IdentifierParser<LexerT>::Identifier(lexer, context);
                                 identifier.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
@@ -1447,7 +1437,7 @@ soul::parser::Match EnumParser<LexerT>::ElaboratedEnumSpecifier(LexerT& lexer, o
                             soul::parser::Match* parentMatch10 = &match;
                             {
                                 std::int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer, context);
+                                soul::parser::Match match = otava::parser::identifier::IdentifierParser<LexerT>::Identifier(lexer, context);
                                 identifier2.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {

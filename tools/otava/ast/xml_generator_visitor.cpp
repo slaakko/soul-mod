@@ -6,6 +6,7 @@
 module otava.ast.xml.generator.visitor;
 
 import otava.ast.node;
+import soul.ast.source.pos;
 import util.unicode;
 
 namespace otava::ast {
@@ -15,7 +16,7 @@ void XmlGeneratorVisitor::BeginVisit(Node& node)
     stack.push(std::move(element));
     element.reset(soul::xml::MakeElement(NodeKindStr(node.Kind())));
     AddAttribute("type", NodeTypeStr(node.Type()));
-    AddAttribute("pos", ToString(node.GetSourcePos()));
+    AddAttribute("pos", soul::ast::ToString(node.GetSourcePos()));
     int n = node.Count();
     if (n != 0)
     {

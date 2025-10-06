@@ -1,0 +1,3 @@
+project fwd_declararation;
+target=program;
+source <fwd_declararation.cpp>;

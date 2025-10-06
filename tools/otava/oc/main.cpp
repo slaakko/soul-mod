@@ -294,7 +294,7 @@ int main(int argc, const char** argv)
                     buildFlags = buildFlags | otava::build::BuildFlags::seed;
                 }
                 std::set<otava::build::Project*, otava::build::ProjectLess> projectSet;
-                otava::build::Build(project.get(), config, optLevel, buildFlags, projectSet);
+                otava::build::Build(fileMap, project.get(), config, optLevel, buildFlags, projectSet);
             }
             else if (file.ends_with(".solution"))
             {

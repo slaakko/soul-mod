@@ -37,7 +37,7 @@ constexpr BuildFlags operator~(BuildFlags flags)
 
 void ScanDependencies(Project* project, int file, bool implementationUnit, std::string& interfaceUnitName);
 otava::symbols::Module* GetModule(otava::symbols::ModuleMapper& moduleMapper, const std::string& moduleName);
-void Build(Project* project, const std::string& config, int optLevel, BuildFlags flags, std::set<Project*, ProjectLess>& projectSet);
+void Build(soul::lexer::FileMap& fileMap, Project* project, const std::string& config, int optLevel, BuildFlags flags, std::set<Project*, ProjectLess>& projectSet);
 void Build(soul::lexer::FileMap& fileMap, Solution* solution, const std::string& config, int optLevel, BuildFlags flags, std::set<Project*, ProjectLess>& projectSet);
 
 } // namespace otava::build

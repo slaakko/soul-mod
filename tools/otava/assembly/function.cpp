@@ -36,21 +36,21 @@ void Function::AddInstruction(Instruction* inst)
 {
     switch (activeFunctionPart)
     {
-    case FunctionPart::prologue:
-    {
-        prologue.push_back(std::unique_ptr<Instruction>(inst));
-        break;
-    }
-    case FunctionPart::body:
-    {
-        body.push_back(std::unique_ptr<Instruction>(inst));
-        break;
-    }
-    case FunctionPart::epilogue:
-    {
-        epilogue.push_back(std::unique_ptr<Instruction>(inst));
-        break;
-    }
+        case FunctionPart::prologue:
+        {
+            prologue.push_back(std::unique_ptr<Instruction>(inst));
+            break;
+        }
+        case FunctionPart::body:
+        {
+            body.push_back(std::unique_ptr<Instruction>(inst));
+            break;
+        }
+        case FunctionPart::epilogue:
+        {
+            epilogue.push_back(std::unique_ptr<Instruction>(inst));
+            break;
+        }
     }
 }
 

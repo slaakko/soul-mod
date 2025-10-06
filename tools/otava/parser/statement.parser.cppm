@@ -8,8 +8,6 @@ import soul.lexer;
 import soul.parser;
 import otava.symbols.context;
 
-using namespace otava::symbols::context;
-
 export namespace otava::parser::statement {
 
 template<typename LexerT>

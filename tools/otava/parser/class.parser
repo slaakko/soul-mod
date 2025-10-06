@@ -306,7 +306,7 @@ parser ClassParser
         ;
 
     RetMemberDeclSpecifiers(otava::symbols::Context* context) : otava::ast::Node*
-        ::= empty{ context->PushSetFlag(ContextFlags::retMemberDeclSpecifiers); }
+        ::= empty{ context->PushSetFlag(otava::symbols::ContextFlags::retMemberDeclSpecifiers); }
             DeclSpecifierSeq(context):declSpecifiers{ context->PopFlags(); return declSpecifiers; } / { context->PopFlags(); }
         ;
 
@@ -316,7 +316,7 @@ parser ClassParser
         ;
 
     RetMemberFunctionDefinition(otava::symbols::Context* context) : otava::ast::Node*
-        ::= empty{ context->PushSetFlag(ContextFlags::retMemberDeclSpecifiers); }
+        ::= empty{ context->PushSetFlag(otava::symbols::ContextFlags::retMemberDeclSpecifiers); }
             FunctionDefinition(context):functionDefinition{ context->PopFlags(); return functionDefinition; } / { context->PopFlags(); }
         ;
 
@@ -367,7 +367,7 @@ parser ClassParser
     CtorInitializer(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
         ::= MemberFunctionGuard(context):memberFunctionGuard
             CtorInitializerGuarded(context):ctorInitializerGuarded{ return ctorInitializerGuarded; }
-        |   SavedCtorInitializerGuard(context):savedCtorInitializer{ context->ResetFlag(ContextFlags::parseSavedCtorInitializer); }
+        |   SavedCtorInitializerGuard(context):savedCtorInitializer{ context->ResetFlag(otava::symbols::ContextFlags::parseSavedCtorInitializer); }
             CtorInitializerSaved(context):ctorInitializerSaved{ return ctorInitializerSaved; }
         |   CtorInitializerUnguarded(context):ctorInitializerUnguarded{ return ctorInitializerUnguarded; }
         ;
@@ -410,7 +410,7 @@ parser ClassParser
                 else
                 {
                     lexer.BeginRecordedParse(ctorInitializerNode->GetLexerPosPair()); 
-                    Scope* functionScope = static_cast<Scope*>(ctorInitializerNode->FunctionScope());
+                    otava::symbols::Scope* functionScope = static_cast<otava::symbols::Scope*>(ctorInitializerNode->FunctionScope());
                     context->GetSymbolTable()->BeginScope(functionScope);
                 }
             }

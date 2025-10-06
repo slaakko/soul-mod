@@ -495,7 +495,7 @@ StaticAssertDeclarationNode::StaticAssertDeclarationNode(const soul::ast::Source
 }
 
 StaticAssertDeclarationNode::StaticAssertDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* staticAssert_, Node* constantExpr_, Node* comma_, Node* stringLiteral_, Node* semicolon_,
-    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos rpPos_) :
+    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
     CompoundNode(NodeKind::staticAssertDeclarationNode, sourcePos_), staticAssert(staticAssert_), constantExpr(constantExpr_), comma(comma_), stringLiteral(stringLiteral_), semicolon(semicolon_),
     lpPos(lpPos_), rpPos(rpPos_)
 {

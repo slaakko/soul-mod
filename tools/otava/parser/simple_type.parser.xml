@@ -1,18 +1,18 @@
 <parserFile>
  <grammar name="SimpleTypeParser">
-  <rule first="{BOOL, CHAR, CHAR16_T, CHAR32_T, CHAR8_T, DOUBLE, FLOAT, INT, LONG, SHORT, SIGNED, UNSIGNED, VOID, WCHAR_T}" name="SimpleType">
-   <choice first="{BOOL, CHAR, CHAR16_T, CHAR32_T, CHAR8_T, DOUBLE, FLOAT, INT, LONG, SHORT, SIGNED, UNSIGNED, VOID, WCHAR_T}">
-    <choice first="{BOOL, CHAR, CHAR16_T, CHAR32_T, CHAR8_T, DOUBLE, FLOAT, INT, LONG, SHORT, SIGNED, UNSIGNED, WCHAR_T}">
-     <choice first="{BOOL, CHAR, CHAR16_T, CHAR32_T, CHAR8_T, FLOAT, INT, LONG, SHORT, SIGNED, UNSIGNED, WCHAR_T}">
-      <choice first="{BOOL, CHAR, CHAR16_T, CHAR32_T, CHAR8_T, INT, LONG, SHORT, SIGNED, UNSIGNED, WCHAR_T}">
-       <choice first="{BOOL, CHAR, CHAR16_T, CHAR32_T, CHAR8_T, INT, LONG, SHORT, SIGNED, WCHAR_T}">
-        <choice first="{BOOL, CHAR, CHAR16_T, CHAR32_T, CHAR8_T, INT, LONG, SHORT, WCHAR_T}">
-         <choice first="{BOOL, CHAR, CHAR16_T, CHAR32_T, CHAR8_T, INT, SHORT, WCHAR_T}">
-          <choice first="{BOOL, CHAR, CHAR16_T, CHAR32_T, CHAR8_T, SHORT, WCHAR_T}">
-           <choice first="{BOOL, CHAR, CHAR16_T, CHAR32_T, CHAR8_T, WCHAR_T}">
-            <choice first="{CHAR, CHAR16_T, CHAR32_T, CHAR8_T, WCHAR_T}">
-             <choice first="{CHAR, CHAR16_T, CHAR32_T, CHAR8_T}">
-              <choice first="{CHAR, CHAR16_T, CHAR8_T}">
+  <rule first="{BOOL, CHAR, CHAR8_T, CHAR16_T, CHAR32_T, DOUBLE, FLOAT, INT, LONG, SHORT, SIGNED, UNSIGNED, VOID, WCHAR_T}" name="SimpleType">
+   <choice first="{BOOL, CHAR, CHAR8_T, CHAR16_T, CHAR32_T, DOUBLE, FLOAT, INT, LONG, SHORT, SIGNED, UNSIGNED, VOID, WCHAR_T}">
+    <choice first="{BOOL, CHAR, CHAR8_T, CHAR16_T, CHAR32_T, DOUBLE, FLOAT, INT, LONG, SHORT, SIGNED, UNSIGNED, WCHAR_T}">
+     <choice first="{BOOL, CHAR, CHAR8_T, CHAR16_T, CHAR32_T, FLOAT, INT, LONG, SHORT, SIGNED, UNSIGNED, WCHAR_T}">
+      <choice first="{BOOL, CHAR, CHAR8_T, CHAR16_T, CHAR32_T, INT, LONG, SHORT, SIGNED, UNSIGNED, WCHAR_T}">
+       <choice first="{BOOL, CHAR, CHAR8_T, CHAR16_T, CHAR32_T, INT, LONG, SHORT, SIGNED, WCHAR_T}">
+        <choice first="{BOOL, CHAR, CHAR8_T, CHAR16_T, CHAR32_T, INT, LONG, SHORT, WCHAR_T}">
+         <choice first="{BOOL, CHAR, CHAR8_T, CHAR16_T, CHAR32_T, INT, SHORT, WCHAR_T}">
+          <choice first="{BOOL, CHAR, CHAR8_T, CHAR16_T, CHAR32_T, SHORT, WCHAR_T}">
+           <choice first="{BOOL, CHAR, CHAR8_T, CHAR16_T, CHAR32_T, WCHAR_T}">
+            <choice first="{CHAR, CHAR8_T, CHAR16_T, CHAR32_T, WCHAR_T}">
+             <choice first="{CHAR, CHAR8_T, CHAR16_T, CHAR32_T}">
+              <choice first="{CHAR, CHAR8_T, CHAR16_T}">
                <choice first="{CHAR, CHAR8_T}">
                 <action first="{CHAR}">
                  <token first="{CHAR}" name="CHAR"/>

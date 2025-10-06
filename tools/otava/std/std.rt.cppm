@@ -20,6 +20,7 @@ extern "C" int ort_fputs(const char* str, void* file);
 extern "C" bool ort_isspace(int c);
 extern "C" bool ort_isalpha(int c);
 extern "C" bool ort_isdigit(int c);
+extern "C" bool ort_isalnum(int c);
 extern "C" int ort_tolower(int c);
 extern "C" int ort_toupper(int c);
 extern "C" std::int64_t ort_fread(void* buf, std::int64_t size, std::int64_t count, void* file);
@@ -173,6 +174,11 @@ inline bool isalpha(int c)
 inline bool isdigit(int c)
 {
     return ort_isdigit(c);
+}
+
+inline bool isalnum(int c)
+{
+    return ort_isalnum(c);
 }
 
 inline int tolower(int c)

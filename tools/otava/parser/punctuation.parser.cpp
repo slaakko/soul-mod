@@ -4,14 +4,11 @@
 module otava.parser.punctuation;
 
 import util;
+import soul.ast.common;
 import soul.ast.spg;
 import otava.ast;
 import otava.token;
 import otava.lexer;
-
-using namespace otava::ast;
-using namespace otava::token;
-using namespace otava::lexer;
 
 namespace otava::parser::punctuation {
 
@@ -33,7 +30,7 @@ soul::parser::Match PunctuationParser<LexerT>::Semicolon(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == SEMICOLON)
+        if (*lexer == otava::token::SEMICOLON)
         {
             ++lexer;
             match.hit = true;
@@ -81,7 +78,7 @@ soul::parser::Match PunctuationParser<LexerT>::Comma(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == COMMA)
+        if (*lexer == otava::token::COMMA)
         {
             ++lexer;
             match.hit = true;
@@ -129,7 +126,7 @@ soul::parser::Match PunctuationParser<LexerT>::Quest(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == QUEST)
+        if (*lexer == otava::token::QUEST)
         {
             ++lexer;
             match.hit = true;
@@ -177,7 +174,7 @@ soul::parser::Match PunctuationParser<LexerT>::Colon(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == COLON)
+        if (*lexer == otava::token::COLON)
         {
             ++lexer;
             match.hit = true;
@@ -225,7 +222,7 @@ soul::parser::Match PunctuationParser<LexerT>::ColonColon(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == COLON_COLON)
+        if (*lexer == otava::token::COLON_COLON)
         {
             ++lexer;
             match.hit = true;
@@ -273,7 +270,7 @@ soul::parser::Match PunctuationParser<LexerT>::Ellipsis(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == ELLIPSIS)
+        if (*lexer == otava::token::ELLIPSIS)
         {
             ++lexer;
             match.hit = true;
@@ -321,7 +318,7 @@ soul::parser::Match PunctuationParser<LexerT>::LParen(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == LPAREN)
+        if (*lexer == otava::token::LPAREN)
         {
             ++lexer;
             match.hit = true;
@@ -369,7 +366,7 @@ soul::parser::Match PunctuationParser<LexerT>::RParen(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == RPAREN)
+        if (*lexer == otava::token::RPAREN)
         {
             ++lexer;
             match.hit = true;
@@ -417,7 +414,7 @@ soul::parser::Match PunctuationParser<LexerT>::LBracket(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == LBRACKET)
+        if (*lexer == otava::token::LBRACKET)
         {
             ++lexer;
             match.hit = true;
@@ -465,7 +462,7 @@ soul::parser::Match PunctuationParser<LexerT>::RBracket(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == RBRACKET)
+        if (*lexer == otava::token::RBRACKET)
         {
             ++lexer;
             match.hit = true;
@@ -513,7 +510,7 @@ soul::parser::Match PunctuationParser<LexerT>::LBrace(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == LBRACE)
+        if (*lexer == otava::token::LBRACE)
         {
             ++lexer;
             match.hit = true;
@@ -561,7 +558,7 @@ soul::parser::Match PunctuationParser<LexerT>::RBrace(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == RBRACE)
+        if (*lexer == otava::token::RBRACE)
         {
             ++lexer;
             match.hit = true;
@@ -609,7 +606,7 @@ soul::parser::Match PunctuationParser<LexerT>::Assign(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == ASSIGN)
+        if (*lexer == otava::token::ASSIGN)
         {
             ++lexer;
             match.hit = true;

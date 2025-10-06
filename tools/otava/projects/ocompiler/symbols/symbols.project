@@ -1,0 +1,6 @@
+project otava.symbols;
+target=library;
+reference <../../outil/outil.project>;
+reference <../../osoul/oast/oast.project>;
+interface <context.cppm>;
+source <context.cpp>;

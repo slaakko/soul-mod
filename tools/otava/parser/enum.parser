@@ -87,7 +87,7 @@ parser EnumParser
         ;
 
     EnumHeadName(otava::symbols::Context* context) : otava::ast::Node*
-        ::= NestedNameSpecifier(context):nns Identifier(context):identifier{ return new QualifiedIdNode(lexer.GetSourcePos(pos), nns, identifier); }
+        ::= NestedNameSpecifier(context):nns Identifier(context):identifier{ return new otava::ast::QualifiedIdNode(lexer.GetSourcePos(pos), nns, identifier); }
         |   Identifier(context):identifier2{ return identifier2;}
         ;
 
@@ -109,7 +109,7 @@ parser EnumParser
         )*
         ;
 
-    EnumeratorDefinition(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos assignPos, var std::unique_ptr<Node> value) : otava::ast::Node*
+    EnumeratorDefinition(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos assignPos, var std::unique_ptr<otava::ast::Node> value) : otava::ast::Node*
         ::= 
         (
             Enumerator(context):enumerator{ sourcePos = lexer.GetSourcePos(pos); }

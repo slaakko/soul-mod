@@ -9,9 +9,6 @@ import soul.parser;
 import otava.symbols.context;
 import otava.ast;
 
-using namespace otava::symbols::context;
-using namespace otava::ast;
-
 export namespace otava::parser::templates {
 
 template<typename LexerT>

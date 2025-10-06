@@ -22,14 +22,19 @@ public:
     void AddProjectFilePath(const std::string& projectFilePath);
     inline const std::vector<std::string>& ProjectFilePaths() const { return projectFilePaths; }
     void AddProject(Project* project);
-    inline const std::vector<std::unique_ptr<Project>>& Projects() const { return projects; }
+    void AddProject(Project* project, bool own);
+    inline const std::vector<Project*>& Projects() const { return projects; }
     Project* GetProject(const std::string& projectFilePath) const;
+    bool IsProjectSolution() const { return projectSolution; }
+    void SetProjectSolution() { projectSolution = true; }
 private:
     std::string filePath;
     std::string name;
     std::vector<std::string> projectFilePaths;
-    std::vector<std::unique_ptr<Project>> projects;
+    std::vector<std::unique_ptr<Project>> ownedProjects;
+    std::vector<Project*> projects;
     std::map<std::string, Project*> projectMap;
+    bool projectSolution;
 };
 
 } // namespace otava::build_solution

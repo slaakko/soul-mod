@@ -212,7 +212,7 @@ parser DeclarationParser
         ::=
         (
             Extern:extrn{ sourcePos = lexer.GetSourcePos(pos); } 
-            StringLiteral(context):linkage{ linkageNode.reset(linkage); context->PushSetFlag(ContextFlags::linkageDeclaration); } 
+            StringLiteral(context):linkage{ linkageNode.reset(linkage); context->PushSetFlag(otava::symbols::ContextFlags::linkageDeclaration); } 
             (
                 LBRACE{ lbPos = lexer.GetSourcePos(pos); } 
                 DeclarationSeq(context):declarations? 
@@ -495,7 +495,7 @@ parser DeclarationParser
             empty{ context->PushResetFlag(otava::symbols::ContextFlags::hasDefiningTypeSpecifier | otava::symbols::ContextFlags::friendSpecifier); }
             DeclSpecifier(context):first{ sequence.reset(new otava::ast::DeclSpecifierSequenceNode(lexer.GetSourcePos(pos))); sequence->AddNode(first); } 
             (
-                DeclSpecifier(context):next{ sequence->AddNode(next); }
+                DeclSpecifier(context):next{ sequence->AddNode(next); }  
             )*
             (
                 AttributeSpecifierSeq(context):attributes{ sequence->AddNode(attributes); }

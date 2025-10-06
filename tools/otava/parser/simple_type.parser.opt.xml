@@ -1,7 +1,7 @@
 <parserFile>
  <grammar name="SimpleTypeParser">
-  <rule first="{BOOL, CHAR, CHAR16_T, CHAR32_T, CHAR8_T, DOUBLE, FLOAT, INT, LONG, SHORT, SIGNED, UNSIGNED, VOID, WCHAR_T}" name="SimpleType">
-   <switch first="{BOOL, CHAR, CHAR16_T, CHAR32_T, CHAR8_T, DOUBLE, FLOAT, INT, LONG, SHORT, SIGNED, UNSIGNED, VOID, WCHAR_T}">
+  <rule first="{BOOL, CHAR, CHAR8_T, CHAR16_T, CHAR32_T, DOUBLE, FLOAT, INT, LONG, SHORT, SIGNED, UNSIGNED, VOID, WCHAR_T}" name="SimpleType">
+   <switch first="{BOOL, CHAR, CHAR8_T, CHAR16_T, CHAR32_T, DOUBLE, FLOAT, INT, LONG, SHORT, SIGNED, UNSIGNED, VOID, WCHAR_T}">
     <case first="{CHAR}">
      <action first="{CHAR}">
       <token first="{CHAR}" name="CHAR"/>

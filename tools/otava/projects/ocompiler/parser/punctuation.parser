@@ -1,0 +1,132 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module otava.parser.punctuation;
+
+[implementation]import otava.ast;
+[implementation]import otava.token;
+[implementation]import otava.lexer;
+
+parser PunctuationParser
+{
+    lexer otava::lexer::OtavaLexer<char32_t>;
+
+    Semicolon : otava::ast::Node*
+        ::= SEMICOLON
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::SemicolonNode(*sp); 
+            }
+        ;
+
+    Comma : otava::ast::Node*
+        ::= COMMA
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::CommaNode(*sp); 
+            }
+        ;
+    
+    Quest : otava::ast::Node*
+        ::= QUEST
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::QuestNode(*sp); 
+            }
+        ;
+    
+    Colon : otava::ast::Node*
+        ::= COLON
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::ColonNode(*sp); 
+            }
+        ;
+
+    ColonColon : otava::ast::Node*
+        ::= COLON_COLON
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::ColonColonNode(*sp); 
+            }
+        ;
+    
+    Ellipsis : otava::ast::Node*
+        ::= ELLIPSIS
+            {
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::EllipsisNode(*sp); 
+            }
+        ;
+    
+    LParen : otava::ast::Node*
+        ::= LPAREN
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::LParenNode(*sp); 
+            }
+        ;
+    
+    RParen : otava::ast::Node*
+        ::= RPAREN
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::RParenNode(*sp); 
+            }
+        ;
+    
+    LBracket : otava::ast::Node*
+        ::= LBRACKET
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::LBracketNode(*sp); 
+            }
+        ;
+
+    RBracket : otava::ast::Node*
+        ::= RBRACKET
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::RBracketNode(*sp); 
+            }
+        ;
+
+    LBrace : otava::ast::Node*
+        ::= LBRACE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::LBraceNode(*sp); 
+            }
+        ;
+
+    RBrace : otava::ast::Node*
+        ::= RBRACE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::RBraceNode(*sp); 
+            }
+        ;
+
+    Assign : otava::ast::Node*
+        ::= ASSIGN
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::AssignNode(*sp); 
+            }
+        ;
+}

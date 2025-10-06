@@ -244,6 +244,7 @@ soul::ast::common::TokenMap* Parser::GetTokenMap()
     {
         const GrammarParser* grammar = static_cast<const GrammarParser*>(this);
         ParserFile* parserFile = grammar->GetParserFile();
+
         return parserFile->GetTokenMap();
     }
     else if (parent)
@@ -329,8 +330,8 @@ void ChoiceParser::SetOptimizationFlag(int& count)
     {
         if (!First().Contains(tokenMap->Any()))
         {
-            if (!Left()->First().Contains(tokenMap->Epsilon()) && !Right()->First().Contains(tokenMap->Epsilon()) && !Left()->First().Contains(tokenMap->Any()) &&
-                !Right()->First().Contains(tokenMap->Any()))
+            if (!Left()->First().Contains(tokenMap->Epsilon()) && !Right()->First().Contains(tokenMap->Epsilon()) && 
+                !Left()->First().Contains(tokenMap->Any()) && !Right()->First().Contains(tokenMap->Any()))
             {
                 if (!Left()->First().Intersects(Right()->First()))
                 {

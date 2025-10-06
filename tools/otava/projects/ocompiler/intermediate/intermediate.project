@@ -1,0 +1,14 @@
+project otava.intermediate;
+target=library;
+reference <../../outil/outil.project>;
+reference <../../osoul/oast/oast.project>;
+reference <../../osoul/olexer/olexer.project>;
+reference <../../osoul/olex/olex.project>;
+reference <../../osoul/oparser/oparser.project>;
+reference <../assembly/assembly.project>;
+interface <intermediate.lexer.cppm>;
+source <intermediate.lexer.cpp>;
+interface <intermediate.token.cppm>;
+interface <types.cppm>;
+interface <data.cppm>;
+interface <code.cppm>;

@@ -19,6 +19,7 @@ export extern "C" std::int64_t ort_fwrite(void* buffer, std::int64_t size, std::
 export extern "C" bool ort_isspace(int c);
 export extern "C" bool ort_isalpha(int c);
 export extern "C" bool ort_isdigit(int c);
+export extern "C" bool ort_isalnum(int c);
 export extern "C" int ort_tolower(int c);
 export extern "C" int ort_toupper(int c);
 export extern "C" int ort_fflush(void* file);

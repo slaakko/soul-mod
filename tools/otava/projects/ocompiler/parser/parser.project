@@ -1,0 +1,17 @@
+project otava.parser;
+target=library;
+reference <../../outil/outil.project>;
+reference <../../osoul/oast/oast.project>;
+reference <../../osoul/olexer/olexer.project>;
+reference <../../osoul/olex/olex.project>;
+reference <../../osoul/oparser/oparser.project>;
+reference <../../oxml/odom/odom.project>;
+reference <../ast/ast.project>;
+reference <../lexer/lexer.project>;
+reference <../symbols/symbols.project>;
+interface <punctuation.parser.cppm>;
+source <punctuation.parser.cpp>;
+interface <otava_rules.cppm>;
+source <otava_rules.cpp>;
+interface <token_parser.cppm>;
+source <token_parser.cpp>;

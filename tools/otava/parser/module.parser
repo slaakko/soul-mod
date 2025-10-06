@@ -170,7 +170,7 @@ parser ModuleParser
         }
         ;
 
-    HeaderName(otava::symbols::Context* context) : Node*
+    HeaderName(otava::symbols::Context* context) : otava::ast::Node*
         ::= ANGLE_HEADER_NAME{ return new otava::ast::AngleHeaderName(lexer.GetSourcePos(pos), lexer.GetToken(pos).ToString()); }
         |   QUOTE_HEADER_NAME{ return new otava::ast::QuoteHeaderName(lexer.GetSourcePos(pos), lexer.GetToken(pos).ToString()); }
         ;

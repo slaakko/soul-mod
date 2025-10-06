@@ -1,0 +1,3 @@
+project otava.parser;
+tokens <../lexer/otava.token>;
+parser <punctuation.parser>;
