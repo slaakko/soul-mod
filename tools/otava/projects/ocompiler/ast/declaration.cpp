@@ -65,13 +65,19 @@ void SimpleDeclarationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void SimpleDeclarationNode::Write(Writer& writer)
+std::expected<bool, int>  SimpleDeclarationNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(declarationSpecifiers.get());
-    writer.Write(initDeclaratorList.get());
-    writer.Write(attributes.get());
-    writer.Write(semicolon.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(declarationSpecifiers.get());
+    if (!rv) return rv;
+    rv = writer.Write(initDeclaratorList.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> SimpleDeclarationNode::Read(Reader& reader)
@@ -118,15 +124,23 @@ void AsmDeclarationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void AsmDeclarationNode::Write(Writer& writer)
+std::expected<bool, int> AsmDeclarationNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(asm_.get());
-    writer.Write(asmText.get());
-    writer.Write(semicolon.get());
-    writer.Write(attributes.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(asm_.get());
+    if (!rv) return rv;
+    rv = writer.Write(asmText.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> AsmDeclarationNode::Read(Reader& reader)
@@ -194,14 +208,21 @@ void LinkageSpecificationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void LinkageSpecificationNode::Write(Writer& writer)
+std::expected<bool, int> LinkageSpecificationNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(extrn.get());
-    writer.Write(linkage.get());
-    writer.Write(declarations.get());
-    writer.Write(lbPos);
-    writer.Write(rbPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(extrn.get());
+    if (!rv) return rv;
+    rv = writer.Write(linkage.get());
+    if (!rv) return rv;
+    rv = writer.Write(declarations.get());
+    if (!rv) return rv;
+    rv = writer.Write(lbPos);
+    if (!rv) return rv;
+    rv = writer.Write(rbPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> LinkageSpecificationNode::Read(Reader& reader)
@@ -262,16 +283,25 @@ void NamespaceDefinitionNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void NamespaceDefinitionNode::Write(Writer& writer)
+std::expected<bool, int> NamespaceDefinitionNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(nskw.get());
-    writer.Write(nsName.get());
-    writer.Write(nsBody.get());
-    writer.Write(inln.get());
-    writer.Write(attributes.get());
-    writer.Write(lbPos);
-    writer.Write(rbPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(nskw.get());
+    if (!rv) return rv;
+    rv = writer.Write(nsName.get());
+    if (!rv) return rv;
+    rv = writer.Write(nsBody.get());
+    if (!rv) return rv;
+    rv = writer.Write(inln.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    rv = writer.Write(lbPos);
+    if (!rv) return rv;
+    rv = writer.Write(rbPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> NamespaceDefinitionNode::Read(Reader& reader)
@@ -326,10 +356,13 @@ void NamespaceBodyNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void NamespaceBodyNode::Write(Writer& writer)
+std::expected<bool, int> NamespaceBodyNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(declarations.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(declarations.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> NamespaceBodyNode::Read(Reader& reader)
@@ -362,13 +395,19 @@ void NamespaceAliasDefinitionNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void NamespaceAliasDefinitionNode::Write(Writer& writer)
+std::expected<bool, int> NamespaceAliasDefinitionNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(id.get());
-    writer.Write(assign.get());
-    writer.Write(qns.get());
-    writer.Write(semicolon.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(id.get());
+    if (!rv) return rv;
+    rv = writer.Write(assign.get());
+    if (!rv) return rv;
+    rv = writer.Write(qns.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> NamespaceAliasDefinitionNode::Read(Reader& reader)
@@ -410,12 +449,17 @@ void UsingDeclarationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void UsingDeclarationNode::Write(Writer& writer)
+std::expected<bool, int> UsingDeclarationNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(usng.get());
-    writer.Write(declarators.get());
-    writer.Write(semicolon.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(usng.get());
+    if (!rv) return rv;
+    rv = writer.Write(declarators.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> UsingDeclarationNode::Read(Reader& reader)
@@ -488,12 +532,17 @@ void UsingEnumDeclarationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void UsingEnumDeclarationNode::Write(Writer& writer)
+std::expected<bool, int> UsingEnumDeclarationNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(usng.get());
-    writer.Write(ees.get());
-    writer.Write(semicolon.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(usng.get());
+    if (!rv) return rv;
+    rv = writer.Write(ees.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> UsingEnumDeclarationNode::Read(Reader& reader)
@@ -537,14 +586,21 @@ void UsingDirectiveNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void UsingDirectiveNode::Write(Writer& writer)
+std::expected<bool, int>  UsingDirectiveNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(usng.get());
-    writer.Write(nskw.get());
-    writer.Write(id.get());
-    writer.Write(semicolon.get());
-    writer.Write(attributes.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(usng.get());
+    if (!rv) return rv;
+    rv = writer.Write(nskw.get());
+    if (!rv) return rv;
+    rv = writer.Write(id.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> UsingDirectiveNode::Read(Reader& reader)
@@ -617,16 +673,25 @@ void StaticAssertDeclarationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void StaticAssertDeclarationNode::Write(Writer& writer)
+std::expected<bool, int> StaticAssertDeclarationNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(staticAssert.get());
-    writer.Write(constantExpr.get());
-    writer.Write(comma.get());
-    writer.Write(stringLiteral.get());
-    writer.Write(semicolon.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(staticAssert.get());
+    if (!rv) return rv;
+    rv = writer.Write(constantExpr.get());
+    if (!rv) return rv;
+    rv = writer.Write(comma.get());
+    if (!rv) return rv;
+    rv = writer.Write(stringLiteral.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> StaticAssertDeclarationNode::Read(Reader& reader)
@@ -697,15 +762,23 @@ void AliasDeclarationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void AliasDeclarationNode::Write(Writer& writer)
+std::expected<bool, int> AliasDeclarationNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(usng.get());
-    writer.Write(identifier.get());
-    writer.Write(assign.get());
-    writer.Write(definingTypeId.get());
-    writer.Write(attributes.get());
-    writer.Write(semicolon.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(usng.get());
+    if (!rv) return rv;
+    rv = writer.Write(identifier.get());
+    if (!rv) return rv;
+    rv = writer.Write(assign.get());
+    if (!rv) return rv;
+    rv = writer.Write(definingTypeId.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> AliasDeclarationNode::Read(Reader& reader)
@@ -827,12 +900,17 @@ void TrailingFunctionDeclaratorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void TrailingFunctionDeclaratorNode::Write(Writer& writer)
+std::expected<bool, int> TrailingFunctionDeclaratorNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(declarator.get());
-    writer.Write(params.get());
-    writer.Write(trailingReturnType.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(declarator.get());
+    if (!rv) return rv;
+    rv = writer.Write(params.get());
+    if (!rv) return rv;
+    rv = writer.Write(trailingReturnType.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> TrailingFunctionDeclaratorNode::Read(Reader& reader)
@@ -871,12 +949,17 @@ void ParenthesizedDeclaratorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ParenthesizedDeclaratorNode::Write(Writer& writer)
+std::expected<bool, int> ParenthesizedDeclaratorNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(declarator.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(declarator.get());
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ParenthesizedDeclaratorNode::Read(Reader& reader)
@@ -1114,12 +1197,17 @@ void ConditionalExplicitNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ConditionalExplicitNode::Write(Writer& writer)
+std::expected<bool, int> ConditionalExplicitNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(cond.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(cond.get());
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ConditionalExplicitNode::Read(Reader& reader)
@@ -1241,12 +1329,17 @@ void ArrayDeclaratorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ArrayDeclaratorNode::Write(Writer& writer)
+std::expected<bool, int> ArrayDeclaratorNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(dimension.get());
-    writer.Write(lbPos);
-    writer.Write(rbPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(dimension.get());
+    if (!rv) return rv;
+    rv = writer.Write(lbPos);
+    if (!rv) return rv;
+    rv = writer.Write(rbPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ArrayDeclaratorNode::Read(Reader& reader)
@@ -1285,10 +1378,13 @@ void FunctionDeclaratorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void FunctionDeclaratorNode::Write(Writer& writer)
+std::expected<bool, int> FunctionDeclaratorNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(params.get());
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(params.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> FunctionDeclaratorNode::Read(Reader& reader)
@@ -1343,10 +1439,13 @@ void TrailingQualifiersNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void TrailingQualifiersNode::Write(Writer& writer)
+std::expected<bool, int> TrailingQualifiersNode::Write(Writer& writer)
 {
-    SequenceNode::Write(writer);
-    writer.Write(subject.get());
+    std::expected<bool, int> rv = SequenceNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(subject.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> TrailingQualifiersNode::Read(Reader& reader)
@@ -1403,12 +1502,17 @@ void NoexceptSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void NoexceptSpecifierNode::Write(Writer& writer)
+std::expected<bool, int> NoexceptSpecifierNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(constantExpr.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(constantExpr.get());
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> NoexceptSpecifierNode::Read(Reader& reader)
@@ -1447,11 +1551,15 @@ void ThrowSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ThrowSpecifierNode::Write(Writer& writer)
+std::expected<bool, int> ThrowSpecifierNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ThrowSpecifierNode::Read(Reader& reader)

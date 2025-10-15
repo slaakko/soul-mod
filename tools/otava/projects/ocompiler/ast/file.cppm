@@ -14,7 +14,7 @@ struct File
 {
     File();
     File(const std::string& filePath_, Node* content_);
-    void Write(Writer& writer);
+    std::expected<bool, int> Write(Writer& writer);
     std::expected<bool, int> Read(Reader& reader);
     std::string filePath;
     std::unique_ptr<Node> content;

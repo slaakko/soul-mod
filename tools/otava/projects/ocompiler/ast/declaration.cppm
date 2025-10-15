@@ -25,7 +25,7 @@ public:
     SimpleDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* declarationSpecifiers_, Node* initDeclaratorList_, Node* attributes_, Node* semicolon_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* DeclarationSpecifiers() const { return declarationSpecifiers.get(); }
     inline Node* InitDeclaratorList() const { return initDeclaratorList.get(); }
@@ -45,7 +45,7 @@ public:
     AsmDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* asm__, Node* asmText_, Node* semicolon_, Node* attributes_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Asm() const { return asm_.get(); }
     inline Node* AsmText() const { return asmText.get(); }
@@ -77,7 +77,7 @@ public:
     LinkageSpecificationNode(const soul::ast::SourcePos& sourcePos_, Node* extrn_, Node* linkage_, Node* declarations_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Extern() const { return extrn.get(); }
     inline Node* Linkage() const { return linkage.get(); }
@@ -99,7 +99,7 @@ public:
     NamespaceDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* nskw_, Node* nsName_, Node* nsBody_, Node* inln_, Node* attributes_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Namespace() const { return nskw.get(); }
     inline Node* NamespaceName() const { return nsName.get(); }
@@ -125,7 +125,7 @@ public:
     NamespaceBodyNode(const soul::ast::SourcePos& sourcePos_, Node* declarations_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Declarations() const { return declarations.get(); }
 private:
@@ -139,7 +139,7 @@ public:
     NamespaceAliasDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* id_, Node* assign_, Node* qns_, Node* semicolon_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Id() const { return id.get(); }
     inline Node* Assign() const { return assign.get(); }
@@ -159,7 +159,7 @@ public:
     UsingDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* usng_, Node* declarators_, Node* semicolon_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Using() const { return usng.get(); }
     inline Node* Declarators() const { return declarators.get(); }
@@ -193,7 +193,7 @@ public:
     UsingEnumDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* usng_, Node* ees_, Node* semicolon_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Using() const { return usng.get(); }
     inline Node* ElaboratedEnumSpecifier() const { return ees.get(); }
@@ -211,7 +211,7 @@ public:
     UsingDirectiveNode(const soul::ast::SourcePos& sourcePos_, Node* usng_, Node* nskw_, Node* id_, Node* semicolon_, Node* attributes_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Using() const { return usng.get(); }
     inline Node* Namespace() const { return nskw.get(); }
@@ -242,7 +242,7 @@ public:
         const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* StaticAssert() const { return staticAssert.get(); }
     inline Node* ConstantExpr() const { return constantExpr.get(); }
@@ -276,7 +276,7 @@ public:
     AliasDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* usng_, Node* identifier_, Node* assign_, Node* definingTypeId_, Node* attributes_, Node* semicolon_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Using() const { return usng.get(); }
     inline Node* Identifier() const { return identifier.get(); }
@@ -334,7 +334,7 @@ public:
     TrailingFunctionDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* declarator_, Node* params_, Node* trailingReturnType_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Declarator() const { return declarator.get(); }
     inline Node* Parameters() const { return params.get(); }
@@ -352,7 +352,7 @@ public:
     ParenthesizedDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* declarator_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Declarator() const { return declarator.get(); }
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
@@ -474,7 +474,7 @@ public:
     ConditionalExplicitNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Condition() const { return cond.get(); }
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
@@ -527,7 +527,7 @@ public:
     ArrayDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* dimension_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Dimension() const { return dimension.get(); }
     inline const soul::ast::SourcePos& LBracketPos() const { return lbPos; }
@@ -545,7 +545,7 @@ public:
     FunctionDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* parameters_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Params() const { return params.get(); }
 private:
@@ -568,7 +568,7 @@ public:
     TrailingQualifiersNode(const soul::ast::SourcePos& sourcePos_, Node* subject_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Subject() const { return subject.get(); }
     inline Node* ReleaseSubject() { return subject.release(); }
@@ -592,7 +592,7 @@ public:
     NoexceptSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* constantExpr_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* ConstantExpr() const { return constantExpr.get(); }
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
@@ -610,7 +610,7 @@ public:
     ThrowSpecifierNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }

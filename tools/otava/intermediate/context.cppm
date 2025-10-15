@@ -18,8 +18,6 @@ import std;
 
 export namespace otava::intermediate {
 
-namespace context {}
-
 enum class ContextFlags : int
 {
     none = 0, debug = 1 << 0
@@ -102,11 +100,11 @@ public:
     inline Value* MakeSymbolValue(const soul::ast::Span& span, Type* type, const std::string& symbol) { return data.MakeSymbolValue(span, type, symbol); }
     inline Value* MakeIntegerLiteral(const soul::ast::Span& span, Type* type, const std::string& strValue) 
     { 
-        return data.MakeIntegerLiteral(span, type, strValue, types, this); 
+        return data.MakeIntegerLiteral(span, type, strValue, types); 
     }
     inline Value* MakeAddressLiteral(const soul::ast::Span& span, Type* type, const std::string& id, bool resolve)
     {
-        return data.MakeAddressLiteral(span, type, id, this, resolve);
+        return data.MakeAddressLiteral(span, type, id, resolve);
     }
     inline Type* GetVoidType() { return types.GetVoidType(); }
     inline Type* GetBoolType() { return types.GetBoolType(); }

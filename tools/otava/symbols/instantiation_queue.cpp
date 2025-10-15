@@ -5,6 +5,7 @@
 
 module otava.symbols.instantiation_queue;
 
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.function.templates;
 import otava.symbols.inline_functions;

@@ -283,9 +283,9 @@ void FunctionGroupTypeSymbol::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(functionGroupSymbolId);
 }
 
-void FunctionGroupTypeSymbol::Resolve(SymbolTable& symbolTable)
+void FunctionGroupTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    TypeSymbol::Resolve(symbolTable);
+    TypeSymbol::Resolve(symbolTable, context);
     functionGroupSymbol = symbolTable.GetFunctionGroup(functionGroupSymbolId);
 }
 
@@ -300,7 +300,7 @@ ClassGroupTypeSymbol::ClassGroupTypeSymbol(const std::u32string& name_) :
 }
 
 ClassGroupTypeSymbol::ClassGroupTypeSymbol(ClassGroupSymbol* classGroupSymbol_) :
-    TypeSymbol(SymbolKind::classGroupTypeSymbol, U"@class_group_type"), classGroupSymbol(classGroupSymbol_)
+    TypeSymbol(SymbolKind::classGroupTypeSymbol, U"@classGroupType:" + classGroupSymbol_->Name()), classGroupSymbol(classGroupSymbol_)
 {
 }
 
@@ -316,9 +316,9 @@ void ClassGroupTypeSymbol::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(classGroupSymbolId);
 }
 
-void ClassGroupTypeSymbol::Resolve(SymbolTable& symbolTable)
+void ClassGroupTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    TypeSymbol::Resolve(symbolTable);
+    TypeSymbol::Resolve(symbolTable, context);
     classGroupSymbol = symbolTable.GetClassGroup(classGroupSymbolId);
 }
 
@@ -349,9 +349,9 @@ void AliasGroupTypeSymbol::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(aliasGroupSymbolId);
 }
 
-void AliasGroupTypeSymbol::Resolve(SymbolTable& symbolTable)
+void AliasGroupTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    TypeSymbol::Resolve(symbolTable);
+    TypeSymbol::Resolve(symbolTable, context);
     aliasGroupSymbol = symbolTable.GetAliasGroup(aliasGroupSymbolId);
 }
 

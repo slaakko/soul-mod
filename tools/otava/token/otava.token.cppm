@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/token/otava.token' using soul lexer generator version 4.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/token/otava.token' using soul lexer generator version 5.0.0
 
 export module otava.token;
 

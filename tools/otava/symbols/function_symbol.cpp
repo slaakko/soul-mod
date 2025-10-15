@@ -39,70 +39,6 @@ import util.unicode;
 
 namespace otava::symbols {
 
-std::string MakeFunctionQualifierStr(FunctionQualifiers qualifiers)
-{
-    std::string s;
-    if ((qualifiers & FunctionQualifiers::isVolatile) != FunctionQualifiers::none)
-    {
-        s.append("volatile");
-    }
-    if ((qualifiers & FunctionQualifiers::isConst) != FunctionQualifiers::none)
-    {
-        if (!s.empty())
-        {
-            s.append(1, ' ');
-        }
-        s.append("const");
-    }
-    if ((qualifiers & FunctionQualifiers::isOverride) != FunctionQualifiers::none)
-    {
-        if (!s.empty())
-        {
-            s.append(1, ' ');
-        }
-        s.append("override");
-    }
-    if ((qualifiers & FunctionQualifiers::isFinal) != FunctionQualifiers::none)
-    {
-        if (!s.empty())
-        {
-            s.append(1, ' ');
-        }
-        s.append("final");
-    }
-    if ((qualifiers & FunctionQualifiers::isDefault) != FunctionQualifiers::none)
-    {
-        if (!s.empty())
-        {
-            s.append(1, ' ');
-        }
-        s.append("= default");
-    }
-    if ((qualifiers & FunctionQualifiers::isDeleted) != FunctionQualifiers::none)
-    {
-        if (!s.empty())
-        {
-            s.append(1, ' ');
-        }
-        s.append("= delete");
-    }
-    return s;
-}
-
-std::string SpecialFunctionKindPrefix(SpecialFunctionKind specialFunctionKind)
-{
-    switch (specialFunctionKind)
-    {
-        case SpecialFunctionKind::defaultCtor: return "default_ctor";
-        case SpecialFunctionKind::copyCtor: return "copy_ctor";
-        case SpecialFunctionKind::moveCtor: return "move_ctor";
-        case SpecialFunctionKind::copyAssignment: return "copy_assignment";
-        case SpecialFunctionKind::moveAssignment: return "move_assignment";
-        case SpecialFunctionKind::dtor: return "dtor";
-    }
-    return std::string();
-}
-
 class OperatorFunctionMap
 {
 public:
@@ -185,19 +121,6 @@ std::string OperatorFunctionMap::GetPrefix(const std::u32string& name) const
     }
 }
 
-std::string FunctionKindStr(FunctionKind functionKind)
-{
-    switch (functionKind)
-    {
-        case FunctionKind::function: return "fn";
-        case FunctionKind::constructor: return "ctor";
-        case FunctionKind::destructor: return "dtor";
-        case FunctionKind::special: return "special";
-        case FunctionKind::conversionMemFn: return "conversionMemFn";
-    }
-    return "fn";
-}
-
 std::string GetOperatorFunctionPrefix(const std::u32string& functionName)
 {
     return OperatorFunctionMap::Instance().GetPrefix(functionName);
@@ -249,9 +172,9 @@ void ParameterSymbol::Read(Reader& reader)
     }
 }
 
-void ParameterSymbol::Resolve(SymbolTable& symbolTable)
+void ParameterSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    Symbol::Resolve(symbolTable);
+    Symbol::Resolve(symbolTable, context);
     type = symbolTable.GetType(typeId);
     if (!type)
     {
@@ -271,7 +194,7 @@ void ParameterSymbol::Accept(Visitor& visitor)
 
 TypeSymbol* ParameterSymbol::GetReferredType(Context* context) const
 {
-    TypeSymbol* referredType = type->GetBaseType();
+    TypeSymbol* referredType = type->GetBaseType()->FinalType(soul::ast::SourcePos(), context);
     if (context->GetFlag(ContextFlags::resolveNestedTypes) && referredType->IsNestedTypeSymbol())
     {
         if (context->TemplateParameterMap())
@@ -629,22 +552,22 @@ SpecialFunctionKind FunctionSymbol::GetSpecialFunctionKind(Context* context) con
     {
         const std::vector<ParameterSymbol*>& memFunParams = MemFunParameters(context);
         TypeSymbol* pointerType = classType->AddPointer(context);
-        if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == className) return SpecialFunctionKind::defaultCtor;
-        if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == U"~" + className) return SpecialFunctionKind::dtor;
+        if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType, context) && Name() == className) return SpecialFunctionKind::defaultCtor;
+        if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType, context) && Name() == U"~" + className) return SpecialFunctionKind::dtor;
         if (classTemplate)
         {
-            if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == U"~" + classTemplate->Name()) return SpecialFunctionKind::dtor;
+            if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType, context) && Name() == U"~" + classTemplate->Name()) return SpecialFunctionKind::dtor;
         }
         TypeSymbol* constRefType = classType->AddConst(context)->AddLValueRef(context);
-        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == className &&
-            TypesEqual(memFunParams[1]->GetType(), constRefType)) return SpecialFunctionKind::copyCtor;
+        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType, context) && Name() == className &&
+            TypesEqual(memFunParams[1]->GetType(), constRefType, context)) return SpecialFunctionKind::copyCtor;
         TypeSymbol* rvalueRefType = classType->AddRValueRef(context);
-        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == className &&
-            TypesEqual(memFunParams[1]->GetType(), rvalueRefType)) return SpecialFunctionKind::moveCtor;
-        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == U"operator=" &&
-            TypesEqual(memFunParams[1]->GetType(), constRefType)) return SpecialFunctionKind::copyAssignment;
-        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == U"operator=" &&
-            TypesEqual(memFunParams[1]->GetType(), rvalueRefType)) return SpecialFunctionKind::moveAssignment;
+        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType, context) && Name() == className &&
+            TypesEqual(memFunParams[1]->GetType(), rvalueRefType, context)) return SpecialFunctionKind::moveCtor;
+        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType, context) && Name() == U"operator=" &&
+            TypesEqual(memFunParams[1]->GetType(), constRefType, context)) return SpecialFunctionKind::copyAssignment;
+        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType, context) && Name() == U"operator=" &&
+            TypesEqual(memFunParams[1]->GetType(), rvalueRefType, context)) return SpecialFunctionKind::moveAssignment;
     }
     return SpecialFunctionKind::none;
 }
@@ -664,7 +587,7 @@ void FunctionSymbol::SetReturnType(TypeSymbol* returnType_, Context* context)
     returnType = returnType_;
     if (returnType)
     {
-        if (returnType->IsClassTypeSymbol())
+        if (returnType->IsClassTypeSymbol() || returnType->IsForwardClassDeclarationSymbol())
         {
             SetReturnsClass();
             TypeSymbol* returnValueType = returnType->AddPointer(context);
@@ -886,9 +809,9 @@ void FunctionSymbol::Read(Reader& reader)
     }
 }
 
-void FunctionSymbol::Resolve(SymbolTable& symbolTable)
+void FunctionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    ContainerSymbol::Resolve(symbolTable);
+    ContainerSymbol::Resolve(symbolTable, context);
     if (returnTypeId != util::nil_uuid())
     {
         returnType = symbolTable.GetType(returnTypeId);
@@ -898,7 +821,7 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable)
         }
         if (ReturnsClass())
         {
-            returnValueParam->Resolve(symbolTable);
+            returnValueParam->Resolve(symbolTable, context);
         }
     }
     if (IsConversion())
@@ -1069,7 +992,7 @@ FunctionTypeSymbol* FunctionSymbol::GetFunctionType(otava::symbols::Context* con
     return functionType;
 }
 
-otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const
 {
     otava::intermediate::Type* type = emitter.GetType(Id());
     if (!type)
@@ -1350,9 +1273,9 @@ void FunctionDefinitionSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void FunctionDefinitionSymbol::Resolve(SymbolTable& symbolTable)
+void FunctionDefinitionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    FunctionSymbol::Resolve(symbolTable);
+    FunctionSymbol::Resolve(symbolTable, context);
     if (declarationId != util::nil_uuid())
     {
         declaration = symbolTable.GetFunction(declarationId);
@@ -1377,6 +1300,27 @@ std::string FunctionDefinitionSymbol::IrName(Context* context) const
         }
         return irName;
     }
+}
+
+otava::intermediate::Type* FunctionDefinitionSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const
+{
+    if (declaration)
+    {
+        return declaration->IrType(emitter, sourcePos, context);
+    }
+    else
+    {
+        return FunctionSymbol::IrType(emitter, sourcePos, context);
+    }
+}
+
+void FunctionDefinitionSymbol::SetReturnType(TypeSymbol* returnType_, Context* context)
+{
+    if (declaration)
+    {
+        declaration->SetReturnType(returnType_, context);
+    }
+    FunctionSymbol::SetReturnType(returnType_, context);
 }
 
 FunctionKind FunctionDefinitionSymbol::GetFunctionKind() const
@@ -1528,6 +1472,15 @@ void FunctionDefinitionSymbol::AddDefinitionToGroup(Context* context)
     Group()->AddFunctionDefinition(this, context);
 }
 
+bool FunctionDefinitionSymbol::IsMemberFunction() const
+{
+    if (declaration)
+    {
+        return declaration->IsMemberFunction();
+    }
+    return false;
+}
+
 soul::xml::Element* FunctionDefinitionSymbol::ToXml() const
 {
     soul::xml::Element* element = FunctionSymbol::ToXml();
@@ -1589,7 +1542,7 @@ bool FunctionMatches(FunctionSymbol* left, FunctionSymbol* right, Context* conte
         if (leftTemplateDeclaration->Arity() != rightTemplateDeclaration->Arity()) return false;
         for (int i = 0; i < leftTemplateDeclaration->Arity(); ++i)
         {
-            if (!TypesEqual(leftTemplateDeclaration->TemplateParameters()[i], rightTemplateDeclaration->TemplateParameters()[i])) return false;
+            if (!TypesEqual(leftTemplateDeclaration->TemplateParameters()[i], rightTemplateDeclaration->TemplateParameters()[i], context)) return false;
         }
     }
     int leftsn = left->Specialization().size();
@@ -1597,12 +1550,12 @@ bool FunctionMatches(FunctionSymbol* left, FunctionSymbol* right, Context* conte
     if (leftsn != rightsn) return false;
     for (int i = 0; i < leftsn; ++i)
     {
-        if (!TypesEqual(left->Specialization()[i], right->Specialization()[i])) return false;
+        if (!TypesEqual(left->Specialization()[i], right->Specialization()[i], context)) return false;
     }
     if (left->MemFunArity(context) != right->MemFunArity(context)) return false;
     for (int i = 0; i < left->MemFunArity(context); ++i)
     {
-        if (!TypesEqual(left->MemFunParameters(context)[i]->GetType(), right->MemFunParameters(context)[i]->GetType())) return false;
+        if (!TypesEqual(left->MemFunParameters(context)[i]->GetType(), right->MemFunParameters(context)[i]->GetType(), context)) return false;
     }
     return true;
 }

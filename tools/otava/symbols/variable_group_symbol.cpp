@@ -87,9 +87,9 @@ void VariableGroupSymbol::Read(Reader& reader)
     }
 }
 
-void VariableGroupSymbol::Resolve(SymbolTable& symbolTable)
+void VariableGroupSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    Symbol::Resolve(symbolTable);
+    Symbol::Resolve(symbolTable, context);
     for (const auto& variableId : variableIds)
     {
         VariableSymbol* variable = symbolTable.GetVariable(variableId);

@@ -36,13 +36,19 @@ void LambdaExpressionNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void LambdaExpressionNode::Write(Writer& writer)
+std::expected<bool, int> LambdaExpressionNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(introducer.get());
-    writer.Write(templateParams.get());
-    writer.Write(declarator.get());
-    writer.Write(body.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(introducer.get());
+    if (!rv) return rv;
+    rv = writer.Write(templateParams.get());
+    if (!rv) return rv;
+    rv = writer.Write(declarator.get());
+    if (!rv) return rv;
+    rv = writer.Write(body.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> LambdaExpressionNode::Read(Reader& reader)
@@ -89,12 +95,17 @@ void LambdaIntroducerNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void LambdaIntroducerNode::Write(Writer& writer)
+std::expected<bool, int> LambdaIntroducerNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(capture.get());
-    writer.Write(lbPos);
-    writer.Write(rbPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(capture.get());
+    if (!rv) return rv;
+    rv = writer.Write(lbPos);
+    if (!rv) return rv;
+    rv = writer.Write(rbPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> LambdaIntroducerNode::Read(Reader& reader)
@@ -207,12 +218,17 @@ void SimpleCaptureNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void SimpleCaptureNode::Write(Writer& writer)
+std::expected<bool, int> SimpleCaptureNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(identifier.get());
-    writer.Write(byRefCapture.get());
-    writer.Write(ellipsis.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(identifier.get());
+    if (!rv) return rv;
+    rv = writer.Write(byRefCapture.get());
+    if (!rv) return rv;
+    rv = writer.Write(ellipsis.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> SimpleCaptureNode::Read(Reader& reader)
@@ -250,10 +266,13 @@ void CurrentObjectCopyCapture::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void CurrentObjectCopyCapture::Write(Writer& writer)
+std::expected<bool, int> CurrentObjectCopyCapture::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(thisPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(thisPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> CurrentObjectCopyCapture::Read(Reader& reader)
@@ -285,10 +304,13 @@ void CurrentObjectByRefCapture::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void CurrentObjectByRefCapture::Write(Writer& writer)
+std::expected<bool, int> CurrentObjectByRefCapture::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(thisPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(thisPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> CurrentObjectByRefCapture::Read(Reader& reader)
@@ -331,13 +353,19 @@ void InitCaptureNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void InitCaptureNode::Write(Writer& writer)
+std::expected<bool, int> InitCaptureNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(identifier.get());
-    writer.Write(initializer.get());
-    writer.Write(byRefCapture.get());
-    writer.Write(ellipsis.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(identifier.get());
+    if (!rv) return rv;
+    rv = writer.Write(initializer.get());
+    if (!rv) return rv;
+    rv = writer.Write(byRefCapture.get());
+    if (!rv) return rv;
+    rv = writer.Write(ellipsis.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> InitCaptureNode::Read(Reader& reader)
@@ -389,12 +417,17 @@ void LambdaDeclaratorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void LambdaDeclaratorNode::Write(Writer& writer)
+std::expected<bool, int> LambdaDeclaratorNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(parameterList.get());
-    writer.Write(specifiers.get());
-    writer.Write(requiresClause.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(parameterList.get());
+    if (!rv) return rv;
+    rv = writer.Write(specifiers.get());
+    if (!rv) return rv;
+    rv = writer.Write(requiresClause.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> LambdaDeclaratorNode::Read(Reader& reader)
@@ -453,13 +486,19 @@ void LambdaSpecifiersNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void LambdaSpecifiersNode::Write(Writer& writer)
+std::expected<bool, int> LambdaSpecifiersNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(declSpecifiers.get());
-    writer.Write(noexceptSpecifier.get());
-    writer.Write(attributes.get());
-    writer.Write(trailingReturnType.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(declSpecifiers.get());
+    if (!rv) return rv;
+    rv = writer.Write(noexceptSpecifier.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    rv = writer.Write(trailingReturnType.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> LambdaSpecifiersNode::Read(Reader& reader)
@@ -511,11 +550,15 @@ void LambdaTemplateParamsNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void LambdaTemplateParamsNode::Write(Writer& writer)
+std::expected<bool, int> LambdaTemplateParamsNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(templateParams.get());
-    writer.Write(requiresClause.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(templateParams.get());
+    if (!rv) return rv;
+    rv = writer.Write(requiresClause.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> LambdaTemplateParamsNode::Read(Reader& reader)

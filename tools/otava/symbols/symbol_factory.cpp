@@ -28,6 +28,7 @@ import otava.symbols.block;
 import otava.symbols.classes;
 import otava.symbols.compound.type.symbol;
 import otava.symbols.enums;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.namespaces;
 import otava.symbols.templates;

@@ -892,7 +892,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
                 }
                 else
                 {
-                    formatter->Write("static void Parse(LexerT& lexer");
+                    formatter->Write("static std::expected<bool, int> Parse(LexerT& lexer");
                 }
                 for (const auto& param : startRule->Params())
                 {
@@ -938,7 +938,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
                 }
                 else
                 {
-                    formatter->Write("void " + parser.Name() + "<LexerT>::Parse(LexerT& lexer");
+                    formatter->Write("std::expected<bool, int> " + parser.Name() + "<LexerT>::Parse(LexerT& lexer");
                 }
                 for (const auto& param : startRule->Params())
                 {
@@ -1044,7 +1044,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
                 }
                 else
                 {
-                    formatter->WriteLine("return;");
+                    formatter->WriteLine("return std::expected<bool, int>(true);");
                 }
                 formatter->DecIndent();
                 formatter->WriteLine("}");
@@ -1080,7 +1080,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
                 }
                 else
                 {
-                    formatter->WriteLine("return;");
+                    formatter->WriteLine("return std::expected<bool, int>(true);");
                 }
                 formatter->DecIndent();
                 formatter->WriteLine("}");

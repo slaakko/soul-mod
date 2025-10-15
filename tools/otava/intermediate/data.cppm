@@ -435,8 +435,8 @@ public:
     Value* MakeConversionValue(const soul::ast::Span& span, Type* type, Value* from);
     Value* MakeClsIdValue(const soul::ast::Span& span, Type* type, const std::string& clsIdStr);
     Value* MakeSymbolValue(const soul::ast::Span& span, Type* type, const std::string& symbol);
-    Value* MakeIntegerLiteral(const soul::ast::Span& span, Type* type, const std::string& strValue, const Types& types, Context* context);
-    Value* MakeAddressLiteral(const soul::ast::Span& span, Type* type, const std::string& id, Context* context, bool resolve);
+    Value* MakeIntegerLiteral(const soul::ast::Span& span, Type* type, const std::string& strValue, const Types& types);
+    Value* MakeAddressLiteral(const soul::ast::Span& span, Type* type, const std::string& id, bool resolve);
     void ResolveAddressValue(AddressValue* addressValue);
     void ResolveAddressValues();
     void VisitGlobalVariables(Visitor& visitor);

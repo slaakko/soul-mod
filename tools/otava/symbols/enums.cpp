@@ -69,9 +69,9 @@ void EnumeratedTypeSymbol::Read(Reader& reader)
     }
 }
 
-void EnumeratedTypeSymbol::Resolve(SymbolTable& symbolTable)
+void EnumeratedTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    TypeSymbol::Resolve(symbolTable);
+    TypeSymbol::Resolve(symbolTable, context);
     if (underlyingTypeId != util::nil_uuid())
     {
         underlyingType = symbolTable.GetType(underlyingTypeId);
@@ -157,9 +157,9 @@ void ForwardEnumDeclarationSymbol::Read(Reader& reader)
     }
 }
 
-void ForwardEnumDeclarationSymbol::Resolve(SymbolTable& symbolTable)
+void ForwardEnumDeclarationSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    TypeSymbol::Resolve(symbolTable);
+    TypeSymbol::Resolve(symbolTable, context);
     if (underlyingTypeId != util::nil_uuid())
     {
         underlyingType = symbolTable.GetType(underlyingTypeId);
@@ -217,9 +217,9 @@ void EnumConstantSymbol::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
 }
 
-void EnumConstantSymbol::Resolve(SymbolTable& symbolTable)
+void EnumConstantSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    Symbol::Resolve(symbolTable);
+    Symbol::Resolve(symbolTable, context);
     EvaluationContext* evaluationContext = symbolTable.GetModule()->GetEvaluationContext();
     value = evaluationContext->GetValue(valueId);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
@@ -486,9 +486,9 @@ void EnumTypeDefaultCtor::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
 }
 
-void EnumTypeDefaultCtor::Resolve(SymbolTable& symbolTable)
+void EnumTypeDefaultCtor::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    FunctionSymbol::Resolve(symbolTable);
+    FunctionSymbol::Resolve(symbolTable, context);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
     if (type && type->IsEnumeratedTypeSymbol())
     {
@@ -537,9 +537,9 @@ void EnumTypeCopyCtor::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
 }
 
-void EnumTypeCopyCtor::Resolve(SymbolTable& symbolTable)
+void EnumTypeCopyCtor::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    FunctionSymbol::Resolve(symbolTable);
+    FunctionSymbol::Resolve(symbolTable, context);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
     if (type && type->IsEnumeratedTypeSymbol())
     {
@@ -590,9 +590,9 @@ void EnumTypeMoveCtor::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
 }
 
-void EnumTypeMoveCtor::Resolve(SymbolTable& symbolTable)
+void EnumTypeMoveCtor::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    FunctionSymbol::Resolve(symbolTable);
+    FunctionSymbol::Resolve(symbolTable, context);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
     if (type && type->IsEnumeratedTypeSymbol())
     {
@@ -646,9 +646,9 @@ void EnumTypeCopyAssignment::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
 }
 
-void EnumTypeCopyAssignment::Resolve(SymbolTable& symbolTable)
+void EnumTypeCopyAssignment::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    FunctionSymbol::Resolve(symbolTable);
+    FunctionSymbol::Resolve(symbolTable, context);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
     if (type && type->IsEnumeratedTypeSymbol())
     {
@@ -696,9 +696,9 @@ void EnumTypeMoveAssignment::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
 }
 
-void EnumTypeMoveAssignment::Resolve(SymbolTable& symbolTable)
+void EnumTypeMoveAssignment::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    FunctionSymbol::Resolve(symbolTable);
+    FunctionSymbol::Resolve(symbolTable, context);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
     if (type && type->IsEnumeratedTypeSymbol())
     {
@@ -749,9 +749,9 @@ void EnumTypeEqual::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
 }
 
-void EnumTypeEqual::Resolve(SymbolTable& symbolTable)
+void EnumTypeEqual::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    FunctionSymbol::Resolve(symbolTable);
+    FunctionSymbol::Resolve(symbolTable, context);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
     if (type && type->IsEnumeratedTypeSymbol())
     {
@@ -802,9 +802,9 @@ void EnumTypeLess::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
 }
 
-void EnumTypeLess::Resolve(SymbolTable& symbolTable)
+void EnumTypeLess::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    FunctionSymbol::Resolve(symbolTable);
+    FunctionSymbol::Resolve(symbolTable, context);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
     if (type && type->IsEnumeratedTypeSymbol())
     {

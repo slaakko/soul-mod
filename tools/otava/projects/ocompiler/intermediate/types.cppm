@@ -5,6 +5,7 @@
 
 export module otava.intermediate.types;
 
+import otava.intermediate.error;
 import otava.assembly;
 import soul.ast.span;
 import util;
@@ -105,21 +106,21 @@ public:
     inline bool IsFloatType() const { return id == floatTypeId; }
     inline bool IsDoubleType() const { return id == doubleTypeId; }
     inline bool IsPointerType() const { return kind == TypeKind::pointerType; }
-    Type* AddPointer(Context* context) const;
-    Type* RemovePointer(const soul::ast::Span& span, Context* context) const;
+    std::expected<Type*, int> AddPointer(Context* context) const;
+    std::expected<Type*, int> RemovePointer(const soul::ast::Span& span, Context* context) const;
     inline bool IsFwdDeclaredStructureType() const { return kind == TypeKind::fwdDeclaredStructureType; }
     virtual void ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context);
     inline std::int32_t NextTypeId() { return nextTypeId++; }
     virtual std::string Name() const = 0;
     inline bool IsStructureType() const { return kind == TypeKind::structureType; }
-    StructureType* GetStructurePointeeType(const soul::ast::Span& span, Context* context) const;
-    ArrayType* GetArrayPointeeType(const soul::ast::Span& span, Context* context) const;
+    std::expected<StructureType*, int> GetStructurePointeeType(const soul::ast::Span& span, Context* context) const;
+    std::expected<ArrayType*, int> GetArrayPointeeType(const soul::ast::Span& span, Context* context) const;
     inline bool IsArrayType() const { return kind == TypeKind::arrayType; }
     inline bool IsFunctionType() const { return kind == TypeKind::functionType; }
     bool IsFunctionPtrType() const;
     virtual bool IsWeakType() const { return true; }
-    virtual void Add(Types* types, Context* context);
-    virtual void Resolve(Types* types, Context* context);
+    virtual std::expected<bool, int> Add(Types* types, Context* context);
+    virtual std::expected<bool, int> Resolve(Types* types, Context* context);
     inline const soul::ast::Span& Span() const { return span; }
     inline std::int32_t Id() const { return id; }
     void Write(util::CodeFormatter& formatter);
@@ -290,8 +291,8 @@ class StructureType : public Type
 public:
     StructureType(const soul::ast::Span& span_, std::int32_t typeId_, const std::vector<TypeRef>& fieldTypeRefs_);
     void Accept(Visitor& visitor) override;
-    void Add(Types* types, Context* context) override;
-    void Resolve(Types* types, Context* context) override;
+    std::expected<bool, int> Add(Types* types, Context* context) override;
+    std::expected<bool, int> Resolve(Types* types, Context* context) override;
     std::int64_t Size() const override;
     std::int64_t Alignment() const override { return 8; }
     std::string Name() const override { return "$T" + std::to_string(Id() - userTypeId); }
@@ -301,7 +302,7 @@ public:
     Type* FieldType(int i) const;
     std::int64_t GetFieldOffset(std::int64_t index) const;
     void WriteDeclaration(util::CodeFormatter& formatter) override;
-    void ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context) override;
+    std::expected<bool, int> ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context) override;
     Value* MakeDefaultValue(Context& context) const override;
     inline const std::string& Comment() const { return comment; }
     void SetComment(const std::string& comment_);
@@ -339,8 +340,8 @@ class ArrayType : public Type
 public:
     ArrayType(const soul::ast::Span& span_, std::int32_t typeId_, std::int64_t elementCount_, const TypeRef& elementTypeRef_);
     void Accept(Visitor& visitor) override;
-    void Add(Types* types, Context* context) override;
-    void Resolve(Types* types, Context* context) override;
+    std::expected<bool, int> Add(Types* types, Context* context) override;
+    std::expected<bool, int> Resolve(Types* types, Context* context) override;
     std::int64_t Size() const override;
     std::int64_t Alignment() const override { return 8; }
     std::string Name() const override { return "$T" + std::to_string(Id() - userTypeId); }
@@ -360,8 +361,8 @@ class FunctionType : public Type
 public:
     FunctionType(const soul::ast::Span& span_, std::int32_t typeId_, const TypeRef& returnTypeRef_, const std::vector<TypeRef>& paramTypeRefs_);
     void Accept(Visitor& visitor) override;
-    void Add(Types* types, Context* context) override;
-    void Resolve(Types* types, Context* context) override;
+    std::expected<bool, int> Add(Types* types, Context* context) override;
+    std::expected<bool, int> Resolve(Types* types, Context* context) override;
     bool IsWeakType() const override;
     inline int Arity() const { return paramTypeRefs.size(); }
     std::int64_t Size() const override { return 8; }
@@ -396,7 +397,7 @@ private:
     TypeRef baseTypeRef;
 };
 
-Type* GetElemType(Value* ptr, Value* index, const soul::ast::Span& span, Context* context);
+std::expected<Type*, int> GetElemType(Value* ptr, Value* index, const soul::ast::Span& span, Context* context);
 
 class Types
 {
@@ -411,8 +412,8 @@ public:
     void AddArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
     void AddFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
     void Resolve(Context* context);
-    void ResolveType(TypeRef& typeRef, Context* context);
-    void Add(Type* type, Context* context);
+    std::expected<bool, int> ResolveType(TypeRef& typeRef, Context* context);
+    std::expected<bool, int> Add(Type* type, Context* context);
     Type* Get(std::int32_t id) const;
     void Map(Type* type);
     void VisitTypeDeclarations(Visitor& visitor);
@@ -428,8 +429,8 @@ public:
     inline ULongType* GetULongType() const { return const_cast<ULongType*>(&ulongType); }
     inline FloatType* GetFloatType() const { return const_cast<FloatType*>(&floatType); }
     inline DoubleType* GetDoubleType() const { return const_cast<DoubleType*>(&doubleType); }
-    PointerType* MakePointerType(const soul::ast::Span& span, std::int32_t baseTypeId, std::int8_t pointerCount, Context* context);
-    Type* MakePtrType(Type* baseType);
+    std::expected<PointerType*, int> MakePointerType(const soul::ast::Span& span, std::int32_t baseTypeId, std::int8_t pointerCount, Context* context);
+    std::expected<Type*, int> MakePtrType(Type* baseType);
     StructureType* GetStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
     ArrayType* GetArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
     FunctionType* GetFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);

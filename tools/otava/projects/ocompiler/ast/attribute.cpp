@@ -49,14 +49,21 @@ void AttributeSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void AttributeSpecifierNode::Write(Writer& writer)
+std::expected<bool, int> AttributeSpecifierNode::Write(Writer& writer)
 {
-    ListNode::Write(writer);
-    writer.Write(usingPrefix.get());
-    writer.Write(lbPos1);
-    writer.Write(lbPos2);
-    writer.Write(rbPos1);
-    writer.Write(rbPos2);
+    std::expected<bool, int> rv = ListNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(usingPrefix.get());
+    if (!rv) return rv;
+    rv = writer.Write(lbPos1);
+    if (!rv) return rv;
+    rv = writer.Write(lbPos2);
+    if (!rv) return rv;
+    rv = writer.Write(rbPos1);
+    if (!rv) return rv;
+    rv = writer.Write(rbPos2);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> AttributeSpecifierNode::Read(Reader& reader)
@@ -111,15 +118,19 @@ void AttributeUsingPrefixNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void AttributeUsingPrefixNode::Write(Writer& writer)
+std::expected<bool, int> AttributeUsingPrefixNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(colonPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(colonPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> AttributeUsingPrefixNode::Read(Reader& reader)
 {
-    UnaryNode::Read(reader);
+    std::expected<bool, int> rv = UnaryNode::Read(reader);
+    if (!rv) return rv;
     std::expected<soul::ast::SourcePos, int> posRv = reader.ReadSourcePos();
     if (!posRv) return std::unexpected<int>(posRv.error());
     colonPos = *posRv;
@@ -146,11 +157,15 @@ void AttributeNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void AttributeNode::Write(Writer& writer)
+std::expected<bool, int> AttributeNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(attributeToken.get());
-    writer.Write(attributeArgs.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(attributeToken.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributeArgs.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> AttributeNode::Read(Reader& reader)
@@ -186,12 +201,17 @@ void AttributeScopedTokenNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void AttributeScopedTokenNode::Write(Writer& writer)
+std::expected<bool, int> AttributeScopedTokenNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(ns.get());
-    writer.Write(colonColon.get());
-    writer.Write(identifier.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(ns.get());
+    if (!rv) return rv;
+    rv = writer.Write(colonColon.get());
+    if (!rv) return rv;
+    rv = writer.Write(identifier.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> AttributeScopedTokenNode::Read(Reader& reader)
@@ -231,12 +251,17 @@ void AttributeArgumentsNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void AttributeArgumentsNode::Write(Writer& writer)
+std::expected<bool, int> AttributeArgumentsNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(balancedTokenSequence.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(balancedTokenSequence.get());
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> AttributeArgumentsNode::Read(Reader& reader)
@@ -293,10 +318,13 @@ void TokenNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void TokenNode::Write(Writer& writer)
+std::expected<bool, int> TokenNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(str);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(str);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> TokenNode::Read(Reader& reader)
@@ -335,13 +363,19 @@ void AlignmentSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void AlignmentSpecifierNode::Write(Writer& writer)
+std::expected<bool, int> AlignmentSpecifierNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(alignment.get());
-    writer.Write(ellipsis.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(alignment.get());
+    if (!rv) return rv;
+    rv = writer.Write(ellipsis.get());
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> AlignmentSpecifierNode::Read(Reader& reader)

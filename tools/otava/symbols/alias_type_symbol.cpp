@@ -46,9 +46,9 @@ void AliasTypeSymbol::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(referredTypeId);
 }
 
-void AliasTypeSymbol::Resolve(SymbolTable& symbolTable)
+void AliasTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    TypeSymbol::Resolve(symbolTable);
+    TypeSymbol::Resolve(symbolTable, context);
     referredType = symbolTable.GetTypeNoThrow(referredTypeId);
 }
 

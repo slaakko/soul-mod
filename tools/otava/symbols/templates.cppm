@@ -41,7 +41,7 @@ public:
     inline ParameterSymbol* GetParameterSymbol() const { return parameterSymbol; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     TypeSymbol* Unify(TypeSymbol* argType, Context* context) override;
     TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
@@ -100,7 +100,7 @@ public:
     std::string SymbolDocKindStr() const override { return "explicit_instantiation"; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
 private:
     ClassTemplateSpecializationSymbol* specialization;

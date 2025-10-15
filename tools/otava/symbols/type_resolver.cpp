@@ -27,6 +27,7 @@ import otava.symbols.inline_functions;
 import otava.symbols.value;
 import otava.symbols.expression.binder;
 import otava.symbols.bound.tree;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.variable.symbol;
 import util.unicode;
@@ -327,7 +328,7 @@ void TypeResolver::Visit(otava::ast::TypenameSpecifierNode& node)
                     boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
                     boundTemplateParameter->SetBoundSymbol(templateParamType.second);
                     boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
-                    instantiationScope.Install(boundTemplateParameter);
+                    instantiationScope.Install(boundTemplateParameter, context);
                 }
             }
             context->GetSymbolTable()->PushTopScopeIndex();
@@ -359,6 +360,13 @@ void TypeResolver::Visit(otava::ast::QualifiedIdNode& node)
 void TypeResolver::Visit(otava::ast::IdentifierNode& node)
 {
     Symbol* symbol = context->GetSymbolTable()->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, node.GetSourcePos(), context);
+    if (!symbol && !createTypeSymbol)
+    {
+        int topScopeIndex = context->GetSymbolTable()->TopScopeIndex();
+        context->GetSymbolTable()->SetTopScopeIndex(0);
+        symbol = context->GetSymbolTable()->LookupInScopeStack(node.Str(), SymbolGroupKind::typeSymbolGroup, node.GetSourcePos(), context, LookupFlags::none);
+        context->GetSymbolTable()->SetTopScopeIndex(topScopeIndex);
+    }
     if (symbol)
     {
         if (symbol->IsTypeSymbol())
@@ -491,7 +499,7 @@ void TypeResolver::Visit(otava::ast::TemplateIdNode& node)
     {
         AliasGroupTypeSymbol* aliasGroupType = static_cast<AliasGroupTypeSymbol*>(typeSymbol);
         AliasGroupSymbol* aliasGroup = aliasGroupType->AliasGroup();
-        typeSymbol = aliasGroup->GetBestMatchingAliasType(templateArgs);
+        typeSymbol = aliasGroup->GetBestMatchingAliasType(templateArgs, context);
         if (!typeSymbol)
         {
             ThrowException("no matching alias type found from alias group '" + util::ToUtf8(aliasGroup->Name()) + "'", node.GetSourcePos(), context);

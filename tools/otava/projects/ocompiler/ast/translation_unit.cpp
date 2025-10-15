@@ -35,10 +35,13 @@ void TranslationUnitNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void TranslationUnitNode::Write(Writer& writer)
+std::expected<bool, int> TranslationUnitNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(unit.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(unit.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> TranslationUnitNode::Read(Reader& reader)
@@ -87,13 +90,19 @@ void ModuleUnitNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ModuleUnitNode::Write(Writer& writer)
+std::expected<bool, int> ModuleUnitNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(globalModuleFragment.get());
-    writer.Write(moduleDeclaration.get());
-    writer.Write(declarations.get());
-    writer.Write(privateModuleFragment.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(globalModuleFragment.get());
+    if (!rv) return rv;
+    rv = writer.Write(moduleDeclaration.get());
+    if (!rv) return rv;
+    rv = writer.Write(declarations.get());
+    if (!rv) return rv;
+    rv = writer.Write(privateModuleFragment.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ModuleUnitNode::Read(Reader& reader)

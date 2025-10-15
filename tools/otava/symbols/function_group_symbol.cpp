@@ -5,6 +5,7 @@
 
 module otava.symbols.function.group.symbol;
 
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.reader;
 import otava.symbols.writer;
@@ -14,6 +15,7 @@ import otava.symbols.type_compare;
 import otava.symbols.type.symbol;
 import otava.symbols.compound.type.symbol;
 import otava.symbols.templates;
+import otava.symbols.context;
 
 namespace otava::symbols {
 
@@ -103,9 +105,9 @@ void FunctionGroupSymbol::Read(Reader& reader)
     }
 }
 
-void FunctionGroupSymbol::Resolve(SymbolTable& symbolTable)
+void FunctionGroupSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    Symbol::Resolve(symbolTable);
+    Symbol::Resolve(symbolTable, context);
     for (const auto& functionId : functionIds)
     {
         FunctionSymbol* function = symbolTable.GetFunction(functionId);
@@ -145,7 +147,7 @@ void FunctionGroupSymbol::Merge(FunctionGroupSymbol* that)
 }
 
 FunctionSymbol* FunctionGroupSymbol::ResolveFunction(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers,
-    const std::vector<TypeSymbol*>& specialization, TemplateDeclarationSymbol* templateDeclaration, bool isSpecialization) const
+    const std::vector<TypeSymbol*>& specialization, TemplateDeclarationSymbol* templateDeclaration, bool isSpecialization, Context* context) const
 {
     for (const auto& function : functions)
     {
@@ -159,7 +161,7 @@ FunctionSymbol* FunctionGroupSymbol::ResolveFunction(const std::vector<TypeSymbo
             if (templateDeclaration->Arity() != functionTemplateDeclaration->Arity()) continue;
             for (int i = 0; i < templateDeclaration->Arity(); ++i)
             {
-                if (!TypesEqual(templateDeclaration->TemplateParameters()[i], functionTemplateDeclaration->TemplateParameters()[i])) continue;
+                if (!TypesEqual(templateDeclaration->TemplateParameters()[i], functionTemplateDeclaration->TemplateParameters()[i], context)) continue;
             }
         }
         if (!function->IsMemberFunction() && function->IsSpecialization() != isSpecialization) continue;
@@ -179,7 +181,7 @@ FunctionSymbol* FunctionGroupSymbol::ResolveFunction(const std::vector<TypeSymbo
                     {
                         for (int i = 0; i < n; ++i)
                         {
-                            if (!TypesEqual(specialization[i], function->Specialization()[i]))
+                            if (!TypesEqual(specialization[i], function->Specialization()[i], context))
                             {
                                 found = false;
                                 break;
@@ -191,7 +193,7 @@ FunctionSymbol* FunctionGroupSymbol::ResolveFunction(const std::vector<TypeSymbo
                 {
                     for (int i = 0; i < function->Arity(); ++i)
                     {
-                        if (!TypesEqual(function->Parameters()[i]->GetType(), parameterTypes[i]))
+                        if (!TypesEqual(function->Parameters()[i]->GetType(), parameterTypes[i], context))
                         {
                             found = false;
                             break;
@@ -208,7 +210,7 @@ FunctionSymbol* FunctionGroupSymbol::ResolveFunction(const std::vector<TypeSymbo
     return nullptr;
 }
 
-FunctionDefinitionSymbol* FunctionGroupSymbol::GetFunctionDefinition(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers) const
+FunctionDefinitionSymbol* FunctionGroupSymbol::GetFunctionDefinition(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, Context* context) const
 {
     for (const auto& functionDefinition : definitions)
     {
@@ -219,7 +221,7 @@ FunctionDefinitionSymbol* FunctionGroupSymbol::GetFunctionDefinition(const std::
             {
                 for (int i = 0; i < functionDefinition->Arity(); ++i)
                 {
-                    if (!TypesEqual(functionDefinition->Parameters()[i]->GetType(), parameterTypes[i]))
+                    if (!TypesEqual(functionDefinition->Parameters()[i]->GetType(), parameterTypes[i], context))
                     {
                         found = false;
                         break;
@@ -332,7 +334,7 @@ int MatchFunctionTemplate(FunctionSymbol* function, const std::vector<TypeSymbol
                             return -1;
                         }
                     }
-                    if (!TypesEqual(templateArg, specializationType))
+                    if (!TypesEqual(templateArg, specializationType, context))
                     {
                         return -1;
                     }
@@ -416,6 +418,7 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, const std::vector<Ty
                 if (std::find(viableFunctions.begin(), viableFunctions.end(), function) == viableFunctions.end())
                 {
                     if (function->Skip()) continue;
+                    if (context->GetFlag(ContextFlags::skipNonstaticMemberFunctions) && !function->IsStatic() && function->IsMemberFunction()) continue;
                     viableFunctions.push_back(function);
                 }
             }
@@ -427,6 +430,7 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, const std::vector<Ty
                 continue;
             }
             if (functionDefinition->Skip()) continue;
+            if (context->GetFlag(ContextFlags::skipNonstaticMemberFunctions) && functionDefinition->IsStatic() && functionDefinition->IsMemberFunction()) continue;
             if (arity >= functionDefinition->MinMemFunArity(context) && arity <= functionDefinition->MemFunArity(context))
             {
                 if (std::find(viableFunctions.begin(), viableFunctions.end(), functionDefinition) == viableFunctions.end())

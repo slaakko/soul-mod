@@ -24,7 +24,7 @@ public:
     AttributeSpecifierNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline void SetUsingPrefix(Node* usingPrefix_) { usingPrefix.reset(usingPrefix_); }
     inline Node* UsingPrefix() const { return usingPrefix.get(); }
@@ -48,7 +48,7 @@ public:
     AttributeUsingPrefixNode(const soul::ast::SourcePos& sourcePos_, Node* attributeNamespace_, const soul::ast::SourcePos& colonPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& ColonPos() const { return colonPos; }
 private:
@@ -62,7 +62,7 @@ public:
     AttributeNode(const soul::ast::SourcePos& sourcePos_, Node* attributeToken_, Node* attributeArgs_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* AttributeToken() const { return attributeToken.get(); }
     inline Node* AttributeArgs() const { return attributeArgs.get(); }
@@ -78,7 +78,7 @@ public:
     AttributeScopedTokenNode(const soul::ast::SourcePos& sourcePos_, Node* ns_, Node* colonColon_, Node* identifier_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Ns() const { return ns.get(); }
     inline Node* ColonColon() const { return colonColon.get(); }
@@ -96,7 +96,7 @@ public:
     AttributeArgumentsNode(const soul::ast::SourcePos& sourcePos_, Node* balancedTokenSequence_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* BalancedTokenSequence() const { return balancedTokenSequence.get(); }
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
@@ -122,7 +122,7 @@ public:
     TokenNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& str_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline std::u32string Str() const override { return str; }
 private:
@@ -136,7 +136,7 @@ public:
     AlignmentSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* alignment_, Node* ellipsis_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Alignment() const { return alignment.get(); }
     inline Node* Ellipsis() const { return ellipsis.get(); }

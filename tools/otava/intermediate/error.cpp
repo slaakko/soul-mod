@@ -101,7 +101,7 @@ void Warning(const std::string& message, const soul::ast::Span& span, Context* c
     }
     else
     {
-        std::cout << "warning: " << "\n";
+        std::cout << "warning: " << message << "\n";
     }
 }
 

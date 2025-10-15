@@ -9,6 +9,7 @@ import otava.symbols.type.symbol;
 import otava.symbols.bound.tree;
 import otava.symbols.bound.tree.visitor;
 import otava.symbols.class_group.symbol;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.function.type.symbol;
 import otava.symbols.context;
@@ -154,7 +155,7 @@ FunctionSymbol* PointerCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundE
     if (type->IsReferenceType()) return nullptr;
     TypeSymbol* pointerType = type->RemovePointer(context);
     TypeSymbol* rvalueRefType = pointerType->AddRValueRef(context);
-    if (TypesEqual(args[1]->GetType(), rvalueRefType)) return nullptr;
+    if (TypesEqual(args[1]->GetType(), rvalueRefType, context)) return nullptr;
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
     {
@@ -227,7 +228,7 @@ FunctionSymbol* PointerMoveCtorOperation::Get(std::vector<std::unique_ptr<BoundE
     if (type->IsReferenceType()) return nullptr;
     TypeSymbol* pointerType = type->RemovePointer(context);
     TypeSymbol* rvalueRefType = pointerType->AddRValueRef(context);
-    if (!TypesEqual(args[1]->GetType(), rvalueRefType) && !args[1]->BindToRvalueRef()) return nullptr;
+    if (!TypesEqual(args[1]->GetType(), rvalueRefType, context) && !args[1]->BindToRvalueRef()) return nullptr;
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
     {
@@ -293,7 +294,7 @@ FunctionSymbol* PointerCopyAssignmentOperation::Get(std::vector<std::unique_ptr<
     TypeSymbol* type = arg->GetType();
     if (type->PointerCount() <= 1) return nullptr;
     TypeSymbol* pointerType = type->RemovePointer(context)->RemoveReference(context);
-    if (TypesEqual(args[1]->GetType(), pointerType->AddRValueRef(context)) || args[1]->BindToRvalueRef()) return nullptr;
+    if (TypesEqual(args[1]->GetType(), pointerType->AddRValueRef(context), context) || args[1]->BindToRvalueRef()) return nullptr;
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
     {
@@ -360,7 +361,7 @@ FunctionSymbol* PointerMoveAssignmentOperation::Get(std::vector<std::unique_ptr<
     TypeSymbol* type = arg->GetType();
     if (type->PointerCount() <= 1) return nullptr;
     TypeSymbol* pointerType = type->RemovePointer(context)->RemoveReference(context);
-    if (!TypesEqual(args[1]->GetType(), pointerType->AddRValueRef(context)) && !args[1]->BindToRvalueRef()) return nullptr;
+    if (!TypesEqual(args[1]->GetType(), pointerType->AddRValueRef(context), context) && !args[1]->BindToRvalueRef()) return nullptr;
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
     {
@@ -1132,9 +1133,9 @@ FunctionSymbol* ClassCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundExp
     if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
-    if (TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) || args[1]->BindToRvalueRef()) return nullptr;
+    if (TypesEqual(args[1]->GetType(), classType->AddRValueRef(context), context) || args[1]->BindToRvalueRef()) return nullptr;
     int distance = 0;
-    if (!TypesEqual(args[1]->GetType()->GetBaseType(), classType) && !args[1]->GetType()->GetBaseType()->HasBaseClass(classType, distance)) return nullptr;
+    if (!TypesEqual(args[1]->GetType()->GetBaseType(), classType, context) && !args[1]->GetType()->GetBaseType()->HasBaseClass(classType, distance, context)) return nullptr;
     FunctionSymbol* copyCtor = classType->GetFunctionByIndex(copyCtorIndex);
     if (copyCtor)
     {
@@ -1322,9 +1323,9 @@ FunctionSymbol* ClassMoveCtorOperation::Get(std::vector<std::unique_ptr<BoundExp
     if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
-    if (!TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) && !args[1]->BindToRvalueRef()) return nullptr;
+    if (!TypesEqual(args[1]->GetType(), classType->AddRValueRef(context), context) && !args[1]->BindToRvalueRef()) return nullptr;
     int distance = 0;
-    if (!TypesEqual(args[1]->GetType()->GetBaseType(), classType) && !args[1]->GetType()->GetBaseType()->HasBaseClass(classType, distance)) return nullptr;
+    if (!TypesEqual(args[1]->GetType()->GetBaseType(), classType, context) && !args[1]->GetType()->GetBaseType()->HasBaseClass(classType, distance, context)) return nullptr;
     FunctionSymbol* moveCtor = classType->GetFunctionByIndex(moveCtorIndex);
     if (moveCtor)
     {
@@ -1524,7 +1525,7 @@ FunctionSymbol* ClassCopyAssignmentOperation::Get(std::vector<std::unique_ptr<Bo
     if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
-    if (TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) || args[1]->BindToRvalueRef()) return nullptr;
+    if (TypesEqual(args[1]->GetType(), classType->AddRValueRef(context), context) || args[1]->BindToRvalueRef()) return nullptr;
     FunctionSymbol* copyAssignment = classType->GetFunctionByIndex(copyAssignmentIndex);
     if (copyAssignment)
     {
@@ -1681,7 +1682,7 @@ FunctionSymbol* ClassMoveAssignmentOperation::Get(std::vector<std::unique_ptr<Bo
     if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
-    if (!TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) && !args[1]->BindToRvalueRef()) return nullptr;
+    if (!TypesEqual(args[1]->GetType(), classType->AddRValueRef(context), context) && !args[1]->BindToRvalueRef()) return nullptr;
     FunctionSymbol* moveAssignment = classType->GetFunctionByIndex(moveAssignmentIndex);
     if (moveAssignment)
     {

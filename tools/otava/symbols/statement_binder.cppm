@@ -5,25 +5,18 @@
 
 export module otava.symbols.statement.binder;
 
+import otava.symbols.bound.tree;
 import std;
 import otava.ast.node;
 import otava.ast.visitor;
 
 export namespace otava::symbols {
 
-class BoundStatementNode;
-class BoundExpressionStatementNode;
 class Context;
 class FunctionDefinitionSymbol;
-class BoundCtorInitializerNode;
-class BoundDtorTerminatorNode;
 class ClassTypeSymbol;
 class TypeSymbol;
 class VariableSymbol;
-class BoundExpressionNode;
-class BoundFunctionCallNode;
-class BoundStatement;
-class BoundCompoundStatementNode;
 
 class StatementBinder : public otava::ast::DefaultVisitor
 {

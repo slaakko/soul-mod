@@ -62,7 +62,9 @@ enum class ContextFlags : std::int64_t
     resolveDependentTypes = static_cast<std::int64_t>(1) << 33,
     processingAliasDeclation = static_cast<std::int64_t>(1) << 34,
     leaveBoundFunction = static_cast<std::int64_t>(1) << 35,
-    skipFirstPtrToBooleanConversion = static_cast<std::int64_t>(1) << 36
+    skipFirstPtrToBooleanConversion = static_cast<std::int64_t>(1) << 36,
+    matchClassGroup = static_cast<std::int64_t>(1) << 37,
+    skipNonstaticMemberFunctions = static_cast<std::int64_t>(1) << 38
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)

@@ -59,14 +59,21 @@ void FunctionDefinitionNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void FunctionDefinitionNode::Write(Writer& writer)
+std::expected<bool, int> FunctionDefinitionNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(attributes.get());
-    writer.Write(declSpecifiers.get());
-    writer.Write(declarator.get());
-    writer.Write(specifiers.get());
-    writer.Write(functionBody.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    rv = writer.Write(declSpecifiers.get());
+    if (!rv) return rv;
+    rv = writer.Write(declarator.get());
+    if (!rv) return rv;
+    rv = writer.Write(specifiers.get());
+    if (!rv) return rv;
+    rv = writer.Write(functionBody.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> FunctionDefinitionNode::Read(Reader& reader)
@@ -160,12 +167,17 @@ void DefaultedOrDeletedFunctionNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void DefaultedOrDeletedFunctionNode::Write(Writer& writer)
+std::expected<bool, int> DefaultedOrDeletedFunctionNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(assign.get());
-    writer.Write(defaultOrDelete.get());
-    writer.Write(semicolon.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(assign.get());
+    if (!rv) return rv;
+    rv = writer.Write(defaultOrDelete.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> DefaultedOrDeletedFunctionNode::Read(Reader& reader)
@@ -209,12 +221,17 @@ void NoDeclSpecFunctionDeclarationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void NoDeclSpecFunctionDeclarationNode::Write(Writer& writer)
+std::expected<bool, int> NoDeclSpecFunctionDeclarationNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(declarator.get());
-    writer.Write(attributes.get());
-    writer.Write(semicolon.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(declarator.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> NoDeclSpecFunctionDeclarationNode::Read(Reader& reader)
@@ -268,12 +285,15 @@ void NewArrayOpNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void NewArrayOpNode::Write(Writer& writer)
+std::expected<bool, int> NewArrayOpNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(lbPos);
-    writer.Write(rbPos);
-
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(lbPos);
+    if (!rv) return rv;
+    rv = writer.Write(rbPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> NewArrayOpNode::Read(Reader& reader)
@@ -324,11 +344,15 @@ void DeleteArrayOpNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void DeleteArrayOpNode::Write(Writer& writer)
+std::expected<bool, int> DeleteArrayOpNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(lbPos);
-    writer.Write(rbPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(lbPos);
+    if (!rv) return rv;
+    rv = writer.Write(rbPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> DeleteArrayOpNode::Read(Reader& reader)
@@ -469,11 +493,15 @@ void ConversionTypeIdNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ConversionTypeIdNode::Write(Writer& writer)
+std::expected<bool, int> ConversionTypeIdNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(typeSpecifierSeq.get());
-    writer.Write(conversionDeclarator.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(typeSpecifierSeq.get());
+    if (!rv) return rv;
+    rv = writer.Write(conversionDeclarator.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ConversionTypeIdNode::Read(Reader& reader)
@@ -514,11 +542,15 @@ void ConversionDeclaratorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ConversionDeclaratorNode::Write(Writer& writer)
+std::expected<bool, int> ConversionDeclaratorNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(ptrOp.get());
-    writer.Write(conversionDeclarator.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(ptrOp.get());
+    if (!rv) return rv;
+    rv = writer.Write(conversionDeclarator.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ConversionDeclaratorNode::Read(Reader& reader)
@@ -585,14 +617,21 @@ void ParameterNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ParameterNode::Write(Writer& writer)
+std::expected<bool, int> ParameterNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(attributes.get());
-    writer.Write(declSpecifiers.get());
-    writer.Write(declarator.get());
-    writer.Write(assign.get());
-    writer.Write(initializer.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    rv = writer.Write(declSpecifiers.get());
+    if (!rv) return rv;
+    rv = writer.Write(declarator.get());
+    if (!rv) return rv;
+    rv = writer.Write(assign.get());
+    if (!rv) return rv;
+    rv = writer.Write(initializer.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ParameterNode::Read(Reader& reader)
@@ -663,11 +702,15 @@ void ParameterListNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ParameterListNode::Write(Writer& writer)
+std::expected<bool, int> ParameterListNode::Write(Writer& writer)
 {
-    ListNode::Write(writer);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = ListNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ParameterListNode::Read(Reader& reader)
@@ -723,12 +766,17 @@ void FunctionTryBlockNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void FunctionTryBlockNode::Write(Writer& writer)
+std::expected<bool, int> FunctionTryBlockNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(ctorInitializer.get());
-    writer.Write(tryBlock.get());
-    writer.Write(handlers.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(ctorInitializer.get());
+    if (!rv) return rv;
+    rv = writer.Write(tryBlock.get());
+    if (!rv) return rv;
+    rv = writer.Write(handlers.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> FunctionTryBlockNode::Read(Reader& reader)

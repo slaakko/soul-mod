@@ -20,6 +20,7 @@ import otava.symbols.function.templates;
 import otava.symbols.inline_functions;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.operation.repository;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import util.unicode;
 import util.sha1;
@@ -89,9 +90,9 @@ void VariableSymbol::Read(Reader& reader)
     layoutIndex = reader.GetBinaryStreamReader().ReadInt();
 }
 
-void VariableSymbol::Resolve(SymbolTable& symbolTable)
+void VariableSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    Symbol::Resolve(symbolTable);
+    Symbol::Resolve(symbolTable, context);
     declaredType = symbolTable.GetType(declaredTypeId);
     if (!declaredType)
     {

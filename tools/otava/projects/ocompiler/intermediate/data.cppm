@@ -53,7 +53,7 @@ class Value
 public:
     Value(const soul::ast::Span& span_, ValueKind kind_, Type* type_);
     virtual ~Value();
-    virtual Value* Clone(CloneContext& cloneContext) const { return const_cast<Value*>(this); }
+    virtual std::expected<Value*, int> Clone(CloneContext& cloneContext) const { return const_cast<Value*>(this); }
     virtual void Accept(Visitor& visitor);
     inline bool IsRegValue() const { return kind == ValueKind::regValue; }
     inline bool IsInstruction() const { return kind == ValueKind::instruction; }
@@ -401,7 +401,7 @@ public:
     inline Context* GetContext() const { return context; }
     inline void SetContext(Context* context_) { context = context_; }
     GlobalVariable* AddGlobalVariable(const soul::ast::Span& span, Type* type, const std::string& variableName, Value* initializer, Context* context);
-    GlobalVariable* GetGlobalVariableForString(Value* stringValue, Type* charType);
+    std::expected<GlobalVariable*, int> GetGlobalVariableForString(Value* stringValue, Type* charType);
     Value* GetBoolValue(bool value, const Types& types);
     Value* GetTrueValue(const Types& types);
     Value* GetFalseValue(const Types& types);
@@ -435,8 +435,8 @@ public:
     Value* MakeConversionValue(const soul::ast::Span& span, Type* type, Value* from);
     Value* MakeClsIdValue(const soul::ast::Span& span, Type* type, const std::string& clsIdStr);
     Value* MakeSymbolValue(const soul::ast::Span& span, Type* type, const std::string& symbol);
-    Value* MakeIntegerLiteral(const soul::ast::Span& span, Type* type, const std::string& strValue, const Types& types, Context* context);
-    Value* MakeAddressLiteral(const soul::ast::Span& span, Type* type, const std::string& id, Context* context, bool resolve);
+    std::expected<Value*, int> MakeIntegerLiteral(const soul::ast::Span& span, Type* type, const std::string& strValue, const Types& types);
+    Value* MakeAddressLiteral(const soul::ast::Span& span, Type* type, const std::string& id, bool resolve);
     void ResolveAddressValue(AddressValue* addressValue);
     void ResolveAddressValues();
     void VisitGlobalVariables(Visitor& visitor);

@@ -4,6 +4,8 @@ import otava.symbols.type.symbol;
 import otava.symbols.class_templates;
 import otava.symbols.compound.type.symbol;
 import otava.symbols.classes;
+import otava.symbols.class_group.symbol;
+import otava.symbols.context;
 import otava.symbols.function.type.symbol;
 
 namespace otava::symbols {
@@ -13,7 +15,7 @@ bool TypeIdLess::operator()(TypeSymbol* left, TypeSymbol* right) const
     return left->Id() < right->Id();
 }
 
-bool TypesEqual(TypeSymbol* left, TypeSymbol* right)
+bool TypesEqual(TypeSymbol* left, TypeSymbol* right, Context* context)
 {
     if (left->IsForwardClassDeclarationSymbol())
     {
@@ -37,7 +39,7 @@ bool TypesEqual(TypeSymbol* left, TypeSymbol* right)
     {
         ClassTemplateSpecializationSymbol* leftSpecialization = static_cast<ClassTemplateSpecializationSymbol*>(left);
         ClassTemplateSpecializationSymbol* rightSpecialization = static_cast<ClassTemplateSpecializationSymbol*>(right);
-        if (!TypesEqual(leftSpecialization->ClassTemplate(), rightSpecialization->ClassTemplate())) return false;
+        if (!TypesEqual(leftSpecialization->ClassTemplate(), rightSpecialization->ClassTemplate(), context)) return false;
         if (leftSpecialization->TemplateArguments().size() != rightSpecialization->TemplateArguments().size()) return false;
         int n = leftSpecialization->TemplateArguments().size();
         for (int i = 0; i < n; ++i)
@@ -48,9 +50,12 @@ bool TypesEqual(TypeSymbol* left, TypeSymbol* right)
             {
                 TypeSymbol* leftTemplateArgType = static_cast<TypeSymbol*>(leftTemplateArg);
                 TypeSymbol* rightTemplateArgType = static_cast<TypeSymbol*>(rightTemplateArg);
-                if (!TypesEqual(leftTemplateArgType, rightTemplateArgType)) return false;
+                if (!TypesEqual(leftTemplateArgType, rightTemplateArgType, context)) return false;
             }
-            if (leftTemplateArg != rightTemplateArg) return false;
+            else
+            {
+                if (leftTemplateArg != rightTemplateArg) return false;
+            }
         }
         return true;
     }
@@ -58,7 +63,7 @@ bool TypesEqual(TypeSymbol* left, TypeSymbol* right)
     {
         CompoundTypeSymbol* leftCompound = static_cast<CompoundTypeSymbol*>(left);
         CompoundTypeSymbol* rightCompound = static_cast<CompoundTypeSymbol*>(right);
-        if (TypesEqual(leftCompound->BaseType(), rightCompound->BaseType()) && leftCompound->GetDerivations() == rightCompound->GetDerivations()) return true;
+        if (TypesEqual(leftCompound->BaseType(), rightCompound->BaseType(), context) && leftCompound->GetDerivations() == rightCompound->GetDerivations()) return true;
     }
     if (left->IsTemplateParameterSymbol() && right->IsTemplateParameterSymbol())
     {
@@ -70,7 +75,28 @@ bool TypesEqual(TypeSymbol* left, TypeSymbol* right)
     {
         FunctionTypeSymbol* leftFnType = static_cast<FunctionTypeSymbol*>(left);
         FunctionTypeSymbol* rightFnType = static_cast<FunctionTypeSymbol*>(right);
-        return FunctionTypesEqual(leftFnType, rightFnType);
+        return FunctionTypesEqual(leftFnType, rightFnType, context);
+    }
+    if (context && context->GetFlag(ContextFlags::matchClassGroup))
+    {
+        if (left->IsClassGroupTypeSymbol() && right->IsClassTypeSymbol())
+        {
+            ClassGroupTypeSymbol* classGroupType = static_cast<ClassGroupTypeSymbol*>(left);
+            ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(right);
+            if (classGroupType->ClassGroup()->Name() == classType->Group()->Name())
+            {
+                return true;
+            }
+        }
+        else if (left->IsClassTypeSymbol() && right->IsClassGroupTypeSymbol())
+        {
+            ClassGroupTypeSymbol* classGroupType = static_cast<ClassGroupTypeSymbol*>(right);
+            ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(left);
+            if (classGroupType->ClassGroup()->Name() == classType->Group()->Name())
+            {
+                return true;
+            }
+        }
     }
     return false;
 }

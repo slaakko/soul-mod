@@ -64,9 +64,9 @@ void ArrayTypeSymbol::Read(Reader& reader)
     size = reader.GetBinaryStreamReader().ReadLong();
 }
 
-void ArrayTypeSymbol::Resolve(SymbolTable& symbolTable)
+void ArrayTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    TypeSymbol::Resolve(symbolTable);
+    TypeSymbol::Resolve(symbolTable, context);
     elementType = symbolTable.GetType(elementTypeId);
     symbolTable.AddArrayTypeToSet(this);
 }
@@ -78,7 +78,13 @@ void ArrayTypeSymbol::Accept(Visitor& visitor)
 
 otava::intermediate::Type* ArrayTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    return emitter.MakeArrayType(size, elementType->IrType(emitter, sourcePos, context));
+    otava::intermediate::Type* type = emitter.GetType(Id());
+    if (!type)
+    {
+        type = emitter.MakeArrayType(size, elementType->IrType(emitter, sourcePos, context));
+        emitter.SetType(Id(), type);
+    }
+    return type;
 }
 
 void ArrayTypeSymbol::Bind(const soul::ast::SourcePos& sourcePos, Context* context)
@@ -147,7 +153,7 @@ void ArrayTypeDefaultCtor::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(arrayTypeId);
 }
 
-void ArrayTypeDefaultCtor::Resolve(SymbolTable& symbolTable)
+void ArrayTypeDefaultCtor::Resolve(SymbolTable& symbolTable, Context* context)
 {
     TypeSymbol* type = symbolTable.GetType(arrayTypeId);
     if (type && type->IsArrayTypeSymbol())
@@ -215,7 +221,7 @@ void ArrayTypeCopyCtor::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(arrayTypeId);
 }
 
-void ArrayTypeCopyCtor::Resolve(SymbolTable& symbolTable)
+void ArrayTypeCopyCtor::Resolve(SymbolTable& symbolTable, Context* context)
 {
     TypeSymbol* type = symbolTable.GetType(arrayTypeId);
     if (type && type->IsArrayTypeSymbol())
@@ -285,7 +291,7 @@ void ArrayTypeMoveCtor::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(arrayTypeId);
 }
 
-void ArrayTypeMoveCtor::Resolve(SymbolTable& symbolTable)
+void ArrayTypeMoveCtor::Resolve(SymbolTable& symbolTable, Context* context)
 {
     TypeSymbol* type = symbolTable.GetType(arrayTypeId);
     if (type && type->IsArrayTypeSymbol())
@@ -357,7 +363,7 @@ void ArrayTypeCopyAssignment::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(arrayTypeId);
 }
 
-void ArrayTypeCopyAssignment::Resolve(SymbolTable& symbolTable)
+void ArrayTypeCopyAssignment::Resolve(SymbolTable& symbolTable, Context* context)
 {
     TypeSymbol* type = symbolTable.GetType(arrayTypeId);
     if (type && type->IsArrayTypeSymbol())
@@ -429,7 +435,7 @@ void ArrayTypeMoveAssignment::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(arrayTypeId);
 }
 
-void ArrayTypeMoveAssignment::Resolve(SymbolTable& symbolTable)
+void ArrayTypeMoveAssignment::Resolve(SymbolTable& symbolTable, Context* context)
 {
     TypeSymbol* type = symbolTable.GetType(arrayTypeId);
     if (type && type->IsArrayTypeSymbol())
@@ -500,7 +506,7 @@ void ArrayTypeBegin::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(arrayTypeId);
 }
 
-void ArrayTypeBegin::Resolve(SymbolTable& symbolTable)
+void ArrayTypeBegin::Resolve(SymbolTable& symbolTable, Context* context)
 {
     TypeSymbol* type = symbolTable.GetType(arrayTypeId);
     if (type && type->IsArrayTypeSymbol())
@@ -549,7 +555,7 @@ void ArrayTypeEnd::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(arrayTypeId);
 }
 
-void ArrayTypeEnd::Resolve(SymbolTable& symbolTable)
+void ArrayTypeEnd::Resolve(SymbolTable& symbolTable, Context* context)
 {
     TypeSymbol* type = symbolTable.GetType(arrayTypeId);
     if (type && type->IsArrayTypeSymbol())

@@ -7,6 +7,7 @@ export module otava.symbols.enums;
 
 import std;
 import otava.symbols.scope;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.type.symbol;
 import otava.ast.node;
@@ -33,7 +34,7 @@ public:
     inline void SetUnderlyingType(TypeSymbol* underlyingType_) { underlyingType = underlyingType_; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     inline bool IsBound() const { return bound; }
@@ -61,7 +62,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
 private:
     EnumTypeKind enumTypeKind;
     TypeSymbol* underlyingType;
@@ -81,7 +82,7 @@ public:
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     EnumeratedTypeSymbol* GetEnumType() const { return enumType; }
     void SetEnumType(EnumeratedTypeSymbol* enumType_) { enumType = enumType_; }
@@ -104,7 +105,7 @@ public:
     EnumTypeDefaultCtor(EnumeratedTypeSymbol* enumType_, Context* context);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
@@ -121,7 +122,7 @@ public:
     EnumTypeCopyCtor(EnumeratedTypeSymbol* enumType_, Context* context);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
@@ -138,7 +139,7 @@ public:
     EnumTypeMoveCtor(EnumeratedTypeSymbol* enumType_, Context* context);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
@@ -155,7 +156,7 @@ public:
     EnumTypeCopyAssignment(EnumeratedTypeSymbol* enumType_, Context* context);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
@@ -172,7 +173,7 @@ public:
     EnumTypeMoveAssignment(EnumeratedTypeSymbol* enumType_, Context* context);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
@@ -189,7 +190,7 @@ public:
     EnumTypeEqual(EnumeratedTypeSymbol* enumType_, Context* context);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
@@ -205,7 +206,7 @@ public:
     EnumTypeLess(EnumeratedTypeSymbol* enumType_, Context* context);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }

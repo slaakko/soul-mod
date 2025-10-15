@@ -44,7 +44,7 @@ public:
     }
     inline void AddFwdDependentType(otava::intermediate::FwdDeclaredStructureType* fwdDeclaredType, otava::intermediate::Type* type)
     {
-        return context->AddFwdDependentType(fwdDeclaredType, type);
+        context->AddFwdDependentType(fwdDeclaredType, type);
     }
     otava::intermediate::Type* GetOrInsertFwdDeclaredStructureType(const util::uuid& id, const std::string& comment);
     void ResolveForwardReferences(const util::uuid& typeId, otava::intermediate::StructureType* structureType);

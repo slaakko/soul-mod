@@ -5,6 +5,7 @@
 
 module otava.symbols.conversion.table;
 
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.type.symbol;
 import otava.symbols.type_compare;
@@ -23,7 +24,7 @@ ConversionTableEntry::ConversionTableEntry(TypeSymbol* paramType_, TypeSymbol* a
 
 bool ConversionTableEntryEqual::operator()(const ConversionTableEntry& left, const ConversionTableEntry& right) const
 {
-    return TypesEqual(left.paramType, right.paramType) && TypesEqual(left.argType, right.argType);
+    return TypesEqual(left.paramType, right.paramType, nullptr) && TypesEqual(left.argType, right.argType, nullptr);
 }
 
 size_t ConversionTableEntryHash::operator()(const ConversionTableEntry& entry) const
@@ -32,7 +33,7 @@ size_t ConversionTableEntryHash::operator()(const ConversionTableEntry& entry) c
     return hashCode;
 }
 
-ConversionTable::ConversionTable(SymbolTable* symbolTable_) : symbolTable(symbolTable_)
+ConversionTable::ConversionTable(SymbolTable* symbolTable_) : symbolTable(symbolTable_), conversionMap()
 {
 }
 

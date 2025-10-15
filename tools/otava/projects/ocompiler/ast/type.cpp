@@ -55,12 +55,17 @@ void TypenameSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void TypenameSpecifierNode::Write(Writer& writer)
+std::expected<bool, int> TypenameSpecifierNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(nns.get());
-    writer.Write(id.get());
-    writer.Write(templateNode.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(nns.get());
+    if (!rv) return rv;
+    rv = writer.Write(id.get());
+    if (!rv) return rv;
+    rv = writer.Write(templateNode.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> TypenameSpecifierNode::Read(Reader& reader)
@@ -104,11 +109,15 @@ void TypeIdNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void TypeIdNode::Write(Writer& writer)
+std::expected<bool, int> TypeIdNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(typeSpecifiers.get());
-    writer.Write(declarator.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(typeSpecifiers.get());
+    if (!rv) return rv;
+    rv = writer.Write(declarator.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> TypeIdNode::Read(Reader& reader)
@@ -149,11 +158,15 @@ void DefiningTypeIdNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void DefiningTypeIdNode::Write(Writer& writer)
+std::expected<bool, int> DefiningTypeIdNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(definingTypeSpecifiers.get());
-    writer.Write(abstractDeclarator.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(definingTypeSpecifiers.get());
+    if (!rv) return rv;
+    rv = writer.Write(abstractDeclarator.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> DefiningTypeIdNode::Read(Reader& reader)
@@ -233,12 +246,17 @@ void ElaboratedTypeSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ElaboratedTypeSpecifierNode::Write(Writer& writer)
+std::expected<bool, int> ElaboratedTypeSpecifierNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(classKey.get());
-    writer.Write(id.get());
-    writer.Write(attributes.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(classKey.get());
+    if (!rv) return rv;
+    rv = writer.Write(id.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ElaboratedTypeSpecifierNode::Read(Reader& reader)
@@ -277,12 +295,17 @@ void DeclTypeSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void DeclTypeSpecifierNode::Write(Writer& writer)
+std::expected<bool, int> DeclTypeSpecifierNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(expr.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(expr.get());
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> DeclTypeSpecifierNode::Read(Reader& reader)
@@ -326,14 +349,21 @@ void PlaceholderTypeSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void PlaceholderTypeSpecifierNode::Write(Writer& writer)
+std::expected<bool, int> PlaceholderTypeSpecifierNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(typeConstraint.get());
-    writer.Write(dtPos);
-    writer.Write(autoPos);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(typeConstraint.get());
+    if (!rv) return rv;
+    rv = writer.Write(dtPos);
+    if (!rv) return rv;
+    rv = writer.Write(autoPos);
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> PlaceholderTypeSpecifierNode::Read(Reader& reader)

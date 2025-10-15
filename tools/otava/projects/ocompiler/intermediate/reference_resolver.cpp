@@ -1,0 +1,130 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+module otava.intermediate.reference_resolver;
+
+import otava.intermediate.visitor;
+import otava.intermediate.code;
+import otava.intermediate.context;
+import otava.intermediate.error;
+
+namespace otava::intermediate {
+
+class ResolverVisitor : public Visitor
+{
+public:
+    ResolverVisitor(Context* context_);
+    void Visit(Function& function) override;
+    void Visit(BasicBlock& basicBlock) override;
+    void Visit(JmpInstruction& inst) override;
+    void Visit(BranchInstruction& inst) override;
+    void Visit(SwitchInstruction& inst) override;
+private:
+    Function* currentFunction;
+};
+
+ResolverVisitor::ResolverVisitor(Context* context_) : Visitor(context_), currentFunction(nullptr)
+{
+}
+
+void ResolverVisitor::Visit(Function& function)
+{
+    if (!Valid()) return;
+    currentFunction = &function;
+    function.VisitBasicBlocks(*this);
+}
+
+void ResolverVisitor::Visit(BasicBlock& basicBlock)
+{
+    if (!Valid()) return;
+    basicBlock.VisitInstructions(*this);
+}
+
+void ResolverVisitor::Visit(JmpInstruction& inst)
+{
+    if (!Valid()) return;
+    std::int32_t target = inst.TargetLabelId();
+    BasicBlock* basicBlock = inst.Parent();
+    Function* function = basicBlock->Parent();
+    BasicBlock* targetBasicBlock = function->GetBasicBlock(target);
+    if (!targetBasicBlock)
+    {
+        auto rv = Error("resolve error: jump target basic block " + std::to_string(target) + " not found from function '" + function->Name() + "'", inst.Span(), GetContext());
+        SetError(rv.error());
+        return;
+    }
+    inst.SetTargetBasicBlock(targetBasicBlock);
+}
+
+void ResolverVisitor::Visit(BranchInstruction& inst)
+{
+    if (!Valid()) return;
+    BasicBlock* trueBasicBlock = inst.Parent();
+    std::int32_t trueTarget = inst.TrueTargetLabelId();
+    Function* trueFunction = trueBasicBlock->Parent();
+    BasicBlock* trueTargetBasicBlock = trueFunction->GetBasicBlock(trueTarget);
+    if (!trueTargetBasicBlock)
+    {
+        auto rv = Error("resolve error: branch true target basic block " + std::to_string(trueTarget) + " not found from function '" + trueFunction->Name() + "'",
+            inst.Span(), GetContext());
+        SetError(rv.error());
+        return;
+    }
+    inst.SetTrueTargetBasicBlock(trueTargetBasicBlock);
+    std::int32_t falseTarget = inst.FalseTargetLabelId();
+    BasicBlock* falseBasicBlock = inst.Parent();
+    Function* falseFunction = falseBasicBlock->Parent();
+    BasicBlock* falseTargetBasicBlock = falseFunction->GetBasicBlock(falseTarget);
+    if (!falseTargetBasicBlock)
+    {
+        auto rv = Error("resolve error: branch false target basic block " + std::to_string(falseTarget) + " not found from function '" + falseFunction->Name() + "'",
+            inst.Span(), GetContext());
+        SetError(rv.error());
+        return;
+    }
+    inst.SetFalseTargetBasicBlock(falseTargetBasicBlock);
+}
+
+void ResolverVisitor::Visit(SwitchInstruction& inst)
+{
+    if (!Valid()) return;
+    std::int32_t defaultTarget = inst.DefaultTargetLabelId();
+    BasicBlock* parent = inst.Parent();
+    Function* function = parent->Parent();
+    BasicBlock* defaultTargetBlock = function->GetBasicBlock(defaultTarget);
+    if (!defaultTargetBlock)
+    {
+        auto rv = Error("resolve error: switch default target basic block " + std::to_string(defaultTarget) +
+            " not found from function '" + function->Name() + "'", inst.Span(), GetContext());
+        SetError(rv.error());
+        return;
+    }
+    inst.SetDefaultTargetBlock(defaultTargetBlock);
+    for (CaseTarget& caseTarget : inst.CaseTargets())
+    {
+        BasicBlock* caseTargetBlock = function->GetBasicBlock(caseTarget.targetLabelId);
+        if (!caseTargetBlock)
+        {
+            auto rv = Error("resolve error: switch case target basic block " + std::to_string(caseTarget.targetLabelId) +
+                " not found from function '" + function->Name() + "'", inst.Span(), GetContext());
+            SetError(rv.error());
+            return;
+        }
+        caseTarget.targetBlock = caseTargetBlock;
+    }
+}
+
+std::expected<bool, int> ResolveReferences(Context& context)
+{
+    ResolverVisitor visitor(&context);
+    if (!visitor)
+    {
+        return std::unexpected<int>(visitor.GetError());
+    }
+    context.GetCode().VisitFunctions(visitor);
+    return std::expected<bool, int>(true);
+}
+
+} // otava::intermediate

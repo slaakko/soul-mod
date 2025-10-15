@@ -50,7 +50,7 @@ class LiteralNode : public Node
 public:
     LiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
     LiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::u32string& rep_);
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const std::u32string& Rep() const { return rep; }
 private:
@@ -64,7 +64,7 @@ public:
     IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_, std::uint64_t value_, Suffix suffix_, Base base_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline std::uint64_t Value() const { return value; }
     inline Suffix GetSuffix() const { return suffix; }
@@ -82,7 +82,7 @@ public:
     FloatingLiteralNode(const soul::ast::SourcePos& sourcePos_, double value_, Suffix suffix_, Base base_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline double Value() const { return value; }
     inline Suffix GetSuffix() const { return suffix; }
@@ -100,7 +100,7 @@ public:
     CharacterLiteralNode(const soul::ast::SourcePos& sourcePos_, char32_t value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_, bool hasMultipleCharacters_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline char32_t Value() const { return value; }
     inline EncodingPrefix GetEncodingPrefix() const { return encodingPrefix; }
@@ -120,7 +120,7 @@ public:
     StringLiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const std::u32string& Value() const { return value; }
     inline EncodingPrefix GetEncodingPrefix() const { return encodingPrefix; }
@@ -136,7 +136,7 @@ public:
     RawStringLiteralNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_, const std::u32string& delimSequence_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const std::u32string& DelimSequence() const { return delimSequence; }
 private:
@@ -150,7 +150,7 @@ public:
     BooleanLiteralNode(const soul::ast::SourcePos& sourcePos_, bool value_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline bool Value() const { return value; }
 private:
@@ -182,7 +182,7 @@ public:
     LiteralOperatorIdNode(const soul::ast::SourcePos& sourcePos_, Node* id_, const soul::ast::SourcePos& stringLitPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& StringLitPos() const { return stringLitPos; }
 private:

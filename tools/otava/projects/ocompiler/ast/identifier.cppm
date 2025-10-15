@@ -17,7 +17,7 @@ public:
     IdentifierNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& str_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::u32string Str() const override { return str; }
 private:
@@ -73,7 +73,7 @@ public:
     std::u32string Str() const override { return str; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
 private:
     std::u32string str;

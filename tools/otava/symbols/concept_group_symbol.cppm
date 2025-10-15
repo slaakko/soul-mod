@@ -24,7 +24,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Merge(ConceptGroupSymbol* that);
 private:
     std::vector<ConceptSymbol*> concepts;

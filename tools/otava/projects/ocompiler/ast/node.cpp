@@ -401,13 +401,16 @@ std::expected<bool, int> Node::AddNode(Node* node)
 
 std::expected<bool, int> Node::Clear()
 {
-    return std::unexpected<int>(util::AllocateError("cannot clear to this kind of node"));
+    return std::unexpected<int>(util::AllocateError("cannot clear this kind of node"));
 }
 
-void Node::Write(Writer& writer)
+std::expected<bool, int> Node::Write(Writer& writer)
 {
-    writer.GetBinaryStreamWriter().Write(id);
-    writer.Write(sourcePos);
+    std::expected<bool, int> rv = writer.GetBinaryStreamWriter().Write(id);
+    if (!rv) return rv;
+    rv = writer.Write(sourcePos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> Node::Read(Reader& reader)
@@ -433,10 +436,13 @@ UnaryNode::UnaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Nod
     }
 }
 
-void UnaryNode::Write(Writer& writer)
+std::expected<bool, int> UnaryNode::Write(Writer& writer)
 {
-    Node::Write(writer);
-    writer.Write(child.get());
+    std::expected<bool, int> rv = Node::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(child.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> UnaryNode::Read(Reader& reader)
@@ -461,11 +467,15 @@ BinaryNode::BinaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, N
     }
 }
 
-void BinaryNode::Write(Writer& writer)
+std::expected<bool, int> BinaryNode::Write(Writer& writer)
 {
-    Node::Write(writer);
-    writer.Write(left.get());
-    writer.Write(right.get());
+    std::expected<bool, int> rv = Node::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(left.get());
+    if (!rv) return rv;
+    rv = writer.Write(right.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> BinaryNode::Read(Reader& reader)
@@ -496,16 +506,20 @@ void SequenceNode::Clear()
     nodes.Clear();
 }
 
-void SequenceNode::Write(Writer& writer)
+std::expected<bool, int> SequenceNode::Write(Writer& writer)
 {
-    Node::Write(writer);
+    std::expected<bool, int> rv = Node::Write(writer);
+    if (!rv) return rv;
     std::uint32_t n = Nodes().Count();
-    writer.GetBinaryStreamWriter().WriteULEB128UInt(n);
+    rv = writer.GetBinaryStreamWriter().WriteULEB128UInt(n);
+    if (!rv) return rv;
     for (std::int32_t i = 0; i < static_cast<std::int32_t>(n); ++i)
     {
         Node* node = nodes[i];
-        writer.Write(node);
+        rv = writer.Write(node);
+        if (!rv) return rv;
     }
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> SequenceNode::Read(Reader& reader)
@@ -545,16 +559,20 @@ void ListNode::Clear()
     items.clear();
 }
 
-void ListNode::Write(Writer& writer)
+std::expected<bool, int> ListNode::Write(Writer& writer)
 {
-    Node::Write(writer);
+    std::expected<bool, int> rv = Node::Write(writer);
+    if (!rv) return rv;
     std::uint32_t n = Nodes().Count();
-    writer.GetBinaryStreamWriter().WriteULEB128UInt(n);
+    rv = writer.GetBinaryStreamWriter().WriteULEB128UInt(n);
+    if (!rv) return rv;
     for (std::int32_t i = 0; i < static_cast<std::int32_t>(n); ++i)
     {
         Node* node = nodes[i];
-        writer.Write(node);
+        rv = writer.Write(node);
+        if (!rv) return rv;
     }
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ListNode::Read(Reader& reader)

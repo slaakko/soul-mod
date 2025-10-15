@@ -96,9 +96,9 @@ void Value::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(typeId);
 }
 
-void Value::Resolve(SymbolTable& symbolTable)
+void Value::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    Symbol::Resolve(symbolTable);
+    Symbol::Resolve(symbolTable, context);
     if (typeId != util::nil_uuid())
     {
         type = symbolTable.GetType(typeId);
@@ -521,9 +521,9 @@ void SymbolValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void SymbolValue::Resolve(SymbolTable& symbolTable)
+void SymbolValue::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    Value::Resolve(symbolTable);
+    Value::Resolve(symbolTable, context);
     symbol = symbolTable.GetSymbolMap()->GetSymbol(symbolTable.GetModule(), SymbolKind::null, symbolId);
 }
 
@@ -587,9 +587,9 @@ void InvokeValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void InvokeValue::Resolve(SymbolTable& symbolTable)
+void InvokeValue::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    Value::Resolve(symbolTable);
+    Value::Resolve(symbolTable, context);
     EvaluationContext* evaluationContext = symbolTable.GetModule()->GetEvaluationContext();
     subject = evaluationContext->GetValue(subjectId);
 }
@@ -971,11 +971,11 @@ void EvaluationContext::MapValue(Value* value)
     valueMap[value->Id()] = value;
 }
 
-void EvaluationContext::Resolve(SymbolTable& symbolTable)
+void EvaluationContext::Resolve(SymbolTable& symbolTable, Context* context)
 {
     for (const auto& value : values)
     {
-        value->Resolve(symbolTable);
+        value->Resolve(symbolTable, context);
     }
 }
 

@@ -21,6 +21,7 @@ import otava.symbols.reader;
 import otava.symbols.type.resolver;
 import otava.symbols.statement.binder;
 import otava.symbols.variable.symbol;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.overload.resolution;
 import otava.symbols.argument.conversion.table;
@@ -184,11 +185,11 @@ void ClassTypeSymbol::AddDerivedClass(ClassTypeSymbol* derivedClass)
     }
 }
 
-bool ClassTypeSymbol::HasBaseClass(TypeSymbol* baseClass, int& distance) const
+bool ClassTypeSymbol::HasBaseClass(TypeSymbol* baseClass, int& distance, Context* context) const
 {
     for (const auto& baseCls : baseClasses)
     {
-        if (TypesEqual(baseCls, baseClass))
+        if (TypesEqual(baseCls, baseClass, context))
         {
             ++distance;
             return true;
@@ -196,7 +197,7 @@ bool ClassTypeSymbol::HasBaseClass(TypeSymbol* baseClass, int& distance) const
         else 
         {
             ++distance;
-            if (baseCls->HasBaseClass(baseClass, distance))
+            if (baseCls->HasBaseClass(baseClass, distance, context))
             {
                 return true;
             }
@@ -350,9 +351,9 @@ void ClassTypeSymbol::Read(Reader& reader)
     nextMemFnDefIndex = reader.GetBinaryStreamReader().ReadInt();
 }
 
-void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
+void ClassTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    TypeSymbol::Resolve(symbolTable);
+    TypeSymbol::Resolve(symbolTable, context);
     for (const util::uuid& baseClassId : baseClassIds)
     {
         Symbol* baseClassSymbol = symbolTable.GetSymbolMap()->GetSymbol(symbolTable.GetModule(), SymbolKind::null, baseClassId);
@@ -494,7 +495,7 @@ void ClassTypeSymbol::MakeVTab(Context* context, const soul::ast::SourcePos& sou
     vtabSize = vtab.size();
 }
 
-bool Overrides(FunctionSymbol* f, FunctionSymbol* g)
+bool Overrides(FunctionSymbol* f, FunctionSymbol* g, Context* context)
 {
     if (f->GroupName() == g->GroupName())
     {
@@ -505,7 +506,13 @@ bool Overrides(FunctionSymbol* f, FunctionSymbol* g)
             {
                 ParameterSymbol* p = f->Parameters()[i];
                 ParameterSymbol* q = g->Parameters()[i];
-                if (!TypesEqual(p->GetType(), q->GetType())) return false;
+                context->PushSetFlag(ContextFlags::matchClassGroup);
+                if (!TypesEqual(p->GetType(), q->GetType(), context))
+                {
+                    context->PopFlags();
+                    return false;
+                }
+                context->PopFlags();
             }
             if (f->IsConst() != g->IsConst()) return false;
             return true;
@@ -516,6 +523,10 @@ bool Overrides(FunctionSymbol* f, FunctionSymbol* g)
 
 void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos, bool clear)
 {
+    if (Group()->Name() == U"Instantiator")
+    {
+        int x = 0;
+    }
     if (!IsPolymorphic()) return;
     if (clear)
     {
@@ -566,12 +577,20 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
     for (int i = 0; i < n; ++i)
     {
         FunctionSymbol* f = virtualFunctions[i];
+        if (f->GroupName() == U"Visit")
+        {
+            int x = 0;
+        }
         bool found = false;
         int m = vtab.size();
         for (int j = 0; j < m; ++j)
         {
             FunctionSymbol* v = vtab[j];
-            if (Overrides(f, v))
+            if (v->GroupName() == U"Visit")
+            {
+                int x = 0;
+            }
+            if (Overrides(f, v, context))
             {
                 if (!f->IsOverride() && !f->IsFinal() && !f->IsDestructor())
                 {
@@ -796,18 +815,18 @@ FunctionSymbol* ClassTypeSymbol::GetFunctionByNodeId(std::int32_t nodeId) const
     }
 }
 
-FunctionSymbol* ClassTypeSymbol::GetConversionFunction(TypeSymbol* type) const
+FunctionSymbol* ClassTypeSymbol::GetConversionFunction(TypeSymbol* type, Context* context) const
 {
     for (const auto& conversionFunction : conversionFunctions)
     {
-        if (TypesEqual(conversionFunction->ReturnType(), type))
+        if (TypesEqual(conversionFunction->ReturnType(), type, context))
         {
             return conversionFunction;
         }
     }
     for (ClassTypeSymbol* baseClass : baseClasses)
     {
-        FunctionSymbol* baseClassConversionFn = baseClass->GetConversionFunction(type);
+        FunctionSymbol* baseClassConversionFn = baseClass->GetConversionFunction(type, context);
         if (baseClassConversionFn)
         {
             return baseClassConversionFn;
@@ -854,14 +873,14 @@ void ClassTypeSymbol::GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Co
 
 std::pair<bool, std::int64_t> ClassTypeSymbol::Delta(ClassTypeSymbol* base, Emitter& emitter, Context* context)
 {
-    if (TypesEqual(base, this)) return std::make_pair(true, 0);
-    int64_t delta = 0;
+    if (TypesEqual(base, this, context)) return std::make_pair(true, 0);
+    std::int64_t delta = 0;
     for (ClassTypeSymbol* bc : BaseClasses())
     {
         auto [bcfound, bcdelta] = bc->Delta(base, emitter, context);
         if (bcfound) return std::make_pair(true, delta + bcdelta);
         otava::intermediate::Type* bctype = bc->IrType(emitter, soul::ast::SourcePos(), context);
-        int64_t bcsize = bctype->Size();
+        std::int64_t bcsize = bctype->Size();
         delta += bcsize;
     }
     return std::make_pair(false, 0);
@@ -941,9 +960,9 @@ void ForwardClassDeclarationSymbol::Read(Reader& reader)
     }
 }
 
-void ForwardClassDeclarationSymbol::Resolve(SymbolTable& symbolTable)
+void ForwardClassDeclarationSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    TypeSymbol::Resolve(symbolTable);
+    TypeSymbol::Resolve(symbolTable, context);
     if (classTypeSymbolId != util::nil_uuid())
     {
         TypeSymbol* type = symbolTable.GetType(classTypeSymbolId);

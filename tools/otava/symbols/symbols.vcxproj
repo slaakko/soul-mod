@@ -213,6 +213,8 @@
     <ClCompile Include="function_definition_symbol_set.cppm" />
     <ClCompile Include="function_group_symbol.cpp" />
     <ClCompile Include="function_group_symbol.cppm" />
+    <ClCompile Include="function_kind.cpp" />
+    <ClCompile Include="function_kind.cppm" />
     <ClCompile Include="function_return_path_checker.cpp" />
     <ClCompile Include="function_return_path_checker.cppm" />
     <ClCompile Include="function_symbol.cpp" />

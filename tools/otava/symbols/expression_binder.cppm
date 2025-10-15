@@ -7,6 +7,7 @@ export module otava.symbols.expression.binder;
 
 import std;
 import otava.ast.node;
+import otava.symbols.scope;
 import otava.symbols.symbol;
 import soul.ast.source.pos;
 

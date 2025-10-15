@@ -125,7 +125,7 @@ parser IdentifierParser
                     otava::symbols::SymbolGroupKind::typeSymbolGroup, 
                     lexer.GetSourcePos(pos), 
                     context);
-                if (symbol && symbol->IsTypeSymbol())
+                if (symbol && (symbol->IsTypeSymbol() || symbol->IsClassGroupSymbol() || symbol->IsAliasGroupSymbol()))
                 {
                     context->GetSymbolTable()->MapNode(identifier.get(), symbol);
                     return identifier.release();

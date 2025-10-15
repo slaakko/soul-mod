@@ -14,6 +14,7 @@ import otava.symbols.enum_group.symbol;
 import otava.symbols.exception;
 import otava.symbols.function.group.symbol;
 import otava.symbols.variable.group.symbol;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.visitor;
 import otava.symbols.symbol.table;
@@ -102,11 +103,11 @@ void NamespaceSymbol::Import(NamespaceSymbol* that, Context* context)
             }
             if (installSymbol->CanInstall())
             {
-                currentScope->Install(installSymbol, symbol.get());
+                currentScope->Install(installSymbol, symbol.get(), context);
             }
         }
     }
-    currentScope->Import(that->GetScope());
+    currentScope->Import(that->GetScope(), context);
     symbolTable->EndNamespace();
 }
 

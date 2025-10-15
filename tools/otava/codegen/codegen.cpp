@@ -6,6 +6,7 @@
 module otava.codegen;
 
 import otava.symbols.emitter;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.intermediate.code;
 import otava.intermediate.compile_unit;

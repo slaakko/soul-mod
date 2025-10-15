@@ -135,6 +135,7 @@ I find_if(I begin, I end, P p)
         }
         ++begin;
     }
+    return end;
 }
 
 template<typename I, typename P>

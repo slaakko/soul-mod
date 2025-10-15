@@ -6,6 +6,7 @@ module otava.parser.expression;
 import util;
 import soul.ast.common;
 import soul.ast.spg;
+import otava.symbols.exception;
 import soul.ast.source.pos;
 import soul.ast.lexer.pos.pair;
 import otava.token;
@@ -294,6 +295,10 @@ soul::parser::Match ExpressionParser<LexerT>::AssignmentExpression(LexerT& lexer
                                                 {
                                                     sourcePos = lexer.GetSourcePos(pos);
                                                     leftExpr.reset(left.release());
+                                                    if (!leftExpr)
+                                                    {
+                                                        otava::symbols::ThrowException("left expression is null", sourcePos, context);
+                                                    }
                                                     if (leftExpr->IsBinaryExprNode())
                                                     {
                                                         pass = false;

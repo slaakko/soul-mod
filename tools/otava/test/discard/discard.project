@@ -1,0 +1,3 @@
+project discard;
+target=program;
+source <discard.cpp>;

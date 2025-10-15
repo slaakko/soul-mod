@@ -24,6 +24,7 @@ import otava.symbols.namespaces;
 import otava.symbols.conversion.table;
 import otava.symbols.symbol.table;
 import otava.symbols.exception;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.classes;
 import otava.symbols.function_definition_symbol_set;

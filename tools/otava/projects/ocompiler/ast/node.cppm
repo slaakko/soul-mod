@@ -108,8 +108,8 @@ public:
     inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
     inline void SetSourcePos(const soul::ast::SourcePos& sourcePos_) { sourcePos = sourcePos_; }
     virtual void Accept(Visitor& visitor) = 0;
-    virtual void Write(Writer& writer);
-    virtual virtual std::expected<bool, int> Read(Reader& reader);
+    virtual std::expected<bool, int> Write(Writer& writer);
+    virtual std::expected<bool, int> Read(Reader& reader);
     virtual std::expected<bool, int> AddNode(Node* node);
     virtual std::expected<bool, int> Clear();
     inline Node* Parent() const { return parent; }
@@ -168,7 +168,7 @@ public:
     UnaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* child_);
     UnaryNode(const UnaryNode&) = delete;
     UnaryNode& operator=(const UnaryNode&) = delete;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     NodeType Type() const override { return NodeType::unary; }
     int Count() const override { return 1; }
@@ -183,7 +183,7 @@ public:
     BinaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* left_, Node* right_);
     BinaryNode(const BinaryNode&) = delete;
     BinaryNode& operator=(const BinaryNode&) = delete;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     NodeType Type() const override { return NodeType::binary; }
     int Count() const override { return 2; }
@@ -198,7 +198,7 @@ class SequenceNode : public Node
 {
 public:
     SequenceNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     NodeType Type() const override { return NodeType::sequence; }
     int Count() const override { return nodes.Count(); }
@@ -214,7 +214,7 @@ class ListNode : public Node
 {
 public:
     ListNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     NodeType Type() const override { return NodeType::list; }
     int Count() const override { return nodes.Count(); }

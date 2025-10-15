@@ -20,15 +20,15 @@ public:
     std::string SymbolDocKindStr() const override { return "alias_group"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     Symbol* GetSingleSymbol() override;
-    void AddAliasTypeSymbol(AliasTypeSymbol* aliasTypeSymbol);
+    void AddAliasTypeSymbol(AliasTypeSymbol* aliasTypeSymbol, Context* context);
     AliasTypeSymbol* GetAliasTypeSymbol(int arity) const;
     inline const std::vector<AliasTypeSymbol*>& AliasTypeSymbols() const { return aliasTypeSymbols; }
-    AliasTypeSymbol* GetBestMatchingAliasType(const std::vector<Symbol*>& templateArgs) const;
+    AliasTypeSymbol* GetBestMatchingAliasType(const std::vector<Symbol*>& templateArgs, Context* context) const;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
-    void Merge(AliasGroupSymbol* that);
+    void Merge(AliasGroupSymbol* that, Context* context);
     void RemoveAliasType(AliasTypeSymbol* aliasType);
 private:
     std::vector<AliasTypeSymbol*> aliasTypeSymbols;

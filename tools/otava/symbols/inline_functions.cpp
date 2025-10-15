@@ -7,6 +7,7 @@ module otava.symbols.inline_functions;
 
 import otava.symbols.context;
 import otava.symbols.bound.tree;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.modules;
 import otava.symbols.symbol.table;

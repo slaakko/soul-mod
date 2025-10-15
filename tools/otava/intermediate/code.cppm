@@ -54,8 +54,6 @@ public:
     Instruction(const soul::ast::Span& span_, Type* type_, OpCode opCode_);
     void Check();
     std::string Name() const;
-    virtual void Accept(Visitor& visitor) = 0;
-    virtual Instruction* Clone(CloneContext& cloneContext) const = 0;
     BasicBlock* Parent() const;
     inline Instruction* Next() { return static_cast<Instruction*>(NextSibling()); }
     inline Instruction* Prev() { return static_cast<Instruction*>(PrevSibling()); }

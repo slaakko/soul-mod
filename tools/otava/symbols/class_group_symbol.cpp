@@ -80,11 +80,8 @@ ClassTypeSymbol* ClassGroupSymbol::GetClass(int arity) const
 
 void ClassGroupSymbol::AddForwardDeclaration(ForwardClassDeclarationSymbol* forwardDeclaration)
 {
-    if (std::find(forwardDeclarations.begin(), forwardDeclarations.end(), forwardDeclaration) == forwardDeclarations.end())
-    {
-        forwardDeclaration->SetGroup(this);
-        forwardDeclarations.push_back(forwardDeclaration);
-    }
+    forwardDeclaration->SetGroup(this);
+    forwardDeclarations.push_back(forwardDeclaration);
     ClassTypeSymbol* cls = GetClass(forwardDeclaration->Arity());
     if (cls)
     {
@@ -127,9 +124,9 @@ void ClassGroupSymbol::Read(Reader& reader)
     }
 }
 
-void ClassGroupSymbol::Resolve(SymbolTable& symbolTable)
+void ClassGroupSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    Symbol::Resolve(symbolTable);
+    Symbol::Resolve(symbolTable, context);
     for (const auto& classId : classIds)
     {
         ClassTypeSymbol* cls = symbolTable.GetClass(classId);
@@ -156,7 +153,8 @@ void ClassGroupSymbol::Merge(ClassGroupSymbol* that)
     }
     for (const auto& fwd : that->forwardDeclarations)
     {
-        if (std::find(forwardDeclarations.cbegin(), forwardDeclarations.cend(), fwd) == forwardDeclarations.end())
+        ForwardClassDeclarationSymbol* prev = GetForwardDeclaration(fwd->Arity());
+        if (!prev)
         {
             forwardDeclarations.push_back(fwd);
         }
@@ -195,7 +193,7 @@ int Match(Symbol* templateArg, TypeSymbol* specialization, int index, TemplateMa
         ClassTemplateSpecializationSymbol* specializationArgType = GetClassTemplateSpecializationArgType(specialization, index);
         if (specializationArgType)
         {
-            if (TypesEqual(templateArgType->ClassTemplate(), specializationArgType->ClassTemplate()))
+            if (TypesEqual(templateArgType->ClassTemplate(), specializationArgType->ClassTemplate(), context))
             {
                 int n = templateArgType->TemplateArguments().size();
                 int m = specializationArgType->TemplateArguments().size();
@@ -244,7 +242,7 @@ int Match(Symbol* templateArg, TypeSymbol* specialization, int index, TemplateMa
                             {
                                 return -1;
                             }
-                            if (!TypesEqual(argTypeSymbol, templateTypeSymbol))
+                            if (!TypesEqual(argTypeSymbol, templateTypeSymbol, context))
                             {
                                 return -1;
                             }

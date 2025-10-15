@@ -25,47 +25,56 @@ Writer::Writer(util::BinaryStreamWriter* writerPtr_) : writerPtr(writerPtr_), er
 {
 }
 
-void Writer::Write(const soul::ast::SourcePos& sourcePos)
+std::expected<bool, int> Writer::Write(const soul::ast::SourcePos& sourcePos)
 {
     if (sourcePos.IsValid())
     {
-        writerPtr->WriteULEB128UInt(sourcePos.line);
-        writerPtr->WriteULEB128UInt(sourcePos.col);
-        writerPtr->WriteULEB128UInt(sourcePos.file);
+        std::expected<bool, int> rv = writerPtr->WriteULEB128UInt(sourcePos.line);
+        if (!rv) return rv;
+        rv = writerPtr->WriteULEB128UInt(sourcePos.col);
+        if (!rv) return rv;
+        rv = writerPtr->WriteULEB128UInt(sourcePos.file);
+        if (!rv) return rv;
     }
     else
     {
-        writerPtr->WriteULEB128UInt(0);
+        std::expected<bool, int> rv = writerPtr->WriteULEB128UInt(0);
+        if (!rv) return rv;
     }
+    return std::expected<bool, int>(true);
 }
 
-void Writer::Write(NodeKind nodeKind)
+std::expected<bool, int> Writer::Write(NodeKind nodeKind)
 {
-    writerPtr->WriteULEB128UInt(static_cast<std::uint32_t>(static_cast<std::uint16_t>(nodeKind)));
+    return writerPtr->WriteULEB128UInt(static_cast<std::uint32_t>(static_cast<std::uint16_t>(nodeKind)));
 }
 
-void Writer::Write(const std::u32string& str)
+std::expected<bool, int> Writer::Write(const std::u32string& str)
 {
-    writerPtr->Write(str);
+    return writerPtr->Write(str);
 }
 
-void Writer::Write(bool value)
+std::expected<bool, int> Writer::Write(bool value)
 {
-    writerPtr->Write(value);
+    return writerPtr->Write(value);
 }
 
-void Writer::Write(Node* node)
+std::expected<bool, int> Writer::Write(Node* node)
 {
     if (!node)
     {
-        Write(NodeKind::nullNode);
+        return Write(NodeKind::nullNode);
     }
     else
     {
-        Write(node->Kind());
-        Write(node->GetSourcePos());
-        node->Write(*this);
+        std::expected<bool, int> rv = Write(node->Kind());
+        if (!rv) return rv;
+        rv = Write(node->GetSourcePos());
+        if (!rv) return rv;
+        rv = node->Write(*this);
+        if (!rv) return rv;
     }
+    return std::expected<bool, int>(true);
 }
 
 } // namespace otava::ast

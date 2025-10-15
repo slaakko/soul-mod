@@ -25,7 +25,7 @@ public:
     TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* id_, Node* templateNode_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* NestedNameSpecifier() const { return nns.get(); }
     inline Node* Id() const { return id.get(); }
@@ -43,7 +43,7 @@ public:
     TypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_, Node* declarator_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* TypeSpecifiers() const { return typeSpecifiers.get(); }
     inline Node* Declarator() const { return declarator.get(); }
@@ -59,7 +59,7 @@ public:
     DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* definingTypeSpecifiers_, Node* abstractDeclarator_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* DefiningTypeSpecifiers() const { return definingTypeSpecifiers.get(); }
     inline Node* AbstractDeclarator() const { return abstractDeclarator.get(); }
@@ -92,7 +92,7 @@ public:
     ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* id_, Node* attributes_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* ClassKey() const { return classKey.get(); }
     inline Node* Id() const { return id.get(); }
@@ -110,7 +110,7 @@ public:
     DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Expression() const { return expr.get(); }
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
@@ -128,7 +128,7 @@ public:
     PlaceholderTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_, const soul::ast::SourcePos& dtPos_, const soul::ast::SourcePos& autoPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* TypeConstraint() const { return typeConstraint.get(); }
     inline const soul::ast::SourcePos& DeclTypePos() const { return dtPos; }

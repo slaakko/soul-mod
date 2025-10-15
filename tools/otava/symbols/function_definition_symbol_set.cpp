@@ -5,6 +5,7 @@
 
 module otava.symbols.function_definition_symbol_set;
 
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 
 namespace otava::symbols {

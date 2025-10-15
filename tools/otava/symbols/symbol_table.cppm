@@ -131,6 +131,8 @@ public:
     void EndScopeGeneric(Context* context);
     void PushTopScopeIndex();
     void PopTopScopeIndex();
+    void SetTopScopeIndex(int topScopeIndex_) { topScopeIndex = topScopeIndex_; }
+    inline int TopScopeIndex() const { return topScopeIndex; }
     void BeginNamespace(const std::u32string& name, otava::ast::Node* node, Context* context);
     void EndNamespace();
     void BeginNamespace(otava::ast::Node* node, Context* context);

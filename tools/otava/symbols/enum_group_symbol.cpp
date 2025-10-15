@@ -76,9 +76,9 @@ void EnumGroupSymbol::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(fwdDeclId);
 }
 
-void EnumGroupSymbol::Resolve(SymbolTable& symbolTable)
+void EnumGroupSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    Symbol::Resolve(symbolTable);
+    Symbol::Resolve(symbolTable, context);
     if (enumTypeId != util::nil_uuid())
     {
         TypeSymbol* type = symbolTable.GetType(enumTypeId);

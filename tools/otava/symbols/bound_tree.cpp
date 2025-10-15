@@ -9,6 +9,7 @@ import otava.symbols.context;
 import otava.symbols.exception;
 import otava.symbols.value;
 import otava.symbols.variable.symbol;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.emitter;
 import otava.symbols.enums;

@@ -18,10 +18,13 @@ File::File(const std::string& filePath_, Node* content_) : filePath(filePath_), 
 {
 }
 
-void File::Write(Writer& writer)
+std::expected<bool, int> File::Write(Writer& writer)
 {
-    writer.GetBinaryStreamWriter().Write(filePath);
-    writer.Write(content.get());
+    std::expected<bool, int> rv = writer.GetBinaryStreamWriter().Write(filePath);
+    if (!rv) return rv;
+    rv = writer.Write(content.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> File::Read(Reader& reader)

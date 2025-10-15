@@ -17,7 +17,7 @@ public:
     BinaryExprNode(const soul::ast::SourcePos& sourcePos_, Node* op_, Node* left_, Node* right_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Op() const { return op.get(); }
 private:
@@ -31,7 +31,7 @@ public:
     UnaryExprNode(const soul::ast::SourcePos& sourcePos_, Node* op_, Node* child_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Op() const { return op.get(); }
 private:
@@ -44,7 +44,7 @@ public:
     ExpressionListNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
     inline void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
@@ -80,7 +80,7 @@ public:
     ConditionalExprNode(const soul::ast::SourcePos& sourcePos_, Node* condition_, Node* quest_, Node* thenExpr_, Node* colon_, Node* elseExpr_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Condition() const { return condition.get(); }
     inline Node* Quest() const { return quest.get(); }
@@ -359,7 +359,7 @@ public:
     inline Node* TypeId() const { return typeId.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
@@ -433,7 +433,7 @@ public:
     SizeOfTypeExprNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
@@ -450,7 +450,7 @@ public:
         const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& EllipsisPos() const { return ellipsisPos; }
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
@@ -477,7 +477,7 @@ public:
     AlignOfExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
@@ -493,7 +493,7 @@ public:
     NoexceptExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
@@ -509,7 +509,7 @@ public:
     NewExprNode(const soul::ast::SourcePos& sourcePos_, Node* placement_, Node* child_, Node* initializer_, Node* colonColonHead_, const soul::ast::SourcePos& newPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* ColonColonHead() const { return colonColonHead.get(); }
     inline Node* Placement() const { return placement.get(); }
@@ -528,7 +528,7 @@ public:
     NewPlacementNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
     inline void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
@@ -546,7 +546,7 @@ public:
     ParenNewTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
@@ -562,7 +562,7 @@ public:
     NewTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifierSeq_, Node* newDeclarator_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* TypeSpecifierSeq() const { return typeSpecifierSeq.get(); }
     inline Node* NewDeclarator() const { return newDeclarator.get(); }
@@ -579,7 +579,7 @@ public:
         const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* ColonColonHead() const { return colonColonHead.get(); }
     inline const soul::ast::SourcePos& DeletePos() const { return deletePos; }
@@ -599,7 +599,7 @@ public:
     DeletePtrNode(const soul::ast::SourcePos& sourcePos_, Node* ptr_, Node* colonColonHead_, const soul::ast::SourcePos& deletePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* ColonColonHead() const { return colonColonHead.get(); }
     inline const soul::ast::SourcePos& DeletePos() const { return deletePos; }
@@ -615,7 +615,7 @@ public:
     SubscriptExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* index_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Index() const { return index.get(); }
     inline const soul::ast::SourcePos& LBracketPos() const { return lbPos; }
@@ -633,7 +633,7 @@ public:
     InvokeExprNode(const soul::ast::SourcePos& sourcePos_, Node* subject_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Subject() const { return subject.get(); }
     inline void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
@@ -678,7 +678,7 @@ public:
     MemberExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* op_, Node* id_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Op() const { return op.get(); }
     inline Node* Id() const { return id.get(); }
@@ -694,7 +694,7 @@ public:
     PostfixIncExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& opPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& OpPos() const { return opPos; }
 private:
@@ -708,7 +708,7 @@ public:
     PostfixDecExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& opPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& OpPos() const { return opPos; }
 private:
@@ -722,7 +722,7 @@ public:
     TypeIdExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
@@ -771,7 +771,7 @@ public:
         const soul::ast::SourcePos& laPos_, const soul::ast::SourcePos& raPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* TypeId() const { return typeId.get(); }
     inline Node* Op() const { return op.get(); }
@@ -803,7 +803,7 @@ public:
     ParenthesizedExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
@@ -818,7 +818,7 @@ public:
     FoldExprNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
     inline void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
@@ -851,7 +851,7 @@ public:
     NewInitializerNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
     inline void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }

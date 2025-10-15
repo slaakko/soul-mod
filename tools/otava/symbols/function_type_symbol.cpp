@@ -76,9 +76,9 @@ void FunctionTypeSymbol::Read(Reader& reader)
     }
 }
 
-void FunctionTypeSymbol::Resolve(SymbolTable& symbolTable)
+void FunctionTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    TypeSymbol::Resolve(symbolTable);
+    TypeSymbol::Resolve(symbolTable, context);
     returnType = symbolTable.GetType(returnTypeId);
     if (!returnType)
     {
@@ -105,15 +105,21 @@ void FunctionTypeSymbol::Accept(Visitor& visitor)
 
 otava::intermediate::Type* FunctionTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    std::vector<otava::intermediate::Type*> paramTypes;
-    for (const auto& paramType : parameterTypes)
+    otava::intermediate::Type* type = emitter.GetType(Id());
+    if (!type)
     {
-        paramTypes.push_back(paramType->IrType(emitter, sourcePos, context));
+        std::vector<otava::intermediate::Type*> paramTypes;
+        for (const auto& paramType : parameterTypes)
+        {
+            paramTypes.push_back(paramType->IrType(emitter, sourcePos, context));
+        }
+        type = emitter.MakeFunctionType(returnType->IrType(emitter, sourcePos, context), paramTypes);
+        emitter.SetType(Id(), type);
     }
-    return emitter.MakeFunctionType(returnType->IrType(emitter, sourcePos, context), paramTypes);
+    return type;
 }
 
-bool FunctionTypesEqual(FunctionTypeSymbol* left, FunctionTypeSymbol* right)
+bool FunctionTypesEqual(FunctionTypeSymbol* left, FunctionTypeSymbol* right, Context* context)
 {
     int n = left->ParameterTypes().size();
     if (n != right->ParameterTypes().size()) return false;
@@ -121,9 +127,9 @@ bool FunctionTypesEqual(FunctionTypeSymbol* left, FunctionTypeSymbol* right)
     {
         TypeSymbol* leftParamType = left->ParameterTypes()[i];
         TypeSymbol* rightParamType = right->ParameterTypes()[i];
-        if (!TypesEqual(leftParamType, rightParamType)) return false;
+        if (!TypesEqual(leftParamType, rightParamType, context)) return false;
     }
-    return TypesEqual(left->ReturnType(), right->ReturnType());
+    return TypesEqual(left->ReturnType(), right->ReturnType(), context);
 }
 
 } // namespace otava::symbols

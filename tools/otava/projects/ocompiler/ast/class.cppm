@@ -18,7 +18,7 @@ public:
     ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classHead_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* ClassHead() const { return classHead.get(); }
     inline void SetLBracePos(const soul::ast::SourcePos& lbPos_) { lbPos = lbPos_; }
@@ -41,7 +41,7 @@ public:
     ClassHeadNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* classHeadName_, Node* classVirtSpecifier_, Node* baseClause_, Node* attributes_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* ClassKey() const { return classKey.get(); }
     inline Node* ClassHeadName() const { return classHeadName.get(); }
@@ -80,7 +80,7 @@ public:
     BaseSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classOrDeclType_, Node* accessSpecifier_, Node* virtualSpecifier_, Node* attributes_, bool virtualFirst_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* ClassOrDeclType() const { return classOrDeclType.get(); }
     inline Node* AccessSpecifier() const { return accessSpecifier.get(); }
@@ -102,7 +102,7 @@ public:
     BeginAccessGroupNode(const soul::ast::SourcePos& sourcePos_, Node* accessSpecifier_, const soul::ast::SourcePos& colonPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& ColonPos() const { return colonPos; }
 private:
@@ -116,7 +116,7 @@ public:
     MemberDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* declSpecifiers_, Node* memberDeclarators_, Node* semicolon_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Attributes() const { return attributes.get(); }
     inline Node* DeclSpecifiers() const { return declSpecifiers.get(); }
@@ -153,7 +153,7 @@ public:
     ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* memberInitializerList_);
     inline Node* GetMemberInitializerListNode() const { return memberInitializerListNode.get(); }
     void SetMemberInitializerListNode(Node* memberInitializerListNode_);
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -271,7 +271,7 @@ public:
     PureSpecifierNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& zeroPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& ZeroPos() const { return zeroPos; }
 private:

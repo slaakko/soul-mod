@@ -45,11 +45,11 @@ Symbol* AliasGroupSymbol::GetSingleSymbol()
     }
 }
 
-void AliasGroupSymbol::AddAliasTypeSymbol(AliasTypeSymbol* aliasTypeSymbol)
+void AliasGroupSymbol::AddAliasTypeSymbol(AliasTypeSymbol* aliasTypeSymbol, Context* context)
 {
     if (std::find(aliasTypeSymbols.begin(), aliasTypeSymbols.end(), aliasTypeSymbol) == aliasTypeSymbols.end() &&
         std::find_if(aliasTypeSymbols.begin(), aliasTypeSymbols.end(), 
-            [&](AliasTypeSymbol* symbol) { return TypesEqual(symbol->ReferredType(), aliasTypeSymbol->ReferredType()); }) == aliasTypeSymbols.end())
+            [&](AliasTypeSymbol* symbol) { return TypesEqual(symbol->ReferredType(), aliasTypeSymbol->ReferredType(), context); }) == aliasTypeSymbols.end())
     {
         aliasTypeSymbol->SetGroup(this);
         aliasTypeSymbols.push_back(aliasTypeSymbol);
@@ -91,13 +91,13 @@ void AliasGroupSymbol::Read(Reader& reader)
     }
 }
 
-void AliasGroupSymbol::Resolve(SymbolTable& symbolTable)
+void AliasGroupSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    Symbol::Resolve(symbolTable);
+    Symbol::Resolve(symbolTable, context);
     for (const auto& aliasTypeId : aliasTypeIds)
     {
         AliasTypeSymbol* aliasType = symbolTable.GetAliasType(aliasTypeId);
-        AddAliasTypeSymbol(aliasType);
+        AddAliasTypeSymbol(aliasType, context);
     }
 }
 
@@ -106,11 +106,11 @@ void AliasGroupSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void AliasGroupSymbol::Merge(AliasGroupSymbol* that)
+void AliasGroupSymbol::Merge(AliasGroupSymbol* that, Context* context)
 {
     for (const auto& aliasType : that->aliasTypeSymbols)
     {
-        AddAliasTypeSymbol(aliasType);
+        AddAliasTypeSymbol(aliasType, context);
     }
 }
 
@@ -122,7 +122,7 @@ struct ViableAliasTypeGreater
     }
 };
     
-AliasTypeSymbol* AliasGroupSymbol::GetBestMatchingAliasType(const std::vector<Symbol*>& templateArgs) const
+AliasTypeSymbol* AliasGroupSymbol::GetBestMatchingAliasType(const std::vector<Symbol*>& templateArgs, Context* context) const
 {
     std::vector<std::pair<AliasTypeSymbol*, int>> viableAliasTypes;
     int arity = templateArgs.size();
@@ -136,7 +136,7 @@ AliasTypeSymbol* AliasGroupSymbol::GetBestMatchingAliasType(const std::vector<Sy
                 if (templateArgs[0]->IsTypeSymbol())
                 {
                     TypeSymbol* templateArgType = static_cast<TypeSymbol*>(templateArgs[0]);
-                    if (TypesEqual(alias->ReferredType(), templateArgType))
+                    if (TypesEqual(alias->ReferredType(), templateArgType, context))
                     {
                         viableAliasTypes.push_back(std::make_pair(alias, 1));
                         added = true;

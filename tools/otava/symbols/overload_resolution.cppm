@@ -7,6 +7,8 @@ export module otava.symbols.overload.resolution;
 
 import std;
 import soul.ast.source.pos;
+import otava.symbols.function.kind;
+import otava.symbols.bound.tree;
 import otava.symbols.templates;
 import otava.symbols.type.symbol;
 import otava.symbols.template_param_compare;
@@ -21,7 +23,7 @@ class Exception;
 
 enum class OverloadResolutionFlags : std::int32_t
 {
-    none = 0, dontInstantiate = 1 << 0, dontSearchArgumentScopes = 1 << 1
+    none = 0, dontInstantiate = 1 << 0, dontSearchArgumentScopes = 1 << 1, noMemberFunctions = 1 << 2
 };
 
 constexpr OverloadResolutionFlags operator|(OverloadResolutionFlags left, OverloadResolutionFlags right)
@@ -41,8 +43,6 @@ constexpr OverloadResolutionFlags operator~(OverloadResolutionFlags flags)
 
 class FunctionSymbol;
 class ClassTemplateSpecializationSymbol;
-enum class ConversionKind : std::int32_t;
-enum class OperationFlags : std::int32_t;
 
 struct ArgumentMatch
 {
@@ -73,7 +73,7 @@ struct FunctionMatch
 
 struct BetterFunctionMatch
 {
-    bool operator()(const std::unique_ptr<FunctionMatch>& left, const std::unique_ptr<FunctionMatch>& right) const { return operator()(*left, *right); }
+    inline bool operator()(const std::unique_ptr<FunctionMatch>& left, const std::unique_ptr<FunctionMatch>& right) const { return BetterFunctionMatch()(*left, *right); }
     bool operator()(const FunctionMatch& left, const FunctionMatch& right) const;
 };
 

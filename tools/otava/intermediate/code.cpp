@@ -2064,7 +2064,8 @@ void BasicBlock::CloneInstructions(CloneContext& cloneContext, BasicBlock* to)
     Instruction* inst = FirstInstruction();
     while (inst)
     {
-        Instruction* clonedInst = inst->Clone(cloneContext);
+        Value* clonedValue = inst->Clone(cloneContext);
+        Instruction* clonedInst = static_cast<Instruction*>(clonedValue);
         cloneContext.MapInstruction(inst, clonedInst);
         to->AddInstruction(clonedInst);
         inst = inst->Next();
@@ -2529,13 +2530,6 @@ RegValue* Function::GetRegRef(const soul::ast::Span& span, Type* type, std::int3
 
 RegValue* Function::MakeRegValue(const soul::ast::Span& span, Type* type, std::int32_t reg, Context* context)
 {
-/*
-    RegValue* prev = GetRegValue(reg);
-    if (prev)
-    {
-        Error("error adding register " + std::to_string(reg) + ": register not unique", span, context, prev->Span());
-    }
-*/
     RegValue* regValue = new RegValue(span, type, reg);
     regValues.push_back(std::unique_ptr<RegValue>(regValue));
     regValueMap[reg] = regValue;
@@ -2662,7 +2656,7 @@ Value* Function::GetParam(int index) const
     }
     else
     {
-        Error("invalid param index", Span(), Parent()->GetContext());
+        Error("invalid param index " + std::to_string(index) + " for function '" + Name() + "'", Span(), Parent()->GetContext());
         return nullptr;
     }
 }
@@ -2864,7 +2858,8 @@ Function* Code::AddFunctionDefinition(const soul::ast::Span& span, FunctionType*
         {
             if (prev->GetType() != functionType)
             {
-                Error("error adding function '" + functionId + "': type '" + functionType->Name() + "' conflicts with earlier declaration", span, context, prev->Span());
+                Error("error adding function '" + functionId + "': type '" + functionType->Name() + 
+                    "' conflicts with earlier declaration (" + prev->GetType()->Name() + ")", span, context, prev->Span());
             }
             prev->SetDefined();
             prev->CreateEntry(context);

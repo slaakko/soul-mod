@@ -14,6 +14,7 @@ import otava.symbols.context;
 import otava.symbols.declaration;
 import otava.symbols.exception;
 import otava.symbols.scope.resolver;
+import otava.symbols.symbol;
 import otava.symbols.symbol.table;
 import otava.symbols.value;
 import otava.symbols.fundamental.type.symbol;

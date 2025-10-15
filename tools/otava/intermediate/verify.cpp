@@ -113,7 +113,7 @@ void VerifierVisitor::CheckBinaryInstructionTypes(BinaryInstruction& inst)
 {
     if (inst.Result()->GetType() != inst.Left()->GetType() || inst.Result()->GetType() != inst.Right()->GetType())
     {
-        Error("type check error: equal types expected: types are '" + inst.Result()->GetType()->Name() + "', '" + inst.Left()->GetType()->Name() + +"' and '" +
+        Error("type check error: equal types expected: types are '" + inst.Result()->GetType()->Name() + "', '" + inst.Left()->GetType()->Name() + "' and '" +
             inst.Right()->GetType()->Name() + "'", inst.Span(), GetContext());
     }
 }

@@ -17,7 +17,7 @@ public:
     TranslationUnitNode(const soul::ast::SourcePos& sourcePos_, Node* unit_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Unit() const { return unit.get(); }
 private:
@@ -31,7 +31,7 @@ public:
     ModuleUnitNode(const soul::ast::SourcePos& sourcePos_, Node* globalModuleFragment_, Node* moduleDeclaration_, Node* declarations_, Node* privateModuleFragment_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* GlobalModuleFragment() const { return globalModuleFragment.get(); }
     inline Node* ModuleDeclaration() const { return moduleDeclaration.get(); }

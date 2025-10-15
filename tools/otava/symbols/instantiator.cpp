@@ -14,6 +14,7 @@ import otava.symbols.symbol;
 import otava.symbols.templates;
 import otava.symbols.using_declaration;
 import otava.symbols.using_directive;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.block;
 import otava.ast;

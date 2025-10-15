@@ -17,7 +17,7 @@ public:
     FunctionDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* declSpecifiers_, Node* declarator_, Node* specifiers_, Node* functionBody_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Attributes() const { return attributes.get(); }
     inline Node* DeclSpecifiers() const { return declSpecifiers.get(); }
@@ -68,7 +68,7 @@ public:
     DefaultedOrDeletedFunctionNode(const soul::ast::SourcePos& sourcePos_, Node* assign_, Node* defaultOrDelete_, Node* semicolon_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Assign() const { return assign.get(); }
     inline Node* DefaultOrDelete() const { return defaultOrDelete.get(); }
@@ -86,7 +86,7 @@ public:
     NoDeclSpecFunctionDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* declarator_, Node* semicolon_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Attributes() const { return attributes.get(); }
     inline Node* Declarator() const { return declarator.get(); }
@@ -112,7 +112,7 @@ public:
     NewArrayOpNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& LBracketPos() const { return lbPos; }
     inline const soul::ast::SourcePos& RBracketPos() const { return rbPos; }
@@ -136,7 +136,7 @@ public:
     DeleteArrayOpNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& LBracketPos() const { return lbPos; }
     inline const soul::ast::SourcePos& RBracketPos() const { return rbPos; }
@@ -202,7 +202,7 @@ public:
     ConversionTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifierSeq_, Node* conversionDeclarator_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* TypeSpecifierSeq() const { return typeSpecifierSeq.get(); }
     inline Node* ConversionDeclarator() const { return conversionDeclarator.get(); }
@@ -218,7 +218,7 @@ public:
     ConversionDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* ptrOp_, Node* conversionDeclarator_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* PtrOp() const { return ptrOp.get(); }
     inline Node* ConversionDeclarator() const { return conversionDeclarator.get(); }
@@ -242,7 +242,7 @@ public:
     ParameterNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Attributes() const { return attributes.get(); }
     void SetAttributes(Node* attributes_);
@@ -268,7 +268,7 @@ public:
     ParameterListNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
     inline void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
@@ -294,7 +294,7 @@ public:
     FunctionTryBlockNode(const soul::ast::SourcePos& sourcePos_, Node* ctorInitializer_, Node* tryBlock_, Node* handlers_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* CtorInitializer() const { return ctorInitializer.get(); }
     inline Node* TryBlock() const { return tryBlock.get(); }

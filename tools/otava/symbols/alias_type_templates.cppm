@@ -25,7 +25,7 @@ public:
     void AddTemplateArgument(Symbol* templateArgument);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
 private:
     TypeSymbol* aliasTypeTemplate;
@@ -34,6 +34,6 @@ private:
     bool instantiated;
 };
 
-TypeSymbol* InstantiateAliasTypeSymbol(TypeSymbol* aliasTypeSymbol, const std::vector<Symbol*>& templateArgs, otava::ast::TemplateIdNode* node, Context* context);
+TypeSymbol* InstantiateAliasTypeSymbol(TypeSymbol* aliasTypeSymbol, const std::vector<Symbol*>& templateArgs, otava::ast::TemplateIdNode* node,  Context* context);
 
 } // namespace otava::symbols

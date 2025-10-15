@@ -16,6 +16,7 @@ import otava.symbols.writer;
 import otava.symbols.reader;
 import otava.symbols.value;
 import otava.symbols.visitor;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.class_templates;
 import otava.symbols.modules;
@@ -99,9 +100,9 @@ void TemplateParameterSymbol::Read(Reader& reader)
     }
 }
 
-void TemplateParameterSymbol::Resolve(SymbolTable& symbolTable)
+void TemplateParameterSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    TypeSymbol::Resolve(symbolTable);
+    TypeSymbol::Resolve(symbolTable, context);
     symbolTable.MapType(this);
     if (constraintId != util::nil_uuid())
     {
@@ -394,7 +395,7 @@ void ExplicitInstantiationSymbol::Read(Reader& reader)
     }
 }
 
-void ExplicitInstantiationSymbol::Resolve(SymbolTable& symbolTable)
+void ExplicitInstantiationSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
     TypeSymbol* specializationType = symbolTable.GetType(specializationId);
     if (specializationType && specializationType->IsClassTemplateSpecializationSymbol())
@@ -404,7 +405,7 @@ void ExplicitInstantiationSymbol::Resolve(SymbolTable& symbolTable)
     }
     for (auto& functionDefSymbol : functionDefinitionSymbols)
     {
-        functionDefSymbol->Resolve(symbolTable);
+        functionDefSymbol->Resolve(symbolTable, context);
     }
 }
 

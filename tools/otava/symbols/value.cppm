@@ -47,7 +47,7 @@ public:
     virtual std::u32string ToString() const { return Rep(); }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     TypeSymbol* GetType() const { return type; }
     virtual Value* Clone() const = 0;
 private:
@@ -192,7 +192,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     std::u32string ToString() const override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     Value* Clone() const override { return new SymbolValue(symbol); }
@@ -215,7 +215,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     std::u32string ToString() const override;
     Value* Clone() const override { return new InvokeValue(subject->Clone()); }
 private:
@@ -278,7 +278,7 @@ public:
     StructureValue* GetStructureValue(TypeSymbol* type);
     Value* GetValue(const util::uuid& valueId) const;
     void AddValue(Value* value);
-    void Resolve(SymbolTable& symbolTable);
+    void Resolve(SymbolTable& symbolTable, Context* context);
     SymbolTable& GetSymbolTable() { return symbolTable; }
 private:
     void MapValue(Value* value);

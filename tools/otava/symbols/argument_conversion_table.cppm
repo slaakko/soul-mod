@@ -6,13 +6,14 @@
 export module otava.symbols.argument.conversion.table;
 
 import std;
+import otava.symbols.function.kind;
+import otava.symbols.function.symbol;
 import soul.ast.source.pos;
 
 export namespace otava::symbols {
 
 class BoundExpressionNode;
 class Context;
-class FunctionSymbol;
 class TypeSymbol;
 
 struct ArgumentMatch;

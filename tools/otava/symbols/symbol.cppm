@@ -29,7 +29,66 @@ class NamespaceSymbol;
 class TemplateDeclarationSymbol;
 class VariableSymbol;
 
-enum class DeclarationFlags : std::int32_t;
+enum class DeclarationFlags : std::int32_t
+{
+    none = 0,
+    staticFlag = 1 << 0,
+    threadLocalFlag = 1 << 1,
+    externFlag = 1 << 2,
+    mutableFlag = 1 << 3,
+    virtualFlag = 1 << 4,
+    explicitFlag = 1 << 5,
+    inlineFlag = 1 << 6,
+    friendFlag = 1 << 7,
+    typedefFlag = 1 << 8,
+    constExprFlag = 1 << 9,
+    constEvalFlag = 1 << 10,
+    constInitFlag = 1 << 11,
+    constFlag = 1 << 12,
+    volatileFlag = 1 << 13,
+    lvalueRefFlag = 1 << 14,
+    rvalueRefFlag = 1 << 15,
+
+    charFlag = 1 << 16,
+    char8Flag = 1 << 17,
+    char16Flag = 1 << 18,
+    char32Flag = 1 << 19,
+    wcharFlag = 1 << 20,
+    boolFlag = 1 << 21,
+    shortFlag = 1 << 22,
+    intFlag = 1 << 23,
+    longFlag = 1 << 24,
+    longLongFlag = 1 << 25,
+    signedFlag = 1 << 26,
+    unsignedFlag = 1 << 27,
+    floatFlag = 1 << 28,
+    doubleFlag = 1 << 29,
+    voidFlag = 1 << 30,
+    autoFlag = 1 << 31,
+
+    fundamentalTypeFlags =
+    charFlag | char8Flag | char16Flag | char32Flag | wcharFlag | boolFlag | shortFlag | intFlag | longFlag | longLongFlag | signedFlag | unsignedFlag | floatFlag | doubleFlag |
+    voidFlag | autoFlag,
+
+    typedefFlagMask = staticFlag | threadLocalFlag | externFlag | mutableFlag | virtualFlag | explicitFlag | inlineFlag | friendFlag | constExprFlag | constEvalFlag | constInitFlag,
+
+    cvQualifierFlagMask = constFlag | volatileFlag
+};
+
+constexpr DeclarationFlags operator|(DeclarationFlags left, DeclarationFlags right)
+{
+    return DeclarationFlags(std::int32_t(left) | std::int32_t(right));
+}
+
+constexpr DeclarationFlags operator&(DeclarationFlags left, DeclarationFlags right)
+{
+    return DeclarationFlags(std::int32_t(left) & std::int32_t(right));
+}
+
+constexpr DeclarationFlags operator~(DeclarationFlags flags)
+{
+    return DeclarationFlags(~std::int32_t(flags));
+}
 
 enum class Access : std::int32_t
 {
@@ -37,35 +96,6 @@ enum class Access : std::int32_t
 };
 
 std::string AccessStr(Access access);
-
-enum class SymbolGroupKind : std::int32_t
-{
-    none = 0,
-    functionSymbolGroup = 1 << 0,
-    typeSymbolGroup = 1 << 1,
-    variableSymbolGroup = 1 << 2,
-    enumConstantSymbolGroup = 1 << 3,
-    conceptSymbolGroup = 1 << 4,
-    blockSymbolGroup = 1 << 5,
-    all = functionSymbolGroup | typeSymbolGroup | variableSymbolGroup | enumConstantSymbolGroup | conceptSymbolGroup | blockSymbolGroup
-};
-
-std::string SymbolGroupStr(SymbolGroupKind group);
-
-constexpr SymbolGroupKind operator|(SymbolGroupKind left, SymbolGroupKind right)
-{
-    return SymbolGroupKind(std::int32_t(left) | std::int32_t(right));
-}
-
-constexpr SymbolGroupKind operator&(SymbolGroupKind left, SymbolGroupKind right)
-{
-    return SymbolGroupKind(std::int32_t(left) & std::int32_t(right));
-}
-
-constexpr SymbolGroupKind operator~(SymbolGroupKind kind)
-{
-    return SymbolGroupKind(~std::int32_t(kind));
-}
 
 enum class SymbolKind : std::int32_t
 {
@@ -98,10 +128,6 @@ enum class SymbolKind : std::int32_t
 };
 
 std::string SymbolKindToString(SymbolKind kind);
-
-enum class SymbolGroupKind : std::int32_t;
-
-std::vector<SymbolGroupKind> SymbolGroupKindstoSymbolGroupKindVec(SymbolGroupKind symbolGroupKinds);
 
 using SymbolDestroyedFunc = void(*)(Symbol*);
 
@@ -160,7 +186,7 @@ public:
     virtual std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol);
     virtual void Write(Writer& writer);
     virtual void Read(Reader& reader);
-    virtual void Resolve(SymbolTable& symbolTable);
+    virtual void Resolve(SymbolTable& symbolTable, Context* context);
     virtual void Accept(Visitor& visitor) = 0;
     virtual bool IsExportSymbol(Context* context) const { return IsProject(); }
     virtual bool IsExportMapSymbol(Context* context)  const { return IsExportSymbol(context); }

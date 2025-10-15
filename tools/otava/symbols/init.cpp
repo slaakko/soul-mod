@@ -6,6 +6,7 @@
 module otava.symbols.init;
 
 import otava.symbols.expression.binder;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.symbol;
 import otava.symbols.modules;

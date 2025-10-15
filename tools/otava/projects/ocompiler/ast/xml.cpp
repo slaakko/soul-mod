@@ -16,9 +16,11 @@ std::expected<bool, int> WriteXml(Node* node, const std::string& filePath)
 {
     XmlGeneratorVisitor generator;
     node->Accept(generator);
+    if (!generator) return std::unexpected<int>(generator.Error());
     std::unique_ptr<soul::xml::Element> element = generator.GetElement();
     soul::xml::Document doc;
-    doc.AppendChild(element.release());
+    std::expected<bool, int> rv = doc.AppendChild(element.release());
+    if (!rv) return rv;
     std::ofstream file(filePath);
     if (!file)
     {
@@ -26,7 +28,8 @@ std::expected<bool, int> WriteXml(Node* node, const std::string& filePath)
     }
     util::CodeFormatter formatter(file);
     formatter.SetIndentSize(1);
-    doc.Write(formatter);
+    rv = doc.Write(formatter);
+    if (!rv) return rv;
     return std::expected<bool, int>(true);
 }
 

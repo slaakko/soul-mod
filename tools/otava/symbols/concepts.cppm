@@ -25,7 +25,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
 private:
     otava::ast::Node* constraintExprNode;
     std::int64_t constraintEprNodeId;
@@ -43,7 +43,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void SetConstraintExpr(ConstraintExprSymbol* constraintExpr_);
     inline ConstraintExprSymbol* GetConstraintExpr() const { return constraintExpr.get(); }
 private:

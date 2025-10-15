@@ -1110,7 +1110,7 @@ soul::parser::Match IdentifierParser<LexerT>::TypeIdentifierChecked(LexerT& lexe
         {
             std::unique_ptr<otava::ast::IdentifierNode> identifier(otava::parser::token::ParseIdentifier(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
             otava::symbols::Symbol *symbol = context->GetSymbolTable()->Lookup(identifier->Str(), otava::symbols::SymbolGroupKind::typeSymbolGroup, lexer.GetSourcePos(pos), context);
-            if (symbol && symbol->IsTypeSymbol())
+            if (symbol && (symbol->IsTypeSymbol() || symbol->IsClassGroupSymbol() || symbol->IsAliasGroupSymbol()))
             {
                 context->GetSymbolTable()->MapNode(identifier.get(), symbol);
                 {

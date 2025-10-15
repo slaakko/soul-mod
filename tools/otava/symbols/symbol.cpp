@@ -14,6 +14,7 @@ import otava.symbols.declaration;
 import otava.symbols.emitter;
 import otava.symbols.enums;
 import otava.symbols.exception;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.namespaces;
@@ -46,104 +47,20 @@ std::string AccessStr(Access access)
 {
     switch (access)
     {
-    case Access::private_:
-    {
-        return "private";
-    }
-    case Access::protected_:
-    {
-        return "protected";
-    }
-    case Access::public_:
-    {
-        return "public";
-    }
+        case Access::private_:
+        {
+            return "private";
+        }
+        case Access::protected_:
+        {
+            return "protected";
+        }
+        case Access::public_:
+        {
+            return "public";
+        }
     }
     return std::string();
-}
-
-std::string SymbolGroupStr(SymbolGroupKind group)
-{
-    std::string groupStr;
-    if ((group & SymbolGroupKind::functionSymbolGroup) != SymbolGroupKind::none)
-    {
-        if (!groupStr.empty())
-        {
-            groupStr.append(" | ");
-        }
-        groupStr.append("functionSymbolGroup");
-    }
-    if ((group & SymbolGroupKind::typeSymbolGroup) != SymbolGroupKind::none)
-    {
-        if (!groupStr.empty())
-        {
-            groupStr.append(" | ");
-        }
-        groupStr.append("typeSymbolGroup");
-    }
-    if ((group & SymbolGroupKind::variableSymbolGroup) != SymbolGroupKind::none)
-    {
-        if (!groupStr.empty())
-        {
-            groupStr.append(" | ");
-        }
-        groupStr.append("variableSymbolGroup");
-    }
-    if ((group & SymbolGroupKind::enumConstantSymbolGroup) != SymbolGroupKind::none)
-    {
-        if (!groupStr.empty())
-        {
-            groupStr.append(" | ");
-        }
-        groupStr.append("enumConstantSymbolGroup");
-    }
-    if ((group & SymbolGroupKind::conceptSymbolGroup) != SymbolGroupKind::none)
-    {
-        if (!groupStr.empty())
-        {
-            groupStr.append(" | ");
-        }
-        groupStr.append("conceptSymbolGroup");
-    }
-    if ((group & SymbolGroupKind::blockSymbolGroup) != SymbolGroupKind::none)
-    {
-        if (!groupStr.empty())
-        {
-            groupStr.append(" | ");
-        }
-        groupStr.append("blockSymbolGroup");
-    }
-    return groupStr;
-}
-
-std::vector<SymbolGroupKind> SymbolGroupKindstoSymbolGroupKindVec(SymbolGroupKind symbolGroupKinds)
-{
-    std::vector<SymbolGroupKind> symbolGroupKindVec;
-    if ((symbolGroupKinds & SymbolGroupKind::functionSymbolGroup) != SymbolGroupKind::none)
-    {
-        symbolGroupKindVec.push_back(SymbolGroupKind::functionSymbolGroup);
-    }
-    if ((symbolGroupKinds & SymbolGroupKind::typeSymbolGroup) != SymbolGroupKind::none)
-    {
-        symbolGroupKindVec.push_back(SymbolGroupKind::typeSymbolGroup);
-    }
-    if ((symbolGroupKinds & SymbolGroupKind::variableSymbolGroup) != SymbolGroupKind::none)
-    {
-        symbolGroupKindVec.push_back(SymbolGroupKind::variableSymbolGroup);
-    }
-    if ((symbolGroupKinds & SymbolGroupKind::enumConstantSymbolGroup) != SymbolGroupKind::none)
-    {
-        symbolGroupKindVec.push_back(SymbolGroupKind::enumConstantSymbolGroup);
-    }
-    if ((symbolGroupKinds & SymbolGroupKind::conceptSymbolGroup) != SymbolGroupKind::none)
-    {
-        symbolGroupKindVec.push_back(SymbolGroupKind::conceptSymbolGroup);
-    }
-    if ((symbolGroupKinds & SymbolGroupKind::blockSymbolGroup) != SymbolGroupKind::none)
-    {
-        symbolGroupKindVec.push_back(SymbolGroupKind::blockSymbolGroup);
-    }
-    return symbolGroupKindVec;
 }
 
 std::string SymbolKindToString(SymbolKind kind)
@@ -273,7 +190,7 @@ std::string SymbolKindToString(SymbolKind kind)
         case SymbolKind::friendSymbol: return "friend";
         case SymbolKind::namespaceTypeSymbol: return "namespaceType";
     }
-    return "symbol";
+    return "<symbol>";
 }
 
 Symbol::Symbol(SymbolKind kind_, const std::u32string& name_) : kind(kind_), flags(SymbolFlags::project), id(util::random_uuid()), 
@@ -359,7 +276,7 @@ void Symbol::Read(Reader& reader)
     access = static_cast<Access>(reader.GetBinaryStreamReader().ReadByte());
 }
 
-void Symbol::Resolve(SymbolTable& symbolTable)
+void Symbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
 }
 

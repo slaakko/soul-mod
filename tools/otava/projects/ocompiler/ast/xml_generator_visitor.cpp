@@ -32,7 +32,12 @@ void XmlGeneratorVisitor::EndVisit(Node& node)
     stack.pop();
     if (parent)
     {
-        parent->AppendChild(element.release());
+        std::expected<bool, int> rv = parent->AppendChild(element.release());
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
         element.reset(parent.release());
     }
 }
@@ -122,7 +127,12 @@ void XmlGeneratorVisitor::AddAttribute(const std::string& name, const std::strin
 
 void XmlGeneratorVisitor::AddElement(soul::xml::Element* child)
 {
-    element->AppendChild(child);
+    std::expected<bool, int> rv = element->AppendChild(child);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 } // namespace otava::ast

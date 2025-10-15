@@ -30,13 +30,13 @@ public:
     inline const std::vector<FunctionSymbol*>& Functions() const { return functions; }
     inline const std::vector<FunctionDefinitionSymbol*>& Definitions() const { return definitions; }
     FunctionSymbol* ResolveFunction(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, const std::vector<TypeSymbol*>& specialization,
-        TemplateDeclarationSymbol* templateDeclaration, bool isSpecialization) const;
+        TemplateDeclarationSymbol* templateDeclaration, bool isSpecialization, Context* context) const;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     void Merge(FunctionGroupSymbol* that);
-    FunctionDefinitionSymbol* GetFunctionDefinition(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers) const;
+    FunctionDefinitionSymbol* GetFunctionDefinition(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, Context* context) const;
     void AddFunctionDefinition(FunctionDefinitionSymbol* definition_, Context* context);
     void SetVTabIndex(FunctionSymbol* function, int vtabIndex, Context* context);
     void CollectViableFunctions(int arity, const std::vector<TypeSymbol*>& templateArgs, std::vector<FunctionSymbol*>& viableFunctions, Context* context);

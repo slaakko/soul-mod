@@ -22,7 +22,7 @@ class RegValue : public Value
 public:
     RegValue(const soul::ast::Span& span_, Type* type_, std::int32_t reg_);
     ~RegValue();
-    Value* Clone(CloneContext& cloneContext) const;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     inline std::int32_t Reg() const { return reg; }
     inline void SetReg(std::int32_t reg_) { reg = reg_; }
     inline void SetInst(Instruction* inst_) { inst = inst_; }
@@ -50,10 +50,8 @@ class Instruction : public Value, public util::Component
 {
 public:
     Instruction(const soul::ast::Span& span_, Type* type_, OpCode opCode_);
-    void Check();
+    std::expected<bool, int> Check();
     std::string Name() const;
-    virtual void Accept(Visitor& visitor) = 0;
-    virtual Instruction* Clone(CloneContext& cloneContext) const = 0;
     BasicBlock* Parent() const;
     inline Instruction* Next() { return static_cast<Instruction*>(NextSibling()); }
     inline Instruction* Prev() { return static_cast<Instruction*>(PrevSibling()); }
@@ -91,7 +89,7 @@ public:
     void RemoveUser(Instruction* user);
     virtual std::vector<Instruction*> Uses() const { return std::vector<Instruction*>(); }
     virtual void AddToUses();
-    void ReplaceUsesWith(Value* value);
+    std::expected<bool, int> ReplaceUsesWith(Value* value);
     void RemoveFromUses();
     virtual void ReplaceValue(Value* use, Value* value);
     virtual void Write(util::CodeFormatter& formatter) = 0;
@@ -111,7 +109,7 @@ class StoreInstruction : public Instruction
 public:
     StoreInstruction(const soul::ast::Span& span_, Value* value_, Value* ptr_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
     inline Value* GetValue() const { return value; }
     inline Value* GetPtr() const { return ptr; }
@@ -129,7 +127,7 @@ class ArgInstruction : public Instruction
 public:
     ArgInstruction(const soul::ast::Span& span_, Value* arg_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
     inline Value* Arg() const { return arg; }
     bool IsFloatingPointInstruction() const override { return arg->GetType()->IsFloatingPointType(); }
@@ -145,7 +143,7 @@ class JmpInstruction : public Instruction
 public:
     JmpInstruction(const soul::ast::Span& span_, std::int32_t targetLabelId_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
     inline std::int32_t TargetLabelId() const { return targetLabelId; }
     inline BasicBlock* TargetBasicBlock() const { return targetBasicBlock; }
@@ -160,7 +158,7 @@ class BranchInstruction : public Instruction
 public:
     BranchInstruction(const soul::ast::Span& span_, Value* cond_, std::int32_t trueTargetLabelId_, std::int32_t falseTargetLabelId_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
     Value* Cond() const { return cond; }
     inline std::int32_t TrueTargetLabelId() const { return trueTargetLabelId; }
@@ -185,7 +183,7 @@ class ProcedureCallInstruction : public Instruction
 public:
     ProcedureCallInstruction(const soul::ast::Span& span_, Value* callee_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
     inline Value* Callee() const { return callee; }
     Function* CalleeFn() const;
@@ -204,7 +202,7 @@ class RetInstruction : public Instruction
 public:
     RetInstruction(const soul::ast::Span& span_, Value* returnValue_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
     inline Value* ReturnValue() const { return returnValue; }
     bool IsFloatingPointInstruction() const override;
@@ -229,7 +227,7 @@ class SwitchInstruction : public Instruction
 public:
     SwitchInstruction(const soul::ast::Span& span_, Value* cond_, std::int32_t defaultTargetLabelId_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
     inline Value* Cond() const { return cond; }
     inline std::int32_t DefaultTargetLabelId() const { return defaultTargetLabelId; }
@@ -281,7 +279,7 @@ class NotInstruction : public UnaryInstruction
 public:
     NotInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -291,7 +289,7 @@ public:
     NegInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_);
     bool IsFloatingPointInstruction() const override { return Operand()->GetType()->IsFloatingPointType(); }
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -300,7 +298,7 @@ class SignExtendInstruction : public UnaryInstruction
 public:
     SignExtendInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -309,7 +307,7 @@ class ZeroExtendInstruction : public UnaryInstruction
 public:
     ZeroExtendInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -318,7 +316,7 @@ class FloatingPointExtendInstruction : public UnaryInstruction
 public:
     FloatingPointExtendInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -327,7 +325,7 @@ class TruncateInstruction : public UnaryInstruction
 public:
     TruncateInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -336,7 +334,7 @@ class BitcastInstruction : public UnaryInstruction
 public:
     BitcastInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -346,7 +344,7 @@ public:
     IntToFloatInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_);
     bool IsFloatingPointInstruction() const override { return true; }
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -356,7 +354,7 @@ public:
     FloatToIntInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_);
     bool IsFloatingPointInstruction() const override { return false; }
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -365,7 +363,7 @@ class IntToPtrInstruction : public UnaryInstruction
 public:
     IntToPtrInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -374,7 +372,7 @@ class PtrToIntInstruction : public UnaryInstruction
 public:
     PtrToIntInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -399,7 +397,7 @@ class AddInstruction : public BinaryInstruction
 public:
     AddInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -408,7 +406,7 @@ class SubInstruction : public BinaryInstruction
 public:
     SubInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -417,7 +415,7 @@ class MulInstruction : public BinaryInstruction
 public:
     MulInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -426,7 +424,7 @@ class DivInstruction : public BinaryInstruction
 public:
     DivInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -435,7 +433,7 @@ class ModInstruction : public BinaryInstruction
 public:
     ModInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -444,7 +442,7 @@ class AndInstruction : public BinaryInstruction
 public:
     AndInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -453,7 +451,7 @@ class OrInstruction : public BinaryInstruction
 public:
     OrInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -462,7 +460,7 @@ class XorInstruction : public BinaryInstruction
 public:
     XorInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -471,7 +469,7 @@ class ShlInstruction : public BinaryInstruction
 public:
     ShlInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -480,7 +478,7 @@ class ShrInstruction : public BinaryInstruction
 public:
     ShrInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -489,7 +487,7 @@ class EqualInstruction : public BinaryInstruction
 public:
     EqualInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     bool IsFloatingPointInstruction() const override { return false; }
     void Write(util::CodeFormatter& formatter) override;
 };
@@ -499,7 +497,7 @@ class LessInstruction : public BinaryInstruction
 public:
     LessInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     bool IsFloatingPointInstruction() const override { return false; }
     void Write(util::CodeFormatter& formatter) override;
 };
@@ -509,7 +507,7 @@ class ParamInstruction : public ValueInstruction
 public:
     ParamInstruction(const soul::ast::Span& span_, RegValue* result_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -518,7 +516,7 @@ class LocalInstruction : public ValueInstruction
 public:
     LocalInstruction(const soul::ast::Span& span_, RegValue* result_, Type* localType_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
     inline Type* LocalType() const { return localType; }
 private:
@@ -530,7 +528,7 @@ class LoadInstruction : public ValueInstruction
 public:
     LoadInstruction(const soul::ast::Span& span_, RegValue* result_, Value* ptr_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
     inline Value* Ptr() const { return ptr; }
     void AddToUses() override;
@@ -550,11 +548,11 @@ class ElemAddrInstruction : public ValueInstruction
 public:
     ElemAddrInstruction(const soul::ast::Span& span_, RegValue* result_, Value* ptr_, Value* indexValue_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
     inline Value* Ptr() const { return ptr; }
     inline Value* IndexValue() const { return indexValue; }
-    ElemAddrKind GetElemAddrKind(Context* context) const;
+    std::expected<ElemAddrKind, int> GetElemAddrKind(Context* context) const;
     void AddToUses() override;
     void ReplaceValue(Value* use, Value* value) override;
     std::vector<Instruction*> Uses() const override;
@@ -568,7 +566,7 @@ class PtrOffsetInstruction : public ValueInstruction
 public:
     PtrOffsetInstruction(const soul::ast::Span& span_, RegValue* result_, Value* ptr_, Value* offset_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
     inline Value* Ptr() const { return ptr; }
     inline Value* Offset() const { return offset; }
@@ -585,7 +583,7 @@ class PtrDiffInstruction : public ValueInstruction
 public:
     PtrDiffInstruction(const soul::ast::Span& span_, RegValue* result_, Value* leftPtr_, Value* rightPtr_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
     inline Value* LeftPtr() const { return leftPtr; }
     inline Value* RightPtr() const { return rightPtr; }
@@ -602,7 +600,7 @@ class FunctionCallInstruction : public ValueInstruction
 public:
     FunctionCallInstruction(const soul::ast::Span& span_, RegValue* result_, Value* callee_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
     inline Value* Callee() const { return callee; }
     Function* CalleeFn() const;
@@ -630,7 +628,7 @@ class NoOperationInstruction : public Instruction
 public:
     NoOperationInstruction(const soul::ast::Span& span_);
     void Accept(Visitor& visitor) override;
-    Instruction* Clone(CloneContext& cloneContext) const override;
+    std::expected<Value*, int> Clone(CloneContext& cloneContext) const override;
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -641,10 +639,10 @@ class BasicBlock : public util::Component
 {
 public:
     BasicBlock(const soul::ast::Span& span_, std::int32_t id_);
-    void Check();
+    std::expected<bool, int> Check();
     void Accept(Visitor& visitor);
     BasicBlock* Clone(CloneContext& cloneContext) const;
-    void CloneInstructions(CloneContext& cloneContext, BasicBlock* to);
+    std::expected<bool, int> CloneInstructions(CloneContext& cloneContext, BasicBlock* to);
     void VisitInstructions(Visitor& visitor);
     inline const soul::ast::Span& Span() const { return span; }
     std::string Name() const;
@@ -659,8 +657,8 @@ public:
     Instruction* Leader() const;
     bool IsLast() const;
     bool ContainsOnlyNops();
-    void AddInstruction(Instruction* instruction);
-    void AddInstruction(Instruction* instruction, bool mapInstruction);
+    void DoAddInstruction(Instruction* instruction);
+    void DoAddInstruction(Instruction* instruction, bool mapInstruction);
     std::unique_ptr<Instruction> RemoveInstruction(Instruction* instruction);
     void InsertInstructionAfter(Instruction* instruction, Instruction* after);
     void InsertFront(Instruction* instruction);
@@ -713,7 +711,7 @@ public:
     Function(const Function&) = delete;
     Function& operator=(const Function&) = delete;
     void CreateEntry(Context* context);
-    void Check();
+    std::expected<bool, int> Check();
     inline bool GetFlag(FunctionFlags flag) const { return (flags & flag) != FunctionFlags::none; }
     inline void SetFlag(FunctionFlags flag) { flags = flags | flag; }
     inline void ResetFlag(FunctionFlags flag) { flags = flags & ~flag; }
@@ -726,7 +724,7 @@ public:
     inline void SetLinkOnce() { SetFlag(FunctionFlags::linkOnce); }
     inline int Arity() const { return type->Arity(); }
     void Accept(Visitor& visitor);
-    Function* Clone() const;
+    std::expected<Function*, int> Clone() const;
     void VisitBasicBlocks(Visitor& visitor);
     Code* Parent() const;
     inline Function* Next() { return static_cast<Function*>(NextSibling()); }
@@ -734,7 +732,7 @@ public:
     inline bool IsEmpty() const { return basicBlocks.IsEmpty(); }
     BasicBlock* GetBasicBlock(std::int32_t id) const;
     BasicBlock* CreateBasicBlock();
-    BasicBlock* AddBasicBlock(const soul::ast::Span& span, std::int32_t id, Context* context);
+    std::expected<BasicBlock*, int> AddBasicBlock(const soul::ast::Span& span, std::int32_t id, Context* context);
     void AddBasicBlock(BasicBlock* basicBlock);
     inline util::Container* BasicBlocks() { return &basicBlocks; }
     void InsertBasicBlockBefore(BasicBlock* basicBlockToInsert, BasicBlock* before);
@@ -747,7 +745,7 @@ public:
     inline const std::string& Name() const { return name; }
     std::string ToString() const override { return "@" + name; }
     RegValue* GetRegValue(std::int32_t reg) const;
-    RegValue* GetRegRef(const soul::ast::Span& span, Type* type, std::int32_t reg, Context* context) const;
+    std::expected<RegValue*, int> GetRegRef(const soul::ast::Span& span, Type* type, std::int32_t reg, Context* context) const;
     RegValue* MakeRegValue(const soul::ast::Span& span, Type* type, std::int32_t reg, Context* context);
     RegValue* MakeNextRegValue(const soul::ast::Span& span, Type* type, Context* context);
     void MapRegValue(RegValue* regValue);
@@ -757,13 +755,13 @@ public:
     int NumBasicBlocks() const;
     inline const std::vector<BasicBlock*>& RetBlocks() const { return retBlocks; }
     void AddRetBlock(BasicBlock* retBlock);
-    void AddEntryAndExitBlocks();
-    void RemoveEntryAndExitBlocks();
+    std::expected<bool, int> AddEntryAndExitBlocks();
+    std::expected<bool, int> RemoveEntryAndExitBlocks();
     inline void SetNextRegNumber(std::int32_t nextRegNumber_) { nextRegNumber = nextRegNumber_; }
     inline std::int32_t NextRegNumber() const { return nextRegNumber; }
     inline std::int32_t GetNextRegNumber() { return nextRegNumber++; }
     inline std::int32_t GetNextBasicBlockNumber() { return nextBBNumber++; }
-    Value* GetParam(int index) const;
+    std::expected<Value*, int> GetParam(int index) const;
     void SetNumbers();
     void MoveRegValues(Function* toFunction);
     inline void SetMdId(int mdId_) { mdId = mdId_; }
@@ -773,7 +771,7 @@ public:
     void SetComment(const std::string& comment_);
     inline const std::string& Comment() const { return comment; }
     std::string ResolveFullName() const;
-    void Write(util::CodeFormatter& formatter);
+    std::expected<bool, int> Write(util::CodeFormatter& formatter);
 private:
     FunctionFlags flags;
     soul::ast::Span span;
@@ -805,11 +803,11 @@ public:
     inline util::Container* Functions() const { return const_cast<util::Container*>(&functions); }
     inline Function* CurrentFunction() const { return currentFunction; }
     void SetCurrentFunction(Function* function);
-    Function* GetOrInsertFunction(const std::string& functionId, FunctionType* functionType);
+    std::expected<Function*, int> GetOrInsertFunction(const std::string& functionId, FunctionType* functionType);
     Function* GetFunction(const std::string& functionId) const;
-    Function* AddFunctionDefinition(const soul::ast::Span& span, FunctionType* functionType, const std::string& functionId, bool inline_, bool linkOnce, bool createEntry,
-        MetadataRef* metadataRef);
-    Function* AddFunctionDeclaration(const soul::ast::Span& span, FunctionType* functionType, const std::string& functionId);
+    std::expected<Function*, int> AddFunctionDefinition(const soul::ast::Span& span, FunctionType* functionType, const std::string& functionId, 
+        bool inline_, bool linkOnce, bool createEntry, MetadataRef* metadataRef);
+    std::expected<Function*, int> AddFunctionDeclaration(const soul::ast::Span& span, FunctionType* functionType, const std::string& functionId);
     inline Function* FirstFunction() { return static_cast<Function*>(functions.FirstChild()); }
     inline Function* LastFunction() { return static_cast<Function*>(functions.LastChild()); }
     void VisitFunctions(Visitor& visitor);

@@ -24,6 +24,90 @@ import util.unicode;
 
 namespace otava::symbols {
 
+std::string SymbolGroupStr(SymbolGroupKind group)
+{
+    std::string groupStr;
+    if ((group & SymbolGroupKind::functionSymbolGroup) != SymbolGroupKind::none)
+    {
+        if (!groupStr.empty())
+        {
+            groupStr.append(" | ");
+        }
+        groupStr.append("functionSymbolGroup");
+    }
+    if ((group & SymbolGroupKind::typeSymbolGroup) != SymbolGroupKind::none)
+    {
+        if (!groupStr.empty())
+        {
+            groupStr.append(" | ");
+        }
+        groupStr.append("typeSymbolGroup");
+    }
+    if ((group & SymbolGroupKind::variableSymbolGroup) != SymbolGroupKind::none)
+    {
+        if (!groupStr.empty())
+        {
+            groupStr.append(" | ");
+        }
+        groupStr.append("variableSymbolGroup");
+    }
+    if ((group & SymbolGroupKind::enumConstantSymbolGroup) != SymbolGroupKind::none)
+    {
+        if (!groupStr.empty())
+        {
+            groupStr.append(" | ");
+        }
+        groupStr.append("enumConstantSymbolGroup");
+    }
+    if ((group & SymbolGroupKind::conceptSymbolGroup) != SymbolGroupKind::none)
+    {
+        if (!groupStr.empty())
+        {
+            groupStr.append(" | ");
+        }
+        groupStr.append("conceptSymbolGroup");
+    }
+    if ((group & SymbolGroupKind::blockSymbolGroup) != SymbolGroupKind::none)
+    {
+        if (!groupStr.empty())
+        {
+            groupStr.append(" | ");
+        }
+        groupStr.append("blockSymbolGroup");
+    }
+    return groupStr;
+}
+
+std::vector<SymbolGroupKind> SymbolGroupKindstoSymbolGroupKindVec(SymbolGroupKind symbolGroupKinds)
+{
+    std::vector<SymbolGroupKind> symbolGroupKindVec;
+    if ((symbolGroupKinds & SymbolGroupKind::functionSymbolGroup) != SymbolGroupKind::none)
+    {
+        symbolGroupKindVec.push_back(SymbolGroupKind::functionSymbolGroup);
+    }
+    if ((symbolGroupKinds & SymbolGroupKind::typeSymbolGroup) != SymbolGroupKind::none)
+    {
+        symbolGroupKindVec.push_back(SymbolGroupKind::typeSymbolGroup);
+    }
+    if ((symbolGroupKinds & SymbolGroupKind::variableSymbolGroup) != SymbolGroupKind::none)
+    {
+        symbolGroupKindVec.push_back(SymbolGroupKind::variableSymbolGroup);
+    }
+    if ((symbolGroupKinds & SymbolGroupKind::enumConstantSymbolGroup) != SymbolGroupKind::none)
+    {
+        symbolGroupKindVec.push_back(SymbolGroupKind::enumConstantSymbolGroup);
+    }
+    if ((symbolGroupKinds & SymbolGroupKind::conceptSymbolGroup) != SymbolGroupKind::none)
+    {
+        symbolGroupKindVec.push_back(SymbolGroupKind::conceptSymbolGroup);
+    }
+    if ((symbolGroupKinds & SymbolGroupKind::blockSymbolGroup) != SymbolGroupKind::none)
+    {
+        symbolGroupKindVec.push_back(SymbolGroupKind::blockSymbolGroup);
+    }
+    return symbolGroupKindVec;
+}
+
 std::string ScopeKindStr(ScopeKind kind)
 {
     switch (kind)
@@ -50,21 +134,21 @@ Scope::~Scope()
 {
 }
 
-void Scope::Import(Scope* that)
+void Scope::Import(Scope* that, Context* context)
 {
     for (const auto& p : that->symbolMap)
     {
         Symbol* s = p.second;
-        Install(s);
+        Install(s, context);
     }
 }
 
-void Scope::Install(Symbol* symbol)
+void Scope::Install(Symbol* symbol, Context* context)
 {
-    Install(symbol, symbol);
+    Install(symbol, symbol, context);
 }
 
-void Scope::Install(Symbol* symbol, Symbol* from)
+void Scope::Install(Symbol* symbol, Symbol* from, Context* context)
 {
     SymbolGroupKind symbolGroupKind = symbol->GetSymbolGroupKind();
     if (from != symbol)
@@ -85,7 +169,7 @@ void Scope::Install(Symbol* symbol, Symbol* from)
         {
             AliasGroupSymbol* fromAliasGroup = static_cast<AliasGroupSymbol*>(from);
             AliasGroupSymbol* aliasGroup = static_cast<AliasGroupSymbol*>(symbol);
-            aliasGroup->Merge(fromAliasGroup);
+            aliasGroup->Merge(fromAliasGroup, context);
         }
         else if (from->IsVariableGroupSymbol() && symbol->IsVariableGroupSymbol())
         {
@@ -313,7 +397,7 @@ void ContainerScope::ClearParentScopes()
     parentScopes.clear();
 }
 
-void ContainerScope::Import(Scope* that)
+void ContainerScope::Import(Scope* that, Context* context)
 {
     if (that->IsContainerScope())
     {
@@ -325,14 +409,14 @@ void ContainerScope::Import(Scope* that)
                 usingDeclarationScope = new UsingDeclarationScope(this);
                 scopes.push_back(std::unique_ptr<Scope>(usingDeclarationScope));
             }
-            usingDeclarationScope->Import(thatScope->usingDeclarationScope);
+            usingDeclarationScope->Import(thatScope->usingDeclarationScope, context);
         }
         for (UsingDirectiveScope* thatUsingDirectiveScope : thatScope->usingDirectiveScopes)
         {
             UsingDirectiveScope* usingDirectiveScope = new UsingDirectiveScope(thatUsingDirectiveScope->Ns());
             scopes.push_back(std::unique_ptr<Scope>(usingDirectiveScope));
             usingDirectiveScopes.push_back(usingDirectiveScope);
-            usingDirectiveScope->Import(thatUsingDirectiveScope);
+            usingDirectiveScope->Import(thatUsingDirectiveScope, context);
         }
     }
 }
@@ -377,7 +461,7 @@ void ContainerScope::AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& 
     {
         ContainerScope* containerScope = static_cast<ContainerScope*>(baseScope);
         ContainerSymbol* baseClassSymbol = containerScope->GetContainerSymbol();
-        Install(baseClassSymbol);
+        Install(baseClassSymbol, context);
     }
     baseScopes.push_back(baseScope);
 }
@@ -473,7 +557,7 @@ void ContainerScope::AddUsingDeclaration(Symbol* usingDeclaration, const soul::a
         usingDeclarationScope = new UsingDeclarationScope(this);
         scopes.push_back(std::unique_ptr<Scope>(usingDeclarationScope));
     }
-    usingDeclarationScope->Install(usingDeclaration);
+    usingDeclarationScope->Install(usingDeclaration, context);
 }
 
 void ContainerScope::AddUsingDirective(NamespaceSymbol* ns, const soul::ast::SourcePos& sourcePos, Context* context)

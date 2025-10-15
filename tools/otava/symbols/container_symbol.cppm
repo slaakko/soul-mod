@@ -22,7 +22,7 @@ public:
     inline const std::vector<std::unique_ptr<Symbol>>& Symbols() const { return symbols; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     soul::xml::Element* ToXml() const override;
 private:
     std::vector<std::unique_ptr<Symbol>> symbols;

@@ -42,12 +42,12 @@ constexpr OperationFlags operator~(OperationFlags flags)
 
 constexpr std::uint8_t GetDerefCount(OperationFlags flags)
 {
-    return std::uint8_t(std::uint16_t(flags & OperationFlags::derefCount) >> 8);
+    return static_cast<std::uint8_t>(static_cast<std::int32_t>(flags & OperationFlags::derefCount) >> 8);
 }
 
 constexpr OperationFlags SetDerefCount(OperationFlags flags, std::uint8_t n)
 {
-    return OperationFlags(flags | OperationFlags(std::uint16_t(n) << 8));
+    return OperationFlags(flags | OperationFlags(static_cast<std::int32_t>(n) << 8));
 }
 
 class FunctionSymbol;
@@ -112,6 +112,7 @@ public:
     inline bool IsBoundVariableNode() const { return kind == BoundNodeKind::boundVariableNode; }
     inline bool IsBoundEnumConstant() const { return kind == BoundNodeKind::boundEnumConstantNode; }
     inline bool IsBoundFunctionCallNode() const { return kind == BoundNodeKind::boundFunctionCallNode; }
+    inline bool IsBoundConstructTemporaryNode() const { return kind == BoundNodeKind::boundConstructTemporaryNode; }
     inline bool IsBoundFunctionPtrCallNode() const { return kind == BoundNodeKind::boundFunctionPtrCallNode; }
     inline bool IsBoundEmptyDestructorNode() const { return kind == BoundNodeKind::boundEmptyDestructorNode; }
     inline bool IsBoundConversionNode() const { return kind == BoundNodeKind::boundConversionNode; }
@@ -901,6 +902,7 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     bool HasValue() const override { return true; }
     bool IsLvalueExpression() const override { return true; }
+    BoundExpressionNode* ConstructorCall() const { return constructorCall.get(); }
     inline BoundExpressionNode* Temporary() const { return temporary.get(); }
     BoundExpressionNode* Clone() const override;
     void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;

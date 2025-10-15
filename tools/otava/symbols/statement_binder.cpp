@@ -18,11 +18,13 @@ import otava.ast.literal;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.bound.tree;
 import otava.symbols.classes;
+import otava.symbols.class_group.symbol;
 import otava.symbols.context;
 import otava.symbols.declarator;
 import otava.symbols.declaration;
 import otava.symbols.exception;
 import otava.symbols.expression.binder;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.function_return_path_checker;
 import otava.symbols.overload.resolution;
@@ -475,7 +477,7 @@ int StatementBinder::GetBaseInitializerOrTerminatorIndex(TypeSymbol* baseClass) 
     for (int i = 0; i < n; ++i)
     {
         TypeSymbol* baseCls = currentClass->BaseClasses()[i];
-        if (TypesEqual(baseCls, baseClass))
+        if (TypesEqual(baseCls, baseClass, context))
         {
             return i - maxBaseInitializers;
         }
@@ -757,7 +759,7 @@ void StatementBinder::Visit(otava::ast::CaseStatementNode& node)
     }
     BoundExpressionNode* caseExpr = BindExpression(node.CaseExpression(), context);
     TypeSymbol* switchCondType = context->GetSwitchCondType();
-    if (!TypesEqual(caseExpr->GetType(), switchCondType))
+    if (!TypesEqual(caseExpr->GetType(), switchCondType, context))
     {
         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
             switchCondType, caseExpr->GetType()->DirectType(context)->FinalType(node.GetSourcePos(), context), node.GetSourcePos(), context);
@@ -1029,9 +1031,9 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
                 flagsPushed = true;
             }
             BoundExpressionNode* returnValueExpr = BindExpression(node.ReturnValue(), context);
-            if (!TypesEqual(returnValueExpr->GetType(), returnType))
+            if (!TypesEqual(returnValueExpr->GetType(), returnType, context))
             {
-                if (TypesEqual(returnValueExpr->GetType()->PlainType(context), returnType->PlainType(context)))
+                if (TypesEqual(returnValueExpr->GetType()->PlainType(context), returnType->PlainType(context), context))
                 {
                     if (!(
                         returnType->IsLValueRefType() && returnValueExpr->GetType()->IsRValueRefType() || 
@@ -1089,6 +1091,27 @@ void StatementBinder::Visit(otava::ast::ExpressionStatementNode& node)
     if (node.Expression())
     {
         BoundExpressionNode* expr = BindExpression(node.Expression(), context);
+        if (expr->IsBoundConstructTemporaryNode())
+        {
+            BoundConstructTemporaryNode* ctNode = static_cast<BoundConstructTemporaryNode*>(expr);
+            BoundExpressionNode* call = ctNode->ConstructorCall();
+            if (call->IsBoundFunctionCallNode())
+            {
+                BoundFunctionCallNode* fnCall = static_cast<BoundFunctionCallNode*>(call);
+                FunctionSymbol* fn = fnCall->GetFunctionSymbol();
+                TypeSymbol* returnType = fn->ReturnType();
+                if (returnType && returnType->IsClassTemplateSpecializationSymbol())
+                {
+                    ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(returnType);
+                    ClassTypeSymbol* ct = sp->ClassTemplate();
+                    ClassGroupSymbol* group = ct->Group();
+                    if (group->Name() == U"expected")
+                    {
+                        PrintWarning("discarding return value of function '" + util::ToUtf8(fn->FullName()) + "", node.GetSourcePos(), context);
+                    }
+                }
+            }
+        }
         boundExpressionStatement->SetExpr(expr, node.GetSourcePos(), context);
     }
     SetStatement(boundExpressionStatement);
@@ -1513,6 +1536,11 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
 
 FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
+    if (functionDefinitionSymbol->GroupName() == U"GenerateCode" && functionDefinitionSymbol->ThisParam(context) && 
+        functionDefinitionSymbol->ThisParam(context)->GetType()->GetBaseType()->Name() == U"DerivedToBaseConversion")
+    {
+        int x = 0;
+    }
     RemoveTemporaryAliasTypeSymbols(context);
     if (functionDefinitionSymbol->IsBound()) return functionDefinitionSymbol;
     if (functionDefinitionSymbol->IsTemplate()) return functionDefinitionSymbol;

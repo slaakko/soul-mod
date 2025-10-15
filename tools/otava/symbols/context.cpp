@@ -11,6 +11,7 @@ import otava.symbols.symbol.table;
 import otava.symbols.scope;
 import otava.symbols.symbol;
 import otava.symbols.bound.tree;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.function.templates;
 import otava.symbols.inline_functions;

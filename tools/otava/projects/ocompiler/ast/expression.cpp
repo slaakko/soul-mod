@@ -31,10 +31,13 @@ void BinaryExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void BinaryExprNode::Write(Writer& writer)
+std::expected<bool, int> BinaryExprNode::Write(Writer& writer)
 {
-    BinaryNode::Write(writer);
-    writer.Write(op.get());
+    std::expected<bool, int> rv = BinaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(op.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> BinaryExprNode::Read(Reader& reader)
@@ -66,10 +69,13 @@ void UnaryExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void UnaryExprNode::Write(Writer& writer)
+std::expected<bool, int> UnaryExprNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(op.get());
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(op.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> UnaryExprNode::Read(Reader& reader)
@@ -101,11 +107,15 @@ void ExpressionListNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ExpressionListNode::Write(Writer& writer)
+std::expected<bool, int> ExpressionListNode::Write(Writer& writer)
 {
-    ListNode::Write(writer);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = ListNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ExpressionListNode::Read(Reader& reader)
@@ -179,14 +189,21 @@ void ConditionalExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ConditionalExprNode::Write(Writer& writer)
+std::expected<bool, int> ConditionalExprNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(condition.get());
-    writer.Write(quest.get());
-    writer.Write(thenExpr.get());
-    writer.Write(colon.get());
-    writer.Write(elseExpr.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(condition.get());
+    if (!rv) return rv;
+    rv = writer.Write(quest.get());
+    if (!rv) return rv;
+    rv = writer.Write(thenExpr.get());
+    if (!rv) return rv;
+    rv = writer.Write(colon.get());
+    if (!rv) return rv;
+    rv = writer.Write(elseExpr.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ConditionalExprNode::Read(Reader& reader)
@@ -711,12 +728,17 @@ void CastExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void CastExprNode::Write(Writer& writer)
+std::expected<bool, int> CastExprNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(typeId.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(typeId.get());
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> CastExprNode::Read(Reader& reader)
@@ -864,11 +886,15 @@ void SizeOfTypeExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void SizeOfTypeExprNode::Write(Writer& writer)
+std::expected<bool, int> SizeOfTypeExprNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> SizeOfTypeExprNode::Read(Reader& reader)
@@ -905,12 +931,17 @@ void SizeOfPackExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void SizeOfPackExprNode::Write(Writer& writer)
+std::expected<bool, int> SizeOfPackExprNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(ellipsisPos);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(ellipsisPos);
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> SizeOfPackExprNode::Read(Reader& reader)
@@ -969,11 +1000,15 @@ void AlignOfExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void AlignOfExprNode::Write(Writer& writer)
+std::expected<bool, int> AlignOfExprNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> AlignOfExprNode::Read(Reader& reader)
@@ -1009,11 +1044,15 @@ void NoexceptExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void NoexceptExprNode::Write(Writer& writer)
+std::expected<bool, int> NoexceptExprNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> NoexceptExprNode::Read(Reader& reader)
@@ -1064,13 +1103,19 @@ void NewExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void NewExprNode::Write(Writer& writer)
+std::expected<bool, int> NewExprNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(colonColonHead.get());
-    writer.Write(placement.get());
-    writer.Write(initializer.get());
-    writer.Write(newPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(colonColonHead.get());
+    if (!rv) return rv;
+    rv = writer.Write(placement.get());
+    if (!rv) return rv;
+    rv = writer.Write(initializer.get());
+    if (!rv) return rv;
+    rv = writer.Write(newPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> NewExprNode::Read(Reader& reader)
@@ -1113,11 +1158,15 @@ void NewPlacementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void NewPlacementNode::Write(Writer& writer)
+std::expected<bool, int> NewPlacementNode::Write(Writer& writer)
 {
-    ListNode::Write(writer);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = ListNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> NewPlacementNode::Read(Reader& reader)
@@ -1153,11 +1202,15 @@ void ParenNewTypeIdNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ParenNewTypeIdNode::Write(Writer& writer)
+std::expected<bool, int> ParenNewTypeIdNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ParenNewTypeIdNode::Read(Reader& reader)
@@ -1198,11 +1251,15 @@ void NewTypeIdNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void NewTypeIdNode::Write(Writer& writer)
+std::expected<bool, int> NewTypeIdNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(typeSpecifierSeq.get());
-    writer.Write(newDeclarator.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(typeSpecifierSeq.get());
+    if (!rv) return rv;
+    rv = writer.Write(newDeclarator.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> NewTypeIdNode::Read(Reader& reader)
@@ -1244,13 +1301,19 @@ void ArrayDeletePtrNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ArrayDeletePtrNode::Write(Writer& writer)
+std::expected<bool, int> ArrayDeletePtrNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(colonColonHead.get());
-    writer.Write(deletePos);
-    writer.Write(lbPos);
-    writer.Write(rbPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(colonColonHead.get());
+    if (!rv) return rv;
+    rv = writer.Write(deletePos);
+    if (!rv) return rv;
+    rv = writer.Write(lbPos);
+    if (!rv) return rv;
+    rv = writer.Write(rbPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ArrayDeletePtrNode::Read(Reader& reader)
@@ -1297,11 +1360,15 @@ void DeletePtrNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void DeletePtrNode::Write(Writer& writer)
+std::expected<bool, int> DeletePtrNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(colonColonHead.get());
-    writer.Write(deletePos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(colonColonHead.get());
+    if (!rv) return rv;
+    rv = writer.Write(deletePos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> DeletePtrNode::Read(Reader& reader)
@@ -1337,12 +1404,17 @@ void SubscriptExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void SubscriptExprNode::Write(Writer& writer)
+std::expected<bool, int> SubscriptExprNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(index.get());
-    writer.Write(lbPos);
-    writer.Write(rbPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(index.get());
+    if (!rv) return rv;
+    rv = writer.Write(lbPos);
+    if (!rv) return rv;
+    rv = writer.Write(rbPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> SubscriptExprNode::Read(Reader& reader)
@@ -1389,12 +1461,17 @@ void InvokeExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void InvokeExprNode::Write(Writer& writer)
+std::expected<bool, int> InvokeExprNode::Write(Writer& writer)
 {
-    ListNode::Write(writer);
-    writer.Write(subject.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = ListNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(subject.get());
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> InvokeExprNode::Read(Reader& reader)
@@ -1481,11 +1558,15 @@ void MemberExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void MemberExprNode::Write(Writer& writer)
+std::expected<bool, int> MemberExprNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(op.get());
-    writer.Write(id.get());
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(op.get());
+    if (!rv) return rv;
+    rv = writer.Write(id.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> MemberExprNode::Read(Reader& reader)
@@ -1521,10 +1602,13 @@ void PostfixIncExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void PostfixIncExprNode::Write(Writer& writer)
+std::expected<bool, int> PostfixIncExprNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(opPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(opPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> PostfixIncExprNode::Read(Reader& reader)
@@ -1557,10 +1641,13 @@ void PostfixDecExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void PostfixDecExprNode::Write(Writer& writer)
+std::expected<bool, int> PostfixDecExprNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(opPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(opPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> PostfixDecExprNode::Read(Reader& reader)
@@ -1593,11 +1680,15 @@ void TypeIdExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void TypeIdExprNode::Write(Writer& writer)
+std::expected<bool, int> TypeIdExprNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> TypeIdExprNode::Read(Reader& reader)
@@ -1694,15 +1785,23 @@ void CppCastExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void CppCastExprNode::Write(Writer& writer)
+std::expected<bool, int> CppCastExprNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(typeId.get());
-    writer.Write(op.get());
-    writer.Write(laPos);
-    writer.Write(raPos);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(typeId.get());
+    if (!rv) return rv;
+    rv = writer.Write(op.get());
+    if (!rv) return rv;
+    rv = writer.Write(laPos);
+    if (!rv) return rv;
+    rv = writer.Write(raPos);
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> CppCastExprNode::Read(Reader& reader)
@@ -1765,11 +1864,15 @@ void ParenthesizedExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ParenthesizedExprNode::Write(Writer& writer)
+std::expected<bool, int> ParenthesizedExprNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ParenthesizedExprNode::Read(Reader& reader)
@@ -1806,11 +1909,15 @@ void FoldExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void FoldExprNode::Write(Writer& writer)
+std::expected<bool, int> FoldExprNode::Write(Writer& writer)
 {
-    SequenceNode::Write(writer);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = SequenceNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> FoldExprNode::Read(Reader& reader)
@@ -1883,11 +1990,15 @@ void NewInitializerNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void NewInitializerNode::Write(Writer& writer)
+std::expected<bool, int> NewInitializerNode::Write(Writer& writer)
 {
-    ListNode::Write(writer);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = ListNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> NewInitializerNode::Read(Reader& reader)

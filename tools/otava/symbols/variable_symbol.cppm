@@ -32,7 +32,7 @@ public:
     inline void SetValue(Value* value_) { value = value_; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     bool IsLocalVariable() const;
     bool IsMemberVariable() const;

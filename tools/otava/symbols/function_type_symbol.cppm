@@ -26,7 +26,7 @@ public:
     int PtrIndex() const override { return ptrIndex; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 private:
@@ -37,6 +37,6 @@ private:
     int ptrIndex;
 };
 
-bool FunctionTypesEqual(FunctionTypeSymbol* left, FunctionTypeSymbol* right);
+bool FunctionTypesEqual(FunctionTypeSymbol* left, FunctionTypeSymbol* right, Context* context);
 
 } // namespace otava::symbols

@@ -8,6 +8,7 @@ module otava.symbols.container.symbol;
 import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.fundamental.type.symbol;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.type.symbol;
 import otava.symbols.context;
@@ -43,7 +44,7 @@ void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
     }
     if (symbol->CanInstall())
     {
-        scope.Install(symbol);
+        scope.Install(symbol, context);
     }
     symbols.push_back(std::unique_ptr<Symbol>(symbol));
     if (symbol->IsTypeSymbol())
@@ -164,12 +165,12 @@ void ContainerSymbol::Read(Reader& reader)
     }
 }
 
-void ContainerSymbol::Resolve(SymbolTable& symbolTable)
+void ContainerSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    Symbol::Resolve(symbolTable);
+    Symbol::Resolve(symbolTable, context);
     for (const auto& symbol : symbols)
     {
-        symbol->Resolve(symbolTable);
+        symbol->Resolve(symbolTable, context);
     }
 }
 

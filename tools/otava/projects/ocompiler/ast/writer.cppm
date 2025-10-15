@@ -18,11 +18,11 @@ public:
     Writer(const std::string& fileName);
     Writer(util::BinaryStreamWriter* writerPtr_);
     inline util::BinaryStreamWriter& GetBinaryStreamWriter() { return *writerPtr; }
-    void Write(const soul::ast::SourcePos& sourcePos);
-    void Write(NodeKind nodeKind);
-    void Write(const std::u32string& str);
-    void Write(bool value);
-    void Write(Node* node);
+    std::expected<bool, int> Write(const soul::ast::SourcePos& sourcePos);
+    std::expected<bool, int> Write(NodeKind nodeKind);
+    std::expected<bool, int> Write(const std::u32string& str);
+    std::expected<bool, int> Write(bool value);
+    std::expected<bool, int> Write(Node* node);
     inline bool Valid() const { return error == 0; }
     inline explicit operator bool() const { return Valid(); }
     inline int Error() const { return error; }

@@ -75,7 +75,8 @@ std::expected<Node*, int> Reader::ReadNode()
         if (!rv) return rv;
         Node* node = *rv;
         node->SetId(-1);
-        node->Read(*this);
+        std::expected<bool, int> rrv = node->Read(*this);
+        if (!rrv) return std::unexpected<int>(rrv.error());
         if (node->InternalId() == -1)
         {
             return std::unexpected<int>(util::AllocateError("otava.ast.Reader: node id not set"));

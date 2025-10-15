@@ -9,6 +9,7 @@ import otava.symbols.context;
 import otava.symbols.declarator;
 import otava.symbols.evaluator;
 import otava.symbols.exception;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.function.group.symbol;
 import otava.symbols.fundamental.type.symbol;
@@ -17,6 +18,7 @@ import otava.symbols.symbol.table;
 import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.bound.tree;
+import otava.symbols.symbol;
 import otava.symbols.statement.binder;
 import otava.symbols.classes;
 import otava.symbols.alias.type.symbol;
@@ -1182,7 +1184,7 @@ TypeSymbol* MapType(FunctionSymbol* functionSymbol, TypeSymbol* type, Context* c
             ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(parentClassType);
             if (type->GetBaseType()->IsClassTypeSymbol())
             {
-                if (TypesEqual(type->GetBaseType(), specialization->ClassTemplate()))
+                if (TypesEqual(type->GetBaseType(), specialization->ClassTemplate(), context))
                 {
                     type = context->GetSymbolTable()->MakeCompoundType(specialization, type->GetDerivations());
                 }
@@ -1259,7 +1261,7 @@ void AddConvertingConstructorToConversionTable(FunctionSymbol* functionSymbol, c
     {
         TypeSymbol* conversionParamType = functionSymbol->MemFunParameters(context)[0]->GetType()->RemovePointer(context)->DirectType(context)->FinalType(sourcePos, context);
         TypeSymbol* conversionArgType = functionSymbol->MemFunParameters(context)[1]->GetType()->PlainType(context)->DirectType(context)->FinalType(sourcePos, context);
-        if (!TypesEqual(conversionParamType, conversionArgType))
+        if (!TypesEqual(conversionParamType, conversionArgType, context))
         {
             FunctionSymbol* conversion = context->GetSymbolTable()->GetConversionTable().GetConversion(conversionParamType, conversionArgType, context);
             if (!conversion)

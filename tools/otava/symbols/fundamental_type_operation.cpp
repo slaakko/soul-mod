@@ -490,9 +490,9 @@ void FundamentalTypeDefaultCtor::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(typeId);
 }
 
-void FundamentalTypeDefaultCtor::Resolve(SymbolTable& symbolTable)
+void FundamentalTypeDefaultCtor::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    FunctionSymbol::Resolve(symbolTable);
+    FunctionSymbol::Resolve(symbolTable, context);
     type = symbolTable.GetType(typeId);
     if (!type)
     {
@@ -537,9 +537,9 @@ void FundamentalTypeCopyCtor::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(typeId);
 }
 
-void FundamentalTypeCopyCtor::Resolve(SymbolTable& symbolTable)
+void FundamentalTypeCopyCtor::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    FunctionSymbol::Resolve(symbolTable);
+    FunctionSymbol::Resolve(symbolTable, context);
     type = symbolTable.GetType(typeId);
     if (!type)
     {
@@ -586,9 +586,9 @@ void FundamentalTypeMoveCtor::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(typeId);
 }
 
-void FundamentalTypeMoveCtor::Resolve(SymbolTable& symbolTable)
+void FundamentalTypeMoveCtor::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    FunctionSymbol::Resolve(symbolTable);
+    FunctionSymbol::Resolve(symbolTable, context);
     type = symbolTable.GetType(typeId);
     if (!type)
     {
@@ -638,9 +638,9 @@ void FundamentalTypeCopyAssignment::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(typeId);
 }
 
-void FundamentalTypeCopyAssignment::Resolve(SymbolTable& symbolTable)
+void FundamentalTypeCopyAssignment::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    FunctionSymbol::Resolve(symbolTable);
+    FunctionSymbol::Resolve(symbolTable, context);
     type = symbolTable.GetType(typeId);
     if (!type)
     {
@@ -684,9 +684,9 @@ void FundamentalTypeMoveAssignment::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(typeId);
 }
 
-void FundamentalTypeMoveAssignment::Resolve(SymbolTable& symbolTable)
+void FundamentalTypeMoveAssignment::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    FunctionSymbol::Resolve(symbolTable);
+    FunctionSymbol::Resolve(symbolTable, context);
     type = symbolTable.GetType(typeId);
     if (!type)
     {

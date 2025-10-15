@@ -8,6 +8,7 @@ module otava.symbols.class_templates;
 import otava.symbols.bound.tree;
 import otava.symbols.modules;
 import otava.symbols.context;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.symbol.table;
 import otava.symbols.exception;
@@ -132,9 +133,9 @@ void ClassTemplateSpecializationSymbol::Read(Reader& reader)
     }
 }
 
-void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable)
+void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    ClassTypeSymbol::Resolve(symbolTable);
+    ClassTypeSymbol::Resolve(symbolTable, context);
     classTemplate = static_cast<ClassTypeSymbol*>(symbolTable.GetType(ids[0].first));
     if (classTemplate)
     {
@@ -588,7 +589,7 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
         boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
         boundTemplateParameter->SetBoundSymbol(templateArg);
         boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
-        instantiationScope.Install(boundTemplateParameter);
+        instantiationScope.Install(boundTemplateParameter, context);
     }
     if (wasInstantiated)
     {
@@ -814,12 +815,12 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                     boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
                     boundTemplateParameter->SetBoundSymbol(templateArg);
                     boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
-                    instantiationScope.Install(boundTemplateParameter);
+                    instantiationScope.Install(boundTemplateParameter, context);
                 }
                 BoundTemplateParameterSymbol* templateNameParameter(new BoundTemplateParameterSymbol(classTemplateSpecialization->ClassTemplate()->Name()));
                 templateNameParameter->SetBoundSymbol(classTemplateSpecialization);
                 boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(templateNameParameter));
-                instantiationScope.Install(templateNameParameter);
+                instantiationScope.Install(templateNameParameter, context);
                 context->GetSymbolTable()->BeginScope(&instantiationScope);
                 Instantiator instantiator(context, &instantiationScope);
                 FunctionSymbol* specialization = nullptr;
@@ -943,12 +944,12 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                     boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
                     boundTemplateParameter->SetBoundSymbol(templateArg);
                     boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
-                    instantiationScope.Install(boundTemplateParameter);
+                    instantiationScope.Install(boundTemplateParameter, context);
                 }
                 BoundTemplateParameterSymbol* templateNameParameter(new BoundTemplateParameterSymbol(classTemplateSpecialization->ClassTemplate()->Name()));
                 templateNameParameter->SetBoundSymbol(classTemplateSpecialization);
                 boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(templateNameParameter));
-                instantiationScope.Install(templateNameParameter);
+                instantiationScope.Install(templateNameParameter, context);
                 context->GetSymbolTable()->BeginScope(&instantiationScope);
                 Instantiator instantiator(context, &instantiationScope);
                 FunctionSymbol* specialization = nullptr;

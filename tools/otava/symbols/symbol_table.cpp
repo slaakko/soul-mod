@@ -33,6 +33,7 @@ import otava.symbols.declaration;
 import otava.symbols.enums;
 import otava.symbols.modules;
 import otava.symbols.namespaces;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.templates;
@@ -932,13 +933,13 @@ void SymbolTable::Resolve(Context* context)
     {
         MapType(static_cast<TypeSymbol*>(dependentTypeSymbol.get()));
     }
-    globalNs->Resolve(*this);
+    globalNs->Resolve(*this, context);
     for (const auto& specialization : classTemplateSpecializations)
     {
         if (specialization->Kind() == SymbolKind::classTemplateSpecializationSymbol)
         {
             ClassTemplateSpecializationSymbol* s = static_cast<ClassTemplateSpecializationSymbol*>(specialization.get());
-            s->Resolve(*this);
+            s->Resolve(*this, context);
         }
         else
         {
@@ -950,7 +951,7 @@ void SymbolTable::Resolve(Context* context)
         if (specialization->Kind() == SymbolKind::aliasTypeTemplateSpecializationSymbol)
         {
             AliasTypeTemplateSpecializationSymbol* s = static_cast<AliasTypeTemplateSpecializationSymbol*>(specialization.get());
-            s->Resolve(*this);
+            s->Resolve(*this, context);
         }
         else
         {
@@ -960,15 +961,15 @@ void SymbolTable::Resolve(Context* context)
     for (const auto& arrayType : arrayTypes)
     {
         ArrayTypeSymbol* a = static_cast<ArrayTypeSymbol*>(arrayType.get());
-        a->Resolve(*this);
+        a->Resolve(*this, context);
     }
     for (const auto& instantiation : explicitInstantiations)
     {
-        instantiation->Resolve(*this);
+        instantiation->Resolve(*this, context);
     }
     for (auto& compoundType : compoundTypes)
     {
-        compoundType->Resolve(*this);
+        compoundType->Resolve(*this, context);
     }
     conversionTable->Make();
 }
@@ -1312,7 +1313,7 @@ AliasTypeSymbol* SymbolTable::AddAliasType(otava::ast::Node* idNode, otava::ast:
     AliasTypeSymbol* aliasTypeSymbol = new AliasTypeSymbol(id, type);
     aliasTypeSymbol->SetAccess(currentAccess);
     currentScope->SymbolScope()->AddSymbol(aliasTypeSymbol, idNode->GetSourcePos(), context);
-    aliasGroup->AddAliasTypeSymbol(aliasTypeSymbol);
+    aliasGroup->AddAliasTypeSymbol(aliasTypeSymbol, context);
     MapNode(aliasTypeNode, aliasTypeSymbol);
     return aliasTypeSymbol;
 }
@@ -1444,15 +1445,20 @@ void SymbolTable::AddForwardClassDeclaration(const std::u32string& name, ClassKi
 {
     Symbol* symbol = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, node->GetSourcePos(), context, LookupFlags::dontResolveSingle);
     ClassGroupSymbol* classGroup = currentScope->GroupScope()->GetOrInsertClassGroup(name, node->GetSourcePos(), context);
-    ForwardClassDeclarationSymbol* forwardDeclarationSymbol = new ForwardClassDeclarationSymbol(name);
+    std::unique_ptr<ForwardClassDeclarationSymbol> forwardDeclarationSymbol(new ForwardClassDeclarationSymbol(name));
     forwardDeclarationSymbol->SetAccess(CurrentAccess());
     forwardDeclarationSymbol->SetClassKind(classKind);
     forwardDeclarationSymbol->SetSpecialization(specialization);
-    currentScope->SymbolScope()->AddSymbol(forwardDeclarationSymbol, node->GetSourcePos(), context);
-    classGroup->AddForwardDeclaration(forwardDeclarationSymbol);
-    MapNode(node, forwardDeclarationSymbol);
-    forwardDeclarations.insert(forwardDeclarationSymbol);
-    allForwardDeclarations.insert(forwardDeclarationSymbol);
+    forwardDeclarationSymbol->SetParent(currentScope->SymbolScope()->GetSymbol());
+    ForwardClassDeclarationSymbol* fwdDeclaration = classGroup->GetForwardDeclaration(forwardDeclarationSymbol->Arity());
+    if (!fwdDeclaration)
+    {
+        classGroup->AddForwardDeclaration(forwardDeclarationSymbol.get());
+        MapNode(node, forwardDeclarationSymbol.get());
+        forwardDeclarations.insert(forwardDeclarationSymbol.get());
+        allForwardDeclarations.insert(forwardDeclarationSymbol.get());
+        currentScope->SymbolScope()->AddSymbol(forwardDeclarationSymbol.release(), node->GetSourcePos(), context);
+    }
 }
 
 void SymbolTable::AddFriend(const std::u32string& name, otava::ast::Node* node, Context* context)
@@ -1701,7 +1707,7 @@ FunctionDefinitionSymbol* SymbolTable::AddOrGetFunctionDefinition(Scope* scope, 
     FunctionDefinitionSymbol* definition = functionDefinition.get();
     currentScope->SymbolScope()->AddSymbol(functionDefinition.release(), node->GetSourcePos(), context);
     FunctionSymbol* declaration = functionGroup->ResolveFunction(parameterTypes, qualifiers, specialization, definition->ParentTemplateDeclaration(),
-        definition->IsSpecialization());
+        definition->IsSpecialization(), context);
     if (declaration)
     {
         definition->SetDeclaration(declaration);

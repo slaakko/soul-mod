@@ -28,7 +28,7 @@ public:
     std::string SymbolDocKindStr() const override { return "alias_type"; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     bool IsExportSymbol(Context* context) const override;
     bool IsExportMapSymbol(Context* context) const override;

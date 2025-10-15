@@ -31,13 +31,19 @@ void ConceptDefinitionNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ConceptDefinitionNode::Write(Writer& writer)
+std::expected<bool, int> ConceptDefinitionNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(conceptName.get());
-    writer.Write(assign.get());
-    writer.Write(constraintExpr.get());
-    writer.Write(semicolon.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(conceptName.get());
+    if (!rv) return rv;
+    rv = writer.Write(assign.get());
+    if (!rv) return rv;
+    rv = writer.Write(constraintExpr.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ConceptDefinitionNode::Read(Reader& reader)
@@ -83,11 +89,15 @@ void RequiresExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void RequiresExprNode::Write(Writer& writer)
+std::expected<bool, int> RequiresExprNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(params.get());
-    writer.Write(body.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(params.get());
+    if (!rv) return rv;
+    rv = writer.Write(body.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> RequiresExprNode::Read(Reader& reader)
@@ -124,11 +134,15 @@ void RequirementBodyNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void RequirementBodyNode::Write(Writer& writer)
+std::expected<bool, int> RequirementBodyNode::Write(Writer& writer)
 {
-    SequenceNode::Write(writer);
-    writer.Write(lbPos);
-    writer.Write(rbPos);
+    std::expected<bool, int> rv = SequenceNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(lbPos);
+    if (!rv) return rv;
+    rv = writer.Write(rbPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> RequirementBodyNode::Read(Reader& reader)
@@ -198,12 +212,17 @@ void TypeRequirementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void TypeRequirementNode::Write(Writer& writer)
+std::expected<bool, int> TypeRequirementNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(nns.get());
-    writer.Write(typeName.get());
-    writer.Write(semicolon.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(nns.get());
+    if (!rv) return rv;
+    rv = writer.Write(typeName.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> TypeRequirementNode::Read(Reader& reader)
@@ -253,15 +272,23 @@ void CompoundRequirementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void CompoundRequirementNode::Write(Writer& writer)
+std::expected<bool, int> CompoundRequirementNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(expr.get());
-    writer.Write(noexceptNode.get());
-    writer.Write(returnTypeRequirement.get());
-    writer.Write(semicolon.get());
-    writer.Write(lbPos);
-    writer.Write(rbPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(expr.get());
+    if (!rv) return rv;
+    rv = writer.Write(noexceptNode.get());
+    if (!rv) return rv;
+    rv = writer.Write(returnTypeRequirement.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    rv = writer.Write(lbPos);
+    if (!rv) return rv;
+    rv = writer.Write(rbPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> CompoundRequirementNode::Read(Reader& reader)
@@ -351,13 +378,19 @@ void TypeConstraintNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void TypeConstraintNode::Write(Writer& writer)
+std::expected<bool, int> TypeConstraintNode::Write(Writer& writer)
 {
-    ListNode::Write(writer);
-    writer.Write(conceptName.get());
-    writer.Write(hasTemplateArgumentList);
-    writer.Write(laPos);
-    writer.Write(raPos);
+    std::expected<bool, int> rv = ListNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(conceptName.get());
+    if (!rv) return rv;
+    rv = writer.Write(hasTemplateArgumentList);
+    if (!rv) return rv;
+    rv = writer.Write(laPos);
+    if (!rv) return rv;
+    rv = writer.Write(raPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> TypeConstraintNode::Read(Reader& reader)

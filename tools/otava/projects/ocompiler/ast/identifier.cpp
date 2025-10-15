@@ -30,10 +30,13 @@ void IdentifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void IdentifierNode::Write(Writer& writer)
+std::expected<bool, int> IdentifierNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(str);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(str);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> IdentifierNode::Read(Reader& reader)
@@ -152,10 +155,13 @@ void ModuleNameNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ModuleNameNode::Write(Writer& writer)
+std::expected<bool, int> ModuleNameNode::Write(Writer& writer)
 {
-    Node::Write(writer);
-    writer.Write(str);
+    std::expected<bool, int> rv = Node::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(str);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ModuleNameNode::Read(Reader& reader)

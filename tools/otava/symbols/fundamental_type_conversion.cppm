@@ -9,6 +9,7 @@ import std;
 import otava.symbols.context;
 import otava.symbols.emitter;
 import otava.symbols.symbol.table;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.writer;
 import otava.symbols.reader;
@@ -17,11 +18,6 @@ import otava.intermediate.data;
 import otava.intermediate.types;
 
 export namespace otava::symbols {
-
-enum class ConversionKind : std::int32_t
-{
-    implicitConversion, explicitConversion
-};
 
 struct FundamentalTypeIdentity
 {
@@ -112,7 +108,7 @@ struct FundamentalTypeConversion : public FunctionSymbol
     { 
         return distance;
     }
-    void Write(Writer& writer) override
+    void  Write(Writer& writer) override
     {
         FunctionSymbol::Write(writer);
         writer.GetBinaryStreamWriter().Write(distance);
@@ -124,17 +120,17 @@ struct FundamentalTypeConversion : public FunctionSymbol
     {
         FunctionSymbol::Read(reader);
         distance = reader.GetBinaryStreamReader().ReadInt();
-        conversionKind = static_cast<ConversionKind>(reader.GetBinaryStreamReader().ReadByte());
+        conversionKind = static_cast<ConversionKind>(static_cast<std::int32_t>(reader.GetBinaryStreamReader().ReadByte()));
         reader.GetBinaryStreamReader().ReadUuid(paramTypeId);
         reader.GetBinaryStreamReader().ReadUuid(argTypeId);
     }
-    void Resolve(SymbolTable& symbolTable) override
+    void Resolve(SymbolTable& symbolTable, Context* context) override
     {
-        FunctionSymbol::Resolve(symbolTable);
+        FunctionSymbol::Resolve(symbolTable, context);
         paramType = symbolTable.GetType(paramTypeId);
         argType = symbolTable.GetType(argTypeId);
     }
-    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
     {
         context->SetArgType(argType);
@@ -227,9 +223,9 @@ public:
         reader.GetBinaryStreamReader().ReadUuid(paramTypeId);
         reader.GetBinaryStreamReader().ReadUuid(argTypeId);
     }
-    void Resolve(SymbolTable& symbolTable) override
+    void Resolve(SymbolTable& symbolTable, Context* context) override
     {
-        FunctionSymbol::Resolve(symbolTable);
+        FunctionSymbol::Resolve(symbolTable, context);
         paramType = symbolTable.GetType(paramTypeId);
         argType = symbolTable.GetType(argTypeId);
     }

@@ -64,11 +64,15 @@ void TemplateHeadNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void TemplateHeadNode::Write(Writer& writer)
+std::expected<bool, int> TemplateHeadNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(templateParamList.get());
-    writer.Write(requiresClause.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(templateParamList.get());
+    if (!rv) return rv;
+    rv = writer.Write(requiresClause.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> TemplateHeadNode::Read(Reader& reader)
@@ -105,11 +109,15 @@ void TemplateParameterListNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void TemplateParameterListNode::Write(Writer& writer)
+std::expected<bool, int> TemplateParameterListNode::Write(Writer& writer)
 {
-    ListNode::Write(writer);
-    writer.Write(laPos);
-    writer.Write(raPos);
+    std::expected<bool, int> rv = ListNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(laPos);
+    if (!rv) return rv;
+    rv = writer.Write(raPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> TemplateParameterListNode::Read(Reader& reader)
@@ -165,15 +173,23 @@ void TypeParameterNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void TypeParameterNode::Write(Writer& writer)
+std::expected<bool, int> TypeParameterNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(typeConstraint.get());
-    writer.Write(identifier.get());
-    writer.Write(assign.get());
-    writer.Write(typeId.get());
-    writer.Write(ellipsis.get());
-    writer.Write(templateHead.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(typeConstraint.get());
+    if (!rv) return rv;
+    rv = writer.Write(identifier.get());
+    if (!rv) return rv;
+    rv = writer.Write(assign.get());
+    if (!rv) return rv;
+    rv = writer.Write(typeId.get());
+    if (!rv) return rv;
+    rv = writer.Write(ellipsis.get());
+    if (!rv) return rv;
+    rv = writer.Write(templateHead.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> TypeParameterNode::Read(Reader& reader)
@@ -224,12 +240,17 @@ void TemplateIdNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void TemplateIdNode::Write(Writer& writer)
+std::expected<bool, int> TemplateIdNode::Write(Writer& writer)
 {
-    ListNode::Write(writer);
-    writer.Write(templateName.get());
-    writer.Write(laPos);
-    writer.Write(raPos);
+    std::expected<bool, int> rv = ListNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(templateName.get());
+    if (!rv) return rv;
+    rv = writer.Write(laPos);
+    if (!rv) return rv;
+    rv = writer.Write(raPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> TemplateIdNode::Read(Reader& reader)
@@ -296,17 +317,27 @@ void DeductionGuideNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void DeductionGuideNode::Write(Writer& writer)
+std::expected<bool, int> DeductionGuideNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(templateName.get());
-    writer.Write(params.get());
-    writer.Write(arrow.get());
-    writer.Write(templateId.get());
-    writer.Write(explicitSpecifier.get());
-    writer.Write(semicolon.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(templateName.get());
+    if (!rv) return rv;
+    rv = writer.Write(params.get());
+    if (!rv) return rv;
+    rv = writer.Write(arrow.get());
+    if (!rv) return rv;
+    rv = writer.Write(templateId.get());
+    if (!rv) return rv;
+    rv = writer.Write(explicitSpecifier.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    rv = writer.Write(lpPos);
+    if (!rv) return rv;
+    rv = writer.Write(rpPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> DeductionGuideNode::Read(Reader& reader)
@@ -365,12 +396,17 @@ void ExplicitInstantiationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ExplicitInstantiationNode::Write(Writer& writer)
+std::expected<bool, int> ExplicitInstantiationNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(extrn.get());
-    writer.Write(tmp.get());
-    writer.Write(declaration.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(extrn.get());
+    if (!rv) return rv;
+    rv = writer.Write(tmp.get());
+    if (!rv) return rv;
+    rv = writer.Write(declaration.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ExplicitInstantiationNode::Read(Reader& reader)
@@ -425,13 +461,19 @@ void ExplicitSpecializationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ExplicitSpecializationNode::Write(Writer& writer)
+std::expected<bool, int> ExplicitSpecializationNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(tmp.get());
-    writer.Write(declaration.get());
-    writer.Write(laPos);
-    writer.Write(raPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(tmp.get());
+    if (!rv) return rv;
+    rv = writer.Write(declaration.get());
+    if (!rv) return rv;
+    rv = writer.Write(laPos);
+    if (!rv) return rv;
+    rv = writer.Write(raPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ExplicitSpecializationNode::Read(Reader& reader)

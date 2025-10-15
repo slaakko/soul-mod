@@ -25,7 +25,7 @@ public:
     TemplateHeadNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     void SetTemplateParameterList(Node* templateParamList_);
     inline Node* TemplateParamList() const { return templateParamList.get(); }
@@ -42,7 +42,7 @@ public:
     TemplateParameterListNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline void SetLAnglePos(const soul::ast::SourcePos& laPos_) { laPos = laPos_; }
     inline void SetRAnglePos(const soul::ast::SourcePos& raPos_) { raPos = raPos_; }
@@ -60,7 +60,7 @@ public:
     TypeParameterNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_, Node* identifier_, Node* assign_, Node* typeId_, Node* ellipsis_, Node* templateHead_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* TypeConstraint() const { return typeConstraint.get(); }
     inline Node* Identifier() const { return identifier.get(); }
@@ -84,7 +84,7 @@ public:
     TemplateIdNode(const soul::ast::SourcePos& sourcePos_, Node* templateName_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* TemplateName() const { return templateName.get(); }
     inline void SetLAnglePos(const soul::ast::SourcePos& laPos_) { laPos = laPos_; }
@@ -116,7 +116,7 @@ public:
         const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* TemplateName() const { return templateName.get(); }
     inline Node* Parameters() const { return params.get(); }
@@ -144,7 +144,7 @@ public:
     ExplicitInstantiationNode(const soul::ast::SourcePos& sourcePos_, Node* extrn_, Node* tmp_, Node* declaration_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Extern() const { return extrn.get(); }
     inline Node* Template() const { return tmp.get(); }
@@ -171,7 +171,7 @@ public:
         const soul::ast::SourcePos& laPos_, const soul::ast::SourcePos& raPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Template() const { return tmp.get(); }
     inline Node* Declaration() const { return declaration.get(); }

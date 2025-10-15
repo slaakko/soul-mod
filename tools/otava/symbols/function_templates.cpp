@@ -7,6 +7,7 @@ module otava.symbols.function.templates;
 
 import otava.symbols.context;
 import otava.symbols.bound.tree;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.function.group.symbol;
 import otava.symbols.templates;
@@ -130,7 +131,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
             boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
             boundTemplateParameter->SetBoundSymbol(templateArg);
             boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
-            instantiationScope.Install(boundTemplateParameter);
+            instantiationScope.Install(boundTemplateParameter, context);
         }
         context->GetSymbolTable()->BeginScope(&instantiationScope);
         Instantiator instantiator(context, &instantiationScope);
@@ -237,7 +238,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
             boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
             boundTemplateParameter->SetBoundSymbol(templateArg);
             boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
-            instantiationScope.Install(boundTemplateParameter);
+            instantiationScope.Install(boundTemplateParameter, context);
         }
         context->GetSymbolTable()->BeginScope(&instantiationScope);
         Instantiator instantiator(context, &instantiationScope);

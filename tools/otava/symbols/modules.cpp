@@ -17,6 +17,7 @@ import otava.symbols.writer;
 import otava.symbols.visitor;
 import otava.symbols.conversion.table;
 import otava.symbols.templates;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.ast.reader;
 import otava.ast.writer;
@@ -410,7 +411,7 @@ void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std:
 #ifdef DEBUG_WRITE_MAPS
     std::cout << ">module '" << Name() << "' resolve evaluation context" << "\n";
 #endif
-    evaluationContext.Resolve(symbolTable);
+    evaluationContext.Resolve(symbolTable, reader.GetContext());
 #ifdef DEBUG_WRITE_MAPS
     std::cout << "<module '" << Name() << "' resolve evaluation context" << "\n";
 #endif

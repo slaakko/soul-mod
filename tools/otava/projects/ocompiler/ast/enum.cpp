@@ -34,12 +34,17 @@ void EnumSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void EnumSpecifierNode::Write(Writer& writer)
+std::expected<bool, int> EnumSpecifierNode::Write(Writer& writer)
 {
-    ListNode::Write(writer);
-    writer.Write(enumHead.get());
-    writer.Write(lbPos);
-    writer.Write(rbPos);
+    std::expected<bool, int> rv = ListNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(enumHead.get());
+    if (!rv) return rv;
+    rv = writer.Write(lbPos);
+    if (!rv) return rv;
+    rv = writer.Write(rbPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> EnumSpecifierNode::Read(Reader& reader)
@@ -88,13 +93,19 @@ void EnumHeadNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void EnumHeadNode::Write(Writer& writer)
+std::expected<bool, int> EnumHeadNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(enumKey.get());
-    writer.Write(enumHeadName.get());
-    writer.Write(enumBase.get());
-    writer.Write(attributes.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(enumKey.get());
+    if (!rv) return rv;
+    rv = writer.Write(enumHeadName.get());
+    if (!rv) return rv;
+    rv = writer.Write(enumBase.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int>EnumHeadNode::Read(Reader& reader)
@@ -154,10 +165,13 @@ void EnumClassNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void EnumClassNode::Write(Writer& writer)
+std::expected<bool, int> EnumClassNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(classPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(classPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> EnumClassNode::Read(Reader& reader)
@@ -190,10 +204,13 @@ void EnumStructNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void EnumStructNode::Write(Writer& writer)
+std::expected<bool, int> EnumStructNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(structPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(structPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> EnumStructNode::Read(Reader& reader)
@@ -246,12 +263,17 @@ void EnumeratorDefinitionNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void EnumeratorDefinitionNode::Write(Writer& writer)
+std::expected<bool, int> EnumeratorDefinitionNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(enumerator.get());
-    writer.Write(value.get());
-    writer.Write(assignPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(enumerator.get());
+    if (!rv) return rv;
+    rv = writer.Write(value.get());
+    if (!rv) return rv;
+    rv = writer.Write(assignPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> EnumeratorDefinitionNode::Read(Reader& reader)
@@ -295,11 +317,15 @@ void EnumeratorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void EnumeratorNode::Write(Writer& writer)
+std::expected<bool, int> EnumeratorNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(identifier.get());
-    writer.Write(attributes.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(identifier.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> EnumeratorNode::Read(Reader& reader)
@@ -365,14 +391,21 @@ void OpaqueEnumDeclarationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void OpaqueEnumDeclarationNode::Write(Writer& writer)
+std::expected<bool, int> OpaqueEnumDeclarationNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(enumKey.get());
-    writer.Write(enumHeadName.get());
-    writer.Write(enumBase.get());
-    writer.Write(attributes.get());
-    writer.Write(semicolon.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(enumKey.get());
+    if (!rv) return rv;
+    rv = writer.Write(enumHeadName.get());
+    if (!rv) return rv;
+    rv = writer.Write(enumBase.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> OpaqueEnumDeclarationNode::Read(Reader& reader)

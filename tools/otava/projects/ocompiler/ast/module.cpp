@@ -49,15 +49,23 @@ void ModuleDeclarationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ModuleDeclarationNode::Write(Writer& writer)
+std::expected<bool, int> ModuleDeclarationNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(exprt.get());
-    writer.Write(modle.get());
-    writer.Write(moduleName.get());
-    writer.Write(modulePartition.get());
-    writer.Write(attributes.get());
-    writer.Write(semicolon.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(exprt.get());
+    if (!rv) return rv;
+    rv = writer.Write(modle.get());
+    if (!rv) return rv;
+    rv = writer.Write(moduleName.get());
+    if (!rv) return rv;
+    rv = writer.Write(modulePartition.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ModuleDeclarationNode::Read(Reader& reader)
@@ -110,13 +118,19 @@ void ExportDeclarationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ExportDeclarationNode::Write(Writer& writer)
+std::expected<bool, int> ExportDeclarationNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(exprt.get());
-    writer.Write(subject.get());
-    writer.Write(lbPos);
-    writer.Write(rbPos);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(exprt.get());
+    if (!rv) return rv;
+    rv = writer.Write(subject.get());
+    if (!rv) return rv;
+    rv = writer.Write(lbPos);
+    if (!rv) return rv;
+    rv = writer.Write(rbPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ExportDeclarationNode::Read(Reader& reader)
@@ -193,13 +207,19 @@ void ImportDeclarationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ImportDeclarationNode::Write(Writer& writer)
+std::expected<bool, int> ImportDeclarationNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(imprt.get());
-    writer.Write(subject.get());
-    writer.Write(attributes.get());
-    writer.Write(semicolon.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(imprt.get());
+    if (!rv) return rv;
+    rv = writer.Write(subject.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ImportDeclarationNode::Read(Reader& reader)
@@ -280,12 +300,17 @@ void GlobalModuleFragmentNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void GlobalModuleFragmentNode::Write(Writer& writer)
+std::expected<bool, int> GlobalModuleFragmentNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(modle.get());
-    writer.Write(semicolon.get());
-    writer.Write(declarations.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(modle.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    rv = writer.Write(declarations.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> GlobalModuleFragmentNode::Read(Reader& reader)
@@ -328,14 +353,21 @@ void PrivateModuleFragmentNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void PrivateModuleFragmentNode::Write(Writer& writer)
+std::expected<bool, int> PrivateModuleFragmentNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(modle.get());
-    writer.Write(colon.get());
-    writer.Write(privat.get());
-    writer.Write(semicolon.get());
-    writer.Write(declarations.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(modle.get());
+    if (!rv) return rv;
+    rv = writer.Write(colon.get());
+    if (!rv) return rv;
+    rv = writer.Write(privat.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    rv = writer.Write(declarations.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> PrivateModuleFragmentNode::Read(Reader& reader)
@@ -379,10 +411,13 @@ void AngleHeaderName::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void AngleHeaderName::Write(Writer& writer)
+std::expected<bool, int> AngleHeaderName::Write(Writer& writer)
 {
-    Node::Write(writer);
-    writer.Write(rep);
+    std::expected<bool, int> rv = Node::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(rep);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> AngleHeaderName::Read(Reader& reader)
@@ -414,10 +449,13 @@ void QuoteHeaderName::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void QuoteHeaderName::Write(Writer& writer)
+std::expected<bool, int> QuoteHeaderName::Write(Writer& writer)
 {
-    Node::Write(writer);
-    writer.Write(rep);
+    std::expected<bool, int> rv = Node::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(rep);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> QuoteHeaderName::Read(Reader& reader)

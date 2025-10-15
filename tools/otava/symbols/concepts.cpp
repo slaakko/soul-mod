@@ -46,9 +46,9 @@ void ConstraintExprSymbol::Read(Reader& reader)
     constraintEprNodeId = reader.GetBinaryStreamReader().ReadLong();
 }
 
-void ConstraintExprSymbol::Resolve(SymbolTable& symbolTable)
+void ConstraintExprSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    Symbol::Resolve(symbolTable);
+    Symbol::Resolve(symbolTable, context);
     otava::ast::NodeMap* nodeMap = symbolTable.GetNodeMap();
     constraintExprNode = nodeMap->GetNode(constraintEprNodeId);
 }
@@ -88,9 +88,9 @@ void ConceptSymbol::Read(Reader& reader)
     }
 }
 
-void ConceptSymbol::Resolve(SymbolTable& symbolTable)
+void ConceptSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    Symbol::Resolve(symbolTable);
+    Symbol::Resolve(symbolTable, context);
     // todo
 }
 

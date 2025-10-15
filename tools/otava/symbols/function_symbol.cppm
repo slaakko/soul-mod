@@ -8,75 +8,12 @@ export module otava.symbols.function.symbol;
 import std;
 import otava.symbols.symbol;
 import otava.symbols.container.symbol;
+import otava.symbols.function.kind;
 import otava.symbols.bound.tree;
 import otava.ast.node;
 import otava.intermediate.types;
 
 export namespace otava::symbols {
-
-enum class FunctionKind
-{
-    function, constructor, destructor, special, conversionMemFn
-};
-
-std::string FunctionKindStr(FunctionKind functionKind);
-
-enum class SpecialFunctionKind
-{
-    none, defaultCtor, copyCtor, moveCtor, copyAssignment, moveAssignment, dtor
-};
-
-std::string SpecialFunctionKindPrefix(SpecialFunctionKind specialFunctionKind);
-
-enum class Linkage : std::int32_t
-{
-    c_linkage, cpp_linkage
-};
-
-enum class FunctionQualifiers : std::int32_t
-{
-    none = 0, isConst = 1 << 0, isVolatile = 1 << 1, isOverride = 1 << 2, isFinal = 1 << 3, isPure = 1 << 4, isDefault = 1 << 5, isDeleted = 1 << 6, noreturn = 1 << 7
-};
-
-enum class ConversionKind : std::int32_t;
-
-constexpr FunctionQualifiers operator|(FunctionQualifiers left, FunctionQualifiers right)
-{
-    return FunctionQualifiers(std::int32_t(left) | std::int32_t(right));
-}
-
-constexpr FunctionQualifiers operator&(FunctionQualifiers left, FunctionQualifiers right)
-{
-    return FunctionQualifiers(std::int32_t(left) & std::int32_t(right));
-}
-
-constexpr FunctionQualifiers operator~(FunctionQualifiers qualifiers)
-{
-    return FunctionQualifiers(~std::int32_t(qualifiers));
-}
-
-std::string MakeFunctionQualifierStr(FunctionQualifiers qualifiers);
-
-enum class FunctionSymbolFlags : std::int32_t
-{
-    none = 0, bound = 1 << 0, specialization = 1 << 1, trivialDestructor = 1 << 2, returnsClass = 1 << 3, conversion = 1 << 4, fixedIrName = 1 << 5, inline_ = 1 << 6,
-    generated = 1 << 7, skip = 1 << 8
-};
-
-constexpr FunctionSymbolFlags operator|(FunctionSymbolFlags left, FunctionSymbolFlags right)
-{
-    return FunctionSymbolFlags(std::int32_t(left) | std::int32_t(right));
-}
-
-constexpr FunctionSymbolFlags operator&(FunctionSymbolFlags left, FunctionSymbolFlags right)
-{
-    return FunctionSymbolFlags(std::int32_t(left) & std::int32_t(right));
-}
-
-constexpr FunctionSymbolFlags operator~(FunctionSymbolFlags flags)
-{
-    return FunctionSymbolFlags(~std::int32_t(flags));
-}
 
 class TypeSymbol;
 class FunctionTypeSymbol;
@@ -98,7 +35,7 @@ public:
     inline void SetDefaultValue(otava::ast::Node* defaultValue_) { defaultValue = defaultValue_; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     soul::xml::Element* ToXml() const override;
 private:
@@ -141,7 +78,7 @@ public:
     inline void SetSkip() { SetFlag(FunctionSymbolFlags::skip); }
     virtual bool IsArrayElementAccess() const { return false; }
     TemplateDeclarationSymbol* ParentTemplateDeclaration() const;
-    void SetReturnType(TypeSymbol* returnType_, Context* context);
+    virtual void SetReturnType(TypeSymbol* returnType_, Context* context);
     inline TypeSymbol* ReturnType() const { return returnType; }
     inline bool ReturnsClass() const { return GetFlag(FunctionSymbolFlags::returnsClass); }
     inline void SetReturnsClass() { SetFlag(FunctionSymbolFlags::returnsClass); }
@@ -176,13 +113,13 @@ public:
     bool IsExplicitSpecializationDeclaration()  const;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     virtual void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     void GenerateVirtualFunctionCall(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     FunctionTypeSymbol* GetFunctionType(otava::symbols::Context* context);
-    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+    virtual otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const;
     std::string IrName(Context* context) const override;
     inline const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
     VariableSymbol* CreateTemporary(TypeSymbol* type);
@@ -195,7 +132,7 @@ public:
     void SetOverride();
     ClassTypeSymbol* ParentClassType() const override;
     virtual ParameterSymbol* ThisParam(Context* context) const;
-    bool IsMemberFunction() const;
+    virtual bool IsMemberFunction() const;
     SpecialFunctionKind GetSpecialFunctionKind(Context* context) const;
     inline Linkage GetLinkage() const { return linkage; }
     inline void SetLinkage(Linkage linkage_) { linkage = linkage_; }
@@ -267,9 +204,11 @@ public:
     void SetDeclaration(FunctionSymbol* declaration_) { declaration = declaration_; }
     FunctionSymbol* Declaration() const { return declaration; }
     std::string IrName(Context* context) const override;
+    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const override;
+    void SetReturnType(TypeSymbol* returnType_, Context* context) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     inline std::int32_t DefIndex() const { return defIndex; }
     inline void SetDefIndex(std::int32_t defIndex_) { defIndex = defIndex_; }
@@ -286,6 +225,7 @@ public:
     std::int32_t ConversionDistance() const override;
     void AddDefinitionToGroup(Context* context) override;
     inline const std::string& GetIrName() const { return irName; }
+    bool IsMemberFunction() const override;
     soul::xml::Element* ToXml() const override;
 private:
     FunctionSymbol* declaration;

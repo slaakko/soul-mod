@@ -8,6 +8,7 @@ export module otava.symbols.classes;
 import std;
 import otava.symbols.scope;
 import otava.symbols.type.symbol;
+import otava.symbols.function.kind;
 import otava.ast.node;
 import otava.ast.statement;
 import otava.ast.classes;
@@ -28,8 +29,6 @@ const std::int32_t vtabFunctionSectionOffset = 2;
 
 class FunctionDefinitionSymbol;
 class ClassGroupSymbol;
-
-enum class SpecialFunctionKind : std::int32_t;
 
 std::int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind);
 
@@ -104,13 +103,13 @@ public:
     void AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
     inline const std::vector<ClassTypeSymbol*>& DerivedClasses() const { return derivedClasses; }
     void AddDerivedClass(ClassTypeSymbol* derivedClass);
-    bool HasBaseClass(TypeSymbol* baseClass, int& distance) const override;
+    bool HasBaseClass(TypeSymbol* baseClass, int& distance, Context* context) const override;
     bool HasPolymorphicBaseClass() const;
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     inline int Level() const { return level; }
     inline void SetLevel(int level_) { level = level_; }
     bool IsPolymorphic() const override;
@@ -142,7 +141,7 @@ public:
     inline bool VTabInitialized() const { return GetFlag(ClassTypeSymbolFlags::vtabInitialized); }
     inline void SetVTabInitialized() { SetFlag(ClassTypeSymbolFlags::vtabInitialized); }
     inline const std::vector<FunctionSymbol*>& ConversionFunctions() const { return conversionFunctions; }
-    FunctionSymbol* GetConversionFunction(TypeSymbol* type) const;
+    FunctionSymbol* GetConversionFunction(TypeSymbol* type, Context* context) const;
     virtual ClassGroupSymbol* Group() const { return group; }
     inline void SetGroup(ClassGroupSymbol* group_) { group = group_; }
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
@@ -203,7 +202,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;

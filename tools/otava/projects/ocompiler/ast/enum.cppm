@@ -17,7 +17,7 @@ public:
     EnumSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* enumHead_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* EnumHead() const { return enumHead.get(); }
     inline void SetLBracePos(const soul::ast::SourcePos& lbPos_) { lbPos = lbPos_; }
@@ -37,7 +37,7 @@ public:
     EnumHeadNode(const soul::ast::SourcePos& sourcePos_, Node* enumKey_, Node* enumHeadName_, Node* enumBase_, Node* attributes_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* EnumKey() const { return enumKey.get(); }
     inline Node* EnumHeadName() const { return enumHeadName.get(); }
@@ -66,7 +66,7 @@ public:
     EnumClassNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& classPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& ClassPos() const { return classPos; }
 private:
@@ -80,7 +80,7 @@ public:
     EnumStructNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& structPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline const soul::ast::SourcePos& StructPos() const { return structPos; }
 private:
@@ -102,7 +102,7 @@ public:
     EnumeratorDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* enumerator_, Node* value_, const soul::ast::SourcePos& assignPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Enumerator() const { return enumerator.get(); }
     inline Node* Value() const { return value.get(); }
@@ -120,7 +120,7 @@ public:
     EnumeratorNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* attributes_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Identifier() const { return identifier.get(); }
     inline Node* Attributes() const { return attributes.get(); }
@@ -145,7 +145,7 @@ public:
     OpaqueEnumDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* enumKey_, Node* enumHeadName_, Node* enumBase_, Node* attributes_, Node* semicolon_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* EnumKey() const { return enumKey.get(); }
     inline Node* EnumHeadName() const { return enumHeadName.get(); }

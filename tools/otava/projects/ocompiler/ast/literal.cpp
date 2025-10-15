@@ -19,10 +19,13 @@ LiteralNode::LiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_,
 {
 }
 
-void LiteralNode::Write(Writer& writer)
+std::expected<bool, int> LiteralNode::Write(Writer& writer)
 {
-    Node::Write(writer);
-    writer.Write(rep);
+    std::expected<bool, int> rv = Node::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(rep);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> LiteralNode::Read(Reader& reader)
@@ -55,12 +58,17 @@ void IntegerLiteralNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void IntegerLiteralNode::Write(Writer& writer)
+std::expected<bool, int> IntegerLiteralNode::Write(Writer& writer)
 {
-    LiteralNode::Write(writer);
-    writer.GetBinaryStreamWriter().Write(value);
-    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(suffix));
-    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(base));
+    std::expected<bool, int> rv = LiteralNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.GetBinaryStreamWriter().Write(value);
+    if (!rv) return rv;
+    rv = writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(suffix));
+    if (!rv) return rv;
+    rv = writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(base));
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> IntegerLiteralNode::Read(Reader& reader)
@@ -101,12 +109,17 @@ void FloatingLiteralNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void FloatingLiteralNode::Write(Writer& writer)
+std::expected<bool, int> FloatingLiteralNode::Write(Writer& writer)
 {
-    LiteralNode::Write(writer);
-    writer.GetBinaryStreamWriter().Write(value);
-    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(suffix));
-    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(base));
+    std::expected<bool, int> rv = LiteralNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.GetBinaryStreamWriter().Write(value);
+    if (!rv) return rv;
+    rv = writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(suffix));
+    if (!rv) return rv;
+    rv = writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(base));
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> FloatingLiteralNode::Read(Reader& reader)
@@ -147,12 +160,17 @@ void CharacterLiteralNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void CharacterLiteralNode::Write(Writer& writer)
+std::expected<bool, int> CharacterLiteralNode::Write(Writer& writer)
 {
-    LiteralNode::Write(writer);
-    writer.GetBinaryStreamWriter().Write(value);
-    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(encodingPrefix));
-    writer.GetBinaryStreamWriter().Write(hasMultipleCharacters);
+    std::expected<bool, int> rv = LiteralNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.GetBinaryStreamWriter().Write(value);
+    if (!rv) return rv;
+    rv = writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(encodingPrefix));
+    if (!rv) return rv;
+    rv = writer.GetBinaryStreamWriter().Write(hasMultipleCharacters);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> CharacterLiteralNode::Read(Reader& reader)
@@ -201,11 +219,15 @@ void StringLiteralNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void StringLiteralNode::Write(Writer& writer)
+std::expected<bool, int> StringLiteralNode::Write(Writer& writer)
 {
-    LiteralNode::Write(writer);
-    writer.Write(value);
-    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(encodingPrefix));
+    std::expected<bool, int> rv = LiteralNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(value);
+    if (!rv) return rv;
+    rv = writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(encodingPrefix));
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> StringLiteralNode::Read(Reader& reader)
@@ -243,10 +265,13 @@ void RawStringLiteralNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void RawStringLiteralNode::Write(Writer& writer)
+std::expected<bool, int> RawStringLiteralNode::Write(Writer& writer)
 {
-    StringLiteralNode::Write(writer);
-    writer.Write(delimSequence);
+    std::expected<bool, int> rv = StringLiteralNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(delimSequence);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> RawStringLiteralNode::Read(Reader& reader)
@@ -279,10 +304,13 @@ void BooleanLiteralNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void BooleanLiteralNode::Write(Writer& writer)
+std::expected<bool, int> BooleanLiteralNode::Write(Writer& writer)
 {
-    LiteralNode::Write(writer);
-    writer.Write(value);
+    std::expected<bool, int> rv = LiteralNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(value);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> BooleanLiteralNode::Read(Reader& reader)
@@ -355,10 +383,13 @@ void LiteralOperatorIdNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void LiteralOperatorIdNode::Write(Writer& writer)
+std::expected<bool, int> LiteralOperatorIdNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(stringLitPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(stringLitPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> LiteralOperatorIdNode::Read(Reader& reader)

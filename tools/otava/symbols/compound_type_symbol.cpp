@@ -56,9 +56,9 @@ void CompoundTypeSymbol::Read(Reader& reader)
     reader.GetSymbolTable()->MapType(this);
 }
 
-void CompoundTypeSymbol::Resolve(SymbolTable& symbolTable)
+void CompoundTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    TypeSymbol::Resolve(symbolTable);
+    TypeSymbol::Resolve(symbolTable, context);
     baseType = symbolTable.GetType(baseTypeId);
     if (!baseType)
     {

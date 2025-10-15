@@ -11,7 +11,6 @@ import otava.symbols.classes;
 import otava.symbols.class_templates;
 import otava.symbols.conversion.table;
 import otava.symbols.exception;
-import otava.symbols.function.symbol;
 import otava.symbols.function.type.symbol;
 import otava.symbols.function.group.symbol;
 import otava.symbols.function.templates;
@@ -70,7 +69,7 @@ public:
 FunctionSymbol* IdentityArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, 
     FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    if (TypesEqual(argType->PlainType(context), paramType->PlainType(context)))
+    if (TypesEqual(argType->PlainType(context), paramType->PlainType(context), context))
     {
         return new IdentityConversion(argType, context);
     }
@@ -141,11 +140,11 @@ FunctionSymbol* DerivedToBaseArgumentConversion::Get(TypeSymbol* paramType, Type
     int distance = 0;
     if ((paramType->PointerCount() == 1 && argType->PointerCount() == 1 || 
         paramType->IsReferenceType() && paramType->PointerCount() == 0 && argType->IsReferenceType() && argType->PointerCount() == 0) && 
-        argType->GetBaseType()->HasBaseClass(paramType->GetBaseType(), distance))
+        argType->GetBaseType()->HasBaseClass(paramType->GetBaseType(), distance, context))
     {
         return new DerivedToBaseConversion(argType, paramType, distance, context);
     }
-    if (argType->GetBaseType()->HasBaseClass(paramType->GetBaseType(), distance))
+    if (argType->GetBaseType()->HasBaseClass(paramType->GetBaseType(), distance, context))
     {
         if (paramType->IsReferenceType())
         {
@@ -221,7 +220,7 @@ FunctionSymbol* BaseToDerivedArgumentConversion::Get(TypeSymbol* paramType, Type
     if ((paramType->PointerCount() == 1 && argType->PointerCount() == 1 || 
         paramType->IsReferenceType() && paramType->PointerCount() == 0 && 
         argType->IsReferenceType() && argType->PointerCount() == 0) &&
-        paramType->GetBaseType()->HasBaseClass(argType->GetBaseType(), distance))
+        paramType->GetBaseType()->HasBaseClass(argType->GetBaseType(), distance, context))
     {
         distance += 100;
         return new BaseToDerivedConversion(argType, paramType, distance, context);
@@ -474,7 +473,7 @@ FunctionSymbol* VoidPtrToUInt64ArgumentConversion::Get(TypeSymbol* paramType, Ty
     FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     TypeSymbol* uint64Type = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType);
-    if (argType->PlainType(context)->IsVoidPtrType() && TypesEqual(paramType->PlainType(context), uint64Type))
+    if (argType->PlainType(context)->IsVoidPtrType() && TypesEqual(paramType->PlainType(context), uint64Type, context))
     {
         return new VoidPtrToUInt64Conversion(argType, paramType, context);
     }
@@ -525,7 +524,7 @@ FunctionSymbol* UInt64ToVoidPtrArgumentConversion::Get(TypeSymbol* paramType, Ty
     FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     TypeSymbol* uint64Type = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType);
-    if (TypesEqual(argType, uint64Type) && paramType->IsVoidPtrType())
+    if (TypesEqual(argType, uint64Type, context) && paramType->IsVoidPtrType())
     {
         return new UInt64ToVoidPtrConversion(argType, paramType, context);
     }
@@ -580,7 +579,7 @@ FunctionSymbol* PtrToBooleanArgumentConversion::Get(TypeSymbol* paramType, TypeS
 {
     if (context->GetFlag(ContextFlags::skipFirstPtrToBooleanConversion) && context->ArgIndex() == 0) return nullptr;
     TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::boolType);
-    if (argType->IsPointerType() && TypesEqual(paramType, boolType))
+    if (argType->IsPointerType() && TypesEqual(paramType, boolType, context))
     {
         return new PtrToBooleanConversion(argType, paramType, context);
     }
@@ -641,7 +640,7 @@ FunctionSymbol* ArrayToPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSym
     {
         ArrayTypeSymbol* arrayType = static_cast<ArrayTypeSymbol*>(argType->RemovePointer(context));
         TypeSymbol* elementType = arrayType->ElementType()->AddPointer(context);
-        if (TypesEqual(paramType->RemoveConst(context), elementType))
+        if (TypesEqual(paramType->RemoveConst(context), elementType, context))
         {
             if (addAddr)
             {
@@ -737,7 +736,7 @@ FunctionSymbol* EnumTypeToUnderlyingTypeArgumentConversion::Get(TypeSymbol* para
             underlyingType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType);
         }
         underlyingType = underlyingType->DirectType(context)->FinalType(sourcePos, context);
-        if (TypesEqual(paramType, underlyingType))
+        if (TypesEqual(paramType, underlyingType, context))
         {
             return new EnumTypeToUnderlyingTypeConversion(enumType, underlyingType, context);
         }
@@ -797,7 +796,7 @@ FunctionSymbol* UnderlyingTypeEnumTypeToArgumentConversion::Get(TypeSymbol* para
             underlyingType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType);
         }
         underlyingType = underlyingType->DirectType(context)->FinalType(sourcePos, context);
-        if (TypesEqual(argType, underlyingType))
+        if (TypesEqual(argType, underlyingType, context))
         {
             return new UnderlyingTypeToEnumTypeConversion(enumType, underlyingType, context);
         }
@@ -960,7 +959,7 @@ FunctionSymbol* ArgumentConversionTable::GetArgumentConversion(TypeSymbol* param
     const soul::ast::SourcePos& sourcePos, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, Context* context)
 {
     FunctionSymbol* conversion = nullptr; 
-    if (!TypesEqual(paramType, argType))
+    if (!TypesEqual(paramType, argType, context))
     {
         conversion = context->GetSymbolTable()->GetConversionTable().GetConversion(paramType, argType, context);
         if (conversion)
@@ -989,7 +988,7 @@ FunctionSymbol* ArgumentConversionTable::GetArgumentConversion(TypeSymbol* param
             if (classTemplateSymbol->IsClassTypeSymbol())
             {
                 ClassTypeSymbol* classTemplate = static_cast<ClassTypeSymbol*>(classTemplateSymbol);
-                FunctionSymbol* conversionFunction = classTemplate->GetConversionFunction(paramType);
+                FunctionSymbol* conversionFunction = classTemplate->GetConversionFunction(paramType, context);
                 if (conversionFunction)
                 {
                     std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
@@ -1000,7 +999,7 @@ FunctionSymbol* ArgumentConversionTable::GetArgumentConversion(TypeSymbol* param
         }
         else
         {
-            FunctionSymbol* conversionFunction = classType->GetConversionFunction(paramType);
+            FunctionSymbol* conversionFunction = classType->GetConversionFunction(paramType, context);
             if (conversionFunction)
             {
                 return conversionFunction;

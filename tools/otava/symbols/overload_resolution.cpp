@@ -10,6 +10,7 @@ import otava.symbols.classes;
 import otava.symbols.context;
 import otava.symbols.exception;
 import otava.symbols.function.group.symbol;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.function.type.symbol;
 import otava.symbols.type.symbol;
@@ -498,7 +499,7 @@ bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, Boun
     {
         return false;
     }
-    if (TypesEqual(argType, paramType))
+    if (TypesEqual(argType, paramType, context))
     {
         ArgumentMatch argumentMatch;
         if (argType->IsClassTypeSymbol() && paramType->IsClassTypeSymbol())
@@ -512,7 +513,7 @@ bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, Boun
     {
         bool qualificationConversionMatch = false;
         ArgumentMatch argumentMatch;
-        if (TypesEqual(argType->PlainType(context), paramType->PlainType(context)))
+        if (TypesEqual(argType->PlainType(context), paramType->PlainType(context), context))
         {
             qualificationConversionMatch = FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch);
             if (qualificationConversionMatch)
@@ -644,7 +645,7 @@ bool FindClassTemplateMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExp
     }
     TypeSymbol* plainTargetType = context->GetSymbolTable()->MakeClassTemplateSpecialization(paramClassType, targetTemplateArguments);
     paramType = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations());
-    if (TypesEqual(argType, paramType))
+    if (TypesEqual(argType, paramType, context))
     {
         ArgumentMatch argumentMatch;
         if (argType->IsClassTypeSymbol() && paramType->IsClassTypeSymbol())
@@ -658,7 +659,7 @@ bool FindClassTemplateMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExp
     {
         bool qualificationConversionMatch = false;
         ArgumentMatch argumentMatch;
-        if (TypesEqual(argType->PlainType(context), paramType->PlainType(context)))
+        if (TypesEqual(argType->PlainType(context), paramType->PlainType(context), context))
         {
             qualificationConversionMatch = FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch);
         }
@@ -715,7 +716,7 @@ bool PlainTemplateArgsEqual(const std::vector<Symbol*>& sourceTemplateArguments,
         Symbol* sourceTemplateArg = sourceTemplateArguments[i];
         Symbol* targetTemplateArg = targetTemplateArguments[i];
         if (!sourceTemplateArg->IsTypeSymbol() || !targetTemplateArg->IsTypeSymbol()) return false;
-        if (!TypesEqual(static_cast<TypeSymbol*>(sourceTemplateArg)->PlainType(context), static_cast<TypeSymbol*>(targetTemplateArg)->PlainType(context)))
+        if (!TypesEqual(static_cast<TypeSymbol*>(sourceTemplateArg)->PlainType(context), static_cast<TypeSymbol*>(targetTemplateArg)->PlainType(context), context))
         {
             return false;
         }
@@ -807,7 +808,7 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
         }
         TypeSymbol* plainTargetType = context->GetSymbolTable()->MakeClassTemplateSpecialization(paramSpecializationType->ClassTemplate(), targetTemplateArguments);
         TypeSymbol* compoundParamType = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations());
-        if (TypesEqual(argType, compoundParamType))
+        if (TypesEqual(argType, compoundParamType, context))
         {
             ArgumentMatch argumentMatch;
             if (argType->IsClassTypeSymbol() && paramType->IsClassTypeSymbol())
@@ -821,7 +822,7 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
         {
             ArgumentMatch argumentMatch;
             bool qualificationConversionMatch = false;
-            if (TypesEqual(argType->PlainType(context), compoundParamType->PlainType(context)))
+            if (TypesEqual(argType->PlainType(context), compoundParamType->PlainType(context), context))
             {
                 qualificationConversionMatch = FindQualificationConversion(argType, compoundParamType, arg, functionMatch, argumentMatch);
             }
@@ -871,7 +872,7 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
                         ++functionMatch.numConversions;
                         plainTargetType = context->GetSymbolTable()->MakeClassTemplateSpecialization(paramSpecializationType->ClassTemplate(), sourceTemplateArguments);
                         compoundParamType = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations());
-                        if (TypesEqual(argType, compoundParamType))
+                        if (TypesEqual(argType, compoundParamType, context))
                         {
                             functionMatch.argumentMatches.push_back(ArgumentMatch());
                             return true;
@@ -879,7 +880,7 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
                         else
                         {
                             ArgumentMatch argumentMatch;
-                            if (TypesEqual(argType->PlainType(context), compoundParamType->PlainType(context)))
+                            if (TypesEqual(argType->PlainType(context), compoundParamType->PlainType(context), context))
                             {
                                 qualificationConversionMatch = FindQualificationConversion(argType, compoundParamType, arg, functionMatch, argumentMatch);
                             }
@@ -974,7 +975,7 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
         TypeSymbol* paramType = parameter->GetReferredType(context)->FinalType(sourcePos, context);
         context->PopTemplateParameterMap();
         context->PopFlags();
-        if (TypesEqual(argType, paramType))
+        if (TypesEqual(argType, paramType, context))
         {
             ArgumentMatch argumentMatch;
             if (argType->IsClassTypeSymbol() && paramType->IsClassTypeSymbol())
@@ -987,7 +988,7 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
         {
             bool qualificationConversionMatch = false;
             ArgumentMatch argumentMatch;
-            if (TypesEqual(argType->PlainType(context), paramType->PlainType(context)))
+            if (TypesEqual(argType->PlainType(context), paramType->PlainType(context), context))
             {
                 qualificationConversionMatch = FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch);
                 if (qualificationConversionMatch)
@@ -1195,7 +1196,7 @@ std::unique_ptr<BoundFunctionCallNode> ResolveIOManipFn(Scope* scope, const std:
         std::vector<std::unique_ptr<BoundExpressionNode>> ioManipFnArgs;
         ioManipFnArgs.push_back(std::unique_ptr<BoundExpressionNode>(arg));
         std::vector<TypeSymbol*> templateArgs;
-        std::unique_ptr<BoundFunctionCallNode> ioManipFnCall = ResolveOverload(scope, functionGroupType->FunctionGroup()->Name(), templateArgs, 
+        std::unique_ptr<BoundFunctionCallNode> ioManipFnCall = ResolveOverload(scope, functionGroupType->FunctionGroup()->Name(), templateArgs,
             ioManipFnArgs, sourcePos, context, ex, flags);
         if (ioManipFnCall)
         {
@@ -1227,8 +1228,8 @@ void MakeFinalDirectArgs(std::vector<std::unique_ptr<BoundExpressionNode>>& args
     }
 }
 
-std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs, 
-    std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, FunctionMatch& functionMatch, 
+std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs,
+    std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, FunctionMatch& functionMatch,
     OverloadResolutionFlags flags)
 {
     MakeFinalDirectArgs(args, sourcePos, context);
@@ -1265,7 +1266,17 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
             scopeLookups.push_back(std::make_pair(scope, ScopeLookup::allScopes));
             AddArgumentScopes(scopeLookups, args);
         }
+        bool flagsPushed = false;
+        if ((flags & OverloadResolutionFlags::noMemberFunctions) != OverloadResolutionFlags::none)
+        {
+            context->PushSetFlag(ContextFlags::skipNonstaticMemberFunctions);
+            flagsPushed = true;
+        }
         context->GetSymbolTable()->CollectViableFunctions(scopeLookups, groupName, templateArgs, args.size(), viableFunctions, context);
+        if (flagsPushed)
+        {
+            context->PopFlags();
+        }
     }
     std::unique_ptr<FunctionMatch> bestMatch = SelectBestMatchingFunction(viableFunctions, templateArgs, args, groupName, sourcePos, context, ex);
     if (!bestMatch)

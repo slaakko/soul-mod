@@ -1,0 +1,88 @@
+module otava.intermediate.parser.rules;
+
+namespace otava::intermediate::parser::rules {
+
+std::mutex ruleMtx;
+
+std::map<std::int64_t, std::string>* GetRuleNameMapPtr()
+{
+    std::lock_guard<std::mutex> lock(ruleMtx);
+    static std::map<std::int64_t, std::string> ruleNameMap = {
+        { 2652886897990303745, "IntermediateParser.IntermediateFile" },
+        { 2652886897990303746, "IntermediateParser.TypeDeclarations" },
+        { 2652886897990303747, "IntermediateParser.TypeDeclaration" },
+        { 2652886897990303748, "IntermediateParser.TypeId" },
+        { 2652886897990303749, "IntermediateParser.FundamentalTypeId" },
+        { 2652886897990303750, "IntermediateParser.ParseTypeRef" },
+        { 2652886897990303751, "IntermediateParser.ParseStructureType" },
+        { 2652886897990303752, "IntermediateParser.ParseArrayType" },
+        { 2652886897990303753, "IntermediateParser.ParseFunctionType" },
+        { 2652886897990303754, "IntermediateParser.DataDefinitions" },
+        { 2652886897990303755, "IntermediateParser.DataDefinition" },
+        { 2652886897990303756, "IntermediateParser.Constant" },
+        { 2652886897990303757, "IntermediateParser.BoolConstant" },
+        { 2652886897990303758, "IntermediateParser.SByteConstant" },
+        { 2652886897990303759, "IntermediateParser.ByteConstant" },
+        { 2652886897990303760, "IntermediateParser.ShortConstant" },
+        { 2652886897990303761, "IntermediateParser.UShortConstant" },
+        { 2652886897990303762, "IntermediateParser.IntConstant" },
+        { 2652886897990303763, "IntermediateParser.UIntConstant" },
+        { 2652886897990303764, "IntermediateParser.LongConstant" },
+        { 2652886897990303765, "IntermediateParser.ULongConstant" },
+        { 2652886897990303766, "IntermediateParser.FloatConstant" },
+        { 2652886897990303767, "IntermediateParser.DoubleConstant" },
+        { 2652886897990303768, "IntermediateParser.AddressConstant" },
+        { 2652886897990303769, "IntermediateParser.ArrayConstant" },
+        { 2652886897990303770, "IntermediateParser.StructureConstant" },
+        { 2652886897990303771, "IntermediateParser.StringConstant" },
+        { 2652886897990303772, "IntermediateParser.StringArrayConstant" },
+        { 2652886897990303773, "IntermediateParser.StringArrayPrefix" },
+        { 2652886897990303774, "IntermediateParser.ConversionConstant" },
+        { 2652886897990303775, "IntermediateParser.ClsIdConstant" },
+        { 2652886897990303776, "IntermediateParser.SymbolConstant" },
+        { 2652886897990303777, "IntermediateParser.ParseValue" },
+        { 2652886897990303778, "IntermediateParser.ParseRegValue" },
+        { 2652886897990303779, "IntermediateParser.ResultRegValue" },
+        { 2652886897990303780, "IntermediateParser.ParseSymbolValue" },
+        { 2652886897990303781, "IntermediateParser.LiteralValue" },
+        { 2652886897990303782, "IntermediateParser.FunctionDefinitions" },
+        { 2652886897990303783, "IntermediateParser.FunctionDeclaration" },
+        { 2652886897990303784, "IntermediateParser.FunctionDefinition" },
+        { 2652886897990303785, "IntermediateParser.FunctionHeader" },
+        { 2652886897990303786, "IntermediateParser.ParseBasicBlock" },
+        { 2652886897990303787, "IntermediateParser.Label" },
+        { 2652886897990303788, "IntermediateParser.Operand" },
+        { 2652886897990303789, "IntermediateParser.Instructions" },
+        { 2652886897990303790, "IntermediateParser.ParseInstruction" },
+        { 2652886897990303791, "IntermediateParser.ParseStoreInstruction" },
+        { 2652886897990303792, "IntermediateParser.ParseArgInstruction" },
+        { 2652886897990303793, "IntermediateParser.ParseJmpInstruction" },
+        { 2652886897990303794, "IntermediateParser.ParseBranchInstruction" },
+        { 2652886897990303795, "IntermediateParser.ParseProcedureCallInstruction" },
+        { 2652886897990303796, "IntermediateParser.ParseRetInstruction" },
+        { 2652886897990303797, "IntermediateParser.ParseSwitchInstruction" },
+        { 2652886897990303798, "IntermediateParser.ParseValueInstruction" },
+        { 2652886897990303799, "IntermediateParser.Operation" },
+        { 2652886897990303800, "IntermediateParser.ParseUnaryInstruction" },
+        { 2652886897990303801, "IntermediateParser.ParseBinaryInstruction" },
+        { 2652886897990303802, "IntermediateParser.ParseParamInstruction" },
+        { 2652886897990303803, "IntermediateParser.ParseLocalInstruction" },
+        { 2652886897990303804, "IntermediateParser.ParseLoadInstruction" },
+        { 2652886897990303805, "IntermediateParser.ParseElemAddrInstruction" },
+        { 2652886897990303806, "IntermediateParser.ParsePtrOffsetInstruction" },
+        { 2652886897990303807, "IntermediateParser.ParsePtrDiffInstruction" },
+        { 2652886897990303808, "IntermediateParser.ParseFunctionCallInstruction" },
+        { 2652886897990303809, "IntermediateParser.ParseNoOperationInstruction" },
+        { 2652886897990303810, "IntermediateParser.ParseMetadata" },
+        { 2652886897990303811, "IntermediateParser.ParseMetadataStruct" },
+        { 2652886897990303812, "IntermediateParser.ParseMetadataField" },
+        { 2652886897990303813, "IntermediateParser.ParseMetadataItem" },
+        { 2652886897990303814, "IntermediateParser.ParseMetadataBool" },
+        { 2652886897990303815, "IntermediateParser.ParseMetadataLong" },
+        { 2652886897990303816, "IntermediateParser.ParseMetadataString" },
+        { 2652886897990303817, "IntermediateParser.ParseMetadataRef" }
+    };
+    return &ruleNameMap;
+}
+
+} // otava::intermediate::parser::rules

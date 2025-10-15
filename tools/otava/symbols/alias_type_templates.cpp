@@ -64,9 +64,9 @@ void AliasTypeTemplateSpecializationSymbol::Read(Reader& reader)
     }
 }
 
-void AliasTypeTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable)
+void AliasTypeTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    AliasTypeSymbol::Resolve(symbolTable);
+    AliasTypeSymbol::Resolve(symbolTable, context);
     aliasTypeTemplate = static_cast<AliasTypeSymbol*>(symbolTable.GetType(ids[0]));
     for (int i = 1; i < ids.size(); ++i)
     {
@@ -131,7 +131,7 @@ TypeSymbol* InstantiateAliasTypeSymbol(TypeSymbol* typeSymbol, const std::vector
                 boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
                 boundTemplateParameter->SetBoundSymbol(templateArg);
                 boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
-                instantiationScope.Install(boundTemplateParameter);
+                instantiationScope.Install(boundTemplateParameter, context);
             }
             context->GetSymbolTable()->BeginScope(&instantiationScope);
             Instantiator instantiator(context, &instantiationScope);
@@ -151,7 +151,8 @@ TypeSymbol* InstantiateAliasTypeSymbol(TypeSymbol* typeSymbol, const std::vector
         }
         else
         {
-            ThrowException("otava.symbols.alias_type_templates: template declarator for alias type template '" + util::ToUtf8(aliasTypeSymbol->Name()) + " not found", node->GetSourcePos(), context);
+            ThrowException("otava.symbols.alias_type_templates: template declarator for alias type template '" + 
+                util::ToUtf8(aliasTypeSymbol->Name()) + "' not found", node->GetSourcePos(), context);
         }
     }
     else

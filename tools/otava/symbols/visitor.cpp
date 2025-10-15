@@ -20,6 +20,7 @@ import otava.symbols.inline_functions;
 import otava.symbols.enums;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.function.group.symbol;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.modules;
 import otava.symbols.namespaces;

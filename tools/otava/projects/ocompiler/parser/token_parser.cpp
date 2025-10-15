@@ -398,7 +398,7 @@ std::expected<otava::ast::IntegerLiteralNode*, int> ParseIntegerLiteral(const so
     }
     if (firstWasSingleQuote)
     {
-        auto rv = util::ToUtf8(token.ToString();
+        auto rv = util::ToUtf8(token.ToString());
         if (!rv) return std::unexpected<int>(rv.error());
         std::string tokenStr = *rv;
         std::string errorMessage("invalid integer literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ", literal begins with single quote: " +
@@ -407,7 +407,7 @@ std::expected<otava::ast::IntegerLiteralNode*, int> ParseIntegerLiteral(const so
     }
     else if (lastWasSingleQuote)
     {
-        auto rv = util::ToUtf8(token.ToString();
+        auto rv = util::ToUtf8(token.ToString());
         if (!rv) return std::unexpected<int>(rv.error());
         std::string tokenStr = *rv;
         std::string errorMessage("invalid integer literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ", literal ends with single quote: " +

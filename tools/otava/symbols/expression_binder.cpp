@@ -18,6 +18,7 @@ import otava.symbols.enum_group.symbol;
 import otava.symbols.evaluator;
 import otava.symbols.exception;
 import otava.symbols.fundamental.type.symbol;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.function.group.symbol;
 import otava.symbols.overload.resolution;
@@ -941,6 +942,10 @@ void ExpressionBinder::Visit(otava::ast::DoubleNode& node)
 
 void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
 {
+    if (node.Str() == U"Delta")
+    {
+        int x = 0;
+    }
     SymbolGroupKind groups = symbolGroups;
     if ((groups & SymbolGroupKind::functionSymbolGroup) != SymbolGroupKind::none)
     {
@@ -1441,12 +1446,12 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
         if (!functionCall && thisPtrAdded)
         {
             args.erase(args.begin());
-            Exception ex2;
             if (suppressWarning)
             {
                 context->PushSetFlag(ContextFlags::suppress_warning);
                 flagsPushed = true;
             }
+            resolutionFlags = resolutionFlags | OverloadResolutionFlags::noMemberFunctions;
             functionCall = ResolveOverload(subjectScope, groupName, templateArgs, args, node.GetSourcePos(), context, ex2, resolutionFlags);
             if (flagsPushed)
             {

@@ -37,13 +37,19 @@ void ClassSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ClassSpecifierNode::Write(Writer& writer)
+std::expected<bool, int> ClassSpecifierNode::Write(Writer& writer)
 {
-    SequenceNode::Write(writer);
-    writer.Write(classHead.get());
-    writer.Write(lbPos);
-    writer.Write(rbPos);
-    writer.GetBinaryStreamWriter().Write(complete);
+    std::expected<bool, int> rv = SequenceNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(classHead.get());
+    if (!rv) return rv;
+    rv = writer.Write(lbPos);
+    if (!rv) return rv;
+    rv = writer.Write(rbPos);
+    if (!rv) return rv;
+    rv = writer.GetBinaryStreamWriter().Write(complete);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ClassSpecifierNode::Read(Reader& reader)
@@ -100,14 +106,21 @@ void ClassHeadNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ClassHeadNode::Write(Writer& writer)
+std::expected<bool, int> ClassHeadNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(classKey.get());
-    writer.Write(classHeadName.get());
-    writer.Write(classVirtSpecifier.get());
-    writer.Write(baseClause.get());
-    writer.Write(attributes.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(classKey.get());
+    if (!rv) return rv;
+    rv = writer.Write(classHeadName.get());
+    if (!rv) return rv;
+    rv = writer.Write(classVirtSpecifier.get());
+    if (!rv) return rv;
+    rv = writer.Write(baseClause.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ClassHeadNode::Read(Reader& reader)
@@ -206,14 +219,21 @@ void BaseSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void BaseSpecifierNode::Write(Writer& writer)
+std::expected<bool, int> BaseSpecifierNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(classOrDeclType.get());
-    writer.Write(accessSpecifier.get());
-    writer.Write(virtualSpecifier.get());
-    writer.Write(attributes.get());
-    writer.Write(virtualFirst);
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(classOrDeclType.get());
+    if (!rv) return rv;
+    rv = writer.Write(accessSpecifier.get());
+    if (!rv) return rv;
+    rv = writer.Write(virtualSpecifier.get());
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    rv = writer.Write(virtualFirst);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> BaseSpecifierNode::Read(Reader& reader)
@@ -258,10 +278,13 @@ void BeginAccessGroupNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void BeginAccessGroupNode::Write(Writer& writer)
+std::expected<bool, int> BeginAccessGroupNode::Write(Writer& writer)
 {
-    UnaryNode::Write(writer);
-    writer.Write(colonPos);
+    std::expected<bool, int> rv = UnaryNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(colonPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> BeginAccessGroupNode::Read(Reader& reader)
@@ -309,13 +332,19 @@ void MemberDeclarationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void MemberDeclarationNode::Write(Writer& writer)
+std::expected<bool, int> MemberDeclarationNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(attributes.get());
-    writer.Write(declSpecifiers.get());
-    writer.Write(memberDeclarators.get());
-    writer.Write(semicolon.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(attributes.get());
+    if (!rv) return rv;
+    rv = writer.Write(declSpecifiers.get());
+    if (!rv) return rv;
+    rv = writer.Write(memberDeclarators.get());
+    if (!rv) return rv;
+    rv = writer.Write(semicolon.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> MemberDeclarationNode::Read(Reader& reader)
@@ -385,10 +414,13 @@ ConstructorInitializerNode::ConstructorInitializerNode(const soul::ast::SourcePo
 {
 }
 
-void ConstructorInitializerNode::Write(Writer& writer)
+std::expected<bool, int>  ConstructorInitializerNode::Write(Writer& writer)
 {
-    CompoundNode::Write(writer);
-    writer.Write(memberInitializerListNode.get());
+    std::expected<bool, int> rv = CompoundNode::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(memberInitializerListNode.get());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ConstructorInitializerNode::Read(Reader& reader)
@@ -635,10 +667,13 @@ void PureSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void PureSpecifierNode::Write(Writer& writer)
+std::expected<bool, int>  PureSpecifierNode::Write(Writer& writer)
 {
-    Node::Write(writer);
-    writer.Write(zeroPos);
+    std::expected<bool, int> rv = Node::Write(writer);
+    if (!rv) return rv;
+    rv = writer.Write(zeroPos);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> PureSpecifierNode::Read(Reader& reader)

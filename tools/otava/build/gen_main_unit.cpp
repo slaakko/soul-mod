@@ -13,6 +13,7 @@ import otava.symbols.function.templates;
 import otava.symbols.inline_functions;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.operation.repository;
+import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.declarator;
 import otava.symbols.instantiator;

@@ -35,7 +35,7 @@ public:
     void AddTemplateArgument(Symbol* templateArgument);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;

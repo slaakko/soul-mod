@@ -17,7 +17,7 @@ public:
     ConceptDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* conceptName_, Node* assign_, Node* constraintExpr_, Node* semicolon_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* ConceptName() const { return conceptName.get(); }
     inline Node* Assign() const { return assign.get(); }
@@ -37,7 +37,7 @@ public:
     RequiresExprNode(const soul::ast::SourcePos& sourcePos_, Node* params_, Node* body_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Params() const { return params.get(); }
     inline Node* Body() const { return body.get(); }
@@ -52,7 +52,7 @@ public:
     RequirementBodyNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     void SetLBracePos(const soul::ast::SourcePos& lbPos_);
     void SetRBracePos(const soul::ast::SourcePos& rbPos_);
@@ -79,7 +79,7 @@ public:
     TypeRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* typeName_, Node* semicolon_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* NestedNameSpecifier() const { return nns.get(); }
     inline Node* TypeName() const { return typeName.get(); }
@@ -97,7 +97,7 @@ public:
     CompoundRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, Node* noexcept_, Node* returnTypeRequirement_, Node* semicolon_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline Node* Expr() const { return expr.get(); }
     inline Node* NoExcept() const { return noexceptNode.get(); }
@@ -139,7 +139,7 @@ public:
     TypeConstraintNode(const soul::ast::SourcePos& sourcePos_, Node* conceptName_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
+    std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     inline void SetHasTemplateArgumentList() { hasTemplateArgumentList = true; }
     inline bool HasTemplateArgumentList() const { return hasTemplateArgumentList; }

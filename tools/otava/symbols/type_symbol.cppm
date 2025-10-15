@@ -36,7 +36,7 @@ public:
     virtual TypeSymbol* PlainType(Context* context) { return this; }
     virtual TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) { return this; }
     virtual TypeSymbol* DirectType(Context* context) { return this; }
-    virtual bool HasBaseClass(TypeSymbol* baseClass, int& distance) const { return false; }
+    virtual bool HasBaseClass(TypeSymbol* baseClass, int& distance, Context* context) const { return false; }
     virtual bool IsVoidType() const { return false; }
     virtual bool IsBoolType() const { return false; }
     virtual bool IsDoubleType() const { return false; }
@@ -122,7 +122,7 @@ public:
     FunctionGroupSymbol* FunctionGroup() const { return functionGroupSymbol; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
 private:
     FunctionGroupSymbol* functionGroupSymbol;
@@ -139,7 +139,7 @@ public:
     ClassGroupSymbol* ClassGroup() const { return classGroupSymbol; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
 private:
     ClassGroupSymbol* classGroupSymbol;
@@ -156,7 +156,7 @@ public:
     AliasGroupSymbol* AliasGroup() const { return aliasGroupSymbol; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
 private:
     AliasGroupSymbol* aliasGroupSymbol;

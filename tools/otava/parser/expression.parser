@@ -7,6 +7,7 @@ export module otava.parser.expression;
 
 [interface]import otava.symbols.context;
 [interface]import otava.ast;
+[implementation]import otava.symbols.exception;
 [implementation]import soul.ast.source.pos;
 [implementation]import soul.ast.lexer.pos.pair;
 [implementation]import otava.token;
@@ -80,6 +81,10 @@ parser ExpressionParser
             { 
                 sourcePos = lexer.GetSourcePos(pos); 
                 leftExpr.reset(left); 
+                if (!leftExpr)
+                {
+                    otava::symbols::ThrowException("left expression is null", sourcePos, context);
+                }
                 if (leftExpr->IsBinaryExprNode()) 
                 {
                     pass = false; 

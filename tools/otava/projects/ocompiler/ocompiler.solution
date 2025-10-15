@@ -11,4 +11,4 @@ project <intermediate/intermediate.project>;
 project <ast/ast.project>;
 project <lexer/lexer.project>;
 project <symbols/symbols.project>;
-
+//project <parser/parser.project>;

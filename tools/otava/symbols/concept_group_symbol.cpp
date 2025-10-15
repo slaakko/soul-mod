@@ -65,9 +65,9 @@ void ConceptGroupSymbol::Read(Reader& reader)
     }
 }
 
-void ConceptGroupSymbol::Resolve(SymbolTable& symbolTable)
+void ConceptGroupSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
-    Symbol::Resolve(symbolTable);
+    Symbol::Resolve(symbolTable, context);
     for (const auto& conceptId : conceptIds)
     {
         ConceptSymbol* cncp = symbolTable.GetConcept(conceptId);
