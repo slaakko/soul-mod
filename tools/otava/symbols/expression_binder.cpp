@@ -942,10 +942,6 @@ void ExpressionBinder::Visit(otava::ast::DoubleNode& node)
 
 void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
 {
-    if (node.Str() == U"Delta")
-    {
-        int x = 0;
-    }
     SymbolGroupKind groups = symbolGroups;
     if ((groups & SymbolGroupKind::functionSymbolGroup) != SymbolGroupKind::none)
     {

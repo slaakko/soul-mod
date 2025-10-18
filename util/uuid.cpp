@@ -167,7 +167,7 @@ void Rotate(uuid& id, int index)
 
 void Xor(uuid& id, const uuid& that)
 {
-    for (int i = 0; i < id.static_size(); ++i)
+    for (int i = 0; i < uuid::static_size(); ++i)
     {
         id.data[i] ^= that.data[i];
     }

@@ -208,7 +208,7 @@ public:
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
-    TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<TypeSymbol*, int> FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::expected<otava::intermediate::Type*, int> IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
     inline ClassGroupSymbol* Group() const { return group; }

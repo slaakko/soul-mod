@@ -15,7 +15,8 @@ export namespace otava::symbols {
 class Context;
 class TypeSymbol;
 
-void CheckDuplicateSpecifier(DeclarationFlags flags, DeclarationFlags flag, const std::string& specifierStr, const soul::ast::SourcePos& sourcePos, Context* context);
+std::expected<bool, int> CheckDuplicateSpecifier(DeclarationFlags flags, DeclarationFlags flag, const std::string& specifierStr, const soul::ast::SourcePos& sourcePos, 
+    Context* context);
 
 enum class TypeResolverFlags : std::int32_t
 {
@@ -37,8 +38,8 @@ constexpr TypeResolverFlags operator~(TypeResolverFlags flags)
     return TypeResolverFlags(~std::int32_t(flags));
 }
 
-TypeSymbol* ResolveType(otava::ast::Node* node, DeclarationFlags flags, Context* context);
-TypeSymbol* ResolveType(otava::ast::Node* node, DeclarationFlags flags, Context* context, TypeResolverFlags resolverFlags);
-TypeSymbol* ResolveFwdDeclaredType(TypeSymbol* type, const soul::ast::SourcePos& sourcePos, Context* context);
+std::expected<TypeSymbol*, int> ResolveType(otava::ast::Node* node, DeclarationFlags flags, Context* context);
+std::expected<TypeSymbol*, int> ResolveType(otava::ast::Node* node, DeclarationFlags flags, Context* context, TypeResolverFlags resolverFlags);
+std::expected<TypeSymbol*, int> ResolveFwdDeclaredType(TypeSymbol* type, const soul::ast::SourcePos& sourcePos, Context* context);
 
 } // namespace otava::symbols

@@ -53,7 +53,7 @@ int CountMatchingDerivations(Derivations left, Derivations right);
 class Writer;
 class Reader;
 
-void Write(Writer& writer, Derivations derivations);
-void Read(Reader& reader, Derivations& derivations);
+std::expected<bool, int> Write(Writer& writer, Derivations derivations);
+std::expected<bool, int> Read(Reader& reader, Derivations& derivations);
 
 } // namespace otava::symbols

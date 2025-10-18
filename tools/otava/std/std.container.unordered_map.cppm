@@ -2,96 +2,82 @@ export module std.container.unordered_map;
 
 import std.type.fundamental;
 import std.functional;
-import std.iterator.unordered_map;
 import std.utilities.pair;
+import std.container.hash_table;
 
 export namespace std {
 
-template<class Key, class T, class Hash = hash<Key>, class Pred = equal_to<Key>>
+template<typename Key, typename T, typename Hash = hash<Key>, typename Compare = equal_to<Key>>
 class unordered_map
 {
 public:
     using key_type = Key;
     using mapped_type = T;
     using value_type = pair<const Key, T>;
-    using hasher = Hash;
-    using key_equal = Pred;
+    using hash_fn = Hash;
+    using key_equal = Compare;
     using pointer = value_type*;
     using const_pointer = const value_type*;
     using reference = value_type&;
     using const_reference = const value_type&;
-    using size_type = int64_t;
+    using table_type = hash_table<key_type, value_type, std::select_first<const key_type, mapped_type>, hash_fn, key_equal>;
+    using size_type = typename table_type::size_type;
     using difference_type = int64_t;
-    using iterator = std::unordered_map_iterator<value_type>;
-    using const_iterator = const iterator;
+    using iterator = typename table_type::iterator;
+    using const_iterator = typename table_type::const_iterator;
     using local_iterator = iterator;
     using const_local_iterator = const_iterator;
+    using self = std::unordered_map<key_type, mapped_type, hash_fn, key_equal>;
 
-    unordered_map();
-    unordered_map(const unordered_map&);
-    unordered_map(unordered_map&&);
-    ~unordered_map();
-    unordered_map& operator=(const unordered_map&);
-    unordered_map& operator=(unordered_map&&);
+    inline unordered_map() : tbl() {}
+    inline unordered_map(const self& that) : tbl(that.tbl) {}
+    inline unordered_map(self&& that) : tbl(std::move(that.tbl)) {}
+    inline self& operator=(const self& that) { tbl = that.tbl; return *this; }
+    inline self& operator=(self&& that) { tbl = std::move(that.tbl); return *this; }
+
+    inline iterator begin() { return tbl.begin(); }
+    inline const_iterator begin() const { return tbl.begin(); }
+    inline iterator end() { return tbl.end(); }
+    inline const_iterator end() const { return tbl.end(); }
+    inline const_iterator cbegin() const { return tbl.cbegin(); }
+    inline const_iterator cend() const { return tbl.cend(); }
+
+    inline bool empty() const { return tbl.empty(); }
+    inline size_type size() const { return tbl.size(); }
+
+    mapped_type& operator[](const key_type& key)
+    {
+        value_type value(key, mapped_type());
+        pair<iterator, bool> ib = insert(value);
+        iterator it = ib.first;
+        return it->second;
+    }
+
+    inline pair<iterator, bool> insert(const value_type& x) { return tbl.insert(x); }
+
+    inline iterator erase(iterator position) { return tbl.erase(position); }
+    inline iterator erase(const_iterator position) { return tbl.erase(position); }
+    inline size_type erase(const key_type& key) { return tbl.erase(key); }
+    inline iterator erase(const_iterator first, const_iterator last) { return tbl.erase(first, last); }
+    inline void swap(self& that) { std::swap(tbl, that.tbl); }
+    inline void clear() { tbl.clear(); }
+
+    inline hash_fn hash_function() const { return tbl.get_hash_function(); }
+    inline key_equal key_eq() const { return tbl.get_key_eq(); }
+
+    inline iterator find(const key_type& key) { return tbl.find(key); }
+    inline const_iterator find(const key_type& key) const { return tbl.find(key); }
+    inline bool contains(const key_type& key) const { return tbl.contains(key); }
     
-    iterator begin();
-    const_iterator begin() const;
-    iterator end();
-    const_iterator end() const;
-    const_iterator cbegin() const;
-    const_iterator cend() const;
+    inline size_type bucket_count() const { return tbl.bucket_count(); }
+    inline size_type bucket_size(size_type n) const { return tbl.bucket_size(n); }
+    inline size_type bucket(const key_type& k) const { return tbl.bucket(k); }
 
-    bool empty() const;
-    size_type size() const;
-    size_type max_size() const;
-
-    mapped_type& operator[](const key_type& x);
-    mapped_type& operator[](key_type&& x);
-    mapped_type& at(const key_type& x);
-    const mapped_type& at(const key_type& x) const;
-
-    pair<iterator, bool> insert(const value_type& x);
-    pair<iterator, bool> insert(value_type&& x);
-    iterator insert(const_iterator position, const value_type& x);
-    iterator insert(const_iterator position, value_type&& x);
-
-    iterator erase(iterator position);
-    iterator erase(const_iterator position);
-    size_type erase(const key_type& x);
-    iterator erase(const_iterator first, const_iterator last);
-    void swap(unordered_map&);
-    void clear();
-    
-    hasher hash_function() const;
-    key_equal key_eq() const;   
-    
-    iterator find(const key_type& x);
-    const_iterator find(const key_type& x) const;
-    size_type count(const key_type& x) const;
-    bool contains(const key_type& x) const;
-    iterator lower_bound(const key_type& x);
-    const_iterator lower_bound(const key_type& x) const;
-    iterator upper_bound(const key_type& x);
-    const_iterator upper_bound(const key_type& x) const;
-    pair<iterator, iterator> equal_range(const key_type& x);
-    pair<const_iterator, const_iterator> equal_range(const key_type& x) const;
-    
-    size_type bucket_count() const;
-    size_type max_bucket_count() const;
-    size_type bucket_size(size_type n) const;
-    size_type bucket(const key_type& k) const;  
-    local_iterator begin(size_type n);  
-    const_local_iterator begin(size_type n) const;
-    local_iterator end(size_type n);
-    const_local_iterator end(size_type n) const;
-    const_local_iterator cbegin(size_type n) const;
-    const_local_iterator cend(size_type n) const;   
-
-    float load_factor() const noexcept;
-    float max_load_factor() const noexcept;
-    void max_load_factor(float z);
-    void rehash(size_type n);
-    void reserve(size_type n);
+    inline float load_factor() const noexcept { return tbl.load_factor(); }
+    inline float max_load_factor() const noexcept { return tbl.max_load_factor(); }
+    inline void max_load_factor(float z) { tbl.max_load_factor(z); }
+private:
+    table_type tbl;
 };
 
 } // namespace std

@@ -88,7 +88,7 @@ public:
     void AddImplementationUnit(Module* implementationUnit);
     void LoadImplementationUnits(ModuleMapper& moduleMapper, const std::string& config, int optLevel);
     inline otava::ast::NodeIdFactory* GetNodeIdFactory() { return &nodeIdFactory; }
-    void ToXml(const std::string& xmlFilePath) const;
+    std::expected<bool, int> ToXml(const std::string& xmlFilePath) const;
 private:
     ModuleKind kind;
     util::uuid projectId;

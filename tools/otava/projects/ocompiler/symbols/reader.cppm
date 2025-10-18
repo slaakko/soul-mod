@@ -21,7 +21,7 @@ class Reader
 public:
     Reader(const std::string& fileName);
     inline util::BinaryStreamReader& GetBinaryStreamReader() { return binaryStreamReader; }
-    Symbol* ReadSymbol();
+    std::expected<Symbol*, int> ReadSymbol();
     inline Context* GetContext() { return context; }
     inline void SetContext(Context* context_) { context = context_; }
     inline void SetSymbolTable(SymbolTable* symbolTable_) { symbolTable = symbolTable_; }

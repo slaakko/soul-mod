@@ -698,6 +698,10 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
 
     context->PushResetFlag(ContextFlags::returnRef);
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
+    if (condition->GetType()->IsReferenceType())
+    {
+        condition = new BoundDereferenceNode(condition, node.GetSourcePos(), condition->GetType()->GetBaseType());
+    }
     if (!condition->GetType()->IsBoolType())
     {
         condition = MakeBoundBooleanConversionNode(condition, context);
@@ -814,6 +818,10 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
     BoundWhileStatementNode* boundWhileStatement = new BoundWhileStatementNode(node.GetSourcePos());
     context->PushResetFlag(ContextFlags::returnRef);
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
+    if (condition->GetType()->IsReferenceType())
+    {
+        condition = new BoundDereferenceNode(condition, node.GetSourcePos(), condition->GetType()->GetBaseType());
+    }
     if (!condition->GetType()->IsBoolType())
     {
         condition = MakeBoundBooleanConversionNode(condition, context);
@@ -834,6 +842,10 @@ void StatementBinder::Visit(otava::ast::DoStatementNode& node)
     BoundDoStatementNode* boundDoStatement = new BoundDoStatementNode(node.GetSourcePos());
     context->PushResetFlag(ContextFlags::returnRef);
     BoundExpressionNode* condition = BindExpression(node.Expression(), context);
+    if (condition->GetType()->IsReferenceType())
+    {
+        condition = new BoundDereferenceNode(condition, node.GetSourcePos(), condition->GetType()->GetBaseType());
+    }
     if (!condition->GetType()->IsBoolType())
     {
         condition = MakeBoundBooleanConversionNode(condition, context);
@@ -958,6 +970,10 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
     {
         context->PushResetFlag(ContextFlags::returnRef);
         BoundExpressionNode* condition = BindExpression(node.Condition(), context);
+        if (condition->GetType()->IsReferenceType())
+        {
+            condition = new BoundDereferenceNode(condition, node.GetSourcePos(), condition->GetType()->GetBaseType());
+        }
         if (!condition->GetType()->IsBoolType())
         {
             condition = MakeBoundBooleanConversionNode(condition, context);
@@ -1536,11 +1552,6 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
 
 FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
-    if (functionDefinitionSymbol->GroupName() == U"GenerateCode" && functionDefinitionSymbol->ThisParam(context) && 
-        functionDefinitionSymbol->ThisParam(context)->GetType()->GetBaseType()->Name() == U"DerivedToBaseConversion")
-    {
-        int x = 0;
-    }
     RemoveTemporaryAliasTypeSymbols(context);
     if (functionDefinitionSymbol->IsBound()) return functionDefinitionSymbol;
     if (functionDefinitionSymbol->IsTemplate()) return functionDefinitionSymbol;

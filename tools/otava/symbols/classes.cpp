@@ -523,10 +523,6 @@ bool Overrides(FunctionSymbol* f, FunctionSymbol* g, Context* context)
 
 void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos, bool clear)
 {
-    if (Group()->Name() == U"Instantiator")
-    {
-        int x = 0;
-    }
     if (!IsPolymorphic()) return;
     if (clear)
     {
@@ -577,19 +573,11 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
     for (int i = 0; i < n; ++i)
     {
         FunctionSymbol* f = virtualFunctions[i];
-        if (f->GroupName() == U"Visit")
-        {
-            int x = 0;
-        }
         bool found = false;
         int m = vtab.size();
         for (int j = 0; j < m; ++j)
         {
             FunctionSymbol* v = vtab[j];
-            if (v->GroupName() == U"Visit")
-            {
-                int x = 0;
-            }
             if (Overrides(f, v, context))
             {
                 if (!f->IsOverride() && !f->IsFinal() && !f->IsDestructor())

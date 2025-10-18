@@ -41,7 +41,7 @@ public:
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     inline FunctionSymbol* Destructor() const { return destructor; }
     inline void SetDestructor(FunctionSymbol* destructor_) { destructor = destructor_; }
-    TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<TypeSymbol*, int> FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
     inline bool InstantiatingDestructor() const { return instantiatingDestructor; }
     inline void SetInstantiatingDestructor(bool instantiating) { instantiatingDestructor = instantiating; }
@@ -79,6 +79,7 @@ util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplat
 
 struct MemFunKey
 {
+    MemFunKey() {}
     MemFunKey(FunctionSymbol* memFun_, const std::vector<TypeSymbol*>& templateArgumentTypes_);
     FunctionSymbol* memFun;
     std::vector<TypeSymbol*> templateArgumentTypes;
@@ -105,13 +106,13 @@ std::u32string MakeSpecializationName(TypeSymbol* templateSymbol, const std::vec
 CompoundTypeSymbol* GetCompoundSpecializationArgType(TypeSymbol* specialization, int index);
 ClassTemplateSpecializationSymbol* GetClassTemplateSpecializationArgType(TypeSymbol* specialization, int index);
 
-ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs,
+std::expected<ClassTemplateSpecializationSymbol*, int> InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs,
     const soul::ast::SourcePos& sourcePos, Context* context);
 
-FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
+std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
     ClassTemplateSpecializationSymbol* classTemplateSpecialization, const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap,
     const soul::ast::SourcePos& sourcePos, Context* context);
 
-void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, const soul::ast::SourcePos& sourcePos, Context* context);
+std::expected<bool, int> InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, const soul::ast::SourcePos& sourcePos, Context* context);
 
 } // namespace otava::symbols

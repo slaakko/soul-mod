@@ -19,13 +19,13 @@ public:
     Scope* GetScope() override { return &scope; }
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol) override;
-    inline const std::vector<std::unique_ptr<Symbol>>& Symbols() const { return symbols; }
+    inline const std::vector<std::unique_ptr<Symbol>>& Symbols() const { return members; }
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
-    soul::xml::Element* ToXml() const override;
+    std::expected<soul::xml::Element*, int> ToXml() const override;
 private:
-    std::vector<std::unique_ptr<Symbol>> symbols;
+    std::vector<std::unique_ptr<Symbol>> members;
     ContainerScope scope;
 };
 

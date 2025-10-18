@@ -34,7 +34,7 @@ public:
     bool IsRValueRefType() const;
     bool IsReferenceType() const;
     virtual TypeSymbol* PlainType(Context* context) { return this; }
-    virtual TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) { return this; }
+    virtual std::expected<TypeSymbol*, int> FinalType(const soul::ast::SourcePos& sourcePos, Context* context) { return this; }
     virtual TypeSymbol* DirectType(Context* context) { return this; }
     virtual bool HasBaseClass(TypeSymbol* baseClass, int& distance, Context* context) const { return false; }
     virtual bool IsVoidType() const { return false; }

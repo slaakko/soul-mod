@@ -260,23 +260,32 @@ std::expected<bool, int> BoundExpressionNode::Store(Emitter& emitter, OperationF
     return Error("STORE not implemented for " + BoundNodeKindStr(Kind()), sourcePos, context);
 }
 
-Scope* BoundExpressionNode::GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const
+std::expected<Scope*, int> BoundExpressionNode::GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const
 {
     if (type)
     {
         if (op->IsDotNode())
         {
-            TypeSymbol* baseType = type->DirectType(context)->FinalType(sourcePos, context)->GetBaseType();
+            std::expected<TypeSymbol*, int> rv = type->DirectType(context)->FinalType(sourcePos, context);
+            if (!rv) return std::unexpected<int>(rv.error());
+            TypeSymbol* finalType = *rv;
+            TypeSymbol* baseType = finalType->GetBaseType();
             return baseType->GetScope();
         }
         else if (op->IsArrowNode() && type->IsPointerType())
         {
-            TypeSymbol* baseType = type->DirectType(context)->FinalType(sourcePos, context)->RemovePointer(context)->GetBaseType();
+            std::expected<TypeSymbol*, int> rv = type->DirectType(context)->FinalType(sourcePos, context);
+            if (!rv) return std::unexpected<int>(rv.error());
+            TypeSymbol* finalType = *rv;
+            TypeSymbol* baseType = finalType->RemovePointer(context)->GetBaseType();
             return baseType->GetScope();
         }
         else if (op->IsArrowNode() && type->PlainType(context)->IsClassTypeSymbol())
         {
-            TypeSymbol* baseType = type->PlainType(context)->DirectType(context)->FinalType(sourcePos, context);
+            std::expected<TypeSymbol*, int> rv = type->PlainType(context)->DirectType(context)->FinalType(sourcePos, context);
+            if (!rv) return std::unexpected<int>(rv.error());
+            TypeSymbol* finalType = *rv;
+            TypeSymbol* baseType = finalType;
             return baseType->GetScope();
         }
     }
@@ -293,12 +302,16 @@ void BoundExpressionNode::SetFlag(BoundExpressionFlags flag)
     flags = flags | flag;
 }
 
-void BoundExpressionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundExpressionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
     if (type)
     {
-        type = type->FinalType(sourcePos, context)->DirectType(context);
+        std::expected<TypeSymbol*, int> rv = type->DirectType(context)->FinalType(sourcePos, context);
+        if (!rv) return std::unexpected<int>(rv.error());
+        TypeSymbol* finalType = *rv;
+        type = finalType;
     }
+    return std::expected<bool, int>(true);
 }
 
 BoundValueExpressionNode::BoundValueExpressionNode(otava::intermediate::Value* value_, TypeSymbol* type) :
@@ -403,15 +416,17 @@ void BoundCompileUnitNode::Sort()
 std::expected<otava::intermediate::Value*, int> BoundCompileUnitNode::CreateBoundGlobalVariable(
     VariableSymbol* globalVariableSymbol, Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context, bool definition)
 {
-    otava::symbols::TypeSymbol* type = otava::symbols::ResolveFwdDeclaredType(globalVariableSymbol->GetType(), sourcePos, context);
+    auto rv = otava::symbols::ResolveFwdDeclaredType(globalVariableSymbol->GetType(), sourcePos, context);
+    if (!rv) return std::unexpected<int>(rv.error());
+    otava::symbols::TypeSymbol* type = *rv;
     globalVariableSymbol->SetDeclaredType(type);
     otava::intermediate::Value* initializer = nullptr;
     std::expected<otava::intermediate::Type*, int> irv = globalVariableSymbol->GetType()->IrType(emitter, sourcePos, context);
     if (!irv) return std::unexpected<int>(irv.error());
     otava::intermediate::Type* irType = *irv;
-    std::expected<otava::intermediate::Type*, int> rv = emitter.MakePtrType(irType);
-    if (!rv) return std::unexpected<int>(rv.error());
-    otava::intermediate::Type* ptrIrType = *rv;
+    std::expected<otava::intermediate::Type*, int> prv = emitter.MakePtrType(irType);
+    if (!prv) return std::unexpected<int>(prv.error());
+    otava::intermediate::Type* ptrIrType = *prv;
     if (definition)
     {
         if (globalVariableSymbol->GetValue())
@@ -446,12 +461,14 @@ std::expected<bool, int> BoundCompileUnitNode::AddDynamicInitialization(BoundExp
     }
     BoundCompoundStatementNode* body = compileUnitInitializationFunction->Body();
     BoundExpressionStatementNode* initExprStmt = new BoundExpressionStatementNode(sourcePos);
-    initExprStmt->SetExpr(dynamicInitialization, sourcePos, context);
+    std::expected<bool, int> rv = initExprStmt->SetExpr(dynamicInitialization, sourcePos, context);
+    if (!rv) return rv;
     body->AddStatement(initExprStmt);
     if (atExitCall)
     {
         BoundExpressionStatementNode* atExitStmt = new BoundExpressionStatementNode(sourcePos);
-        atExitStmt->SetExpr(atExitCall, sourcePos, context);
+        std::expected<bool, int> rv = atExitStmt->SetExpr(atExitCall, sourcePos, context);
+        if (!rv) return rv;
         body->AddStatement(atExitStmt);
     }
     return std::expected<bool, int>(true);
@@ -852,10 +869,10 @@ void BoundReturnStatementNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-void BoundReturnStatementNode::SetExpr(BoundExpressionNode* expr_, const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundReturnStatementNode::SetExpr(BoundExpressionNode* expr_, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     expr.reset(expr_);
-    expr->ModifyTypes(sourcePos, context);
+    return expr->ModifyTypes(sourcePos, context);
 }
 
 BoundGotoStatementNode::BoundGotoStatementNode(const soul::ast::SourcePos& sourcePos_) : BoundStatementNode(BoundNodeKind::boundGotoStatementNode, sourcePos_)
@@ -891,10 +908,10 @@ void BoundExpressionStatementNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-void BoundExpressionStatementNode::SetExpr(BoundExpressionNode* expr_, const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundExpressionStatementNode::SetExpr(BoundExpressionNode* expr_, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     expr.reset(expr_);
-    expr->ModifyTypes(sourcePos, context);
+    return expr->ModifyTypes(sourcePos, context);
 }
 
 bool BoundExpressionStatementNode::IsTerminator() const
@@ -1260,13 +1277,15 @@ bool BoundVariableNode::IsBoundMemberVariable() const
     return variable->IsMemberVariable();
 }
 
-void BoundVariableNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundVariableNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
     if (thisPtr)
     {
-        thisPtr->ModifyTypes(sourcePos, context);
+        return thisPtr->ModifyTypes(sourcePos, context);
     }
+    return std::expected<bool, int>(true);
 }
 
 BoundParameterNode::BoundParameterNode(ParameterSymbol* parameter_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type) :
@@ -1519,11 +1538,15 @@ BoundExpressionNode* BoundMemberExprNode::Clone() const
     return clone;
 }
 
-void BoundMemberExprNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundMemberExprNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    subject->ModifyTypes(sourcePos, context);
-    member->ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = subject->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = member->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 BoundFunctionCallNode::BoundFunctionCallNode(FunctionSymbol* functionSymbol_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
@@ -1670,13 +1693,16 @@ bool BoundFunctionCallNode::IsNoReturnFunctionCall() const
     return false;
 }
 
-void BoundFunctionCallNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundFunctionCallNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
     for (auto& arg : args)
     {
-        arg->ModifyTypes(sourcePos, context);
+        rv = arg->ModifyTypes(sourcePos, context);
+        if (!rv) return rv;
     }
+    return std::expected<bool, int>(true);
 }
 
 BoundEmptyFunctionCallNode::BoundEmptyFunctionCallNode(const soul::ast::SourcePos& sourcePos_) :
@@ -1752,13 +1778,16 @@ BoundExpressionNode* BoundFunctionPtrCallNode::Clone() const
     return clone;
 }
 
-void BoundFunctionPtrCallNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundFunctionPtrCallNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
     for (auto& arg : args)
     {
-        arg->ModifyTypes(sourcePos, context);
+        rv = arg->ModifyTypes(sourcePos, context);
+        if (!rv) return rv;
     }
+    return std::expected<bool, int>(true);
 }
 
 BoundExpressionSequenceNode::BoundExpressionSequenceNode(const soul::ast::SourcePos& sourcePos_, BoundExpressionNode* left_, BoundExpressionNode* right_) :
@@ -1814,11 +1843,15 @@ bool BoundExpressionSequenceNode::HasValue() const
     return right->HasValue();
 }
 
-void BoundExpressionSequenceNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundExpressionSequenceNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    left->ModifyTypes(sourcePos, context);
-    right->ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = left->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = right->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 BoundExpressionListNode::BoundExpressionListNode(const soul::ast::SourcePos& sourcePos_) :
@@ -1855,13 +1888,16 @@ void BoundExpressionListNode::AddExpression(BoundExpressionNode* expr)
     exprs.push_back(std::unique_ptr<BoundExpressionNode>(expr));
 }
 
-void BoundExpressionListNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundExpressionListNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
     for (auto& expr : exprs)
     {
-        expr->ModifyTypes(sourcePos, context);
+        rv = expr->ModifyTypes(sourcePos, context);
+        if (!rv) return rv;
     }
+    return std::expected<bool, int>(true);
 }
 
 BoundConjunctionNode::BoundConjunctionNode(BoundExpressionNode* left_, BoundExpressionNode* right_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* boolType) :
@@ -1927,15 +1963,20 @@ BoundExpressionNode* BoundConjunctionNode::Clone() const
     return clone;
 }
 
-void BoundConjunctionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundConjunctionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    left->ModifyTypes(sourcePos, context);
-    right->ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = left->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = right->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
     if (temporary)
     {
-        temporary->ModifyTypes(sourcePos, context);
+        rv = temporary->ModifyTypes(sourcePos, context);
+        if (!rv) return rv;
     }
+    return std::expected<bool, int>(true);
 }
 
 BoundDisjunctionNode::BoundDisjunctionNode(BoundExpressionNode* left_, BoundExpressionNode* right_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* boolType) :
@@ -2001,15 +2042,20 @@ BoundExpressionNode* BoundDisjunctionNode::Clone() const
     return clone;
 }
 
-void BoundDisjunctionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundDisjunctionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    left->ModifyTypes(sourcePos, context);
-    right->ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = left->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = right->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
     if (temporary)
     {
-        temporary->ModifyTypes(sourcePos, context);
+        rv = temporary->ModifyTypes(sourcePos, context);
+        if (!rv) return rv;
     }
+    return std::expected<bool, int>(true);
 }
 
 BoundConversionNode::BoundConversionNode(BoundExpressionNode* subject_, FunctionSymbol* conversionFunction_, const soul::ast::SourcePos& sourcePos_) :
@@ -2065,10 +2111,13 @@ BoundExpressionNode* BoundConversionNode::Clone() const
     return clone;
 }
 
-void BoundConversionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundConversionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    subject->ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = subject->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 BoundAddressOfNode::BoundAddressOfNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
@@ -2120,10 +2169,13 @@ BoundExpressionNode* BoundAddressOfNode::Clone() const
     return clone;
 }
 
-void BoundAddressOfNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundAddressOfNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    subject->ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = subject->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 BoundDereferenceNode::BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
@@ -2189,10 +2241,13 @@ BoundExpressionNode* BoundDereferenceNode::Clone() const
     return clone;
 }
 
-void BoundDereferenceNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundDereferenceNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    subject->ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = subject->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 BoundRefToPtrNode::BoundRefToPtrNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
@@ -2222,10 +2277,13 @@ BoundExpressionNode* BoundRefToPtrNode::Clone() const
     return clone;
 }
 
-void BoundRefToPtrNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundRefToPtrNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    subject->ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = subject->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 BoundPtrToRefNode::BoundPtrToRefNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
@@ -2255,10 +2313,13 @@ std::expected<bool, int> BoundPtrToRefNode::Store(Emitter& emitter, OperationFla
     return subject->Store(emitter, flags, sourcePos, context);
 }
 
-void BoundPtrToRefNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundPtrToRefNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    subject->ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = subject->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 BoundDefaultInitNode::BoundDefaultInitNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_) :
@@ -2288,10 +2349,13 @@ BoundExpressionNode* BoundDefaultInitNode::Clone() const
     return clone;
 }
 
-void BoundDefaultInitNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundDefaultInitNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    subject->ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = subject->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 BoundTemporaryNode::BoundTemporaryNode(BoundExpressionNode* rvalueExpr_, BoundVariableNode* backingStore_, const soul::ast::SourcePos& sourcePos_) :
@@ -2344,11 +2408,15 @@ BoundExpressionNode* BoundTemporaryNode::Clone() const
     return clone;
 }
 
-void BoundTemporaryNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundTemporaryNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    rvalueExpr->ModifyTypes(sourcePos, context);
-    backingStore->ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = rvalueExpr->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = backingStore->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 BoundConstructTemporaryNode::BoundConstructTemporaryNode(BoundExpressionNode* constructorCall_, BoundExpressionNode* temporary_, const soul::ast::SourcePos& sourcePos_) :
@@ -2382,11 +2450,15 @@ BoundExpressionNode* BoundConstructTemporaryNode::Clone() const
     return clone;
 }
 
-void BoundConstructTemporaryNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundConstructTemporaryNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    constructorCall->ModifyTypes(sourcePos, context);
-    temporary->ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = constructorCall->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = temporary->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 BoundConstructExpressionNode::BoundConstructExpressionNode(BoundExpressionNode* allocation_, BoundExpressionNode* constructObjectCall_, TypeSymbol* type_,
@@ -2417,11 +2489,15 @@ BoundExpressionNode* BoundConstructExpressionNode::Clone() const
     return clone;
 }
 
-void BoundConstructExpressionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundConstructExpressionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    allocation->ModifyTypes(sourcePos, context);
-    constructObjectCall->ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = allocation->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = constructObjectCall->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 BoundGlobalVariableDefinitionNode::BoundGlobalVariableDefinitionNode(VariableSymbol* globalVariable_, const soul::ast::SourcePos& sourcePos_) :
@@ -2518,10 +2594,13 @@ std::expected<bool, int> BoundVariableAsVoidPtrNode::Load(Emitter& emitter, Oper
     return std::expected<bool, int>(true);
 }
 
-void BoundVariableAsVoidPtrNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundVariableAsVoidPtrNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    addrOfBoundVariable->ModifyTypes(sourcePos, context);
+    std::expected<bool, int> rv = BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    rv = addrOfBoundVariable->ModifyTypes(sourcePos, context);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 bool InDirectSwitchStatement(BoundStatementNode* statement)

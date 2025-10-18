@@ -120,9 +120,9 @@ otava::intermediate::Value* Emitter::EmitString16Value(const std::string& value)
     std::vector<otava::intermediate::Value*> elements;
     for (const char16_t x : str)
     {
-        elements.push_back(EmitUShort(static_cast<uint16_t>(x)));
+        elements.push_back(EmitUShort(static_cast<std::uint16_t>(x)));
     }
-    elements.push_back(EmitUShort(static_cast<uint16_t>(0)));
+    elements.push_back(EmitUShort(static_cast<std::uint16_t>(0)));
     otava::intermediate::Value* string16Value = context->MakeStringArrayValue(soul::ast::Span(), 'w', elements);
     otava::intermediate::GlobalVariable* globalVar = context->GetGlobalVariableForString(string16Value, GetUShortType());
     return globalVar;
@@ -134,9 +134,9 @@ otava::intermediate::Value* Emitter::EmitString32Value(const std::string& value)
     std::vector<otava::intermediate::Value*> elements;
     for (const char32_t x : str)
     {
-        elements.push_back(EmitUInt(static_cast<uint32_t>(x)));
+        elements.push_back(EmitUInt(static_cast<std::uint32_t>(x)));
     }
-    elements.push_back(EmitUInt(static_cast<uint32_t>(0)));
+    elements.push_back(EmitUInt(static_cast<std::uint32_t>(0)));
     otava::intermediate::Value* string16Value = context->MakeStringArrayValue(soul::ast::Span(), 'u', elements);
     otava::intermediate::GlobalVariable* globalVar = context->GetGlobalVariableForString(string16Value, GetUIntType());
     return globalVar;

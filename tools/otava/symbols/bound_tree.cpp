@@ -2232,7 +2232,7 @@ BoundConstructExpressionNode::BoundConstructExpressionNode(BoundExpressionNode* 
 void BoundConstructExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     allocation->Load(emitter, flags | OperationFlags::dup, sourcePos, context);
-    constructObjectCall->Load(emitter, flags | OperationFlags::storeDeref, sourcePos, context);
+    constructObjectCall->Load(emitter, flags | OperationFlags::storeDeref | OperationFlags::defaultInit, sourcePos, context);
 }
 
 void BoundConstructExpressionNode::Accept(BoundTreeVisitor& visitor)

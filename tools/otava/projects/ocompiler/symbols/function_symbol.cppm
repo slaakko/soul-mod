@@ -37,7 +37,7 @@ public:
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
-    soul::xml::Element* ToXml() const override;
+    std::expected<soul::xml::Element*, int> ToXml() const override;
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -161,7 +161,7 @@ public:
     void SetCompileUnitId(const std::string& compileUnitId_);
     inline const std::string& CompileUnitId() const { return compileUnitId; }
     void SetTemplateArgs(const std::vector<TypeSymbol*>& templateArgs_);
-    soul::xml::Element* ToXml() const override;
+    std::expected<soul::xml::Element*, int> ToXml() const override;
 private:
     mutable bool memFunParamsConstructed;
     FunctionKind kind;
@@ -226,7 +226,7 @@ public:
     void AddDefinitionToGroup(Context* context) override;
     bool IsMemberFunction() const override;
     inline const std::string& GetIrName() const { return irName; }
-    soul::xml::Element* ToXml() const override;
+    std::expected<soul::xml::Element*, int> ToXml() const override;
 private:
     FunctionSymbol* declaration;
     util::uuid declarationId;

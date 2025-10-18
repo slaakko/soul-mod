@@ -22,9 +22,14 @@ struct ConversionTableEntry
     TypeSymbol* argType;
 };
 
-struct ConversionTableEntryLess
+struct ConversionTableEntryEqual
 {
     bool operator()(const ConversionTableEntry& left, const ConversionTableEntry& right) const;
+};
+
+struct ConversionTableEntryHash
+{
+    size_t operator()(const ConversionTableEntry& entry) const;
 };
 
 class ConversionTable
@@ -38,7 +43,7 @@ public:
 private:
     SymbolTable* symbolTable;
     std::vector<FunctionSymbol*> conversionFunctions;
-    std::map<ConversionTableEntry, FunctionSymbol*, ConversionTableEntryLess> conversionMap;
+    std::unordered_map<ConversionTableEntry, FunctionSymbol*, ConversionTableEntryHash, ConversionTableEntryEqual> conversionMap;
 };
 
 } // otava::symbols

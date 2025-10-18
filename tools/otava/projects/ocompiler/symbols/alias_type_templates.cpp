@@ -133,7 +133,9 @@ std::expected<TypeSymbol*, int> InstantiateAliasTypeSymbol(TypeSymbol* typeSymbo
                     if (defaultTemplateArgNode)
                     {
                         context->GetSymbolTable()->BeginScope(&instantiationScope);
-                        templateArg = ResolveType(defaultTemplateArgNode, DeclarationFlags::none, context);
+                        auto rv = ResolveType(defaultTemplateArgNode, DeclarationFlags::none, context);
+                        if (!rv) return std::unexpected<int>(rv.error());
+                        templateArg = *rv;
                         context->GetSymbolTable()->EndScope();
                     }
                     else
@@ -150,7 +152,7 @@ std::expected<TypeSymbol*, int> InstantiateAliasTypeSymbol(TypeSymbol* typeSymbo
                 boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
                 boundTemplateParameter->SetBoundSymbol(templateArg);
                 boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
-                instantiationScope.Install(boundTemplateParameter);
+                instantiationScope.Install(boundTemplateParameter, context);
             }
             context->GetSymbolTable()->BeginScope(&instantiationScope);
             Instantiator instantiator(context, &instantiationScope);

@@ -263,7 +263,7 @@ public:
     SymbolGroupKind GetSymbolGroupKind() const;
     void* IrObject(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
     bool IsExtern() const;
-    virtual soul::xml::Element* ToXml() const;
+    virtual std::expected<soul::xml::Element*, int> ToXml() const;
 private:
     SymbolKind kind;
     SymbolFlags flags;

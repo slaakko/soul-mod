@@ -102,7 +102,7 @@ class Context
 {
 public:
     Context();
-    ~Context(); // delete declarationMap
+    ~Context();
     inline Lexer* GetLexer() { return lexer; }
     void SetLexer(Lexer* lexer_);
     inline SymbolTable* GetSymbolTable() { return symbolTable; }

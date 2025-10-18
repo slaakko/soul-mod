@@ -18,7 +18,7 @@ class Writer
 public:
     Writer(const std::string& fileName);
     inline util::BinaryStreamWriter& GetBinaryStreamWriter() { return binaryStreamWriter; }
-    void Write(Symbol* symbol);
+    std::expected<bool, int> Write(Symbol* symbol);
     inline Context* GetContext() { return context; }
     inline void SetContext(Context* context_) { context = context_; }
 private:

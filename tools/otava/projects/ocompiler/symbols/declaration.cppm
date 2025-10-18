@@ -21,27 +21,27 @@ class Reader;
 
 std::string DeclarationFlagStr(DeclarationFlags flags);
 
-void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context);
-Declaration ProcessFunctionDeclaration(otava::ast::Node* node, Context* context);
-Declaration ProcessParameterDeclaration(otava::ast::Node* node, Context* context);
-Declaration ProcessExceptionDeclaration(otava::ast::Node* node, Context* context);
-void ProcessMemberDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context);
-int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast::Node* declarator, otava::ast::Node* functionNode, otava::ast::Node* specifierNode,
-    bool& get, Context* context);
-void EndFunctionDefinition(otava::ast::Node* functionDefinitionNode, int scopes, Context* context);
-void ProcessMemberFunctionDefinition(otava::ast::Node* node, Context* context);
-TypeSymbol* ProcessExplicitInstantiationDeclaration(otava::ast::Node* node, Context* context);
+std::expected<bool, int> ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context);
+std::expected<Declaration, int> ProcessFunctionDeclaration(otava::ast::Node* node, Context* context);
+std::expected<Declaration, int> ProcessParameterDeclaration(otava::ast::Node* node, Context* context);
+std::expected<Declaration, int> ProcessExceptionDeclaration(otava::ast::Node* node, Context* context);
+std::expected<bool, int> ProcessMemberDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context);
+std::expected<int, int> BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast::Node* declarator, otava::ast::Node* functionNode, 
+    otava::ast::Node* specifierNode, bool& get, Context* context);
+std::expected<bool, int> EndFunctionDefinition(otava::ast::Node* functionDefinitionNode, int scopes, Context* context);
+std::expected<bool, int> ProcessMemberFunctionDefinition(otava::ast::Node* node, Context* context);
+std::expected<TypeSymbol*, int> ProcessExplicitInstantiationDeclaration(otava::ast::Node* node, Context* context);
 TypeSymbol* MapType(FunctionSymbol* functionSymbol, TypeSymbol* type, Context* context);
-void GenerateDynamicInitialization(VariableSymbol* variable, BoundExpressionNode* initializer, const soul::ast::SourcePos& sourcePos, Context* context);
-std::unique_ptr<BoundFunctionCallNode> MakeAtExitForVariable(VariableSymbol* variable, const soul::ast::SourcePos& sourcePos, Context* context);
-void AddConvertingConstructorToConversionTable(FunctionSymbol* functionSymbol, const soul::ast::SourcePos& sourcePos, Context* context);
+std::expected<bool, int> GenerateDynamicInitialization(VariableSymbol* variable, BoundExpressionNode* initializer, const soul::ast::SourcePos& sourcePos, Context* context);
+std::expected<std::unique_ptr<BoundFunctionCallNode>, int> MakeAtExitForVariable(VariableSymbol* variable, const soul::ast::SourcePos& sourcePos, Context* context);
+std::expected<bool, int> AddConvertingConstructorToConversionTable(FunctionSymbol* functionSymbol, const soul::ast::SourcePos& sourcePos, Context* context);
 bool HasNoReturnAttribute(otava::ast::Node* attributes);
 
 void Write(Writer& writer, DeclarationFlags flags);
 void Read(Reader& reader, DeclarationFlags& flags);
 
-void ThrowDeclarationParsingError(const soul::ast::SourcePos& sourcePos, Context* context);
+std::unexpected<int> ReturnDeclarationParsingError(const soul::ast::SourcePos& sourcePos, Context* context);
 
-void ProcessLinkageSpecification(otava::ast::Node* node, Context* context);
+std::expected<bool, int> ProcessLinkageSpecification(otava::ast::Node* node, Context* context);
 
 } // namespace otava::symbols

@@ -96,7 +96,7 @@ public:
     virtual ~BoundNode();
     virtual void Accept(BoundTreeVisitor& visitor) = 0;
     inline BoundNodeKind Kind() const { return kind; }
-    virtual Scope* GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const { return nullptr; }
+    virtual std::expected<Scope*, int> GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const { return nullptr; }
     inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
     inline bool IsBoundAddressOfNode() const { return kind == BoundNodeKind::boundAddressOfNode; }
     inline bool IsBoundDereferenceNode() const { return kind == BoundNodeKind::boundDereferenceNode; }
@@ -160,8 +160,8 @@ public:
     inline void SetFlags(BoundExpressionFlags flags_) { flags = flags_; }
     inline TypeSymbol* GetType() const { return type; }
     inline void SetType(TypeSymbol* type_) { type = type_; }
-    virtual void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context);
-    Scope* GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const override;
+    virtual std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context);
+    std::expected<Scope*, int> GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const override;
     bool BindToRvalueRef() const { return GetFlag(BoundExpressionFlags::bindToRvalueRef); }
     virtual bool HasValue() const { return false; }
     virtual std::expected<bool, int> Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context);
@@ -460,7 +460,7 @@ class BoundReturnStatementNode : public BoundStatementNode
 public:
     BoundReturnStatementNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
-    void SetExpr(BoundExpressionNode* expr_, const soul::ast::SourcePos& sourcePos, Context* context);
+    std::expected<bool, int> SetExpr(BoundExpressionNode* expr_, const soul::ast::SourcePos& sourcePos, Context* context);
     inline BoundExpressionNode* GetExpr() const { return expr.get(); }
     bool IsTerminator() const override { return true; }
 private:
@@ -510,7 +510,7 @@ class BoundExpressionStatementNode : public BoundStatementNode
 public:
     BoundExpressionStatementNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
-    void SetExpr(BoundExpressionNode* expr_, const soul::ast::SourcePos& sourcePos, Context* context);
+    std::expected<bool, int> SetExpr(BoundExpressionNode* expr_, const soul::ast::SourcePos& sourcePos, Context* context);
     inline BoundExpressionNode* GetExpr() const { return expr.get(); }
     bool IsTerminator() const override;
 private:
@@ -573,7 +573,7 @@ public:
     bool IsBoundMemberVariable() const override;
     bool IsLvalueExpression() const override { return true; }
     BoundExpressionNode* Clone() const override;
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     VariableSymbol* variable;
     std::unique_ptr<BoundExpressionNode> thisPtr;
@@ -669,7 +669,7 @@ public:
     inline BoundExpressionNode* Member() const { return member.get(); }
     inline otava::ast::NodeKind Op() const { return op; }
     BoundExpressionNode* Clone() const override;
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::unique_ptr<BoundExpressionNode> subject;
     std::unique_ptr<BoundExpressionNode> member;
@@ -691,7 +691,7 @@ public:
     BoundExpressionNode* Clone() const override;
     bool CallsClassConstructor(ClassTypeSymbol*& cls, BoundExpressionNode*& firstArg, FunctionDefinitionSymbol*& destructor) const;
     bool IsNoReturnFunctionCall() const override;
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     FunctionSymbol* functionSymbol;
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
@@ -716,7 +716,7 @@ public:
     inline const std::vector<std::unique_ptr<BoundExpressionNode>>& Args() const { return args; }
     std::expected<bool, int> Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Clone() const override;
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
 };
@@ -733,7 +733,7 @@ public:
     std::expected<bool, int> Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     inline BoundExpressionNode* Left() const { return left.get(); }
     inline BoundExpressionNode* Right() const { return right.get(); }
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::unique_ptr<BoundExpressionNode> left;
     std::unique_ptr<BoundExpressionNode> right;
@@ -749,7 +749,7 @@ public:
     inline int Count() const { return exprs.size(); }
     inline const std::vector<std::unique_ptr<BoundExpressionNode>>& Exprs() const { return exprs; }
     inline BoundExpressionNode* ReleaseExpr(int i) { return exprs[i].release(); }
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::vector<std::unique_ptr<BoundExpressionNode>> exprs;
 };
@@ -765,7 +765,7 @@ public:
     bool HasValue() const override;
     std::expected<bool, int> Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Clone() const override;
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::unique_ptr<BoundExpressionNode> left;
     std::unique_ptr<BoundExpressionNode> right;
@@ -783,7 +783,7 @@ public:
     bool HasValue() const override;
     std::expected<bool, int> Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Clone() const override;
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::unique_ptr<BoundExpressionNode> left;
     std::unique_ptr<BoundExpressionNode> right;
@@ -800,7 +800,7 @@ public:
     bool IsLvalueExpression() const override;
     inline BoundExpressionNode* Subject() const { return subject.get(); }
     BoundExpressionNode* Clone() const override;
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::unique_ptr<BoundExpressionNode> subject;
     FunctionSymbol* conversionFunction;
@@ -816,7 +816,7 @@ public:
     inline BoundExpressionNode* Subject() { return subject.get(); }
     inline BoundExpressionNode* ReleaseSubject() { return subject.release(); }
     BoundExpressionNode* Clone() const override;
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::unique_ptr<BoundExpressionNode> subject;
 };
@@ -832,7 +832,7 @@ public:
     bool IsLvalueExpression() const override { return true; }
     inline BoundExpressionNode* Subject() { return subject.get(); }
     BoundExpressionNode* Clone() const override;
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     OperationFlags kind;
     std::unique_ptr<BoundExpressionNode> subject;
@@ -846,7 +846,7 @@ public:
     std::expected<bool, int> Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::expected<bool, int> Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Clone() const override;
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::unique_ptr<BoundExpressionNode> subject;
 };
@@ -860,7 +860,7 @@ public:
     std::expected<bool, int> Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Clone() const override;
     inline BoundExpressionNode* Subject() const { return subject.get(); }
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::unique_ptr<BoundExpressionNode> subject;
 };
@@ -873,7 +873,7 @@ public:
     std::expected<bool, int> Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::expected<bool, int> Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Clone() const override;
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::unique_ptr<BoundExpressionNode> subject;
 };
@@ -890,7 +890,7 @@ public:
     bool HasValue() const override { return true; }
     bool IsLvalueExpression() const override { return true; }
     BoundExpressionNode* Clone() const override;
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::unique_ptr<BoundExpressionNode> rvalueExpr;
     std::unique_ptr<BoundVariableNode> backingStore;
@@ -908,7 +908,7 @@ public:
     BoundExpressionNode* ConstructorCall() const { return constructorCall.get(); }
     inline BoundExpressionNode* Temporary() const { return temporary.get(); }
     BoundExpressionNode* Clone() const override;
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::unique_ptr<BoundExpressionNode> constructorCall;
     std::unique_ptr<BoundExpressionNode> temporary;
@@ -923,7 +923,7 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     bool HasValue() const override { return !hasPlacement; }
     BoundExpressionNode* Clone() const override;
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::unique_ptr<BoundExpressionNode> allocation;
     std::unique_ptr<BoundExpressionNode> constructObjectCall;
@@ -967,7 +967,7 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     BoundExpressionNode* Clone() const override;
     std::expected<bool, int> Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::unique_ptr<BoundExpressionNode> addrOfBoundVariable;
 };

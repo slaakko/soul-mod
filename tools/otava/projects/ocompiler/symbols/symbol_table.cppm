@@ -260,7 +260,7 @@ public:
     void AddAliasTypeTemplateSpecializationToSet(AliasTypeTemplateSpecializationSymbol* at);
     void AddArrayTypeToSet(ArrayTypeSymbol* a);
     void ImportAfterResolve();
-    void ToXml(const std::string& xmlFilePath) const;
+    std::expected<bool, int> ToXml(const std::string& xmlFilePath) const;
     void InitTemplateParameterIds();
     void InitCompoundTypeIds();
     void InitLevelIds();

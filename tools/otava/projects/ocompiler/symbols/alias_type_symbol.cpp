@@ -108,14 +108,16 @@ std::expected<otava::intermediate::Type*, int> AliasTypeSymbol::IrType(Emitter& 
     return DirectType(context)->IrType(emitter, sourcePos, context);
 }
 
-soul::xml::Element* AliasTypeSymbol::ToXml() const
+std::expected<soul::xml::Element*, int> AliasTypeSymbol::ToXml() const
 {
-    soul::xml::Element* element = TypeSymbol::ToXml();
+    std::expected<soul::xml::Element*, int> rv = TypeSymbol::ToXml();
+    if (!rv) return rv;
+    soul::xml::Element* element = *rv;
     if (group)
     {
         element->SetAttribute("groupId", util::ToString(group->Id()));
     }
-    return element;
+    return std::expected<soul::xml::Element*, int>(element);
 }
 
 class AliasDeclarationProcessor : public otava::ast::DefaultVisitor
@@ -137,9 +139,16 @@ AliasDeclarationProcessor::AliasDeclarationProcessor(Context* context_) : contex
 
 void AliasDeclarationProcessor::Visit(otava::ast::AliasDeclarationNode& node)
 {
+    if (!Valid()) return;
     context->PushSetFlag(ContextFlags::processingAliasDeclation);
     idNode = node.Identifier();
-    type = ResolveType(node.DefiningTypeId(), DeclarationFlags::none, context);
+    std::expected<TypeSymbol*, int> rv = ResolveType(node.DefiningTypeId(), DeclarationFlags::none, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
+    type = *rv;
     while (type->IsAliasTypeSymbol())
     {
         AliasTypeSymbol* aliasType = static_cast<AliasTypeSymbol*>(type);
@@ -148,7 +157,7 @@ void AliasDeclarationProcessor::Visit(otava::ast::AliasDeclarationNode& node)
     context->PopFlags();
 }
 
-void ProcessAliasDeclaration(otava::ast::Node* aliasDeclarationNode, Context* context)
+std::expected<bool, int> ProcessAliasDeclaration(otava::ast::Node* aliasDeclarationNode, Context* context)
 {
     bool instantiate = context->GetFlag(ContextFlags::instantiateAliasTypeTemplate);
     if (instantiate)
@@ -158,6 +167,7 @@ void ProcessAliasDeclaration(otava::ast::Node* aliasDeclarationNode, Context* co
     AliasTypeSymbol* aliasType = context->GetAliasType();
     AliasDeclarationProcessor processor(context);
     aliasDeclarationNode->Accept(processor);
+    if (!processor) return std::unexpected<int>(processor.Error());
     otava::ast::Node* idNode = processor.GetIdNode();
     TypeSymbol* type = processor.GetType();
     if (instantiate)
@@ -176,6 +186,7 @@ void ProcessAliasDeclaration(otava::ast::Node* aliasDeclarationNode, Context* co
     {
         context->PopFlags();
     }
+    return std::expected<bool, int>(true);
 }
 
 bool AliasTypeLess::operator()(AliasTypeSymbol* left, AliasTypeSymbol* right) const

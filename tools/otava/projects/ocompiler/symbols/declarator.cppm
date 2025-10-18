@@ -92,10 +92,11 @@ private:
 
 class Context;
 
-std::unique_ptr<DeclarationList> ProcessInitDeclaratorList(TypeSymbol* baseType, otava::ast::Node* declarationNode, otava::ast::Node* initDeclaratorList,
-    DeclarationFlags flags, Context* context);
-std::unique_ptr<DeclarationList> ProcessMemberDeclaratorList(TypeSymbol* baseType, otava::ast::Node* declarationNode, otava::ast::Node* memberDeclaratorList, DeclarationFlags flags, Context* context);
-Declaration ProcessDeclarator(TypeSymbol* baseType, otava::ast::Node* declarator, otava::ast::Node* declarationNode, DeclarationFlags flags, FunctionQualifiers qualifiers,
-    Context* context);
+std::expected<std::unique_ptr<DeclarationList>, int> ProcessInitDeclaratorList(
+    TypeSymbol* baseType, otava::ast::Node* declarationNode, otava::ast::Node* initDeclaratorList, DeclarationFlags flags, Context* context);
+std::expected<std::unique_ptr<DeclarationList>, int> ProcessMemberDeclaratorList(
+    TypeSymbol* baseType, otava::ast::Node* declarationNode, otava::ast::Node* memberDeclaratorList, DeclarationFlags flags, Context* context);
+std::expected<Declaration, int> ProcessDeclarator(TypeSymbol* baseType, otava::ast::Node* declarator, otava::ast::Node* declarationNode, DeclarationFlags flags, 
+    FunctionQualifiers qualifiers, Context* context);
 
 } // namespace otava::symbols

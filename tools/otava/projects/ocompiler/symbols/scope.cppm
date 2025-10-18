@@ -71,8 +71,8 @@ public:
     virtual ~Scope();
     inline ScopeKind Kind() const { return kind; }
     inline void SetKind(ScopeKind kind_) { kind = kind_; }
-    void Install(Symbol* symbol);
-    void Install(Symbol* symbol, Symbol* from);
+    void Install(Symbol* symbol, Context* context);
+    void Install(Symbol* symbol, Symbol* from, Context* context);
     void Uninstall(Symbol* symbol);
     Symbol* Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags) const;
     inline bool IsBlockScope() const { return kind == ScopeKind::blockScope; }

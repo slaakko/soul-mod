@@ -1,0 +1,3 @@
+project ptr_placement;
+target=program;
+source <main.cpp>;

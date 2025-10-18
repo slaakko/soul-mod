@@ -35,14 +35,14 @@ public:
     std::expected<otava::intermediate::Type*, int> IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     inline AliasGroupSymbol* Group() const { return group; }
     inline void SetGroup(AliasGroupSymbol* group_) { group = group_; }
-    soul::xml::Element* ToXml() const override;
+    std::expected<soul::xml::Element*, int> ToXml() const override;
 private:
     TypeSymbol* referredType;
     util::uuid referredTypeId;
     AliasGroupSymbol* group;
 };
 
-void ProcessAliasDeclaration(otava::ast::Node* aliasDeclarationNode, Context* context);
+std::expected<bool, int> ProcessAliasDeclaration(otava::ast::Node* aliasDeclarationNode, Context* context);
 
 struct AliasTypeLess
 {

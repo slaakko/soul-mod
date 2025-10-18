@@ -152,4 +152,22 @@ std::expected<uuid, int> ParseUuid(const std::string& str)
     return std::expected<uuid, int>(id);
 }
 
+void Rotate(uuid& id, int index)
+{
+    std::rotate(id.begin(), id.begin() + index, id.end());
+}
+
+void Xor(uuid& id, const uuid& that)
+{
+    for (int i = 0; i < uuid::static_size(); ++i)
+    {
+        id.data[i] ^= that.data[i];
+    }
+}
+
+size_t uuid_hash::operator()(const uuid& id) const
+{
+    return std::hash_bytes(id.begin(), uuid::static_size());
+}
+
 } // namespace util

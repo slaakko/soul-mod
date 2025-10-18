@@ -25,9 +25,9 @@ public:
     inline const std::string& FilePath() const { return context->FilePath(); }
     void SetCompileUnitInfo(const std::string& compileUnitId, const std::string& sourceFilePath);
     inline otava::intermediate::Context* GetIntermediateContext() { return context; }
-    void ResolveReferences();
-    void Emit();
-    otava::intermediate::Function* CreateFunction(const std::string& name, otava::intermediate::Type* type, bool inline_, bool once);
+    std::expected<bool, int> ResolveReferences();
+    std::expected<bool, int> Emit();
+    std::expected<otava::intermediate::Function*, int> CreateFunction(const std::string& name, otava::intermediate::Type* type, bool inline_, bool once);
     void SetRegNumbers();
     inline std::expected<otava::intermediate::Function*, int> GetOrInsertFunction(const std::string& name, otava::intermediate::FunctionType* functionType)
     {
@@ -83,9 +83,9 @@ public:
     {
         return context->MakeStructureValue(soul::ast::Span(), fieldValues, structureType);
     }
-    otava::intermediate::Value* EmitStringValue(const std::string& value);
-    otava::intermediate::Value* EmitString16Value(const std::string& value);
-    otava::intermediate::Value* EmitString32Value(const std::string& value);
+    std::expected<otava::intermediate::Value*, int> EmitStringValue(const std::string& value);
+    std::expected<otava::intermediate::Value*, int> EmitString16Value(const std::string& value);
+    std::expected<otava::intermediate::Value*, int> EmitString32Value(const std::string& value);
     inline otava::intermediate::Value* EmitConversionValue(otava::intermediate::Type* type, otava::intermediate::Value* from)
     {
         return context->MakeConversionValue(soul::ast::Span(), type, from);
@@ -192,7 +192,8 @@ public:
     IrValueStack& Stack() { return *stack; }
     inline otava::intermediate::Value* RetValue() const { return retValue; }
     inline void SetRetValue(otava::intermediate::Value* retValue_) { retValue = retValue_; }
-    otava::intermediate::Value* EmitClassPtrConversion(otava::intermediate::Value* classPtr, otava::intermediate::Value* delta, otava::intermediate::Type* destType);
+    std::expected<otava::intermediate::Value*, int> EmitClassPtrConversion(otava::intermediate::Value* classPtr, otava::intermediate::Value* delta, 
+        otava::intermediate::Type* destType);
     inline otava::intermediate::MetadataStruct* CreateMetadataStruct() { return context->CreateMetadataStruct(); }
     inline otava::intermediate::MetadataBool* CreateMetadataBool(bool value) { return context->CreateMetadataBool(value); }
     inline otava::intermediate::MetadataLong* CreateMetadataLong(std::int64_t value) { return context->CreateMetadataLong(value); }

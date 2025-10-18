@@ -524,7 +524,9 @@ std::expected<bool, int> ClassTypeSymbol::MakeObjectLayout(const soul::ast::Sour
     {
         std::int32_t layoutIndex = objectLayout.size();
         memberVar->SetLayoutIndex(layoutIndex);
-        TypeSymbol* memberVarType = memberVar->GetType()->FinalType(sourcePos, context);
+        std::expected<TypeSymbol*, int> rv = memberVar->GetType()->FinalType(sourcePos, context);
+        if (!rv) return std::unexpected<int>(rv.error());
+        TypeSymbol* memberVarType = *rv;
         if (memberVarType->IsForwardClassDeclarationSymbol())
         {
             return Error("could not make object layout: incomplete types not allowed", sourcePos, context);
@@ -1098,7 +1100,7 @@ int ForwardClassDeclarationSymbol::Arity()
     }
 }
 
-TypeSymbol* ForwardClassDeclarationSymbol::FinalType(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<TypeSymbol*, int> ForwardClassDeclarationSymbol::FinalType(const soul::ast::SourcePos& sourcePos, Context* context)
 {
     if (classTypeSymbol)
     {
@@ -1112,7 +1114,9 @@ TypeSymbol* ForwardClassDeclarationSymbol::FinalType(const soul::ast::SourcePos&
 
 std::expected<otava::intermediate::Type*, int> ForwardClassDeclarationSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    TypeSymbol* finalType = FinalType(sourcePos, context);
+    std::expected<TypeSymbol*, int> rv = FinalType(sourcePos, context);
+    if (!rv) return std::unexpected<int>(rv.error());
+    TypeSymbol* finalType = *rv;
     if (finalType->IsForwardClassDeclarationSymbol())
     {
         return context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType)->IrType(emitter, sourcePos, context);    
@@ -1165,44 +1169,61 @@ ClassResolver::ClassResolver(Context* context_) : context(context_), classKind(o
 
 void ClassResolver::Visit(otava::ast::ClassSpecifierNode& node)
 {
+    if (!Valid()) return;
     node.ClassHead()->Accept(*this);
 }
 
 void ClassResolver::Visit(otava::ast::ClassHeadNode& node)
 {
+    if (!Valid()) return;
     node.ClassKey()->Accept(*this);
+    if (!Valid()) return; 
     node.ClassHeadName()->Accept(*this);
 }
 
 void ClassResolver::Visit(otava::ast::IdentifierNode& node)
 {
+    if (!Valid()) return;
     name = node.Str();
 }
 
 void ClassResolver::Visit(otava::ast::TemplateIdNode& node)
 {
+    if (!Valid()) return;
     node.TemplateName()->Accept(*this);
-    specialization = ResolveType(&node, DeclarationFlags::none, context, TypeResolverFlags::dontInstantiate);
+    if (!Valid()) return;
+    auto rv = ResolveType(&node, DeclarationFlags::none, context, TypeResolverFlags::dontInstantiate);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
+    specialization = *rv;
 }
 
 void ClassResolver::Visit(otava::ast::ElaboratedTypeSpecifierNode& node)
 {
+    if (!Valid()) return;
     node.ClassKey()->Accept(*this);
+    if (!Valid()) return;
     name = node.Id()->Str();
 }
 
 void ClassResolver::Visit(otava::ast::ClassNode& node)
 {
+    if (!Valid()) return;
     classKind = otava::symbols::ClassKind::class_;
 }
 
 void ClassResolver::Visit(otava::ast::StructNode& node)
 {
+    if (!Valid()) return;
     classKind = otava::symbols::ClassKind::struct_;
 }
 
 void ClassResolver::Visit(otava::ast::UnionNode& node)
 {
+    if (!Valid()) return;
     classKind = otava::symbols::ClassKind::union_;
 }
 
@@ -1223,7 +1244,14 @@ BaseClassResolver::BaseClassResolver(Context* context_) : context(context_)
 
 void BaseClassResolver::Visit(otava::ast::BaseSpecifierNode& node)
 {
-    TypeSymbol* baseClassType = ResolveType(node.ClassOrDeclType(), DeclarationFlags::none, context);
+    if (!Valid()) return;
+    auto rv = ResolveType(node.ClassOrDeclType(), DeclarationFlags::none, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
+    TypeSymbol* baseClassType = *rv;
     if (baseClassType->IsClassTypeSymbol())
     {
         ClassTypeSymbol* baseClass = static_cast<ClassTypeSymbol*>(baseClassType);
@@ -1243,10 +1271,7 @@ std::expected<bool, int> GetClassAttributes(otava::ast::Node* node, std::u32stri
     node->Accept(resolver);
     name = resolver.GetName();
     kind = resolver.GetClassKind();
-    if (!resolver)
-    {
-        return std::unexpected<int>(resolver.Error());
-    }
+    if (!resolver) return std::unexpected<int>(resolver.Error());
     specialization = resolver.Specialization();
     return std::expected<bool, int>(true);
 }
@@ -1517,7 +1542,8 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
                 std::set<const TypeSymbol*> visited;
                 if (sp->IsComplete(visited))
                 {
-                    InstantiateDestructor(sp, sourcePos, context);
+                    std::expected<bool, int> rv = InstantiateDestructor(sp, sourcePos, context);
+                    if (!rv) return std::unexpected<int>(rv.error());
                 }
             }
             destructorFn = sp->Destructor();
@@ -1590,8 +1616,10 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         ParameterSymbol* thisParam = destructorDefinitionSymbol->ThisParam(context);
         BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, thisParam->GetType());
-        FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+        std::expected<FunctionSymbol*, int> rv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
             baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+        if (!rv) return std::unexpected<int>(rv.error());
+        FunctionSymbol* conversion = *rv;
         if (conversion)
         {
             std::expected<Symbol*, int> rv = GenerateDestructor(baseClass, sourcePos, context);
@@ -1658,8 +1686,10 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
             if (vptrHolderClass != classTypeSymbol)
             {
                 BoundExpressionNode* thisPtr = new BoundParameterNode(destructor->ThisParam(context), sourcePos, destructor->ThisParam(context)->GetReferredType(context));
-                FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                std::expected<FunctionSymbol*, int> rv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
                     vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+                if (!rv) return std::unexpected<int>(rv.error());
+                FunctionSymbol* conversion = *rv;
                 if (conversion)
                 {
                     BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
@@ -1691,7 +1721,9 @@ std::expected<bool, int> GenerateDestructors(BoundCompileUnitNode* boundCompileU
     for (ClassTypeSymbol* classType : boundCompileUnit->GenerateDestructorList())
     {
         soul::ast::SourcePos sourcePos;
-        TypeSymbol* finalType = classType->FinalType(sourcePos, context);
+        std::expected<TypeSymbol*, int> rv = classType->FinalType(sourcePos, context);
+        if (!rv) return std::unexpected<int>(rv.error());
+        TypeSymbol* finalType = *rv;
         if (finalType->IsClassTypeSymbol())
         {
             ClassTypeSymbol* finalClass = static_cast<ClassTypeSymbol*>(finalType);

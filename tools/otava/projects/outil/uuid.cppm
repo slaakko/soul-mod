@@ -47,4 +47,12 @@ inline uuid random_uuid()
     return uuid::random();
 }
 
+void Rotate(uuid& id, int index);
+void Xor(uuid& id, const uuid& that);
+
+struct uuid_hash 
+{
+    size_t operator()(const uuid& id) const;
+};
+
 } // namespace util

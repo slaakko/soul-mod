@@ -506,7 +506,12 @@ void FundamentalTypeDefaultCtor::GenerateCode(Emitter& emitter, std::vector<Boun
     if ((flags & OperationFlags::defaultInit) != OperationFlags::none)
     {
         emitter.Stack().Push(type->IrType(emitter, sourcePos, context)->DefaultValue());
-        args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+        OperationFlags storeFlags = OperationFlags::none;
+        if ((flags & OperationFlags::storeDeref) != OperationFlags::none)
+        {
+            storeFlags = storeFlags | OperationFlags::deref;
+        }
+        args[0]->Store(emitter, storeFlags, sourcePos, context);
     }
 }
 

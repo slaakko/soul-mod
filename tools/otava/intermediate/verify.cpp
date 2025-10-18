@@ -105,7 +105,7 @@ void VerifierVisitor::CheckType(const std::string& typeDescription, Type* type, 
     if (assertedType != expected)
     {
         Error("type check error: " + typeDescription + " is '" + type->Name() + "', and " + expectedTypeDescription + " is '" + assertedType->Name() +
-            "' but '" + expected->Name() + "' expected", span, GetContext());
+            "' but '" + expected->Name() + "' seen", span, GetContext());
     }
 }
 

@@ -20,6 +20,6 @@ TypeSymbol* GetIntegerType(otava::ast::Suffix suffix, const soul::ast::SourcePos
 TypeSymbol* GetFloatingPointType(otava::ast::Suffix suffix, const soul::ast::SourcePos& sourcePos, Context* context);
 TypeSymbol* GetStringType(otava::ast::EncodingPrefix encodingPrefix, const soul::ast::SourcePos& sourcePos, Context* context);
 TypeSymbol* GetCharacterType(otava::ast::EncodingPrefix encodingPrefix, const soul::ast::SourcePos& sourcePos, Context* context);
-Value* Evaluate(otava::ast::Node* node, Context* context);
+std::expected<Value*, int> Evaluate(otava::ast::Node* node, Context* context);
 
 } // namespace otava::symbols

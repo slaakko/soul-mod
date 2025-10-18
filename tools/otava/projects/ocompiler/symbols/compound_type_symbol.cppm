@@ -36,7 +36,7 @@ public:
     void Accept(Visitor& visitor) override;
     bool IsExportSymbol(Context* context) const override;
     std::expected<otava::intermediate::Type*, int> IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<TypeSymbol*, int> FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
     TypeSymbol* DirectType(Context* context) override;
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
     bool IsBasicStringCharType(Context* context) override { return PointerCount() == 0 && PlainType(context)->IsBasicStringCharType(context); }

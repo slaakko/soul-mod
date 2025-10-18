@@ -507,7 +507,12 @@ void EnumTypeDefaultCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpres
     if ((flags & OperationFlags::defaultInit) != OperationFlags::none)
     {
         emitter.Stack().Push(enumType->IrType(emitter, sourcePos, context)->DefaultValue());
-        args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+        OperationFlags storeFlags = OperationFlags::none;
+        if ((flags & OperationFlags::storeDeref) != OperationFlags::none)
+        {
+            storeFlags = storeFlags | OperationFlags::deref;
+        }
+        args[0]->Store(emitter, storeFlags, sourcePos, context);
     }
 }
 

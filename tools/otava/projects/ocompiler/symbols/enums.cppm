@@ -16,7 +16,7 @@ export namespace otava::symbols {
 
 class Value;
 
-enum class EnumTypeKind
+enum class EnumTypeKind : std::uint8_t
 {
     enum_, enumClass, enumStruct
 };
@@ -106,7 +106,7 @@ public:
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
-    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
@@ -123,7 +123,7 @@ public:
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
-    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
@@ -140,7 +140,7 @@ public:
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
-    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
@@ -157,7 +157,7 @@ public:
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
-    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
@@ -174,7 +174,7 @@ public:
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
-    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
@@ -191,7 +191,7 @@ public:
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
-    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
@@ -207,7 +207,7 @@ public:
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
-    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
@@ -218,10 +218,10 @@ private:
 
 class Context;
 
-void BeginEnumType(otava::ast::Node* node, Context* context);
-void AddEnumerators(otava::ast::Node* node, Context* context);
-void EndEnumType(otava::ast::Node* node, Context* context);
-void ProcessEnumForwardDeclaration(otava::ast::Node* node, Context* context);
+std::expected<bool, int> BeginEnumType(otava::ast::Node* node, Context* context);
+std::expected<bool, int> AddEnumerators(otava::ast::Node* node, Context* context);
+std::expected<bool, int> EndEnumType(otava::ast::Node* node, Context* context);
+std::expected<bool, int> ProcessEnumForwardDeclaration(otava::ast::Node* node, Context* context);
 void BindEnumType(EnumeratedTypeSymbol* enumType, const soul::ast::SourcePos& sourcePos, Context* context);
 
 } // namespace otava::symbols

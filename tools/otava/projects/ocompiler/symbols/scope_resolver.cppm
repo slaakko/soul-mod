@@ -13,7 +13,7 @@ export namespace otava::symbols {
 class Scope;
 class Context;
 
-Scope* ResolveScope(otava::ast::Node* nnsNode, Context* context);
+std::expected<Scope*, int> ResolveScope(otava::ast::Node* nnsNode, Context* context);
 
 void BeginScope(otava::ast::Node* nnsNode, Context* context);
 void EndScope(Context* context);
