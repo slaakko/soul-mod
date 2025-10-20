@@ -13,10 +13,10 @@ CharNode::CharNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::char
 {
 }
 
-Node* CharNode::Clone() const
+std::expected<Node*, int> CharNode::Clone() const
 {
     CharNode* clone = new CharNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void CharNode::Accept(Visitor& visitor)
@@ -28,10 +28,10 @@ Char8Node::Char8Node(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::ch
 {
 }
 
-Node* Char8Node::Clone() const
+std::expected<Node*, int> Char8Node::Clone() const
 {
     Char8Node* clone = new Char8Node(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void Char8Node::Accept(Visitor& visitor)
@@ -43,10 +43,10 @@ Char16Node::Char16Node(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
-Node* Char16Node::Clone() const
+std::expected<Node*, int> Char16Node::Clone() const
 {
     Char16Node* clone = new Char16Node(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void Char16Node::Accept(Visitor& visitor)
@@ -58,10 +58,10 @@ Char32Node::Char32Node(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
-Node* Char32Node::Clone() const
+std::expected<Node*, int> Char32Node::Clone() const
 {
     Char32Node* clone = new Char32Node(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void Char32Node::Accept(Visitor& visitor)
@@ -73,10 +73,10 @@ WCharNode::WCharNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::wc
 {
 }
 
-Node* WCharNode::Clone() const
+std::expected<Node*, int> WCharNode::Clone() const
 {
     WCharNode* clone = new WCharNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void WCharNode::Accept(Visitor& visitor)
@@ -88,10 +88,10 @@ BoolNode::BoolNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::bool
 {
 }
 
-Node* BoolNode::Clone() const
+std::expected<Node*, int> BoolNode::Clone() const
 {
     BoolNode* clone = new BoolNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void BoolNode::Accept(Visitor& visitor)
@@ -103,10 +103,10 @@ ShortNode::ShortNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::sh
 {
 }
 
-Node* ShortNode::Clone() const
+std::expected<Node*, int> ShortNode::Clone() const
 {
     ShortNode* clone = new ShortNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void ShortNode::Accept(Visitor& visitor)
@@ -118,10 +118,10 @@ IntNode::IntNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::intNod
 {
 }
 
-Node* IntNode::Clone() const
+std::expected<Node*, int> IntNode::Clone() const
 {
     IntNode* clone = new IntNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void IntNode::Accept(Visitor& visitor)
@@ -133,10 +133,10 @@ LongNode::LongNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::long
 {
 }
 
-Node* LongNode::Clone() const
+std::expected<Node*, int> LongNode::Clone() const
 {
     LongNode* clone = new LongNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void LongNode::Accept(Visitor& visitor)
@@ -148,10 +148,10 @@ SignedNode::SignedNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
-Node* SignedNode::Clone() const
+std::expected<Node*, int> SignedNode::Clone() const
 {
     SignedNode* clone = new SignedNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void SignedNode::Accept(Visitor& visitor)
@@ -163,10 +163,10 @@ UnsignedNode::UnsignedNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKi
 {
 }
 
-Node* UnsignedNode::Clone() const
+std::expected<Node*, int> UnsignedNode::Clone() const
 {
     UnsignedNode* clone = new UnsignedNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void UnsignedNode::Accept(Visitor& visitor)
@@ -178,10 +178,10 @@ FloatNode::FloatNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::fl
 {
 }
 
-Node* FloatNode::Clone() const
+std::expected<Node*, int> FloatNode::Clone() const
 {
     FloatNode* clone = new FloatNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void FloatNode::Accept(Visitor& visitor)
@@ -193,10 +193,10 @@ DoubleNode::DoubleNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
-Node* DoubleNode::Clone() const
+std::expected<Node*, int> DoubleNode::Clone() const
 {
     DoubleNode* clone = new DoubleNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void DoubleNode::Accept(Visitor& visitor)
@@ -208,10 +208,10 @@ VoidNode::VoidNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::void
 {
 }
 
-Node* VoidNode::Clone() const
+std::expected<Node*, int> VoidNode::Clone() const
 {
     VoidNode* clone = new VoidNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void VoidNode::Accept(Visitor& visitor)

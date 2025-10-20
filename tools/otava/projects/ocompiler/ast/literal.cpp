@@ -47,10 +47,10 @@ IntegerLiteralNode::IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_, s
 {
 }
 
-Node* IntegerLiteralNode::Clone() const
+std::expected<Node*, int> IntegerLiteralNode::Clone() const
 {
     IntegerLiteralNode* clone = new IntegerLiteralNode(GetSourcePos(), value, suffix, base, Rep());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void IntegerLiteralNode::Accept(Visitor& visitor)
@@ -98,10 +98,10 @@ FloatingLiteralNode::FloatingLiteralNode(const soul::ast::SourcePos& sourcePos_,
 {
 }
 
-Node* FloatingLiteralNode::Clone() const
+std::expected<Node*, int> FloatingLiteralNode::Clone() const
 {
     FloatingLiteralNode* clone = new FloatingLiteralNode(GetSourcePos(), value, suffix, base, Rep());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void FloatingLiteralNode::Accept(Visitor& visitor)
@@ -149,10 +149,10 @@ CharacterLiteralNode::CharacterLiteralNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
-Node* CharacterLiteralNode::Clone() const
+std::expected<Node*, int> CharacterLiteralNode::Clone() const
 {
     CharacterLiteralNode* clone = new CharacterLiteralNode(GetSourcePos(), value, encodingPrefix, Rep(), hasMultipleCharacters);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void CharacterLiteralNode::Accept(Visitor& visitor)
@@ -208,10 +208,10 @@ StringLiteralNode::StringLiteralNode(NodeKind kind_, const soul::ast::SourcePos&
 {
 }
 
-Node* StringLiteralNode::Clone() const
+std::expected<Node*, int> StringLiteralNode::Clone() const
 {
     StringLiteralNode* clone = new StringLiteralNode(GetSourcePos(), value, encodingPrefix, Rep());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void StringLiteralNode::Accept(Visitor& visitor)
@@ -254,10 +254,10 @@ RawStringLiteralNode::RawStringLiteralNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
-Node* RawStringLiteralNode::Clone() const
+std::expected<Node*, int> RawStringLiteralNode::Clone() const
 {
     RawStringLiteralNode* clone = new RawStringLiteralNode(GetSourcePos(), Value(), EncodingPrefix(), delimSequence, Rep());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void RawStringLiteralNode::Accept(Visitor& visitor)
@@ -293,10 +293,10 @@ BooleanLiteralNode::BooleanLiteralNode(const soul::ast::SourcePos& sourcePos_, b
 {
 }
 
-Node* BooleanLiteralNode::Clone() const
+std::expected<Node*, int> BooleanLiteralNode::Clone() const
 {
     BooleanLiteralNode* clone = new BooleanLiteralNode(GetSourcePos(), value, Rep());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void BooleanLiteralNode::Accept(Visitor& visitor)
@@ -332,10 +332,10 @@ NullPtrLiteralNode::NullPtrLiteralNode(const soul::ast::SourcePos& sourcePos_, c
 {
 }
 
-Node* NullPtrLiteralNode::Clone() const
+std::expected<Node*, int> NullPtrLiteralNode::Clone() const
 {
     NullPtrLiteralNode* clone = new NullPtrLiteralNode(GetSourcePos(), Rep());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void NullPtrLiteralNode::Accept(Visitor& visitor)
@@ -352,10 +352,14 @@ UserDefinedLiteraNode::UserDefinedLiteraNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-Node* UserDefinedLiteraNode::Clone() const
+std::expected<Node*, int> UserDefinedLiteraNode::Clone() const
 {
-    UserDefinedLiteraNode* clone = new UserDefinedLiteraNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
-    return clone;
+    std::expected<Node*, int> l = Left()->Clone();
+    if (!l) return l;
+    std::expected<Node*, int> r = Right()->Clone();
+    if (!r) return r;
+    UserDefinedLiteraNode* clone = new UserDefinedLiteraNode(GetSourcePos(), *l, *r);
+    return std::expected<Node*, int>(clone);
 }
 
 void UserDefinedLiteraNode::Accept(Visitor& visitor)
@@ -372,10 +376,12 @@ LiteralOperatorIdNode::LiteralOperatorIdNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-Node* LiteralOperatorIdNode::Clone() const
+std::expected<Node*, int> LiteralOperatorIdNode::Clone() const
 {
-    LiteralOperatorIdNode* clone = new LiteralOperatorIdNode(GetSourcePos(), Child()->Clone(), stringLitPos);
-    return clone;
+    std::expected<Node*, int> c = Child()->Clone();
+    if (!c) return c;
+    LiteralOperatorIdNode* clone = new LiteralOperatorIdNode(GetSourcePos(), *c, stringLitPos);
+    return std::expected<Node*, int>(clone);
 }
 
 void LiteralOperatorIdNode::Accept(Visitor& visitor)

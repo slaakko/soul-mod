@@ -22,26 +22,37 @@ ModuleDeclarationNode::ModuleDeclarationNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-Node* ModuleDeclarationNode::Clone() const
+std::expected<Node*, int> ModuleDeclarationNode::Clone() const
 {
     Node* clonedExport = nullptr;
     if (exprt)
     {
-        clonedExport = exprt->Clone();
+        std::expected<Node*, int> e = exprt->Clone();
+        if (!e) return e;
+        clonedExport = *e;
     }
     Node* clonedModulePartition = nullptr;
     if (modulePartition)
     {
-        clonedModulePartition = modulePartition->Clone();
+        std::expected<Node*, int> p = modulePartition->Clone();
+        if (!p) return p;
+        clonedModulePartition = *p;
     }
     Node* clonedAttributes = nullptr;
     if (attributes)
     {
-        clonedAttributes = attributes->Clone();
+        std::expected<Node*, int> a = attributes->Clone();
+        if (!a) return a;
+        clonedAttributes = *a;
     }
-    ModuleDeclarationNode* clone = new ModuleDeclarationNode(GetSourcePos(), clonedExport, modle->Clone(), moduleName->Clone(), clonedModulePartition, clonedAttributes,
-        semicolon->Clone());
-    return clone;
+    std::expected<Node*, int> m = modle->Clone();
+    if (!m) return m;
+    std::expected<Node*, int> n = moduleName->Clone();
+    if (!n) return n;
+    std::expected<Node*, int> s = semicolon->Clone();
+    if (!s) return s;
+    ModuleDeclarationNode* clone = new ModuleDeclarationNode(GetSourcePos(), clonedExport, *m, *n, clonedModulePartition, clonedAttributes, *s);
+    return std::expected<Node*, int>(clone);
 }
 
 void ModuleDeclarationNode::Accept(Visitor& visitor)
@@ -102,15 +113,19 @@ ExportDeclarationNode::ExportDeclarationNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-Node* ExportDeclarationNode::Clone() const
+std::expected<Node*, int> ExportDeclarationNode::Clone() const
 {
     Node* clonedSubject = nullptr;
     if (subject)
     {
-        clonedSubject = subject->Clone();
+        std::expected<Node*, int> s = subject->Clone();
+        if (!s) return s;
+        clonedSubject = *s;
     }
-    ExportDeclarationNode* clone = new ExportDeclarationNode(GetSourcePos(), exprt->Clone(), clonedSubject, lbPos, rbPos);
-    return clone;
+    std::expected<Node*, int> e = exprt->Clone();
+    if (!e) return e;
+    ExportDeclarationNode* clone = new ExportDeclarationNode(GetSourcePos(), *e, clonedSubject, lbPos, rbPos);
+    return std::expected<Node*, int>(clone);
 }
 
 void ExportDeclarationNode::Accept(Visitor& visitor)
@@ -156,10 +171,10 @@ ExportNode::ExportNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
-Node* ExportNode::Clone() const
+std::expected<Node*, int> ExportNode::Clone() const
 {
     ExportNode* clone = new ExportNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void ExportNode::Accept(Visitor& visitor)
@@ -171,10 +186,10 @@ ImportNode::ImportNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
-Node* ImportNode::Clone() const
+std::expected<Node*, int> ImportNode::Clone() const
 {
     ImportNode* clone = new ImportNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void ImportNode::Accept(Visitor& visitor)
@@ -191,15 +206,23 @@ ImportDeclarationNode::ImportDeclarationNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-Node* ImportDeclarationNode::Clone() const
+std::expected<Node*, int> ImportDeclarationNode::Clone() const
 {
     Node* clonedAtributes = nullptr;
     if (attributes)
     {
-        clonedAtributes = attributes->Clone();
+        std::expected<Node*, int> a = attributes->Clone();
+        if (!a) return a;
+        clonedAtributes = *a;
     }
-    ImportDeclarationNode* clone = new ImportDeclarationNode(GetSourcePos(), imprt->Clone(), subject->Clone(), clonedAtributes, semicolon->Clone());
-    return clone;
+    std::expected<Node*, int> i = imprt->Clone();
+    if (!i) return i;
+    std::expected<Node*, int> s = subject->Clone();
+    if (!s) return s;
+    std::expected<Node*, int> sc = semicolon->Clone();
+    if (!sc) return sc;
+    ImportDeclarationNode* clone = new ImportDeclarationNode(GetSourcePos(), *i, *s, clonedAtributes, *sc);
+    return std::expected<Node*, int>(clone);
 }
 
 void ImportDeclarationNode::Accept(Visitor& visitor)
@@ -249,10 +272,12 @@ ModulePartitionNode::ModulePartitionNode(const soul::ast::SourcePos& sourcePos_,
 {
 }
 
-Node* ModulePartitionNode::Clone() const
+std::expected<Node*, int> ModulePartitionNode::Clone() const
 {
-    ModulePartitionNode* clone = new ModulePartitionNode(GetSourcePos(), Child()->Clone());
-    return clone;
+    std::expected<Node*, int> c = Child()->Clone();
+    if (!c) return c;
+    ModulePartitionNode* clone = new ModulePartitionNode(GetSourcePos(), *c);
+    return std::expected<Node*, int>(clone);
 }
 
 void ModulePartitionNode::Accept(Visitor& visitor)
@@ -264,10 +289,10 @@ ModuleNode::ModuleNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
-Node* ModuleNode::Clone() const
+std::expected<Node*, int> ModuleNode::Clone() const
 {
     ModuleNode* clone = new ModuleNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void ModuleNode::Accept(Visitor& visitor)
@@ -284,15 +309,21 @@ GlobalModuleFragmentNode::GlobalModuleFragmentNode(const soul::ast::SourcePos& s
 {
 }
 
-Node* GlobalModuleFragmentNode::Clone() const
+std::expected<Node*, int> GlobalModuleFragmentNode::Clone() const
 {
     Node* clonedDeclarations = nullptr;
     if (declarations)
     {
-        clonedDeclarations = declarations->Clone();
+        std::expected<Node*, int> d = declarations->Clone();
+        if (!d) return d;
+        clonedDeclarations = *d;
     }
-    GlobalModuleFragmentNode* clone = new GlobalModuleFragmentNode(GetSourcePos(), modle->Clone(), semicolon->Clone(), clonedDeclarations);
-    return clone;
+    std::expected<Node*, int> m = modle->Clone();
+    if (!m) return m;
+    std::expected<Node*, int> s = semicolon->Clone();
+    if (!s) return s;
+    GlobalModuleFragmentNode* clone = new GlobalModuleFragmentNode(GetSourcePos(), *m, *s, clonedDeclarations);
+    return std::expected<Node*, int>(clone);
 }
 
 void GlobalModuleFragmentNode::Accept(Visitor& visitor)
@@ -337,15 +368,25 @@ PrivateModuleFragmentNode::PrivateModuleFragmentNode(const soul::ast::SourcePos&
 {
 }
 
-Node* PrivateModuleFragmentNode::Clone() const
+std::expected<Node*, int> PrivateModuleFragmentNode::Clone() const
 {
     Node* clonedDeclarations = nullptr;
     if (declarations)
     {
-        clonedDeclarations = declarations->Clone();
+        std::expected<Node*, int> d = declarations->Clone();
+        if (!d) return d;
+        clonedDeclarations = *d;
     }
-    PrivateModuleFragmentNode* clone = new PrivateModuleFragmentNode(GetSourcePos(), modle->Clone(), colon->Clone(), privat->Clone(), semicolon->Clone(), clonedDeclarations);
-    return clone;
+    std::expected<Node*, int> m = modle->Clone();
+    if (!m) return m;
+    std::expected<Node*, int> c = colon->Clone();
+    if (!c) return c;
+    std::expected<Node*, int> p = privat->Clone();
+    if (!p) return p;
+    std::expected<Node*, int> s = semicolon->Clone();
+    if (!s) return s;
+    PrivateModuleFragmentNode* clone = new PrivateModuleFragmentNode(GetSourcePos(), *m, *c, *p, *s, clonedDeclarations);
+    return std::expected<Node*, int>(clone);
 }
 
 void PrivateModuleFragmentNode::Accept(Visitor& visitor)
@@ -400,10 +441,10 @@ AngleHeaderName::AngleHeaderName(const soul::ast::SourcePos& sourcePos_, const s
 {
 }
 
-Node* AngleHeaderName::Clone() const
+std::expected<Node*, int> AngleHeaderName::Clone() const
 {
     AngleHeaderName* clone = new AngleHeaderName(GetSourcePos(), rep);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void AngleHeaderName::Accept(Visitor& visitor)
@@ -438,10 +479,10 @@ QuoteHeaderName::QuoteHeaderName(const soul::ast::SourcePos& sourcePos_, const s
 {
 }
 
-Node* QuoteHeaderName::Clone() const
+std::expected<Node*, int> QuoteHeaderName::Clone() const
 {
     QuoteHeaderName* clone = new QuoteHeaderName(GetSourcePos(), rep);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void QuoteHeaderName::Accept(Visitor& visitor)

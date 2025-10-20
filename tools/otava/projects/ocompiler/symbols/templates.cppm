@@ -31,7 +31,7 @@ class TemplateParameterSymbol : public TypeSymbol
 public:
     TemplateParameterSymbol(const std::u32string& name_);
     TemplateParameterSymbol(Symbol* constraint_, const std::u32string& name_, const util::uuid& id_, int index_, otava::ast::Node* defaultTemplateArgNode_);
-    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::string SymbolKindStr() const override { return "template parameter symbol"; }
     std::string SymbolDocKindStr() const override { return "template_paremeter"; }
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
@@ -75,7 +75,7 @@ class TemplateDeclarationSymbol : public ContainerSymbol
 {
 public:
     TemplateDeclarationSymbol();
-    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     inline int Arity() const { return templateParameters.size(); }
     std::string SymbolKindStr() const override { return "template declaration symbol"; }
     std::string SymbolDocKindStr() const override { return "template_declaration"; }

@@ -178,10 +178,10 @@ public:
     virtual Scope* GetScope() { return nullptr; }
     virtual Scope* GetGroupScope() { return nullptr; }
     virtual std::expected<std::string, int> IrName(Context* context) const;
-    virtual std::u32string FullName() const;
+    virtual std::expected<std::u32string, int> FullName() const;
     virtual std::string SymbolKindStr() const = 0;
     virtual bool IsValidDeclarationScope(ScopeKind scopeKind) const { return true; }
-    virtual void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context);
+    virtual std::expected<bool, int> AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const;
     virtual std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol);
     virtual std::expected<bool, int> Write(Writer& writer);

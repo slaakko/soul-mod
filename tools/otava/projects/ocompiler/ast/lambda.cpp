@@ -20,15 +20,23 @@ LambdaExpressionNode::LambdaExpressionNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
-Node* LambdaExpressionNode::Clone() const
+std::expected<Node*, int> LambdaExpressionNode::Clone() const
 {
     Node* clonedTemplateParams = nullptr;
     if (templateParams)
     {
-        clonedTemplateParams = templateParams->Clone();
+        std::expected<Node*, int> t = templateParams->Clone();
+        if (!t) return t;
+        clonedTemplateParams = *t;
     }
-    LambdaExpressionNode* clone = new LambdaExpressionNode(GetSourcePos(), introducer->Clone(), clonedTemplateParams, declarator->Clone(), body->Clone());
-    return clone;
+    std::expected<Node*, int> i = introducer->Clone();
+    if (!i) return i;
+    std::expected<Node*, int> d = declarator->Clone();
+    if (!d) return d;
+    std::expected<Node*, int> b = body->Clone();
+    if (!b) return b;
+    LambdaExpressionNode* clone = new LambdaExpressionNode(GetSourcePos(), *i, clonedTemplateParams, *d, *b);
+    return std::expected<Node*, int>(clone);
 }
 
 void LambdaExpressionNode::Accept(Visitor& visitor)
@@ -79,15 +87,17 @@ LambdaIntroducerNode::LambdaIntroducerNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
-Node* LambdaIntroducerNode::Clone() const
+std::expected<Node*, int> LambdaIntroducerNode::Clone() const
 {
     Node* clonedCapture = nullptr;
     if (capture)
     {
-        clonedCapture = capture->Clone();
+        std::expected<Node*, int> c = capture->Clone();
+        if (!c) return c;
+        clonedCapture = *c;
     }
     LambdaIntroducerNode* clone = new LambdaIntroducerNode(GetSourcePos(), clonedCapture, lbPos, rbPos);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void LambdaIntroducerNode::Accept(Visitor& visitor)
@@ -128,14 +138,17 @@ LambdaCaptureNode::LambdaCaptureNode(const soul::ast::SourcePos& sourcePos_) : L
 {
 }
 
-Node* LambdaCaptureNode::Clone() const
+std::expected<Node*, int> LambdaCaptureNode::Clone() const
 {
     LambdaCaptureNode* clone = new LambdaCaptureNode(GetSourcePos());
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> n = node->Clone();
+        if (!n) return n;
+        std::expected<bool, int> rv = clone->AddNode(*n);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void LambdaCaptureNode::Accept(Visitor& visitor)
@@ -147,10 +160,10 @@ DefaultRefCaptureNode::DefaultRefCaptureNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-Node* DefaultRefCaptureNode::Clone() const
+std::expected<Node*, int> DefaultRefCaptureNode::Clone() const
 {
     DefaultRefCaptureNode* clone = new DefaultRefCaptureNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void DefaultRefCaptureNode::Accept(Visitor& visitor)
@@ -162,10 +175,10 @@ DefaultCopyCaptureNode::DefaultCopyCaptureNode(const soul::ast::SourcePos& sourc
 {
 }
 
-Node* DefaultCopyCaptureNode::Clone() const
+std::expected<Node*, int> DefaultCopyCaptureNode::Clone() const
 {
     DefaultCopyCaptureNode* clone = new DefaultCopyCaptureNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void DefaultCopyCaptureNode::Accept(Visitor& visitor)
@@ -177,10 +190,10 @@ ByRefCaptureNode::ByRefCaptureNode(const soul::ast::SourcePos& sourcePos_) : Nod
 {
 }
 
-Node* ByRefCaptureNode::Clone() const
+std::expected<Node*, int> ByRefCaptureNode::Clone() const
 {
     ByRefCaptureNode* clone = new ByRefCaptureNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void ByRefCaptureNode::Accept(Visitor& visitor)
@@ -197,20 +210,26 @@ SimpleCaptureNode::SimpleCaptureNode(const soul::ast::SourcePos& sourcePos_, Nod
 {
 }
 
-Node* SimpleCaptureNode::Clone() const
+std::expected<Node*, int> SimpleCaptureNode::Clone() const
 {
     Node* clonedByRefCapture = nullptr;
     if (byRefCapture)
     {
-        clonedByRefCapture = byRefCapture->Clone();
+        std::expected<Node*, int> b = byRefCapture->Clone();
+        if (!b) return b;
+        clonedByRefCapture = *b;
     }
     Node* clonedEllipsis = nullptr;
     if (ellipsis)
     {
-        clonedEllipsis = ellipsis->Clone();
+        std::expected<Node*, int> e = ellipsis->Clone();
+        if (!e) return e;
+        clonedEllipsis = *e;
     }
-    SimpleCaptureNode* clone = new SimpleCaptureNode(GetSourcePos(), identifier->Clone(), clonedByRefCapture, clonedEllipsis);
-    return clone;
+    std::expected<Node*, int> i = identifier->Clone();
+    if (!i) return i;
+    SimpleCaptureNode* clone = new SimpleCaptureNode(GetSourcePos(), *i, clonedByRefCapture, clonedEllipsis);
+    return std::expected<Node*, int>(clone);
 }
 
 void SimpleCaptureNode::Accept(Visitor& visitor)
@@ -255,10 +274,10 @@ CurrentObjectCopyCapture::CurrentObjectCopyCapture(const soul::ast::SourcePos& s
 {
 }
 
-Node* CurrentObjectCopyCapture::Clone() const
+std::expected<Node*, int> CurrentObjectCopyCapture::Clone() const
 {
     CurrentObjectCopyCapture* clone = new CurrentObjectCopyCapture(GetSourcePos(), thisPos);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void CurrentObjectCopyCapture::Accept(Visitor& visitor)
@@ -293,10 +312,10 @@ CurrentObjectByRefCapture::CurrentObjectByRefCapture(const soul::ast::SourcePos&
 {
 }
 
-Node* CurrentObjectByRefCapture::Clone() const
+std::expected<Node*, int> CurrentObjectByRefCapture::Clone() const
 {
     CurrentObjectByRefCapture* clone = new CurrentObjectByRefCapture(GetSourcePos(), thisPos);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void CurrentObjectByRefCapture::Accept(Visitor& visitor)
@@ -332,20 +351,28 @@ InitCaptureNode::InitCaptureNode(const soul::ast::SourcePos& sourcePos_, Node* i
 {
 }
 
-Node* InitCaptureNode::Clone() const
+std::expected<Node*, int> InitCaptureNode::Clone() const
 {
     Node* clonedByRefCapture = nullptr;
     if (byRefCapture)
     {
-        clonedByRefCapture = byRefCapture->Clone();
+        std::expected<Node*, int> b = byRefCapture->Clone();
+        if (!b) return b;
+        clonedByRefCapture = *b;
     }
     Node* clonedEllipsis = nullptr;
     if (ellipsis)
     {
-        clonedEllipsis = ellipsis->Clone();
+        std::expected<Node*, int> e = ellipsis->Clone();
+        if (!e) return e;
+        clonedEllipsis = *e;
     }
-    InitCaptureNode* clone = new InitCaptureNode(GetSourcePos(), identifier->Clone(), initializer->Clone(), clonedByRefCapture, clonedEllipsis);
-    return clone;
+    std::expected<Node*, int> i = identifier->Clone();
+    if (!i) return i;
+    std::expected<Node*, int> n = initializer->Clone();
+    if (!n) return n;
+    InitCaptureNode* clone = new InitCaptureNode(GetSourcePos(), *i, *n, clonedByRefCapture, clonedEllipsis);
+    return std::expected<Node*, int>(clone);
 }
 
 void InitCaptureNode::Accept(Visitor& visitor)
@@ -396,20 +423,26 @@ LambdaDeclaratorNode::LambdaDeclaratorNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
-Node* LambdaDeclaratorNode::Clone() const
+std::expected<Node*, int> LambdaDeclaratorNode::Clone() const
 {
     Node* clonedRequiresClause = nullptr;
     if (requiresClause)
     {
-        clonedRequiresClause = requiresClause->Clone();
+        std::expected<Node*, int> r = requiresClause->Clone();
+        if (!r) return r;
+        clonedRequiresClause = *r;
     }
     Node* clonedParameterList = nullptr;
     if (parameterList)
     {
-        clonedParameterList = parameterList->Clone();
+        std::expected<Node*, int> p = parameterList->Clone();
+        if (!p) return p;
+        clonedParameterList = *p;
     }
-    LambdaDeclaratorNode* clone = new LambdaDeclaratorNode(GetSourcePos(), clonedParameterList, specifiers->Clone(), clonedRequiresClause);
-    return clone;
+    std::expected<Node*, int> s = specifiers->Clone();
+    if (!s) return s;
+    LambdaDeclaratorNode* clone = new LambdaDeclaratorNode(GetSourcePos(), clonedParameterList, *s, clonedRequiresClause);
+    return std::expected<Node*, int>(clone);
 }
 
 void LambdaDeclaratorNode::Accept(Visitor& visitor)
@@ -455,30 +488,38 @@ LambdaSpecifiersNode::LambdaSpecifiersNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
-Node* LambdaSpecifiersNode::Clone() const
+std::expected<Node*, int> LambdaSpecifiersNode::Clone() const
 {
     Node* clonedDeclSpecifiers = nullptr;
     if (declSpecifiers)
     {
-        clonedDeclSpecifiers = declSpecifiers->Clone();
+        std::expected<Node*, int> d = declSpecifiers->Clone();
+        if (!d) return d;
+        clonedDeclSpecifiers = *d;
     }
     Node* clonedNoexceptSpecifier = nullptr;
     if (noexceptSpecifier)
     {
-        clonedNoexceptSpecifier = noexceptSpecifier->Clone();
+        std::expected<Node*, int> n = noexceptSpecifier->Clone();
+        if (!n) return n;
+        clonedNoexceptSpecifier = *n;
     }
     Node* clonedAttributes = nullptr;
     if (attributes)
     {
-        clonedAttributes = attributes->Clone();
+        std::expected<Node*, int> a = attributes->Clone();
+        if (!a) return a;
+        clonedAttributes = *a;
     }
     Node* clonedTrailingReturnType = nullptr;
     if (trailingReturnType)
     {
-        clonedTrailingReturnType = trailingReturnType->Clone();
+        std::expected<Node*, int> t = trailingReturnType->Clone();
+        if (!t) return t;
+        clonedTrailingReturnType = *t;
     }
     LambdaSpecifiersNode* clone = new LambdaSpecifiersNode(GetSourcePos(), clonedDeclSpecifiers, clonedNoexceptSpecifier, clonedAttributes, clonedTrailingReturnType);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void LambdaSpecifiersNode::Accept(Visitor& visitor)
@@ -534,15 +575,19 @@ LambdaTemplateParamsNode::LambdaTemplateParamsNode(const soul::ast::SourcePos& s
 {
 }
 
-Node* LambdaTemplateParamsNode::Clone() const
+std::expected<Node*, int> LambdaTemplateParamsNode::Clone() const
 {
     Node* clonedRequiresClause = nullptr;
     if (requiresClause)
     {
-        clonedRequiresClause = requiresClause->Clone();
+        std::expected<Node*, int> r = requiresClause->Clone();
+        if (!r) return r;
+        clonedRequiresClause = *r;
     }
-    LambdaTemplateParamsNode* clone = new LambdaTemplateParamsNode(GetSourcePos(), templateParams->Clone(), clonedRequiresClause);
-    return clone;
+    std::expected<Node*, int> t = templateParams->Clone();
+    if (!t) return t;
+    LambdaTemplateParamsNode* clone = new LambdaTemplateParamsNode(GetSourcePos(), *t, clonedRequiresClause);
+    return std::expected<Node*, int>(clone);
 }
 
 void LambdaTemplateParamsNode::Accept(Visitor& visitor)

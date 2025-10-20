@@ -15,7 +15,7 @@ class ConceptDefinitionNode : public CompoundNode
 public:
     ConceptDefinitionNode(const soul::ast::SourcePos& sourcePos_);
     ConceptDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* conceptName_, Node* assign_, Node* constraintExpr_, Node* semicolon_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -35,7 +35,7 @@ class RequiresExprNode : public CompoundNode
 public:
     RequiresExprNode(const soul::ast::SourcePos& sourcePos_);
     RequiresExprNode(const soul::ast::SourcePos& sourcePos_, Node* params_, Node* body_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -50,7 +50,7 @@ class RequirementBodyNode : public SequenceNode
 {
 public:
     RequirementBodyNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -68,7 +68,7 @@ class SimpleRequirementNode : public BinaryNode
 public:
     SimpleRequirementNode(const soul::ast::SourcePos& sourcePos_);
     SimpleRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, Node* semicolon_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -77,7 +77,7 @@ class TypeRequirementNode : public CompoundNode
 public:
     TypeRequirementNode(const soul::ast::SourcePos& sourcePos_);
     TypeRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* typeName_, Node* semicolon_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -95,7 +95,7 @@ class CompoundRequirementNode : public CompoundNode
 public:
     CompoundRequirementNode(const soul::ast::SourcePos& sourcePos_);
     CompoundRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, Node* noexcept_, Node* returnTypeRequirement_, Node* semicolon_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -119,7 +119,7 @@ class ReturnTypeRequirementNode : public UnaryNode
 public:
     ReturnTypeRequirementNode(const soul::ast::SourcePos& sourcePos_);
     ReturnTypeRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -128,7 +128,7 @@ class NestedRequirementNode : public BinaryNode
 public:
     NestedRequirementNode(const soul::ast::SourcePos& sourcePos_);
     NestedRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* constraintExpression_, Node* semicolon_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -137,7 +137,7 @@ class TypeConstraintNode : public ListNode
 public:
     TypeConstraintNode(const soul::ast::SourcePos& sourcePos_);
     TypeConstraintNode(const soul::ast::SourcePos& sourcePos_, Node* conceptName_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -160,7 +160,7 @@ class RequiresClauseNode : public UnaryNode
 public:
     RequiresClauseNode(const soul::ast::SourcePos& sourcePos_);
     RequiresClauseNode(const soul::ast::SourcePos& sourcePos_, Node* constraintLogicalOrExpr_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 

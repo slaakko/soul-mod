@@ -114,7 +114,7 @@ struct FundamentalTypeConversion : public FunctionSymbol
         if (!rv) return rv;
         rv = writer.GetBinaryStreamWriter().Write(distance);
         if (!rv) return rv;
-        rv = writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(static_cast<std::int32_t>(conversionKind)));
+        rv = writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(conversionKind));
         if (!rv) return rv;
         rv = writer.GetBinaryStreamWriter().Write(paramType->Id());
         if (!rv) return rv;
@@ -131,7 +131,8 @@ struct FundamentalTypeConversion : public FunctionSymbol
         distance = *rrv;
         std::expected<std::uint8_t, int> brv = reader.GetBinaryStreamReader().ReadByte();
         if (!brv) return std::unexpected<int>(brv.error());
-        conversionKind = static_cast<ConversionKind>(static_cast<std::int32_t>(*brv));
+        std::uint8_t b = *brv;
+        conversionKind = static_cast<ConversionKind>(b);
         rv = reader.GetBinaryStreamReader().ReadUuid(paramTypeId);
         if (!rv) return rv;
         rv = reader.GetBinaryStreamReader().ReadUuid(argTypeId);

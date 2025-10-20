@@ -51,6 +51,6 @@ private:
     FundamentalTypeKind fundamentalTypeKind;
 };
 
-TypeSymbol* GetFundamentalType(DeclarationFlags fundamentalTypeFlags, const soul::ast::SourcePos& sourcePos, Context* context);
+std::expected<TypeSymbol*, int> GetFundamentalType(DeclarationFlags fundamentalTypeFlags, const soul::ast::SourcePos& sourcePos, Context* context);
 
 } // namespace otava::symbols

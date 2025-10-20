@@ -20,6 +20,7 @@ class Context;
 
 struct FunctionTemplateKey
 {
+    FunctionTemplateKey();
     FunctionTemplateKey(FunctionSymbol* functionTemplate_, const std::vector<TypeSymbol*>& templateArgumentTypes_);
     FunctionSymbol* functionTemplate;
     std::vector<TypeSymbol*> templateArgumentTypes;
@@ -41,7 +42,7 @@ private:
     std::vector<std::unique_ptr<otava::ast::Node>> functionDefinitionNodes;
 };
 
-FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
+std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
     const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, const soul::ast::SourcePos& sourcePos, Context* context);
 
 } // namespace otava::symbols

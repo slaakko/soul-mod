@@ -78,8 +78,14 @@ public:
     TypeSymbol* RemoveRValueRef(Context* context);
     TypeSymbol* RemoveReference(Context* context);
     TypeSymbol* RemoveRefOrPtr(Context* context);
-    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     virtual std::expected<otava::intermediate::Type*, int> IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
+    inline bool Valid() const { return error == 0; }
+    inline int GetError() const { return error; }
+    inline void SetError(int error_) { error = error_; }
+    inline explicit operator bool() const { return Valid(); }
+private:
+    int error;
 };
 
 class NestedTypeSymbol : public TypeSymbol

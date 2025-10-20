@@ -15,7 +15,7 @@ class ModuleDeclarationNode : public CompoundNode
 public:
     ModuleDeclarationNode(const soul::ast::SourcePos& sourcePos_);
     ModuleDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* exprt_, Node* modle_, Node* moduleName_, Node* modulePartition_, Node* attributes_, Node* semicolon_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -39,7 +39,7 @@ class ExportDeclarationNode : public CompoundNode
 public:
     ExportDeclarationNode(const soul::ast::SourcePos& sourcePos_);
     ExportDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* exprt_, Node* subject_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -58,7 +58,7 @@ class ExportNode : public Node
 {
 public:
     ExportNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -66,7 +66,7 @@ class ImportNode : public Node
 {
 public:
     ImportNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -75,7 +75,7 @@ class ImportDeclarationNode : public CompoundNode
 public:
     ImportDeclarationNode(const soul::ast::SourcePos& sourcePos_);
     ImportDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* imprt_, Node* subject_, Node* attributes_, Node* semicolon_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -95,7 +95,7 @@ class ModulePartitionNode : public UnaryNode
 public:
     ModulePartitionNode(const soul::ast::SourcePos& sourcePos_);
     ModulePartitionNode(const soul::ast::SourcePos& sourcePos_, Node* moduleName_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -103,7 +103,7 @@ class ModuleNode : public Node
 {
 public:
     ModuleNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -112,7 +112,7 @@ class GlobalModuleFragmentNode : public CompoundNode
 public:
     GlobalModuleFragmentNode(const soul::ast::SourcePos& sourcePos_);
     GlobalModuleFragmentNode(const soul::ast::SourcePos& sourcePos_, Node* modle_, Node* semicolon_, Node* declarations_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -130,7 +130,7 @@ class PrivateModuleFragmentNode : public CompoundNode
 public:
     PrivateModuleFragmentNode(const soul::ast::SourcePos& sourcePos_);
     PrivateModuleFragmentNode(const soul::ast::SourcePos& sourcePos_, Node* modle_, Node* colon_, Node* privat_, Node* semicolon_, Node* declarations_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -152,7 +152,7 @@ class AngleHeaderName : public Node
 public:
     AngleHeaderName(const soul::ast::SourcePos& sourcePos_);
     AngleHeaderName(const soul::ast::SourcePos& sourcePos_, const std::u32string& rep_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -166,7 +166,7 @@ class QuoteHeaderName : public Node
 public:
     QuoteHeaderName(const soul::ast::SourcePos& sourcePos_);
     QuoteHeaderName(const soul::ast::SourcePos& sourcePos_, const std::u32string& rep_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;

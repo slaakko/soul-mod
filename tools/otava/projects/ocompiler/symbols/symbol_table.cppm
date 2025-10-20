@@ -113,7 +113,7 @@ public:
     void Accept(Visitor& visitor);
     void WriteMaps(Writer& writer, Context* context);
     void ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap);
-    TypeSymbol* GetFundamentalTypeSymbol(FundamentalTypeKind kind);
+    std::expected<TypeSymbol*, int> GetFundamentalTypeSymbol(FundamentalTypeKind kind);
     inline Symbol* GetTypenameConstraintSymbol() { return typenameConstraintSymbol; }
     inline void SetTypenameConstraintSymbol(Symbol* typenameConstraintSymbol_) { typenameConstraintSymbol = typenameConstraintSymbol_; }
     inline TypeSymbol* GetErrorTypeSymbol() { return errorTypeSymbol; }
@@ -154,7 +154,7 @@ public:
         otava::ast::Node* defaultTemplateArgNode, Context* context);
     FunctionSymbol* AddFunction(const std::u32string& name, const std::vector<TypeSymbol*>& specialization, otava::ast::Node* node, FunctionKind kind,
         FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context);
-    void AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol, Context* context);
+    std::expected<bool, int> AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol, Context* context);
     FunctionDefinitionSymbol* AddOrGetFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& specialization,
         const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, FunctionKind kind, DeclarationFlags declarationFlags,
         otava::ast::Node* node, otava::ast::Node* functionNode, bool& get, Context* context);

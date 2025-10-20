@@ -71,9 +71,11 @@ std::expected<bool, int> CompoundTypeSymbol::Resolve(SymbolTable& symbolTable, C
     baseType = symbolTable.GetType(baseTypeId);
     if (!baseType)
     {
-        std::expected<std::string, int> fname = util::ToUtf8(FullName());
-        if (!fname) return std::unexpected<int>(rv.error());
-        std::cout << "CompoundTypeSymbol::Resolve(): warning: type of '" + *fname + "' not resolved" << "\n";
+        std::expected<std::u32string, int> fname = FullName();
+        if (!fname) return std::unexpected<int>(fname.error());
+        std::expected<std::string, int> sfname = util::ToUtf8(*fname);
+        if (!sfname) return std::unexpected<int>(sfname.error());
+        std::cout << "CompoundTypeSymbol::Resolve(): warning: type of '" + *sfname + "' not resolved" << "\n";
     }
     return std::expected<bool, int>(true);
 }

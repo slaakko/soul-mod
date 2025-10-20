@@ -19,15 +19,17 @@ TranslationUnitNode::TranslationUnitNode(const soul::ast::SourcePos& sourcePos_,
 {
 }
 
-Node* TranslationUnitNode::Clone() const
+std::expected<Node*, int> TranslationUnitNode::Clone() const
 {
     Node* clonedUnit = nullptr;
     if (unit)
     {
-        clonedUnit = unit->Clone();
+        std::expected<Node*, int> u = unit->Clone();
+        if (!u) return u;
+        clonedUnit = *u;
     }
     TranslationUnitNode* clone = new TranslationUnitNode(GetSourcePos(), clonedUnit);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void TranslationUnitNode::Accept(Visitor& visitor)
@@ -64,25 +66,33 @@ ModuleUnitNode::ModuleUnitNode(const soul::ast::SourcePos& sourcePos_, Node* glo
 {
 }
 
-Node* ModuleUnitNode::Clone() const
+std::expected<Node*, int> ModuleUnitNode::Clone() const
 {
     Node* clonedGlobalModuleFragment = nullptr;
     if (globalModuleFragment)
     {
-        clonedGlobalModuleFragment = globalModuleFragment->Clone();
+        std::expected<Node*, int> g = globalModuleFragment->Clone();
+        if (!g) return g;
+        clonedGlobalModuleFragment = *g;
     }
     Node* clonedDeclarations = nullptr;
     if (declarations)
     {
-        clonedDeclarations = declarations->Clone();
+        std::expected<Node*, int> d = declarations->Clone();
+        if (!d) return d;
+        clonedDeclarations = *d;
     }
     Node* clonedPrivateModuleFragment = nullptr;
     if (privateModuleFragment)
     {
-        clonedPrivateModuleFragment = privateModuleFragment->Clone();
+        std::expected<Node*, int> p = privateModuleFragment->Clone();
+        if (!p) return p;
+        clonedPrivateModuleFragment = *p;;
     }
-    ModuleUnitNode* clone = new ModuleUnitNode(GetSourcePos(), clonedGlobalModuleFragment, moduleDeclaration->Clone(), clonedDeclarations, clonedPrivateModuleFragment);
-    return clone;
+    std::expected<Node*, int> m = moduleDeclaration->Clone();
+    if (!m) return m;
+    ModuleUnitNode* clone = new ModuleUnitNode(GetSourcePos(), clonedGlobalModuleFragment, *m, clonedDeclarations, clonedPrivateModuleFragment);
+    return std::expected<Node*, int>(clone);
 }
 
 void ModuleUnitNode::Accept(Visitor& visitor)

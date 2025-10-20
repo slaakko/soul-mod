@@ -20,10 +20,18 @@ ConceptDefinitionNode::ConceptDefinitionNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-Node* ConceptDefinitionNode::Clone() const
+std::expected<Node*, int> ConceptDefinitionNode::Clone() const
 {
-    ConceptDefinitionNode* clone = new ConceptDefinitionNode(GetSourcePos(), conceptName->Clone(), assign->Clone(), constraintExpr->Clone(), semicolon->Clone());
-    return clone;
+    std::expected<Node*, int> cn = conceptName->Clone();
+    if (!cn) return cn;
+    std::expected<Node*, int> an = assign->Clone();
+    if (!an) return an;
+    std::expected<Node*, int> en = constraintExpr->Clone();
+    if (!en) return en;
+    std::expected<Node*, int> sn = semicolon->Clone();
+    if (!sn) return sn;
+    ConceptDefinitionNode* clone = new ConceptDefinitionNode(GetSourcePos(), *cn, *an, *en, *sn);
+    return std::expected<Node*, int>(clone);
 }
 
 void ConceptDefinitionNode::Accept(Visitor& visitor)
@@ -73,15 +81,19 @@ RequiresExprNode::RequiresExprNode(const soul::ast::SourcePos& sourcePos_, Node*
 {
 }
 
-Node* RequiresExprNode::Clone() const
+std::expected<Node*, int> RequiresExprNode::Clone() const
 {
     Node* clonedParams = nullptr;
     if (params)
     {
-        clonedParams = params->Clone();
+        std::expected<Node*, int> pc = params->Clone();
+        if (!pc) return pc;
+        clonedParams = *pc;
     }
-    RequiresExprNode* clone = new RequiresExprNode(GetSourcePos(), clonedParams, body->Clone());
-    return clone;
+    std::expected<Node*, int> bc = body->Clone();
+    if (!bc) return bc;
+    RequiresExprNode* clone = new RequiresExprNode(GetSourcePos(), clonedParams, *bc);
+    return std::expected<Node*, int>(clone);
 }
 
 void RequiresExprNode::Accept(Visitor& visitor)
@@ -117,16 +129,19 @@ RequirementBodyNode::RequirementBodyNode(const soul::ast::SourcePos& sourcePos_)
 {
 }
 
-Node* RequirementBodyNode::Clone() const
+std::expected<Node*, int> RequirementBodyNode::Clone() const
 {
     RequirementBodyNode* clone = new RequirementBodyNode(GetSourcePos());
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> nc = node->Clone();
+        if (!nc) return nc;
+        std::expected<bool, int> rv = clone->AddNode(*nc);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
     clone->SetLBracePos(lbPos);
     clone->SetRBracePos(rbPos);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void RequirementBodyNode::Accept(Visitor& visitor)
@@ -176,10 +191,14 @@ SimpleRequirementNode::SimpleRequirementNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-Node* SimpleRequirementNode::Clone() const
+std::expected<Node*, int> SimpleRequirementNode::Clone() const
 {
-    SimpleRequirementNode* clone = new SimpleRequirementNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
-    return clone;
+    std::expected<Node*, int> lrv = Left()->Clone();
+    if (!lrv) return lrv;
+    std::expected<Node*, int> rrv = Right()->Clone();
+    if (!rrv) return rrv;
+    SimpleRequirementNode* clone = new SimpleRequirementNode(GetSourcePos(), *lrv, *rrv);
+    return std::expected<Node*, int>(clone);
 }
 
 void SimpleRequirementNode::Accept(Visitor& visitor)
@@ -196,15 +215,21 @@ TypeRequirementNode::TypeRequirementNode(const soul::ast::SourcePos& sourcePos_,
 {
 }
 
-Node* TypeRequirementNode::Clone() const
+std::expected<Node*, int> TypeRequirementNode::Clone() const
 {
     Node* clonedNns = nullptr;
     if (nns)
     {
-        clonedNns = nns->Clone();
+        std::expected<Node*, int> nc = nns->Clone();
+        if (!nc) return nc;
+        clonedNns = *nc;
     }
-    TypeRequirementNode* clone = new TypeRequirementNode(GetSourcePos(), clonedNns, typeName->Clone(), semicolon->Clone());
-    return clone;
+    std::expected<Node*, int> tn = typeName->Clone();
+    if (!tn) return tn;
+    std::expected<Node*, int> sc = semicolon->Clone();
+    if (!sc) return sc;
+    TypeRequirementNode* clone = new TypeRequirementNode(GetSourcePos(), clonedNns, *tn, *sc);
+    return std::expected<Node*, int>(clone);
 }
 
 void TypeRequirementNode::Accept(Visitor& visitor)
@@ -251,20 +276,28 @@ CompoundRequirementNode::CompoundRequirementNode(const soul::ast::SourcePos& sou
 {
 }
 
-Node* CompoundRequirementNode::Clone() const
+std::expected<Node*, int> CompoundRequirementNode::Clone() const
 {
     Node* clonedNoExcept = nullptr;
     if (noexceptNode)
     {
-        clonedNoExcept = noexceptNode->Clone();
+        std::expected<Node*, int> ne = noexceptNode->Clone();
+        if (!ne) return ne;
+        clonedNoExcept = *ne;
     }
     Node* clonedReturnTypeRequirement = nullptr;
     if (returnTypeRequirement)
     {
-        clonedReturnTypeRequirement = returnTypeRequirement->Clone();
+        std::expected<Node*, int> rt = returnTypeRequirement->Clone();
+        if (!rt) return rt;
+        clonedReturnTypeRequirement = *rt;
     }
-    CompoundRequirementNode* clone = new CompoundRequirementNode(GetSourcePos(), expr->Clone(), clonedNoExcept, clonedReturnTypeRequirement, semicolon->Clone(), lbPos, rbPos);
-    return clone;
+    std::expected<Node*, int> ex = expr->Clone();
+    if (!ex) return ex;
+    std::expected<Node*, int> sc = semicolon->Clone();
+    if (!sc) return sc;
+    CompoundRequirementNode* clone = new CompoundRequirementNode(GetSourcePos(), *ex, clonedNoExcept, clonedReturnTypeRequirement, *sc, lbPos, rbPos);
+    return std::expected<Node*, int>(clone);
 }
 
 void CompoundRequirementNode::Accept(Visitor& visitor)
@@ -324,10 +357,12 @@ ReturnTypeRequirementNode::ReturnTypeRequirementNode(const soul::ast::SourcePos&
 {
 }
 
-Node* ReturnTypeRequirementNode::Clone() const
+std::expected<Node*, int> ReturnTypeRequirementNode::Clone() const
 {
-    ReturnTypeRequirementNode* clone = new ReturnTypeRequirementNode(GetSourcePos(), Child()->Clone());
-    return clone;
+    std::expected<Node*, int> cc = Child()->Clone();
+    if (!cc) return cc;
+    ReturnTypeRequirementNode* clone = new ReturnTypeRequirementNode(GetSourcePos(), *cc);
+    return std::expected<Node*, int>(clone);
 }
 
 void ReturnTypeRequirementNode::Accept(Visitor& visitor)
@@ -344,9 +379,13 @@ NestedRequirementNode::NestedRequirementNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-Node* NestedRequirementNode::Clone() const
+std::expected<Node*, int> NestedRequirementNode::Clone() const
 {
-    NestedRequirementNode* clone = new NestedRequirementNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    std::expected<Node*, int> l = Left()->Clone();
+    if (!l) return l;
+    std::expected<Node*, int> r = Right()->Clone();
+    if (!r) return r;
+    NestedRequirementNode* clone = new NestedRequirementNode(GetSourcePos(), *l, *r);
     return clone;
 }
 
@@ -363,14 +402,19 @@ TypeConstraintNode::TypeConstraintNode(const soul::ast::SourcePos& sourcePos_, N
 {
 }
 
-Node* TypeConstraintNode::Clone() const
+std::expected<Node*, int> TypeConstraintNode::Clone() const
 {
-    TypeConstraintNode* clone = new TypeConstraintNode(GetSourcePos(), conceptName->Clone());
+    std::expected<Node*, int> cn = conceptName->Clone();
+    if (!cn) return cn;
+    TypeConstraintNode* clone = new TypeConstraintNode(GetSourcePos(), *cn);
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> n = node->Clone();
+        if (!n) return n;
+        std::expected<bool, int> rv = clone->AddNode(*n);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void TypeConstraintNode::Accept(Visitor& visitor)
@@ -431,10 +475,12 @@ RequiresClauseNode::RequiresClauseNode(const soul::ast::SourcePos& sourcePos_, N
 {
 }
 
-Node* RequiresClauseNode::Clone() const
+std::expected<Node*, int> RequiresClauseNode::Clone() const
 {
-    RequiresClauseNode* clone = new RequiresClauseNode(GetSourcePos(), Child()->Clone());
-    return clone;
+    std::expected<Node*, int> c = Child()->Clone();
+    if (!c) return c;
+    RequiresClauseNode* clone = new RequiresClauseNode(GetSourcePos(), *c);
+    return std::expected<Node*, int>(clone);
 }
 
 void RequiresClauseNode::Accept(Visitor& visitor)

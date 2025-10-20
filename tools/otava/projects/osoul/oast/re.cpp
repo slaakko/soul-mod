@@ -877,11 +877,12 @@ std::expected<bool, int> DfaState::Print(LexerContext& context, CodeFormatter& f
     int n = static_cast<int>(next.size());
     for (int i = 0; i < n; ++i)
     {
-        if (next[i])
+        DfaState* s = next[i];
+        if (s)
         {
             std::expected<bool, int> rv = context.Partition()[i]->Print(formatter);
             if (!rv) return rv;
-            formatter.WriteLine("-> " + std::to_string(next[i]->Id()));
+            formatter.WriteLine("-> " + std::to_string(s->Id()));
         }
     }
     formatter.DecIndent();

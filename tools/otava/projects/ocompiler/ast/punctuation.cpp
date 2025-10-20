@@ -13,10 +13,10 @@ SemicolonNode::SemicolonNode(const soul::ast::SourcePos& sourcePos_) : Node(Node
 {
 }
 
-Node* SemicolonNode::Clone() const
+std::expected<Node*, int> SemicolonNode::Clone() const
 {
     SemicolonNode* clone = new SemicolonNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void SemicolonNode::Accept(Visitor& visitor)
@@ -28,10 +28,10 @@ CommaNode::CommaNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::co
 {
 }
 
-Node* CommaNode::Clone() const
+std::expected<Node*, int> CommaNode::Clone() const
 {
     CommaNode* clone = new CommaNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void CommaNode::Accept(Visitor& visitor)
@@ -43,10 +43,10 @@ QuestNode::QuestNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::qu
 {
 }
 
-Node* QuestNode::Clone() const
+std::expected<Node*, int> QuestNode::Clone() const
 {
     QuestNode* clone = new QuestNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void QuestNode::Accept(Visitor& visitor)
@@ -58,10 +58,10 @@ ColonNode::ColonNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::co
 {
 }
 
-Node* ColonNode::Clone() const
+std::expected<Node*, int> ColonNode::Clone() const
 {
     ColonNode* clone = new ColonNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void ColonNode::Accept(Visitor& visitor)
@@ -73,10 +73,10 @@ EllipsisNode::EllipsisNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKi
 {
 }
 
-Node* EllipsisNode::Clone() const
+std::expected<Node*, int> EllipsisNode::Clone() const
 {
     EllipsisNode* clone = new EllipsisNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void EllipsisNode::Accept(Visitor& visitor)
@@ -88,10 +88,10 @@ LParenNode::LParenNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
-Node* LParenNode::Clone() const
+std::expected<Node*, int> LParenNode::Clone() const
 {
     LParenNode* clone = new LParenNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void LParenNode::Accept(Visitor& visitor)
@@ -103,10 +103,10 @@ RParenNode::RParenNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
-Node* RParenNode::Clone() const
+std::expected<Node*, int> RParenNode::Clone() const
 {
     RParenNode* clone = new RParenNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void RParenNode::Accept(Visitor& visitor)
@@ -118,10 +118,10 @@ LBracketNode::LBracketNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKi
 {
 }
 
-Node* LBracketNode::Clone() const
+std::expected<Node*, int> LBracketNode::Clone() const
 {
     LBracketNode* clone = new LBracketNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void LBracketNode::Accept(Visitor& visitor)
@@ -133,10 +133,10 @@ RBracketNode::RBracketNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKi
 {
 }
 
-Node* RBracketNode::Clone() const
+std::expected<Node*, int> RBracketNode::Clone() const
 {
     RBracketNode* clone = new RBracketNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void RBracketNode::Accept(Visitor& visitor)
@@ -148,10 +148,10 @@ LBraceNode::LBraceNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
-Node* LBraceNode::Clone() const
+std::expected<Node*, int> LBraceNode::Clone() const
 {
     LBraceNode* clone = new LBraceNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void LBraceNode::Accept(Visitor& visitor)
@@ -163,10 +163,10 @@ RBraceNode::RBraceNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
-Node* RBraceNode::Clone() const
+std::expected<Node*, int> RBraceNode::Clone() const
 {
     RBraceNode* clone = new RBraceNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void RBraceNode::Accept(Visitor& visitor)

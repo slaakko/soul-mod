@@ -399,7 +399,13 @@ void EnumCreator::Visit(otava::ast::EnumeratorDefinitionNode& node)
     TypeSymbol* valueType = enumType->UnderlyingType();
     if (!valueType)
     {
-        valueType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType);
+        std::expected<TypeSymbol*, int> rv = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
+        valueType = *rv;
     }
     if (node.Value())
     {
@@ -557,7 +563,8 @@ std::expected<bool, int> EndEnumType(otava::ast::Node* node, Context* context)
     EnumeratedTypeSymbol* enumType = static_cast<EnumeratedTypeSymbol*>(currentSymbol);
     context->GetSymbolTable()->EndEnumeratedType();
     context->GetSymbolTable()->EndScope();
-    BindEnumType(enumType, node->GetSourcePos(), context);
+    std::expected<bool, int> rv = BindEnumType(enumType, node->GetSourcePos(), context);
+    if (!rv) return rv;
     return std::expected<bool, int>(true);
 }
 
@@ -580,7 +587,12 @@ EnumTypeDefaultCtor::EnumTypeDefaultCtor(EnumeratedTypeSymbol* enumType_, Contex
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> EnumTypeDefaultCtor::Write(Writer& writer)
@@ -645,9 +657,19 @@ EnumTypeCopyCtor::EnumTypeCopyCtor(EnumeratedTypeSymbol* enumType_, Context* con
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType);
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    rv = AddParameter(thatParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> EnumTypeCopyCtor::Write(Writer& writer)
@@ -708,9 +730,19 @@ EnumTypeMoveCtor::EnumTypeMoveCtor(EnumeratedTypeSymbol* enumType_, Context* con
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType->AddRValueRef(context));
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    rv = AddParameter(thatParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> EnumTypeMoveCtor::Write(Writer& writer)
@@ -776,9 +808,19 @@ EnumTypeCopyAssignment::EnumTypeCopyAssignment(EnumeratedTypeSymbol* enumType_, 
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType);
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    rv = AddParameter(thatParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> EnumTypeCopyAssignment::Write(Writer& writer)
@@ -836,9 +878,19 @@ EnumTypeMoveAssignment::EnumTypeMoveAssignment(EnumeratedTypeSymbol* enumType_, 
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType->AddRValueRef(context));
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    rv = AddParameter(thatParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> EnumTypeMoveAssignment::Write(Writer& writer)
@@ -899,9 +951,19 @@ EnumTypeEqual::EnumTypeEqual(EnumeratedTypeSymbol* enumType_, Context* context) 
     SetFunctionKind(FunctionKind::function);
     SetAccess(Access::public_);
     ParameterSymbol* leftParam = new ParameterSymbol(U"left", enumType);
-    AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
+    std::expected<bool, int> rv = AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     ParameterSymbol* rightParam = new ParameterSymbol(U"right", enumType);
-    AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
+    rv = AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType);
     SetReturnType(boolType, context);
 }
@@ -962,9 +1024,19 @@ EnumTypeLess::EnumTypeLess(EnumeratedTypeSymbol* enumType_, Context* context) : 
     SetFunctionKind(FunctionKind::function);
     SetAccess(Access::public_);
     ParameterSymbol* leftParam = new ParameterSymbol(U"left", enumType);
-    AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
+    std::expected<bool, int> rv = AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     ParameterSymbol* rightParam = new ParameterSymbol(U"right", enumType);
-    AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
+    rv = AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType);
     SetReturnType(boolType, context);
 }
@@ -1016,44 +1088,53 @@ std::expected<bool, int> EnumTypeLess::GenerateCode(Emitter& emitter, std::vecto
     return std::expected<bool, int>(true);
 }
 
-void BindEnumType(EnumeratedTypeSymbol* enumType, const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BindEnumType(EnumeratedTypeSymbol* enumType, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    if (enumType->IsBound()) return;
+    if (enumType->IsBound()) return std::expected<bool, int>(false);
     enumType->SetBound();
     Scope* scope = enumType->GetScope();
     FunctionGroupSymbol* constructorGroup = scope->GetOrInsertFunctionGroup(U"@constructor", sourcePos, context);
     EnumTypeDefaultCtor* enumTypeDefaultCtor = new EnumTypeDefaultCtor(enumType, context);
-    scope->AddSymbol(enumTypeDefaultCtor, sourcePos, context);
+    std::expected<bool, int> rv = scope->AddSymbol(enumTypeDefaultCtor, sourcePos, context);
+    if (!rv) return rv;
     constructorGroup->AddFunction(enumTypeDefaultCtor);
     EnumTypeCopyCtor* enumTypeCopyCtor = new EnumTypeCopyCtor(enumType, context);
-    scope->AddSymbol(enumTypeCopyCtor, sourcePos, context);
+    rv = scope->AddSymbol(enumTypeCopyCtor, sourcePos, context);
+    if (!rv) return rv;
     constructorGroup->AddFunction(enumTypeCopyCtor);
     EnumTypeMoveCtor* enumTypeMoveCtor = new EnumTypeMoveCtor(enumType, context);
-    scope->AddSymbol(enumTypeMoveCtor, sourcePos, context);
+    rv = scope->AddSymbol(enumTypeMoveCtor, sourcePos, context);
+    if (!rv) return rv;
     constructorGroup->AddFunction(enumTypeMoveCtor);
 
     FunctionGroupSymbol* destructorGroup = scope->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
     TrivialDestructor* trivialDestructor = new TrivialDestructor(enumType, context);
-    scope->AddSymbol(trivialDestructor, sourcePos, context);
+    rv = scope->AddSymbol(trivialDestructor, sourcePos, context);
+    if (!rv) return rv;
     destructorGroup->AddFunction(trivialDestructor);
 
     FunctionGroupSymbol* assignmentGroup = scope->GetOrInsertFunctionGroup(U"operator=", sourcePos, context);
     EnumTypeCopyAssignment* enumTypeCopyAssignment = new EnumTypeCopyAssignment(enumType, context);
-    scope->AddSymbol(enumTypeCopyAssignment, sourcePos, context);
+    rv = scope->AddSymbol(enumTypeCopyAssignment, sourcePos, context);
+    if (!rv) return rv;
     assignmentGroup->AddFunction(enumTypeCopyAssignment);
     EnumTypeMoveAssignment* enumTypeMoveAssignment = new EnumTypeMoveAssignment(enumType, context);
-    scope->AddSymbol(enumTypeMoveAssignment, sourcePos, context);
+    rv = scope->AddSymbol(enumTypeMoveAssignment, sourcePos, context);
+    if (!rv) return rv;
     assignmentGroup->AddFunction(enumTypeMoveAssignment);
 
     FunctionGroupSymbol* equalGroup = scope->GetOrInsertFunctionGroup(U"operator==", sourcePos, context);
     EnumTypeEqual* enumTypeEqual = new EnumTypeEqual(enumType, context);
-    scope->AddSymbol(enumTypeEqual, sourcePos, context);
+    rv = scope->AddSymbol(enumTypeEqual, sourcePos, context);
+    if (!rv) return rv;
     equalGroup->AddFunction(enumTypeEqual);
 
     FunctionGroupSymbol* lessGroup = scope->GetOrInsertFunctionGroup(U"operator<", sourcePos, context);
     EnumTypeLess* enumTypeLess = new EnumTypeLess(enumType, context);
-    scope->AddSymbol(enumTypeLess, sourcePos, context);
+    rv = scope->AddSymbol(enumTypeLess, sourcePos, context);
+    if (!rv) return rv;
     lessGroup->AddFunction(enumTypeLess);
+    return std::expected<bool, int>(true);
 }
 
 } // namespace otava::symbols

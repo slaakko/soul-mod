@@ -21,7 +21,9 @@ std::expected<std::u32string, int> MakeArrayTypeName(TypeSymbol* elementType, st
     std::u32string arrayTypeName;
     std::expected<std::u32string, int> rv = util::ToUtf32(std::to_string(size));
     if (!rv) return std::unexpected<int>(rv.error());
-    arrayTypeName.append(elementType->FullName()).append(U" [").append(*rv).append(U"]");
+    std::expected<std::u32string, int> fname = elementType->FullName();
+    if (!fname) return fname;
+    arrayTypeName.append(*fname).append(U" [").append(*rv).append(U"]");
     return std::expected<std::u32string, int>(arrayTypeName);
 }
 
@@ -112,45 +114,53 @@ std::expected<otava::intermediate::Type*, int> ArrayTypeSymbol::IrType(Emitter& 
     return type;
 }
 
-void ArrayTypeSymbol::Bind(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> ArrayTypeSymbol::Bind(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    if (IsBound()) return;
+    if (IsBound()) return std::expected<bool, int>(false);
     SetBound();
     FunctionGroupSymbol* constructorGroup = GetScope()->GetOrInsertFunctionGroup(U"@constructor", sourcePos, context);
 
     ArrayTypeDefaultCtor* arrayTypeDefaultCtor = new ArrayTypeDefaultCtor(this, context);
-    GetScope()->AddSymbol(arrayTypeDefaultCtor, sourcePos, context);
+    std::expected<bool, int> rv = GetScope()->AddSymbol(arrayTypeDefaultCtor, sourcePos, context);
+    if (!rv) return rv;
     constructorGroup->AddFunction(arrayTypeDefaultCtor);
 
     ArrayTypeCopyCtor* arrayTypeCopyCtor = new ArrayTypeCopyCtor(this, context);
-    GetScope()->AddSymbol(arrayTypeCopyCtor, sourcePos, context);
+    rv = GetScope()->AddSymbol(arrayTypeCopyCtor, sourcePos, context);
+    if (!rv) return rv;
     constructorGroup->AddFunction(arrayTypeCopyCtor);
 
     ArrayTypeMoveCtor* arrayTypeMoveCtor = new ArrayTypeMoveCtor(this, context);
-    GetScope()->AddSymbol(arrayTypeMoveCtor, sourcePos, context);
+    rv = GetScope()->AddSymbol(arrayTypeMoveCtor, sourcePos, context);
+    if (!rv) return rv;
     constructorGroup->AddFunction(arrayTypeMoveCtor);
 
     FunctionGroupSymbol* assignmentGroup = GetScope()->GetOrInsertFunctionGroup(U"operator=", sourcePos, context);
 
     ArrayTypeCopyAssignment* arrayTypeCopyAssignment = new ArrayTypeCopyAssignment(this, context);
-    GetScope()->AddSymbol(arrayTypeCopyAssignment, sourcePos, context);
+    rv = GetScope()->AddSymbol(arrayTypeCopyAssignment, sourcePos, context);
+    if (!rv) return rv;
     assignmentGroup->AddFunction(arrayTypeCopyAssignment);
 
     ArrayTypeMoveAssignment* arrayTypeMoveAssignment = new ArrayTypeMoveAssignment(this, context);
-    GetScope()->AddSymbol(arrayTypeMoveAssignment, sourcePos, context);
+    rv = GetScope()->AddSymbol(arrayTypeMoveAssignment, sourcePos, context);
+    if (!rv) return rv;
     assignmentGroup->AddFunction(arrayTypeMoveAssignment);
 
     FunctionGroupSymbol* beginGroup = GetScope()->GetOrInsertFunctionGroup(U"begin", sourcePos, context);
 
     ArrayTypeBegin* arrayTypeBegin = new ArrayTypeBegin(this, context);
-    GetScope()->AddSymbol(arrayTypeBegin, sourcePos, context);
+    rv = GetScope()->AddSymbol(arrayTypeBegin, sourcePos, context);
+    if (!rv) return rv;
     beginGroup->AddFunction(arrayTypeBegin);
 
     FunctionGroupSymbol* endGroup = GetScope()->GetOrInsertFunctionGroup(U"end", sourcePos, context);
 
     ArrayTypeEnd* arrayTypeEnd = new ArrayTypeEnd(this, context);
-    GetScope()->AddSymbol(arrayTypeEnd, sourcePos, context);
+    rv = GetScope()->AddSymbol(arrayTypeEnd, sourcePos, context);
+    if (!rv) return rv;
     endGroup->AddFunction(arrayTypeEnd);
+    return std::expected<bool, int>(true);
 }
 
 ArrayTypeDefaultCtor::ArrayTypeDefaultCtor(const std::u32string& name_) : FunctionSymbol(SymbolKind::arrayTypeDefaultCtor, name_), arrayType(nullptr)
@@ -163,7 +173,12 @@ ArrayTypeDefaultCtor::ArrayTypeDefaultCtor(ArrayTypeSymbol* arrayType_, Context*
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> ArrayTypeDefaultCtor::Write(Writer& writer)
@@ -248,9 +263,19 @@ ArrayTypeCopyCtor::ArrayTypeCopyCtor(ArrayTypeSymbol* arrayType_, Context* conte
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddConst(context)->AddLValueRef(context));
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    rv = AddParameter(thatParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> ArrayTypeCopyCtor::Write(Writer& writer)
@@ -339,9 +364,19 @@ ArrayTypeMoveCtor::ArrayTypeMoveCtor(ArrayTypeSymbol* arrayType_, Context* conte
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddRValueRef(context));
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    rv = AddParameter(thatParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> ArrayTypeMoveCtor::Write(Writer& writer)
@@ -431,9 +466,19 @@ ArrayTypeCopyAssignment::ArrayTypeCopyAssignment(ArrayTypeSymbol* arrayType_, Co
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddConst(context)->AddLValueRef(context));
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    rv = AddParameter(thatParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(arrayType->AddLValueRef(context), context);
 }
 
@@ -526,9 +571,19 @@ ArrayTypeMoveAssignment::ArrayTypeMoveAssignment(ArrayTypeSymbol* arrayType_, Co
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddRValueRef(context));
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    rv = AddParameter(thatParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(arrayType->AddLValueRef(context), context);
 }
 
@@ -621,7 +676,12 @@ ArrayTypeBegin::ArrayTypeBegin(ArrayTypeSymbol* arrayType_, Context* context) :
     SetFunctionKind(FunctionKind::function);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(arrayType->ElementType()->AddPointer(context), context);
 }
 
@@ -680,7 +740,12 @@ ArrayTypeEnd::ArrayTypeEnd(ArrayTypeSymbol* arrayType_, Context* context) :
     SetFunctionKind(FunctionKind::function);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(arrayType->ElementType()->AddPointer(context), context);
 }
 

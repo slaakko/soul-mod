@@ -5,6 +5,11 @@
 
 module otava.symbols.error;
 
+import otava.symbols.context;
+import util;
+
+namespace otava::symbols {
+
 std::expected<std::string, int> ErrorLine(const soul::ast::SourcePos& sourcePos, Context* context)
 {
     if (sourcePos.IsValid())
@@ -12,11 +17,13 @@ std::expected<std::string, int> ErrorLine(const soul::ast::SourcePos& sourcePos,
         soul::lexer::FileMap* fileMap = context->GetFileMap();
         if (fileMap)
         {
-            std::expected<std::string, int> rv = util::ToUtf8(fileMap->GetFileLine(sourcePos.file, sourcePos.line));
+            std::expected<std::u32string, int> frv = fileMap->GetFileLine(sourcePos.file, sourcePos.line);
+            if (!frv) return std::unexpected<int>(frv.error());
+            std::expected<std::string, int> rv = util::ToUtf8(*frv);
             if (!rv) return std::unexpected<int>(rv.error());
             std::string errorLine = *rv;
             std::string caretLine = std::string(sourcePos.col - 1, ' ') + "^";
-            return std::expected < std::string, int>(":\n" + errorLine + "\n" + caretLine);
+            return std::expected<std::string, int>(":\n" + errorLine + "\n" + caretLine);
         }
     }
     return std::expected<std::string, int>(std::string());
@@ -67,3 +74,4 @@ std::unexpected<int> Error(const std::string& message, const soul::ast::SourcePo
 }
 
 } // namespace otava::symbols
+

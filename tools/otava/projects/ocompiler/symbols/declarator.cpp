@@ -270,7 +270,12 @@ void DeclaratorProcessor::Visit(otava::ast::FunctionDeclaratorNode& node)
             context->GetSymbolTable()->RecomputeNames();
             context->GetSymbolTable()->SetAddToRecomputeNameSet(false);
         }
-        context->GetSymbolTable()->CurrentScope()->SymbolScope()->AddSymbol(functionTypeSymbol, node.GetSourcePos(), context);
+        std::expected<bool, int> rv = context->GetSymbolTable()->CurrentScope()->SymbolScope()->AddSymbol(functionTypeSymbol, node.GetSourcePos(), context);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
     }
 }
 
@@ -1008,7 +1013,12 @@ void DeclaratorProcessor::Visit(otava::ast::ArrayDeclaratorNode& node)
         }
     }
     ArrayTypeSymbol* arrayType = context->GetSymbolTable()->MakeArrayType(baseType, size);
-    arrayType->Bind(node.GetSourcePos(), context);
+    std::expected<bool, int> rv = arrayType->Bind(node.GetSourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     declaration = Declaration(flags, arrayType, new ArrayDeclarator(arrayName, &node, size));
 }
 

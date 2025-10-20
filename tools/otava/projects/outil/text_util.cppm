@@ -101,8 +101,8 @@ std::vector<StringT> Split(const StringT& s, const StringT& subString)
         if (s.substr(i, subString.length()) == subString)
         {
             v.push_back(s.substr(start, i - start));
-            start = i + subString.length();
-            i += subString.length() - 1;
+            start = i + static_cast<int>(subString.length());
+            i += static_cast<int>(subString.length()) - 1;
         }
     }
     if (start < n)

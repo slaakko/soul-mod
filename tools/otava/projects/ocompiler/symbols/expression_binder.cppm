@@ -18,11 +18,11 @@ class Context;
 class Scope;
 class StatementBinder;
 
-otava::ast::Node* MakeTypeNameNodes(const soul::ast::SourcePos& sourcePos, const std::u32string& fullTypeName);
+std::expected<otava::ast::Node*, int> MakeTypeNameNodes(const soul::ast::SourcePos& sourcePos, const std::u32string& fullTypeName);
 
-BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context);
-BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, bool booleanChild);
-BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, SymbolGroupKind symbolGroups, Scope*& scope);
+std::expected<BoundExpressionNode*, int> BindExpression(otava::ast::Node* node, Context* context);
+std::expected<BoundExpressionNode*, int> BindExpression(otava::ast::Node* node, Context* context, bool booleanChild);
+std::expected<BoundExpressionNode*, int> BindExpression(otava::ast::Node* node, Context* context, SymbolGroupKind symbolGroups, Scope*& scope);
 void InitExpressionBinder();
 
 } // namespace otava::symbols

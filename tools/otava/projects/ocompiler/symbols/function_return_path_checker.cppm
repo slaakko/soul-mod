@@ -12,7 +12,7 @@ export namespace otava::symbols {
 
 class Context;
 
-void CheckFunctionReturnPaths(otava::ast::Node* node, Context* context);
+std::expected<bool, int> CheckFunctionReturnPaths(otava::ast::Node* node, Context* context);
 bool TerminatesCaseOrDefault(otava::ast::Node* statementNode);
 
 } // namespace otava::symbols

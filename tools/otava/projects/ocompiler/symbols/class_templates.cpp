@@ -658,9 +658,11 @@ std::expected<ClassTemplateSpecializationSymbol*, int> InstantiateClassTemplate(
     classNode->Accept(instantiator);
     if (!instantiator)
     {
-        std::expected<std::string, int> fname = util::ToUtf8(specialization->FullName());
+        std::expected<std::u32string, int> fname = specialization->FullName();
         if (!fname) return std::unexpected<int>(fname.error());
-        return Error("otava.symbols.templates: error instantiating specialization '" + *fname + "': " + util::GetErrorMessage(instantiator.Error()), sourcePos, context);
+        std::expected<std::string, int> sfname = util::ToUtf8(*fname);
+        if (!sfname) return std::unexpected<int>(sfname.error());
+        return Error("otava.symbols.templates: error instantiating specialization '" + *sfname + "': " + util::GetErrorMessage(instantiator.Error()), sourcePos, context);
     }
     std::vector<ClassTypeSymbol*> baseClasses = instantiator.GetBaseClasses();
     for (ClassTypeSymbol* baseClass : baseClasses)
@@ -837,9 +839,11 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
         }
         else
         {
-            std::expected<std::string, int> fname = util::ToUtf8(memFn->FullName());
+            std::expected<std::u32string, int> fname = memFn->FullName();
             if (!fname) return std::unexpected<int>(fname.error());
-            return Error("node for symbol '" + *fname + "' not found", sourcePos, context);
+            std::expected<std::string, int> sfname = util::ToUtf8(*fname);
+            if (!sfname) return std::unexpected<int>(sfname.error());
+            return Error("node for symbol '" + *sfname + "' not found", sourcePos, context);
         }
     }
     if (node->IsFunctionDefinitionNode())
@@ -942,7 +946,9 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
                     context->PushBoundFunction(new BoundFunctionNode(functionDefinition, sourcePos));
                     Scope* nsScope = classTemplateSpecialization->ClassTemplate()->GetScope()->GetNamespaceScope();
                     instantiationScope.PushParentScope(nsScope);
-                    functionDefinition = BindFunction(functionDefinitionNode, functionDefinition, context);
+                    std::expected<FunctionDefinitionSymbol*, int> rv = BindFunction(functionDefinitionNode, functionDefinition, context);
+                    if (!rv) return std::unexpected<int>(rv.error());
+                    functionDefinition = *rv;
                     specialization = functionDefinition;
                     context->PopFlags();
                     if (specialization->IsBound())
@@ -1050,9 +1056,11 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
                 context->RemoveClassTemplateSpecialization(node);
                 if (specialization)
                 {
-                    std::expected<std::string, int> fname = util::ToUtf8(specialization->FullName());
-                    if (!fname) return std::unexpected<int>(fname.error());
-                    specializationName = *fname;
+                    std::expected<std::u32string, int> fname = specialization->FullName();
+                    if (!fname)  return std::unexpected<int>(fname.error());
+                    std::expected<std::string, int> sfname = util::ToUtf8(*fname);
+                    if (!sfname) return std::unexpected<int>(sfname.error());
+                    specializationName = *sfname;
                     if (classTemplateSpecialization->ContainsVirtualFunctionSpecialization(specialization))
                     {
                         context->PopFlags();

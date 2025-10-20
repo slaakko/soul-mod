@@ -161,7 +161,9 @@ std::expected<TypeSymbol*, int> InstantiateAliasTypeSymbol(TypeSymbol* typeSymbo
             aliasTypeNode->Accept(instantiator);
             if (!instantiator)
             {
-                std::expected<std::string, int> rv = util::ToUtf8(specialization->FullName());
+                std::expected<std::u32string, int> fname = specialization->FullName();
+                if (!fname) return std::unexpected<int>(fname.error());
+                std::expected<std::string, int> rv = util::ToUtf8(*fname);
                 if (!rv) return std::unexpected<int>(rv.error());
                 std::string sp = *rv;
                 std::string errorMessage = util::GetErrorMessage(instantiator.Error());

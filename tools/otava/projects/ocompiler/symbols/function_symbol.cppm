@@ -28,7 +28,7 @@ public:
     std::string SymbolDocKindStr() const override { return "parameter"; }
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     inline TypeSymbol* GetType() const { return type; }
-    TypeSymbol* GetReferredType(Context* context) const;
+    std::expected<TypeSymbol*, int> GetReferredType(Context* context) const;
     inline void SetType(TypeSymbol* type_) { type = type_; }
     ParameterSymbol* Copy() const;
     inline otava::ast::Node* DefaultValue() const { return defaultValue; }
@@ -82,7 +82,7 @@ public:
     inline TypeSymbol* ReturnType() const { return returnType; }
     inline bool ReturnsClass() const { return GetFlag(FunctionSymbolFlags::returnsClass); }
     inline void SetReturnsClass() { SetFlag(FunctionSymbolFlags::returnsClass); }
-    std::u32string FullName() const override;
+    std::expected<std::u32string, int> FullName() const override;
     bool IsTemplate() const;
     int TemplateArity() const;
     bool IsMemFnOfClassTemplate() const;
@@ -97,13 +97,13 @@ public:
     virtual bool IsCtorAssignmentOrArrow() const { return false; }
     virtual bool IsIdentityConversion() const { return false; }
     virtual bool IsDerivedToBaseConversion() const { return false; }
-    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     inline const std::vector<ParameterSymbol*>& Parameters() const { return parameters; }
     inline const std::vector<ParameterSymbol*>& MemFunParameters(Context* context) const;
     inline ParameterSymbol* ReturnValueParam() const { return returnValueParam.get(); }
     void SetReturnValueParam(ParameterSymbol* returnValueParam_);
-    void AddParameter(ParameterSymbol* parameter, const soul::ast::SourcePos& sourcePos, Context* context);
-    void AddTemporaryParameter(TypeSymbol* paramType, int index);
+    std::expected<bool, int> AddParameter(ParameterSymbol* parameter, const soul::ast::SourcePos& sourcePos, Context* context);
+    std::expected<bool, int> AddTemporaryParameter(TypeSymbol* paramType, int index);
     void ClearTemporaryParameters();
     void AddLocalVariable(VariableSymbol* variable);
     void RemoveLocalVariable(VariableSymbol* variable);
@@ -117,12 +117,12 @@ public:
     void Accept(Visitor& visitor) override;
     virtual std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    void GenerateVirtualFunctionCall(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+    std::expected<bool, int> GenerateVirtualFunctionCall(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     FunctionTypeSymbol* GetFunctionType(otava::symbols::Context* context);
-    virtual otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const;
+    virtual std::expected<otava::intermediate::Type*, int> IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const;
     std::expected<std::string, int> IrName(Context* context) const override;
     inline const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
-    VariableSymbol* CreateTemporary(TypeSymbol* type);
+    std::expected<VariableSymbol*, int> CreateTemporary(TypeSymbol* type);
     virtual bool IsConst() const;
     virtual bool IsVirtual() const;
     virtual bool IsPure() const;
@@ -145,7 +145,7 @@ public:
     inline bool IsSpecialization() const { return GetFlag(FunctionSymbolFlags::specialization); }
     inline void SetSpecialization() { SetFlag(FunctionSymbolFlags::specialization); }
     inline bool IsTrivialDestructor() const { return GetFlag(FunctionSymbolFlags::trivialDestructor); }
-    std::u32string NextTemporaryName();
+    std::expected<std::u32string, int> NextTemporaryName();
     inline void SetVTabIndex(std::int32_t vtabIndex_) { vtabIndex = vtabIndex_; }
     inline virtual std::int32_t VTabIndex() const { return vtabIndex; }
     inline FunctionDefinitionSymbol* Destructor() const { return destructor; }
@@ -154,7 +154,7 @@ public:
     virtual bool IsStatic() const;
     virtual bool IsExplicit() const;
     virtual bool IsPointerCopyAssignment() const { return false; }
-    void CheckGenerateClassCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context);
+    std::expected<bool, int> CheckGenerateClassCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context);
     virtual void AddDefinitionToGroup(Context* context);
     void SetFixedIrName(const std::string& fixedIrName_);
     const std::string& FixedIrName() const { return fixedIrName; }
@@ -162,6 +162,10 @@ public:
     inline const std::string& CompileUnitId() const { return compileUnitId; }
     void SetTemplateArgs(const std::vector<TypeSymbol*>& templateArgs_);
     std::expected<soul::xml::Element*, int> ToXml() const override;
+    inline bool Valid() const { return error == 0; }
+    explicit inline operator bool() const { return Valid(); }
+    inline int GetError() const { return error; }
+    inline void SetError(int error_) { error = error_; }
 private:
     mutable bool memFunParamsConstructed;
     FunctionKind kind;
@@ -191,6 +195,7 @@ private:
     FunctionGroupSymbol* group;
     std::vector<std::unique_ptr<ParameterSymbol>> temporaryParams;
     std::string compileUnitId;
+    int error;
 };
 
 class FunctionDefinitionSymbol : public FunctionSymbol
@@ -241,7 +246,7 @@ public:
     ExplicitlyInstantiatedFunctionDefinitionSymbol(const std::u32string& name_);
     std::string SymbolKindStr() const override { return "explicitly instantiated function definition symbol"; }
     std::string SymbolDocKindStr() const override { return "explcitly_instantiated_function_definition"; }
-    std::expected<std::string, int> IrName(Context* context) const override { return irName; }
+    std::expected<std::string, int> IrName(Context* context) const override { return std::expected<std::string, int>(irName); }
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
 private:

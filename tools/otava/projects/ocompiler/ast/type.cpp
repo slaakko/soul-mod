@@ -15,14 +15,17 @@ TypeSpecifierSequenceNode::TypeSpecifierSequenceNode(const soul::ast::SourcePos&
 {
 }
 
-Node* TypeSpecifierSequenceNode::Clone() const
+std::expected<Node*, int> TypeSpecifierSequenceNode::Clone() const
 {
     TypeSpecifierSequenceNode* clone = new TypeSpecifierSequenceNode(GetSourcePos());
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> n = node->Clone();
+        if (!n) return n;
+        std::expected<bool, int> rv = clone->AddNode(*n);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void TypeSpecifierSequenceNode::Accept(Visitor& visitor)
@@ -39,15 +42,21 @@ TypenameSpecifierNode::TypenameSpecifierNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-Node* TypenameSpecifierNode::Clone() const
+std::expected<Node*, int> TypenameSpecifierNode::Clone() const
 {
     Node* clonedTemplateNode = nullptr;
     if (templateNode)
     {
-        clonedTemplateNode = templateNode->Clone();
+        std::expected<Node*, int> t = templateNode->Clone();
+        if (!t) return t;
+        clonedTemplateNode = *t;
     }
-    TypenameSpecifierNode* clone = new TypenameSpecifierNode(GetSourcePos(), nns->Clone(), id->Clone(), clonedTemplateNode);
-    return clone;
+    std::expected<Node*, int> n = nns->Clone();
+    if (!n) return n;
+    std::expected<Node*, int> i = id->Clone();
+    if (!i) return i;
+    TypenameSpecifierNode* clone = new TypenameSpecifierNode(GetSourcePos(), *n, *i, clonedTemplateNode);
+    return std::expected<Node*, int>(clone);
 }
 
 void TypenameSpecifierNode::Accept(Visitor& visitor)
@@ -93,15 +102,19 @@ TypeIdNode::TypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifi
 {
 }
 
-Node* TypeIdNode::Clone() const
+std::expected<Node*, int> TypeIdNode::Clone() const
 {
     Node* clonedDeclarator = nullptr;
     if (declarator)
     {
-        clonedDeclarator = declarator->Clone();
+        std::expected<Node*, int> d = declarator->Clone();
+        if (!d) return d;
+        clonedDeclarator = *d;
     }
-    TypeIdNode* clone = new TypeIdNode(GetSourcePos(), typeSpecifiers->Clone(), clonedDeclarator);
-    return clone;
+    std::expected<Node*, int> t = typeSpecifiers->Clone();
+    if (!t) return t;
+    TypeIdNode* clone = new TypeIdNode(GetSourcePos(), *t, clonedDeclarator);
+    return std::expected<Node*, int>(clone);
 }
 
 void TypeIdNode::Accept(Visitor& visitor)
@@ -142,15 +155,19 @@ DefiningTypeIdNode::DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_, N
 {
 }
 
-Node* DefiningTypeIdNode::Clone() const
+std::expected<Node*, int> DefiningTypeIdNode::Clone() const
 {
     Node* clonedDeclarator = nullptr;
     if (abstractDeclarator)
     {
-        clonedDeclarator = abstractDeclarator->Clone();
+        std::expected<Node*, int> d = abstractDeclarator->Clone();
+        if (!d) return d;
+        clonedDeclarator = *d;
     }
-    DefiningTypeIdNode* clone = new DefiningTypeIdNode(GetSourcePos(), definingTypeSpecifiers->Clone(), clonedDeclarator);
-    return clone;
+    std::expected<Node*, int> d = definingTypeSpecifiers->Clone();
+    if (!d) return d;
+    DefiningTypeIdNode* clone = new DefiningTypeIdNode(GetSourcePos(), *d, clonedDeclarator);
+    return std::expected<Node*, int>(clone);
 }
 
 void DefiningTypeIdNode::Accept(Visitor& visitor)
@@ -187,14 +204,17 @@ DefiningTypeSpecifierSequenceNode::DefiningTypeSpecifierSequenceNode(const soul:
 {
 }
 
-Node* DefiningTypeSpecifierSequenceNode::Clone() const
+std::expected<Node*, int> DefiningTypeSpecifierSequenceNode::Clone() const
 {
     DefiningTypeSpecifierSequenceNode* clone = new DefiningTypeSpecifierSequenceNode(GetSourcePos());
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> n = node->Clone();
+        if (!n) return n;
+        std::expected<bool, int> rv = clone->AddNode(*n);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void DefiningTypeSpecifierSequenceNode::Accept(Visitor& visitor)
@@ -210,10 +230,12 @@ TrailingReturnTypeNode::TrailingReturnTypeNode(const soul::ast::SourcePos& sourc
 {
 }
 
-Node* TrailingReturnTypeNode::Clone() const
+std::expected<Node*, int> TrailingReturnTypeNode::Clone() const
 {
-    TrailingReturnTypeNode* clone = new TrailingReturnTypeNode(GetSourcePos(), Child()->Clone());
-    return clone;
+    std::expected<Node*, int> c = Child()->Clone();
+    if (!c) return c;
+    TrailingReturnTypeNode* clone = new TrailingReturnTypeNode(GetSourcePos(), *c);
+    return std::expected<Node*, int>(clone);
 }
 
 void TrailingReturnTypeNode::Accept(Visitor& visitor)
@@ -230,15 +252,21 @@ ElaboratedTypeSpecifierNode::ElaboratedTypeSpecifierNode(const soul::ast::Source
 {
 }
 
-Node* ElaboratedTypeSpecifierNode::Clone() const
+std::expected<Node*, int> ElaboratedTypeSpecifierNode::Clone() const
 {
     Node* clonedAttributes = nullptr;
     if (attributes)
     {
-        clonedAttributes = attributes->Clone();
+        std::expected<Node*, int> a = attributes->Clone();
+        if (!a) return a;
+        clonedAttributes = *a;
     }
-    ElaboratedTypeSpecifierNode* clone = new ElaboratedTypeSpecifierNode(GetSourcePos(), classKey->Clone(), id->Clone(), clonedAttributes);
-    return clone;
+    std::expected<Node*, int> k = classKey->Clone();
+    if (!k) return k;
+    std::expected<Node*, int> i = id->Clone();
+    if (!i) return i;
+    ElaboratedTypeSpecifierNode* clone = new ElaboratedTypeSpecifierNode(GetSourcePos(), *k, *i, clonedAttributes);
+    return std::expected<Node*, int>(clone);
 }
 
 void ElaboratedTypeSpecifierNode::Accept(Visitor& visitor)
@@ -284,10 +312,12 @@ DeclTypeSpecifierNode::DeclTypeSpecifierNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-Node* DeclTypeSpecifierNode::Clone() const
+std::expected<Node*, int> DeclTypeSpecifierNode::Clone() const
 {
-    DeclTypeSpecifierNode* clone = new DeclTypeSpecifierNode(GetSourcePos(), expr->Clone(), lpPos, rpPos);
-    return clone;
+    std::expected<Node*, int> e = expr->Clone();
+    if (!e) return e;
+    DeclTypeSpecifierNode* clone = new DeclTypeSpecifierNode(GetSourcePos(), *e, lpPos, rpPos);
+    return std::expected<Node*, int>(clone);
 }
 
 void DeclTypeSpecifierNode::Accept(Visitor& visitor)
@@ -334,14 +364,17 @@ PlaceholderTypeSpecifierNode::PlaceholderTypeSpecifierNode(const soul::ast::Sour
 {
 }
 
-Node* PlaceholderTypeSpecifierNode::Clone() const
+std::expected<Node*, int> PlaceholderTypeSpecifierNode::Clone() const
 {
     Node* clonedTypeConstraint = nullptr;
     if (typeConstraint)
     {
-        clonedTypeConstraint = typeConstraint->Clone();
+        std::expected<Node*, int> t = typeConstraint->Clone();
+        if (!t) return t;
+        clonedTypeConstraint = *t;
     }
-    return new PlaceholderTypeSpecifierNode(GetSourcePos(), clonedTypeConstraint, dtPos, autoPos, lpPos, rpPos);
+    PlaceholderTypeSpecifierNode* clone = new PlaceholderTypeSpecifierNode(GetSourcePos(), clonedTypeConstraint, dtPos, autoPos, lpPos, rpPos);
+    return std::expected<Node*, int>(clone);
 }
 
 void PlaceholderTypeSpecifierNode::Accept(Visitor& visitor)

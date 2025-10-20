@@ -291,7 +291,7 @@ public:
     void Visit(otava::ast::ClassSpecifierNode& node) override;
     void Visit(otava::ast::EnumSpecifierNode& node) override;
     void Visit(otava::ast::ElaboratedTypeSpecifierNode & override);
-    TypeSymbol* ResolveBaseType(otava::ast::Node* node);
+    std::expected<TypeSymbol*, int> ResolveBaseType(otava::ast::Node* node);
     void Visit(otava::ast::CharNode& node) override;
     void Visit(otava::ast::Char8Node& node) override;
     void Visit(otava::ast::Char16Node& node) override;
@@ -352,7 +352,13 @@ void DeclarationProcessor::BeginProcessFunctionDefinition(otava::ast::Node* decl
     {
         declSpecifierSeq->Accept(*this);
     }
-    TypeSymbol* baseType = ResolveBaseType(declSpecifierSeq);
+    std::expected<TypeSymbol*, int> brv = ResolveBaseType(declSpecifierSeq);
+    if (!brv)
+    {
+        SetError(brv.error());
+        return;
+    }
+    TypeSymbol* baseType = *brv;
     FunctionQualifiers qualifiers = GetQualifiers(specifierNode);
     std::expected<Declaration, int> rv = ProcessDeclarator(baseType, declarator, nullptr, flags, qualifiers, context);
     if (!rv)
@@ -364,14 +370,16 @@ void DeclarationProcessor::BeginProcessFunctionDefinition(otava::ast::Node* decl
     declarationList->declarations.push_back(std::move(declaration));
 }
 
-TypeSymbol* DeclarationProcessor::ResolveBaseType(otava::ast::Node* node)
+std::expected<TypeSymbol*, int> DeclarationProcessor::ResolveBaseType(otava::ast::Node* node)
 {
-    if (!Valid()) return nullptr;
+    if (!Valid()) return std::unexpected<int>(Error());
     TypeSymbol* baseType = nullptr;
     DeclarationFlags fundamentalTypeFlags = flags & DeclarationFlags::fundamentalTypeFlags;
     if (fundamentalTypeFlags != DeclarationFlags::none)
     {
-        baseType = GetFundamentalType(fundamentalTypeFlags, node->GetSourcePos(), context);
+        std::expected<TypeSymbol*, int> rv = GetFundamentalType(fundamentalTypeFlags, node->GetSourcePos(), context);
+        if (!rv) return rv;
+        baseType = *rv;
     }
     else
     {
@@ -398,7 +406,7 @@ TypeSymbol* DeclarationProcessor::ResolveBaseType(otava::ast::Node* node)
             baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
         }
     }
-    return baseType;
+    return std::expected<TypeSymbol*, int>(baseType);
 }
 
 void DeclarationProcessor::Visit(otava::ast::SimpleDeclarationNode& node)
@@ -408,14 +416,20 @@ void DeclarationProcessor::Visit(otava::ast::SimpleDeclarationNode& node)
     if (!Valid()) return;
     if (node.InitDeclaratorList())
     {
-        TypeSymbol* baseType = ResolveBaseType(&node);
-        std::expected<std::unique_ptr<DeclarationList>, int> rv = ProcessInitDeclaratorList(baseType, &node, node.InitDeclaratorList(), flags, context);
+        std::expected<TypeSymbol*, int> rv = ResolveBaseType(&node);
         if (!rv)
         {
             SetError(rv.error());
             return;
         }
-        declarationList = std::move(*rv);
+        TypeSymbol* baseType = *rv;
+        std::expected<std::unique_ptr<DeclarationList>, int> irv = ProcessInitDeclaratorList(baseType, &node, node.InitDeclaratorList(), flags, context);
+        if (!irv)
+        {
+            SetError(irv.error());
+            return;
+        }
+        declarationList = std::move(*irv);
     }
 }
 
@@ -995,7 +1009,7 @@ VariableSymbol* ProcessSimpleDeclarator(SimpleDeclarator* simpleDeclarator, Type
     return variable;
 }
 
-VariableSymbol* ProcessArrayDeclarator(ArrayDeclarator* arrayDeclarator, TypeSymbol* elementType, DeclarationFlags flags, Context* context)
+std::expected<VariableSymbol*, int> ProcessArrayDeclarator(ArrayDeclarator* arrayDeclarator, TypeSymbol* elementType, DeclarationFlags flags, Context* context)
 {
     if (arrayDeclarator->Size() == -1)
     {
@@ -1003,7 +1017,8 @@ VariableSymbol* ProcessArrayDeclarator(ArrayDeclarator* arrayDeclarator, TypeSym
         arrayDeclarator->SetSize(GetSizeFromInitializer(node));
     }
     ArrayTypeSymbol* arrayTypeSymbol = context->GetSymbolTable()->MakeArrayType(elementType, arrayDeclarator->Size());
-    arrayTypeSymbol->Bind(arrayDeclarator->Node()->GetSourcePos(), context);
+    std::expected<bool, int> rv = arrayTypeSymbol->Bind(arrayDeclarator->Node()->GetSourcePos(), context);
+    if (!rv) return std::unexpected<int>(rv.error());
     VariableSymbol* variable = context->GetSymbolTable()->AddVariable(arrayDeclarator->Name(), arrayDeclarator->Node(), arrayTypeSymbol, nullptr, nullptr, flags, context);
     return variable;
 }
@@ -1039,7 +1054,8 @@ std::expected<bool, int> ProcessFunctionDeclarator(FunctionDeclarator* functionD
         {
             parameter->SetDefaultValue(parameterDeclaration.initializer);
         }
-        functionSymbol->AddParameter(parameter, sourcePos, context);
+        std::expected<bool, int> rv = functionSymbol->AddParameter(parameter, sourcePos, context);
+        if (!rv) return rv;
     }
     ClassTypeSymbol* classType = functionSymbol->ParentClassType();
     if (classType)
@@ -1065,7 +1081,8 @@ std::expected<bool, int> ProcessFunctionDeclarator(FunctionDeclarator* functionD
     if (functionSymbol->IsExplicitSpecializationDeclaration())
     {
         std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
-        InstantiateFunctionTemplate(functionSymbol, templateParameterMap, functionDeclarator->Node()->GetSourcePos(), context);
+        std::expected<FunctionSymbol*, int> rv = InstantiateFunctionTemplate(functionSymbol, templateParameterMap, functionDeclarator->Node()->GetSourcePos(), context);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
     auto rv = AddConvertingConstructorToConversionTable(functionSymbol, functionDeclarator->Node()->GetSourcePos(), context);
     if (!rv) return rv;
@@ -1095,7 +1112,12 @@ std::expected<bool, int> ProcessSimpleDeclaration(otava::ast::Node* node, otava:
                         std::unique_ptr<BoundExpressionNode> variableInitializer(nullptr);
                         if (declaration.initializer)
                         {
-                            variableInitializer.reset(BindExpression(declaration.initializer, context));
+                            std::expected<BoundExpressionNode*, int> rv = BindExpression(declaration.initializer, context);
+                            if (!rv)
+                            {
+                                return std::unexpected<int>(rv.error());
+                            }
+                            variableInitializer.reset(*rv);
                         }
                         if (!variable->IsExtern())
                         {
@@ -1121,7 +1143,9 @@ std::expected<bool, int> ProcessSimpleDeclaration(otava::ast::Node* node, otava:
             {
                 ArrayDeclarator* arrayDeclarator = static_cast<ArrayDeclarator*>(declarator);
                 ArrayTypeSymbol* arrayType = static_cast<ArrayTypeSymbol*>(declaration.type);
-                VariableSymbol* variable = ProcessArrayDeclarator(arrayDeclarator, arrayType->ElementType(), declaration.flags, context);
+                std::expected<VariableSymbol*, int> rv = ProcessArrayDeclarator(arrayDeclarator, arrayType->ElementType(), declaration.flags, context);
+                if (!rv) return std::unexpected<int>(rv.error());
+                VariableSymbol* variable = *rv;
                 if (declaration.value)
                 {
                     variable->SetValue(declaration.value);
@@ -1290,7 +1314,8 @@ std::expected<int, int> BeginFunctionDefinition(otava::ast::Node* declSpecifierS
                         }
                     }
                 }
-                definition->AddParameter(parameter, sourcePos, context);
+                std::expected<bool, int> rv = definition->AddParameter(parameter, sourcePos, context);
+                if (!rv) return std::unexpected<int>(rv.error());
                 ++parameterIndex;
             }
             definition->AddDefinitionToGroup(context);
@@ -1373,7 +1398,9 @@ std::expected<bool, int> EndFunctionDefinition(otava::ast::Node* node, int scope
         }
         if (!context->GetFlag(ContextFlags::dontBind) && functionDefinitionSymbol)
         {
-            functionDefinitionSymbol = BindFunction(functionDefinitionNode, functionDefinitionSymbol, context);
+            std::expected<FunctionDefinitionSymbol*, int> rv = BindFunction(functionDefinitionNode, functionDefinitionSymbol, context);
+            if (!rv) return std::unexpected<int>(rv.error());
+            functionDefinitionSymbol = *rv;
         }
         if (functionDefinitionSymbol && functionDefinitionSymbol->IsTemplate())
         {
@@ -1382,7 +1409,8 @@ std::expected<bool, int> EndFunctionDefinition(otava::ast::Node* node, int scope
         if (functionDefinitionSymbol && functionDefinitionSymbol->IsExplicitSpecializationDefinitionSymbol())
         {
             std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
-            InstantiateFunctionTemplate(functionDefinitionSymbol, templateParameterMap, node->GetSourcePos(), context);
+            std::expected<FunctionSymbol*, int> rv = InstantiateFunctionTemplate(functionDefinitionSymbol, templateParameterMap, node->GetSourcePos(), context);
+            if (!rv) return std::unexpected<int>(rv.error());
         }
     }
     if (context->GetBoundFunction())
@@ -1598,14 +1626,17 @@ std::expected<bool, int> AddConvertingConstructorToConversionTable(FunctionSymbo
         TypeSymbol* conversionArgType = *rv;
         if (!TypesEqual(conversionParamType, conversionArgType, context))
         {
-            FunctionSymbol* conversion = context->GetSymbolTable()->GetConversionTable().GetConversion(conversionParamType, conversionArgType, context);
+            std::expected<FunctionSymbol*, int> rv = context->GetSymbolTable()->GetConversionTable().GetConversion(conversionParamType, conversionArgType, context);
+            if (!rv) return std::unexpected<int>(rv.error());
+            FunctionSymbol* conversion = *rv;
             if (!conversion)
             {
                 functionSymbol->SetConversion();
                 functionSymbol->SetConversionParamType(conversionParamType);
                 functionSymbol->SetConversionArgType(conversionArgType);
                 functionSymbol->SetConversionDistance(10);
-                context->GetSymbolTable()->GetConversionTable().AddConversion(functionSymbol);
+                std::expected<bool, int> arv = context->GetSymbolTable()->GetConversionTable().AddConversion(functionSymbol);
+                if (!arv) return arv;
             }
         }
     }

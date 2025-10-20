@@ -30,7 +30,7 @@ public:
     std::expected<otava::intermediate::Type*, int> IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     inline bool IsBound() const { return bound; }
     inline void SetBound() { bound = true; }
-    void Bind(const soul::ast::SourcePos& sourcePos, Context* context);
+    std::expected<bool, int> Bind(const soul::ast::SourcePos& sourcePos, Context* context);
     void SetError(int error_) { error = error_; }
     int GetError() const { return error; }
     inline bool Valid() const { return error == 0; }

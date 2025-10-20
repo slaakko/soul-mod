@@ -9,7 +9,7 @@ import std;
 
 export namespace otava::symbols {
 
-enum class FunctionKind
+enum class FunctionKind : std::uint8_t
 {
     function, constructor, destructor, special, conversionMemFn
 };
@@ -23,34 +23,34 @@ enum class SpecialFunctionKind
 
 std::string SpecialFunctionKindPrefix(SpecialFunctionKind specialFunctionKind);
 
-enum class Linkage : std::int32_t
+enum class Linkage : std::uint8_t
 {
     c_linkage, cpp_linkage
 };
 
-enum class FunctionQualifiers : std::int32_t
+enum class FunctionQualifiers : std::uint8_t
 {
     none = 0, isConst = 1 << 0, isVolatile = 1 << 1, isOverride = 1 << 2, isFinal = 1 << 3, isPure = 1 << 4, isDefault = 1 << 5, isDeleted = 1 << 6, noreturn = 1 << 7
 };
 
-enum class ConversionKind : std::int32_t
+enum class ConversionKind : std::uint8_t
 {
     implicitConversion, explicitConversion
 };
 
 constexpr FunctionQualifiers operator|(FunctionQualifiers left, FunctionQualifiers right)
 {
-    return FunctionQualifiers(std::int32_t(left) | std::int32_t(right));
+    return FunctionQualifiers(std::uint8_t(left) | std::uint8_t(right));
 }
 
 constexpr FunctionQualifiers operator&(FunctionQualifiers left, FunctionQualifiers right)
 {
-    return FunctionQualifiers(std::int32_t(left) & std::int32_t(right));
+    return FunctionQualifiers(std::uint8_t(left) & std::uint8_t(right));
 }
 
 constexpr FunctionQualifiers operator~(FunctionQualifiers qualifiers)
 {
-    return FunctionQualifiers(~std::int32_t(qualifiers));
+    return FunctionQualifiers(~std::uint8_t(qualifiers));
 }
 
 std::string MakeFunctionQualifierStr(FunctionQualifiers qualifiers);

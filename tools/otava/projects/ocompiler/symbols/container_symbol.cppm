@@ -17,7 +17,7 @@ public:
     ContainerSymbol(SymbolKind kind_, const std::u32string& name_);
     ContainerSymbol(SymbolKind kind_, const util::uuid& id_, const std::u32string& name_);
     Scope* GetScope() override { return &scope; }
-    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol) override;
     inline const std::vector<std::unique_ptr<Symbol>>& Symbols() const { return members; }
     std::expected<bool, int> Write(Writer& writer) override;

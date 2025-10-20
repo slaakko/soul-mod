@@ -22,7 +22,7 @@ class Context;
 
 enum class OverloadResolutionFlags : std::int32_t
 {
-    none = 0, dontInstantiate = 1 << 0, dontSearchArgumentScopes = 1 << 1
+    none = 0, dontInstantiate = 1 << 0, dontSearchArgumentScopes = 1 << 1, noMemberFunctions = 1 << 2
 };
 
 constexpr OverloadResolutionFlags operator|(OverloadResolutionFlags left, OverloadResolutionFlags right)
@@ -68,6 +68,7 @@ struct FunctionMatch
     std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
     ClassTemplateSpecializationSymbol* specialization;
     std::vector<std::unique_ptr<BoundExpressionNode>> defaultArgs;
+    std::string warning;
 };
 
 struct BetterFunctionMatch

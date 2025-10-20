@@ -20,7 +20,7 @@ public:
     std::string SymbolKindStr() const override { return "block symbol"; }
     std::string SymbolDocKindStr() const override { return "block"; }
     void Accept(Visitor& visitor) override;
-    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::vector<VariableSymbol*> localVariables;
 };

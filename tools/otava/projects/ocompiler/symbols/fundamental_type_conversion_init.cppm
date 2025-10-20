@@ -5,12 +5,14 @@
 
 export module otava.symbols.fundamental.type.conversion.init;
 
+import std;
+
 export namespace otava::symbols {
 
 class Context;
 class TypeSymbol;
 
-void AddFundamentalTypeConversionsToSymboTable(TypeSymbol* charType,
+std::expected<bool, int> AddFundamentalTypeConversionsToSymboTable(TypeSymbol* charType,
     TypeSymbol* signedCharType, TypeSymbol* unsignedCharType, TypeSymbol* char8Type, TypeSymbol* char16Type, TypeSymbol* char32Type, TypeSymbol* wcharType,
     TypeSymbol* shortIntType, TypeSymbol* unsignedShortIntType, TypeSymbol* intType, TypeSymbol* unsignedIntType, TypeSymbol* longIntType, TypeSymbol* unsignedLongIntType,
     TypeSymbol* longLongIntType, TypeSymbol* unsignedLongLongIntType, TypeSymbol* floatType, TypeSymbol* doubleType, Context* context);

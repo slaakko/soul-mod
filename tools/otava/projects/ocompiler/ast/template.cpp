@@ -20,10 +20,14 @@ TemplateDeclarationNode::TemplateDeclarationNode(const soul::ast::SourcePos& sou
 {
 }
 
-Node* TemplateDeclarationNode::Clone() const
+std::expected<Node*, int> TemplateDeclarationNode::Clone() const
 {
-    TemplateDeclarationNode* clone = new TemplateDeclarationNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
-    return clone;
+    std::expected<Node*, int> l = Left()->Clone();
+    if (!l) return l;
+    std::expected<Node*, int> r = Right()->Clone();
+    if (!r) return r;
+    TemplateDeclarationNode* clone = new TemplateDeclarationNode(GetSourcePos(), *l, *r);
+    return std::expected<Node*, int>(clone);
 }
 
 void TemplateDeclarationNode::Accept(Visitor& visitor)
@@ -45,18 +49,22 @@ void TemplateHeadNode::SetRequiresClause(Node* requiresClause_)
     requiresClause.reset(requiresClause_);
 }
 
-Node* TemplateHeadNode::Clone() const
+std::expected<Node*, int> TemplateHeadNode::Clone() const
 {
     TemplateHeadNode* clone = new TemplateHeadNode(GetSourcePos());
     if (templateParamList)
     {
-        clone->SetTemplateParameterList(templateParamList->Clone());
+        std::expected<Node*, int> t = templateParamList->Clone();
+        if (!t) return t;
+        clone->SetTemplateParameterList(*t);
     }
     if (requiresClause)
     {
-        clone->SetRequiresClause(requiresClause->Clone());
+        std::expected<Node*, int> r = requiresClause->Clone();
+        if (!r) return r;
+        clone->SetRequiresClause(*r);
     }
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void TemplateHeadNode::Accept(Visitor& visitor)
@@ -92,16 +100,19 @@ TemplateParameterListNode::TemplateParameterListNode(const soul::ast::SourcePos&
 {
 }
 
-Node* TemplateParameterListNode::Clone() const
+std::expected<Node*, int> TemplateParameterListNode::Clone() const
 {
     TemplateParameterListNode* clone = new TemplateParameterListNode(GetSourcePos());
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> n = node->Clone();
+        if (!n) return n;
+        std::expected<bool, int> rv = clone->AddNode(*n);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
     clone->SetLAnglePos(laPos);
     clone->SetRAnglePos(raPos);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void TemplateParameterListNode::Accept(Visitor& visitor)
@@ -142,30 +153,42 @@ TypeParameterNode::TypeParameterNode(const soul::ast::SourcePos& sourcePos_, Nod
 {
 }
 
-Node* TypeParameterNode::Clone() const
+std::expected<Node*, int> TypeParameterNode::Clone() const
 {
     Node* clonedAssign = nullptr;
     if (assign)
     {
-        clonedAssign = assign->Clone();
+        std::expected<Node*, int> a = assign->Clone();
+        if (!a) return a;
+        clonedAssign = *a;
     }
     Node* clonedTypeId = nullptr;
     if (typeId)
     {
-        clonedTypeId = typeId->Clone();
+        std::expected<Node*, int> t = typeId->Clone();
+        if (!t) return t;
+        clonedTypeId = *t;
     }
     Node* clonedEllipsis = nullptr;
     if (ellipsis)
     {
-        clonedEllipsis = ellipsis->Clone();
+        std::expected<Node*, int> e = ellipsis->Clone();
+        if (!e) return e;
+        clonedEllipsis = *e;
     }
     Node* clonedTemplateHead = nullptr;
     if (templateHead)
     {
-        clonedTemplateHead = templateHead->Clone();
+        std::expected<Node*, int> h = templateHead->Clone();
+        if (!h) return h;
+        clonedTemplateHead = *h;
     }
-    TypeParameterNode* clone = new TypeParameterNode(GetSourcePos(), typeConstraint->Clone(), identifier->Clone(), clonedAssign, clonedTypeId, clonedEllipsis, clonedTemplateHead);
-    return clone;
+    std::expected<Node*, int> t = typeConstraint->Clone();
+    if (!t) return t;
+    std::expected<Node*, int> i = identifier->Clone();
+    if (!i) return i;
+    TypeParameterNode* clone = new TypeParameterNode(GetSourcePos(), *t, *i, clonedAssign, clonedTypeId, clonedEllipsis, clonedTemplateHead);
+    return std::expected<Node*, int>(clone);
 }
 
 void TypeParameterNode::Accept(Visitor& visitor)
@@ -225,14 +248,19 @@ TemplateIdNode::TemplateIdNode(const soul::ast::SourcePos& sourcePos_, Node* tem
 {
 }
 
-Node* TemplateIdNode::Clone() const
+std::expected<Node*, int> TemplateIdNode::Clone() const
 {
-    TemplateIdNode* clone = new TemplateIdNode(GetSourcePos(), templateName->Clone());
+    std::expected<Node*, int> n = templateName->Clone();
+    if (!n) return n;
+    TemplateIdNode* clone = new TemplateIdNode(GetSourcePos(), *n);
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> n = node->Clone();
+        if (!n) return n;
+        std::expected<bool, int> rv = clone->AddNode(*n);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void TemplateIdNode::Accept(Visitor& visitor)
@@ -278,10 +306,10 @@ TypenameNode::TypenameNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKi
 {
 }
 
-Node* TypenameNode::Clone() const
+std::expected<Node*, int> TypenameNode::Clone() const
 {
     TypenameNode* clone = new TypenameNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void TypenameNode::Accept(Visitor& visitor)
@@ -300,16 +328,27 @@ DeductionGuideNode::DeductionGuideNode(const soul::ast::SourcePos& sourcePos_, N
 {
 }
 
-Node* DeductionGuideNode::Clone() const
+std::expected<Node*, int> DeductionGuideNode::Clone() const
 {
     Node* clonedExplicitSpecifier = nullptr;
     if (explicitSpecifier)
     {
-        clonedExplicitSpecifier = explicitSpecifier->Clone();
+        std::expected<Node*, int> e = explicitSpecifier->Clone();
+        if (!e) return e;
+        clonedExplicitSpecifier = *e;
     }
-    DeductionGuideNode* clone = new DeductionGuideNode(GetSourcePos(), templateName->Clone(), params->Clone(), arrow->Clone(), templateId->Clone(), clonedExplicitSpecifier,
-        semicolon->Clone(), lpPos, rpPos);
-    return clone;
+    std::expected<Node*, int> n = templateName->Clone();
+    if (!n) return n;
+    std::expected<Node*, int> p = params->Clone();
+    if (!p) return p;
+    std::expected<Node*, int> a = arrow->Clone();
+    if (!a) return a;
+    std::expected<Node*, int> i = templateId->Clone();
+    if (!i) return i;
+    std::expected<Node*, int> s = semicolon->Clone();
+    if (!s) return s;
+    DeductionGuideNode* clone = new DeductionGuideNode(GetSourcePos(), *n, *p, *a, *i, clonedExplicitSpecifier, *s, lpPos, rpPos);
+    return std::expected<Node*, int>(clone);
 }
 
 void DeductionGuideNode::Accept(Visitor& visitor)
@@ -380,15 +419,21 @@ ExplicitInstantiationNode::ExplicitInstantiationNode(const soul::ast::SourcePos&
 {
 }
 
-Node* ExplicitInstantiationNode::Clone() const
+std::expected<Node*, int> ExplicitInstantiationNode::Clone() const
 {
     Node* clonedExtrn = nullptr;
     if (extrn)
     {
-        clonedExtrn = extrn->Clone();
+        std::expected<Node*, int> e = extrn->Clone();
+        if (!e) return e;
+        clonedExtrn = *e;
     }
-    ExplicitInstantiationNode* clone = new ExplicitInstantiationNode(GetSourcePos(), clonedExtrn, tmp->Clone(), declaration->Clone());
-    return clone;
+    std::expected<Node*, int> t = tmp->Clone();
+    if (!t) return t;
+    std::expected<Node*, int> d = declaration->Clone();
+    if (!d) return d;
+    ExplicitInstantiationNode* clone = new ExplicitInstantiationNode(GetSourcePos(), clonedExtrn, *t, *d);
+    return std::expected<Node*, int>(clone);
 }
 
 void ExplicitInstantiationNode::Accept(Visitor& visitor)
@@ -429,10 +474,10 @@ TemplateNode::TemplateNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKi
 {
 }
 
-Node* TemplateNode::Clone() const
+std::expected<Node*, int> TemplateNode::Clone() const
 {
     TemplateNode* clone = new TemplateNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void TemplateNode::Accept(Visitor& visitor)
@@ -450,10 +495,16 @@ ExplicitSpecializationNode::ExplicitSpecializationNode(const soul::ast::SourcePo
 {
 }
 
-Node* ExplicitSpecializationNode::Clone() const
+std::expected<Node*, int> ExplicitSpecializationNode::Clone() const
 {
-    ExplicitSpecializationNode* clone = new ExplicitSpecializationNode(GetSourcePos(), tmp->Clone(), templateHeadNode->Clone(), declaration->Clone(), laPos, raPos);
-    return clone;
+    std::expected<Node*, int> t = tmp->Clone();
+    if (!t) return t;
+    std::expected<Node*, int> h = templateHeadNode->Clone();
+    if (!h) return h;
+    std::expected<Node*, int> d = declaration->Clone();
+    if (!d) return d;
+    ExplicitSpecializationNode* clone = new ExplicitSpecializationNode(GetSourcePos(), *t, *h, *d, laPos, raPos);
+    return std::expected<Node*, int>(clone);
 }
 
 void ExplicitSpecializationNode::Accept(Visitor& visitor)

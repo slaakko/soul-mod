@@ -495,10 +495,11 @@ SequenceNode::SequenceNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos
 {
 }
 
-void SequenceNode::AddNode(Node* node)
+std::expected<bool, int> SequenceNode::AddNode(Node* node)
 {
     node->SetParent(this);
     nodes.Add(node);
+    return std::expected<bool, int>(true);
 }
 
 void SequenceNode::Clear()
@@ -534,7 +535,8 @@ std::expected<bool, int> SequenceNode::Read(Reader& reader)
         std::expected<Node*, int> nrv = reader.ReadNode();
         if (!nrv) return std::unexpected<int>(nrv.error());
         Node* node = *nrv;
-        AddNode(node);
+        std::expected<bool, int> rv = AddNode(node);
+        if (!rv) return rv;
     }
     return std::expected<bool, int>(true);
 }
@@ -543,7 +545,7 @@ ListNode::ListNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : Nod
 {
 }
 
-void ListNode::AddNode(Node* node)
+std::expected<bool, int> ListNode::AddNode(Node* node)
 {
     node->SetParent(this);
     nodes.Add(node);
@@ -551,6 +553,7 @@ void ListNode::AddNode(Node* node)
     {
         items.push_back(node);
     }
+    return std::expected<bool, int>(true);
 }
 
 void ListNode::Clear()
@@ -587,7 +590,8 @@ std::expected<bool, int> ListNode::Read(Reader& reader)
         std::expected<Node*, int> nrv = reader.ReadNode();
         if (!nrv) return std::unexpected<int>(nrv.error());
         Node* node = *nrv;
-        AddNode(node);
+        std::expected<bool, int> rv = AddNode(node);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
     return std::expected<bool, int>(true);
 }

@@ -19,14 +19,19 @@ EnumSpecifierNode::EnumSpecifierNode(const soul::ast::SourcePos& sourcePos_, Nod
 {
 }
 
-Node* EnumSpecifierNode::Clone() const
+std::expected<Node*, int> EnumSpecifierNode::Clone() const
 {
-    EnumSpecifierNode* clone = new EnumSpecifierNode(GetSourcePos(), enumHead->Clone());
+    std::expected<Node*, int> h = enumHead->Clone();
+    if (!h) return h;
+    EnumSpecifierNode* clone = new EnumSpecifierNode(GetSourcePos(), *h);
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> n = node->Clone();
+        if (!n) return n;
+        std::expected<bool, int> rv = clone->AddNode(*n);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void EnumSpecifierNode::Accept(Visitor& visitor)
@@ -72,20 +77,28 @@ EnumHeadNode::EnumHeadNode(const soul::ast::SourcePos& sourcePos_, Node* enumKey
 {
 }
 
-Node* EnumHeadNode::Clone() const
+std::expected<Node*, int> EnumHeadNode::Clone() const
 {
     Node* clonedEnumBase = nullptr;
     if (enumBase)
     {
-        clonedEnumBase = enumBase->Clone();
+        std::expected<Node*, int> b = enumBase->Clone();
+        if (!b) return b;
+        clonedEnumBase = *b;
     }
     Node* clonedAttributes = nullptr;
     if (attributes)
     {
-        clonedAttributes = attributes->Clone();
+        std::expected<Node*, int> a = attributes->Clone();
+        if (!a) return a;
+        clonedAttributes = *a;
     }
-    EnumHeadNode* clone = new EnumHeadNode(GetSourcePos(), enumKey->Clone(), enumHeadName->Clone(), clonedEnumBase, clonedAttributes);
-    return clone;
+    std::expected<Node*, int> k = enumKey->Clone();
+    if (!k) return k;
+    std::expected<Node*, int> n = enumHeadName->Clone();
+    if (!n) return n;
+    EnumHeadNode* clone = new EnumHeadNode(GetSourcePos(), *k, *n, clonedEnumBase, clonedAttributes);
+    return std::expected<Node*, int>(clone);
 }
 
 void EnumHeadNode::Accept(Visitor& visitor)
@@ -135,10 +148,12 @@ EnumBaseNode::EnumBaseNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpe
 {
 }
 
-Node* EnumBaseNode::Clone() const
+std::expected<Node*, int> EnumBaseNode::Clone() const
 {
-    EnumBaseNode* clone = new EnumBaseNode(GetSourcePos(), Child()->Clone());
-    return clone;
+    std::expected<Node*, int> c = Child()->Clone();
+    if (!c) return c;
+    EnumBaseNode* clone = new EnumBaseNode(GetSourcePos(), *c);
+    return std::expected<Node*, int>(clone);
 }
 
 void EnumBaseNode::Accept(Visitor& visitor)
@@ -154,10 +169,10 @@ EnumClassNode::EnumClassNode(const soul::ast::SourcePos& sourcePos_, const soul:
 {
 }
 
-Node* EnumClassNode::Clone() const
+std::expected<Node*, int> EnumClassNode::Clone() const
 {
     EnumClassNode* clone = new EnumClassNode(GetSourcePos(), classPos);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void EnumClassNode::Accept(Visitor& visitor)
@@ -193,10 +208,10 @@ EnumStructNode::EnumStructNode(const soul::ast::SourcePos& sourcePos_, const sou
 {
 }
 
-Node* EnumStructNode::Clone() const
+std::expected<Node*, int> EnumStructNode::Clone() const
 {
     EnumStructNode* clone = new EnumStructNode(GetSourcePos(), structPos);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void EnumStructNode::Accept(Visitor& visitor)
@@ -227,10 +242,10 @@ EnumNode::EnumNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::enum
 {
 }
 
-Node* EnumNode::Clone() const
+std::expected<Node*, int> EnumNode::Clone() const
 {
     EnumNode* clone = new EnumNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void EnumNode::Accept(Visitor& visitor)
@@ -247,15 +262,19 @@ EnumeratorDefinitionNode::EnumeratorDefinitionNode(const soul::ast::SourcePos& s
 {
 }
 
-Node* EnumeratorDefinitionNode::Clone() const
+std::expected<Node*, int> EnumeratorDefinitionNode::Clone() const
 {
     Node* clonedValue = nullptr;
     if (value)
     {
-        clonedValue = value->Clone();
+        std::expected<Node*, int> v = value->Clone();
+        if (!v) return v;
+        clonedValue = *v;
     }
-    EnumeratorDefinitionNode* clone = new EnumeratorDefinitionNode(GetSourcePos(), enumerator->Clone(), clonedValue, assignPos);
-    return clone;
+    std::expected<Node*, int> e = enumerator->Clone();
+    if (!e) return e;
+    EnumeratorDefinitionNode* clone = new EnumeratorDefinitionNode(GetSourcePos(), *e, clonedValue, assignPos);
+    return std::expected<Node*, int>(clone);
 }
 
 void EnumeratorDefinitionNode::Accept(Visitor& visitor)
@@ -301,14 +320,18 @@ EnumeratorNode::EnumeratorNode(const soul::ast::SourcePos& sourcePos_, Node* ide
 {
 }
 
-Node* EnumeratorNode::Clone() const
+std::expected<Node*, int> EnumeratorNode::Clone() const
 {
     Node* clonedAttributes = nullptr;
     if (attributes)
     {
-        clonedAttributes = attributes->Clone();
+        std::expected<Node*, int> a = attributes->Clone();
+        if (!a) return a;
+        clonedAttributes = *a;
     }
-    EnumeratorNode* clone = new EnumeratorNode(GetSourcePos(), identifier->Clone(), clonedAttributes);
+    std::expected<Node*, int> i = identifier->Clone();
+    if (!i) return i;
+    EnumeratorNode* clone = new EnumeratorNode(GetSourcePos(), *i, clonedAttributes);
     return clone;
 }
 
@@ -350,10 +373,12 @@ ElaboratedEnumSpecifierNode::ElaboratedEnumSpecifierNode(const soul::ast::Source
 {
 }
 
-Node* ElaboratedEnumSpecifierNode::Clone() const
+std::expected<Node*, int> ElaboratedEnumSpecifierNode::Clone() const
 {
-    ElaboratedEnumSpecifierNode* clone = new ElaboratedEnumSpecifierNode(GetSourcePos(), Child()->Clone());
-    return clone;
+    std::expected<Node*, int> c = Child()->Clone();
+    if (!c) return c;
+    ElaboratedEnumSpecifierNode* clone = new ElaboratedEnumSpecifierNode(GetSourcePos(), *c);
+    return std::expected<Node*, int>(clone);
 }
 
 void ElaboratedEnumSpecifierNode::Accept(Visitor& visitor)
@@ -370,20 +395,28 @@ OpaqueEnumDeclarationNode::OpaqueEnumDeclarationNode(const soul::ast::SourcePos&
 {
 }
 
-Node* OpaqueEnumDeclarationNode::Clone() const
+std::expected<Node*, int> OpaqueEnumDeclarationNode::Clone() const
 {
     Node* clonedEnumBase = nullptr;
     if (enumBase)
     {
-        clonedEnumBase = enumBase->Clone();
+        std::expected<Node*, int> b = enumBase->Clone();
+        if (!b) return b;
+        clonedEnumBase = *b;
     }
     Node* clonedAttributes = nullptr;
     if (attributes)
     {
-        clonedAttributes = attributes->Clone();
+        std::expected<Node*, int> a = attributes->Clone();
+        if (!a) return a;
+        clonedAttributes = *a;
     }
-    OpaqueEnumDeclarationNode* clone = new OpaqueEnumDeclarationNode(GetSourcePos(), enumKey->Clone(), enumHeadName->Clone(), clonedEnumBase, clonedAttributes, semicolon->Clone());
-    return clone;
+    std::expected<Node*, int> k = enumKey->Clone();
+    if (!k) return k;
+    std::expected<Node*, int> n = enumHeadName->Clone();
+    if (!n) return n;
+    OpaqueEnumDeclarationNode* clone = new OpaqueEnumDeclarationNode(GetSourcePos(), *k, *n, clonedEnumBase, clonedAttributes, semicolon->Clone());
+    return std::expected<Node*, int>(clone);
 }
 
 void OpaqueEnumDeclarationNode::Accept(Visitor& visitor)

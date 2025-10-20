@@ -14,7 +14,7 @@ class AttributeSpecifierSequenceNode : public SequenceNode
 {
 public:
     AttributeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -22,7 +22,7 @@ class AttributeSpecifierNode : public ListNode
 {
 public:
     AttributeSpecifierNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -46,7 +46,7 @@ class AttributeUsingPrefixNode : public UnaryNode
 public:
     AttributeUsingPrefixNode(const soul::ast::SourcePos& sourcePos_);
     AttributeUsingPrefixNode(const soul::ast::SourcePos& sourcePos_, Node* attributeNamespace_, const soul::ast::SourcePos& colonPos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -60,7 +60,7 @@ class AttributeNode : public CompoundNode
 public:
     AttributeNode(const soul::ast::SourcePos& sourcePos_);
     AttributeNode(const soul::ast::SourcePos& sourcePos_, Node* attributeToken_, Node* attributeArgs_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -76,7 +76,7 @@ class AttributeScopedTokenNode : public CompoundNode
 public:
     AttributeScopedTokenNode(const soul::ast::SourcePos& sourcePos_);
     AttributeScopedTokenNode(const soul::ast::SourcePos& sourcePos_, Node* ns_, Node* colonColon_, Node* identifier_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -94,7 +94,7 @@ class AttributeArgumentsNode : public CompoundNode
 public:
     AttributeArgumentsNode(const soul::ast::SourcePos& sourcePos_);
     AttributeArgumentsNode(const soul::ast::SourcePos& sourcePos_, Node* balancedTokenSequence_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -111,7 +111,7 @@ class BalancedTokenSequenceNode : public SequenceNode
 {
 public:
     BalancedTokenSequenceNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -120,7 +120,7 @@ class TokenNode : public CompoundNode
 public:
     TokenNode(const soul::ast::SourcePos& sourcePos_);
     TokenNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& str_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -134,7 +134,7 @@ class AlignmentSpecifierNode : public CompoundNode
 public:
     AlignmentSpecifierNode(const soul::ast::SourcePos& sourcePos_);
     AlignmentSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* alignment_, Node* ellipsis_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;

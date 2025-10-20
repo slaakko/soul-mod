@@ -22,12 +22,15 @@ ClassSpecifierNode::ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_, N
 {
 }
 
-Node* ClassSpecifierNode::Clone() const
+std::expected<Node*, int> ClassSpecifierNode::Clone() const
 {
     ClassSpecifierNode* clone = new ClassSpecifierNode(GetSourcePos(), classHead->Clone());
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> nrv = node->Clone();
+        if (!nrv) return nrv;
+        std::expected<bool, int> rv = clone->AddNode(*nrv);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
     return clone;
 }
@@ -80,22 +83,28 @@ ClassHeadNode::ClassHeadNode(const soul::ast::SourcePos& sourcePos_, Node* class
 {
 }
 
-Node* ClassHeadNode::Clone() const
+std::expected<Node*, int> ClassHeadNode::Clone() const
 {
     Node* clonedClassVirtSpecifiers = nullptr;
     if (classVirtSpecifier)
     {
-        clonedClassVirtSpecifiers = classVirtSpecifier->Clone();
+        std::expected<Node*, int> crv = classVirtSpecifier->Clone();
+        if (!crv) return crv;
+        clonedClassVirtSpecifiers = *crv;
     }
     Node* clonedBaseClause = nullptr;
     if (baseClause)
     {
-        clonedBaseClause = baseClause->Clone();
+        std::expected<Node*, int> crv = baseClause->Clone();
+        if (!crv) return crv;
+        clonedBaseClause = *crv;
     }
     Node* clonedAttributes = nullptr;
     if (attributes)
     {
-        clonedAttributes = attributes->Clone();
+        std::expected<Node*, int> crv = attributes->Clone();
+        if (!crv) return crv;
+        clonedAttributes = *crv;
     }
     ClassHeadNode* clone = new ClassHeadNode(GetSourcePos(), classKey->Clone(), classHeadName->Clone(), clonedClassVirtSpecifiers, clonedBaseClause, clonedAttributes);
     return clone;
@@ -153,10 +162,12 @@ BaseClauseNode::BaseClauseNode(const soul::ast::SourcePos& sourcePos_, Node* bas
 {
 }
 
-Node* BaseClauseNode::Clone() const
+std::expected<Node*, int> BaseClauseNode::Clone() const
 {
-    BaseClauseNode* clone = new BaseClauseNode(GetSourcePos(), Child()->Clone());
-    return clone;
+    std::expected<Node*, int> crv = Child()->Clone();
+    if (!crv) return crv;
+    BaseClauseNode* clone = new BaseClauseNode(GetSourcePos(), *crv);
+    return std::expected<Node*, int>(clone);
 }
 
 void BaseClauseNode::Accept(Visitor& visitor)
@@ -168,14 +179,16 @@ BaseSpecifierListNode::BaseSpecifierListNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-Node* BaseSpecifierListNode::Clone() const
+std::expected<Node*, int> BaseSpecifierListNode::Clone() const
 {
     BaseSpecifierListNode* clone = new BaseSpecifierListNode(GetSourcePos());
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> crv = node->Clone();
+        if (!crv) return crv;
+        std::expected<bool, int> rv = clone->AddNode(*crv);
     }
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void BaseSpecifierListNode::Accept(Visitor& visitor)
@@ -193,22 +206,28 @@ BaseSpecifierNode::BaseSpecifierNode(const soul::ast::SourcePos& sourcePos_, Nod
 {
 }
 
-Node* BaseSpecifierNode::Clone() const
+std::expected<Node*, int> BaseSpecifierNode::Clone() const
 {
     Node* clonedAccessSpecifier = nullptr;
     if (accessSpecifier)
     {
-        clonedAccessSpecifier = accessSpecifier->Clone();
+        std::expected<Node*, int> crv = accessSpecifier->Clone();
+        if (!crv) return crv;
+        clonedAccessSpecifier = *crv;
     }
     Node* clonedVirtualSpecifier = nullptr;
     if (virtualSpecifier)
     {
-        clonedVirtualSpecifier = virtualSpecifier->Clone();
+        std::expected<Node*, int> crv = virtualSpecifier->Clone();
+        if (!crv) return crv;
+        clonedVirtualSpecifier = *crv;
     }
     Node* clonedAttributes = nullptr;
     if (attributes)
     {
-        clonedAttributes = attributes->Clone();
+        std::expected<Node*, int> crv = attributes->Clone();
+        if (!crv) return crv;
+        clonedAttributes = *crv;
     }
     BaseSpecifierNode* clone = new BaseSpecifierNode(GetSourcePos(), classOrDeclType->Clone(), clonedAccessSpecifier, clonedVirtualSpecifier, clonedAttributes, virtualFirst);
     return clone;
@@ -267,10 +286,12 @@ BeginAccessGroupNode::BeginAccessGroupNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
-Node* BeginAccessGroupNode::Clone() const
+std::expected<Node*, int> BeginAccessGroupNode::Clone() const
 {
-    BeginAccessGroupNode* clone = new BeginAccessGroupNode(GetSourcePos(), Child()->Clone(), colonPos);
-    return clone;
+    std::expected<Node*, int> crv = Child()->Clone();
+    if (!crv) return crv;
+    BeginAccessGroupNode* clone = new BeginAccessGroupNode(GetSourcePos(), *crv, colonPos);
+    return std::expected<Node*, int>(clone);
 }
 
 void BeginAccessGroupNode::Accept(Visitor& visitor)
@@ -306,25 +327,33 @@ MemberDeclarationNode::MemberDeclarationNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-Node* MemberDeclarationNode::Clone() const
+std::expected<Node*, int> MemberDeclarationNode::Clone() const
 {
     Node* clonedAttributes = nullptr;
     if (attributes)
     {
-        clonedAttributes = attributes->Clone();
+        std::expected<Node*, int> crv = attributes->Clone();
+        if (!crv) return crv;
+        clonedAttributes = *crv;
     }
     Node* clonedDeclSpecifiers = nullptr;
     if (declSpecifiers)
     {
-        clonedDeclSpecifiers = declSpecifiers->Clone();
+        std::expected<Node*, int> crv = declSpecifiers->Clone();
+        if (!crv) return crv;
+        clonedDeclSpecifiers = *crv;
     }
     Node* clonedMemberDeclarators = nullptr;
     if (memberDeclarators)
     {
-        clonedMemberDeclarators = memberDeclarators->Clone();
+        std::expected<Node*, int> crv = memberDeclarators->Clone();
+        if (!crv) return crv;
+        clonedMemberDeclarators = *crv;
     }
-    MemberDeclarationNode* clone = new MemberDeclarationNode(GetSourcePos(), clonedAttributes, clonedDeclSpecifiers, clonedMemberDeclarators, semicolon->Clone());
-    return clone;
+    std::expected<Node*, int> crv = semicolon->Clone();
+    if (!crv) return crv;
+    MemberDeclarationNode* clone = new MemberDeclarationNode(GetSourcePos(), clonedAttributes, clonedDeclSpecifiers, clonedMemberDeclarators, *crv);
+    return std::expected<Node*, int>(clone);
 }
 
 void MemberDeclarationNode::Accept(Visitor& visitor)
@@ -370,14 +399,17 @@ MemberDeclaratorListNode::MemberDeclaratorListNode(const soul::ast::SourcePos& s
 {
 }
 
-Node* MemberDeclaratorListNode::Clone() const
+std::expected<Node*, int> MemberDeclaratorListNode::Clone() const
 {
     MemberDeclaratorListNode* clone = new MemberDeclaratorListNode(GetSourcePos());
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> crv = node->Clone();
+        if (!crv) return crv;
+        std::expected<bool, int> rv = clone->AddNode(*crv);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void MemberDeclaratorListNode::Accept(Visitor& visitor)
@@ -394,10 +426,14 @@ ConstructorNode::ConstructorNode(const soul::ast::SourcePos& sourcePos_, Node* c
 {
 }
 
-Node* ConstructorNode::Clone() const
+std::expected<Node*, int> ConstructorNode::Clone() const
 {
-    ConstructorNode* clone = new ConstructorNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
-    return clone;
+    std::expected<Node*, int> lrv = Left()->Clone();
+    if (!lrv) return lrv;
+    std::expected<Node*, int> rrv = Right()->Clone();
+    if (!rrv) return rrv;
+    ConstructorNode* clone = new ConstructorNode(GetSourcePos(), *lrv, *rrv);
+    return std::expected<Node*, int>(clone);
 }
 
 void ConstructorNode::Accept(Visitor& visitor)
@@ -433,10 +469,12 @@ std::expected<bool, int> ConstructorInitializerNode::Read(Reader& reader)
     return std::expected<bool, int>(true);
 }
 
-Node* ConstructorInitializerNode::Clone() const
+std::expected<Node*, int> ConstructorInitializerNode::Clone() const
 {
-    ConstructorInitializerNode* clone = new ConstructorInitializerNode(GetSourcePos(), memberInitializerListNode->Clone());
-    return clone;
+    std::expected<Node*, int> crv = memberInitializerListNode->Clone();
+    if (!crv) return crv;
+    ConstructorInitializerNode* clone = new ConstructorInitializerNode(GetSourcePos(), *crv);
+    return std::expected<Node*, int>(clone);
 }
 
 void ConstructorInitializerNode::Accept(Visitor& visitor)
@@ -458,14 +496,17 @@ MemberInitializerListNode::MemberInitializerListNode(const soul::ast::SourcePos&
 {
 }
 
-Node* MemberInitializerListNode::Clone() const
+std::expected<Node*, int> MemberInitializerListNode::Clone() const
 {
     MemberInitializerListNode* clone = new MemberInitializerListNode(GetSourcePos());
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> crv = node->Clone();
+        if (!crv) return crv;
+        std::expected<bool, int> rv = clone->AddNode(*crv);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void MemberInitializerListNode::Accept(Visitor& visitor)
@@ -483,10 +524,14 @@ MemberInitializerNode::MemberInitializerNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-Node* MemberInitializerNode::Clone() const
+std::expected<Node*, int> MemberInitializerNode::Clone() const
 {
-    MemberInitializerNode* clone = new MemberInitializerNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
-    return clone;
+    std::expected<Node*, int> lrv = Left()->Clone();
+    if (!lrv) return lrv;
+    std::expected<Node*, int> rrv = Right()->Clone();
+    if (!rrv) return rrv;
+    MemberInitializerNode* clone = new MemberInitializerNode(GetSourcePos(), *lrv, *rrv);
+    return std::expected<Node*, int>(clone);
 }
 
 void MemberInitializerNode::Accept(Visitor& visitor)
@@ -498,14 +543,17 @@ VirtSpecifierSequenceNode::VirtSpecifierSequenceNode(const soul::ast::SourcePos&
 {
 }
 
-Node* VirtSpecifierSequenceNode::Clone() const
+std::expected<Node*, int> VirtSpecifierSequenceNode::Clone() const
 {
     VirtSpecifierSequenceNode* clone = new VirtSpecifierSequenceNode(GetSourcePos());
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> crv = node->Clone();
+        if (!crv) return crv;
+        std::expected<bool, int> rv = clone->AddNode(*crv);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void VirtSpecifierSequenceNode::Accept(Visitor& visitor)
@@ -517,10 +565,10 @@ ClassNode::ClassNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::cl
 {
 }
 
-Node* ClassNode::Clone() const
+std::expected<Node*, int> ClassNode::Clone() const
 {
     ClassNode* clone = new ClassNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void ClassNode::Accept(Visitor& visitor)
@@ -532,10 +580,10 @@ StructNode::StructNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
-Node* StructNode::Clone() const
+std::expected<Node*, int> StructNode::Clone() const
 {
     StructNode* clone = new StructNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void StructNode::Accept(Visitor& visitor)
@@ -547,10 +595,10 @@ UnionNode::UnionNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::un
 {
 }
 
-Node* UnionNode::Clone() const
+std::expected<Node*, int>UnionNode::Clone() const
 {
     UnionNode* clone = new UnionNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void UnionNode::Accept(Visitor& visitor)
@@ -562,10 +610,10 @@ PublicNode::PublicNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
-Node* PublicNode::Clone() const
+std::expected<Node*, int> PublicNode::Clone() const
 {
     PublicNode* clone = new PublicNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void PublicNode::Accept(Visitor& visitor)
@@ -577,10 +625,10 @@ ProtectedNode::ProtectedNode(const soul::ast::SourcePos& sourcePos_) : Node(Node
 {
 }
 
-Node* ProtectedNode::Clone() const
+std::expected<Node*, int> ProtectedNode::Clone() const
 {
     ProtectedNode* clone = new ProtectedNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void ProtectedNode::Accept(Visitor& visitor)
@@ -592,10 +640,10 @@ PrivateNode::PrivateNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind
 {
 }
 
-Node* PrivateNode::Clone() const
+std::expected<Node*, int> PrivateNode::Clone() const
 {
     PrivateNode* clone = new PrivateNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void PrivateNode::Accept(Visitor& visitor)
@@ -607,10 +655,10 @@ VirtualNode::VirtualNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind
 {
 }
 
-Node* VirtualNode::Clone() const
+std::expected<Node*, int> VirtualNode::Clone() const
 {
     VirtualNode* clone = new VirtualNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void VirtualNode::Accept(Visitor& visitor)
@@ -622,10 +670,10 @@ OverrideNode::OverrideNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKi
 {
 }
 
-Node* OverrideNode::Clone() const
+std::expected<Node*, int> OverrideNode::Clone() const
 {
     OverrideNode* clone = new OverrideNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void OverrideNode::Accept(Visitor& visitor)
@@ -637,10 +685,10 @@ FinalNode::FinalNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::fi
 {
 }
 
-Node* FinalNode::Clone() const
+std::expected<Node*, int> FinalNode::Clone() const
 {
     FinalNode* clone = new FinalNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void FinalNode::Accept(Visitor& visitor)
@@ -656,10 +704,10 @@ PureSpecifierNode::PureSpecifierNode(const soul::ast::SourcePos& sourcePos_, con
 {
 }
 
-Node* PureSpecifierNode::Clone() const
+std::expected<Node*, int> PureSpecifierNode::Clone() const
 {
     PureSpecifierNode* clone = new PureSpecifierNode(GetSourcePos(), zeroPos);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void PureSpecifierNode::Accept(Visitor& visitor)

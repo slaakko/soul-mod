@@ -19,10 +19,10 @@ IdentifierNode::IdentifierNode(const soul::ast::SourcePos& sourcePos_, const std
 {
 }
 
-Node* IdentifierNode::Clone() const
+std::expected<Node*, int> IdentifierNode::Clone() const
 {
     IdentifierNode* clone = new IdentifierNode(GetSourcePos(), str);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void IdentifierNode::Accept(Visitor& visitor)
@@ -53,10 +53,10 @@ UnnamedNode::UnnamedNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind
 {
 }
 
-Node* UnnamedNode::Clone() const
+std::expected<Node*, int> UnnamedNode::Clone() const
 {
     UnnamedNode* clone = new UnnamedNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void UnnamedNode::Accept(Visitor& visitor)
@@ -68,10 +68,10 @@ ColonColonNode::ColonColonNode(const soul::ast::SourcePos& sourcePos_) : Node(No
 {
 }
 
-Node* ColonColonNode::Clone() const
+std::expected<Node*, int> ColonColonNode::Clone() const
 {
     ColonColonNode* clone = new ColonColonNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void ColonColonNode::Accept(Visitor& visitor)
@@ -83,14 +83,17 @@ NestedNameSpecifierNode::NestedNameSpecifierNode(const soul::ast::SourcePos& sou
 {
 }
 
-Node* NestedNameSpecifierNode::Clone() const
+std::expected<Node*, int> NestedNameSpecifierNode::Clone() const
 {
     NestedNameSpecifierNode* clone = new NestedNameSpecifierNode(GetSourcePos());
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> n = node->Clone();
+        if (!n) return n;
+        std::expected<bool, int> rv = clone->AddNode(*n);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void NestedNameSpecifierNode::Accept(Visitor& visitor)
@@ -106,10 +109,14 @@ QualifiedIdNode::QualifiedIdNode(const soul::ast::SourcePos& sourcePos_, Node* n
 {
 }
 
-Node* QualifiedIdNode::Clone() const
+std::expected<Node*, int> QualifiedIdNode::Clone() const
 {
-    QualifiedIdNode* clone = new QualifiedIdNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
-    return clone;
+    std::expected<Node*, int> l = Left()->Clone();
+    if (!l) return l;
+    std::expected<Node*, int> r = Right()->Clone();
+    if (!r) return r;
+    QualifiedIdNode* clone = new QualifiedIdNode(GetSourcePos(), *l, *r);
+    return std::expected<Node*, int>(clone);
 }
 
 void QualifiedIdNode::Accept(Visitor& visitor)
@@ -121,14 +128,17 @@ IdentifierListNode::IdentifierListNode(const soul::ast::SourcePos& sourcePos_) :
 {
 }
 
-Node* IdentifierListNode::Clone() const
+std::expected<Node*, int> IdentifierListNode::Clone() const
 {
     IdentifierListNode* clone = new IdentifierListNode(GetSourcePos());
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> n = node->Clone();
+        if (!n) return n;
+        std::expected<bool, int> rv = clone->AddNode(*n);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void IdentifierListNode::Accept(Visitor& visitor)
@@ -144,10 +154,10 @@ ModuleNameNode::ModuleNameNode(const soul::ast::SourcePos& sourcePos_, const std
 {
 }
 
-Node* ModuleNameNode::Clone() const
+std::expected<Node*, int> ModuleNameNode::Clone() const
 {
     ModuleNameNode* clone = new ModuleNameNode(GetSourcePos(), str);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void ModuleNameNode::Accept(Visitor& visitor)

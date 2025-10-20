@@ -20,6 +20,7 @@ struct ConversionTableEntry
     std::u32string key;
     TypeSymbol* paramType;
     TypeSymbol* argType;
+    int error;
 };
 
 struct ConversionTableEntryEqual
@@ -37,9 +38,9 @@ class ConversionTable
 public:
     ConversionTable(SymbolTable* symbolTable_);
     void Import(const ConversionTable& that);
-    void AddConversion(FunctionSymbol* conversion);
-    FunctionSymbol* GetConversion(TypeSymbol* paramType, TypeSymbol* argType, Context* context) const;
-    void Make();
+    std::expected<bool, int> AddConversion(FunctionSymbol* conversion);
+    std::expected<FunctionSymbol*, int> GetConversion(TypeSymbol* paramType, TypeSymbol* argType, Context* context) const;
+    std::expected<bool, int> Make();
 private:
     SymbolTable* symbolTable;
     std::vector<FunctionSymbol*> conversionFunctions;

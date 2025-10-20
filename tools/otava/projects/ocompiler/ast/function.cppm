@@ -15,7 +15,7 @@ class FunctionDefinitionNode : public CompoundNode
 public:
     FunctionDefinitionNode(const soul::ast::SourcePos& sourcePos_);
     FunctionDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* declSpecifiers_, Node* declarator_, Node* specifiers_, Node* functionBody_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -41,7 +41,7 @@ class FunctionBodyNode : public UnaryNode
 public:
     FunctionBodyNode(const soul::ast::SourcePos& sourcePos_);
     FunctionBodyNode(const soul::ast::SourcePos& sourcePos_, Node* compoundStatement_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -49,7 +49,7 @@ class DefaultNode : public Node
 {
 public:
     DefaultNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -57,7 +57,7 @@ class DeleteNode : public Node
 {
 public:
     DeleteNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -66,7 +66,7 @@ class DefaultedOrDeletedFunctionNode : public CompoundNode
 public:
     DefaultedOrDeletedFunctionNode(const soul::ast::SourcePos& sourcePos_);
     DefaultedOrDeletedFunctionNode(const soul::ast::SourcePos& sourcePos_, Node* assign_, Node* defaultOrDelete_, Node* semicolon_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -84,7 +84,7 @@ class NoDeclSpecFunctionDeclarationNode : public CompoundNode
 public:
     NoDeclSpecFunctionDeclarationNode(const soul::ast::SourcePos& sourcePos_);
     NoDeclSpecFunctionDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* declarator_, Node* semicolon_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -101,7 +101,7 @@ class OperatorNode : public Node
 {
 public:
     OperatorNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -110,7 +110,7 @@ class NewArrayOpNode : public CompoundNode
 public:
     NewArrayOpNode(const soul::ast::SourcePos& sourcePos_);
     NewArrayOpNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -125,7 +125,7 @@ class NewOpNode : public Node
 {
 public:
     NewOpNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -134,7 +134,7 @@ class DeleteArrayOpNode : public CompoundNode
 public:
     DeleteArrayOpNode(const soul::ast::SourcePos& sourcePos_);
     DeleteArrayOpNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -149,7 +149,7 @@ class DeleteOpNode : public Node
 {
 public:
     DeleteOpNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -157,7 +157,7 @@ class CoAwaitOpNode : public Node
 {
 public:
     CoAwaitOpNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -165,7 +165,7 @@ class InvokeOpNode : public Node
 {
 public:
     InvokeOpNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -173,7 +173,7 @@ class SubscriptOpNode : public Node
 {
 public:
     SubscriptOpNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -182,7 +182,7 @@ class OperatorFunctionIdNode : public BinaryNode
 public:
     OperatorFunctionIdNode(const soul::ast::SourcePos& sourcePos_);
     OperatorFunctionIdNode(const soul::ast::SourcePos& sourcePos_, Node* operatorKwNode_, Node* op_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -191,7 +191,7 @@ class ConversionFunctionIdNode : public BinaryNode
 public:
     ConversionFunctionIdNode(const soul::ast::SourcePos& sourcePos_);
     ConversionFunctionIdNode(const soul::ast::SourcePos& sourcePos_, Node* operatorKwNode_, Node* conversionTypeId_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -200,7 +200,7 @@ class ConversionTypeIdNode : public CompoundNode
 public:
     ConversionTypeIdNode(const soul::ast::SourcePos& sourcePos_);
     ConversionTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifierSeq_, Node* conversionDeclarator_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -216,7 +216,7 @@ class ConversionDeclaratorNode : public CompoundNode
 public:
     ConversionDeclaratorNode(const soul::ast::SourcePos& sourcePos_);
     ConversionDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* ptrOp_, Node* conversionDeclarator_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -232,7 +232,7 @@ class DestructorIdNode : public UnaryNode
 public:
     DestructorIdNode(const soul::ast::SourcePos& sourcePos_);
     DestructorIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeName_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -240,7 +240,7 @@ class ParameterNode : public CompoundNode
 {
 public:
     ParameterNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -266,7 +266,7 @@ class ParameterListNode : public ListNode
 {
 public:
     ParameterListNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -283,7 +283,7 @@ class NoexceptNode : public Node
 {
 public:
     NoexceptNode(const soul::ast::SourcePos& sourcePos_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -292,7 +292,7 @@ class FunctionTryBlockNode : public CompoundNode
 public:
     FunctionTryBlockNode(const soul::ast::SourcePos& sourcePos_);
     FunctionTryBlockNode(const soul::ast::SourcePos& sourcePos_, Node* ctorInitializer_, Node* tryBlock_, Node* handlers_);
-    Node* Clone() const override;
+    std::expected<Node*, int> Clone() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;

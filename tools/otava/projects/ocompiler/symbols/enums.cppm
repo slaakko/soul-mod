@@ -222,6 +222,6 @@ std::expected<bool, int> BeginEnumType(otava::ast::Node* node, Context* context)
 std::expected<bool, int> AddEnumerators(otava::ast::Node* node, Context* context);
 std::expected<bool, int> EndEnumType(otava::ast::Node* node, Context* context);
 std::expected<bool, int> ProcessEnumForwardDeclaration(otava::ast::Node* node, Context* context);
-void BindEnumType(EnumeratedTypeSymbol* enumType, const soul::ast::SourcePos& sourcePos, Context* context);
+std::expected<bool, int> BindEnumType(EnumeratedTypeSymbol* enumType, const soul::ast::SourcePos& sourcePos, Context* context);
 
 } // namespace otava::symbols

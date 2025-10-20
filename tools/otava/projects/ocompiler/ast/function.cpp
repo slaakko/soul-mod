@@ -28,25 +28,35 @@ FunctionDefinitionNode::FunctionDefinitionNode(const soul::ast::SourcePos& sourc
 {
 }
 
-Node* FunctionDefinitionNode::Clone() const
+std::expected<Node*, int> FunctionDefinitionNode::Clone() const
 {
     Node* clonedAttributes = nullptr;
     if (attributes)
     {
-        clonedAttributes = attributes->Clone();
+        std::expected<Node*, int> a = attributes->Clone();
+        if (!a) return a;
+        clonedAttributes = *a;
     }
     Node* clonedDeclSpecifiers = nullptr;
     if (declSpecifiers)
     {
-        clonedDeclSpecifiers = declSpecifiers->Clone();
+        std::expected<Node*, int> d = declSpecifiers->Clone();
+        if (!d) return d;
+        clonedDeclSpecifiers = *d;
     }
     Node* clonedSpecifiers = nullptr;
     if (specifiers)
     {
-        clonedSpecifiers = specifiers->Clone();
+        std::expected<Node*, int> s = specifiers->Clone();
+        if (!s) return s;
+        clonedSpecifiers = *s;
     }
-    FunctionDefinitionNode* clone = new FunctionDefinitionNode(GetSourcePos(), clonedAttributes, clonedDeclSpecifiers, declarator->Clone(), clonedSpecifiers, functionBody->Clone());
-    return clone;
+    std::expected<Node*, int> d = declarator->Clone();
+    if (!d) return d;
+    std::expected<Node*, int> b = functionBody->Clone();
+    if (!b)  return b;
+    FunctionDefinitionNode* clone = new FunctionDefinitionNode(GetSourcePos(), clonedAttributes, clonedDeclSpecifiers, *d, clonedSpecifiers, *b);
+    return std::expected<Node*, int>(clone);
 }
 
 void FunctionDefinitionNode::ResetFunctionBody(Node* functionBody_)
@@ -106,10 +116,12 @@ FunctionBodyNode::FunctionBodyNode(const soul::ast::SourcePos& sourcePos_, Node*
 {
 }
 
-Node* FunctionBodyNode::Clone() const
+std::expected<Node*, int> FunctionBodyNode::Clone() const
 {
-    FunctionBodyNode* clone = new FunctionBodyNode(GetSourcePos(), Child()->Clone());
-    return clone;
+    std::expected<Node*, int> c = Child()->Clone();
+    if (!c) return c;
+    FunctionBodyNode* clone = new FunctionBodyNode(GetSourcePos(), *c);
+    return std::expected<Node*, int>(clone);
 }
 
 void FunctionBodyNode::Accept(Visitor& visitor)
@@ -121,10 +133,10 @@ DefaultNode::DefaultNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind
 {
 }
 
-Node* DefaultNode::Clone() const
+std::expected<Node*, int> DefaultNode::Clone() const
 {
     DefaultNode* clone = new DefaultNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void DefaultNode::Accept(Visitor& visitor)
@@ -136,10 +148,10 @@ DeleteNode::DeleteNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
-Node* DeleteNode::Clone() const
+std::expected<Node*, int>  DeleteNode::Clone() const
 {
     DeleteNode* clone = new DeleteNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void DeleteNode::Accept(Visitor& visitor)
@@ -156,10 +168,16 @@ DefaultedOrDeletedFunctionNode::DefaultedOrDeletedFunctionNode(const soul::ast::
 {
 }
 
-Node* DefaultedOrDeletedFunctionNode::Clone() const
+std::expected<Node*, int> DefaultedOrDeletedFunctionNode::Clone() const
 {
-    DefaultedOrDeletedFunctionNode* clone = new DefaultedOrDeletedFunctionNode(GetSourcePos(), assign->Clone(), defaultOrDelete->Clone(), semicolon->Clone());
-    return clone;
+    std::expected<Node*, int> a = assign->Clone();
+    if (!a) return a;
+    std::expected<Node*, int> d = defaultOrDelete->Clone();
+    if (!d) return d;
+    std::expected<Node*, int> s = semicolon->Clone();
+    if (!s) return s;
+    DefaultedOrDeletedFunctionNode* clone = new DefaultedOrDeletedFunctionNode(GetSourcePos(), *a, *d, *s);
+    return std::expected<Node*, int>(clone);
 }
 
 void DefaultedOrDeletedFunctionNode::Accept(Visitor& visitor)
@@ -205,15 +223,21 @@ NoDeclSpecFunctionDeclarationNode::NoDeclSpecFunctionDeclarationNode(const soul:
 {
 }
 
-Node* NoDeclSpecFunctionDeclarationNode::Clone() const
+std::expected<Node*, int> NoDeclSpecFunctionDeclarationNode::Clone() const
 {
     Node* clonedAttributes = nullptr;
     if (attributes)
     {
-        clonedAttributes = attributes->Clone();
+        std::expected<Node*, int> a = attributes->Clone();
+        if (!a) return a;
+        clonedAttributes = *a;
     }
-    NoDeclSpecFunctionDeclarationNode* clone = new NoDeclSpecFunctionDeclarationNode(GetSourcePos(), clonedAttributes, declarator->Clone(), semicolon->Clone());
-    return clone;
+    std::expected<Node*, int> d = declarator->Clone();
+    if (!d) return d;
+    std::expected<Node*, int> s = semicolon->Clone();
+    if (!s) return s;
+    NoDeclSpecFunctionDeclarationNode* clone = new NoDeclSpecFunctionDeclarationNode(GetSourcePos(), clonedAttributes, *d, *s);
+    return std::expected<Node*, int>(clone);
 }
 
 void NoDeclSpecFunctionDeclarationNode::Accept(Visitor& visitor)
@@ -254,10 +278,10 @@ OperatorNode::OperatorNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKi
 {
 }
 
-Node* OperatorNode::Clone() const
+std::expected<Node*, int> OperatorNode::Clone() const
 {
     OperatorNode* clone = new OperatorNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void OperatorNode::Accept(Visitor& visitor)
@@ -274,10 +298,10 @@ NewArrayOpNode::NewArrayOpNode(const soul::ast::SourcePos& sourcePos_, const sou
 {
 }
 
-Node* NewArrayOpNode::Clone() const
+std::expected<Node*, int> NewArrayOpNode::Clone() const
 {
     NewArrayOpNode* clone = new NewArrayOpNode(GetSourcePos(), lbPos, rbPos);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void NewArrayOpNode::Accept(Visitor& visitor)
@@ -313,10 +337,10 @@ NewOpNode::NewOpNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::ne
 {
 }
 
-Node* NewOpNode::Clone() const
+std::expected<Node*, int> NewOpNode::Clone() const
 {
     NewOpNode* clone = new NewOpNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void NewOpNode::Accept(Visitor& visitor)
@@ -333,10 +357,10 @@ DeleteArrayOpNode::DeleteArrayOpNode(const soul::ast::SourcePos& sourcePos_, con
 {
 }
 
-Node* DeleteArrayOpNode::Clone() const
+std::expected<Node*, int> DeleteArrayOpNode::Clone() const
 {
     DeleteArrayOpNode* clone = new DeleteArrayOpNode(GetSourcePos(), lbPos, rbPos);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void DeleteArrayOpNode::Accept(Visitor& visitor)
@@ -372,10 +396,10 @@ DeleteOpNode::DeleteOpNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKi
 {
 }
 
-Node* DeleteOpNode::Clone() const
+std::expected<Node*, int> DeleteOpNode::Clone() const
 {
     DeleteOpNode* clone = new DeleteOpNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void DeleteOpNode::Accept(Visitor& visitor)
@@ -387,10 +411,10 @@ CoAwaitOpNode::CoAwaitOpNode(const soul::ast::SourcePos& sourcePos_) : Node(Node
 {
 }
 
-Node* CoAwaitOpNode::Clone() const
+std::expected<Node*, int> CoAwaitOpNode::Clone() const
 {
     CoAwaitOpNode* clone = new CoAwaitOpNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void CoAwaitOpNode::Accept(Visitor& visitor)
@@ -402,10 +426,10 @@ InvokeOpNode::InvokeOpNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKi
 {
 }
 
-Node* InvokeOpNode::Clone() const
+std::expected<Node*, int> InvokeOpNode::Clone() const
 {
     InvokeOpNode* clone = new InvokeOpNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void InvokeOpNode::Accept(Visitor& visitor)
@@ -417,10 +441,10 @@ SubscriptOpNode::SubscriptOpNode(const soul::ast::SourcePos& sourcePos_) : Node(
 {
 }
 
-Node* SubscriptOpNode::Clone() const
+std::expected<Node*, int> SubscriptOpNode::Clone() const
 {
     SubscriptOpNode* clone = new SubscriptOpNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void SubscriptOpNode::Accept(Visitor& visitor)
@@ -437,10 +461,10 @@ OperatorFunctionIdNode::OperatorFunctionIdNode(const soul::ast::SourcePos& sourc
 {
 }
 
-Node* OperatorFunctionIdNode::Clone() const
+std::expected<Node*, int>OperatorFunctionIdNode::Clone() const
 {
     OperatorFunctionIdNode* clone = new OperatorFunctionIdNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void OperatorFunctionIdNode::Accept(Visitor& visitor)
@@ -457,10 +481,10 @@ ConversionFunctionIdNode::ConversionFunctionIdNode(const soul::ast::SourcePos& s
 {
 }
 
-Node* ConversionFunctionIdNode::Clone() const
+std::expected<Node*, int> ConversionFunctionIdNode::Clone() const
 {
     ConversionFunctionIdNode* clone = new ConversionFunctionIdNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void ConversionFunctionIdNode::Accept(Visitor& visitor)
@@ -477,15 +501,17 @@ ConversionTypeIdNode::ConversionTypeIdNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
-Node* ConversionTypeIdNode::Clone() const
+std::expected<Node*, int> ConversionTypeIdNode::Clone() const
 {
     Node* clonedConversionDeclarator = nullptr;
     if (conversionDeclarator)
     {
         clonedConversionDeclarator = conversionDeclarator->Clone();
     }
-    ConversionTypeIdNode* clone = new ConversionTypeIdNode(GetSourcePos(), typeSpecifierSeq->Clone(), clonedConversionDeclarator);
-    return clone;
+    std::expected<Node*, int> t = typeSpecifierSeq->Clone();
+    if (!t) return t;
+    ConversionTypeIdNode* clone = new ConversionTypeIdNode(GetSourcePos(), *t, clonedConversionDeclarator);
+    return std::expected<Node*, int>(clone);
 }
 
 void ConversionTypeIdNode::Accept(Visitor& visitor)
@@ -526,15 +552,19 @@ ConversionDeclaratorNode::ConversionDeclaratorNode(const soul::ast::SourcePos& s
 {
 }
 
-Node* ConversionDeclaratorNode::Clone() const
+std::expected<Node*, int> ConversionDeclaratorNode::Clone() const
 {
     Node* clonedConversionDeclarator = nullptr;
     if (conversionDeclarator)
     {
-        clonedConversionDeclarator = conversionDeclarator->Clone();
+        std::expected<Node*, int> c = conversionDeclarator->Clone();
+        if (!c) return c;
+        clonedConversionDeclarator = *c;
     }
-    ConversionDeclaratorNode* clone = new ConversionDeclaratorNode(GetSourcePos(), ptrOp->Clone(), clonedConversionDeclarator);
-    return clone;
+    std::expected<Node*, int> p = ptrOp->Clone();
+    if (!p) return p;
+    ConversionDeclaratorNode* clone = new ConversionDeclaratorNode(GetSourcePos(), *p, clonedConversionDeclarator);
+    return std::expected<Node*, int>(clone);
 }
 
 void ConversionDeclaratorNode::Accept(Visitor& visitor)
@@ -574,10 +604,10 @@ DestructorIdNode::DestructorIdNode(const soul::ast::SourcePos& sourcePos_, Node*
 {
 }
 
-Node* DestructorIdNode::Clone() const
+std::expected<Node*, int> DestructorIdNode::Clone() const
 {
     DestructorIdNode* clone = new DestructorIdNode(GetSourcePos(), Child()->Clone());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void DestructorIdNode::Accept(Visitor& visitor)
@@ -589,27 +619,37 @@ ParameterNode::ParameterNode(const soul::ast::SourcePos& sourcePos_) : CompoundN
 {
 }
 
-Node* ParameterNode::Clone() const
+std::expected<Node*, int> ParameterNode::Clone() const
 {
     ParameterNode* clone = new ParameterNode(GetSourcePos());
     if (attributes)
     {
-        clone->SetAttributes(attributes->Clone());
+        std::expected<Node*, int> a = attributes->Clone();
+        if (!a) return a;
+        clone->SetAttributes(*a);
     }
-    clone->SetDeclSpecifiers(declSpecifiers->Clone());
+    std::expected<Node*, int> d = declSpecifiers->Clone();
+    if (!d) return d;
+    clone->SetDeclSpecifiers(*d);
     if (declarator)
     {
-        clone->SetDeclarator(declarator->Clone());
+        std::expected<Node*, int> d = declarator->Clone();
+        if (!d) return d;
+        clone->SetDeclarator(*d);
     }
     if (assign)
     {
-        clone->SetAssign(assign->Clone());
+        std::expected<Node*, int> a = assign->Clone();
+        if (!a) return a;
+        clone->SetAssign(*a);
     }
     if (initializer)
     {
-        clone->SetInitializer(initializer->Clone());
+        std::expected<Node*, int> i = initializer->Clone();
+        if (!i) return i;
+        clone->SetInitializer(*i);
     }
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void ParameterNode::Accept(Visitor& visitor)
@@ -685,16 +725,19 @@ ParameterListNode::ParameterListNode(const soul::ast::SourcePos& sourcePos_) : L
 {
 }
 
-Node* ParameterListNode::Clone() const
+std::expected<Node*, int> ParameterListNode::Clone() const
 {
     ParameterListNode* clone = new ParameterListNode(GetSourcePos());
     for (const auto& node : Nodes())
     {
-        clone->AddNode(node->Clone());
+        std::expected<Node*, int> n = node->Clone();
+        if (!n) return n;
+        std::expected<bool, int> rv = clone->AddNode(*n);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
     clone->SetLParenPos(lpPos);
     clone->SetRParenPos(rpPos);
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void ParameterListNode::Accept(Visitor& visitor)
@@ -730,10 +773,10 @@ NoexceptNode::NoexceptNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKi
 {
 }
 
-Node* NoexceptNode::Clone() const
+std::expected<Node*, int> NoexceptNode::Clone() const
 {
     NoexceptNode* clone = new NoexceptNode(GetSourcePos());
-    return clone;
+    return std::expected<Node*, int>(clone);
 }
 
 void NoexceptNode::Accept(Visitor& visitor)
@@ -750,15 +793,21 @@ FunctionTryBlockNode::FunctionTryBlockNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
-Node* FunctionTryBlockNode::Clone() const
+std::expected<Node*, int> FunctionTryBlockNode::Clone() const
 {
     Node* clonedCtorInitializer = nullptr;
     if (ctorInitializer)
     {
-        clonedCtorInitializer = ctorInitializer->Clone();
+        std::expected<Node*, int> c = ctorInitializer->Clone();
+        if (!c) return c;
+        clonedCtorInitializer = *c;
     }
-    FunctionTryBlockNode* clone = new FunctionTryBlockNode(GetSourcePos(), clonedCtorInitializer, tryBlock->Clone(), handlers->Clone());
-    return clone;
+    std::expected<Node*, int> t = tryBlock->Clone();
+    if (!t) return t;
+    std::expected<Node*, int> h = handlers->Clone();
+    if (!h) return h;
+    FunctionTryBlockNode* clone = new FunctionTryBlockNode(GetSourcePos(), clonedCtorInitializer, *t, *h);
+    return std::expected<Node*, int>(clone);
 }
 
 void FunctionTryBlockNode::Accept(Visitor& visitor)

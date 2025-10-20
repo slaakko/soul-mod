@@ -202,7 +202,7 @@ public:
     std::expected<bool, int> Read(Reader& reader) override;
     NodeType Type() const override { return NodeType::sequence; }
     int Count() const override { return nodes.Count(); }
-    void AddNode(Node* node) override;
+    std::expected<bool, int> AddNode(Node* node) override;
     void Clear() override;
     inline NodeList<Node>& Nodes() { return nodes; }
     inline const NodeList<Node>& Nodes() const { return nodes; }
@@ -218,7 +218,7 @@ public:
     std::expected<bool, int> Read(Reader& reader) override;
     NodeType Type() const override { return NodeType::list; }
     int Count() const override { return nodes.Count(); }
-    void AddNode(Node* node) override;
+    std::expected<bool, int> AddNode(Node* node) override;
     void Clear() override;
     inline NodeList<Node>& Nodes() { return nodes; }
     inline const NodeList<Node>& Nodes() const { return nodes; }

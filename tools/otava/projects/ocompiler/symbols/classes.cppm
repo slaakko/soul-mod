@@ -120,7 +120,7 @@ public:
     bool IsPolymorphic() const override;
     inline const std::vector<VariableSymbol*>& MemberVariables() const { return memberVariables; }
     inline const std::vector<FunctionSymbol*>& MemberFunctions() const { return memberFunctions; }
-    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void SetMemFnDefSymbol(FunctionDefinitionSymbol* memFnDefSymbol);
     FunctionDefinitionSymbol* GetMemFnDefSymbol(int32_t defIndex) const;
     const std::map<std::int32_t, FunctionDefinitionSymbol*>& MemFnDefSymbolMap() const { return memFnDefSymbolMap; }

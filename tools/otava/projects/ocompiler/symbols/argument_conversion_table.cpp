@@ -50,7 +50,12 @@ IdentityConversion::IdentityConversion(TypeSymbol* type_, Context* context) : Fu
     SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", type);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(type, context);
 }
 
@@ -71,7 +76,12 @@ std::expected<FunctionSymbol*, int> IdentityArgumentConversion::Get(TypeSymbol* 
 {
     if (TypesEqual(argType->PlainType(context), paramType->PlainType(context), context))
     {
-        return std::expected<FunctionSymbol*, int>(new IdentityConversion(argType, context));
+        FunctionSymbol* fn = new IdentityConversion(argType, context);
+        if (!fn->Valid())
+        {
+            return std::unexpected<int>(fn->GetError());
+        }
+        return std::expected<FunctionSymbol*, int>(fn);
     }
     return std::expected<FunctionSymbol*, int>(nullptr);
 }
@@ -99,7 +109,12 @@ DerivedToBaseConversion::DerivedToBaseConversion(TypeSymbol* derivedTypePtr_, Ty
     SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", derivedTypePtr);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(baseTypePtr, context);
 }
 
@@ -156,7 +171,12 @@ std::expected<FunctionSymbol*, int>  DerivedToBaseArgumentConversion::Get(TypeSy
         {
             argumentMatch.preConversionFlags = OperationFlags::addr;
         }
-        return std::expected<FunctionSymbol*, int>(new DerivedToBaseConversion(argType, paramType, distance, context));
+        FunctionSymbol* fn = new DerivedToBaseConversion(argType, paramType, distance, context);
+        if (!fn->Valid())
+        {
+            return std::unexpected<int>(fn->GetError());
+        }
+        return std::expected<FunctionSymbol*, int>(fn);
     }
     return std::expected<FunctionSymbol*, int>(nullptr);
 }
@@ -184,7 +204,12 @@ BaseToDerivedConversion::BaseToDerivedConversion(TypeSymbol* baseTypePtr_, TypeS
     SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", baseTypePtr);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(derivedTypePtr, context);
 }
 
@@ -235,7 +260,12 @@ std::expected<FunctionSymbol*, int> BaseToDerivedArgumentConversion::Get(TypeSym
         paramType->GetBaseType()->HasBaseClass(argType->GetBaseType(), distance, context))
     {
         distance += 100;
-        return std::expected<FunctionSymbol*, int>(new BaseToDerivedConversion(argType, paramType, distance, context));
+        FunctionSymbol* fn = new BaseToDerivedConversion(argType, paramType, distance, context);
+        if (!fn->Valid())
+        {
+            return std::unexpected<int>(fn->GetError());
+        }
+        return std::expected<FunctionSymbol*, int>(fn);
     }
     return std::expected<FunctionSymbol*, int>(nullptr);
 }
@@ -261,7 +291,12 @@ NullPtrToPtrConversion::NullPtrToPtrConversion(TypeSymbol* argType_, TypeSymbol*
     SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", argType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(pointerType, context);
 }
 
@@ -287,7 +322,12 @@ std::expected<FunctionSymbol*, int>  NullPtrToPtrArgumentConversion::Get(TypeSym
 {
     if (argType->IsNullPtrType() && paramType->IsPointerType())
     {
-        return std::expected<FunctionSymbol*, int>(new NullPtrToPtrConversion(argType, paramType, context));
+        FunctionSymbol* fn = new NullPtrToPtrConversion(argType, paramType, context);
+        if (!fn->Valid())
+        {
+            return std::unexpected<int>(fn->GetError());
+        }
+        return std::expected<FunctionSymbol*, int>(fn);
     }
     return std::expected<FunctionSymbol*, int>(nullptr);
 }
@@ -314,7 +354,12 @@ VoidPtrToPtrConversion::VoidPtrToPtrConversion(TypeSymbol* voidPtrType_, TypeSym
     SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", voidPtrType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(targetPointerType, context);
 }
 
@@ -340,7 +385,12 @@ std::expected<FunctionSymbol*, int> VoidPtrToPtrArgumentConversion::Get(TypeSymb
 {
     if (argType->IsPointerType() && argType->PointerCount() == 1 && argType->GetBaseType()->IsVoidType() && paramType->IsPointerType())
     {
-        return std::expected<FunctionSymbol*, int>(new VoidPtrToPtrConversion(argType, paramType, context));
+        FunctionSymbol* fn = new VoidPtrToPtrConversion(argType, paramType, context);
+        if (!fn->Valid())
+        {
+            return std::unexpected<int>(fn->GetError());
+        }
+        return std::expected<FunctionSymbol*, int>(fn);
     }
     return std::expected<FunctionSymbol*, int>(nullptr);
 }
@@ -366,7 +416,12 @@ PtrToVoidPtrConversion::PtrToVoidPtrConversion(TypeSymbol* ptrType_, TypeSymbol*
     SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", ptrType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(voidPtrType, context);
 }
 
@@ -392,7 +447,12 @@ std::expected<FunctionSymbol*, int> PtrToVoidPtrArgumentConversion::Get(TypeSymb
 {
     if (argType->IsPointerType() && paramType->IsPointerType() && paramType->PointerCount() == 1 && paramType->GetBaseType()->IsVoidType())
     {
-        return std::expected<FunctionSymbol*, int>(new PtrToVoidPtrConversion(argType, paramType, context));
+        FunctionSymbol* fn = new PtrToVoidPtrConversion(argType, paramType, context);
+        if (!fn->Valid())
+        {
+            return std::unexpected<int>(fn->GetError());
+        }
+        return std::expected<FunctionSymbol*, int>(fn);
     }
     return std::expected<FunctionSymbol*, int>(nullptr);
 }
@@ -419,7 +479,12 @@ PtrToPtrConversion::PtrToPtrConversion(TypeSymbol* sourcePtrType_, TypeSymbol* t
     SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", sourcePtrType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(targetPtrType, context);
 }
 
@@ -447,7 +512,12 @@ std::expected<FunctionSymbol*, int> ReinterpretCastArgumentConversion::Get(TypeS
     {
         if (argType->IsPointerType() && paramType->IsPointerType() && argType->PointerCount() == 1 && paramType->PointerCount() == 1)
         {
-            return std::expected<FunctionSymbol*, int>(new PtrToPtrConversion(argType, paramType, context));
+            FunctionSymbol* fn = new PtrToPtrConversion(argType, paramType, context);
+            if (!fn->Valid())
+            {
+                return std::unexpected<int>(fn->GetError());
+            }
+            return std::expected<FunctionSymbol*, int>(fn);
         }
     }
     return std::expected<FunctionSymbol*, int>(nullptr);
@@ -475,7 +545,12 @@ VoidPtrToUInt64Conversion::VoidPtrToUInt64Conversion(TypeSymbol* ptrType_, TypeS
     SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", ptrType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(uint64Type, context);
 }
 
@@ -499,10 +574,17 @@ public:
 std::expected<FunctionSymbol*, int> VoidPtrToUInt64ArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, 
     ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    TypeSymbol* uint64Type = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType);
+    std::expected<TypeSymbol*, int> rv = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType);
+    if (!rv) return std::unexpected<int>(rv.error());
+    TypeSymbol* uint64Type = *rv;
     if (argType->PlainType(context)->IsVoidPtrType() && TypesEqual(paramType->PlainType(context), uint64Type, context))
     {
-        return std::expected<FunctionSymbol*, int>(new VoidPtrToUInt64Conversion(argType, paramType, context));
+        FunctionSymbol* fn = new VoidPtrToUInt64Conversion(argType, paramType, context);
+        if (!fn->Valid())
+        {
+            return std::unexpected<int>(fn->GetError());
+        }
+        return std::expected<FunctionSymbol*, int>(fn);
     }
     return std::expected<FunctionSymbol*, int>(nullptr);
 }
@@ -529,7 +611,12 @@ UInt64ToVoidPtrConversion::UInt64ToVoidPtrConversion(TypeSymbol* uint64Type_, Ty
     SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", uint64Type);
-    AddParameter(arg, soul::ast::SourcePos(), nullptr);
+    std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), nullptr);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(ptrType, context);
 }
 
@@ -553,10 +640,17 @@ public:
 std::expected<FunctionSymbol*, int> UInt64ToVoidPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, 
     ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    TypeSymbol* uint64Type = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType);
+    std::expected<TypeSymbol*, int> rv = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType);
+    if (!rv) return std::unexpected<int>(rv.error());
+    TypeSymbol* uint64Type = *rv;
     if (TypesEqual(argType, uint64Type, context) && paramType->IsVoidPtrType())
     {
-        return std::expected<FunctionSymbol*, int>(new UInt64ToVoidPtrConversion(argType, paramType, context));
+        FunctionSymbol* fn = new UInt64ToVoidPtrConversion(argType, paramType, context);
+        if (!fn->Valid())
+        {
+            return std::unexpected<int>(fn->GetError());
+        }
+        return std::expected<FunctionSymbol*, int>(fn);
     }
     return std::expected<FunctionSymbol*, int>(nullptr);
 }
@@ -582,7 +676,12 @@ PtrToBooleanConversion::PtrToBooleanConversion(TypeSymbol* ptrType_, TypeSymbol*
     SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", ptrType);
-    AddParameter(arg, soul::ast::SourcePos(), nullptr);
+    std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), nullptr);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(boolType, context);
 }
 
@@ -611,10 +710,17 @@ std::expected<FunctionSymbol*, int> PtrToBooleanArgumentConversion::Get(TypeSymb
     ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     if (context->GetFlag(ContextFlags::skipFirstPtrToBooleanConversion) && context->ArgIndex() == 0) return std::expected<FunctionSymbol*, int>(nullptr);
-    TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::boolType);
+    std::expected<TypeSymbol*, int> rv = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::boolType);
+    if (!rv) return std::unexpected<int>(rv.error());
+    TypeSymbol* boolType = *rv;
     if (argType->IsPointerType() && TypesEqual(paramType, boolType, context))
     {
-        return std::expected<FunctionSymbol*, int>(new PtrToBooleanConversion(argType, paramType, context));
+        FunctionSymbol* fn = new PtrToBooleanConversion(argType, paramType, context);
+        if (!fn->Valid())
+        {
+            return std::unexpected<int>(fn->GetError());
+        }
+        return std::expected<FunctionSymbol*, int>(fn);
     }
     return std::expected<FunctionSymbol*, int>(nullptr);
 }
@@ -641,7 +747,12 @@ ArrayToPtrConversion::ArrayToPtrConversion(ArrayTypeSymbol* arrayType_, Context*
     SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", arrayType->AddPointer(context));
-    AddParameter(arg, soul::ast::SourcePos(), nullptr);
+    std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), nullptr);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(elementPtrType, context);
 }
 
@@ -682,7 +793,12 @@ std::expected<FunctionSymbol*, int> ArrayToPtrArgumentConversion::Get(TypeSymbol
             {
                 argumentMatch.preConversionFlags = OperationFlags::addr;
             }
-            return std::expected<FunctionSymbol*, int>(new ArrayToPtrConversion(arrayType, context));
+            FunctionSymbol* fn = new ArrayToPtrConversion(arrayType, context);
+            if (!fn->Valid())
+            {
+                return std::unexpected<int>(fn->GetError());
+            }
+            return std::expected<FunctionSymbol*, int>(fn);
         }
         else
         {
@@ -696,7 +812,12 @@ std::expected<FunctionSymbol*, int> ArrayToPtrArgumentConversion::Get(TypeSymbol
                     {
                         argumentMatch.preConversionFlags = OperationFlags::addr;
                     }
-                    return std::expected<FunctionSymbol*, int>(new ArrayToPtrConversion(arrayType, context));
+                    FunctionSymbol* fn = new ArrayToPtrConversion(arrayType, context);
+                    if (!fn->Valid())
+                    {
+                        return std::unexpected<int>(fn->GetError());
+                    }
+                    return std::expected<FunctionSymbol*, int>(fn);
                 }
                 else if (FindClassTemplateMatch(elementType, paramType, arg, tempFunctionMatch, sourcePos, context))
                 {
@@ -704,7 +825,12 @@ std::expected<FunctionSymbol*, int> ArrayToPtrArgumentConversion::Get(TypeSymbol
                     {
                         argumentMatch.preConversionFlags = OperationFlags::addr;
                     }
-                    return std::expected<FunctionSymbol*, int>(new ArrayToPtrConversion(arrayType, context));
+                    FunctionSymbol* fn = new ArrayToPtrConversion(arrayType, context);
+                    if (!fn->Valid())
+                    {
+                        return std::unexpected<int>(fn->GetError());
+                    }
+                    return std::expected<FunctionSymbol*, int>(fn);
                 }
                 else if (FindClassTemplateSpecializationMatch(elementType, paramType, arg, tempFunctionMatch, sourcePos, context))
                 {
@@ -712,7 +838,12 @@ std::expected<FunctionSymbol*, int> ArrayToPtrArgumentConversion::Get(TypeSymbol
                     {
                         argumentMatch.preConversionFlags = OperationFlags::addr;
                     }
-                    return std::expected<FunctionSymbol*, int>(new ArrayToPtrConversion(arrayType, context));
+                    FunctionSymbol* fn = new ArrayToPtrConversion(arrayType, context);
+                    if (!fn->Valid())
+                    {
+                        return std::unexpected<int>(fn->GetError());
+                    }
+                    return std::expected<FunctionSymbol*, int>(fn);
                 }
             }
         }
@@ -742,7 +873,12 @@ EnumTypeToUnderlyingTypeConversion::EnumTypeToUnderlyingTypeConversion(Enumerate
     SetAccess(Access::public_);
     SetConversionKind(ConversionKind::explicitConversion);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", enumType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(underlyingType, context);
 }
 
@@ -772,14 +908,21 @@ std::expected<FunctionSymbol*, int> EnumTypeToUnderlyingTypeArgumentConversion::
         TypeSymbol* underlyingType = enumType->UnderlyingType();
         if (!underlyingType)
         {
-            underlyingType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType);
+            std::expected<TypeSymbol*, int> rv = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType);
+            if (!rv) return std::unexpected<int>(rv.error());
+            underlyingType = *rv;
         }
         std::expected<TypeSymbol*, int> rv = underlyingType->DirectType(context)->FinalType(sourcePos, context);
         if (!rv) return std::unexpected<int>(rv.error());
         underlyingType = *rv;
         if (TypesEqual(paramType, underlyingType, context))
         {
-            return std::expected<FunctionSymbol*, int>(new EnumTypeToUnderlyingTypeConversion(enumType, underlyingType, context));
+            FunctionSymbol* fn = new EnumTypeToUnderlyingTypeConversion(enumType, underlyingType, context);
+            if (!fn->Valid())
+            {
+                return std::unexpected<int>(fn->GetError());
+            }
+            return std::expected<FunctionSymbol*, int>(fn);
         }
     }
     return std::expected<FunctionSymbol*, int>(nullptr);
@@ -807,7 +950,12 @@ UnderlyingTypeToEnumTypeConversion::UnderlyingTypeToEnumTypeConversion(Enumerate
     SetAccess(Access::public_);
     SetConversionKind(ConversionKind::explicitConversion);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", underlyingType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(enumType, context);
 }
 
@@ -837,14 +985,21 @@ std::expected<FunctionSymbol*, int> UnderlyingTypeEnumTypeToArgumentConversion::
         TypeSymbol* underlyingType = enumType->UnderlyingType();
         if (!underlyingType)
         {
-            underlyingType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType);
+            std::expected<TypeSymbol*, int> rv = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType);
+            if (!rv) return std::unexpected<int>(rv.error());
+            underlyingType = *rv;
         }
         std::expected<TypeSymbol*, int> rv = underlyingType->DirectType(context)->FinalType(sourcePos, context);
         if (!rv) return std::unexpected<int>(rv.error());
         underlyingType = *rv;
         if (TypesEqual(argType, underlyingType, context))
         {
-            return std::expected<FunctionSymbol*, int>(new UnderlyingTypeToEnumTypeConversion(enumType, underlyingType, context));
+            FunctionSymbol* fn = new UnderlyingTypeToEnumTypeConversion(enumType, underlyingType, context);
+            if (!fn->Valid())
+            {
+                return std::unexpected<int>(fn->GetError());
+            }
+            return std::expected<FunctionSymbol*, int>(fn);
         }
     }
     return std::expected<FunctionSymbol*, int>(nullptr);
@@ -873,7 +1028,12 @@ FunctionToFunctionPtrConversion::FunctionToFunctionPtrConversion(TypeSymbol* fun
     SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", functionType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetReturnType(functionPtrType, context);
 }
 
@@ -886,8 +1046,10 @@ std::expected<bool, int> FunctionToFunctionPtrConversion::GenerateCode(Emitter& 
     std::expected<std::string, int> rv = util::ToUtf8(*is);
     if (!rv) return std::unexpected<int>(rv.error());
     std::string irName = std::move(*rv);
-    std::expected<otava::intermediate::Function*, int> frv = emitter.GetOrInsertFunction(
-        irName, static_cast<otava::intermediate::FunctionType*>(function->IrType(emitter, sourcePos, context)));
+    std::expected<otava::intermediate::Type*, int> trv = function->IrType(emitter, sourcePos, context);
+    if (trv) return std::unexpected<int>(trv.error());
+    otava::intermediate::Type* irType = *trv;
+    std::expected<otava::intermediate::Function*, int> frv = emitter.GetOrInsertFunction(irName, static_cast<otava::intermediate::FunctionType*>(irType));
     if (!frv) return std::unexpected<int>(frv.error());
     otava::intermediate::Function* fn = *frv;
     emitter.Stack().Push(fn);
@@ -939,8 +1101,12 @@ std::expected<FunctionSymbol*, int> FunctionToFunctionPtrArgumentConversion::Get
                     FunctionSymbol* conversion = *rv;
                     if (conversion)
                     {
-                        return std::expected<FunctionSymbol*, int>(new FunctionToFunctionPtrConversion(paramType, functionSymbol, 
-                            1 + conversion->ConversionDistance(), context));
+                        FunctionSymbol* fn = new FunctionToFunctionPtrConversion(paramType, functionSymbol, 1 + conversion->ConversionDistance(), context);
+                        if (!fn->Valid())
+                        {
+                            return std::unexpected<int>(fn->GetError());
+                        }
+                        return std::expected<FunctionSymbol*, int>(fn);
                     }
                 }
             }
@@ -977,10 +1143,17 @@ std::expected<FunctionSymbol*, int> FunctionToFunctionPtrArgumentConversion::Get
                     {
                         if (functionDefinitionSymbol->IsTemplate())
                         {
-                            functionDefinitionSymbol = InstantiateFunctionTemplate(functionDefinitionSymbol, functionMatch.templateParameterMap, sourcePos, context);
+                            std::expected<FunctionSymbol*, int> fdef = InstantiateFunctionTemplate(functionDefinitionSymbol, functionMatch.templateParameterMap, 
+                                sourcePos, context);
+                            if (!fdef) return std::unexpected<int>(fdef.error());
+                            functionDefinitionSymbol = *fdef;
                         }
-                        return std::expected<FunctionSymbol*, int>(new FunctionToFunctionPtrConversion(paramType, functionDefinitionSymbol, 
-                            1 + conversion->ConversionDistance(), context));
+                        FunctionSymbol* fn = new FunctionToFunctionPtrConversion(paramType, functionDefinitionSymbol, 1 + conversion->ConversionDistance(), context);
+                        if (!fn->Valid())
+                        {
+                            return std::unexpected<int>(fn->GetError());
+                        }
+                        return std::expected<FunctionSymbol*, int>(fn);
                     }
                 }
             }
@@ -1026,7 +1199,9 @@ std::expected<FunctionSymbol*, int> ArgumentConversionTable::GetArgumentConversi
     FunctionSymbol* conversion = nullptr;
     if (!TypesEqual(paramType, argType, context))
     {
-        conversion = context->GetSymbolTable()->GetConversionTable().GetConversion(paramType, argType, context);
+        std::expected<FunctionSymbol*, int> rv = context->GetSymbolTable()->GetConversionTable().GetConversion(paramType, argType, context);
+        if (!rv) return rv;
+        conversion = *rv;
         if (conversion)
         {
             if (conversion->ConversionArgType()->IsReferenceType() && !argType->IsReferenceType() || conversion->ConversionArgType()->IsClassTypeSymbol())

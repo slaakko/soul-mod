@@ -89,7 +89,7 @@ public:
     virtual ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(std::set<Scope*>& visited) const { return nullptr; }
     virtual void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags,
         std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const;
-    virtual void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context);
+    virtual std::expected<bool, int> AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol);
     virtual std::vector<Scope*> ParentScopes() const { return std::vector<Scope*>(); }
     virtual void AddParentScope(Scope* parentScope_);
@@ -135,7 +135,7 @@ public:
     std::string FullName() const override;
     void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags,
         std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const override;
-    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol) override;
     ClassGroupSymbol* GetOrInsertClassGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
     FunctionGroupSymbol* GetOrInsertFunctionGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;

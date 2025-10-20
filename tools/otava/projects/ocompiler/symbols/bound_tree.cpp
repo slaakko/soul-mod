@@ -452,10 +452,11 @@ std::expected<bool, int> BoundCompileUnitNode::AddDynamicInitialization(BoundExp
 {
     if (!compileUnitInitializationFunction)
     {
-        std::expected<std::u32string, int> rv = util::ToUtf32(id);
-        if (!rv) return std::unexpected<int>(rv.error());
-        FunctionDefinitionSymbol* compileUnitInitializationFunctionSymbol = new FunctionDefinitionSymbol(U"@dynamic_init_" + *rv);
-        context->GetSymbolTable()->GlobalNs()->AddSymbol(compileUnitInitializationFunctionSymbol, sourcePos, context);
+        std::expected<std::u32string, int> srv = util::ToUtf32(id);
+        if (!srv) return std::unexpected<int>(srv.error());
+        FunctionDefinitionSymbol* compileUnitInitializationFunctionSymbol = new FunctionDefinitionSymbol(U"@dynamic_init_" + *srv);
+        std::expected<bool, int> rv = context->GetSymbolTable()->GlobalNs()->AddSymbol(compileUnitInitializationFunctionSymbol, sourcePos, context);
+        if (!rv) return rv;
         compileUnitInitializationFunction = new BoundFunctionNode(compileUnitInitializationFunctionSymbol, sourcePos);
         compileUnitInitializationFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
     }
@@ -2552,13 +2553,15 @@ std::expected<bool, int> BoundFunctionValueNode::Load(Emitter& emitter, Operatio
 {
     std::expected<std::string, int> is = function->IrName(context);
     if (!is) return std::unexpected<int>(is.error());
-    std::expected<otava::intermediate::Function*, int> rv = emitter.GetOrInsertFunction(*is, static_cast<otava::intermediate::FunctionType*>(
-        function->IrType(emitter, sourcePos, context)));
-    if (!rv) return std::unexpected<int>(rv.error());
-    otava::intermediate::Value* functionValue = emitter.EmitSymbolValue(function->IrType(emitter, sourcePos, context), *is);
-    std::expected<otava::intermediate::Type*, int> trv = emitter.MakePtrType(emitter.GetVoidType());
+    std::expected<otava::intermediate::Type*, int> trv = function->IrType(emitter, sourcePos, context);
     if (!trv) return std::unexpected<int>(trv.error());
-    otava::intermediate::Type* voidPtrIrType = *trv;
+    otava::intermediate::Type* irType = *trv;
+    std::expected<otava::intermediate::Function*, int> rv = emitter.GetOrInsertFunction(*is, static_cast<otava::intermediate::FunctionType*>(irType));
+    if (!rv) return std::unexpected<int>(rv.error());
+    otava::intermediate::Value* functionValue = emitter.EmitSymbolValue(irType, *is);
+    std::expected<otava::intermediate::Type*, int> vrv = emitter.MakePtrType(emitter.GetVoidType());
+    if (!vrv) return std::unexpected<int>(vrv.error());
+    otava::intermediate::Type* voidPtrIrType = *vrv;
     otava::intermediate::Value* functionValueAsVoidPtr = emitter.EmitBitcast(functionValue, voidPtrIrType);
     emitter.Stack().Push(functionValueAsVoidPtr);
     return std::expected<bool, int>(true);

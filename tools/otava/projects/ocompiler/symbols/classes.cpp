@@ -427,9 +427,11 @@ std::expected<bool, int> ClassTypeSymbol::Resolve(SymbolTable& symbolTable, Cont
         specialization = symbolTable.GetType(specializationId);
         if (!specialization)
         {
-            std::expected<std::string, int> fname = util::ToUtf8(FullName());
+            std::expected<std::u32string, int> fname = FullName();
             if (!fname) return std::unexpected<int>(fname.error());
-            std::cout << "ClassTypeSymbol::Resolve(): warning: specialization type of '" + *fname + "' not resolved" << "\n";
+            std::expected<std::string, int> sfname = util::ToUtf8(*fname);
+            if (!sfname) return std::unexpected<int>(sfname.error());
+            std::cout << "ClassTypeSymbol::Resolve(): warning: specialization type of '" + *sfname + "' not resolved" << "\n";
         }
     }
     for (const auto& tid : objectLayoutIds)
@@ -441,9 +443,11 @@ std::expected<bool, int> ClassTypeSymbol::Resolve(SymbolTable& symbolTable, Cont
         }
         else
         {
-            std::expected<std::string, int> fname = util::ToUtf8(FullName());
+            std::expected<std::u32string, int> fname = FullName();
             if (!fname) return std::unexpected<int>(fname.error());
-            std::cout << "ClassTypeSymbol::Resolve(): warning: object layout type of '" + *fname + "' not resolved" << "\n";
+            std::expected<std::string, int> sfname = util::ToUtf8(*fname);
+            if (!sfname) return std::unexpected<int>(sfname.error());
+            std::cout << "ClassTypeSymbol::Resolve(): warning: object layout type of '" + *sfname + "' not resolved" << "\n";
         }
     }
     for (const auto& fnIndexId : functionIdMap)
@@ -654,12 +658,16 @@ std::expected<bool, int> ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>&
             {
                 if (!f->IsOverride() && !f->IsFinal() && !f->IsDestructor())
                 {
-                    std::expected<std::string, int> fname = util::ToUtf8(f->FullName());
+                    std::expected<std::u32string, int> fname = f->FullName();
                     if (!fname) return std::unexpected<int>(fname.error());
-                    std::expected<std::string, int> vname = util::ToUtf8(v->FullName());
+                    std::expected<std::string, int> sfname = util::ToUtf8(*fname);
+                    if (!sfname) return std::unexpected<int>(sfname.error());
+                    std::expected<std::u32string, int> vfname = v->FullName();
+                    if (!vfname) return std::unexpected<int>(vfname.error());
+                    std::expected<std::string, int> vname = util::ToUtf8(*vfname);
                     if (!vname) return std::unexpected<int>(vname.error());
                     return Error("overriding function should be declared with override or final specifier: (" +
-                        *fname + " overrides " + *vname + ")", sourcePos, context);
+                        *sfname + " overrides " + *vname + ")", sourcePos, context);
                 }
                 vtab[j] = f;
                 f->SetVTabIndex(j);
@@ -675,9 +683,11 @@ std::expected<bool, int> ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>&
         {
             if (f->IsOverride())
             {
-                std::expected<std::string, int> fname = util::ToUtf8(f->FullName());
+                std::expected<std::u32string, int> fname = f->FullName();
                 if (!fname) return std::unexpected<int>(fname.error());
-                return Error("no suitable function to override ('" + *fname + "')", sourcePos, context);
+                std::expected<std::string, int> sfname = util::ToUtf8(*fname);
+                if (!sfname) return std::unexpected<int>(sfname.error());
+                return Error("no suitable function to override ('" + *sfname + "')", sourcePos, context);
             }
             f->SetVTabIndex(m);
             if (f->Group())
@@ -694,10 +704,13 @@ std::expected<std::string, int> ClassTypeSymbol::IrName(Context* context) const
 {
     std::string irName;
     std::expected<std::string, int> name = util::ToUtf8(Name());
+    if (!name) return std::unexpected<int>(name.error());
     irName.append("class_").append(*name);
-    std::expected<std::string, int> fname = util::ToUtf8(FullName());
+    std::expected<std::u32string, int> fname = FullName();
     if (!fname) return std::unexpected<int>(fname.error());
-    std::string shaMaterial = std::move(*fname);
+    std::expected<std::string, int> sfname = util::ToUtf8(*fname);
+    if (!sfname) return std::unexpected<int>(sfname.error());
+    std::string shaMaterial = std::move(*sfname);
     irName.append("_").append(util::GetSha1MessageDigest(shaMaterial));
     return std::expected<std::string, int>(irName);
 }
@@ -723,7 +736,9 @@ std::expected<otava::intermediate::Type*, int> ClassTypeSymbol::VPtrType(Emitter
 
 std::expected<otava::intermediate::Value*, int> ClassTypeSymbol::GetVTabVariable(Emitter& emitter, Context* context)
 {
-    otava::intermediate::Value* vtabVariable = emitter.GetVTabVariable(FullName());
+    std::expected<std::u32string, int> fname = FullName();
+    if (!fname) return std::unexpected<int>(fname.error());
+    otava::intermediate::Value* vtabVariable = emitter.GetVTabVariable(*fname);
     if (!vtabVariable)
     {
         std::expected<otava::intermediate::Type*, int> prv = emitter.MakePtrType(emitter.GetVoidType());
@@ -733,7 +748,7 @@ std::expected<otava::intermediate::Value*, int> ClassTypeSymbol::GetVTabVariable
         std::expected<otava::intermediate::Value*, int> grv = emitter.EmitGlobalVariable(arrayType, VTabName(context), nullptr);
         if (!grv) return std::unexpected<int>(grv.error());
         vtabVariable = *grv;
-        emitter.SetVTabVariable(FullName(), vtabVariable);
+        emitter.SetVTabVariable(*fname, vtabVariable);
     }
     return vtabVariable;
 }
@@ -798,9 +813,10 @@ FunctionDefinitionSymbol* ClassTypeSymbol::GetMemFnDefSymbol(int32_t defIndex) c
     }
 }
 
-void ClassTypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> ClassTypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    TypeSymbol::AddSymbol(symbol, sourcePos, context);
+    std::expected<bool, int> rv = TypeSymbol::AddSymbol(symbol, sourcePos, context);
+    if (!rv) return rv;
     if (symbol->IsVariableSymbol())
     {
         VariableSymbol* memberVariable = static_cast<VariableSymbol*>(symbol);
@@ -829,6 +845,7 @@ void ClassTypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
         FunctionDefinitionSymbol* memFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(symbol);
         SetMemFnDefSymbol(memFnDefSymbol);
     }
+    return std::expected<bool, int>(true);
 }
 
 std::expected<otava::intermediate::Type*, int> ClassTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -836,9 +853,11 @@ std::expected<otava::intermediate::Type*, int> ClassTypeSymbol::IrType(Emitter& 
     otava::intermediate::Type* irType = emitter.GetType(Id());
     if (!irType)
     {
-        std::expected<std::string, int> fname = util::ToUtf8(FullName());
+        std::expected<std::u32string, int> fname = FullName();
         if (!fname) return std::unexpected<int>(fname.error());
-        irType = emitter.GetOrInsertFwdDeclaredStructureType(Id(), *fname);
+        std::expected<std::string, int> sfname = util::ToUtf8(*fname);
+        if (!sfname) return std::unexpected<int>(sfname.error());
+        irType = emitter.GetOrInsertFwdDeclaredStructureType(Id(), *sfname);
         emitter.SetType(Id(), irType);
         std::expected<bool, int> rv = MakeObjectLayout(sourcePos, context);
         if (!rv) return std::unexpected<int>(rv.error());
@@ -852,9 +871,9 @@ std::expected<otava::intermediate::Type*, int> ClassTypeSymbol::IrType(Emitter& 
             elementTypes.push_back(*irv);
         }
         otava::intermediate::MetadataStruct* metadataStruct = emitter.CreateMetadataStruct();
-        metadataStruct->AddItem("fullName", emitter.CreateMetadataString(*fname));
+        metadataStruct->AddItem("fullName", emitter.CreateMetadataString(*sfname));
         otava::intermediate::MetadataRef* metadataRef = emitter.CreateMetadataRef(metadataStruct->Id());
-        otava::intermediate::Type* type = emitter.MakeStructureType(elementTypes, *fname);
+        otava::intermediate::Type* type = emitter.MakeStructureType(elementTypes, *sfname);
         otava::intermediate::StructureType* structureType = static_cast<otava::intermediate::StructureType*>(type);
         structureType->SetMetadataRef(metadataRef);
         irType = type;
@@ -1452,7 +1471,13 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
     {
         FunctionDefinitionSymbol* functionDefinitionSymbol = static_cast<FunctionDefinitionSymbol*>(functionSymbol);
         context->PushBoundFunction(new BoundFunctionNode(functionDefinitionSymbol, node.GetSourcePos()));
-        functionDefinitionSymbol = BindFunction(&node, functionDefinitionSymbol, context);
+        std::expected<FunctionDefinitionSymbol*, int> rv = BindFunction(&node, functionDefinitionSymbol, context);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
+        functionDefinitionSymbol = *rv;
         std::unique_ptr<BoundNode> boundFunctionNode(context->ReleaseBoundFunction());
         if (functionDefinitionSymbol->IsBound())
         {
@@ -1561,7 +1586,8 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
         FunctionGroupSymbol* functionGroup = classTypeSymbol->GetScope()->GroupScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
         Symbol* destructorSymbol = trivialClassDestructor.get();
         functionGroup->AddFunction(trivialClassDestructor.get());
-        classTypeSymbol->AddSymbol(trivialClassDestructor.release(), sourcePos, context);
+        std::expected<bool, int> rv = classTypeSymbol->AddSymbol(trivialClassDestructor.release(), sourcePos, context);
+        if (!rv) return std::unexpected<int>(rv.error());
         return std::expected<Symbol*, int>(destructorSymbol);
     }
     bool hasNonTrivialDestructor = false;
@@ -1594,7 +1620,10 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
         }
         BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVar, sourcePos);
         ParameterSymbol* thisParam = destructorDefinitionSymbol->ThisParam(context);
-        BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, thisParam->GetReferredType(context));
+        std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
+        if (!rrv) return std::unexpected<int>(rrv.error());
+        TypeSymbol* referredType = *rrv;
+        BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, referredType);
         boundVariableNode->SetThisPtr(thisPtr);
         args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariableNode, sourcePos, boundVariableNode->GetType()->AddPointer(context))));
         std::vector<TypeSymbol*> templateArgs;
@@ -1648,16 +1677,19 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
         FunctionGroupSymbol* functionGroup = classTypeSymbol->GetScope()->GroupScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
         FunctionSymbol* trivialDestructor = trivialClassDestructor.get();
         functionGroup->AddFunction(trivialClassDestructor.get());
-        classTypeSymbol->AddSymbol(trivialClassDestructor.release(), sourcePos, context);
-        return trivialDestructor;
+        std::expected<bool, int> rv = classTypeSymbol->AddSymbol(trivialClassDestructor.release(), sourcePos, context);
+        if (!rv) return std::unexpected<int>(rv.error());
+        return std::expected<Symbol*, int>(trivialDestructor);
     }
     BoundFunctionNode* boundDestructor = new BoundFunctionNode(destructorDefinitionSymbol.get(), sourcePos);
     FunctionGroupSymbol* functionGroup = classTypeSymbol->GetScope()->GroupScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
     functionGroup->AddFunction(destructorSymbol.get());
     FunctionSymbol* destructor = destructorDefinitionSymbol.get();
-    classTypeSymbol->AddSymbol(destructorSymbol.release(), sourcePos, context);
+    std::expected<bool, int> rv = classTypeSymbol->AddSymbol(destructorSymbol.release(), sourcePos, context);
+    if (!rv) return std::unexpected<int>(rv.error());
     functionGroup->AddFunctionDefinition(destructorDefinitionSymbol.get(), context);
-    classTypeSymbol->AddSymbol(destructorDefinitionSymbol.release(), sourcePos, context);
+    rv = classTypeSymbol->AddSymbol(destructorDefinitionSymbol.release(), sourcePos, context);
+    if (!rv) return std::unexpected<int>(rv.error());
     BoundCompoundStatementNode* body = new BoundCompoundStatementNode(sourcePos);
     if (classTypeSymbol->IsPolymorphic())
     {
@@ -1677,15 +1709,20 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
         std::vector<ClassTypeSymbol*> vptrHolderClasses = classTypeSymbol->VPtrHolderClasses();
         if (vptrHolderClasses.empty())
         {
-            std::expected<std::string, int> fname = util::ToUtf8(classTypeSymbol->FullName());
+            std::expected<std::u32string, int> fname = classTypeSymbol->FullName();
             if (!fname) return std::unexpected<int>(fname.error());
-            return Error("no vptr holder classes for the class '" + *fname + "'", sourcePos, context);
+            std::expected<std::string, int> sfname = util::ToUtf8(*fname);
+            if (!sfname) return std::unexpected<int>(sfname.error());
+            return Error("no vptr holder classes for the class '" + *sfname + "'", sourcePos, context);
         }
         for (ClassTypeSymbol* vptrHolderClass : vptrHolderClasses)
         {
             if (vptrHolderClass != classTypeSymbol)
             {
-                BoundExpressionNode* thisPtr = new BoundParameterNode(destructor->ThisParam(context), sourcePos, destructor->ThisParam(context)->GetReferredType(context));
+                std::expected<TypeSymbol*, int> rrv = destructor->ThisParam(context)->GetReferredType(context);
+                if (!rrv) return std::unexpected<int>(rrv.error());
+                TypeSymbol* referredType = *rrv;
+                BoundExpressionNode* thisPtr = new BoundParameterNode(destructor->ThisParam(context), sourcePos, referredType);
                 std::expected<FunctionSymbol*, int> rv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
                     vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
                 if (!rv) return std::unexpected<int>(rv.error());
@@ -1703,7 +1740,10 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
             }
             else
             {
-                BoundExpressionNode* thisPtr = new BoundParameterNode(destructor->ThisParam(context), sourcePos, destructor->ThisParam(context)->GetReferredType(context));
+                std::expected<TypeSymbol*, int> rrv = destructor->ThisParam(context)->GetReferredType(context);
+                if (!rrv) return std::unexpected<int>(rrv.error());
+                TypeSymbol* referredType = *rrv;
+                BoundExpressionNode* thisPtr = new BoundParameterNode(destructor->ThisParam(context), sourcePos, referredType);
                 BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classTypeSymbol, classTypeSymbol, sourcePos);
                 body->AddStatement(setVPtrStatement);
             }

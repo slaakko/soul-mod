@@ -35,7 +35,7 @@ ContainerSymbol::ContainerSymbol(SymbolKind kind_, const util::uuid& id_, const 
     scope.SetContainerSymbol(this);
 }
 
-void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     symbol->SetParent(this);
     Scope* childScope = symbol->GetScope();
@@ -64,7 +64,8 @@ void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
         context->GetSymbolTable()->MapFunction(function);
         if (function->IsConversion())
         {
-            context->GetSymbolTable()->GetConversionTable().AddConversion(function);
+            std::expected<bool, int> rv = context->GetSymbolTable()->GetConversionTable().AddConversion(function);
+            if (!rv) return rv;
         }
     }
     if (symbol->IsFunctionDefinitionSymbol())
@@ -73,7 +74,8 @@ void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
         context->GetSymbolTable()->MapFunctionDefinition(functionDefinition);
         if (functionDefinition->IsConversion())
         {
-            context->GetSymbolTable()->GetConversionTable().AddConversion(functionDefinition);
+            std::expected<bool, int> rv = context->GetSymbolTable()->GetConversionTable().AddConversion(functionDefinition);
+            if (!rv) return rv;
         }
     }
     else if (symbol->IsVariableSymbol())
@@ -110,6 +112,7 @@ void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
         ErrorTypeSymbol* errorSymbol = static_cast<ErrorTypeSymbol*>(symbol);
         context->GetSymbolTable()->SetErrorTypeSymbol(errorSymbol);
     }
+    return std::expected<bool, int>(true);
 }
 
 std::unique_ptr<Symbol> ContainerSymbol::RemoveSymbol(Symbol* symbol)
@@ -159,7 +162,8 @@ std::expected<bool, int> ContainerSymbol::Read(Reader& reader)
         Symbol* symbol = *srv;
         if (symbol)
         {
-            AddSymbol(symbol, soul::ast::SourcePos(), reader.GetContext());
+            rv = AddSymbol(symbol, soul::ast::SourcePos(), reader.GetContext());
+            if (!rv) return rv;
             if (symbol->IsFunctionDefinitionSymbol())
             {
                 FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(symbol);

@@ -15,10 +15,22 @@ import util.unicode;
 
 namespace otava::symbols {
 
-ConversionTableEntry::ConversionTableEntry(TypeSymbol* paramType_, TypeSymbol* argType_) : key(), paramType(paramType_), argType(argType_)
+ConversionTableEntry::ConversionTableEntry(TypeSymbol* paramType_, TypeSymbol* argType_) : key(), paramType(paramType_), argType(argType_), error(0)
 {
-    std::u32string combinedName = paramType->FullName();
-    combinedName.append(1, '.').append(argType->FullName());
+    std::expected<std::u32string, int> fname = paramType->FullName();
+    if (!fname)
+    {
+        error = fname.error();
+        return;
+    }
+    std::u32string combinedName = *fname;
+    fname = argType->FullName();
+    if (!fname)
+    {
+        error = fname.error();
+        return;
+    }
+    combinedName.append(1, '.').append(*fname);
     key = combinedName;
 }
 
@@ -46,41 +58,46 @@ void ConversionTable::Import(const ConversionTable& that)
     }
 }
 
-void ConversionTable::AddConversion(FunctionSymbol* conversion)
+std::expected<bool, int> ConversionTable::AddConversion(FunctionSymbol* conversion)
 {
     if (conversion->ConversionParamType() && conversion->ConversionArgType())
     {
         ConversionTableEntry entry(conversion->ConversionParamType(), conversion->ConversionArgType());
+        if (entry.error) return std::unexpected<int>(entry.error);
         conversionMap[entry] = conversion;
     }
     else
     {
         conversionFunctions.push_back(conversion);
     }
+    return std::expected<bool, int>(true);
 }
 
-void ConversionTable::Make()
+std::expected<bool, int> ConversionTable::Make()
 {
     for (FunctionSymbol* conversion : conversionFunctions)
     {
         ConversionTableEntry entry(conversion->ConversionParamType(), conversion->ConversionArgType());
+        if (entry.error) return std::unexpected<int>(entry.error);
         conversionMap[entry] = conversion;
     }
+    return std::expected<bool, int>(true);
 }
 
-FunctionSymbol* ConversionTable::GetConversion(TypeSymbol* paramType, TypeSymbol* argType, Context* context) const
+std::expected<FunctionSymbol*, int> ConversionTable::GetConversion(TypeSymbol* paramType, TypeSymbol* argType, Context* context) const
 {
     TypeSymbol* paramPlainType = paramType->PlainType(context);
     TypeSymbol* argPlainType = argType->PlainType(context);
     ConversionTableEntry entry(paramPlainType, argPlainType);
+    if (entry.error) return std::unexpected<int>(entry.error);
     auto it = conversionMap.find(entry);
     if (it != conversionMap.end())
     {
-        return it->second;
+        return std::expected<FunctionSymbol*, int>(it->second);
     }
     else
     {
-        return nullptr;
+        return std::expected<FunctionSymbol*, int>(nullptr);
     }
 }
 

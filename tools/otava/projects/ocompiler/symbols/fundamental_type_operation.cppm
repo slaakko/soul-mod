@@ -134,7 +134,12 @@ public:
         SetFunctionKind(FunctionKind::function);
         SetAccess(Access::public_);
         ParameterSymbol* param = new ParameterSymbol(U"param", type_);
-        AddParameter(param, soul::ast::SourcePos(), nullptr);
+        std::expected<bool, int> rv = AddParameter(param, soul::ast::SourcePos(), nullptr);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
         SetReturnType(type_, context);
     }
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -161,9 +166,19 @@ public:
         SetFunctionKind(FunctionKind::function);
         SetAccess(Access::public_);
         ParameterSymbol* leftParam = new ParameterSymbol(U"left", type_);
-        AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
+        std::expected<bool, int> rv = AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
         ParameterSymbol* rightParam = new ParameterSymbol(U"right", type_);
-        AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
+        rv = AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
         SetReturnType(type_, context);
     }
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -193,9 +208,19 @@ public:
         SetFunctionKind(FunctionKind::function);
         SetAccess(Access::public_);
         ParameterSymbol* thisParam = new ParameterSymbol(U"this", type);
-        AddParameter(thisParam, soul::ast::SourcePos(), context);
+        std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
         ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
-        AddParameter(thatParam, soul::ast::SourcePos(), context);
+        rv = AddParameter(thatParam, soul::ast::SourcePos(), context);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
         SetReturnType(type->AddLValueRef(context), context);
     }
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -231,9 +256,19 @@ public:
         SetFunctionKind(FunctionKind::function);
         SetAccess(Access::public_);
         ParameterSymbol* leftParam = new ParameterSymbol(U"left", type_);
-        AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
+        std::expected<bool, int> rv = AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
         ParameterSymbol* rightParam = new ParameterSymbol(U"right", type_);
-        AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
+        rv = AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
         SetReturnType(boolType, context);
     }
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -529,6 +564,6 @@ private:
     TypeSymbol* type;
 };
 
-void AddFundamentalTypeOperationsToSymbolTable(Context* context);
+std::expected<bool,int> AddFundamentalTypeOperationsToSymbolTable(Context* context);
 
 } // namespace otava::symbols

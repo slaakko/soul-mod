@@ -36,9 +36,10 @@ void BlockSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void BlockSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BlockSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    ContainerSymbol::AddSymbol(symbol, sourcePos, context);
+    std::expected<bool, int> rv = ContainerSymbol::AddSymbol(symbol, sourcePos, context);
+    if (!rv) return rv;
     if (symbol->IsVariableSymbol())
     {
         VariableSymbol* variable = static_cast<VariableSymbol*>(symbol);
@@ -52,6 +53,7 @@ void BlockSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePo
             }
         }
     }
+    return std::expected<bool, int>(true);
 }
 
 BlockSymbol* BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context)
