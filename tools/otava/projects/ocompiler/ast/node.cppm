@@ -99,7 +99,7 @@ class Node
 public:
     Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
     virtual ~Node();
-    virtual Node* Clone() const = 0;
+    virtual std::expected<Node*, int> Clone() const = 0;
     inline NodeKind Kind() const { return kind; }
     inline void SetId(std::int64_t id_) { id = id_; }
     virtual std::u32string Str() const { return std::u32string(); }

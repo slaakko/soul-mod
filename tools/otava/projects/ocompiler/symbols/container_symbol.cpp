@@ -41,7 +41,8 @@ std::expected<bool, int> ContainerSymbol::AddSymbol(Symbol* symbol, const soul::
     Scope* childScope = symbol->GetScope();
     if (childScope)
     {
-        childScope->AddParentScope(&scope);
+        std::expected<bool, int> rv = childScope->AddParentScope(&scope);
+        if (!rv) return rv;
     }
     if (symbol->CanInstall())
     {

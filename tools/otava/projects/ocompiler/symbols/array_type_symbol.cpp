@@ -118,7 +118,9 @@ std::expected<bool, int> ArrayTypeSymbol::Bind(const soul::ast::SourcePos& sourc
 {
     if (IsBound()) return std::expected<bool, int>(false);
     SetBound();
-    FunctionGroupSymbol* constructorGroup = GetScope()->GetOrInsertFunctionGroup(U"@constructor", sourcePos, context);
+    std::expected<FunctionGroupSymbol*, int> frv = GetScope()->GetOrInsertFunctionGroup(U"@constructor", sourcePos, context);
+    if (!frv) return std::unexpected<int>(frv.error());
+    FunctionGroupSymbol* constructorGroup = *frv;
 
     ArrayTypeDefaultCtor* arrayTypeDefaultCtor = new ArrayTypeDefaultCtor(this, context);
     std::expected<bool, int> rv = GetScope()->AddSymbol(arrayTypeDefaultCtor, sourcePos, context);
@@ -135,7 +137,9 @@ std::expected<bool, int> ArrayTypeSymbol::Bind(const soul::ast::SourcePos& sourc
     if (!rv) return rv;
     constructorGroup->AddFunction(arrayTypeMoveCtor);
 
-    FunctionGroupSymbol* assignmentGroup = GetScope()->GetOrInsertFunctionGroup(U"operator=", sourcePos, context);
+    frv = GetScope()->GetOrInsertFunctionGroup(U"operator=", sourcePos, context);
+    if (!frv) return std::unexpected<int>(frv.error());
+    FunctionGroupSymbol* assignmentGroup = *frv;
 
     ArrayTypeCopyAssignment* arrayTypeCopyAssignment = new ArrayTypeCopyAssignment(this, context);
     rv = GetScope()->AddSymbol(arrayTypeCopyAssignment, sourcePos, context);
@@ -147,14 +151,18 @@ std::expected<bool, int> ArrayTypeSymbol::Bind(const soul::ast::SourcePos& sourc
     if (!rv) return rv;
     assignmentGroup->AddFunction(arrayTypeMoveAssignment);
 
-    FunctionGroupSymbol* beginGroup = GetScope()->GetOrInsertFunctionGroup(U"begin", sourcePos, context);
+    frv = GetScope()->GetOrInsertFunctionGroup(U"begin", sourcePos, context);
+    if (!frv) return std::unexpected<int>(frv.error());
+    FunctionGroupSymbol* beginGroup = *frv;
 
     ArrayTypeBegin* arrayTypeBegin = new ArrayTypeBegin(this, context);
     rv = GetScope()->AddSymbol(arrayTypeBegin, sourcePos, context);
     if (!rv) return rv;
     beginGroup->AddFunction(arrayTypeBegin);
 
-    FunctionGroupSymbol* endGroup = GetScope()->GetOrInsertFunctionGroup(U"end", sourcePos, context);
+    frv = GetScope()->GetOrInsertFunctionGroup(U"end", sourcePos, context);
+    if (!frv) return std::unexpected<int>(frv.error());
+    FunctionGroupSymbol* endGroup = *frv;
 
     ArrayTypeEnd* arrayTypeEnd = new ArrayTypeEnd(this, context);
     rv = GetScope()->AddSymbol(arrayTypeEnd, sourcePos, context);

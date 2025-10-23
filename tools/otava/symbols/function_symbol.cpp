@@ -194,7 +194,7 @@ void ParameterSymbol::Accept(Visitor& visitor)
 
 TypeSymbol* ParameterSymbol::GetReferredType(Context* context) const
 {
-    TypeSymbol* referredType = type->GetBaseType()->FinalType(soul::ast::SourcePos(), context);
+    TypeSymbol* referredType = type->GetBaseType()->DirectType(context)->FinalType(soul::ast::SourcePos(), context);
     if (context->GetFlag(ContextFlags::resolveNestedTypes) && referredType->IsNestedTypeSymbol())
     {
         if (context->TemplateParameterMap())

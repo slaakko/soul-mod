@@ -12,6 +12,6 @@ export namespace otava::symbols {
 
 class SymbolTable;
 
-Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTable* symbolTable);
+std::expected<Symbol*, int> CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTable* symbolTable);
 
 } // namespace otava::symbols

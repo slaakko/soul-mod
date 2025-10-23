@@ -51,6 +51,6 @@ struct AliasTypeLess
 
 void AddTemporaryTypeAlias(otava::ast::Node* aliasDeclarationNode, Context* context);
 
-void RemoveTemporaryAliasTypeSymbols(Context* context);
+std::expected<bool, int> RemoveTemporaryAliasTypeSymbols(Context* context);
 
 } // namespace otava::symbols

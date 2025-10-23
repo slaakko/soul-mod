@@ -106,13 +106,13 @@ public:
     inline Module* GetModule() const { return module; }
     inline NamespaceSymbol* GlobalNs() const { return globalNs.get(); }
     void Init();
-    void Import(const SymbolTable& that, FunctionDefinitionSymbolSet* functionDefinitionSymbolSet);
-    void Write(Writer& writer, Context* context);
-    void Read(Reader& reader);
-    void Resolve(Context* context);
+    std::expected<bool, int> Import(const SymbolTable& that, FunctionDefinitionSymbolSet* functionDefinitionSymbolSet);
+    std::expected<bool, int> Write(Writer& writer, Context* context);
+    std::expected<bool, int> Read(Reader& reader);
+    std::expected<bool, int> Resolve(Context* context);
     void Accept(Visitor& visitor);
-    void WriteMaps(Writer& writer, Context* context);
-    void ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap);
+    std::expected<bool, int> WriteMaps(Writer& writer, Context* context);
+    std::expected<bool, int> ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap);
     std::expected<TypeSymbol*, int> GetFundamentalTypeSymbol(FundamentalTypeKind kind);
     inline Symbol* GetTypenameConstraintSymbol() { return typenameConstraintSymbol; }
     inline void SetTypenameConstraintSymbol(Symbol* typenameConstraintSymbol_) { typenameConstraintSymbol = typenameConstraintSymbol_; }
@@ -182,10 +182,12 @@ public:
     AliasTypeTemplateSpecializationSymbol* MakeAliasTypeTemplateSpecialization(TypeSymbol* aliasTypeTemplate, const std::vector<Symbol*>& templateArguments);
     ArrayTypeSymbol* MakeArrayType(TypeSymbol* elementType, std::int64_t size);
     DependentTypeSymbol* MakeDependentTypeSymbol(otava::ast::Node* node);
-    Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context);
-    Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
-    Symbol* LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
-    Symbol* LookupSymbol(Symbol* symbol);
+    std::expected<Symbol*, int> Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context);
+    std::expected<Symbol*, int> Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, 
+        LookupFlags flags);
+    std::expected<Symbol*, int> LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, 
+        Context* context, LookupFlags flags);
+    std::expected<Symbol*, int> LookupSymbol(Symbol* symbol);
     void ResolveForwardDeclarations();
     void CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs,
         int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context);
@@ -259,7 +261,7 @@ public:
     void UnmapClassTemplateSpecialization(ClassTemplateSpecializationSymbol* sp);
     void AddAliasTypeTemplateSpecializationToSet(AliasTypeTemplateSpecializationSymbol* at);
     void AddArrayTypeToSet(ArrayTypeSymbol* a);
-    void ImportAfterResolve();
+    std::expected<bool, int> ImportAfterResolve();
     std::expected<bool, int> ToXml(const std::string& xmlFilePath) const;
     void InitTemplateParameterIds();
     void InitCompoundTypeIds();

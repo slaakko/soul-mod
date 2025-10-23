@@ -6,6 +6,8 @@
 export module otava.intermediate.code_generator;
 
 import otava.assembly;
+import otava.intermediate.code;
+import otava.intermediate.context;
 import otava.intermediate.visitor;
 import otava.intermediate.data;
 import soul.ast.span;

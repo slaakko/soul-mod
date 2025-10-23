@@ -929,6 +929,10 @@ void SymbolTable::Resolve(Context* context)
     {
         MapType(static_cast<TypeSymbol*>(arrayType.get()));
     }
+    for (auto& cls : classes)
+    {
+        MapType(static_cast<TypeSymbol*>(cls));
+    }
     for (auto& dependentTypeSymbol : dependentTypeSymbols)
     {
         MapType(static_cast<TypeSymbol*>(dependentTypeSymbol.get()));

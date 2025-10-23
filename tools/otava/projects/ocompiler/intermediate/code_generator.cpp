@@ -5,10 +5,8 @@
 
 module otava.intermediate.code_generator;
 
-import otava.intermediate.code;
 import otava.intermediate.data;
 import otava.intermediate.types;
-import otava.intermediate.context;
 import otava.intermediate.location;
 import otava.intermediate.register_allocator;
 import otava.intermediate.linear_scan_register_allocator;

@@ -1244,7 +1244,8 @@ std::expected<int, int> BeginFunctionDefinition(otava::ast::Node* declSpecifierS
         !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) &&
         !context->GetFlag(ContextFlags::instantiateInlineFunction))
     {
-        context->GetSymbolTable()->CurrentScope()->PopParentScope();
+        std::expected<bool, int> rv = context->GetSymbolTable()->CurrentScope()->PopParentScope();
+        if (!rv) return std::unexpected<int>(rv.error());
     }
     DeclarationProcessor processor(context);
     processor.BeginProcessFunctionDefinition(declSpecifierSequence, declarator, specifierNode);
@@ -1326,7 +1327,8 @@ std::expected<int, int> BeginFunctionDefinition(otava::ast::Node* declSpecifierS
                 !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) &&
                 !context->GetFlag(ContextFlags::instantiateInlineFunction))
             {
-                definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
+                std::expected<bool, int> rv = definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
+                if (!rv) return std::unexpected<int>(rv.error());
             }
             ++scopes;
             BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition, declarator->GetSourcePos());
@@ -1404,7 +1406,8 @@ std::expected<bool, int> EndFunctionDefinition(otava::ast::Node* node, int scope
         }
         if (functionDefinitionSymbol && functionDefinitionSymbol->IsTemplate())
         {
-            InstantiateEnqueuedRequests(functionDefinitionSymbol, node->GetSourcePos(), context);
+            std::expected<bool, int> rv = InstantiateEnqueuedRequests(functionDefinitionSymbol, node->GetSourcePos(), context);
+            if (!rv) return rv;
         }
         if (functionDefinitionSymbol && functionDefinitionSymbol->IsExplicitSpecializationDefinitionSymbol())
         {
@@ -1417,7 +1420,7 @@ std::expected<bool, int> EndFunctionDefinition(otava::ast::Node* node, int scope
     {
         if (context->GetBoundFunction()->GetFunctionDefinitionSymbol()->IsBound())
         {
-            auto rv = context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
+            std::expected<bool, int> rv = context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
             if (!rv) return rv;
         }
         context->PopBoundFunction();

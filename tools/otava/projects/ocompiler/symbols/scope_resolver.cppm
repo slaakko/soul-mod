@@ -15,8 +15,8 @@ class Context;
 
 std::expected<Scope*, int> ResolveScope(otava::ast::Node* nnsNode, Context* context);
 
-void BeginScope(otava::ast::Node* nnsNode, Context* context);
+std::expected<bool, int> BeginScope(otava::ast::Node* nnsNode, Context* context);
 void EndScope(Context* context);
-void AddParentScope(otava::ast::Node* node, Context* context);
+std::expected<bool, int> AddParentScope(otava::ast::Node* node, Context* context);
 
 } // namespace otava::symbols

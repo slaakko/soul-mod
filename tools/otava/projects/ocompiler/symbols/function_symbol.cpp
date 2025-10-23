@@ -229,8 +229,10 @@ std::expected<TypeSymbol*, int> ParameterSymbol::GetReferredType(Context* contex
                 if (it != context->TemplateParameterMap()->end())
                 {
                     TypeSymbol* type = it->second;
-                    Symbol* symbol = type->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, context->GetSourcePos(), context,
-                        LookupFlags::none);
+                    std::expected<Symbol*, int> lrv = type->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, 
+                        context->GetSourcePos(), context, LookupFlags::none);
+                    if (!lrv) return std::unexpected<int>(lrv.error());
+                    Symbol* symbol = *lrv;
                     if (symbol && symbol->IsTypeSymbol())
                     {
                         referredType = static_cast<TypeSymbol*>(symbol);
@@ -261,8 +263,10 @@ std::expected<TypeSymbol*, int> ParameterSymbol::GetReferredType(Context* contex
                     if (it != context->TemplateParameterMap()->end())
                     {
                         TypeSymbol* type = it->second;
-                        Symbol* symbol = type->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, context->GetSourcePos(), context,
-                            LookupFlags::none);
+                        std::expected<Symbol*, int> lrv = type->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, 
+                            context->GetSourcePos(), context, LookupFlags::none);
+                        if (!lrv) return std::unexpected<int>(lrv.error());
+                        Symbol* symbol = *lrv;
                         if (symbol && symbol->IsTypeSymbol())
                         {
                             referredType = static_cast<TypeSymbol*>(symbol);

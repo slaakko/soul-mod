@@ -183,6 +183,23 @@ I remove(I begin, I end, const T& value)
     }
 }
 
+template<typename I, typename P>
+I remove_if(I begin, I end, P p)
+{
+    begin = find_if(begin, end, p);
+    if (begin != end)
+    {
+        for (I it = begin; it != end; ++it)
+        {
+            if (!p(*it))
+            {
+                *begin++ = std::move(*it);
+            }
+        }
+    }
+    return begin;
+}
+
 template<typename I, typename R>
 void insertion_sort(I begin, I end, R r)
 {

@@ -6,8 +6,6 @@
 module otava.ast.type;
 
 import otava.ast.visitor;
-import otava.ast.reader;
-import otava.ast.writer;
 
 namespace otava::ast {
 

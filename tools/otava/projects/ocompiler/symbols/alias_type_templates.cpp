@@ -103,7 +103,8 @@ std::expected<TypeSymbol*, int> InstantiateAliasTypeSymbol(TypeSymbol* typeSymbo
     AliasTypeTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeAliasTypeTemplateSpecialization(typeSymbol, templateArgs);
     if (specialization->Instantiated()) return specialization;
     otava::ast::Node* aliasTypeNode = context->GetSymbolTable()->GetNode(typeSymbol);
-    specialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope());
+    std::expected<bool, int> arv = specialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope());
+    if (!arv) return std::unexpected<int>(arv.error());
     if (typeSymbol->IsAliasTypeSymbol())
     {
         specialization->SetInstantiated();
@@ -120,8 +121,8 @@ std::expected<TypeSymbol*, int> InstantiateAliasTypeSymbol(TypeSymbol* typeSymbo
                 std::expected<std::string, int> rv = util::ToUtf8(aliasTypeSymbol->Name());
                 if (!rv) return std::unexpected<int>(rv.error());
                 std::string name = *rv;
-                return Error("otava.symbols.alias_type_templates: wrong number of template args for instantiating alias type template '" + name + "'", node->GetSourcePos(),
-                    context);
+                return Error("otava.symbols.alias_type_templates: wrong number of template args for instantiating alias type template '" + name + "'", 
+                    node->GetSourcePos(), context);
             }
             for (int i = 0; i < arity; ++i)
             {

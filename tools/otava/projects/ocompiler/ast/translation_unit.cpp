@@ -6,8 +6,6 @@
 module otava.ast.translation.unit;
 
 import otava.ast.visitor;
-import otava.ast.reader;
-import otava.ast.writer;
 
 namespace otava::ast {
 

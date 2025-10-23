@@ -73,5 +73,23 @@ std::unexpected<int> Error(const std::string& message, const soul::ast::SourcePo
     return std::unexpected<int>(util::AllocateError(errorMessage));
 }
 
+std::unexpected<int> Warning(const std::string& message, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    return Warning(message, sourcePos, soul::ast::SourcePos(), context);
+}
+
+std::unexpected<int> Warning(const std::string& message, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos, Context* context)
+{
+    std::expected<std::string, int> rv = ErrorLine(sourcePos, context);
+    if (!rv) return std::unexpected<int>(rv.error());
+    std::string errorLine = *rv;
+    std::expected<std::string, int> rrv = ReferenceInfo(refSourcePos, context);
+    if (!rrv) return std::unexpected<int>(rrv.error());
+    std::string referenceInfo = *rrv;
+    std::string errorMessage = "warning: " + message + ", file '" + SourceFilePath(sourcePos, context) + "', line " + std::to_string(sourcePos.line) +
+        errorLine + referenceInfo;
+    return std::unexpected<int>(util::AllocateError(errorMessage));
+}
+
 } // namespace otava::symbols
 

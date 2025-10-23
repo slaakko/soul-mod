@@ -20,13 +20,13 @@ public:
     std::string SymbolKindStr() const override { return "namespace symbol"; }
     std::string SymbolDocKindStr() const override { return "namespace"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
-    void Import(NamespaceSymbol* that, Context* context);
+    std::expected<bool, int> Import(NamespaceSymbol* that, Context* context);
     void Accept(Visitor& visitor) override;
     bool ContainsSymbols() const;
 };
 
 void BeginNamespace(otava::ast::Node* node, Context* context);
-void EndNamespace(otava::ast::Node* node, int level, Context* context);
+std::expected<bool, int> EndNamespace(otava::ast::Node* node, int level, Context* context);
 
 struct NamespaceLess
 {

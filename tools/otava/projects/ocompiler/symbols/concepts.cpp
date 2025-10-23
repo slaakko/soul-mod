@@ -145,15 +145,17 @@ int ConceptSymbol::Arity()
     return 0;
 }
 
-bool IsConceptName(otava::ast::Node* node, Context* context)
+std::expected<bool, int> IsConceptName(otava::ast::Node* node, Context* context)
 {
     std::u32string name = node->Str();
-    Symbol* symbol = context->GetSymbolTable()->Lookup(name, SymbolGroupKind::conceptSymbolGroup, node->GetSourcePos(), context);
+    std::expected<Symbol*, int> rv = context->GetSymbolTable()->Lookup(name, SymbolGroupKind::conceptSymbolGroup, node->GetSourcePos(), context);
+    if (!rv) return std::unexpected<int>(rv.error());
+    Symbol* symbol = *rv;
     if (symbol)
     {
-        return symbol->IsConceptSymbol();
+        return std::expected<bool, int>(symbol->IsConceptSymbol());
     }
-    return false;
+    return std::expected<bool, int>(false);
 }
 
 class ConceptProcessor : public otava::ast::DefaultVisitor

@@ -14,5 +14,7 @@ class Context;
 
 std::unexpected<int> Error(const std::string& message, const soul::ast::SourcePos& sourcePos, Context* context);
 std::unexpected<int> Error(const std::string& message, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos, Context* context);
+std::unexpected<int> Warning(const std::string& message, const soul::ast::SourcePos& sourcePos, Context* context);
+std::unexpected<int> Warning(const std::string& message, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos, Context* context);
 
 } // namespace otava::symbols

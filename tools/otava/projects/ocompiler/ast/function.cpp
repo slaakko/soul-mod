@@ -461,9 +461,13 @@ OperatorFunctionIdNode::OperatorFunctionIdNode(const soul::ast::SourcePos& sourc
 {
 }
 
-std::expected<Node*, int>OperatorFunctionIdNode::Clone() const
+std::expected<Node*, int> OperatorFunctionIdNode::Clone() const
 {
-    OperatorFunctionIdNode* clone = new OperatorFunctionIdNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    std::expected<Node*, int> l = Left()->Clone();
+    if (!l) return l;
+    std::expected<Node*, int> r = Right()->Clone();
+    if (!r) return r;
+    OperatorFunctionIdNode* clone = new OperatorFunctionIdNode(GetSourcePos(), *l, *r);
     return std::expected<Node*, int>(clone);
 }
 
@@ -483,7 +487,11 @@ ConversionFunctionIdNode::ConversionFunctionIdNode(const soul::ast::SourcePos& s
 
 std::expected<Node*, int> ConversionFunctionIdNode::Clone() const
 {
-    ConversionFunctionIdNode* clone = new ConversionFunctionIdNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    std::expected<Node*, int> l = Left()->Clone();
+    if (!l) return l;
+    std::expected<Node*, int> r = Right()->Clone();
+    if (!r) return r;
+    ConversionFunctionIdNode* clone = new ConversionFunctionIdNode(GetSourcePos(), *l, *r);
     return std::expected<Node*, int>(clone);
 }
 
@@ -506,7 +514,9 @@ std::expected<Node*, int> ConversionTypeIdNode::Clone() const
     Node* clonedConversionDeclarator = nullptr;
     if (conversionDeclarator)
     {
-        clonedConversionDeclarator = conversionDeclarator->Clone();
+        std::expected<Node*, int> c = conversionDeclarator->Clone();
+        if (!c) return c;
+        clonedConversionDeclarator = *c;
     }
     std::expected<Node*, int> t = typeSpecifierSeq->Clone();
     if (!t) return t;
@@ -606,7 +616,9 @@ DestructorIdNode::DestructorIdNode(const soul::ast::SourcePos& sourcePos_, Node*
 
 std::expected<Node*, int> DestructorIdNode::Clone() const
 {
-    DestructorIdNode* clone = new DestructorIdNode(GetSourcePos(), Child()->Clone());
+    std::expected<Node*, int> c = Child()->Clone();
+    if (!c) return c;
+    DestructorIdNode* clone = new DestructorIdNode(GetSourcePos(), *c);
     return std::expected<Node*, int>(clone);
 }
 

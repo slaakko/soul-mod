@@ -53,19 +53,19 @@ public:
 private:
     void SetStatement(BoundStatementNode* statement);
     bool HasThisInitializer() const;
-    void CompleteMemberInitializers(const soul::ast::SourcePos& sourcePos);
-    void AddDefaultMemberInitializer(VariableSymbol* memberVar, const soul::ast::SourcePos& sourcePos);
+    std::expected<bool, int> CompleteMemberInitializers(const soul::ast::SourcePos& sourcePos);
+    std::expected<bool, int> AddDefaultMemberInitializer(VariableSymbol* memberVar, const soul::ast::SourcePos& sourcePos);
     int GetBaseInitializerOrTerminatorIndex(TypeSymbol* baseClass) const;
-    void CompleteBaseInitializers(const soul::ast::SourcePos& sourcePos);
-    void AddDefaultBaseInitializer(TypeSymbol* baseClass, int index, const soul::ast::SourcePos& sourcePos);
-    void GenerateDefaultCtorInitializer(const soul::ast::SourcePos& sourcePos);
-    void GenerateDestructorTerminator(const soul::ast::SourcePos& sourcePos);
-    void GenerateBaseTerminators(const soul::ast::SourcePos& sourcePos);
-    void AddBaseTerminator(TypeSymbol* baseClass, int index, const soul::ast::SourcePos& sourcePos);
-    void GenerateMemberTerminators(const soul::ast::SourcePos& sourcePos);
-    void AddMemberTerminator(VariableSymbol* memberVar, const soul::ast::SourcePos& sourcePos);
-    void GenerateSetVPtrStatements(const soul::ast::SourcePos& sourcePos);
-    void BindStaticLocalVariable(VariableSymbol* variable, otava::ast::Node* initializer, otava::ast::SimpleDeclarationNode* declarationNode);
+    std::expected<bool, int> CompleteBaseInitializers(const soul::ast::SourcePos& sourcePos);
+    std::expected<bool, int> AddDefaultBaseInitializer(TypeSymbol* baseClass, int index, const soul::ast::SourcePos& sourcePos);
+    std::expected<bool, int> GenerateDefaultCtorInitializer(const soul::ast::SourcePos& sourcePos);
+    std::expected<bool, int> GenerateDestructorTerminator(const soul::ast::SourcePos& sourcePos);
+    std::expected<bool, int> GenerateBaseTerminators(const soul::ast::SourcePos& sourcePos);
+    std::expected<bool, int> AddBaseTerminator(TypeSymbol* baseClass, int index, const soul::ast::SourcePos& sourcePos);
+    std::expected<bool, int> GenerateMemberTerminators(const soul::ast::SourcePos& sourcePos);
+    std::expected<bool, int> AddMemberTerminator(VariableSymbol* memberVar, const soul::ast::SourcePos& sourcePos);
+    std::expected<bool, int> GenerateSetVPtrStatements(const soul::ast::SourcePos& sourcePos);
+    std::expected<bool, int> BindStaticLocalVariable(VariableSymbol* variable, otava::ast::Node* initializer, otava::ast::SimpleDeclarationNode* declarationNode);
     Context* context;
     ClassTypeSymbol* currentClass;
     BoundCtorInitializerNode* ctorInitializer;
@@ -91,7 +91,7 @@ private:
 };
 
 std::expected<FunctionDefinitionSymbol*, int> BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);
-BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);
+std::expected<BoundStatementNode*, int> BindStatement(otava::ast::Node* statementNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);
 
 
 } // namespace otava::symbols

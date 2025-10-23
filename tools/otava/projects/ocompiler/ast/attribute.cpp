@@ -20,7 +20,9 @@ std::expected<Node*, int> AttributeSpecifierSequenceNode::Clone() const
     AttributeSpecifierSequenceNode* clone = new AttributeSpecifierSequenceNode(GetSourcePos());
     for (const auto& node : Nodes())
     {
-        std::expected<bool, int> rv = clone->AddNode(node->Clone());
+        std::expected<Node*, int> c = node->Clone();
+        if (!c) return c;
+        std::expected<bool, int> rv = clone->AddNode(*c);
         if (!rv) return std::unexpected<int>(rv.error());
     }
     return std::expected<Node*, int>(clone);
@@ -40,7 +42,9 @@ std::expected<Node*, int> AttributeSpecifierNode::Clone() const
     AttributeSpecifierNode* clone = new AttributeSpecifierNode(GetSourcePos());
     for (const auto& node : Nodes())
     {
-        std::expected<bool, int> rv = clone->AddNode(node->Clone());
+        std::expected<Node*, int> c = node->Clone();
+        if (!c) return c;
+        std::expected<bool, int> rv = clone->AddNode(*c);
         if (!rv) return std::unexpected<int>(rv.error());
     }
     return std::expected<Node*, int>(clone);
@@ -111,7 +115,9 @@ AttributeUsingPrefixNode::AttributeUsingPrefixNode(const soul::ast::SourcePos& s
 
 std::expected<Node*, int> AttributeUsingPrefixNode::Clone() const
 {
-    AttributeUsingPrefixNode* clone = new AttributeUsingPrefixNode(GetSourcePos(), Child()->Clone(), colonPos);
+    std::expected<Node*, int> c = Child()->Clone();
+    if (!c) return c;
+    AttributeUsingPrefixNode* clone = new AttributeUsingPrefixNode(GetSourcePos(), *c, colonPos);
     return std::expected<Node*, int>(clone);
 }
 
@@ -150,7 +156,11 @@ AttributeNode::AttributeNode(const soul::ast::SourcePos& sourcePos_, Node* attri
 
 std::expected<Node*, int> AttributeNode::Clone() const
 {
-    AttributeNode* clone = new AttributeNode(GetSourcePos(), attributeToken->Clone(), attributeArgs->Clone());
+    std::expected<Node*, int> at = attributeToken->Clone();
+    if (!at) return at;
+    std::expected<Node*, int> aa = attributeArgs->Clone();
+    if (!aa) return aa;
+    AttributeNode* clone = new AttributeNode(GetSourcePos(), *at, *aa);
     return std::expected<Node*, int>(clone);
 }
 
@@ -194,7 +204,13 @@ AttributeScopedTokenNode::AttributeScopedTokenNode(const soul::ast::SourcePos& s
 
 std::expected<Node*, int> AttributeScopedTokenNode::Clone() const
 {
-    AttributeScopedTokenNode* clone = new AttributeScopedTokenNode(GetSourcePos(), ns->Clone(), colonColon->Clone(), identifier->Clone());
+    std::expected<Node*, int> nc = ns->Clone();
+    if (!nc) return nc;
+    std::expected<Node*, int> cc = colonColon->Clone();
+    if (!cc) return cc;
+    std::expected<Node*, int> id = identifier->Clone();
+    if (!id) return id;
+    AttributeScopedTokenNode* clone = new AttributeScopedTokenNode(GetSourcePos(), *nc, *cc, *id);
     return std::expected<Node*, int>(clone);
 }
 
@@ -244,7 +260,9 @@ AttributeArgumentsNode::AttributeArgumentsNode(const soul::ast::SourcePos& sourc
 
 std::expected<Node*, int> AttributeArgumentsNode::Clone() const
 {
-    AttributeArgumentsNode* clone = new AttributeArgumentsNode(GetSourcePos(), balancedTokenSequence->Clone(), lpPos, rpPos);
+    std::expected<Node*, int> bts = balancedTokenSequence->Clone();
+    if (!bts) return bts;
+    AttributeArgumentsNode* clone = new AttributeArgumentsNode(GetSourcePos(), *bts, lpPos, rpPos);
     return std::expected<Node*, int>(clone);
 }
 
@@ -291,7 +309,9 @@ std::expected<Node*, int> BalancedTokenSequenceNode::Clone() const
     BalancedTokenSequenceNode* clone = new BalancedTokenSequenceNode(GetSourcePos());
     for (const auto& node : Nodes())
     {
-        std::expected<bool, int> rv = clone->AddNode(node->Clone());
+        std::expected<Node*, int> c = node->Clone();
+        if (!c) return c;
+        std::expected<bool, int> rv = clone->AddNode(*c);
         if (!rv) return std::unexpected<int>(rv.error());
     }
     return std::expected<Node*, int>(clone);
@@ -359,7 +379,9 @@ std::expected<Node*, int> AlignmentSpecifierNode::Clone() const
         if (!rv) return rv;
         clonedEllipsis = *rv;
     }
-    AlignmentSpecifierNode* clone = new AlignmentSpecifierNode(GetSourcePos(), alignment->Clone(), clonedEllipsis, lpPos, rpPos);
+    std::expected<Node*, int> a = alignment->Clone();
+    if (!a) return a;
+    AlignmentSpecifierNode* clone = new AlignmentSpecifierNode(GetSourcePos(), *a, clonedEllipsis, lpPos, rpPos);
     return std::expected<Node*, int>(clone);
 }
 

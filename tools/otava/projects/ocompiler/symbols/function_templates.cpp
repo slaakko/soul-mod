@@ -93,7 +93,9 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
     }
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
-    otava::ast::Node* node = context->GetSymbolTable()->GetNode(functionTemplate)->Clone();
+    std::expected<otava::ast::Node*, int> n = context->GetSymbolTable()->GetNode(functionTemplate)->Clone();
+    if (!n) return std::unexpected<int>(n.error());
+    otava::ast::Node* node = *n;
     if (node->IsFunctionDefinitionNode())
     {
         otava::ast::FunctionDefinitionNode* functionDefinitionNode = static_cast<otava::ast::FunctionDefinitionNode*>(node);
@@ -107,8 +109,10 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
                 node->GetSourcePos(), context);
         }
         InstantiationScope instantiationScope(functionTemplate->Parent()->GetScope());
-        instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
-        instantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
+        std::expected<bool, int> prv = instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
+        if (!prv) return std::unexpected<int>(prv.error());
+        prv = instantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
+        if (!prv) return std::unexpected<int>(prv.error());
         std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
         for (int i = 0; i < arity; ++i)
         {
@@ -213,8 +217,10 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
             return Error("otava.symbols.function_templates: function definition symbol expected", node->GetSourcePos(), context);
         }
         context->GetSymbolTable()->EndScope();
-        instantiationScope.PopParentScope();
-        instantiationScope.PopParentScope();
+        prv = instantiationScope.PopParentScope();
+        if (!prv)  return std::unexpected<int>(prv.error());
+        prv = instantiationScope.PopParentScope();
+        if (!prv)  return std::unexpected<int>(prv.error());
         context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
         for (const auto& boundTemplateParameter : boundTemplateParameters)
         {
@@ -225,7 +231,8 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
     }
     else
     {
-        context->GetInstantiationQueue()->EnqueueInstantiationRequest(functionTemplate, templateParameterMap);
+        std::expected<bool, int> erv = context->GetInstantiationQueue()->EnqueueInstantiationRequest(functionTemplate, templateParameterMap);
+        if (!erv) return std::unexpected<int>(erv.error());
         int arity = templateDeclaration->Arity();
         int argCount = templateArgumentTypes.size();
         if (argCount > arity)
@@ -235,8 +242,10 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
                 node->GetSourcePos(), context);
         }
         InstantiationScope instantiationScope(functionTemplate->Parent()->GetScope());
-        instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
-        instantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
+        std::expected<bool, int> prv = instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
+        if (!prv)  return std::unexpected<int>(prv.error());
+        prv = instantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
+        if (!prv)  return std::unexpected<int>(prv.error());
         std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
         for (int i = 0; i < arity; ++i)
         {
@@ -297,8 +306,10 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
             specialization->SetFlag(FunctionSymbolFlags::fixedIrName);
             if (functionTemplate->IsExplicitSpecializationDeclaration())
             {
-                Symbol* symbol = functionTemplate->Parent()->GetScope()->GetNamespaceScope()->Lookup(specialization->GroupName(),
+                std::expected<Symbol*, int> lrv = functionTemplate->Parent()->GetScope()->GetNamespaceScope()->Lookup(specialization->GroupName(),
                     SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, sourcePos, context, LookupFlags::none);
+                if (!lrv) return std::unexpected<int>(lrv.error());
+                Symbol* symbol = *lrv;
                 if (symbol && symbol->IsFunctionGroupSymbol())
                 {
                     FunctionGroupSymbol* functionGroup = static_cast<FunctionGroupSymbol*>(symbol);
@@ -323,8 +334,10 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
         }
         context->PopFlags();
         context->GetSymbolTable()->EndScope();
-        instantiationScope.PopParentScope();
-        instantiationScope.PopParentScope();
+        prv = instantiationScope.PopParentScope();
+        if (!prv)  return std::unexpected<int>(prv.error());
+        prv = instantiationScope.PopParentScope();
+        if (!prv)  return std::unexpected<int>(prv.error());
         context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
         for (const auto& boundTemplateParameter : boundTemplateParameters)
         {

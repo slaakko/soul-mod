@@ -415,7 +415,9 @@ std::expected<Node*, int> OpaqueEnumDeclarationNode::Clone() const
     if (!k) return k;
     std::expected<Node*, int> n = enumHeadName->Clone();
     if (!n) return n;
-    OpaqueEnumDeclarationNode* clone = new OpaqueEnumDeclarationNode(GetSourcePos(), *k, *n, clonedEnumBase, clonedAttributes, semicolon->Clone());
+    std::expected<Node*, int> sc = semicolon->Clone();
+    if (!sc) return sc;
+    OpaqueEnumDeclarationNode* clone = new OpaqueEnumDeclarationNode(GetSourcePos(), *k, *n, clonedEnumBase, clonedAttributes, *sc);
     return std::expected<Node*, int>(clone);
 }
 

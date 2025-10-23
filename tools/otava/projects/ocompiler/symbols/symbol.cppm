@@ -90,14 +90,14 @@ constexpr DeclarationFlags operator~(DeclarationFlags flags)
     return DeclarationFlags(~std::int32_t(flags));
 }
 
-enum class Access : std::int32_t
+enum class Access : std::uint8_t
 {
     none, public_, protected_, private_
 };
 
 std::string AccessStr(Access access);
 
-enum class SymbolKind : std::int32_t
+enum class SymbolKind : std::uint8_t
 {
     null,
     classGroupSymbol, conceptGroupSymbol, functionGroupSymbol, variableGroupSymbol, aliasGroupSymbol, enumGroupSymbol,
@@ -183,7 +183,7 @@ public:
     virtual bool IsValidDeclarationScope(ScopeKind scopeKind) const { return true; }
     virtual std::expected<bool, int> AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const;
-    virtual std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol);
+    virtual std::expected<std::unique_ptr<Symbol>, int> RemoveSymbol(Symbol* symbol);
     virtual std::expected<bool, int> Write(Writer& writer);
     virtual std::expected<bool, int> Read(Reader& reader);
     virtual std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context);
@@ -202,7 +202,7 @@ public:
     FunctionSymbol* ParentFunction() const;
     virtual ClassTypeSymbol* ParentClassType() const;
     NamespaceSymbol* ParentNamespace() const;
-    std::string DocName() const;
+    std::expected<std::string, int> DocName() const;
     bool CanInstall() const;
     bool IsTypeSymbol() const;
     inline bool IsNamespaceSymbol() const { return kind == SymbolKind::namespaceSymbol; }

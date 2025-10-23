@@ -208,7 +208,7 @@ void AddTemporaryTypeAlias(otava::ast::Node* aliasDeclarationNode, Context* cont
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
 }
 
-void RemoveTemporaryAliasTypeSymbols(Context* context)
+std::expected<bool, int> RemoveTemporaryAliasTypeSymbols(Context* context)
 {
     for (AliasTypeSymbol* temporaryAlias : context->TemporaryAliasTypes())
     {
@@ -216,10 +216,12 @@ void RemoveTemporaryAliasTypeSymbols(Context* context)
         Scope* scope = temporaryAlias->Parent()->GetScope()->SymbolScope();
         if (scope->IsContainerScope())
         {
-            scope->RemoveSymbol(temporaryAlias);
+            std::expected<std::unique_ptr<Symbol>, int> rv = scope->RemoveSymbol(temporaryAlias);
+            if (!rv) return std::unexpected<int>(rv.error());
         }
     }
     context->ClearTemporaryAliasTypes();
+    return std::expected<bool, int>(true);
 }
 
 } // namespace otava::symbols

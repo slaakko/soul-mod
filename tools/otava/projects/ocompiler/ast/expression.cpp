@@ -888,7 +888,9 @@ AwaitExprNode::AwaitExprNode(const soul::ast::SourcePos& sourcePos_, Node* child
 
 std::expected<Node*, int> AwaitExprNode::Clone() const
 {
-    AwaitExprNode* clone = new AwaitExprNode(GetSourcePos(), Child()->Clone());
+    std::expected<Node*, int> c = Child()->Clone();
+    if (!c) return c;
+    AwaitExprNode* clone = new AwaitExprNode(GetSourcePos(), *c);
     return std::expected<Node*, int>(clone);
 }
 

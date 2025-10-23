@@ -50,7 +50,7 @@ private:
     std::unique_ptr<ConstraintExprSymbol> constraintExpr;
 };
 
-bool IsConceptName(otava::ast::Node* node, Context* context);
+std::expected<bool, int> IsConceptName(otava::ast::Node* node, Context* context);
 
 struct ConceptLess
 {

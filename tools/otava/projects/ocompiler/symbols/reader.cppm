@@ -28,6 +28,10 @@ public:
     inline SymbolTable* GetSymbolTable() const { return symbolTable; }
     void SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_);
     FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() const;
+    inline int GetError() const { return error; }
+    inline void SetError(int error_) { error = error_; }
+    inline bool Valid() const { return error == 0; }
+    inline explicit operator bool() const { return Valid(); }
 private:
     util::FileStream fileStream;
     util::BufferedStream bufferedStream;
@@ -35,6 +39,7 @@ private:
     Context* context;
     SymbolTable* symbolTable;
     FunctionDefinitionSymbolSet* functionDefinitionSymbolSet;
+    int error;
 };
 
 } // namespace otava::symbols

@@ -14,6 +14,8 @@ import otava.symbols.symbol_map;
 import otava.ast.file;
 import otava.ast.node.map;
 import otava.ast.node;
+import otava.ast.reader;
+import otava.ast.writer;
 
 export namespace otava::symbols {
 
@@ -22,7 +24,7 @@ class Reader;
 class Visitor;
 class FunctionDefinitionSymbolSet;
 
-std::string MakeModuleFilePath(const std::string& root, const std::string& config, int optLevel, const std::string& moduleName);
+std::expected<std::string, int> MakeModuleFilePath(const std::string& root, const std::string& config, int optLevel, const std::string& moduleName);
 
 class ModuleMapper;
 
@@ -31,7 +33,7 @@ struct ModuleLess
     bool operator()(Module* left, Module* right) const;
 };
 
-enum class ModuleKind : std::int8_t
+enum class ModuleKind : std::uint8_t
 {
     interfaceModule, implementationModule,
 };
@@ -51,15 +53,15 @@ public:
     inline const std::string& FilePath() const { return filePath; }
     inline const std::string& Name() const { return name; }
     void Accept(Visitor& visitor);
-    void Import(ModuleMapper& moduleMapper, const std::string& config, int optLevel);
-    void Import(Module* that, ModuleMapper& moduleMapper, const std::string& config, int optLevel);
-    void ResolveForwardDeclarations();
+    std::expected<bool, int> Import(ModuleMapper& moduleMapper, const std::string& config, int optLevel);
+    std::expected<bool, int> Import(Module* that, ModuleMapper& moduleMapper, const std::string& config, int optLevel);
+    std::expected<bool, int> ResolveForwardDeclarations();
     void ResolveAllForwardDeclarations();
     void AddDerivedClasses();
-    void Write(const std::string& root, const std::string& config, int optLevel, Context* context);
-    void Write(Writer& writer, Context* context);
-    void ReadHeader(Reader& reader, ModuleMapper& moduleMapper);
-    void CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config, int optLevel);
+    std::expected<bool, int> Write(const std::string& root, const std::string& config, int optLevel, Context* context);
+    std::expected<bool, int> Write(Writer& writer, Context* context);
+    std::expected<bool, int> ReadHeader(Reader& reader, ModuleMapper& moduleMapper);
+    std::expected<bool, int> CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config, int optLevel);
     void Init();
     inline std::int32_t FileId() const { return fileId; }
     inline void SetFileId(std::int32_t fileId_) { fileId = fileId_; }
@@ -86,7 +88,7 @@ public:
     void SetImplementationUnitNames(const std::vector<std::string>& names);
     inline const std::vector<Module*>& ImplementationUnits() const { return implementationUnits; }
     void AddImplementationUnit(Module* implementationUnit);
-    void LoadImplementationUnits(ModuleMapper& moduleMapper, const std::string& config, int optLevel);
+    std::expected<bool, int> LoadImplementationUnits(ModuleMapper& moduleMapper, const std::string& config, int optLevel);
     inline otava::ast::NodeIdFactory* GetNodeIdFactory() { return &nodeIdFactory; }
     std::expected<bool, int> ToXml(const std::string& xmlFilePath) const;
 private:
@@ -117,10 +119,10 @@ class ModuleMapper
 public:
     ModuleMapper();
     void AddModule(Module* module);
-    std::string GetModuleFilePath(const std::string& moduleName, const std::string& config, int optLevel) const;
-    std::string GetProjectFilePath(const std::string& moduleName) const;
-    Module* GetModule(const std::string& moduleName, const std::string& config, int optLevel);
-    Module* LoadModule(const std::string& moduleName, const std::string& moduleFilePath, const std::string& config, int optLevel);
+    std::expected<std::string, int> GetModuleFilePath(const std::string& moduleName, const std::string& config, int optLevel) const;
+    std::expected<std::string, int> GetProjectFilePath(const std::string& moduleName) const;
+    std::expected<Module*, int> GetModule(const std::string& moduleName, const std::string& config, int optLevel);
+    std::expected<Module*, int> LoadModule(const std::string& moduleName, const std::string& moduleFilePath, const std::string& config, int optLevel);
     void AddRoot(const std::string& root);
     inline otava::ast::NodeMap* GetNodeMap() { return &nodeMap; }
     inline SymbolMap* GetSymbolMap() { return &symbolMap; }
@@ -128,6 +130,10 @@ public:
     FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() const;
     int32_t ModuleCount() const;
     const std::vector<std::unique_ptr<Module>>& Modules() const { return modules; }
+    inline bool Valid() const { return error == 0; }
+    inline explicit operator bool() const { return Valid(); }
+    inline int GetError() const { return error; }
+    inline void SetError(int error_) { error = error_; }
 private:
     std::map<std::string, Module*> moduleMap;
     std::vector<std::unique_ptr<Module>> modules;
@@ -136,6 +142,7 @@ private:
     otava::ast::NodeMap nodeMap;
     SymbolMap symbolMap;
     FunctionDefinitionSymbolSet* functionDefinitionSymbolSet;
+    int error;
 };
 
 ModuleMapper* GetModuleMapper();

@@ -23,6 +23,6 @@ private:
     std::map<FunctionSymbol*, FunctionSymbol*> inlineFunctionMap;
 };
 
-FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::SourcePos& sourcePos, Context* context);
+std::expected<FunctionSymbol*, int> InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::SourcePos& sourcePos, Context* context);
 
 } // namespace otava::symbols

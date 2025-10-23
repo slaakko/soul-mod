@@ -7,6 +7,7 @@ export module soul.xml.processing.instruction;
 
 import std;
 import soul.xml.node;
+import soul.xml.node.operation;
 
 export namespace soul::xml {
 

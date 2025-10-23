@@ -1093,7 +1093,9 @@ std::expected<bool, int> BindEnumType(EnumeratedTypeSymbol* enumType, const soul
     if (enumType->IsBound()) return std::expected<bool, int>(false);
     enumType->SetBound();
     Scope* scope = enumType->GetScope();
-    FunctionGroupSymbol* constructorGroup = scope->GetOrInsertFunctionGroup(U"@constructor", sourcePos, context);
+    std::expected<FunctionGroupSymbol*, int> frv = scope->GetOrInsertFunctionGroup(U"@constructor", sourcePos, context);
+    if (!frv) return std::unexpected<int>(frv.error());
+    FunctionGroupSymbol * constructorGroup = *frv;
     EnumTypeDefaultCtor* enumTypeDefaultCtor = new EnumTypeDefaultCtor(enumType, context);
     std::expected<bool, int> rv = scope->AddSymbol(enumTypeDefaultCtor, sourcePos, context);
     if (!rv) return rv;
@@ -1107,13 +1109,17 @@ std::expected<bool, int> BindEnumType(EnumeratedTypeSymbol* enumType, const soul
     if (!rv) return rv;
     constructorGroup->AddFunction(enumTypeMoveCtor);
 
-    FunctionGroupSymbol* destructorGroup = scope->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
+    frv = scope->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
+    if (!frv) return std::unexpected<int>(frv.error());
+    FunctionGroupSymbol* destructorGroup = *frv;
     TrivialDestructor* trivialDestructor = new TrivialDestructor(enumType, context);
     rv = scope->AddSymbol(trivialDestructor, sourcePos, context);
     if (!rv) return rv;
     destructorGroup->AddFunction(trivialDestructor);
 
-    FunctionGroupSymbol* assignmentGroup = scope->GetOrInsertFunctionGroup(U"operator=", sourcePos, context);
+    frv = scope->GetOrInsertFunctionGroup(U"operator=", sourcePos, context);
+    if (!frv) return std::unexpected<int>(frv.error());
+    FunctionGroupSymbol* assignmentGroup = *frv;
     EnumTypeCopyAssignment* enumTypeCopyAssignment = new EnumTypeCopyAssignment(enumType, context);
     rv = scope->AddSymbol(enumTypeCopyAssignment, sourcePos, context);
     if (!rv) return rv;
@@ -1123,13 +1129,17 @@ std::expected<bool, int> BindEnumType(EnumeratedTypeSymbol* enumType, const soul
     if (!rv) return rv;
     assignmentGroup->AddFunction(enumTypeMoveAssignment);
 
-    FunctionGroupSymbol* equalGroup = scope->GetOrInsertFunctionGroup(U"operator==", sourcePos, context);
+    frv = scope->GetOrInsertFunctionGroup(U"operator==", sourcePos, context);
+    if (!frv) return std::unexpected<int>(frv.error());
+    FunctionGroupSymbol* equalGroup = *frv;
     EnumTypeEqual* enumTypeEqual = new EnumTypeEqual(enumType, context);
     rv = scope->AddSymbol(enumTypeEqual, sourcePos, context);
     if (!rv) return rv;
     equalGroup->AddFunction(enumTypeEqual);
 
-    FunctionGroupSymbol* lessGroup = scope->GetOrInsertFunctionGroup(U"operator<", sourcePos, context);
+    frv = scope->GetOrInsertFunctionGroup(U"operator<", sourcePos, context);
+    if (!frv) return std::unexpected<int>(frv.error());
+    FunctionGroupSymbol* lessGroup = *frv;
     EnumTypeLess* enumTypeLess = new EnumTypeLess(enumType, context);
     rv = scope->AddSymbol(enumTypeLess, sourcePos, context);
     if (!rv) return rv;

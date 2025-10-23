@@ -427,8 +427,10 @@ std::expected<bool, int> InstantiateDestructor(ClassTemplateSpecializationSymbol
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
     ClassTypeSymbol* classTemplate = specialization->ClassTemplate();
-    Symbol* destructor = classTemplate->GetScope()->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, sourcePos, context,
-        LookupFlags::dontResolveSingle);
+    std::expected<Symbol*, int> drv = classTemplate->GetScope()->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, sourcePos, 
+        context, LookupFlags::dontResolveSingle);
+    if (!drv) return std::unexpected<int>(drv.error());
+    Symbol* destructor = *drv;
     if (destructor && destructor->IsFunctionGroupSymbol())
     {
         FunctionGroupSymbol* destructorGroup = static_cast<FunctionGroupSymbol*>(destructor);
@@ -576,8 +578,10 @@ std::expected<ClassTemplateSpecializationSymbol*, int> InstantiateClassTemplate(
         if (!name) return std::unexpected<int>(name.error());
         return Error("otava.symbols.class_templates: wrong number of template args for instantiating class template '" + *name + "'", sourcePos, context);
     }
-    specialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope());
-    specialization->GetScope()->AddParentScope(specialization->ClassTemplate()->GetScope()->GetNamespaceScope());
+    std::expected<bool, int> prv = specialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope());
+    if (!prv) return std::unexpected<int>(prv.error());
+    prv = specialization->GetScope()->AddParentScope(specialization->ClassTemplate()->GetScope()->GetNamespaceScope());
+    if (!prv) return std::unexpected<int>(prv.error());
     context->GetSymbolTable()->BeginScope(specialization->GetScope());
     InstantiationScope instantiationScope(specialization->GetScope());
     std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
@@ -667,7 +671,8 @@ std::expected<ClassTemplateSpecializationSymbol*, int> InstantiateClassTemplate(
     std::vector<ClassTypeSymbol*> baseClasses = instantiator.GetBaseClasses();
     for (ClassTypeSymbol* baseClass : baseClasses)
     {
-        specialization->AddBaseClass(baseClass, sourcePos, context);
+        std::expected<bool, int> brv = specialization->AddBaseClass(baseClass, sourcePos, context);
+        if (!brv) return std::unexpected<int>(brv.error());
     }
     context->PopFlags();
     std::set<const Symbol*> visited;
@@ -827,7 +832,9 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
     otava::ast::Node* node = context->GetSymbolTable()->GetNodeNothrow(memFn);
     if (node)
     {
-        node = node->Clone();
+        std::expected<otava::ast::Node*, int> c = node->Clone();
+        if (!c) return std::unexpected<int>(c.error());
+        node = *c;
     }
     else
     {
@@ -877,8 +884,10 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
                     return Error("otava.symbols.class_templates: wrong number of template args for instantiating class template member function '" +
                         *name + "'", sourcePos, node->GetSourcePos(), context);
                 }
-                classTemplateSpecialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
-                classTemplateSpecialization->GetScope()->AddParentScope(classTemplateSpecialization->ClassTemplate()->GetScope()->GetNamespaceScope());
+                std::expected<bool, int> prv = classTemplateSpecialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
+                if (!prv) return std::unexpected<int>(prv.error());
+                prv = classTemplateSpecialization->GetScope()->AddParentScope(classTemplateSpecialization->ClassTemplate()->GetScope()->GetNamespaceScope());
+                if (!prv) return std::unexpected<int>(prv.error());
                 InstantiationScope instantiationScope(classTemplateSpecialization->GetScope());
                 std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
                 for (int i = 0; i < arity; ++i)
@@ -945,9 +954,14 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
                     classTemplateRepository->AddFunctionDefinition(key, functionDefinition, node);
                     context->PushBoundFunction(new BoundFunctionNode(functionDefinition, sourcePos));
                     Scope* nsScope = classTemplateSpecialization->ClassTemplate()->GetScope()->GetNamespaceScope();
-                    instantiationScope.PushParentScope(nsScope);
+                    std::expected<bool, int> prv = instantiationScope.PushParentScope(nsScope);
+                    if (!prv) return std::unexpected<int>(prv.error());
                     std::expected<FunctionDefinitionSymbol*, int> rv = BindFunction(functionDefinitionNode, functionDefinition, context);
-                    if (!rv) return std::unexpected<int>(rv.error());
+                    if (!rv)
+                    {
+                        return Error("otava.symbols.class_templates: error instantiating specialization '" + specializationName +
+                            "': " + util::GetErrorMessage(rv.error()), node->GetSourcePos(), sourcePos, context);
+                    }
                     functionDefinition = *rv;
                     specialization = functionDefinition;
                     context->PopFlags();
@@ -957,7 +971,8 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
                         if (!rv) return std::unexpected<int>(rv.error());
                     }
                     context->PopBoundFunction();
-                    instantiationScope.PopParentScope();
+                    prv = instantiationScope.PopParentScope();
+                    if (!prv) return std::unexpected<int>(prv.error());
                     functionDefinition->GetScope()->ClearParentScopes();
                     context->GetSymbolTable()->MapClassTemplateSpecialization(classTemplateSpecialization);
                 }
@@ -1014,8 +1029,10 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
                     return Error("otava.symbols.class_templates: wrong number of template args for instantiating class template member function '" +
                         *name + "'", sourcePos, node->GetSourcePos(), context);
                 }
-                classTemplateSpecialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
-                classTemplateSpecialization->GetScope()->AddParentScope(classTemplateSpecialization->ClassTemplate()->GetScope()->GetNamespaceScope());
+                std::expected<bool, int> prv = classTemplateSpecialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
+                if (!prv) return std::unexpected<int>(prv.error());
+                prv = classTemplateSpecialization->GetScope()->AddParentScope(classTemplateSpecialization->ClassTemplate()->GetScope()->GetNamespaceScope());
+                if (!prv) return std::unexpected<int>(prv.error());
                 InstantiationScope instantiationScope(classTemplateSpecialization->GetScope());
                 std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
                 for (int i = 0; i < arity; ++i)
@@ -1081,7 +1098,8 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
                 {
                     return Error("otava.symbols.class_templates: function symbol expected", node->GetSourcePos(), context);
                 }
-                instantiationScope.PopParentScope();
+                prv = instantiationScope.PopParentScope();
+                if (!prv) return std::unexpected<int>(prv.error());
                 context->GetSymbolTable()->EndScope();
                 context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
                 if (prevParseMemberFunction)

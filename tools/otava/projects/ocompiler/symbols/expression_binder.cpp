@@ -785,10 +785,23 @@ void ExpressionBinder::BindPrefixInc(const soul::ast::SourcePos& sourcePos, Boun
     }
     else
     {
+        std::expected<otava::ast::Node*, int> c1 = child->Clone();
+        if (!c1)
+        {
+            SetError(c1.error());
+            return;
+        }
+        otava::ast::Node* child1 = *c1;
+        std::expected<otava::ast::Node*, int> c2 = child->Clone();
+        if (!c2)
+        {
+            SetError(c2.error());
+            return;
+        }
+        otava::ast::Node* child2 = *c2;
         otava::ast::BinaryExprNode assignmentExpr(sourcePos,
             new otava::ast::AssignNode(sourcePos),
-            child->Clone(),
-            new otava::ast::BinaryExprNode(sourcePos, new otava::ast::PlusNode(sourcePos), child->Clone(),
+            child1, new otava::ast::BinaryExprNode(sourcePos, new otava::ast::PlusNode(sourcePos), child2,
                 new otava::ast::IntegerLiteralNode(sourcePos, 1, otava::ast::Suffix::none, otava::ast::Base::decimal, U"")));
         context->PushSetFlag(ContextFlags::suppress_warning);
         std::expected<BoundExpressionNode*, int> rv = BindExpression(&assignmentExpr, context);
@@ -820,10 +833,24 @@ void ExpressionBinder::BindPrefixDec(const soul::ast::SourcePos& sourcePos, Boun
     }
     else
     {
+        std::expected<otava::ast::Node*, int> c1 = child->Clone();
+        if (!c1)
+        {
+            SetError(c1.error());
+            return;
+        }
+        otava::ast::Node* child1 = *c1;
+        std::expected<otava::ast::Node*, int> c2 = child->Clone();
+        if (!c2)
+        {
+            SetError(c2.error());
+            return;
+        }
+        otava::ast::Node* child2 = *c2;
         otava::ast::BinaryExprNode assignmentExpr(sourcePos,
             new otava::ast::AssignNode(sourcePos),
-            child->Clone(),
-            new otava::ast::BinaryExprNode(sourcePos, new otava::ast::MinusNode(sourcePos), child->Clone(),
+            child1,
+            new otava::ast::BinaryExprNode(sourcePos, new otava::ast::MinusNode(sourcePos), child2,
                 new otava::ast::IntegerLiteralNode(sourcePos, 1, otava::ast::Suffix::none, otava::ast::Base::decimal, U"")));
         context->PushSetFlag(ContextFlags::suppress_warning);
         std::expected<BoundExpressionNode*, int> rv = BindExpression(&assignmentExpr, context);
@@ -892,8 +919,13 @@ void ExpressionBinder::Visit(otava::ast::CppCastExprNode& node)
     {
         if (argumentMatch.preConversionFlags == OperationFlags::addr)
         {
-            boundExpression = new BoundAddressOfNode(MakeLvalueExpression(boundExpression, node.GetSourcePos(), context), node.GetSourcePos(),
-                boundExpression->GetType()->AddPointer(context));
+            std::expected<BoundExpressionNode*, int> brv = MakeLvalueExpression(boundExpression, node.GetSourcePos(), context);
+            if (!brv)
+            {
+                SetError(brv.error());
+                return;
+            }
+            boundExpression = new BoundAddressOfNode(*brv, node.GetSourcePos(), boundExpression->GetType()->AddPointer(context));
         }
         else if (argumentMatch.preConversionFlags == OperationFlags::deref)
         {
@@ -954,7 +986,13 @@ void NewInitializerMaker::Visit(otava::ast::InvokeExprNode& node)
     int n = node.Items().size();
     for (int i = 0; i < n; ++i)
     {
-        otava::ast::Node* arg = node.Items()[i]->Clone();
+        std::expected<otava::ast::Node*, int> a = node.Items()[i]->Clone();
+        if (!a)
+        {
+            SetError(a.error());
+            return;
+        }
+        otava::ast::Node* arg = *a;
         std::expected<bool, int> rv = newInitializer->AddNode(arg);
         if (!rv)
         {
@@ -1137,11 +1175,23 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
     Symbol* symbol = nullptr;
     if (qualifiedScope)
     {
-        symbol = scope->Lookup(node.Str(), groups, ScopeLookup::thisAndBaseScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+        std::expected<Symbol*, int> lrv = scope->Lookup(node.Str(), groups, ScopeLookup::thisAndBaseScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+        if (!lrv)
+        {
+            SetError(lrv.error());
+            return;
+        }
+        symbol = *lrv;
     }
     if (!symbol)
     {
-        symbol = scope->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+        std::expected<Symbol*, int> lrv = scope->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+        if (!lrv)
+        {
+            SetError(lrv.error());
+            return;
+        }
+        symbol = *lrv;
     }
     if (!symbol)
     {
@@ -1149,24 +1199,51 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
         ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(scope->GetClassTemplateSpecialization(visited));
         if (sp)
         {
-            symbol = sp->ClassTemplate()->GetScope()->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+            std::expected<Symbol*, int> lrv = sp->ClassTemplate()->GetScope()->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), 
+                context, LookupFlags::dontResolveSingle);
+            if (!lrv)
+            {
+                SetError(lrv.error());
+                return;
+            }
+            symbol = *lrv;
         }
     }
     if (!symbol && boundExpression && boundExpression->IsBoundTypeNode())
     {
         TypeSymbol* type = static_cast<TypeSymbol*>(boundExpression->GetType());
-        symbol = type->GetScope()->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+        std::expected<Symbol*, int> lrv = type->GetScope()->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), 
+            context, LookupFlags::dontResolveSingle);
+        if (!lrv)
+        {
+            SetError(lrv.error());
+            return;
+        }
+        symbol = *lrv;
     }
     if (!symbol && (symbolGroups & SymbolGroupKind::functionSymbolGroup) != SymbolGroupKind::none)
     {
         groups = SymbolGroupKind::functionSymbolGroup;
         if (qualifiedScope)
         {
-            symbol = scope->Lookup(node.Str(), groups, ScopeLookup::thisAndBaseScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+            std::expected<Symbol*, int> lrv = scope->Lookup(node.Str(), groups, ScopeLookup::thisAndBaseScopes, node.GetSourcePos(), 
+                context, LookupFlags::dontResolveSingle);
+            if (!lrv)
+            {
+                SetError(lrv.error());
+                return;
+            }
+            symbol = *lrv;
         }
         if (!symbol)
         {
-            symbol = scope->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+            std::expected<Symbol*, int> lrv = scope->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+            if (!lrv)
+            {
+                SetError(lrv.error());
+                return;
+            }
+            symbol = *lrv;
         }
         if (!symbol)
         {
@@ -1174,13 +1251,27 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
             ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(scope->GetClassTemplateSpecialization(visited));
             if (sp)
             {
-                symbol = sp->ClassTemplate()->GetScope()->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+                std::expected<Symbol*, int> lrv = sp->ClassTemplate()->GetScope()->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), 
+                    context, LookupFlags::dontResolveSingle);
+                if (!lrv)
+                {
+                    SetError(lrv.error());
+                    return;
+                }
+                symbol = *lrv;
             }
         }
         if (!symbol && boundExpression && boundExpression->IsBoundTypeNode())
         {
             TypeSymbol* type = static_cast<TypeSymbol*>(boundExpression->GetType());
-            symbol = type->GetScope()->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+            std::expected<Symbol*, int> lrv = type->GetScope()->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), 
+                context, LookupFlags::dontResolveSingle);
+            if (!lrv)
+            {
+                SetError(lrv.error());
+                return;
+            }
+            symbol = *lrv;
         }
     }
     if (symbol)
@@ -1413,7 +1504,14 @@ void ExpressionBinder::Visit(otava::ast::DestructorIdNode& node)
         }
         scope = s->GetScope();
     }
-    Symbol* symbol = scope->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+    std::expected<Symbol*, int> lrv = scope->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, node.GetSourcePos(),
+        context, LookupFlags::dontResolveSingle);
+    if (!lrv)
+    {
+        SetError(lrv.error());
+        return;
+    }
+    Symbol* symbol = *lrv;
     if (symbol && symbol->IsFunctionGroupSymbol())
     {
         FunctionGroupSymbol* functionGroupSymbol = static_cast<FunctionGroupSymbol*>(symbol);
@@ -1447,7 +1545,12 @@ void ExpressionBinder::Visit(otava::ast::TemplateIdNode& node)
 {
     if (!Valid()) return;
     Scope* currentScope = context->GetSymbolTable()->CurrentScope();
-    currentScope->PushParentScope(scope);
+    std::expected<bool, int> prv = currentScope->PushParentScope(scope);
+    if (!prv)
+    {
+        SetError(prv.error());
+        return;
+    }
     std::expected<TypeSymbol*, int> rv = ResolveType(&node, DeclarationFlags::none, context);
     TypeSymbol* type = nullptr;
     if (rv)
@@ -1502,7 +1605,12 @@ void ExpressionBinder::Visit(otava::ast::TemplateIdNode& node)
             return;
         }
     }
-    currentScope->PopParentScope();
+    prv = currentScope->PopParentScope();
+    if (!prv)
+    {
+        SetError(prv.error());
+        return;
+    }
 }
 
 void ExpressionBinder::Visit(otava::ast::MemberExprNode& node)
@@ -2254,7 +2362,13 @@ void ExpressionBinder::Visit(otava::ast::NewExprNode& node)
         return;
     }
     type = *trv;
-    otava::ast::SizeOfTypeExprNode sizeOfNode(node.GetSourcePos(), node.Child()->Clone(), soul::ast::SourcePos(), soul::ast::SourcePos());
+    std::expected<otava::ast::Node*, int> c = node.Child()->Clone();
+    if (!c)
+    {
+        SetError(c.error());
+        return;
+    }
+    otava::ast::SizeOfTypeExprNode sizeOfNode(node.GetSourcePos(), *c, soul::ast::SourcePos(), soul::ast::SourcePos());
     std::expected<BoundExpressionNode*, int> rv = BindExpression(&sizeOfNode, context);
     if (!rv)
     {
@@ -2481,6 +2595,24 @@ void ExpressionBinder::Visit(otava::ast::PostfixIncExprNode& node)
                 SetError(trv.error());
                 return;
             }
+            std::expected<otava::ast::Node*, int> c1 = node.Child()->Clone();
+            if (!c1)
+            {
+                SetError(c1.error());
+                return;
+            }
+            std::expected<otava::ast::Node*, int> c2 = node.Child()->Clone();
+            if (!c2)
+            {
+                SetError(c2.error());
+                return;
+            }
+            std::expected<otava::ast::Node*, int> c3 = node.Child()->Clone();
+            if (!c3)
+            {
+                SetError(c3.error());
+                return;
+            }
             VariableSymbol* temporary = context->GetSymbolTable()->AddVariable(*trv, &node, type, type, nullptr, DeclarationFlags::none, context);
             std::u32string temporaryName = temporary->Name();
             otava::ast::BinaryExprNode expr(node.GetSourcePos(),
@@ -2490,11 +2622,11 @@ void ExpressionBinder::Visit(otava::ast::PostfixIncExprNode& node)
                     new otava::ast::BinaryExprNode(node.GetSourcePos(),
                         new otava::ast::AssignNode(node.GetSourcePos()),
                         new otava::ast::IdentifierNode(node.GetSourcePos(), temporaryName),
-                        node.Child()->Clone()),
+                        *c1),
                     new otava::ast::BinaryExprNode(node.GetSourcePos(),
                         new otava::ast::AssignNode(node.GetSourcePos()),
-                        node.Child()->Clone(),
-                        new otava::ast::BinaryExprNode(node.GetSourcePos(), new otava::ast::PlusNode(node.GetSourcePos()), node.Child()->Clone(),
+                        *c2,
+                        new otava::ast::BinaryExprNode(node.GetSourcePos(), new otava::ast::PlusNode(node.GetSourcePos()), *c3,
                             new otava::ast::IntegerLiteralNode(node.GetSourcePos(), 1, otava::ast::Suffix::none, otava::ast::Base::decimal, U"")))),
                 new otava::ast::IdentifierNode(node.GetSourcePos(), temporaryName));
             context->PushSetFlag(ContextFlags::suppress_warning);
@@ -2558,6 +2690,24 @@ void ExpressionBinder::Visit(otava::ast::PostfixDecExprNode& node)
                 SetError(trv.error());
                 return;
             }
+            std::expected<otava::ast::Node*, int> c1 = node.Child()->Clone();
+            if (!c1)
+            {
+                SetError(c1.error());
+                return;
+            }
+            std::expected<otava::ast::Node*, int> c2 = node.Child()->Clone();
+            if (!c2)
+            {
+                SetError(c2.error());
+                return;
+            }
+            std::expected<otava::ast::Node*, int> c3 = node.Child()->Clone();
+            if (!c3)
+            {
+                SetError(c3.error());
+                return;
+            }
             VariableSymbol* temporary = context->GetSymbolTable()->AddVariable(*trv, &node, type, type, nullptr, DeclarationFlags::none, context);
             std::u32string temporaryName = temporary->Name();
             otava::ast::BinaryExprNode expr(node.GetSourcePos(),
@@ -2567,11 +2717,11 @@ void ExpressionBinder::Visit(otava::ast::PostfixDecExprNode& node)
                     new otava::ast::BinaryExprNode(node.GetSourcePos(),
                         new otava::ast::AssignNode(node.GetSourcePos()),
                         new otava::ast::IdentifierNode(node.GetSourcePos(), temporaryName),
-                        node.Child()->Clone()),
+                        *c1),
                     new otava::ast::BinaryExprNode(node.GetSourcePos(),
                         new otava::ast::AssignNode(node.GetSourcePos()),
-                        node.Child()->Clone(),
-                        new otava::ast::BinaryExprNode(node.GetSourcePos(), new otava::ast::MinusNode(node.GetSourcePos()), node.Child()->Clone(),
+                        *c2,
+                        new otava::ast::BinaryExprNode(node.GetSourcePos(), new otava::ast::MinusNode(node.GetSourcePos()), *c3,
                             new otava::ast::IntegerLiteralNode(node.GetSourcePos(), 1, otava::ast::Suffix::none, otava::ast::Base::decimal, U"")))),
                 new otava::ast::IdentifierNode(node.GetSourcePos(), temporaryName));
             std::expected<BoundExpressionNode*, int> rv = BindExpression(&expr, context);

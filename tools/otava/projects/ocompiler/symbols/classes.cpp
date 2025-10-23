@@ -169,10 +169,12 @@ bool ClassTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
     return false;
 }
 
-void ClassTypeSymbol::AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> ClassTypeSymbol::AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     baseClasses.push_back(baseClass);
-    GetScope()->AddBaseScope(baseClass->GetScope(), sourcePos, context);
+    std::expected<bool, int> rv = GetScope()->AddBaseScope(baseClass->GetScope(), sourcePos, context);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 void ClassTypeSymbol::AddDerivedClass(ClassTypeSymbol* derivedClass)
@@ -418,7 +420,8 @@ std::expected<bool, int> ClassTypeSymbol::Resolve(SymbolTable& symbolTable, Cont
         Symbol* baseClassSymbol = symbolTable.GetSymbolMap()->GetSymbol(symbolTable.GetModule(), SymbolKind::null, baseClassId);
         if (baseClassSymbol->IsClassTypeSymbol())
         {
-            GetScope()->AddBaseScope(baseClassSymbol->GetScope(), soul::ast::SourcePos(), nullptr);
+            std::expected<bool, int> brv = GetScope()->AddBaseScope(baseClassSymbol->GetScope(), soul::ast::SourcePos(), nullptr);
+            if (!brv) return brv;
             baseClasses.push_back(static_cast<ClassTypeSymbol*>(baseClassSymbol));
         }
     }
@@ -1539,8 +1542,10 @@ void TrivialClassDtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressio
 
 std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    Symbol* dtorFunctionGroupSymbol = classTypeSymbol->GetScope()->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, sourcePos, context,
-        LookupFlags::dontResolveSingle);
+    std::expected<Symbol*, int> lrv = classTypeSymbol->GetScope()->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, sourcePos, 
+        context, LookupFlags::dontResolveSingle);
+    if (!lrv) return lrv;
+    Symbol* dtorFunctionGroupSymbol = *lrv;
     Symbol* destructorFn = nullptr;
     if (dtorFunctionGroupSymbol && dtorFunctionGroupSymbol->IsFunctionGroupSymbol())
     {
@@ -1583,7 +1588,9 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
     int nb = classTypeSymbol->BaseClasses().size();
     if (nm == 0 && nb == 0)
     {
-        FunctionGroupSymbol* functionGroup = classTypeSymbol->GetScope()->GroupScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
+        std::expected<FunctionGroupSymbol*, int> frv = classTypeSymbol->GetScope()->GroupScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
+        if (!frv) return std::unexpected<int>(frv.error());
+        FunctionGroupSymbol* functionGroup = *frv;
         Symbol* destructorSymbol = trivialClassDestructor.get();
         functionGroup->AddFunction(trivialClassDestructor.get());
         std::expected<bool, int> rv = classTypeSymbol->AddSymbol(trivialClassDestructor.release(), sourcePos, context);
@@ -1674,7 +1681,9 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
     }
     if (!hasNonTrivialDestructor)
     {
-        FunctionGroupSymbol* functionGroup = classTypeSymbol->GetScope()->GroupScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
+        std::expected<FunctionGroupSymbol*, int> frv = classTypeSymbol->GetScope()->GroupScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
+        if (!frv)  return std::unexpected<int>(frv.error());
+        FunctionGroupSymbol* functionGroup = *frv;
         FunctionSymbol* trivialDestructor = trivialClassDestructor.get();
         functionGroup->AddFunction(trivialClassDestructor.get());
         std::expected<bool, int> rv = classTypeSymbol->AddSymbol(trivialClassDestructor.release(), sourcePos, context);
@@ -1682,7 +1691,9 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
         return std::expected<Symbol*, int>(trivialDestructor);
     }
     BoundFunctionNode* boundDestructor = new BoundFunctionNode(destructorDefinitionSymbol.get(), sourcePos);
-    FunctionGroupSymbol* functionGroup = classTypeSymbol->GetScope()->GroupScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
+    std::expected<FunctionGroupSymbol*, int> frv = classTypeSymbol->GetScope()->GroupScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
+    if (!frv)  return std::unexpected<int>(frv.error());
+    FunctionGroupSymbol* functionGroup = *frv;
     functionGroup->AddFunction(destructorSymbol.get());
     FunctionSymbol* destructor = destructorDefinitionSymbol.get();
     std::expected<bool, int> rv = classTypeSymbol->AddSymbol(destructorSymbol.release(), sourcePos, context);

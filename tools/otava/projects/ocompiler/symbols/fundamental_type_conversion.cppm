@@ -29,47 +29,42 @@ struct FundamentalTypeIdentity
 
 struct FundamentalTypeSignExtension
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
+    static std::expected<otava::intermediate::Value*, int> Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
 };
 
 struct FundamentalTypeZeroExtension
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
+    static std::expected<otava::intermediate::Value*, int> Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
 };
 
 struct FundamentalTypeFloatingPointExtension
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
+    static std::expected<otava::intermediate::Value*, int> Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
 };
 
 struct FundamentalTypeTruncate
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
-};
-
-struct FundamentalTypeFloatingPointTruncate
-{
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
+    static std::expected<otava::intermediate::Value*, int> Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
 };
 
 struct FundamentalTypeBitcast
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
+    static std::expected<otava::intermediate::Value*, int> Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
 };
 
 struct FundamentalTypeIntToFloat
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
+    static std::expected<otava::intermediate::Value*, int> Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
 };
 
 struct FundamentalTypeFloatToInt
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
+    static std::expected<otava::intermediate::Value*, int> Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
 };
 
 struct FundamentalTypeBoolToInt
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
+    static std::expected<otava::intermediate::Value*, int> Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
 };
 
 template<class Op>
@@ -89,7 +84,12 @@ struct FundamentalTypeConversion : public FunctionSymbol
         SetConversionParamType(paramType_);
         SetConversionArgType(argType_);
         ParameterSymbol* arg = new ParameterSymbol(U"arg", argType);
-        AddParameter(arg, soul::ast::SourcePos(), nullptr);
+        std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), nullptr);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
         SetReturnType(paramType_, context);
     }
     TypeSymbol* ConversionParamType() const override
@@ -155,7 +155,9 @@ struct FundamentalTypeConversion : public FunctionSymbol
         otava::intermediate::Value* value = emitter.Stack().Pop();
         std::expected<otava::intermediate::Type*, int> irv = paramType->IrType(emitter, sourcePos, context);
         if (!irv) return std::unexpected<int>(irv.error());
-        emitter.Stack().Push(Op::Generate(emitter, value, static_cast<otava::intermediate::Type*>(*irv), context));
+        std::expected<otava::intermediate::Value*, int> rv = Op::Generate(emitter, value, static_cast<otava::intermediate::Type*>(*irv), context);
+        if (!rv) return std::unexpected<int>(rv.error());
+        emitter.Stack().Push(*rv);
         return std::expected<bool, int>(true);
     }
     std::int32_t distance;

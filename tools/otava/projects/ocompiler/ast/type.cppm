@@ -7,6 +7,8 @@ export module otava.ast.type;
 
 import std;
 import otava.ast.node;
+import otava.ast.reader;
+import otava.ast.writer;
 
 export namespace otava::ast {
 

@@ -6,8 +6,6 @@
 module otava.ast.statement;
 
 import otava.ast.visitor;
-import otava.ast.reader;
-import otava.ast.writer;
 
 namespace otava::ast {
 
@@ -585,7 +583,7 @@ std::expected<Node*, int> DoStatementNode::Clone() const
     {
         std::expected<Node*, int> a = attributes->Clone();
         if (!a) return a;
-        clonedAttributes = attributes->Clone();
+        clonedAttributes = *a;
     }
     std::expected<Node*, int> s = stmt->Clone();
     if (!s) return s;

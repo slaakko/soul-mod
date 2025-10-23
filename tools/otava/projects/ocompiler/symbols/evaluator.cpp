@@ -216,12 +216,18 @@ void Evaluator::Visit(otava::ast::QualifiedIdNode& node)
 void Evaluator::Visit(otava::ast::IdentifierNode& node)
 {
     if (!Valid()) return;
-    Symbol* symbol = scope->Lookup(node.Str(),
+    std::expected<Symbol*, int> lrv = scope->Lookup(node.Str(),
         SymbolGroupKind::variableSymbolGroup | SymbolGroupKind::enumConstantSymbolGroup | SymbolGroupKind::typeSymbolGroup,
         ScopeLookup::allScopes,
         node.GetSourcePos(),
         context,
         LookupFlags::none);
+    if (!lrv)
+    {
+        SetError(lrv.error());
+        return;
+    }
+    Symbol* symbol = *lrv;
     if (symbol)
     {
         switch (symbol->Kind())

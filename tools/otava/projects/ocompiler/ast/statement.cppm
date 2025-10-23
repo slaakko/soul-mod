@@ -8,6 +8,8 @@ export module otava.ast.statement;
 import std;
 import otava.ast.node;
 import soul.ast.lexer.pos.pair;
+import otava.ast.reader;
+import otava.ast.writer;
 
 export namespace otava::ast {
 

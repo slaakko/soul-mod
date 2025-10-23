@@ -24,7 +24,9 @@ ClassSpecifierNode::ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_, N
 
 std::expected<Node*, int> ClassSpecifierNode::Clone() const
 {
-    ClassSpecifierNode* clone = new ClassSpecifierNode(GetSourcePos(), classHead->Clone());
+    std::expected<Node*, int> h = classHead->Clone();
+    if (!h) return h;
+    ClassSpecifierNode* clone = new ClassSpecifierNode(GetSourcePos(), *h);
     for (const auto& node : Nodes())
     {
         std::expected<Node*, int> nrv = node->Clone();
@@ -78,8 +80,10 @@ ClassHeadNode::ClassHeadNode(const soul::ast::SourcePos& sourcePos_) : CompoundN
 {
 }
 
-ClassHeadNode::ClassHeadNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* classHeadName_, Node* classVirtSpecifier_, Node* baseClause_, Node* attributes_) :
-    CompoundNode(NodeKind::classHeadNode, sourcePos_), classKey(classKey_), classHeadName(classHeadName_), classVirtSpecifier(classVirtSpecifier_), baseClause(baseClause_), attributes(attributes_)
+ClassHeadNode::ClassHeadNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* classHeadName_, Node* classVirtSpecifier_, 
+    Node* baseClause_, Node* attributes_) :
+    CompoundNode(NodeKind::classHeadNode, sourcePos_), classKey(classKey_), classHeadName(classHeadName_), classVirtSpecifier(classVirtSpecifier_), 
+    baseClause(baseClause_), attributes(attributes_)
 {
 }
 
@@ -106,7 +110,11 @@ std::expected<Node*, int> ClassHeadNode::Clone() const
         if (!crv) return crv;
         clonedAttributes = *crv;
     }
-    ClassHeadNode* clone = new ClassHeadNode(GetSourcePos(), classKey->Clone(), classHeadName->Clone(), clonedClassVirtSpecifiers, clonedBaseClause, clonedAttributes);
+    std::expected<Node*, int> k = classKey->Clone();
+    if (!k) return k;
+    std::expected<Node*, int> h = classHeadName->Clone();
+    if (!h) return h;
+    ClassHeadNode* clone = new ClassHeadNode(GetSourcePos(), *k, *h, clonedClassVirtSpecifiers, clonedBaseClause, clonedAttributes);
     return clone;
 }
 
@@ -229,7 +237,9 @@ std::expected<Node*, int> BaseSpecifierNode::Clone() const
         if (!crv) return crv;
         clonedAttributes = *crv;
     }
-    BaseSpecifierNode* clone = new BaseSpecifierNode(GetSourcePos(), classOrDeclType->Clone(), clonedAccessSpecifier, clonedVirtualSpecifier, clonedAttributes, virtualFirst);
+    std::expected<Node*, int> d = classOrDeclType->Clone();
+    if (!d) return d;
+    BaseSpecifierNode* clone = new BaseSpecifierNode(GetSourcePos(), *d, clonedAccessSpecifier, clonedVirtualSpecifier, clonedAttributes, virtualFirst);
     return clone;
 }
 

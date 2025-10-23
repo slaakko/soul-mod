@@ -264,8 +264,8 @@ class EvaluationContext
 public:
     EvaluationContext(SymbolTable& symbolTable_);
     void Init();
-    void Write(Writer& writer, Context* context);
-    void Read(Reader& reader);
+    std::expected<bool, int> Write(Writer& writer, Context* context);
+    std::expected<bool, int> Read(Reader& reader);
     BoolValue* GetBoolValue(bool value);
     IntegerValue* GetIntegerValue(std::int64_t value, const std::u32string& rep, TypeSymbol* type);
     FloatingValue* GetFloatingValue(double value, const std::u32string& rep, TypeSymbol* type);
@@ -278,7 +278,7 @@ public:
     StructureValue* GetStructureValue(TypeSymbol* type);
     Value* GetValue(const util::uuid& valueId) const;
     void AddValue(Value* value);
-    void Resolve(SymbolTable& symbolTable);
+    std::expected<bool, int> Resolve(SymbolTable& symbolTable);
     SymbolTable& GetSymbolTable() { return symbolTable; }
 private:
     void MapValue(Value* value);

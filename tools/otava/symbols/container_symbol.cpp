@@ -18,6 +18,7 @@ import otava.symbols.conversion.table;
 import otava.symbols.function.group.symbol;
 import otava.symbols.class_group.symbol;
 import otava.symbols.alias.group.symbol;
+import otava.symbols.classes;
 import otava.symbols.exception;
 import otava.symbols.concepts;
 import util.unicode;
@@ -56,6 +57,10 @@ void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
     {
         FundamentalTypeSymbol* fundamentalTypeSymbol = static_cast<FundamentalTypeSymbol*>(symbol);
         context->GetSymbolTable()->MapFundamentalType(fundamentalTypeSymbol);
+    }
+    if (symbol->IsClassTypeSymbol())
+    {
+        context->GetSymbolTable()->AddClass(static_cast<ClassTypeSymbol*>(symbol));
     }
     if (symbol->IsFunctionSymbol())
     {

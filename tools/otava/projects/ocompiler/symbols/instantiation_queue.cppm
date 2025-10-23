@@ -32,12 +32,13 @@ class InstantiationQueue
 {
 public:
     InstantiationQueue();
-    void EnqueueInstantiationRequest(FunctionSymbol* function, const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap);
-    std::vector<InstantiationRequest>* GetRequests(FunctionSymbol* functionTemplate);
+    std::expected<bool, int> EnqueueInstantiationRequest(FunctionSymbol* function, 
+        const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap);
+    std::expected<std::vector<InstantiationRequest>*, int> GetRequests(FunctionSymbol* functionTemplate);
 private:
     std::map<std::string, std::map<std::u32string, std::vector<InstantiationRequest>>> requestMap;
 };
 
-void InstantiateEnqueuedRequests(FunctionSymbol* functionTemplate, const soul::ast::SourcePos& sourcePos, Context* context);
+std::expected<bool, int> InstantiateEnqueuedRequests(FunctionSymbol* functionTemplate, const soul::ast::SourcePos& sourcePos, Context* context);
 
 } // namespace otava::symbols

@@ -105,7 +105,7 @@ public:
     std::expected<otava::intermediate::Value*, int> GetVTabVariable(Emitter& emitter, Context* context);
     std::vector<ClassTypeSymbol*> VPtrHolderClasses() const;
     inline const std::vector<ClassTypeSymbol*>& BaseClasses() const { return baseClasses; }
-    void AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
+    std::expected<bool, int> AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
     inline const std::vector<ClassTypeSymbol*>& DerivedClasses() const { return derivedClasses; }
     void AddDerivedClass(ClassTypeSymbol* derivedClass);
     bool HasBaseClass(TypeSymbol* baseClass, int& distance, Context* context) const override;
