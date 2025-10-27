@@ -46,7 +46,7 @@ extern "C" void* fs_path_absolute(void* p);
 extern "C" void* fs_path_absolute_error(void* p, int* error, char** msg);
 extern "C" void* fs_path_canonical(void* p);
 extern "C" void* fs_path_canonical_error(void* p, int* error, char** msg);
-extern "C" bool fs_copy(void* from, void* to);
+extern "C" void fs_copy(void* from, void* to);
 extern "C" void fs_copy_error(void* from, void* to, int* error, char** msg);
 extern "C" bool fs_copy_file(void* from, void* to);
 extern "C" bool fs_copy_file_error(void* from, void* to, int* error, char** msg);
@@ -400,9 +400,9 @@ path canonical(const path& p)
     return path(fs_path_canonical(p.handle));
 }
 
-bool copy(const path& from, const path& to)
+void copy(const path& from, const path& to)
 {
-    return fs_copy(from.handle, to.handle);
+    fs_copy(from.handle, to.handle);
 }
 
 void copy(const path& from, const path& to, std::error_code& ec)

@@ -12,6 +12,6 @@ export namespace otava::symbols {
 
 class Context;
 
-void AddUsingDirective(otava::ast::Node* node, Context* context);
+std::expected<bool, int> AddUsingDirective(otava::ast::Node* node, Context* context);
 
 } // namespace otava::symbols

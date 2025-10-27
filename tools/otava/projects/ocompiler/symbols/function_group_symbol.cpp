@@ -125,12 +125,16 @@ std::expected<bool, int> FunctionGroupSymbol::Resolve(SymbolTable& symbolTable, 
     if (!rv) return rv;
     for (const auto& functionId : functionIds)
     {
-        FunctionSymbol* function = symbolTable.GetFunction(functionId);
+        std::expected<FunctionSymbol*, int> f = symbolTable.GetFunction(functionId);
+        if (!f) return std::unexpected<int>(f.error());
+        FunctionSymbol* function = *f;
         functions.push_back(function);
     }
     for (const auto& functionDefinitionId : functionDefinitionIds)
     {
-        FunctionDefinitionSymbol* functionDefinition = symbolTable.GetFunctionDefinition(functionDefinitionId);
+        std::expected<FunctionDefinitionSymbol*, int> f = symbolTable.GetFunctionDefinition(functionDefinitionId);
+        if (!f) return std::unexpected<int>(f.error());
+        FunctionDefinitionSymbol* functionDefinition = *f;
         if (functionDefinition)
         {
             definitions.push_back(functionDefinition);
@@ -285,11 +289,11 @@ struct FunctionScoreGreater
     }
 };
 
-int MatchFunctionTemplate(FunctionSymbol* function, const std::vector<TypeSymbol*>& templateArgs, Context* context)
+std::expected<int, int> MatchFunctionTemplate(FunctionSymbol* function, const std::vector<TypeSymbol*>& templateArgs, Context* context)
 {
     if (function->Specialization().empty())
     {
-        return 0;
+        return std::expected<int, int>(0);
     }
     else
     {
@@ -318,7 +322,7 @@ int MatchFunctionTemplate(FunctionSymbol* function, const std::vector<TypeSymbol
                     }
                     else
                     {
-                        return -1;
+                        return std::expected<int, int>(-1);
                     }
                 }
                 else
@@ -330,29 +334,33 @@ int MatchFunctionTemplate(FunctionSymbol* function, const std::vector<TypeSymbol
                         auto it = templateParameterMap.find(templateParameter);
                         if (it == templateParameterMap.end())
                         {
-                            templateArgumentType = templateArg->RemoveDerivations(specializationType->GetDerivations(), context);
+                            std::expected<TypeSymbol*, int> rd = templateArg->RemoveDerivations(specializationType->GetDerivations(), context);
+                            if (!rd) return std::unexpected<int>(rd.error());
+                            templateArgumentType = *rd;
                             if (templateArgumentType)
                             {
                                 templateParameterMap[templateParameter] = templateArgumentType;
                             }
                             else
                             {
-                                return -1;
+                                return std::expected<int, int>(-1);
                             }
                         }
                         else
                         {
                             templateArgumentType = it->second;
                         }
-                        specializationType = specializationType->Unify(templateArgumentType, context);
+                        std::expected<TypeSymbol*, int> ud = specializationType->Unify(templateArgumentType, context);
+                        if (!ud) return std::unexpected<int>(ud.error());
+                        specializationType = *ud;
                         if (!specializationType)
                         {
-                            return -1;
+                            return std::expected<int, int>(-1);
                         }
                     }
                     if (!TypesEqual(templateArg, specializationType, context))
                     {
-                        return -1;
+                        return std::expected<int, int>(-1);
                     }
                     else
                     {
@@ -362,22 +370,24 @@ int MatchFunctionTemplate(FunctionSymbol* function, const std::vector<TypeSymbol
             }
             else
             {
-                return -1;
+                return std::expected<int, int>(-1);
             }
         }
-        return score;
+        return std::expected<int, int>(score);
     }
-    return -1;
+    return std::expected<int, int>(-1);
 }
 
-void FunctionGroupSymbol::CollectBestMatchingViableFunctionTemplates(int arity, const std::vector<TypeSymbol*>& templateArgs, std::vector<FunctionSymbol*>& viableFunctions,
-    Context* context)
+std::expected<bool, int> FunctionGroupSymbol::CollectBestMatchingViableFunctionTemplates(
+    int arity, const std::vector<TypeSymbol*>& templateArgs, std::vector<FunctionSymbol*>& viableFunctions, Context* context)
 {
     std::vector<std::pair<FunctionSymbol*, int>> functionScores;
     for (FunctionSymbol* function : functions)
     {
         if (!function->IsTemplate()) continue;
-        int score = MatchFunctionTemplate(function, templateArgs, context);
+        std::expected<int, int> m = MatchFunctionTemplate(function, templateArgs, context);
+        if (!m) return std::unexpected<int>(m.error());
+        int score = *m;
         if (score >= 0)
         {
             functionScores.push_back(std::make_pair(function, score));
@@ -399,7 +409,9 @@ void FunctionGroupSymbol::CollectBestMatchingViableFunctionTemplates(int arity, 
     for (FunctionDefinitionSymbol* functionDefinition : definitions)
     {
         if (!functionDefinition->IsTemplate()) continue;
-        int score = MatchFunctionTemplate(functionDefinition, templateArgs, context);
+        std::expected<int, int> m = MatchFunctionTemplate(functionDefinition, templateArgs, context);
+        if (!m) return std::unexpected<int>(m.error());
+        int score = *m;
         if (score >= 0)
         {
             functionDefScores.push_back(std::make_pair(static_cast<FunctionSymbol*>(functionDefinition), score));
@@ -417,13 +429,16 @@ void FunctionGroupSymbol::CollectBestMatchingViableFunctionTemplates(int arity, 
             }
         }
     }
+    return std::expected<bool, int>(true);
 }
 
-void FunctionGroupSymbol::CollectViableFunctions(int arity, const std::vector<TypeSymbol*>& templateArgs, std::vector<FunctionSymbol*>& viableFunctions, Context* context)
+std::expected<bool, int> FunctionGroupSymbol::CollectViableFunctions(int arity, const std::vector<TypeSymbol*>& templateArgs, 
+    std::vector<FunctionSymbol*>& viableFunctions, Context* context)
 {
     if (!templateArgs.empty())
     {
-        CollectBestMatchingViableFunctionTemplates(arity, templateArgs, viableFunctions, context);
+        std::expected<bool, int> m = CollectBestMatchingViableFunctionTemplates(arity, templateArgs, viableFunctions, context);
+        if (!m) return m;
     }
     else
     {
@@ -456,6 +471,7 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, const std::vector<Ty
             }
         }
     }
+    return std::expected<bool, int>(true);
 }
 
 FunctionSymbol* FunctionGroupSymbol::GetMatchingSpecialization(FunctionSymbol* specialization, Context* context) const

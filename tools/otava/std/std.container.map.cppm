@@ -41,6 +41,7 @@ public:
     
     inline bool empty() const { return tree.empty(); }
     inline size_type size() const { return tree.size(); }
+    inline const key_compare& key_comp() const { return tree.cmp(); }
     
     mapped_type& operator[](const key_type& x)
     {

@@ -226,11 +226,11 @@ std::expected<bool, int> EndClass(otava::ast::Node* node, Context* context);
 // void AddClassInfo(ClassTypeSymbol* classTypeSymbol, Context* context); // todo
 std::expected<bool, int> ProcessElaboratedClassDeclaration(otava::ast::Node* node, otava::symbols::Context* context);
 void SetCurrentAccess(otava::ast::Node* node, otava::symbols::Context* context);
-void GetClassAttributes(otava::ast::Node* node, std::u32string& name, otava::symbols::ClassKind& kind, TypeSymbol*& specialization, Context* context);
-std::vector<ClassTypeSymbol*> ResolveBaseClasses(otava::ast::Node* node, Context* context);
+std::expected<bool, int> GetClassAttributes(otava::ast::Node* node, std::u32string& name, otava::symbols::ClassKind& kind, TypeSymbol*& specialization, Context* context);
+std::expected<std::vector<ClassTypeSymbol*>, int> ResolveBaseClasses(otava::ast::Node* node, Context* context);
 std::expected<bool, int> ParseInlineMemberFunctions(otava::ast::Node* classSpecifierNode, ClassTypeSymbol* classTypeSymbol, otava::symbols::Context* context);
 std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-void GenerateDestructors(BoundCompileUnitNode* compileUnit, otava::symbols::Context* context);
+std::expected<bool, int> GenerateDestructors(BoundCompileUnitNode* compileUnit, otava::symbols::Context* context);
 std::unexpected<int> ReturnMemberDeclarationParsingError(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 std::unexpected<int> ReturntatementParsingError(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 

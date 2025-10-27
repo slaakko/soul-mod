@@ -102,7 +102,9 @@ std::expected<TypeSymbol*, int> InstantiateAliasTypeSymbol(TypeSymbol* typeSymbo
 {
     AliasTypeTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeAliasTypeTemplateSpecialization(typeSymbol, templateArgs);
     if (specialization->Instantiated()) return specialization;
-    otava::ast::Node* aliasTypeNode = context->GetSymbolTable()->GetNode(typeSymbol);
+    std::expected<otava::ast::Node*, int> n = context->GetSymbolTable()->GetNode(typeSymbol);
+    if (!n) return std::unexpected<int>(n.error());
+    otava::ast::Node* aliasTypeNode = *n;
     std::expected<bool, int> arv = specialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope());
     if (!arv) return std::unexpected<int>(arv.error());
     if (typeSymbol->IsAliasTypeSymbol())
@@ -137,7 +139,8 @@ std::expected<TypeSymbol*, int> InstantiateAliasTypeSymbol(TypeSymbol* typeSymbo
                         auto rv = ResolveType(defaultTemplateArgNode, DeclarationFlags::none, context);
                         if (!rv) return std::unexpected<int>(rv.error());
                         templateArg = *rv;
-                        context->GetSymbolTable()->EndScope();
+                        std::expected<bool, int> erv = context->GetSymbolTable()->EndScope();
+                        if (!erv) return std::unexpected<int>(erv.error());
                     }
                     else
                     {
@@ -171,7 +174,8 @@ std::expected<TypeSymbol*, int> InstantiateAliasTypeSymbol(TypeSymbol* typeSymbo
                 return Error("otava.symbols.alias_type_templates: error instantiating specialization '" + sp + "': " + errorMessage, node->GetSourcePos(), context);
             }
             context->PopFlags();
-            context->GetSymbolTable()->EndScope();
+            std::expected<bool, int> erv = context->GetSymbolTable()->EndScope();
+            if (!erv) return std::unexpected<int>(erv.error());
         }
         else
         {

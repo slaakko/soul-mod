@@ -116,7 +116,9 @@ std::expected<bool, int> AliasGroupSymbol::Resolve(SymbolTable& symbolTable, Con
     if (!rv) return rv;
     for (const auto& aliasTypeId : aliasTypeIds)
     {
-        AliasTypeSymbol* aliasType = symbolTable.GetAliasType(aliasTypeId);
+        std::expected<AliasTypeSymbol*, int> a = symbolTable.GetAliasType(aliasTypeId);
+        if (!a) return std::unexpected<int>(a.error());
+        AliasTypeSymbol* aliasType = *a;
         AddAliasTypeSymbol(aliasType, context);
     }
     return std::expected<bool, int>(true);

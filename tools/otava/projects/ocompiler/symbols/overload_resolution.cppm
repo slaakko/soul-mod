@@ -77,8 +77,8 @@ struct BetterFunctionMatch
     bool operator()(const FunctionMatch& left, const FunctionMatch& right) const;
 };
 
-bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos,
-    Context* context);
+std::expected<bool, int> FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, 
+    const soul::ast::SourcePos& sourcePos, Context* context);
 
 std::expected<bool, int> FindClassTemplateMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch,
     const soul::ast::SourcePos& sourcePos, Context* context);

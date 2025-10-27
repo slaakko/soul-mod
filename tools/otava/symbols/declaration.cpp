@@ -807,7 +807,8 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* function
                         }
                         if (!variable->IsExtern())
                         {
-                            context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos())), context);
+                            context->GetBoundCompileUnit()->AddBoundNode(
+                                std::unique_ptr<BoundNode>(new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos())), context);
                             GenerateDynamicInitialization(variable, variableInitializer.get(), node->GetSourcePos(), context);
                         }
                     }
@@ -833,7 +834,8 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* function
                 }
                 if (variable->IsGlobalVariable())
                 {
-                    context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos())), context);
+                    context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(
+                        new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos())), context);
                 }
                 declaration.variable = variable;
                 break;
@@ -912,8 +914,8 @@ bool IsTokenSwitchDeclarator(otava::ast::Node* declarator)
     return false;
 }
 
-int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast::Node* declarator, otava::ast::Node* functionNode, otava::ast::Node* specifierNode, bool& get, 
-    Context* context)
+int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast::Node* declarator, otava::ast::Node* functionNode, 
+    otava::ast::Node* specifierNode, bool& get, Context* context)
 {   
     get = false;
     int scopes = 0;
@@ -939,8 +941,10 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
             {
                 parameterTypes.push_back(parameterDeclaration.type);
             }
-            FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddOrGetFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
-                functionDeclarator->TemplateArgs(), parameterTypes, qualifiers, kind, declaration.flags, declarator, functionNode, get, context);
+            FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddOrGetFunctionDefinition(
+                functionDeclarator->GetScope(), functionDeclarator->Name(), functionDeclarator->TemplateArgs(), parameterTypes, qualifiers, kind, 
+                declaration.flags, declarator, functionNode, get, context);
+            TypeSymbol* fnDeclarationReturnType = nullptr;
             FunctionSymbol* fnDeclaration = definition->Declaration();
             if (fnDeclaration)
             {
@@ -948,6 +952,7 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                 {
                     definition->SetInline();
                 }
+                fnDeclarationReturnType = fnDeclaration->ReturnType();
             }
             if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || 
                 context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) || 
@@ -996,6 +1001,20 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
             definition->AddDefinitionToGroup(context);
             TypeSymbol* returnType = MapType(definition, declaration.type, context);
             definition->SetReturnType(returnType, context);
+            if (fnDeclarationReturnType && returnType && !TypesEqual(fnDeclarationReturnType, returnType, context))
+            {
+                std::set<const Symbol*> visited;
+                bool isTemplateParameterInstantiation = fnDeclaration->IsTemplateParameterInstantiation(context, visited) ||
+                    fnDeclarationReturnType->IsTemplateParameterInstantiation(context, visited) ||
+                    definition->IsTemplateParameterInstantiation(context, visited) || 
+                    returnType->IsTemplateParameterInstantiation(context, visited);
+                if (!isTemplateParameterInstantiation)
+                {
+                    ThrowException("the return type of function '" + util::ToUtf8(definition->FullName()) +
+                        "' definition differs from the return type of function declaration",
+                        definition->GetSourcePos(), fnDeclaration->GetSourcePos(), context);
+                }
+            }
             context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context);
             if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && 
                 !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) && 

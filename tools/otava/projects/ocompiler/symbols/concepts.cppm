@@ -57,7 +57,7 @@ struct ConceptLess
     bool operator()(ConceptSymbol* left, ConceptSymbol* right) const;
 };
 
-void ProcessConcept(otava::ast::Node* node, Context* context);
+std::expected<bool, int> ProcessConcept(otava::ast::Node* node, Context* context);
 ConstraintExprSymbol* ProcessConstraintExpression(otava::ast::Node* node, Context* context);
 
 } // namespace otava::symbols

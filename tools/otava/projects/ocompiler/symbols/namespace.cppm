@@ -25,7 +25,7 @@ public:
     bool ContainsSymbols() const;
 };
 
-void BeginNamespace(otava::ast::Node* node, Context* context);
+std::expected<bool, int> BeginNamespace(otava::ast::Node* node, Context* context);
 std::expected<bool, int> EndNamespace(otava::ast::Node* node, int level, Context* context);
 
 struct NamespaceLess

@@ -85,16 +85,28 @@ std::expected<BoundExpressionNode*, int> MakeBoundBooleanConversionNode(BoundExp
     {
         return Error("condition must be convertible to Boolean type value", condition->GetSourcePos(), context);
     }
-    if (conversionFunction->GetFunctionKind() == FunctionKind::conversionMemFn && condition->GetType()->PlainType(context)->IsClassTypeSymbol())
+    std::expected<TypeSymbol*, int> pt = condition->GetType()->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* plainType = *pt;
+    if (conversionFunction->GetFunctionKind() == FunctionKind::conversionMemFn && plainType->IsClassTypeSymbol())
     {
         TypeSymbol* conditionType = condition->GetType();
         if (conditionType->IsReferenceType())
         {
-            condition = new BoundRefToPtrNode(condition, sourcePos, conditionType->RemoveReference(context)->AddPointer(context));
+            std::expected<TypeSymbol*, int> pt = conditionType->RemoveReference(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* type = *pt;
+            pt = type->AddPointer(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            type = *pt;
+            condition = new BoundRefToPtrNode(condition, sourcePos, type);
         }
         else
         {
-            condition = new BoundAddressOfNode(condition, sourcePos, conditionType->GetBaseType()->AddPointer(context));
+            std::expected<TypeSymbol*, int> pt = conditionType->GetBaseType()->AddPointer(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* type = *pt;
+            condition = new BoundAddressOfNode(condition, sourcePos, type);
         }
         BoundFunctionCallNode* functionCall = new BoundFunctionCallNode(conversionFunction, sourcePos, conversionFunction->ReturnType());
         functionCall->AddArgument(condition);
@@ -155,22 +167,34 @@ StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* fu
 void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
 {
     if (!Valid()) return;
-    Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
-    SpecialFunctionKind specialFunctionKind = functionDefinitionSymbol->GetSpecialFunctionKind(context);
+    std::expected<Symbol*, int> s = context->GetSymbolTable()->GetSymbol(&node);
+    if (!s)
+    {
+        SetError(s.error());
+        return;
+    }
+    Symbol* symbol = *s;
+    std::expected<SpecialFunctionKind, int> sp = functionDefinitionSymbol->GetSpecialFunctionKind(context);
+    if (!sp)
+    {
+        SetError(sp.error());
+        return;
+    }
+    SpecialFunctionKind specialFunctionKind = *sp;
     switch (specialFunctionKind)
     {
-    case SpecialFunctionKind::defaultCtor:
-    case SpecialFunctionKind::copyCtor:
-    case SpecialFunctionKind::moveCtor:
-    {
-        functionDefinitionSymbol->SetFunctionKind(FunctionKind::constructor);
-        break;
-    }
-    case SpecialFunctionKind::dtor:
-    {
-        functionDefinitionSymbol->SetFunctionKind(FunctionKind::destructor);
-        break;
-    }
+        case SpecialFunctionKind::defaultCtor:
+        case SpecialFunctionKind::copyCtor:
+        case SpecialFunctionKind::moveCtor:
+        {
+            functionDefinitionSymbol->SetFunctionKind(FunctionKind::constructor);
+            break;
+        }
+        case SpecialFunctionKind::dtor:
+        {
+            functionDefinitionSymbol->SetFunctionKind(FunctionKind::destructor);
+            break;
+        }
     }
     if (node.FunctionBody()->IsDefaultedOrDeletedFunctionNode())
     {
@@ -183,71 +207,71 @@ void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
             {
                 switch (specialFunctionKind)
                 {
-                case SpecialFunctionKind::defaultCtor:
-                {
-                    int defIndex = functionDefinitionSymbol->DefIndex();
-                    std::expected<FunctionDefinitionSymbol*, int> rv = GenerateClassDefaultCtor(classType, node.GetSourcePos(), context);
-                    if (!rv)
+                    case SpecialFunctionKind::defaultCtor:
                     {
-                        SetError(rv.error());
-                        return;
+                        int defIndex = functionDefinitionSymbol->DefIndex();
+                        std::expected<FunctionDefinitionSymbol*, int> rv = GenerateClassDefaultCtor(classType, node.GetSourcePos(), context);
+                        if (!rv)
+                        {
+                            SetError(rv.error());
+                            return;
+                        }
+                        functionDefinitionSymbol = *rv;
+                        functionDefinitionSymbol->SetDefIndex(defIndex);
+                        break;
                     }
-                    functionDefinitionSymbol = *rv;
-                    functionDefinitionSymbol->SetDefIndex(defIndex);
-                    break;
-                }
-                case SpecialFunctionKind::copyCtor:
-                {
-                    int defIndex = functionDefinitionSymbol->DefIndex();
-                    std::expected<FunctionDefinitionSymbol*, int> rv = GenerateClassCopyCtor(classType, node.GetSourcePos(), context);
-                    if (!rv)
+                    case SpecialFunctionKind::copyCtor:
                     {
-                        SetError(rv.error());
-                        return;
+                        int defIndex = functionDefinitionSymbol->DefIndex();
+                        std::expected<FunctionDefinitionSymbol*, int> rv = GenerateClassCopyCtor(classType, node.GetSourcePos(), context);
+                        if (!rv)
+                        {
+                            SetError(rv.error());
+                            return;
+                        }
+                        functionDefinitionSymbol = *rv;
+                        functionDefinitionSymbol->SetDefIndex(defIndex);
+                        break;
                     }
-                    functionDefinitionSymbol = *rv;
-                    functionDefinitionSymbol->SetDefIndex(defIndex);
-                    break;
-                }
-                case SpecialFunctionKind::moveCtor:
-                {
-                    int defIndex = functionDefinitionSymbol->DefIndex();
-                    std::expected<FunctionDefinitionSymbol*, int> rv = GenerateClassMoveCtor(classType, node.GetSourcePos(), context);
-                    if (!rv)
+                    case SpecialFunctionKind::moveCtor:
                     {
-                        SetError(rv.error());
-                        return;
+                        int defIndex = functionDefinitionSymbol->DefIndex();
+                        std::expected<FunctionDefinitionSymbol*, int> rv = GenerateClassMoveCtor(classType, node.GetSourcePos(), context);
+                        if (!rv)
+                        {
+                            SetError(rv.error());
+                            return;
+                        }
+                        functionDefinitionSymbol = *rv;
+                        functionDefinitionSymbol->SetDefIndex(defIndex);
+                        break;
                     }
-                    functionDefinitionSymbol = *rv;
-                    functionDefinitionSymbol->SetDefIndex(defIndex);
-                    break;
-                }
-                case SpecialFunctionKind::copyAssignment:
-                {
-                    int defIndex = functionDefinitionSymbol->DefIndex();
-                    std::expected<FunctionDefinitionSymbol*, int> rv = GenerateClassCopyAssignment(classType, node.GetSourcePos(), context);
-                    if (!rv)
+                    case SpecialFunctionKind::copyAssignment:
                     {
-                        SetError(rv.error());
-                        return;
+                        int defIndex = functionDefinitionSymbol->DefIndex();
+                        std::expected<FunctionDefinitionSymbol*, int> rv = GenerateClassCopyAssignment(classType, node.GetSourcePos(), context);
+                        if (!rv)
+                        {
+                            SetError(rv.error());
+                            return;
+                        }
+                        functionDefinitionSymbol = *rv;
+                        functionDefinitionSymbol->SetDefIndex(defIndex);
+                        break;
                     }
-                    functionDefinitionSymbol = *rv;
-                    functionDefinitionSymbol->SetDefIndex(defIndex);
-                    break;
-                }
-                case SpecialFunctionKind::moveAssignment:
-                {
-                    int defIndex = functionDefinitionSymbol->DefIndex();
-                    std::expected<FunctionDefinitionSymbol*, int> rv = GenerateClassMoveAssignment(classType, node.GetSourcePos(), context);
-                    if (!rv)
+                    case SpecialFunctionKind::moveAssignment:
                     {
-                        SetError(rv.error());
-                        return;
+                        int defIndex = functionDefinitionSymbol->DefIndex();
+                        std::expected<FunctionDefinitionSymbol*, int> rv = GenerateClassMoveAssignment(classType, node.GetSourcePos(), context);
+                        if (!rv)
+                        {
+                            SetError(rv.error());
+                            return;
+                        }
+                        functionDefinitionSymbol = *rv;
+                        functionDefinitionSymbol->SetDefIndex(defIndex);
+                        break;
                     }
-                    functionDefinitionSymbol = *rv;
-                    functionDefinitionSymbol->SetDefIndex(defIndex);
-                    break;
-                }
                 }
                 BoundFunctionNode* boundFunction = context->ReleaseBoundFunction();
                 std::expected<bool, int> rv = context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(boundFunction), context);
@@ -266,7 +290,12 @@ void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
         return;
     }
     currentClass = symbol->ParentClassType();
-    context->GetSymbolTable()->BeginScopeGeneric(symbol->GetScope(), context);
+    std::expected<bool, int> rv = context->GetSymbolTable()->BeginScopeGeneric(symbol->GetScope(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     node.FunctionBody()->Accept(*this);
     if (!Valid()) return;
     if (functionDefinitionSymbol->GetFunctionKind() == FunctionKind::constructor)
@@ -292,8 +321,13 @@ void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
             return;
         }
     }
-    context->GetSymbolTable()->EndScopeGeneric(context);
-    std::expected<bool, int> rv = functionDefinitionSymbol->CheckGenerateClassCopyCtor(node.GetSourcePos(), context);
+    rv = context->GetSymbolTable()->EndScopeGeneric(context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
+    rv = functionDefinitionSymbol->CheckGenerateClassCopyCtor(node.GetSourcePos(), context);
     if (!rv)
     {
         SetError(rv.error());
@@ -396,10 +430,15 @@ std::expected<bool, int> StatementBinder::GenerateBaseTerminators(const soul::as
 std::expected<bool, int> StatementBinder::AddBaseTerminator(TypeSymbol* baseClass, int index, const soul::ast::SourcePos& sourcePos)
 {
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
-    BoundExpressionNode* thisPtr = context->GetThisPtr(sourcePos);
+    std::expected<BoundExpressionNode*, int> tp = context->GetThisPtr(sourcePos);
+    if (!tp) return std::unexpected<int>(tp.error());
+    BoundExpressionNode* thisPtr = *tp;
     OperationFlags preConversionFlags = OperationFlags::none;
+    std::expected<TypeSymbol*, int> pt = baseClass->AddPointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* ptrType = *pt;
     std::expected<FunctionSymbol*, int> rv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-        baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+        ptrType, thisPtr->GetType(), sourcePos, context);
     if (!rv) return std::unexpected<int>(rv.error());
     FunctionSymbol* conversion = *rv;
     if (conversion)
@@ -438,9 +477,14 @@ std::expected<bool, int> StatementBinder::AddMemberTerminator(VariableSymbol* me
     if (memberVarType->IsPointerType() || memberVarType->IsReferenceType()) return;
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
     BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVar, sourcePos);
-    BoundExpressionNode* thisPtr = context->GetThisPtr(sourcePos);
+    std::expected<BoundExpressionNode*, int> tp = context->GetThisPtr(sourcePos);
+    if (!tp) return std::unexpected<int>(tp.error());
+    BoundExpressionNode* thisPtr = *tp;
     boundVariableNode->SetThisPtr(thisPtr);
-    args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariableNode, sourcePos, boundVariableNode->GetType()->AddPointer(context))));
+    std::expected<TypeSymbol*, int> pt = boundVariableNode->GetType()->AddPointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* ptrType = *pt;
+    args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariableNode, sourcePos, ptrType)));
     std::vector<TypeSymbol*> templateArgs;
     std::expected<std::unique_ptr<BoundFunctionCallNode>, int> orv = ResolveOverload(
         context->GetSymbolTable()->CurrentScope(), U"@destructor", templateArgs, args, sourcePos, context);
@@ -462,7 +506,9 @@ std::expected<bool, int> StatementBinder::GenerateSetVPtrStatements(const soul::
         rv = currentClass->MakeObjectLayout(sourcePos, context);
         if (!rv) return rv;
     }
-    BoundExpressionNode* thisPtr = context->GetThisPtr(sourcePos);
+    std::expected<BoundExpressionNode*, int> tp = context->GetThisPtr(sourcePos);
+    if (!tp) return std::unexpected<int>(tp.error());
+    BoundExpressionNode* thisPtr = *tp;
     std::vector<ClassTypeSymbol*> vptrHolderClasses = currentClass->VPtrHolderClasses();
     if (vptrHolderClasses.empty())
     {
@@ -476,8 +522,11 @@ std::expected<bool, int> StatementBinder::GenerateSetVPtrStatements(const soul::
     {
         if (vptrHolderClass != currentClass)
         {
+            std::expected<TypeSymbol*, int> pt = vptrHolderClass->AddPointer(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* ptrType = *pt;
             std::expected<FunctionSymbol*, int> arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+                ptrType, thisPtr->GetType(), sourcePos, context);
             if (!arv) return std::unexpected<int>(arv.error());
             FunctionSymbol* conversion = *arv;
             if (conversion)
@@ -575,10 +624,15 @@ std::expected<bool, int> StatementBinder::AddDefaultMemberInitializer(VariableSy
 {
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
     BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVar, sourcePos);
-    BoundExpressionNode* thisPtr = context->GetThisPtr(sourcePos);
+    std::expected<BoundExpressionNode*, int> tp = context->GetThisPtr(sourcePos);
+    if (!tp) return std::unexpected<int>(tp.error());
+    BoundExpressionNode* thisPtr = *tp;
     boundVariableNode->SetThisPtr(thisPtr);
     std::vector<TypeSymbol*> templateArgs;
-    args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariableNode, sourcePos, boundVariableNode->GetType()->AddPointer(context))));
+    std::expected<TypeSymbol*, int> pt = boundVariableNode->GetType()->AddPointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* ptrType = *pt;
+    args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariableNode, sourcePos, ptrType)));
     std::expected<std::unique_ptr<BoundFunctionCallNode>, int> orv = ResolveOverload(
         context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, args, sourcePos, context);
     if (!orv) return std::unexpected<int>(orv.error());
@@ -630,9 +684,14 @@ std::expected<bool, int> StatementBinder::CompleteBaseInitializers(const soul::a
 std::expected<bool, int> StatementBinder::AddDefaultBaseInitializer(TypeSymbol* baseClass, int index, const soul::ast::SourcePos& sourcePos)
 {
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
-    BoundExpressionNode* thisPtr = context->GetThisPtr(sourcePos);
+    std::expected<BoundExpressionNode*, int> tp = context->GetThisPtr(sourcePos);
+    if (!tp) return std::unexpected<int>(tp.error());
+    BoundExpressionNode* thisPtr = *tp;
+    std::expected<TypeSymbol*, int> pt = baseClass->AddPointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* ptrType = *pt;
     std::expected<FunctionSymbol*, int> arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-        baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+        ptrType, thisPtr->GetType(), sourcePos, context);
     if (!arv) return std::unexpected<int>(arv.error());
     FunctionSymbol* conversion = *arv;
     if (conversion)
@@ -664,9 +723,22 @@ void StatementBinder::Visit(otava::ast::MemberInitializerNode& node)
     resolveClass = false;
     if (classTypeSymbol)
     {
-        BoundExpressionNode* thisPtr = context->GetThisPtr(node.GetSourcePos());
+        std::expected<BoundExpressionNode*, int> tp = context->GetThisPtr(node.GetSourcePos());
+        if (!tp)
+        {
+            SetError(tp.error());
+            return;
+        }
+        BoundExpressionNode* thisPtr = *tp;
+        std::expected<TypeSymbol*, int> pt = classTypeSymbol->AddPointer(context);
+        if (!pt)
+        {
+            SetError(pt.error());
+            return;
+        }
+        TypeSymbol* ptrType = *pt;
         std::expected<FunctionSymbol*, int> arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            classTypeSymbol->AddPointer(context), thisPtr->GetType(), node.GetSourcePos(), context);
+            ptrType, thisPtr->GetType(), node.GetSourcePos(), context);
         if (!arv)
         {
             SetError(arv.error());
@@ -695,11 +767,24 @@ void StatementBinder::Visit(otava::ast::MemberInitializerNode& node)
         if (memberVariableSymbol)
         {
             BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVariableSymbol, node.GetSourcePos());
-            ParameterSymbol* thisParam = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ThisParam(context);
+            std::expected<ParameterSymbol*, int> tp = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ThisParam(context);
+            if (!tp)
+            {
+                SetError(tp.error());
+                return;
+            }
+            ParameterSymbol* thisParam = *tp;
             BoundParameterNode* thisPtr = new BoundParameterNode(thisParam, node.GetSourcePos(), thisParam->GetType());
             boundVariableNode->SetThisPtr(thisPtr);
+            std::expected<TypeSymbol*, int> pt = boundVariableNode->GetType()->AddPointer(context);
+            if (!pt)
+            {
+                SetError(pt.error());
+                return;
+            }
+            TypeSymbol* ptrType = *pt;
             initializerArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(
-                new BoundDefaultInitNode(boundVariableNode, node.GetSourcePos()), node.GetSourcePos(), boundVariableNode->GetType()->AddPointer(context))));
+                new BoundDefaultInitNode(boundVariableNode, node.GetSourcePos()), node.GetSourcePos(), ptrType)));
             index = memberVariableSymbol->Index();
         }
     }
@@ -806,10 +891,14 @@ void StatementBinder::Visit(otava::ast::CompoundStatementNode& node)
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
     if (!block) return;
     BoundCompoundStatementNode* currentCompoundStatement = new BoundCompoundStatementNode(node.GetSourcePos());
-    context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
+    std::expected<bool, int> rv = context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+    }
     if (functionDefinitionSymbol->GetFunctionKind() == FunctionKind::constructor && !setVPtrStatementsGenerated)
     {
-        std::expected<bool, int> rv = GenerateSetVPtrStatements(node.GetSourcePos());
+        rv = GenerateSetVPtrStatements(node.GetSourcePos());
         if (!rv)
         {
             SetError(rv.error());
@@ -837,7 +926,12 @@ void StatementBinder::Visit(otava::ast::CompoundStatementNode& node)
             currentCompoundStatement->AddStatement(boundStatement);
         }
     }
-    context->GetSymbolTable()->EndScopeGeneric(context);
+    rv = context->GetSymbolTable()->EndScopeGeneric(context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     SetStatement(currentCompoundStatement);
 }
 
@@ -858,7 +952,12 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
     if (!block) return;
-    context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
+    std::expected<bool, int> rv = context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     BoundIfStatementNode* boundIfStatement = new BoundIfStatementNode(node.GetSourcePos());
     if (node.InitStatement())
     {
@@ -925,14 +1024,24 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
         }
     }
     SetStatement(boundIfStatement);
-    context->GetSymbolTable()->EndScopeGeneric(context);
+    rv = context->GetSymbolTable()->EndScopeGeneric(context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
     if (!block) return;
-    context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
+    std::expected<bool, int> rv = context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     BoundSwitchStatementNode* boundSwitchStatement = new BoundSwitchStatementNode(node.GetSourcePos());
     if (node.InitStatement())
     {
@@ -972,7 +1081,12 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
         boundSwitchStatement->SetStatement(boundStmt);
     }
     SetStatement(boundSwitchStatement);
-    context->GetSymbolTable()->EndScopeGeneric(context);
+    rv = context->GetSymbolTable()->EndScopeGeneric(context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 void StatementBinder::Visit(otava::ast::CaseStatementNode& node)
@@ -992,7 +1106,14 @@ void StatementBinder::Visit(otava::ast::CaseStatementNode& node)
     TypeSymbol* switchCondType = context->GetSwitchCondType();
     if (!TypesEqual(caseExpr->GetType(), switchCondType, context))
     {
-        std::expected<TypeSymbol*, int> trv = caseExpr->GetType()->DirectType(context)->FinalType(node.GetSourcePos(), context);
+        std::expected<TypeSymbol*, int> dt = caseExpr->GetType()->DirectType(context);
+        if (!dt)
+        {
+            SetError(dt.error());
+            return;
+        }
+        TypeSymbol* directType = *dt;
+        std::expected<TypeSymbol*, int> trv = directType->FinalType(node.GetSourcePos(), context);
         if (!trv)
         {
             SetError(trv.error());
@@ -1069,7 +1190,12 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
     if (!block) return;
-    context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
+    std::expected<bool, int> rv = context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     BoundWhileStatementNode* boundWhileStatement = new BoundWhileStatementNode(node.GetSourcePos());
     context->PushResetFlag(ContextFlags::returnRef);
     std::expected<BoundExpressionNode*, int> brv = BindExpression(node.Condition(), context);
@@ -1107,7 +1233,12 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
         boundWhileStatement->SetStatement(boundStmt);
     }
     SetStatement(boundWhileStatement);
-    context->GetSymbolTable()->EndScopeGeneric(context);
+    rv = context->GetSymbolTable()->EndScopeGeneric(context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 void StatementBinder::Visit(otava::ast::DoStatementNode& node)
@@ -1342,7 +1473,12 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
     if (!block) return;
-    context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
+    std::expected<bool, int> rv = context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     BoundForStatementNode* boundForStatement = new BoundForStatementNode(node.GetSourcePos());
     if (node.InitStatement())
     {
@@ -1408,7 +1544,12 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
         boundForStatement->SetStatement(boundStmt);
     }
     SetStatement(boundForStatement);
-    context->GetSymbolTable()->EndScopeGeneric(context);
+    rv = context->GetSymbolTable()->EndScopeGeneric(context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 void StatementBinder::Visit(otava::ast::BreakStatementNode& node)
@@ -1450,7 +1591,13 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
             {
                 std::vector<std::unique_ptr<BoundExpressionNode>> moveArgs;
                 moveArgs.push_back(std::unique_ptr<BoundExpressionNode>(expression));
-                Scope* scope = context->GetSymbolTable()->GetNamespaceScope(U"std", node.GetSourcePos(), context);
+                std::expected<Scope*, int> nrv = context->GetSymbolTable()->GetNamespaceScope(U"std", node.GetSourcePos(), context);
+                if (!nrv)
+                {
+                    SetError(nrv.error());
+                    return;
+                }
+                Scope* scope = *nrv;
                 std::vector<TypeSymbol*> templateArgs;
                 std::expected<std::unique_ptr<BoundFunctionCallNode>, int> orv = ResolveOverload(
                     scope, U"move", templateArgs, moveArgs, node.GetSourcePos(), context, OverloadResolutionFlags::dontSearchArgumentScopes);
@@ -1483,7 +1630,14 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
         }
         else
         {
-            std::expected<TypeSymbol*, int> frv = functionDefinitionSymbol->ReturnType()->DirectType(context)->FinalType(node.GetSourcePos(), context);
+            std::expected<TypeSymbol*, int> dt = functionDefinitionSymbol->ReturnType()->DirectType(context);
+            if (!dt)
+            {
+                SetError(dt.error());
+                return;
+            }
+            TypeSymbol* directType = *dt;
+            std::expected<TypeSymbol*, int> frv = directType->FinalType(node.GetSourcePos(), context);
             if (!frv)
             {
                 SetError(frv.error());
@@ -1505,20 +1659,47 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
             BoundExpressionNode* returnValueExpr = *brv;
             if (!TypesEqual(returnValueExpr->GetType(), returnType, context))
             {
-                if (TypesEqual(returnValueExpr->GetType()->PlainType(context), returnType->PlainType(context), context))
+                std::expected<TypeSymbol*, int> pt = returnValueExpr->GetType()->PlainType(context);
+                if (!pt)
+                {
+                    SetError(pt.error());
+                    return;
+                }
+                TypeSymbol* returnValueExprType = *pt;
+                pt = returnType->PlainType(context);
+                if (!pt)
+                {
+                    SetError(pt.error());
+                    return;
+                }
+                TypeSymbol* retType = *pt;
+                if (TypesEqual(returnValueExprType, retType, context))
                 {
                     if (!(
                         returnType->IsLValueRefType() && returnValueExpr->GetType()->IsRValueRefType() ||
                         returnType->IsRValueRefType() && returnValueExpr->GetType()->IsLValueRefType()))
                     {
-
                         if (returnType->IsLValueRefType())
                         {
-                            returnValueExpr = new BoundAddressOfNode(returnValueExpr, node.GetSourcePos(), returnValueExpr->GetType()->AddLValueRef(context));
+                            std::expected<TypeSymbol*, int> pt = returnValueExpr->GetType()->AddLValueRef(context);
+                            if (!pt)
+                            {
+                                SetError(pt.error());
+                                return;
+                            }
+                            TypeSymbol* type = *pt;
+                            returnValueExpr = new BoundAddressOfNode(returnValueExpr, node.GetSourcePos(), type);
                         }
                         else if (returnValueExpr->GetType()->IsLValueRefType())
                         {
-                            returnValueExpr = new BoundDereferenceNode(returnValueExpr, node.GetSourcePos(), returnValueExpr->GetType()->RemoveReference(context));
+                            std::expected<TypeSymbol*, int> pt = returnValueExpr->GetType()->RemoveReference(context);
+                            if (!pt)
+                            {
+                                SetError(pt.error());
+                                return;
+                            }
+                            TypeSymbol* type = *pt;
+                            returnValueExpr = new BoundDereferenceNode(returnValueExpr, node.GetSourcePos(), type);
                         }
                     }
                 }
@@ -1526,7 +1707,14 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
                 {
                     ArgumentMatch argumentMatch;
                     FunctionMatch functionMatch;
-                    std::expected<TypeSymbol*, int> frv = returnValueExpr->GetType()->DirectType(context)->FinalType(node.GetSourcePos(), context);
+                    std::expected<TypeSymbol*, int> dt = returnValueExpr->GetType()->DirectType(context);
+                    if (!dt)
+                    {
+                        SetError(dt.error());
+                        return;
+                    }
+                    TypeSymbol* directType = *dt;
+                    std::expected<TypeSymbol*, int> frv = directType->FinalType(node.GetSourcePos(), context);
                     if (!frv)
                     {
                         SetError(frv.error());
@@ -1545,9 +1733,15 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
                     {
                         if (argumentMatch.preConversionFlags == OperationFlags::addr)
                         {
+                            std::expected<TypeSymbol*, int> pt = returnValueExpr->GetType()->AddPointer(context);
+                            if (!pt)
+                            {
+                                SetError(pt.error());
+                                return;
+                            }
+                            TypeSymbol* ptrType = *pt;
                             returnValueExpr = new BoundConversionNode(
-                                new BoundAddressOfNode(returnValueExpr, node.GetSourcePos(), returnValueExpr->GetType()->AddPointer(context)), conversion, 
-                                node.GetSourcePos());
+                                new BoundAddressOfNode(returnValueExpr, node.GetSourcePos(), ptrType), conversion, node.GetSourcePos());
                         }
                         else
                         {
@@ -1698,7 +1892,14 @@ void StatementBinder::Visit(otava::ast::SimpleDeclarationNode& node)
                 }
                 if (initializer && initializer->GetType())
                 {
-                    std::expected<TypeSymbol*, int> frv = initializer->GetType()->DirectType(context)->FinalType(node.GetSourcePos(), context);
+                    std::expected<TypeSymbol*, int> dt = initializer->GetType()->DirectType(context);
+                    if (!dt)
+                    {
+                        SetError(dt.error());
+                        return;
+                    }
+                    TypeSymbol* directType = *dt;
+                    std::expected<TypeSymbol*, int> frv = directType->FinalType(node.GetSourcePos(), context);
                     if (!frv)
                     {
                         SetError(frv.error());
@@ -1707,14 +1908,27 @@ void StatementBinder::Visit(otava::ast::SimpleDeclarationNode& node)
                     TypeSymbol* initializerType = *frv;
                     if (variable->GetDeclaredType()->GetBaseType()->IsAutoTypeSymbol() && variable->GetDeclaredType()->GetDerivations() != Derivations::none)
                     {
-                        initializerType = context->GetSymbolTable()->MakeCompoundType(initializerType->GetBaseType(), variable->GetDeclaredType()->GetDerivations());
+                        std::expected<TypeSymbol*, int> c = context->GetSymbolTable()->MakeCompoundType(initializerType->GetBaseType(), 
+                            variable->GetDeclaredType()->GetDerivations());
+                        if (!c)
+                        {
+                            SetError(c.error());
+                            return;
+                        }
+                        initializerType = *c;
                     }
                     variable->SetInitializerType(initializerType);
                 }
                 BoundVariableNode* boundVariable = new BoundVariableNode(variable, node.GetSourcePos());
                 std::vector<std::unique_ptr<BoundExpressionNode>> arguments;
-                arguments.push_back(std::unique_ptr<BoundExpressionNode>(
-                    new BoundAddressOfNode(boundVariable, node.GetSourcePos(), boundVariable->GetType()->AddPointer(context))));
+                std::expected<TypeSymbol*, int> pt = boundVariable->GetType()->AddPointer(context);
+                if (!pt)
+                {
+                    SetError(pt.error());
+                    return;
+                }
+                TypeSymbol* ptrType = *pt;
+                arguments.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariable, node.GetSourcePos(), ptrType)));
                 if (initializer)
                 {
                     if (initializer->IsBoundExpressionListNode())
@@ -2101,7 +2315,8 @@ std::expected<bool, int> StatementBinder::BindStaticLocalVariable(
     erv = ProcessSimpleDeclaration(globalStaticVarDeclaration.get(), nullptr, context);
     if (!erv) return std::unexpected<int>(erv.error());
     context->PopFlags();
-    context->GetSymbolTable()->EndScope();
+    erv = context->GetSymbolTable()->EndScope();
+    if (!erv) return std::unexpected<int>(erv.error());
     std::unique_ptr<otava::ast::CompoundStatementNode> compound1;
     std::unique_ptr<otava::ast::UnaryExprNode> inititalizedCond;
     std::unique_ptr<otava::ast::CompoundStatementNode> compound2;
@@ -2153,7 +2368,10 @@ std::expected<bool, int> StatementBinder::BindStaticLocalVariable(
     {
         BoundVariableNode* boundVariable = new BoundVariableNode(globalStaticVariableSymbol, sourcePos);
         std::vector<std::unique_ptr<BoundExpressionNode>> arguments;
-        arguments.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariable, sourcePos, boundVariable->GetType()->AddPointer(context))));
+        std::expected<TypeSymbol*, int> pt = boundVariable->GetType()->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* ptrType = *pt;
+        arguments.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariable, sourcePos, ptrType)));
         BoundExpressionNode* initializer = nullptr;
         if (initializerNode)
         {

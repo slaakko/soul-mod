@@ -66,6 +66,7 @@ class BoundNamespaceExpression;
 class BoundTreeVisitor
 {
 public:
+    BoundTreeVisitor();
     virtual ~BoundTreeVisitor();
     virtual void Visit(BoundCompileUnitNode& node) {}
     virtual void Visit(BoundFunctionNode& node) {}
@@ -120,6 +121,12 @@ public:
     virtual void Visit(BoundFunctionValueNode& node) {}
     virtual void Visit(BoundVariableAsVoidPtrNode& node) {}
     virtual void Visit(BoundNamespaceExpression& node) {}
+    inline bool Valid() const { return error == 0; }
+    inline explicit operator bool() const { return Valid(); }
+    inline int GetError() const { return error; }
+    inline void SetError(int error_) { error = error_; }
+private:
+    int error;
 };
 
 class DefaultBoundTreeVisitor : public BoundTreeVisitor

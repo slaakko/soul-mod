@@ -889,7 +889,8 @@ void FunctionSymbol::GenerateCode(Emitter& emitter, std::vector<BoundExpressionN
     if (type->IsFunctionType())
     {
         otava::intermediate::FunctionType* functionType = static_cast<otava::intermediate::FunctionType*>(type);
-        otava::intermediate::Function* function = emitter.GetOrInsertFunction(IrName(context), functionType);
+        std::string irName = IrName(context);
+        otava::intermediate::Function* function = emitter.GetOrInsertFunction(irName, functionType);
         if (!functionType->ReturnType() || functionType->ReturnType()->IsVoidType())
         {
             emitter.EmitCall(function, arguments);
@@ -1110,7 +1111,7 @@ std::string FunctionSymbol::IrName(Context* context) const
         digestSource.append(compileUnitId);
         if (returnType)
         {
-            digestSource.append(".").append(util::ToUtf8(returnType->FullName()));
+            digestSource.append(".").append(returnType->IrName(context));
         }
         irName.append("_").append(util::GetSha1MessageDigest(digestSource));
         if (GetFlag(FunctionSymbolFlags::fixedIrName))

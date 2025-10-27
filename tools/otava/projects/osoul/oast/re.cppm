@@ -156,7 +156,7 @@ public:
     NfaEdge(Symbol* symbol_, NfaState* next_);
     inline Symbol* GetSymbol() const { return symbol; }
     inline NfaState* Next() const { return next; }
-    void Print(CodeFormatter& formatter);
+    std::expected<bool, int> Print(CodeFormatter& formatter);
 private:
     Symbol* symbol;
     NfaState* next;
@@ -176,7 +176,7 @@ public:
     void AddEdge(const NfaEdge& edge);
     void AddPrev(NfaState* prev_);
     std::vector<NfaState*> Next(char32_t c) const;
-    void Print(CodeFormatter& formatter);
+    std::expected<bool, int> Print(CodeFormatter& formatter);
 private:
     int id;
     int ruleIndex;
@@ -220,7 +220,7 @@ public:
     inline const std::vector<int>& NfaStateIds() const { return nfaStateIds; }
     void AddNext(DfaState* next);
     DfaState* Next(int i) const;
-    void Print(LexerContext& context, CodeFormatter& formatter);
+    std::expected<bool, int> Print(LexerContext& context, CodeFormatter& formatter);
 private:
     int id;
     std::vector<int> nfaStateIds;
@@ -236,7 +236,7 @@ public:
     void AddState(DfaState* state);
     inline const std::vector<DfaState*>& States() const { return states; }
     std::expected<bool, int> Finalize(LexerContext& lexerContext);
-    void Print(LexerContext& lexerContext, CodeFormatter& formatter);
+    std::expected<bool, int> Print(LexerContext& lexerContext, CodeFormatter& formatter);
 private:
     std::vector<DfaState*> states;
 };

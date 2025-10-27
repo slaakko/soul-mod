@@ -108,7 +108,9 @@ std::expected<otava::intermediate::Type*, int> ArrayTypeSymbol::IrType(Emitter& 
     {
         std::expected<otava::intermediate::Type*, int> irv = elementType->IrType(emitter, sourcePos, context);
         if (!irv) return irv;
-        type = emitter.MakeArrayType(size, *irv);
+        std::expected<otava::intermediate::Type*, int> rv = emitter.MakeArrayType(size, *irv);
+        if (!rv) return rv;
+        type = *rv;
         emitter.SetType(Id(), type);
     }
     return type;
@@ -180,7 +182,13 @@ ArrayTypeDefaultCtor::ArrayTypeDefaultCtor(ArrayTypeSymbol* arrayType_, Context*
 {
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = arrayType->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", *pt);
     std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
@@ -270,14 +278,34 @@ ArrayTypeCopyCtor::ArrayTypeCopyCtor(ArrayTypeSymbol* arrayType_, Context* conte
 {
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = arrayType->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", *pt);
     std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddConst(context)->AddLValueRef(context));
+    pt = arrayType->AddConst(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* type = *pt;
+    pt = type->AddLValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    type = *pt;
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
     rv = AddParameter(thatParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
@@ -371,14 +399,27 @@ ArrayTypeMoveCtor::ArrayTypeMoveCtor(ArrayTypeSymbol* arrayType_, Context* conte
 {
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = arrayType->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", *pt);
     std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddRValueRef(context));
+    pt = arrayType->AddRValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* type = *pt;
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
     rv = AddParameter(thatParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
@@ -473,21 +514,53 @@ ArrayTypeCopyAssignment::ArrayTypeCopyAssignment(ArrayTypeSymbol* arrayType_, Co
 {
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = arrayType->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", *pt);
     std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddConst(context)->AddLValueRef(context));
+    pt = arrayType->AddConst(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* type = *pt;
+    pt = type->AddLValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    type = *pt;
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
     rv = AddParameter(thatParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    SetReturnType(arrayType->AddLValueRef(context), context);
+    pt = arrayType->AddLValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    type = *pt;
+    rv = SetReturnType(type, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> ArrayTypeCopyAssignment::Write(Writer& writer)
@@ -578,21 +651,46 @@ ArrayTypeMoveAssignment::ArrayTypeMoveAssignment(ArrayTypeSymbol* arrayType_, Co
 {
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = arrayType->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", *pt);
     std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddRValueRef(context));
+    pt = arrayType->AddRValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* type = *pt;
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
     rv = AddParameter(thatParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    SetReturnType(arrayType->AddLValueRef(context), context);
+    pt = arrayType->AddLValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    type = *pt;
+    rv = SetReturnType(type, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> ArrayTypeMoveAssignment::Write(Writer& writer)
@@ -683,14 +781,31 @@ ArrayTypeBegin::ArrayTypeBegin(ArrayTypeSymbol* arrayType_, Context* context) :
 {
     SetFunctionKind(FunctionKind::function);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = arrayType->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", *pt);
     std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    SetReturnType(arrayType->ElementType()->AddPointer(context), context);
+    pt = arrayType->ElementType()->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    rv = SetReturnType(*pt, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> ArrayTypeBegin::Write(Writer& writer)
@@ -747,14 +862,31 @@ ArrayTypeEnd::ArrayTypeEnd(ArrayTypeSymbol* arrayType_, Context* context) :
 {
     SetFunctionKind(FunctionKind::function);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = arrayType->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", *pt);
     std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    SetReturnType(arrayType->ElementType()->AddPointer(context), context);
+    pt = arrayType->ElementType()->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    rv = SetReturnType(*pt, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> ArrayTypeEnd::Write(Writer& writer)

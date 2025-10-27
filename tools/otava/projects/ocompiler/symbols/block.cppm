@@ -27,9 +27,9 @@ private:
 
 class Context;
 
-BlockSymbol* BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context);
-void EndBlock(Context* context);
-void RemoveBlock(Context* context);
+std::expected<BlockSymbol*, int> BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context);
+std::expected<bool, int> EndBlock(Context* context);
+std::expected<bool, int> RemoveBlock(Context* context);
 void MapNode(otava::ast::Node* node, Context* context);
 
 } // namespace otava::symbols

@@ -23,7 +23,7 @@ public:
     int Arity();
     inline void SetReferredType(TypeSymbol* referredType_) { referredType = referredType_; }
     TypeSymbol* ReferredType() const { return referredType; }
-    TypeSymbol* DirectType(Context* context) override;
+    std::expected<TypeSymbol*, int> DirectType(Context* context) override;
     std::string SymbolKindStr() const override { return "alias type symbol"; }
     std::string SymbolDocKindStr() const override { return "alias_type"; }
     std::expected<bool, int> Write(Writer& writer) override;
@@ -49,7 +49,7 @@ struct AliasTypeLess
     bool operator()(AliasTypeSymbol* left, AliasTypeSymbol* right) const;
 };
 
-void AddTemporaryTypeAlias(otava::ast::Node* aliasDeclarationNode, Context* context);
+std::expected<bool, int> AddTemporaryTypeAlias(otava::ast::Node* aliasDeclarationNode, Context* context);
 
 std::expected<bool, int> RemoveTemporaryAliasTypeSymbols(Context* context);
 

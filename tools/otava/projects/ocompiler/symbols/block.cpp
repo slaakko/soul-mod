@@ -56,19 +56,19 @@ std::expected<bool, int> BlockSymbol::AddSymbol(Symbol* symbol, const soul::ast:
     return std::expected<bool, int>(true);
 }
 
-BlockSymbol* BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<BlockSymbol*, int> BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context)
 {
     return context->GetSymbolTable()->BeginBlock(sourcePos, context);
 }
 
-void EndBlock(Context* context)
+std::expected<bool, int> EndBlock(Context* context)
 {
-    context->GetSymbolTable()->EndBlock(context);
+    return context->GetSymbolTable()->EndBlock(context);
 }
 
-void RemoveBlock(Context* context)
+std::expected<bool, int> RemoveBlock(Context* context)
 {
-    context->GetSymbolTable()->RemoveBlock();
+    return context->GetSymbolTable()->RemoveBlock();
 }
 
 void MapNode(otava::ast::Node* node, Context* context)

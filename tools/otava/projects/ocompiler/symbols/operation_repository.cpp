@@ -47,7 +47,14 @@ PointerDefaultCtor::PointerDefaultCtor(TypeSymbol* type_, const soul::ast::Sourc
 {
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = type->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* ptrType = *pt;
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", ptrType);
     std::expected<bool, int> rv = AddParameter(thisParam, sourcePos, context);
     if (!rv)
     {
@@ -98,7 +105,9 @@ std::expected<FunctionSymbol*, int> PointerDefaultCtorOperation::Get(std::vector
     TypeSymbol* type = arg->GetType();
     if (type->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(nullptr);
     if (type->IsReferenceType()) return std::expected<FunctionSymbol*, int>(nullptr);
-    TypeSymbol* pointerType = type->RemovePointer(context);
+    std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* pointerType = *pt;
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
     {
@@ -129,7 +138,14 @@ PointerCopyCtor::PointerCopyCtor(TypeSymbol* type_, const soul::ast::SourcePos& 
 {
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = type->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* ptrType = *pt;
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", ptrType);
     std::expected<bool, int> rv = AddParameter(thisParam, sourcePos, context);
     if (!rv)
     {
@@ -186,8 +202,12 @@ std::expected<FunctionSymbol*, int> PointerCopyCtorOperation::Get(std::vector<st
     TypeSymbol* type = arg->GetType();
     if (type->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(nullptr);
     if (type->IsReferenceType()) return std::expected<FunctionSymbol*, int>(nullptr);
-    TypeSymbol* pointerType = type->RemovePointer(context);
-    TypeSymbol* rvalueRefType = pointerType->AddRValueRef(context);
+    std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* pointerType = *pt;
+    pt = pointerType->AddRValueRef(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* rvalueRefType = *pt;
     if (TypesEqual(args[1]->GetType(), rvalueRefType, context)) return std::expected<FunctionSymbol*, int>(nullptr);
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
@@ -222,14 +242,28 @@ PointerMoveCtor::PointerMoveCtor(TypeSymbol* type_, const soul::ast::SourcePos& 
 {
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = type->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* ptrType = *pt;
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", ptrType);
     std::expected<bool, int> rv = AddParameter(thisParam, sourcePos, context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef(context));
+    pt = type->AddRValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* rvalueRefType = *pt;
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", rvalueRefType);
     rv = AddParameter(thatParam, sourcePos, context);
     if (!rv)
     {
@@ -278,8 +312,12 @@ std::expected<FunctionSymbol*, int> PointerMoveCtorOperation::Get(std::vector<st
     TypeSymbol* type = arg->GetType();
     if (type->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(nullptr);
     if (type->IsReferenceType()) return std::expected<FunctionSymbol*, int>(nullptr);
-    TypeSymbol* pointerType = type->RemovePointer(context);
-    TypeSymbol* rvalueRefType = pointerType->AddRValueRef(context);
+    std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* pointerType = *pt;
+    pt = pointerType->AddRValueRef(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* rvalueRefType = *pt;
     if (!TypesEqual(args[1]->GetType(), rvalueRefType, context) && !args[1]->BindToRvalueRef()) return std::expected<FunctionSymbol*, int>(nullptr);
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
@@ -315,7 +353,14 @@ PointerCopyAssignment::PointerCopyAssignment(TypeSymbol* type_, const soul::ast:
 {
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = type->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* ptrType = *pt;
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", ptrType);
     std::expected<bool, int> rv = AddParameter(thisParam, sourcePos, context);
     if (!rv)
     {
@@ -329,7 +374,19 @@ PointerCopyAssignment::PointerCopyAssignment(TypeSymbol* type_, const soul::ast:
         SetError(rv.error());
         return;
     }
-    SetReturnType(type->AddLValueRef(context), context);
+    pt = type->AddLValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* lvalueRefType = *pt;
+    rv = SetReturnType(lvalueRefType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> PointerCopyAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -363,8 +420,17 @@ std::expected<FunctionSymbol*, int> PointerCopyAssignmentOperation::Get(std::vec
     BoundExpressionNode* arg = args[0].get();
     TypeSymbol* type = arg->GetType();
     if (type->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(nullptr);
-    TypeSymbol* pointerType = type->RemovePointer(context)->RemoveReference(context);
-    if (TypesEqual(args[1]->GetType(), pointerType->AddRValueRef(context), context) || args[1]->BindToRvalueRef()) return std::expected<FunctionSymbol*, int>(nullptr);
+    std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* t = *pt;
+    pt = t->RemoveReference(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    t = *pt;
+    TypeSymbol* pointerType = t;
+    pt = pointerType->AddRValueRef(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    t = *pt;
+    if (TypesEqual(args[1]->GetType(), t, context) || args[1]->BindToRvalueRef()) return std::expected<FunctionSymbol*, int>(nullptr);
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
     {
@@ -398,21 +464,47 @@ PointerMoveAssignment::PointerMoveAssignment(TypeSymbol* type_, const soul::ast:
 {
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = type->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* ptrType = *pt;
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", ptrType);
     std::expected<bool, int> rv = AddParameter(thisParam, sourcePos, context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef(context));
+    pt = type->AddRValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* rvalueRefType = *pt;
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", rvalueRefType);
     rv = AddParameter(thatParam, sourcePos, context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    SetReturnType(type->AddLValueRef(context), context);
+    pt = type->AddLValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* lvalueRefType = *pt;
+    rv = SetReturnType(lvalueRefType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> PointerMoveAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -450,8 +542,16 @@ std::expected<FunctionSymbol*, int> PointerMoveAssignmentOperation::Get(std::vec
     BoundExpressionNode* arg = args[0].get();
     TypeSymbol* type = arg->GetType();
     if (type->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(nullptr);
-    TypeSymbol* pointerType = type->RemovePointer(context)->RemoveReference(context);
-    if (!TypesEqual(args[1]->GetType(), pointerType->AddRValueRef(context), context) && !args[1]->BindToRvalueRef()) return std::expected<FunctionSymbol*, int>(nullptr);
+    std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* tp = *pt;
+    pt = tp->RemoveReference(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* pointerType = *pt;
+    pt = pointerType->AddRValueRef(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    tp = *pt;
+    if (!TypesEqual(args[1]->GetType(), tp, context) && !args[1]->BindToRvalueRef()) return std::expected<FunctionSymbol*, int>(nullptr);
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
     {
@@ -498,7 +598,12 @@ PointerPlusOffset::PointerPlusOffset(TypeSymbol* pointerType_, TypeSymbol* longL
         SetError(rv.error());
         return;
     }
-    SetReturnType(pointerType, context);
+    rv = SetReturnType(pointerType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> PointerPlusOffset::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -532,10 +637,15 @@ std::expected<FunctionSymbol*, int> PointerPlusOffsetOperation::Get(std::vector<
     Context* context)
 {
     if (context->GetFlag(ContextFlags::noPtrOps)) return std::expected<FunctionSymbol*, int>(nullptr);
-    TypeSymbol* leftType = args[0]->GetType()->PlainType(context);
+    std::expected<TypeSymbol*, int> pt = args[0]->GetType()->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* leftType = *pt;
     if (!leftType->IsPointerType()) return std::expected<FunctionSymbol*, int>(nullptr);
     TypeSymbol* rightType = args[1]->GetType();
-    if (!rightType->PlainType(context)->IsIntegralType())
+    pt = rightType->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* rightPlainType = *pt;
+    if (!rightPlainType->IsIntegralType())
     {
         if (!context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
             rightType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), sourcePos, context))
@@ -589,7 +699,12 @@ OffsetPlusPointer::OffsetPlusPointer(TypeSymbol* pointerType_, TypeSymbol* longL
         SetError(rv.error());
         return;
     }
-    SetReturnType(pointerType, context);
+    rv = SetReturnType(pointerType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> OffsetPlusPointer::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -623,7 +738,10 @@ std::expected<FunctionSymbol*, int> OffsetPlusPointerOperation::Get(std::vector<
     Context* context)
 {
     TypeSymbol* leftType = args[0]->GetType();
-    if (!leftType->PlainType(context)->IsIntegralType())
+    std::expected<TypeSymbol*, int> pt = leftType->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* leftPlainType = *pt;
+    if (!leftPlainType->IsIntegralType())
     {
         if (!context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
             leftType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), sourcePos, context))
@@ -631,7 +749,9 @@ std::expected<FunctionSymbol*, int> OffsetPlusPointerOperation::Get(std::vector<
             return std::expected<FunctionSymbol*, int>(nullptr);
         }
     }
-    TypeSymbol* rightType = args[1]->GetType()->PlainType(context);
+    pt = args[1]->GetType()->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* rightType = *pt;
     if (!rightType->IsPointerType()) return std::expected<FunctionSymbol*, int>(nullptr);
     auto it = functionMap.find(leftType);
     if (it != functionMap.cend())
@@ -679,7 +799,12 @@ PointerMinusOffset::PointerMinusOffset(TypeSymbol* pointerType_, TypeSymbol* lon
         SetError(rv.error());
         return;
     }
-    SetReturnType(pointerType, context);
+    rv = SetReturnType(pointerType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> PointerMinusOffset::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -714,10 +839,15 @@ std::expected<FunctionSymbol*, int> PointerMinusOffsetOperation::Get(std::vector
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
     if (context->GetFlag(ContextFlags::noPtrOps)) return std::expected<FunctionSymbol*, int>(nullptr);
-    TypeSymbol* leftType = args[0]->GetType()->PlainType(context);
+    std::expected<TypeSymbol*, int> pt = args[0]->GetType()->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* leftType = *pt;
     if (!leftType->IsPointerType()) return std::expected<FunctionSymbol*, int>(nullptr);
     TypeSymbol* rightType = args[1]->GetType();
-    if (!rightType->PlainType(context)->IsIntegralType())
+    pt = rightType->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* rightPlainType = *pt;
+    if (!rightPlainType->IsIntegralType())
     {
         if (!context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
             rightType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), sourcePos, context))
@@ -772,7 +902,12 @@ PointerMinusPointer::PointerMinusPointer(TypeSymbol* pointerType_, TypeSymbol* l
         SetError(rv.error());
         return;
     }
-    SetReturnType(longLongIntType, context);
+    rv = SetReturnType(longLongIntType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> PointerMinusPointer::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -805,9 +940,13 @@ PointerMinusPointerOperation::PointerMinusPointerOperation() : Operation(U"opera
 std::expected<FunctionSymbol*, int> PointerMinusPointerOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    TypeSymbol* leftType = args[0]->GetType()->PlainType(context);
+    std::expected<TypeSymbol*, int> pt = args[0]->GetType()->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* leftType = *pt;
     if (!leftType->IsPointerType()) return std::expected<FunctionSymbol*, int>(nullptr);
-    TypeSymbol* rightType = args[1]->GetType()->PlainType(context);
+    pt = args[1]->GetType()->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* rightType = *pt;
     if (!rightType->IsPointerType()) return std::expected<FunctionSymbol*, int>(nullptr);
     auto it = functionMap.find(leftType);
     if (it != functionMap.cend())
@@ -863,7 +1002,12 @@ PointerEqual::PointerEqual(TypeSymbol* pointerType_, const soul::ast::SourcePos&
         return;
     }
     TypeSymbol* boolType = *trv;
-    SetReturnType(boolType, context);
+    rv = SetReturnType(boolType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> PointerEqual::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -896,9 +1040,13 @@ PointerEqualOperation::PointerEqualOperation() : Operation(U"operator==", 2)
 std::expected<FunctionSymbol*, int> PointerEqualOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    TypeSymbol* leftType = args[0]->GetType()->PlainType(context);
+    std::expected<TypeSymbol*, int> pt = args[0]->GetType()->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* leftType = *pt;
     if (!leftType->IsPointerType() && !leftType->IsNullPtrType()) return std::expected<FunctionSymbol*, int>(nullptr);
-    TypeSymbol* rightType = args[1]->GetType()->PlainType(context);
+    pt = args[1]->GetType()->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* rightType = *pt;
     if (!rightType->IsPointerType() && !rightType->IsNullPtrType()) return std::expected<FunctionSymbol*, int>(nullptr);
     auto it = functionMap.find(leftType);
     if (it != functionMap.cend())
@@ -952,7 +1100,12 @@ PointerLess::PointerLess(TypeSymbol* pointerType_, const soul::ast::SourcePos& s
         return;
     }
     TypeSymbol* boolType = *trv;
-    SetReturnType(boolType, context);
+    rv = SetReturnType(boolType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> PointerLess::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -985,9 +1138,13 @@ PointerLessOperation::PointerLessOperation() : Operation(U"operator<", 2)
 std::expected<FunctionSymbol*, int> PointerLessOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, 
     Context* context)
 {
-    TypeSymbol* leftType = args[0]->GetType()->PlainType(context);
+    std::expected<TypeSymbol*, int> pt = args[0]->GetType()->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* leftType = *pt;
     if (!leftType->IsPointerType()) return std::expected<FunctionSymbol*, int>(nullptr);
-    TypeSymbol* rightType = args[1]->GetType()->PlainType(context);
+    pt = args[1]->GetType()->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* rightType = *pt;
     if (!rightType->IsPointerType()) return std::expected<FunctionSymbol*, int>(nullptr);
     auto it = functionMap.find(leftType);
     if (it != functionMap.cend())
@@ -1021,14 +1178,26 @@ PointerArrow::PointerArrow(TypeSymbol* type_, const soul::ast::SourcePos& source
 {
     SetFunctionKind(FunctionKind::function);
     SetAccess(Access::public_);
-    ParameterSymbol* operandParam = new ParameterSymbol(U"operand", type->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = type->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* ptrType = *pt;
+    ParameterSymbol* operandParam = new ParameterSymbol(U"operand", ptrType);
     std::expected<bool, int> rv = AddParameter(operandParam, sourcePos, context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    SetReturnType(type, context);
+    rv = SetReturnType(type, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> PointerArrow::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -1056,7 +1225,9 @@ std::expected<FunctionSymbol*, int> PointerArrowOperation::Get(std::vector<std::
 {
     TypeSymbol* operandType = args[0]->GetType();
     if (operandType->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(nullptr);
-    TypeSymbol* type = operandType->RemovePointer(context);
+    std::expected<TypeSymbol*, int> pt = operandType->RemovePointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* type = *pt;
     auto it = functionMap.find(type);
     if (it != functionMap.cend())
     {
@@ -1089,7 +1260,14 @@ CopyRef::CopyRef(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos, Conte
 {
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = type->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* ptrType = *pt;
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", ptrType);
     std::expected<bool, int> rv = AddParameter(thisParam, sourcePos, context);
     if (!rv)
     {
@@ -1133,7 +1311,9 @@ std::expected<FunctionSymbol*, int> CopyRefOperation::Get(std::vector<std::uniqu
 {
     TypeSymbol* arg0Type = args[0]->GetType();
     if (arg0Type->PointerCount() != 1) return std::expected<FunctionSymbol*, int>(nullptr);
-    TypeSymbol* type = arg0Type->RemovePointer(context);
+    std::expected<TypeSymbol*, int> pt = arg0Type->RemovePointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* type = *pt;
     if (!type->IsReferenceType()) return std::expected<FunctionSymbol*, int>(nullptr);
     TypeSymbol* argType = args[1]->GetType();
     if (!argType->IsReferenceType()) return std::expected<FunctionSymbol*, int>(nullptr);
@@ -1177,7 +1357,12 @@ ClassDefaultCtor::ClassDefaultCtor(ClassTypeSymbol* classType_, const soul::ast:
         return;
     }
     TypeSymbol* voidType = *frv;
-    SetReturnType(voidType, context);
+    std::expected<bool, int> rv = SetReturnType(voidType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     std::expected<std::u32string, int> fname = classType->FullName();
     if (!fname)
     {
@@ -1228,7 +1413,13 @@ std::expected<FunctionSymbol*, int> ClassDefaultCtorOperation::Get(std::vector<s
     Context* context)
 {
     TypeSymbol* type = args[0]->GetType();
-    if (type->PointerCount() != 1 || !type->RemovePointer(context)->PlainType(context)->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* tp = *pt;
+    pt = tp->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* plainType = *pt;
+    if (type->PointerCount() != 1 || !plainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations))
     {
@@ -1275,11 +1466,17 @@ std::expected<bool, int> ClassDefaultCtorOperation::GenerateImplementation(Class
     {
         TypeSymbol* baseClass = classType->BaseClasses()[i];
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
-        std::expected<TypeSymbol*, int> rrv = classDefaultCtor->ThisParam(context)->GetReferredType(context);
+        std::expected<ParameterSymbol*, int> tp = classDefaultCtor->ThisParam(context);
+        if (!tp) return std::unexpected<int>(tp.error());
+        ParameterSymbol* thisParam = *tp;
+        std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
         if (!rrv) return std::unexpected<int>(rrv.error());
-        BoundExpressionNode* thisPtr = new BoundParameterNode(classDefaultCtor->ThisParam(context), sourcePos, *rrv);
+        BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, *rrv);
+        std::expected<TypeSymbol*, int> pt = baseClass->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* baseClassPtrType = *pt;
         std::expected<FunctionSymbol*, int> arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+            baseClassPtrType, thisPtr->GetType(), sourcePos, context);
         if (!arv) return std::unexpected<int>(arv.error());
         FunctionSymbol* conversion = *arv;
         if (conversion)
@@ -1315,11 +1512,16 @@ std::expected<bool, int> ClassDefaultCtorOperation::GenerateImplementation(Class
         {
             if (vptrHolderClass != classType)
             {
-                std::expected<TypeSymbol*, int> rrv = classDefaultCtor->ThisParam(context)->GetReferredType(context);
+                std::expected<ParameterSymbol*, int> tp = classDefaultCtor->ThisParam(context);
+                if (!tp) return std::unexpected<int>(tp.error());
+                ParameterSymbol* thisParam = *tp;
+                std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
                 if (!rrv) return std::unexpected<int>(rrv.error());
-                BoundExpressionNode* thisPtr = new BoundParameterNode(classDefaultCtor->ThisParam(context), sourcePos, *rrv);
+                BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, *rrv);
+                std::expected<TypeSymbol*, int> pt = vptrHolderClass->AddPointer(context);
+                if (!pt) return std::unexpected<int>(pt.error());
                 std::expected<FunctionSymbol*, int> arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                    vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+                    *pt, thisPtr->GetType(), sourcePos, context);
                 if (!arv) return std::unexpected<int>(arv.error());
                 FunctionSymbol* conversion = *arv;
                 if (conversion)
@@ -1335,9 +1537,12 @@ std::expected<bool, int> ClassDefaultCtorOperation::GenerateImplementation(Class
             }
             else
             {
-                std::expected<TypeSymbol*, int> rrv = classDefaultCtor->ThisParam(context)->GetReferredType(context);
+                std::expected<ParameterSymbol*, int> tp = classDefaultCtor->ThisParam(context);
+                if (!tp) return std::unexpected<int>(tp.error());
+                ParameterSymbol* thisParam = *tp;
+                std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
                 if (!rrv) return std::unexpected<int>(rrv.error());
-                BoundExpressionNode* thisPtr = new BoundParameterNode(classDefaultCtor->ThisParam(context), sourcePos, *rrv);
+                BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, *rrv);
                 BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classType, classType, sourcePos);
                 context->GetBoundFunction()->Body()->AddStatement(setVPtrStatement);
             }
@@ -1348,11 +1553,17 @@ std::expected<bool, int> ClassDefaultCtorOperation::GenerateImplementation(Class
     {
         VariableSymbol* memberVariableSymbol = classType->MemberVariables()[i];
         BoundVariableNode* boundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
-        std::expected<TypeSymbol*, int> rrv = classDefaultCtor->ThisParam(context)->GetReferredType(context);
-        boundMemberVariable->SetThisPtr(new BoundParameterNode(classDefaultCtor->ThisParam(context), sourcePos, *rrv));
+        std::expected<ParameterSymbol*, int> tp = classDefaultCtor->ThisParam(context);
+        if (!tp) return std::unexpected<int>(tp.error());
+        ParameterSymbol* thisParam = *tp;
+        std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
+        boundMemberVariable->SetThisPtr(new BoundParameterNode(thisParam, sourcePos, *rrv));
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         std::vector<TypeSymbol*> templateArgs;
-        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos, boundMemberVariable->GetType()->AddPointer(context))));
+        std::expected<TypeSymbol*, int> pt = boundMemberVariable->GetType()->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* ptrType = *pt;
+        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos, ptrType)));
         std::expected<std::unique_ptr<BoundFunctionCallNode>, int> orv = ResolveOverload(classType->GetScope(), U"@constructor", templateArgs, args, sourcePos, context);
         if (!orv) return std::unexpected<int>(orv.error());
         std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = std::move(*orv);
@@ -1407,8 +1618,28 @@ ClassCopyCtor::ClassCopyCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
     SetGenerated();
     SetAccess(Access::public_);
     SetParent(classType);
-    ParameterSymbol* thisParam = ThisParam(context);
-    ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddConst(context)->AddLValueRef(context));
+    std::expected<ParameterSymbol*, int> tp = ThisParam(context);
+    if (!tp)
+    {
+        SetError(tp.error());
+        return;
+    }
+    ParameterSymbol* thisParam = *tp;
+    std::expected<TypeSymbol*, int> pt = classType->AddConst(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* type = *pt;
+    pt = type->AddLValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    type = *pt;
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
     std::expected<bool, int> rv = AddParameter(thatParam, sourcePos, context);
     if (!rv)
     {
@@ -1422,7 +1653,12 @@ ClassCopyCtor::ClassCopyCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
         return;
     }
     TypeSymbol* voidType = *frv;
-    SetReturnType(voidType, context);
+    rv = SetReturnType(voidType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     std::expected<std::u32string, int> fname = classType->FullName();
     if (!fname)
     {
@@ -1466,7 +1702,7 @@ class ClassCopyCtorOperation : public Operation
 {
 public:
     ClassCopyCtorOperation();
-    FunctionSymbol* Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<FunctionSymbol*, int> Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::expected<bool, int> GenerateImplementation(ClassCopyCtor* classCopyCtor, const soul::ast::SourcePos& sourcePos, Context* context);
 private:
     std::map<TypeSymbol*, FunctionSymbol*> functionMap;
@@ -1481,14 +1717,26 @@ std::expected<FunctionSymbol*, int> ClassCopyCtorOperation::Get(std::vector<std:
     Context* context)
 {
     TypeSymbol* type = args[0]->GetType();
-    if (type->PointerCount() != 1 || !type->RemovePointer(context)->RemoveConst(context)->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
-    if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* tp = *pt;
+    pt = tp->RemoveConst(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    tp = *pt;
+    if (type->PointerCount() != 1 || !tp->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    pt = args[1]->GetType()->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* plainType = *pt;
+    if (!plainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations))
     {
         return std::expected<FunctionSymbol*, int>(nullptr);
     }
-    if (TypesEqual(args[1]->GetType(), classType->AddRValueRef(context), context) || args[1]->BindToRvalueRef())
+    pt = classType->AddRValueRef(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    tp = *pt;
+    if (TypesEqual(args[1]->GetType(), tp, context) || args[1]->BindToRvalueRef())
     {
         return std::expected<FunctionSymbol*, int>(nullptr);
     }
@@ -1533,19 +1781,30 @@ std::expected<bool, int> ClassCopyCtorOperation::GenerateImplementation(ClassCop
     {
         TypeSymbol* baseClass = classType->BaseClasses()[i];
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
-        std::expected<TypeSymbol*, int> rrv = classCopyCtor->ThisParam(context)->GetReferredType(context);
+        std::expected<ParameterSymbol*, int> tp = classCopyCtor->ThisParam(context);
+        if (!tp) return std::unexpected<int>(tp.error());
+        ParameterSymbol* thisParam = *tp;
+        std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
         if (!rrv) return std::unexpected<int>(rrv.error());
-        BoundExpressionNode* thisPtr = new BoundParameterNode(classCopyCtor->ThisParam(context), sourcePos, *rrv);
+        BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, *rrv);
+        std::expected<TypeSymbol*, int> pt = baseClass->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
         std::expected<FunctionSymbol*, int> arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+            *pt, thisPtr->GetType(), sourcePos, context);
         if (!arv) return std::unexpected<int>(arv.error());
         FunctionSymbol* conversion = *arv;
         if (conversion)
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
             ParameterSymbol* thatParam = classCopyCtor->MemFunParameters(context)[1];
-            arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                baseClass->AddConst(context)->AddLValueRef(context), thatParam->GetType(), sourcePos, context);
+            if (!classCopyCtor->Valid()) return std::unexpected<int>(classCopyCtor->GetError());
+            pt = baseClass->AddConst(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* tp = *pt;
+            pt = tp->AddLValueRef(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            tp = *pt;
+            arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(tp, thatParam->GetType(), sourcePos, context);
             if (!arv) return std::unexpected<int>(arv.error());
             FunctionSymbol* thatConversion = *arv;
             if (thatConversion)
@@ -1587,11 +1846,16 @@ std::expected<bool, int> ClassCopyCtorOperation::GenerateImplementation(ClassCop
         {
             if (vptrHolderClass != classType)
             {
-                std::expected<TypeSymbol*, int> rrv = classCopyCtor->ThisParam(context)->GetReferredType(context);
+                std::expected<ParameterSymbol*, int> tp = classCopyCtor->ThisParam(context);
+                if (!tp) return std::unexpected<int>(tp.error());
+                ParameterSymbol* thisParam = *tp;
+                std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
                 if (!rrv) return std::unexpected<int>(rrv.error());
-                BoundExpressionNode* thisPtr = new BoundParameterNode(classCopyCtor->ThisParam(context), sourcePos, *rrv);
+                BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, *rrv);
+                std::expected<TypeSymbol*, int> pt = vptrHolderClass->AddPointer(context);
+                if (!pt) return std::unexpected<int>(pt.error());
                 std::expected<FunctionSymbol*, int> arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                    vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+                    *pt, thisPtr->GetType(), sourcePos, context);
                 if (!arv) return std::unexpected<int>(arv.error());
                 FunctionSymbol* conversion = *arv;
                 if (conversion)
@@ -1607,9 +1871,12 @@ std::expected<bool, int> ClassCopyCtorOperation::GenerateImplementation(ClassCop
             }
             else
             {
-                std::expected<TypeSymbol*, int> rrv = classCopyCtor->ThisParam(context)->GetReferredType(context);
+                std::expected<ParameterSymbol*, int> tp = classCopyCtor->ThisParam(context);
+                if (!tp) return std::unexpected<int>(tp.error());
+                ParameterSymbol* thisParam = *tp;
+                std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
                 if (!rrv) return std::unexpected<int>(rrv.error());
-                BoundExpressionNode* thisPtr = new BoundParameterNode(classCopyCtor->ThisParam(context), sourcePos, *rrv);
+                BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, *rrv);
                 BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classType, classType, sourcePos);
                 context->GetBoundFunction()->Body()->AddStatement(setVPtrStatement);
             }
@@ -1620,17 +1887,29 @@ std::expected<bool, int> ClassCopyCtorOperation::GenerateImplementation(ClassCop
     {
         VariableSymbol* memberVariableSymbol = classType->MemberVariables()[i];
         BoundVariableNode* boundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
-        std::expected<TypeSymbol*, int> rrv = classCopyCtor->ThisParam(context)->GetReferredType(context);
+        std::expected<ParameterSymbol*, int> tp = classCopyCtor->ThisParam(context);
+        if (!tp) return std::unexpected<int>(tp.error());
+        ParameterSymbol* thisParam = *tp;
+        std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
         if (!rrv) return std::unexpected<int>(rrv.error());
-        boundMemberVariable->SetThisPtr(new BoundParameterNode(classCopyCtor->ThisParam(context), sourcePos, *rrv));
+        boundMemberVariable->SetThisPtr(new BoundParameterNode(thisParam, sourcePos, *rrv));
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
-        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos, boundMemberVariable->GetType()->AddPointer(context))));
+        std::expected<TypeSymbol*, int> pt = boundMemberVariable->GetType()->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* ptrType = *pt;
+        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos, ptrType)));
         ParameterSymbol* thatParam = classCopyCtor->MemFunParameters(context)[1];
+        if (!classCopyCtor->Valid()) return std::unexpected<int>(classCopyCtor->GetError());
         BoundVariableNode* thatBoundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
         rrv = thatParam->GetReferredType(context);
         if (!rrv) return std::unexpected<int>(rrv.error());
-        thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(new BoundParameterNode(thatParam, sourcePos, *rrv), sourcePos,
-            thatParam->GetType()->RemoveReference(context)->AddPointer(context)));
+        pt = thatParam->GetType()->RemoveReference(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* type = *pt;
+        pt = type->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        type = *pt;
+        thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(new BoundParameterNode(thatParam, sourcePos, *rrv), sourcePos, type));
         args.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
         std::vector<TypeSymbol*> templateArgs;
         std::expected<std::unique_ptr<BoundFunctionCallNode>, int> orv = ResolveOverload(classType->GetScope(), U"@constructor", templateArgs, args, sourcePos, context);
@@ -1686,8 +1965,21 @@ ClassMoveCtor::ClassMoveCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
     SetGenerated();
     SetAccess(Access::public_);
     SetParent(classType);
-    ParameterSymbol* thisParam = ThisParam(context);
-    ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddRValueRef(context));
+    std::expected<ParameterSymbol*, int> tp = ThisParam(context);
+    if (!tp)
+    {
+        SetError(tp.error());
+        return;
+    }
+    ParameterSymbol* thisParam = *tp;
+    std::expected<TypeSymbol*, int> pt = classType->AddRValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* type = *pt;
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
     std::expected<bool, int> rv = AddParameter(thatParam, sourcePos, context);
     if (!rv)
     {
@@ -1700,7 +1992,12 @@ ClassMoveCtor::ClassMoveCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
         SetError(trv.error());
         return;
     }
-    SetReturnType(*trv, context);
+    rv = SetReturnType(*trv, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     std::expected<std::u32string, int> fname = classType->FullName();
     if (!fname)
     {
@@ -1751,14 +2048,26 @@ std::expected<FunctionSymbol*, int> ClassMoveCtorOperation::Get(std::vector<std:
     Context* context)
 {
     TypeSymbol* type = args[0]->GetType();
-    if (type->PointerCount() != 1 || !type->RemovePointer(context)->RemoveConst(context)->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
-    if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* tp = *pt;
+    pt = tp->RemoveConst(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    tp = *pt;
+    if (type->PointerCount() != 1 || !tp->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    pt = args[1]->GetType()->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* plainType = *pt;
+    if (!plainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations))
     {
         return std::expected<FunctionSymbol*, int>(nullptr);
     }
-    if (!TypesEqual(args[1]->GetType(), classType->AddRValueRef(context), context) && !args[1]->BindToRvalueRef())
+    pt = classType->AddRValueRef(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    tp = *pt;
+    if (!TypesEqual(args[1]->GetType(), tp, context) && !args[1]->BindToRvalueRef())
     {
         return std::expected<FunctionSymbol*, int>(nullptr);
     }
@@ -1803,19 +2112,28 @@ std::expected<bool, int> ClassMoveCtorOperation::GenerateImplementation(ClassMov
     {
         TypeSymbol* baseClass = classType->BaseClasses()[i];
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
-        std::expected<TypeSymbol*, int> rrv = classMoveCtor->ThisParam(context)->GetReferredType(context);
+        std::expected<ParameterSymbol*, int> tp = classMoveCtor->ThisParam(context);
+        if (!tp) return std::unexpected<int>(tp.error());
+        ParameterSymbol* thisParam = *tp;
+        std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
         if (!rrv) return std::unexpected<int>(rrv.error());
-        BoundExpressionNode* thisPtr = new BoundParameterNode(classMoveCtor->ThisParam(context), sourcePos, *rrv);
+        BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, *rrv);
+        std::expected<TypeSymbol*, int> pt = baseClass->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* type = *pt;
         std::expected<FunctionSymbol*, int> arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+            type, thisPtr->GetType(), sourcePos, context);
         if (!arv) return std::unexpected<int>(arv.error());
         FunctionSymbol* conversion = *arv;
         if (conversion)
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
             ParameterSymbol* thatParam = classMoveCtor->MemFunParameters(context)[1];
-            arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                baseClass->AddRValueRef(context), thatParam->GetType(), sourcePos, context);
+            if (!classMoveCtor->Valid()) return std::unexpected<int>(classMoveCtor->GetError());
+            std::expected<TypeSymbol*, int> pt = baseClass->AddRValueRef(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* tp = *pt;
+            arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(tp, thatParam->GetType(), sourcePos, context);
             if (!arv) return std::unexpected<int>(arv.error());
             FunctionSymbol* thatParamConversion = *arv;
             if (thatParamConversion)
@@ -1857,11 +2175,17 @@ std::expected<bool, int> ClassMoveCtorOperation::GenerateImplementation(ClassMov
         {
             if (vptrHolderClass != classType)
             {
-                std::expected<TypeSymbol*, int> rrv = classMoveCtor->ThisParam(context)->GetReferredType(context);
+                std::expected<ParameterSymbol*, int> tp = classMoveCtor->ThisParam(context);
+                if (!tp) return std::unexpected<int>(tp.error());
+                ParameterSymbol* thisParam = *tp;
+                std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
                 if (!rrv) return std::unexpected<int>(rrv.error());
-                BoundExpressionNode* thisPtr = new BoundParameterNode(classMoveCtor->ThisParam(context), sourcePos, *rrv);
+                BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, *rrv);
+                std::expected<TypeSymbol*, int> pt = vptrHolderClass->AddPointer(context);
+                if (!pt) return std::unexpected<int>(pt.error());
+                TypeSymbol* ptrType = *pt;
                 std::expected<FunctionSymbol*, int> arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                    vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+                    ptrType, thisPtr->GetType(), sourcePos, context);
                 if (!arv) return std::unexpected<int>(arv.error());
                 FunctionSymbol* conversion = *arv;
                 if (conversion)
@@ -1877,9 +2201,12 @@ std::expected<bool, int> ClassMoveCtorOperation::GenerateImplementation(ClassMov
             }
             else
             {
-                std::expected<TypeSymbol*, int> rrv = classMoveCtor->ThisParam(context)->GetReferredType(context);
+                std::expected<ParameterSymbol*, int> tp = classMoveCtor->ThisParam(context);
+                if (!tp) return std::unexpected<int>(tp.error());
+                ParameterSymbol* thisParam = *tp;
+                std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
                 if (!rrv) return std::unexpected<int>(rrv.error());
-                BoundExpressionNode* thisPtr = new BoundParameterNode(classMoveCtor->ThisParam(context), sourcePos, *rrv);
+                BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, *rrv);
                 BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classType, classType, sourcePos);
                 context->GetBoundFunction()->Body()->AddStatement(setVPtrStatement);
             }
@@ -1890,17 +2217,29 @@ std::expected<bool, int> ClassMoveCtorOperation::GenerateImplementation(ClassMov
     {
         VariableSymbol* memberVariableSymbol = classType->MemberVariables()[i];
         BoundVariableNode* boundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
-        std::expected<TypeSymbol*, int> rrv = classMoveCtor->ThisParam(context)->GetReferredType(context);
+        std::expected<ParameterSymbol*, int> tp = classMoveCtor->ThisParam(context);
+        if (!tp) return std::unexpected<int>(tp.error());
+        ParameterSymbol* thisParam = *tp;
+        std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
         if (!rrv) return std::unexpected<int>(rrv.error());
-        boundMemberVariable->SetThisPtr(new BoundParameterNode(classMoveCtor->ThisParam(context), sourcePos, *rrv));
+        boundMemberVariable->SetThisPtr(new BoundParameterNode(thisParam, sourcePos, *rrv));
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         std::vector<TypeSymbol*> templateArgs;
-        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos, boundMemberVariable->GetType()->AddPointer(context))));
+        std::expected<TypeSymbol*, int> pt = boundMemberVariable->GetType()->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* ptrType = *pt;
+        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos, ptrType)));
         ParameterSymbol* thatParam = classMoveCtor->MemFunParameters(context)[1];
+        if (!classMoveCtor->Valid()) return std::unexpected<int>(classMoveCtor->GetError());
         BoundVariableNode* thatBoundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
         rrv = thatParam->GetReferredType(context);
-        thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(
-            new BoundParameterNode(thatParam, sourcePos, *rrv), sourcePos, thatParam->GetType()->RemoveReference(context)->AddPointer(context)));
+        pt = thatParam->GetType()->RemoveReference(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        ptrType = *pt;
+        pt = ptrType->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        ptrType = *pt;
+        thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(new BoundParameterNode(thatParam, sourcePos, *rrv), sourcePos, ptrType));
         if (thatBoundMemberVariable->GetType()->IsFunctionPtrType())
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
@@ -1909,7 +2248,9 @@ std::expected<bool, int> ClassMoveCtorOperation::GenerateImplementation(ClassMov
         {
             std::vector<std::unique_ptr<BoundExpressionNode>> moveArgs;
             moveArgs.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
-            Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+            std::expected<Scope*, int> nrv = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+            if (!nrv) return std::unexpected<int>(nrv.error());
+            Scope* stdScope = *nrv;
             std::expected<std::unique_ptr<BoundFunctionCallNode>, int> orv = ResolveOverload(
                 stdScope, U"move", templateArgs, moveArgs, sourcePos, context);
             if (!orv) return std::unexpected<int>(orv.error());
@@ -1969,15 +2310,47 @@ ClassCopyAssignment::ClassCopyAssignment(ClassTypeSymbol* classType_, const soul
     SetGenerated();
     SetAccess(Access::public_);
     SetParent(classType);
-    ParameterSymbol* thisParam = ThisParam(context);
-    ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddConst(context)->AddLValueRef(context));
+    std::expected<ParameterSymbol*, int> tp = ThisParam(context);
+    if (!tp)
+    {
+        SetError(tp.error());
+        return;
+    }
+    ParameterSymbol* thisParam = *tp;
+    std::expected<TypeSymbol*, int> pt = classType->AddConst(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* type = *pt;
+    pt = type->AddLValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    type = *pt;
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
     std::expected<bool, int> rv = AddParameter(thatParam, sourcePos, context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    SetReturnType(classType->AddLValueRef(context), context);
+    pt = classType->AddLValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    type = *pt;
+    rv = SetReturnType(type, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     std::expected<std::u32string, int> fname = classType->FullName();
     if (!fname)
     {
@@ -2028,14 +2401,28 @@ std::expected<FunctionSymbol*, int> ClassCopyAssignmentOperation::Get(std::vecto
     Context* context)
 {
     TypeSymbol* type = args[0]->GetType();
-    if (type->PointerCount() != 1 || !type->RemovePointer(context)->PlainType(context)->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
-    if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
-    ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
+    std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* tp = *pt;
+    pt = tp->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* plainType = *pt;
+    if (type->PointerCount() != 1 || !plainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    pt = args[1]->GetType()->PlainType(context);
+    TypeSymbol* rightPlainType = *pt;
+    if (!rightPlainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    pt = type->GetBaseType();
+    if (!pt) return std::unexpected<int>(pt.error());
+    tp = *pt;
+    ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(tp);
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations))
     {
         return std::expected<FunctionSymbol*, int>(nullptr);
     }
-    if (TypesEqual(args[1]->GetType(), classType->AddRValueRef(context), context) || args[1]->BindToRvalueRef())
+    pt = classType->AddRValueRef(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* rvalueRefType = *pt;
+    if (TypesEqual(args[1]->GetType(), rvalueRefType, context) || args[1]->BindToRvalueRef())
     {
         return std::expected<FunctionSymbol*, int>(nullptr);
     }
@@ -2075,20 +2462,32 @@ std::expected<bool, int> ClassCopyAssignmentOperation::GenerateImplementation(Cl
     {
         TypeSymbol* baseClass = classType->BaseClasses()[i];
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
-        std::expected<TypeSymbol*, int> rrv = classCopyAssignment->ThisParam(context)->GetReferredType(context);
+        std::expected<ParameterSymbol*, int> tp = classCopyAssignment->ThisParam(context);
+        if (!tp) return std::unexpected<int>(tp.error());
+        ParameterSymbol* thisParam = *tp;
+        std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
         if (!rrv) return std::unexpected<int>(rrv.error());
-        BoundExpressionNode* thisPtr = new BoundParameterNode(classCopyAssignment->ThisParam(context), sourcePos, *rrv);
+        BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, *rrv);
+        std::expected<TypeSymbol*, int> pt = baseClass->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* ptrType = *pt;
         std::expected<FunctionSymbol*, int> arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+            ptrType, thisPtr->GetType(), sourcePos, context);
         if (!arv) return std::unexpected<int>(arv.error());
         FunctionSymbol* conversion = *arv;
         if (conversion)
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
             ParameterSymbol* thatParam = classCopyAssignment->MemFunParameters(context)[1];
+            if (!classCopyAssignment->Valid()) return std::unexpected<int>(classCopyAssignment->GetError());
             BoundExpressionNode* thatPtr = new BoundParameterNode(thatParam, sourcePos, thatParam->GetType());
-            arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                baseClass->AddConst(context)->AddLValueRef(context), thatParam->GetType(), sourcePos, context);
+            pt = baseClass->AddConst(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            ptrType = *pt;
+            pt = ptrType->AddLValueRef(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            ptrType = *pt;
+            arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(ptrType, thatParam->GetType(), sourcePos, context);
             if (!arv) return std::unexpected<int>(arv.error());
             FunctionSymbol* thatConversion = *arv;
             if (thatConversion)
@@ -2119,18 +2518,29 @@ std::expected<bool, int> ClassCopyAssignmentOperation::GenerateImplementation(Cl
     {
         VariableSymbol* memberVariableSymbol = classType->MemberVariables()[i];
         BoundVariableNode* boundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
-        std::expected<TypeSymbol*, int> rrv = classCopyAssignment->ThisParam(context)->GetReferredType(context);
+        std::expected<ParameterSymbol*, int> tp = classCopyAssignment->ThisParam(context);
+        if (!tp) return std::unexpected<int>(tp.error());
+        ParameterSymbol* thisParam = *tp;
+        std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
         if (!rrv) return std::unexpected<int>(rrv.error());
-        boundMemberVariable->SetThisPtr(new BoundParameterNode(classCopyAssignment->ThisParam(context), sourcePos, *rrv));
+        boundMemberVariable->SetThisPtr(new BoundParameterNode(thisParam, sourcePos, *rrv));
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
-        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos, boundMemberVariable->GetType()->AddPointer(context))));
+        std::expected<TypeSymbol*, int> pt = boundMemberVariable->GetType()->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* ptrType = *pt;
+        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos, ptrType)));
         ParameterSymbol* thatParam = classCopyAssignment->MemFunParameters(context)[1];
+        if (!classCopyAssignment->Valid()) return std::unexpected<int>(classCopyAssignment->GetError());
         BoundVariableNode* thatBoundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
         if (!rrv) return std::unexpected<int>(rrv.error());
         rrv = thatParam->GetReferredType(context);
-        thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(
-            new BoundParameterNode(thatParam, sourcePos, *rrv), sourcePos,
-            thatParam->GetType()->RemoveReference(context)->AddPointer(context)));
+        pt = thatParam->GetType()->RemoveReference(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        ptrType = *pt;
+        pt = ptrType->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        ptrType = *pt;
+        thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(new BoundParameterNode(thatParam, sourcePos, *rrv), sourcePos, ptrType));
         args.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
         std::vector<TypeSymbol*> templateArgs;
         std::expected<std::unique_ptr<BoundFunctionCallNode>, int> orv = ResolveOverload(classType->GetScope(), U"operator=", templateArgs, args, sourcePos, context);
@@ -2195,15 +2605,38 @@ ClassMoveAssignment::ClassMoveAssignment(ClassTypeSymbol* classType_, const soul
     SetGenerated();
     SetAccess(Access::public_);
     SetParent(classType);
-    ParameterSymbol* thisParam = ThisParam(context);
-    ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddRValueRef(context));
+    std::expected<ParameterSymbol*, int> tp = ThisParam(context);
+    if (!tp)
+    {
+        SetError(tp.error());
+        return;
+    }
+    ParameterSymbol* thisParam = *tp;
+    std::expected<TypeSymbol*, int> pt = classType->AddRValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", *pt);
     std::expected<bool, int> rv = AddParameter(thatParam, sourcePos, context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    SetReturnType(classType->AddLValueRef(context), context);
+    pt = classType->AddLValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    rv = SetReturnType(*pt, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     std::expected<std::u32string, int> fname = classType->FullName();
     if (!fname)
     {
@@ -2254,14 +2687,26 @@ std::expected<FunctionSymbol*, int> ClassMoveAssignmentOperation::Get(std::vecto
     Context* context)
 {
     TypeSymbol* type = args[0]->GetType();
-    if (type->PointerCount() != 1 || !type->RemovePointer(context)->PlainType(context)->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
-    if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* tp = *pt;
+    pt = tp->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* plainType = *pt;
+    if (type->PointerCount() != 1 || !plainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    pt = args[1]->GetType()->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* rightPlainType = *pt;
+    if (!rightPlainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations))
     {
         return std::expected<FunctionSymbol*, int>(nullptr);
     }
-    if (!TypesEqual(args[1]->GetType(), classType->AddRValueRef(context), context) && !args[1]->BindToRvalueRef())
+    pt = classType->AddRValueRef(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* rvalueRefType = *pt;
+    if (!TypesEqual(args[1]->GetType(), rvalueRefType, context) && !args[1]->BindToRvalueRef())
     {
         return std::expected<FunctionSymbol*, int>(nullptr);
     }
@@ -2297,25 +2742,36 @@ std::expected<bool, int> ClassMoveAssignmentOperation::GenerateImplementation(Cl
     {
         TypeSymbol* baseClass = classType->BaseClasses()[i];
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
-        std::expected<TypeSymbol*, int> rrv = classMoveAssignment->ThisParam(context)->GetReferredType(context);
+        std::expected<ParameterSymbol*, int> tp = classMoveAssignment->ThisParam(context);
+        if (!tp) return std::unexpected<int>(tp.error());
+        ParameterSymbol* thisParam = *tp;
+        std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
         if (!rrv) return std::unexpected<int>(rrv.error());
-        BoundExpressionNode* thisPtr = new BoundParameterNode(classMoveAssignment->ThisParam(context), sourcePos, *rrv);
+        BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, *rrv);
+        std::expected<TypeSymbol*, int> pt = baseClass->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* ptrType = *pt;
         std::expected<FunctionSymbol*, int> arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+            ptrType, thisPtr->GetType(), sourcePos, context);
         if (!arv) return std::unexpected<int>(arv.error());
         FunctionSymbol* conversion = *arv;
         if (conversion)
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
             ParameterSymbol* thatParam = classMoveAssignment->MemFunParameters(context)[1];
+            if (!classMoveAssignment->Valid()) return std::unexpected<int>(classMoveAssignment->GetError());
             BoundExpressionNode* thatPtr = new BoundParameterNode(thatParam, sourcePos, thatParam->GetType());
-            arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                baseClass->AddRValueRef(context), thatParam->GetType(), sourcePos, context);
+            std::expected<TypeSymbol*, int> pt = baseClass->AddRValueRef(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* rvalueRefType = *pt;
+            arv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(rvalueRefType, thatParam->GetType(), sourcePos, context);
             if (!arv) return std::unexpected<int>(arv.error());
             FunctionSymbol* thatConversion = *arv;
             std::vector<std::unique_ptr<BoundExpressionNode>> moveArgs;
             moveArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thatPtr, thatConversion, sourcePos)));
-            Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+            std::expected<Scope*, int> nrv = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+            if (!nrv) return std::unexpected<int>(nrv.error());
+            Scope* stdScope = *nrv;
             std::vector<TypeSymbol*> templateArgs;
             std::expected<std::unique_ptr<BoundFunctionCallNode>, int> orv = ResolveOverload(stdScope, U"move", templateArgs, moveArgs, sourcePos, context);
             if (!orv) return std::unexpected<int>(orv.error());
@@ -2339,19 +2795,30 @@ std::expected<bool, int> ClassMoveAssignmentOperation::GenerateImplementation(Cl
     {
         VariableSymbol* memberVariableSymbol = classType->MemberVariables()[i];
         BoundVariableNode* boundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
-        std::expected<TypeSymbol*, int> rrv = classMoveAssignment->ThisParam(context)->GetReferredType(context);
+        std::expected<ParameterSymbol*, int> tp = classMoveAssignment->ThisParam(context);
+        if (!tp) return std::unexpected<int>(tp.error());
+        ParameterSymbol* thisParam = *tp;
+        std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
         if (!rrv) return std::unexpected<int>(rrv.error());
-        boundMemberVariable->SetThisPtr(new BoundParameterNode(classMoveAssignment->ThisParam(context), sourcePos, *rrv));
+        boundMemberVariable->SetThisPtr(new BoundParameterNode(thisParam, sourcePos, *rrv));
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         args.push_back(std::unique_ptr<BoundExpressionNode>(boundMemberVariable));
         ParameterSymbol* thatParam = classMoveAssignment->MemFunParameters(context)[1];
+        if (!classMoveAssignment->Valid()) return std::unexpected<int>(classMoveAssignment->GetError());
         BoundVariableNode* thatBoundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
         rrv = thatParam->GetReferredType(context);
         if (!rrv) return std::unexpected<int>(rrv.error());
-        thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(
-            new BoundParameterNode(thatParam, sourcePos, *rrv), sourcePos, thatParam->GetType()->RemoveReference(context)->AddPointer(context)));
+        std::expected<TypeSymbol*, int> pt = thatParam->GetType()->RemoveReference(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* ptrType = *pt;
+        pt = ptrType->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        ptrType = *pt;
+        thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(new BoundParameterNode(thatParam, sourcePos, *rrv), sourcePos, ptrType));
         args.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
-        Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+        std::expected<Scope*, int> nrv = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+        if (!nrv) return std::unexpected<int>(nrv.error());
+        Scope* stdScope = *nrv;
         std::vector<TypeSymbol*> templateArgs;
         std::expected<std::unique_ptr<BoundFunctionCallNode>, int> orv = ResolveOverload(stdScope, U"swap", templateArgs, args, sourcePos, context);
         if (!orv) return std::unexpected<int>(orv.error());
@@ -2413,7 +2880,14 @@ FunctionPtrApply::FunctionPtrApply(FunctionTypeSymbol* functionType_, const soul
 {
     SetFunctionKind(FunctionKind::function);
     SetAccess(Access::public_);
-    ParameterSymbol* parameter = new ParameterSymbol(U"fn", functionType->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = functionType->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* ptrType = *pt;
+    ParameterSymbol* parameter = new ParameterSymbol(U"fn", ptrType);
     std::expected<bool, int> rv = AddSymbol(parameter, sourcePos, context);
     if (!rv)
     {
@@ -2430,7 +2904,12 @@ FunctionPtrApply::FunctionPtrApply(FunctionTypeSymbol* functionType_, const soul
             return;
         }
     }
-    SetReturnType(functionType->ReturnType(), context);
+    rv = SetReturnType(functionType->ReturnType(), context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> FunctionPtrApply::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -2452,7 +2931,8 @@ std::expected<bool, int> FunctionPtrApply::GenerateCode(Emitter& emitter, std::v
         otava::intermediate::Value* arg = emitter.Stack().Pop();
         arguments[na - i - 1] = arg;
     }
-    emitter.EmitCall(callee, arguments);
+    std::expected<otava::intermediate::Value*, int> crv = emitter.EmitCall(callee, arguments);
+    if (!crv) return std::unexpected<int>(crv.error());
     return std::expected<bool, int>(true);
 }
 
@@ -2475,7 +2955,9 @@ std::expected<FunctionSymbol*, int> FunctionPtrApplyOperation::Get(std::vector<s
     if (args.size() < 1) return std::expected<FunctionSymbol*, int>(nullptr);
     TypeSymbol* type = args[0]->GetType();
     if (type->PointerCount() != 1) return std::expected<FunctionSymbol*, int>(nullptr);
-    TypeSymbol* pointeeType = type->RemovePointer(context);
+    std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* pointeeType = *pt;
     if (!pointeeType->IsFunctionTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
     FunctionTypeSymbol* functionType = static_cast<FunctionTypeSymbol*>(pointeeType);
     FunctionPtrApply* apply = new FunctionPtrApply(functionType, sourcePos, context);

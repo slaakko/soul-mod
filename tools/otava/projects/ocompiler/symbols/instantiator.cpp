@@ -158,13 +158,23 @@ void Instantiator::Visit(otava::ast::SimpleDeclarationNode& node)
 void Instantiator::Visit(otava::ast::UsingDeclarationNode& node)
 {
     if (!Valid()) return;
-    AddUsingDeclaration(&node, context);
+    std::expected<bool, int> rv = AddUsingDeclaration(&node, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 void Instantiator::Visit(otava::ast::UsingDirectiveNode& node)
 {
     if (!Valid()) return;
-    AddUsingDirective(&node, context);
+    std::expected<bool, int> rv = AddUsingDirective(&node, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 void Instantiator::Visit(otava::ast::FunctionDefinitionNode& node)
@@ -229,17 +239,34 @@ void Instantiator::Visit(otava::ast::TemplateDeclarationNode& node)
 void Instantiator::Visit(otava::ast::CompoundStatementNode& node)
 {
     if (!Valid()) return;
-    BlockSymbol* block = BeginBlock(node.GetSourcePos(), context);
+    std::expected<BlockSymbol*, int> b = BeginBlock(node.GetSourcePos(), context);
+    if (!b)
+    {
+        SetError(b.error());
+        return;
+    }
+    BlockSymbol* block = *b;
     context->GetSymbolTable()->MapNode(&node, block);
     VisitSequence(node);
     if (!Valid()) return;
-    EndBlock(context);
+    std::expected<bool, int> rv = EndBlock(context);
+    if (!rv)
+    {
+        SetError(rv.error()); 
+        return;
+    }
 }
 
 void Instantiator::Visit(otava::ast::IfStatementNode& node)
 {
     if (!Valid()) return;
-    BlockSymbol* block = BeginBlock(node.GetSourcePos(), context);
+    std::expected<BlockSymbol*, int> b = BeginBlock(node.GetSourcePos(), context);
+    if (!b)
+    {
+        SetError(b.error());
+        return;
+    }
+    BlockSymbol* block = *b;
     context->GetSymbolTable()->MapNode(&node, block);
     if (node.InitStatement())
     {
@@ -253,13 +280,24 @@ void Instantiator::Visit(otava::ast::IfStatementNode& node)
         node.ElseStatement()->Accept(*this);
         if (!Valid()) return;
     }
-    EndBlock(context);
+    std::expected<bool, int> rv = EndBlock(context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 void Instantiator::Visit(otava::ast::SwitchStatementNode& node)
 {
     if (!Valid()) return;
-    BlockSymbol* block = BeginBlock(node.GetSourcePos(), context);
+    std::expected<BlockSymbol*, int> b = BeginBlock(node.GetSourcePos(), context);
+    if (!b)
+    {
+        SetError(b.error());
+        return;
+    }
+    BlockSymbol* block = *b;
     context->GetSymbolTable()->MapNode(&node, block);
     if (node.InitStatement())
     {
@@ -268,17 +306,33 @@ void Instantiator::Visit(otava::ast::SwitchStatementNode& node)
     }
     node.Statement()->Accept(*this);
     if (!Valid()) return;
-    EndBlock(context);
+    std::expected<bool, int> rv = EndBlock(context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 void Instantiator::Visit(otava::ast::WhileStatementNode& node)
 {
     if (!Valid()) return;
-    BlockSymbol* block = BeginBlock(node.GetSourcePos(), context);
+    std::expected<BlockSymbol*, int> b = BeginBlock(node.GetSourcePos(), context);
+    if (!b)
+    {
+        SetError(b.error());
+        return;
+    }
+    BlockSymbol* block = *b;
     context->GetSymbolTable()->MapNode(&node, block);
     node.Statement()->Accept(*this);
     if (!Valid()) return;
-    EndBlock(context);
+    std::expected<bool, int> rv = EndBlock(context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 void Instantiator::Visit(otava::ast::DoStatementNode& node)
@@ -290,7 +344,13 @@ void Instantiator::Visit(otava::ast::DoStatementNode& node)
 void Instantiator::Visit(otava::ast::ForStatementNode& node)
 {
     if (!Valid()) return;
-    BlockSymbol* block = BeginBlock(node.GetSourcePos(), context);
+    std::expected<BlockSymbol*, int> b = BeginBlock(node.GetSourcePos(), context);
+    if (!b)
+    {
+        SetError(b.error());
+        return;
+    }
+    BlockSymbol* block = *b;
     context->GetSymbolTable()->MapNode(&node, block);
     if (node.InitStatement())
     {
@@ -299,7 +359,12 @@ void Instantiator::Visit(otava::ast::ForStatementNode& node)
     }
     node.Statement()->Accept(*this);
     if (!Valid()) return;
-    EndBlock(context);
+    std::expected<bool, int> rv = EndBlock(context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 void Instantiator::Visit(otava::ast::ExpressionStatementNode& node)

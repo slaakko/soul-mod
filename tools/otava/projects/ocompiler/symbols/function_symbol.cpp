@@ -278,7 +278,9 @@ std::expected<TypeSymbol*, int> ParameterSymbol::GetReferredType(Context* contex
     }
     if (type->IsCompoundType())
     {
-        referredType = context->GetSymbolTable()->MakeCompoundType(referredType, type->GetDerivations());
+        std::expected<TypeSymbol*, int> c = context->GetSymbolTable()->MakeCompoundType(referredType, type->GetDerivations());
+        if (!c) return c;
+        referredType = *c;
     }
     if (context->GetFlag(ContextFlags::resolveDependentTypes) && referredType->IsDependentTypeSymbol())
     {
@@ -520,9 +522,9 @@ ClassTypeSymbol* FunctionSymbol::ParentClassType() const
     return nullptr;
 }
 
-ParameterSymbol* FunctionSymbol::ThisParam(Context* context) const
+std::expected<ParameterSymbol*, int> FunctionSymbol::ThisParam(Context* context) const
 {
-    if (IsStatic()) return nullptr;
+    if (IsStatic()) return std::expected<ParameterSymbol*, int>(nullptr);
     if (!thisParam)
     {
         ClassTypeSymbol* classType = ParentClassType();
@@ -530,22 +532,37 @@ ParameterSymbol* FunctionSymbol::ThisParam(Context* context) const
         {
             if ((Qualifiers() & FunctionQualifiers::isConst) != FunctionQualifiers::none)
             {
-                thisParam.reset(new ParameterSymbol(U"this", classType->AddConst(context)->AddPointer(context)));
+                std::expected<TypeSymbol*, int> pt = classType->AddConst(context);
+                if (!pt) return std::unexpected<int>(pt.error());
+                TypeSymbol* type = *pt;
+                pt = type->AddPointer(context);
+                if (!pt) return std::unexpected<int>(pt.error());
+                type = *pt;
+                thisParam.reset(new ParameterSymbol(U"this", type));
             }
             else
             {
-                thisParam.reset(new ParameterSymbol(U"this", classType->AddPointer(context)));
+                std::expected<TypeSymbol*, int> pt = classType->AddPointer(context);
+                if (!pt) return std::unexpected<int>(pt.error());
+                TypeSymbol* type = *pt;
+                thisParam.reset(new ParameterSymbol(U"this", type));
             }
         }
     }
-    return thisParam.get();
+    return std::expected<ParameterSymbol*, int>(thisParam.get());
 }
 
 const std::vector<ParameterSymbol*>& FunctionSymbol::MemFunParameters(Context* context) const
 {
     if (memFunParamsConstructed) return memFunParameters;
     memFunParamsConstructed = true;
-    ParameterSymbol* thisParam = ThisParam(context);
+    std::expected<ParameterSymbol*, int> tp = ThisParam(context);
+    if (!tp)
+    {
+        SetError(tp.error());
+        return memFunParameters;
+    }
+    ParameterSymbol* thisParam = *tp;
     if (thisParam)
     {
         memFunParameters.push_back(thisParam);
@@ -570,7 +587,7 @@ bool FunctionSymbol::IsMemberFunction() const
     }
 }
 
-SpecialFunctionKind FunctionSymbol::GetSpecialFunctionKind(Context* context) const
+std::expected<SpecialFunctionKind, int> FunctionSymbol::GetSpecialFunctionKind(Context* context) const
 {
     ClassTypeSymbol* classType = ParentClassType();
     TypeSymbol* classTemplate = nullptr;
@@ -588,25 +605,36 @@ SpecialFunctionKind FunctionSymbol::GetSpecialFunctionKind(Context* context) con
     if (classType)
     {
         const std::vector<ParameterSymbol*>& memFunParams = MemFunParameters(context);
-        TypeSymbol* pointerType = classType->AddPointer(context);
+        if (!Valid()) return std::unexpected<int>(GetError());
+        std::expected<TypeSymbol*, int> pt = classType->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* pointerType = *pt;
         if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType, context) && Name() == className) return SpecialFunctionKind::defaultCtor;
         if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType, context) && Name() == U"~" + className) return SpecialFunctionKind::dtor;
         if (classTemplate)
         {
-            if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType, context) && Name() == U"~" + classTemplate->Name()) return SpecialFunctionKind::dtor;
+            if (memFunParams.size() == 1 && 
+                TypesEqual(memFunParams[0]->GetType(), pointerType, context) && Name() == U"~" + classTemplate->Name()) return SpecialFunctionKind::dtor;
         }
-        TypeSymbol* constRefType = classType->AddConst(context)->AddLValueRef(context);
+        pt = classType->AddConst(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* type = *pt;
+        pt = type->AddLValueRef(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* constRefType = *pt;
         if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType, context) && Name() == className &&
-            TypesEqual(memFunParams[1]->GetType(), constRefType, context)) return SpecialFunctionKind::copyCtor;
-        TypeSymbol* rvalueRefType = classType->AddRValueRef(context);
+            TypesEqual(memFunParams[1]->GetType(), constRefType, context)) return std::expected<SpecialFunctionKind, int>(SpecialFunctionKind::copyCtor);
+        pt = classType->AddRValueRef(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* rvalueRefType = *pt;
         if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType, context) && Name() == className &&
-            TypesEqual(memFunParams[1]->GetType(), rvalueRefType, context)) return SpecialFunctionKind::moveCtor;
+            TypesEqual(memFunParams[1]->GetType(), rvalueRefType, context)) return std::expected<SpecialFunctionKind, int>(SpecialFunctionKind::moveCtor);
         if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType, context) && Name() == U"operator=" &&
-            TypesEqual(memFunParams[1]->GetType(), constRefType, context)) return SpecialFunctionKind::copyAssignment;
+            TypesEqual(memFunParams[1]->GetType(), constRefType, context)) return std::expected<SpecialFunctionKind, int>(SpecialFunctionKind::copyAssignment);
         if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType, context) && Name() == U"operator=" &&
-            TypesEqual(memFunParams[1]->GetType(), rvalueRefType, context)) return SpecialFunctionKind::moveAssignment;
+            TypesEqual(memFunParams[1]->GetType(), rvalueRefType, context)) return std::expected<SpecialFunctionKind, int>(SpecialFunctionKind::moveAssignment);
     }
-    return SpecialFunctionKind::none;
+    return std::expected<SpecialFunctionKind, int>(SpecialFunctionKind::none);
 }
 
 TemplateDeclarationSymbol* FunctionSymbol::ParentTemplateDeclaration() const
@@ -619,7 +647,7 @@ TemplateDeclarationSymbol* FunctionSymbol::ParentTemplateDeclaration() const
     return nullptr;
 }
 
-void FunctionSymbol::SetReturnType(TypeSymbol* returnType_, Context* context)
+std::expected<bool, int> FunctionSymbol::SetReturnType(TypeSymbol* returnType_, Context* context)
 {
     returnType = returnType_;
     if (returnType)
@@ -627,10 +655,13 @@ void FunctionSymbol::SetReturnType(TypeSymbol* returnType_, Context* context)
         if (returnType->IsClassTypeSymbol() || returnType->IsForwardClassDeclarationSymbol())
         {
             SetReturnsClass();
-            TypeSymbol* returnValueType = returnType->AddPointer(context);
+            std::expected<TypeSymbol*, int> pt = returnType->AddPointer(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* returnValueType = *pt;
             SetReturnValueParam(new ParameterSymbol(U"@return_value", returnValueType));
         }
     }
+    return std::expected<bool, int>(true);
 }
 
 bool FunctionSymbol::IsTemplate() const
@@ -1012,11 +1043,15 @@ std::expected<bool, int> FunctionSymbol::GenerateCode(Emitter& emitter, std::vec
         otava::intermediate::Function* function = *frv;
         if (!functionType->ReturnType() || functionType->ReturnType()->IsVoidType())
         {
-            emitter.EmitCall(function, arguments);
+            std::expected<otava::intermediate::Value*, int> rv = emitter.EmitCall(function, arguments);
+            if (!rv) return std::unexpected<int>(rv.error());
         }
         else
         {
-            emitter.Stack().Push(emitter.EmitCall(function, arguments));
+            std::expected<otava::intermediate::Value*, int> rv = emitter.EmitCall(function, arguments);
+            if (!rv) return std::unexpected<int>(rv.error());
+            otava::intermediate::Value* call = *rv;
+            emitter.Stack().Push(call);
         }
     }
     else
@@ -1072,7 +1107,10 @@ std::expected<bool, int> FunctionSymbol::GenerateVirtualFunctionCall(Emitter& em
             otava::intermediate::Value* thisPtr = emitter.Stack().Pop();
             if (classType != vptrHolderClass)
             {
-                std::expected<otava::intermediate::Type*, int> irv = vptrHolderClass->AddPointer(context)->IrType(emitter, sourcePos, context);
+                std::expected<TypeSymbol*, int> pt = vptrHolderClass->AddPointer(context);
+                if (!pt) return std::unexpected<int>(pt.error());
+                TypeSymbol* type = *pt;
+                std::expected<otava::intermediate::Type*, int> irv = type->IrType(emitter, sourcePos, context);
                 if (!irv) return std::unexpected<int>(irv.error());
                 thisPtr = emitter.EmitBitcast(thisPtr, *irv);
             }
@@ -1134,11 +1172,15 @@ std::expected<bool, int> FunctionSymbol::GenerateVirtualFunctionCall(Emitter& em
     }
     if (!functionType->ReturnType() || functionType->ReturnType()->IsVoidType())
     {
-        emitter.EmitCall(callee, arguments);
+        std::expected<otava::intermediate::Value*, int> rv = emitter.EmitCall(callee, arguments);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
     else
     {
-        emitter.Stack().Push(emitter.EmitCall(callee, arguments));
+        std::expected<otava::intermediate::Value*, int> rv = emitter.EmitCall(callee, arguments);
+        if (!rv) return std::unexpected<int>(rv.error());
+        otava::intermediate::Value* call = *rv;
+        emitter.Stack().Push(call);
     }
     std::expected<bool, int> rv = context->GetBoundCompileUnit()->AddBoundNodeForClass(classType, sourcePos, context);
     if (!rv) return rv;
@@ -1159,7 +1201,10 @@ std::expected<otava::intermediate::Type*, int> FunctionSymbol::IrType(Emitter& e
         otava::intermediate::Type* returnIrType = nullptr;
         if (returnType && !ReturnsClass())
         {
-            auto frv = returnType->DirectType(context)->FinalType(sourcePos, context);
+            std::expected<TypeSymbol*, int> dt = returnType->DirectType(context);
+            if (!dt) return std::unexpected<int>(dt.error());
+            TypeSymbol* directType = *dt;
+            auto frv = directType->FinalType(sourcePos, context);
             if (!frv) return std::unexpected<int>(frv.error());
             TypeSymbol* finalType = *frv;
             std::expected<otava::intermediate::Type*, int> rv = finalType->IrType(emitter, sourcePos, context);
@@ -1173,13 +1218,20 @@ std::expected<otava::intermediate::Type*, int> FunctionSymbol::IrType(Emitter& e
         std::vector<otava::intermediate::Type*> paramIrTypes;
         for (ParameterSymbol* param : MemFunParameters(context))
         {
+            if (!Valid()) return std::unexpected<int>(GetError());
             otava::intermediate::Type* paramIrType = nullptr;
             std::expected<TypeSymbol*, int> rrv = param->GetReferredType(context);
             if (!rrv) return std::unexpected<int>(rrv.error());
             TypeSymbol* paramType = *rrv;
             if (paramType->IsClassTypeSymbol())
             {
-                std::expected<otava::intermediate::Type*, int> rv = paramType->AddConst(context)->AddLValueRef(context)->IrType(emitter, sourcePos, context);
+                std::expected<TypeSymbol*, int> pt = paramType->AddConst(context);
+                if (!pt) return std::unexpected<int>(pt.error());
+                TypeSymbol* type = *pt;
+                pt = type->AddLValueRef(context);
+                if (!pt) return std::unexpected<int>(pt.error());
+                type = *pt;
+                std::expected<otava::intermediate::Type*, int> rv = type->IrType(emitter, sourcePos, context);
                 if (!rv) return rv;
                 paramIrType = *rv;
             }
@@ -1200,7 +1252,9 @@ std::expected<otava::intermediate::Type*, int> FunctionSymbol::IrType(Emitter& e
             if (!rv) return rv;
             paramIrTypes.push_back(*rv);
         }
-        type = emitter.MakeFunctionType(returnIrType, paramIrTypes);
+        std::expected<otava::intermediate::Type*, int> rv = emitter.MakeFunctionType(returnIrType, paramIrTypes);
+        if (!rv) return rv;
+        type = *rv;
         emitter.SetType(Id(), type);
     }
     return std::expected<otava::intermediate::Type*, int>(type);
@@ -1226,7 +1280,9 @@ std::expected<std::string, int> FunctionSymbol::IrName(Context* context) const
     if (linkage == Linkage::cpp_linkage)
     {
         std::string irName;
-        SpecialFunctionKind specialFunctionKind = GetSpecialFunctionKind(context);
+        std::expected<SpecialFunctionKind, int> s = GetSpecialFunctionKind(context);
+        if (!s) return std::unexpected<int>(s.error());
+        SpecialFunctionKind specialFunctionKind = *s;
         std::string digestSource;
         if (specialFunctionKind != SpecialFunctionKind::none)
         {
@@ -1313,11 +1369,10 @@ std::expected<std::string, int> FunctionSymbol::IrName(Context* context) const
         digestSource.append(compileUnitId);
         if (returnType)
         {
-            fname = returnType->FullName();
-            if (!fname) return std::unexpected<int>(fname.error());
-            sfname = util::ToUtf8(*fname);
-            if (!sfname) return sfname;
-            digestSource.append(".").append(*sfname);
+            std::expected<std::string, int> irv = returnType->IrName(context);
+            if (!irv) return irv;
+            std::string retName = std::move(*irv);
+            digestSource.append(retName);
         }
         irName.append("_").append(util::GetSha1MessageDigest(digestSource));
         if (GetFlag(FunctionSymbolFlags::fixedIrName))
@@ -1415,6 +1470,7 @@ std::expected<bool, int> FunctionSymbol::CheckGenerateClassCopyCtor(const soul::
 {
     for (ParameterSymbol* parameter : MemFunParameters(context))
     {
+        if (!Valid()) return std::unexpected<int>(GetError());
         std::expected<TypeSymbol*, int> trv = parameter->GetReferredType(context);
         if (!trv) return std::unexpected<int>(trv.error());
         TypeSymbol* paramType = *trv;
@@ -1511,7 +1567,9 @@ std::expected<bool, int> FunctionDefinitionSymbol::Resolve(SymbolTable& symbolTa
     if (!rv) return rv;
     if (declarationId != util::nil_uuid())
     {
-        declaration = symbolTable.GetFunction(declarationId);
+        std::expected<FunctionSymbol*, int> f = symbolTable.GetFunction(declarationId);
+        if (!f) return std::unexpected<int>(f.error());
+        declaration = *f;
     }
     return std::expected<bool, int>(true);
 }
@@ -1540,7 +1598,8 @@ std::expected<std::string, int> FunctionDefinitionSymbol::IrName(Context* contex
     }
 }
 
-std::expected<otava::intermediate::Type*, int> FunctionDefinitionSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const
+std::expected<otava::intermediate::Type*, int> FunctionDefinitionSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, 
+    otava::symbols::Context* context) const
 {
     if (declaration)
     {
@@ -1552,13 +1611,16 @@ std::expected<otava::intermediate::Type*, int> FunctionDefinitionSymbol::IrType(
     }
 }
 
-void FunctionDefinitionSymbol::SetReturnType(TypeSymbol* returnType_, Context* context)
+std::expected<bool, int> FunctionDefinitionSymbol::SetReturnType(TypeSymbol* returnType_, Context* context)
 {
     if (declaration)
     {
-        declaration->SetReturnType(returnType_, context);
+        std::expected<bool, int> rv = declaration->SetReturnType(returnType_, context);
+        if (!rv) return rv;
     }
-    FunctionSymbol::SetReturnType(returnType_, context);
+    std::expected<bool, int> rv = FunctionSymbol::SetReturnType(returnType_, context);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
 }
 
 FunctionKind FunctionDefinitionSymbol::GetFunctionKind() const
@@ -1753,7 +1815,12 @@ ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDe
     }
     if (functionDefinitionSymbol->ReturnType())
     {
-        SetReturnType(functionDefinitionSymbol->ReturnType(), context);
+        std::expected<bool, int> rv = SetReturnType(functionDefinitionSymbol->ReturnType(), context);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
     }
 }
 

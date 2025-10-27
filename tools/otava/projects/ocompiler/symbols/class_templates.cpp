@@ -194,11 +194,15 @@ std::expected<bool, int> ClassTemplateSpecializationSymbol::Resolve(SymbolTable&
         }
         if (destructorId != util::nil_uuid())
         {
-            destructor = symbolTable.GetFunctionDefinition(destructorId);
+            std::expected<FunctionDefinitionSymbol*, int> d = symbolTable.GetFunctionDefinition(destructorId);
+            if (!d) return std::unexpected<int>(d.error());
+            destructor = *d;
         }
         for (const auto& vfId : instantiatedVirtualFunctionSpecializationIds)
         {
-            FunctionSymbol* vf = symbolTable.GetFunction(vfId);
+            std::expected<FunctionSymbol*, int> f = symbolTable.GetFunction(vfId);
+            if (!f) return std::unexpected<int>(f.error());
+            FunctionSymbol* vf = *f;
             if (vf)
             {
                 instantiatedVirtualFunctionSpecializations.push_back(vf);
@@ -217,7 +221,8 @@ void ClassTemplateSpecializationSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-TypeSymbol* ClassTemplateSpecializationSymbol::UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context)
+std::expected<TypeSymbol*, int> ClassTemplateSpecializationSymbol::UnifyTemplateArgumentType(
+    const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context)
 {
     std::vector<Symbol*> targetTemplateArguments;
     for (int i = 0; i < templateArguments.size(); ++i)
@@ -230,19 +235,23 @@ TypeSymbol* ClassTemplateSpecializationSymbol::UnifyTemplateArgumentType(const s
         }
         else
         {
-            return nullptr;
+            return std::expected<TypeSymbol*, int>(nullptr);
         }
-        TypeSymbol* templateArgumentType = sourceTemplateArgumentType->UnifyTemplateArgumentType(templateParameterMap, context);
+        std::expected<TypeSymbol*, int> ud = sourceTemplateArgumentType->UnifyTemplateArgumentType(templateParameterMap, context);
+        if (!ud) return ud;
+        TypeSymbol* templateArgumentType = *ud;
         if (templateArgumentType)
         {
             targetTemplateArguments.push_back(templateArgumentType);
         }
         else
         {
-            return nullptr;
+            return std::expected<TypeSymbol*, int>(nullptr);
         }
     }
-    return context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, targetTemplateArguments);
+    std::expected<ClassTemplateSpecializationSymbol*, int> sp = context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, targetTemplateArguments);
+    if (!sp) return std::unexpected<int>(sp.error());
+    return std::expected<TypeSymbol*, int>(*sp);
 }
 
 bool ClassTemplateSpecializationSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
@@ -266,7 +275,10 @@ std::expected<TypeSymbol*, int> ClassTemplateSpecializationSymbol::FinalType(con
         if (templateArg->IsTypeSymbol())
         {
             TypeSymbol* typeTemplateArg = static_cast<TypeSymbol*>(templateArg);
-            std::expected<TypeSymbol*, int> rv = typeTemplateArg->DirectType(context)->FinalType(sourcePos, context);
+            std::expected<TypeSymbol*, int> dt = typeTemplateArg->DirectType(context);
+            if (!dt) return dt;
+            TypeSymbol* directType = *dt;
+            std::expected<TypeSymbol*, int> rv = directType->FinalType(sourcePos, context);
             if (!rv) return rv;
             TypeSymbol* finalType = *rv;
             typeTemplateArg = finalType;
@@ -331,7 +343,8 @@ bool ClassTemplateSpecializationSymbol::ContainsVirtualFunctionSpecialization(Fu
     return false;
 }
 
-util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, int level, SymbolTable& symbolTable)
+std::expected<util::uuid, int> MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, 
+    int level, SymbolTable& symbolTable)
 {
     util::uuid id = classTemplate->Id();
     int n = static_cast<int>(templateArguments.size());
@@ -342,16 +355,21 @@ util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplat
         if (arg->IsClassTemplateSpecializationSymbol())
         {
             ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(arg);
-            argId = MakeClassTemplateSpecializationSymbolId(sp->ClassTemplate(), sp->TemplateArguments(), level + 1, symbolTable);
+            std::expected<util::uuid, int> a = MakeClassTemplateSpecializationSymbolId(sp->ClassTemplate(), sp->TemplateArguments(), level + 1, symbolTable);
+            if (!a) return a;
+            argId = *a;
         }
         util::Rotate(argId, (i + level + 1) & (util::uuid::static_size() - 1));
         util::Xor(id, argId);
     }
-    util::Xor(id, symbolTable.GetLevelId(level));
-    return id;
+    std::expected<util::uuid, int> l = symbolTable.GetLevelId(level);
+    if (!l) return l;
+    util::Xor(id, *l);
+    return std::expected<util::uuid, int>(id);
 }
 
-util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, SymbolTable& symbolTable)
+std::expected<util::uuid, int> MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, 
+    SymbolTable& symbolTable)
 {
     return MakeClassTemplateSpecializationSymbolId(classTemplate, templateArguments, 0, symbolTable);
 }
@@ -503,7 +521,9 @@ std::expected<bool, int> InstantiateVirtualFunctions(ClassTemplateSpecialization
         ClassTypeSymbol* classTemplate = specialization->ClassTemplate();
         for (FunctionSymbol* memFn : classTemplate->MemberFunctions())
         {
-            otava::ast::Node* node = context->GetSymbolTable()->GetNode(memFn);
+            std::expected<otava::ast::Node*, int> n = context->GetSymbolTable()->GetNode(memFn);
+            if (!n) return std::unexpected<int>(n.error());
+            otava::ast::Node* node = *n;
             if (node && IsVirtualFunctionNode(node))
             {
                 virtualFunctions.push_back(memFn);
@@ -543,14 +563,18 @@ std::expected<ClassTemplateSpecializationSymbol*, int> InstantiateClassTemplate(
         return Error("otava.symbols.class_templates: template declaration not found from class template '" + *name + "'", sourcePos, context);
     }
     int arity = templateDeclaration->Arity();
-    ClassTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, templateArgs);
+    std::expected<ClassTemplateSpecializationSymbol*, int> sp = context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, templateArgs);
+    if (!sp) return std::unexpected<int>(sp.error());
+    ClassTemplateSpecializationSymbol* specialization = *sp;
     int m = templateArgs.size();
     bool wasInstantiated = specialization->Instantiated();
     if (wasInstantiated && arity == m)
     {
         return std::expected<ClassTemplateSpecializationSymbol*, int>(specialization);
     }
-    ExplicitInstantiationSymbol* explicitInstantiation = context->GetSymbolTable()->GetExplicitInstantiation(specialization);
+    std::expected<ExplicitInstantiationSymbol*, int> e = context->GetSymbolTable()->GetExplicitInstantiation(specialization);
+    if (!e) return std::unexpected<int>(e.error());
+    ExplicitInstantiationSymbol* explicitInstantiation = *e;
     if (explicitInstantiation)
     {
         return std::expected<ClassTemplateSpecializationSymbol*, int>(explicitInstantiation->Specialization());
@@ -598,14 +622,17 @@ std::expected<ClassTemplateSpecializationSymbol*, int> InstantiateClassTemplate(
                 auto rv = ResolveType(defaultTemplateArgNode, DeclarationFlags::none, context);
                 if (!rv) return std::unexpected<int>(rv.error());
                 templateArg = *rv;
-                context->GetSymbolTable()->EndScope();
+                std::expected<bool, int> erv = context->GetSymbolTable()->EndScope();
+                if (!erv) return std::unexpected<int>(erv.error());
                 if (specialization->TemplateArguments().size() < arity)
                 {
                     specialization->AddTemplateArgument(templateArg);
                     context->GetSymbolTable()->UnmapClassTemplateSpecialization(specialization);
                     std::string oldId = util::ToString(specialization->Id());
-                    specialization->SetId(MakeClassTemplateSpecializationSymbolId(specialization->ClassTemplate(), specialization->TemplateArguments(),
-                        *context->GetSymbolTable()));
+                    std::expected<util::uuid, int> i = MakeClassTemplateSpecializationSymbolId(
+                        specialization->ClassTemplate(), specialization->TemplateArguments(), *context->GetSymbolTable());
+                    if (!i)  return std::unexpected<int>(i.error());
+                    specialization->SetId(*i);
                     context->GetSymbolTable()->MapClassTemplateSpecialization(specialization);
                 }
             }
@@ -627,7 +654,9 @@ std::expected<ClassTemplateSpecializationSymbol*, int> InstantiateClassTemplate(
                 CompoundTypeSymbol* specializationArgType = GetCompoundSpecializationArgType(specialization, i);
                 if (specializationArgType)
                 {
-                    templateArg = templateArgType->RemoveDerivations(specializationArgType->GetDerivations(), context);
+                    std::expected<TypeSymbol*, int> rd = templateArgType->RemoveDerivations(specializationArgType->GetDerivations(), context);
+                    if (!rd) return std::unexpected<int>(rd.error());
+                    templateArg = *rd;
                 }
                 else
                 {
@@ -647,7 +676,8 @@ std::expected<ClassTemplateSpecializationSymbol*, int> InstantiateClassTemplate(
     }
     if (wasInstantiated)
     {
-        context->GetSymbolTable()->EndScope();
+        std::expected<bool, int> erv = context->GetSymbolTable()->EndScope();
+        if (!erv) return std::unexpected<int>(erv.error());
         specialization->GetScope()->ClearParentScopes();
         for (const auto& boundTemplateParameter : boundTemplateParameters)
         {
@@ -684,8 +714,10 @@ std::expected<ClassTemplateSpecializationSymbol*, int> InstantiateClassTemplate(
         rv = InstantiateVirtualFunctions(specialization, sourcePos, context);
         if (!rv) return std::unexpected<int>(rv.error());
     }
-    context->GetSymbolTable()->EndScope();
-    context->GetSymbolTable()->EndScope();
+    std::expected<bool, int> erv = context->GetSymbolTable()->EndScope();
+    if (!erv) return std::unexpected<int>(erv.error());
+    erv = context->GetSymbolTable()->EndScope();
+    if (!erv) return std::unexpected<int>(erv.error());
     specialization->GetScope()->ClearParentScopes();
     for (const auto& boundTemplateParameter : boundTemplateParameters)
     {
@@ -792,7 +824,9 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
     {
         return std::expected<FunctionSymbol*, int>(functionDefinitionSymbol);
     }
-    ExplicitInstantiationSymbol* explicitInstantiation = context->GetSymbolTable()->GetExplicitInstantiation(classTemplateSpecialization);
+    std::expected<ExplicitInstantiationSymbol*, int> e = context->GetSymbolTable()->GetExplicitInstantiation(classTemplateSpecialization);
+    if (!e) return std::unexpected<int>(e.error());
+    ExplicitInstantiationSymbol* explicitInstantiation = *e;
     if (explicitInstantiation)
     {
         //bool isInline = memFn->IsInline() && context->ReleaseConfig() && otava::optimizer::HasOptimization(otava::optimizer::Optimizations::inlining);
@@ -803,7 +837,9 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
             if (memFn->IsFunctionDefinitionSymbol())
             {
                 FunctionDefinitionSymbol* memFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(memFn);
-                FunctionDefinitionSymbol* functionDefinitionSymbol = explicitInstantiation->GetFunctionDefinitionSymbol(memFnDefSymbol->DefIndex());
+                std::expected<FunctionDefinitionSymbol*, int> rv = explicitInstantiation->GetFunctionDefinitionSymbol(memFnDefSymbol->DefIndex());
+                if (!rv) return std::unexpected<int>(rv.error());
+                FunctionDefinitionSymbol* functionDefinitionSymbol = *rv;
                 functionDefinitionSymbol->SetDestructor(explicitInstantiation->Destructor());
                 return std::expected<FunctionSymbol*, int>(functionDefinitionSymbol);
             }
@@ -928,7 +964,8 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
                 if (classTemplateSpecialization->ContainsVirtualFunctionSpecialization(specialization))
                 {
                     context->PopFlags();
-                    context->GetSymbolTable()->EndScope();
+                    std::expected<bool, int> erv = context->GetSymbolTable()->EndScope();
+                    if (!erv) return std::unexpected<int>(erv.error());
                     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
                     if (prevParseMemberFunction)
                     {
@@ -980,7 +1017,8 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
                 {
                     return Error("otava.symbols.class_templates: function definition symbol expected", node->GetSourcePos(), context);
                 }
-                context->GetSymbolTable()->EndScope();
+                std::expected<bool, int> erv = context->GetSymbolTable()->EndScope();
+                if (!erv) return std::unexpected<int>(erv.error());
                 context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
                 if (prevParseMemberFunction)
                 {
@@ -1081,7 +1119,8 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
                     if (classTemplateSpecialization->ContainsVirtualFunctionSpecialization(specialization))
                     {
                         context->PopFlags();
-                        context->GetSymbolTable()->EndScope();
+                        std::expected<bool, int> erv = context->GetSymbolTable()->EndScope();
+                        if (!erv) return std::unexpected<int>(erv.error());
                         context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
                         if (prevParseMemberFunction)
                         {
@@ -1100,7 +1139,8 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
                 }
                 prv = instantiationScope.PopParentScope();
                 if (!prv) return std::unexpected<int>(prv.error());
-                context->GetSymbolTable()->EndScope();
+                std::expected<bool, int> erv = context->GetSymbolTable()->EndScope();
+                if (!erv) return std::unexpected<int>(erv.error());
                 context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
                 if (prevParseMemberFunction)
                 {

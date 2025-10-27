@@ -21,14 +21,15 @@ public:
     std::string SymbolKindStr() const override { return "compound type symbol"; }
     std::string SymbolDocKindStr() const override { return "compound_type"; }
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
-    TypeSymbol* PlainType(Context* context) override;
+    std::expected<TypeSymbol*, int> PlainType(Context* context) override;
     bool IsVoidPtrType() const override { return baseType->IsVoidType(); }
     int PointerCount() const override;
     inline TypeSymbol* BaseType() const { return baseType; }
     Derivations GetDerivations() const override { return derivations; }
-    TypeSymbol* RemoveDerivations(Derivations sourceDerivations, Context* context) override;
-    TypeSymbol* Unify(TypeSymbol* argType, Context* context) override;
-    TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
+    std::expected<TypeSymbol*, int> RemoveDerivations(Derivations sourceDerivations, Context* context) override;
+    std::expected<TypeSymbol*, int> Unify(TypeSymbol* argType, Context* context) override;
+    std::expected<TypeSymbol*, int> UnifyTemplateArgumentType(
+        const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
     std::expected<std::string, int> IrName(Context* context) const override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -37,11 +38,11 @@ public:
     bool IsExportSymbol(Context* context) const override;
     std::expected<otava::intermediate::Type*, int> IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::expected<TypeSymbol*, int> FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
-    TypeSymbol* DirectType(Context* context) override;
+    std::expected<TypeSymbol*, int> DirectType(Context* context) override;
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
-    bool IsBasicStringCharType(Context* context) override { return PointerCount() == 0 && PlainType(context)->IsBasicStringCharType(context); }
-    bool IsBasicStringChar16Type(Context* context) override { return PointerCount() == 0 && PlainType(context)->IsBasicStringChar16Type(context); }
-    bool IsBasicStringChar32Type(Context* context) override { return PointerCount() == 0 && PlainType(context)->IsBasicStringChar32Type(context); }
+    bool IsBasicStringCharType(Context* context) override;
+    bool IsBasicStringChar16Type(Context* context) override;
+    bool IsBasicStringChar32Type(Context* context) override;
 private:
     TypeSymbol* baseType;
     Derivations derivations;
@@ -49,6 +50,6 @@ private:
 };
 
 std::u32string MakeCompoundTypeName(TypeSymbol* baseType, Derivations derivations);
-util::uuid MakeCompoundTypeId(TypeSymbol* baseType, Derivations derivations, SymbolTable& symbolTable);
+std::expected<util::uuid, int> MakeCompoundTypeId(TypeSymbol* baseType, Derivations derivations, SymbolTable& symbolTable);
 
 } // namespace otava::symbols

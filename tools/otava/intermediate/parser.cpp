@@ -31,6 +31,8 @@ void Parse(const std::string& filePath, Context& context, bool verbose)
     }
     auto lexer = otava::intermediate::lexer::MakeLexer(content.c_str(), content.c_str() + content.length(), filePath);
     lexer.SetFile(fileIndex);
+    soul::lexer::LexerBase<char32_t>* lexerBase = &lexer;
+    context.SetLexer(lexerBase);
     using LexerType = decltype(lexer);
     lexer.SetRuleNameMapPtr(otava::intermediate::parser::rules::GetRuleNameMapPtr());
     otava::intermediate::parser::IntermediateParser<LexerType>::Parse(lexer, &context);

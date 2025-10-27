@@ -15,6 +15,10 @@ import otava.symbols.function.symbol;
 
 namespace otava::symbols {
 
+BoundTreeVisitor::BoundTreeVisitor() : error(0)
+{
+}
+
 BoundTreeVisitor::~BoundTreeVisitor()
 {
 }

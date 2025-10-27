@@ -56,12 +56,18 @@ IdentityConversion::IdentityConversion(TypeSymbol* type_, Context* context) : Fu
         SetError(rv.error());
         return;
     }
-    SetReturnType(type, context);
+    rv = SetReturnType(type, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
-void IdentityConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+std::expected<bool, int> IdentityConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
+    return std::expected<bool, int>(true);
 }
 
 class IdentityArgumentConversion : public ArgumentConversion
@@ -74,7 +80,11 @@ public:
 std::expected<FunctionSymbol*, int> IdentityArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
     FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    if (TypesEqual(argType->PlainType(context), paramType->PlainType(context), context))
+    std::expected<TypeSymbol*, int> pa = argType->PlainType(context);
+    if (!pa) return std::unexpected<int>(pa.error());
+    std::expected<TypeSymbol*, int> pp = paramType->PlainType(context);
+    if (!pp) return std::unexpected<int>(pp.error());
+    if (TypesEqual(*pa, *pp, context))
     {
         FunctionSymbol* fn = new IdentityConversion(argType, context);
         if (!fn->Valid())
@@ -115,7 +125,12 @@ DerivedToBaseConversion::DerivedToBaseConversion(TypeSymbol* derivedTypePtr_, Ty
         SetError(rv.error());
         return;
     }
-    SetReturnType(baseTypePtr, context);
+    rv = SetReturnType(baseTypePtr, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> DerivedToBaseConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -210,7 +225,12 @@ BaseToDerivedConversion::BaseToDerivedConversion(TypeSymbol* baseTypePtr_, TypeS
         SetError(rv.error());
         return;
     }
-    SetReturnType(derivedTypePtr, context);
+    rv = SetReturnType(derivedTypePtr, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> BaseToDerivedConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -297,7 +317,12 @@ NullPtrToPtrConversion::NullPtrToPtrConversion(TypeSymbol* argType_, TypeSymbol*
         SetError(rv.error());
         return;
     }
-    SetReturnType(pointerType, context);
+    rv = SetReturnType(pointerType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> NullPtrToPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -360,7 +385,12 @@ VoidPtrToPtrConversion::VoidPtrToPtrConversion(TypeSymbol* voidPtrType_, TypeSym
         SetError(rv.error());
         return;
     }
-    SetReturnType(targetPointerType, context);
+    rv = SetReturnType(targetPointerType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> VoidPtrToPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -422,7 +452,12 @@ PtrToVoidPtrConversion::PtrToVoidPtrConversion(TypeSymbol* ptrType_, TypeSymbol*
         SetError(rv.error());
         return;
     }
-    SetReturnType(voidPtrType, context);
+    rv = SetReturnType(voidPtrType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> PtrToVoidPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -485,7 +520,12 @@ PtrToPtrConversion::PtrToPtrConversion(TypeSymbol* sourcePtrType_, TypeSymbol* t
         SetError(rv.error());
         return;
     }
-    SetReturnType(targetPtrType, context);
+    rv = SetReturnType(targetPtrType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> PtrToPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -551,7 +591,12 @@ VoidPtrToUInt64Conversion::VoidPtrToUInt64Conversion(TypeSymbol* ptrType_, TypeS
         SetError(rv.error());
         return;
     }
-    SetReturnType(uint64Type, context);
+    rv = SetReturnType(uint64Type, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> VoidPtrToUInt64Conversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -577,7 +622,12 @@ std::expected<FunctionSymbol*, int> VoidPtrToUInt64ArgumentConversion::Get(TypeS
     std::expected<TypeSymbol*, int> rv = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType);
     if (!rv) return std::unexpected<int>(rv.error());
     TypeSymbol* uint64Type = *rv;
-    if (argType->PlainType(context)->IsVoidPtrType() && TypesEqual(paramType->PlainType(context), uint64Type, context))
+    std::expected<TypeSymbol*, int> pa = argType->PlainType(context);
+    if (!pa) return std::unexpected<int>(pa.error());
+    TypeSymbol* plainArgType = *pa;
+    std::expected<TypeSymbol*, int> pp = paramType->PlainType(context);
+    if (!pp) return std::unexpected<int>(pp.error());
+    if (plainArgType->IsVoidPtrType() && TypesEqual(*pp, uint64Type, context))
     {
         FunctionSymbol* fn = new VoidPtrToUInt64Conversion(argType, paramType, context);
         if (!fn->Valid())
@@ -617,7 +667,12 @@ UInt64ToVoidPtrConversion::UInt64ToVoidPtrConversion(TypeSymbol* uint64Type_, Ty
         SetError(rv.error());
         return;
     }
-    SetReturnType(ptrType, context);
+    rv = SetReturnType(ptrType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> UInt64ToVoidPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -682,7 +737,12 @@ PtrToBooleanConversion::PtrToBooleanConversion(TypeSymbol* ptrType_, TypeSymbol*
         SetError(rv.error());
         return;
     }
-    SetReturnType(boolType, context);
+    rv = SetReturnType(boolType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> PtrToBooleanConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -742,18 +802,37 @@ private:
 };
 
 ArrayToPtrConversion::ArrayToPtrConversion(ArrayTypeSymbol* arrayType_, Context* context) :
-    FunctionSymbol(U"@conversion"), arrayType(arrayType_), arrayPtrType(arrayType->AddPointer(context)), elementPtrType(arrayType->ElementType()->AddPointer(context))
+    FunctionSymbol(U"@conversion"), arrayType(arrayType_), arrayPtrType(nullptr), elementPtrType(nullptr)
 {
+    std::expected<TypeSymbol*, int> pt = arrayType->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    arrayPtrType = *pt;
+    pt = arrayType->ElementType()->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
     SetConversion();
     SetAccess(Access::public_);
-    ParameterSymbol* arg = new ParameterSymbol(U"arg", arrayType->AddPointer(context));
+    ParameterSymbol* arg = new ParameterSymbol(U"arg", arrayPtrType);
     std::expected<bool, int> rv = AddParameter(arg, soul::ast::SourcePos(), nullptr);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    SetReturnType(elementPtrType, context);
+    elementPtrType = *pt;
+    rv = SetReturnType(elementPtrType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> ArrayToPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -781,13 +860,21 @@ std::expected<FunctionSymbol*, int> ArrayToPtrArgumentConversion::Get(TypeSymbol
     if (argType->IsArrayTypeSymbol())
     {
         addAddr = true;
-        argType = argType->AddPointer(context);
+        std::expected<TypeSymbol*, int> rv = argType->AddPointer(context);
+        if (!rv) return std::unexpected<int>(rv.error());
+        argType = *rv;
     }
     if (argType->RemovePointer(context)->IsArrayTypeSymbol())
     {
-        ArrayTypeSymbol* arrayType = static_cast<ArrayTypeSymbol*>(argType->RemovePointer(context));
-        TypeSymbol* elementType = arrayType->ElementType()->AddPointer(context);
-        if (TypesEqual(paramType->RemoveConst(context), elementType, context))
+        std::expected<TypeSymbol*, int> pt = argType->RemovePointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        ArrayTypeSymbol* arrayType = *pt;
+        pt = arrayType->ElementType()->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* elementType = *pt;
+        pt = paramType->RemoveConst(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        if (TypesEqual(*pt, elementType, context))
         {
             if (addAddr)
             {
@@ -879,7 +966,12 @@ EnumTypeToUnderlyingTypeConversion::EnumTypeToUnderlyingTypeConversion(Enumerate
         SetError(rv.error());
         return;
     }
-    SetReturnType(underlyingType, context);
+    rv = SetReturnType(underlyingType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> EnumTypeToUnderlyingTypeConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -912,7 +1004,10 @@ std::expected<FunctionSymbol*, int> EnumTypeToUnderlyingTypeArgumentConversion::
             if (!rv) return std::unexpected<int>(rv.error());
             underlyingType = *rv;
         }
-        std::expected<TypeSymbol*, int> rv = underlyingType->DirectType(context)->FinalType(sourcePos, context);
+        std::expected<TypeSymbol*, int> dt = underlyingType->DirectType(context);
+        if (!dt) return std::unexpected<int>(dt.error());
+        TypeSymbol* directType = *dt;
+        std::expected<TypeSymbol*, int> rv = directType->FinalType(sourcePos, context);
         if (!rv) return std::unexpected<int>(rv.error());
         underlyingType = *rv;
         if (TypesEqual(paramType, underlyingType, context))
@@ -956,7 +1051,12 @@ UnderlyingTypeToEnumTypeConversion::UnderlyingTypeToEnumTypeConversion(Enumerate
         SetError(rv.error());
         return;
     }
-    SetReturnType(enumType, context);
+    rv = SetReturnType(enumType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> UnderlyingTypeToEnumTypeConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -989,7 +1089,10 @@ std::expected<FunctionSymbol*, int> UnderlyingTypeEnumTypeToArgumentConversion::
             if (!rv) return std::unexpected<int>(rv.error());
             underlyingType = *rv;
         }
-        std::expected<TypeSymbol*, int> rv = underlyingType->DirectType(context)->FinalType(sourcePos, context);
+        std::expected<TypeSymbol*, int> dt = underlyingType->DirectType(context);
+        if (!dt) return std::unexpected<int>(dt.error());
+        TypeSymbol* directType = *dt;
+        std::expected<TypeSymbol*, int> rv = directType->FinalType(sourcePos, context);
         if (!rv) return std::unexpected<int>(rv.error());
         underlyingType = *rv;
         if (TypesEqual(argType, underlyingType, context))
@@ -1034,7 +1137,12 @@ FunctionToFunctionPtrConversion::FunctionToFunctionPtrConversion(TypeSymbol* fun
         SetError(rv.error());
         return;
     }
-    SetReturnType(functionPtrType, context);
+    rv = SetReturnType(functionPtrType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> FunctionToFunctionPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -1059,8 +1167,8 @@ std::expected<bool, int> FunctionToFunctionPtrConversion::GenerateCode(Emitter& 
 class FunctionToFunctionPtrArgumentConversion : public ArgumentConversion
 {
 public:
-    FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<FunctionSymbol*, int> Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, 
+        FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context) override;
 };
 
 std::expected<FunctionSymbol*, int> FunctionToFunctionPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, 
@@ -1218,7 +1326,10 @@ std::expected<FunctionSymbol*, int> ArgumentConversionTable::GetArgumentConversi
     {
         return std::expected<FunctionSymbol*, int>(conversion);
     }
-    if (argType->PlainType(context)->IsClassTypeSymbol())
+    std::expected<TypeSymbol*, int> pa = argType->PlainType(context);
+    if (!pa) return std::unexpected<int>(pa.error());
+    TypeSymbol* plainArgType = *pa;
+    if (plainArgType->IsClassTypeSymbol())
     {
         ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(argType->GetBaseType());
         if (classType->IsClassTemplateSpecializationSymbol())

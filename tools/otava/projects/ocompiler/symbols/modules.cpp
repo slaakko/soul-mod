@@ -250,9 +250,9 @@ std::expected<bool, int> Module::Write(const std::string& root, const std::strin
     return Write(writer, context);
 }
 
-void Module::Init()
+std::expected<bool, int> Module::Init()
 {
-    symbolTable.Init();
+    return symbolTable.Init();
 }
 
 void Module::SetFile(otava::ast::File* astFile_)

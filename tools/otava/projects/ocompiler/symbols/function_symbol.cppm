@@ -78,7 +78,7 @@ public:
     inline void SetSkip() { SetFlag(FunctionSymbolFlags::skip); }
     virtual bool IsArrayElementAccess() const { return false; }
     TemplateDeclarationSymbol* ParentTemplateDeclaration() const;
-    virtual void SetReturnType(TypeSymbol* returnType_, Context* context);
+    virtual std::expected<bool, int> SetReturnType(TypeSymbol* returnType_, Context* context);
     inline TypeSymbol* ReturnType() const { return returnType; }
     inline bool ReturnsClass() const { return GetFlag(FunctionSymbolFlags::returnsClass); }
     inline void SetReturnsClass() { SetFlag(FunctionSymbolFlags::returnsClass); }
@@ -99,7 +99,7 @@ public:
     virtual bool IsDerivedToBaseConversion() const { return false; }
     std::expected<bool, int> AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     inline const std::vector<ParameterSymbol*>& Parameters() const { return parameters; }
-    inline const std::vector<ParameterSymbol*>& MemFunParameters(Context* context) const;
+    const std::vector<ParameterSymbol*>& MemFunParameters(Context* context) const;
     inline ParameterSymbol* ReturnValueParam() const { return returnValueParam.get(); }
     void SetReturnValueParam(ParameterSymbol* returnValueParam_);
     std::expected<bool, int> AddParameter(ParameterSymbol* parameter, const soul::ast::SourcePos& sourcePos, Context* context);
@@ -131,9 +131,9 @@ public:
     virtual bool IsFinal() const;
     void SetOverride();
     ClassTypeSymbol* ParentClassType() const override;
-    virtual ParameterSymbol* ThisParam(Context* context) const;
+    virtual std::expected<ParameterSymbol*, int> ThisParam(Context* context) const;
     virtual bool IsMemberFunction() const;
-    SpecialFunctionKind GetSpecialFunctionKind(Context* context) const;
+    std::expected<SpecialFunctionKind, int> GetSpecialFunctionKind(Context* context) const;
     inline Linkage GetLinkage() const { return linkage; }
     inline void SetLinkage(Linkage linkage_) { linkage = linkage_; }
     inline std::int32_t Index() const { return index; }
@@ -209,8 +209,8 @@ public:
     void SetDeclaration(FunctionSymbol* declaration_) { declaration = declaration_; }
     FunctionSymbol* Declaration() const { return declaration; }
     std::expected<std::string, int> IrName(Context* context) const override;
-    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const override;
-    void SetReturnType(TypeSymbol* returnType_, Context* context) override;
+    std::expected<otava::intermediate::Type*, int> IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const override;
+    std::expected<bool, int> SetReturnType(TypeSymbol* returnType_, Context* context) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;

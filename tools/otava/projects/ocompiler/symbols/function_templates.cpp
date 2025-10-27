@@ -93,9 +93,12 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
     }
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
-    std::expected<otava::ast::Node*, int> n = context->GetSymbolTable()->GetNode(functionTemplate)->Clone();
+    std::expected<otava::ast::Node*, int> n = context->GetSymbolTable()->GetNode(functionTemplate);
     if (!n) return std::unexpected<int>(n.error());
     otava::ast::Node* node = *n;
+    n = node->Clone();
+    if (!n) return std::unexpected<int>(n.error());
+    node = *n;
     if (node->IsFunctionDefinitionNode())
     {
         otava::ast::FunctionDefinitionNode* functionDefinitionNode = static_cast<otava::ast::FunctionDefinitionNode*>(node);
@@ -109,7 +112,9 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
                 node->GetSourcePos(), context);
         }
         InstantiationScope instantiationScope(functionTemplate->Parent()->GetScope());
-        std::expected<bool, int> prv = instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
+        std::expected<Scope*, int> nrv = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+        if (!nrv) return std::unexpected<int>(nrv.error());
+        std::expected<bool, int> prv = instantiationScope.PushParentScope(*nrv);
         if (!prv) return std::unexpected<int>(prv.error());
         prv = instantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
         if (!prv) return std::unexpected<int>(prv.error());
@@ -127,7 +132,8 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
                     std::expected<TypeSymbol*, int> trv = ResolveType(defaultTemplateArgNode, DeclarationFlags::none, context);
                     if (!trv) return std::unexpected<int>(trv.error());
                     templateArg = *trv;
-                    context->GetSymbolTable()->EndScope();
+                    std::expected<bool, int> erv = context->GetSymbolTable()->EndScope();
+                    if (!erv) return std::unexpected<int>(erv.error());
                 }
                 else
                 {
@@ -216,7 +222,8 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
         {
             return Error("otava.symbols.function_templates: function definition symbol expected", node->GetSourcePos(), context);
         }
-        context->GetSymbolTable()->EndScope();
+        std::expected<bool, int> erv = context->GetSymbolTable()->EndScope();
+        if (!erv) return std::unexpected<int>(erv.error());
         prv = instantiationScope.PopParentScope();
         if (!prv)  return std::unexpected<int>(prv.error());
         prv = instantiationScope.PopParentScope();
@@ -242,7 +249,9 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
                 node->GetSourcePos(), context);
         }
         InstantiationScope instantiationScope(functionTemplate->Parent()->GetScope());
-        std::expected<bool, int> prv = instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
+        std::expected<Scope*, int> nrv = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+        if (!nrv) return std::unexpected<int>(nrv.error());
+        std::expected<bool, int> prv = instantiationScope.PushParentScope(*nrv);
         if (!prv)  return std::unexpected<int>(prv.error());
         prv = instantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
         if (!prv)  return std::unexpected<int>(prv.error());
@@ -260,7 +269,8 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
                     std::expected<TypeSymbol*, int> trv = ResolveType(defaultTemplateArgNode, DeclarationFlags::none, context);
                     if (!trv) return std::unexpected<int>(trv.error());
                     templateArg = *trv;
-                    context->GetSymbolTable()->EndScope();
+                    std::expected<bool, int> erv = context->GetSymbolTable()->EndScope();
+                    if (!erv) return std::unexpected<int>(erv.error());
                 }
                 else
                 {
@@ -333,7 +343,8 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
             return Error("otava.symbols.function_templates: function symbol expected", node->GetSourcePos(), context);
         }
         context->PopFlags();
-        context->GetSymbolTable()->EndScope();
+        erv = context->GetSymbolTable()->EndScope();
+        if (!erv) return std::unexpected<int>(erv.error());
         prv = instantiationScope.PopParentScope();
         if (!prv)  return std::unexpected<int>(prv.error());
         prv = instantiationScope.PopParentScope();

@@ -112,17 +112,19 @@ EvaluationContext* Context::GetEvaluationContext()
     return symbolTable->GetModule()->GetEvaluationContext();
 }
 
-BoundExpressionNode* Context::GetThisPtr(const soul::ast::SourcePos& sourcePos)
+std::expected<BoundExpressionNode*, int> Context::GetThisPtr(const soul::ast::SourcePos& sourcePos)
 {
     FunctionDefinitionSymbol* function = boundFunction->GetFunctionDefinitionSymbol();
-    ParameterSymbol* thisParam = function->ThisParam(this);
+    std::expected<ParameterSymbol*, int> tp = function->ThisParam(this);
+    if (!tp) return std::unexpected<int>(tp.error());
+    ParameterSymbol* thisParam = *tp;
     if (thisParam)
     {
-        return new BoundParameterNode(thisParam, sourcePos, thisParam->GetType());
+        return std::expected<BoundExpressionNode*, int>(new BoundParameterNode(thisParam, sourcePos, thisParam->GetType()));
     }
     else
     {
-        return nullptr;
+        return std::expected<BoundExpressionNode*, int>(nullptr);
     }
 }
 

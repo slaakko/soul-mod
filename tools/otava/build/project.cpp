@@ -275,7 +275,8 @@ bool Project::UpToDate(const std::string& config, int optLevel) const
     for (const auto& sourceFileName : sourceFilePaths)
     {
         std::string sourceFilePath = util::Path::Combine(util::Path::GetDirectoryName(FilePath()), sourceFileName);
-        if (!std::filesystem::exists(sourceFilePath) || std::filesystem::last_write_time(outputFilePath) < std::filesystem::last_write_time(sourceFilePath))
+        if (!std::filesystem::exists(sourceFilePath) || 
+            std::filesystem::last_write_time(outputFilePath) < std::filesystem::last_write_time(sourceFilePath))
         {
             return false;
         }

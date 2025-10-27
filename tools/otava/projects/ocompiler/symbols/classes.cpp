@@ -417,7 +417,9 @@ std::expected<bool, int> ClassTypeSymbol::Resolve(SymbolTable& symbolTable, Cont
     if (!rv) return rv;
     for (const util::uuid& baseClassId : baseClassIds)
     {
-        Symbol* baseClassSymbol = symbolTable.GetSymbolMap()->GetSymbol(symbolTable.GetModule(), SymbolKind::null, baseClassId);
+        std::expected<Symbol*, int> rv= symbolTable.GetSymbolMap()->GetSymbol(symbolTable.GetModule(), SymbolKind::null, baseClassId);
+        if (!rv) return std::unexpected<int>(rv.error());
+        Symbol* baseClassSymbol = *rv;
         if (baseClassSymbol->IsClassTypeSymbol())
         {
             std::expected<bool, int> brv = GetScope()->AddBaseScope(baseClassSymbol->GetScope(), soul::ast::SourcePos(), nullptr);
@@ -455,23 +457,31 @@ std::expected<bool, int> ClassTypeSymbol::Resolve(SymbolTable& symbolTable, Cont
     }
     for (const auto& fnIndexId : functionIdMap)
     {
-        FunctionSymbol* function = symbolTable.GetFunction(fnIndexId.second);
+        std::expected<FunctionSymbol*, int> f = symbolTable.GetFunction(fnIndexId.second);
+        if (!f) return std::unexpected<int>(f.error());
+        FunctionSymbol* function = *f;
+/*
         if (!function)
         {
             function = symbolTable.GetFunctionDefinition(fnIndexId.second);
         }
+*/
         functionIndexMap[fnIndexId.first] = function;
     }
     if (groupId != util::nil_uuid())
     {
-        group = symbolTable.GetClassGroup(groupId);
+        std::expected<ClassGroupSymbol*, int> g = symbolTable.GetClassGroup(groupId);
+        if (!g) return std::unexpected<int>(g.error());
+        group = *g;
     }
     memFnDefSymbolMap.clear();
     for (const auto& mfIndexSymbolIdPair : memFnDefSymbolIdMap)
     {
         int32_t index = mfIndexSymbolIdPair.first;
         util::uuid mfnid = mfIndexSymbolIdPair.second;
-        FunctionDefinitionSymbol* mfn = symbolTable.GetFunctionDefinition(mfnid);
+        std::expected<FunctionDefinitionSymbol*, int> d = symbolTable.GetFunctionDefinition(mfnid);
+        if (!d) return std::unexpected<int>(d.error());
+        FunctionDefinitionSymbol* mfn = *d;
         memFnDefSymbolMap[index] = mfn;
     }
     memFnDefSymbolIdMap.clear();
@@ -518,7 +528,9 @@ std::expected<bool, int> ClassTypeSymbol::MakeObjectLayout(const soul::ast::Sour
         if (IsPolymorphic())
         {
             SetVPtrIndex(static_cast<std::int32_t>(objectLayout.size()));
-            objectLayout.push_back(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType)->AddPointer(context));
+            std::expected<TypeSymbol*, int> pt = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType)->AddPointer(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            objectLayout.push_back(*pt);
             SetDeltaIndex(static_cast<std::int32_t>(objectLayout.size()));
             objectLayout.push_back(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType));
         }
@@ -732,7 +744,10 @@ std::expected<otava::intermediate::Type*, int> ClassTypeSymbol::VPtrType(Emitter
     std::expected<otava::intermediate::Type*, int> prv = emitter.MakePtrType(emitter.GetVoidType());
     if (!prv) return std::unexpected<int>(prv.error());
     otava::intermediate::Type* voidPtrIrType = *prv;
-    prv = emitter.MakePtrType(emitter.MakeArrayType(vtabSize * 2 + otava::symbols::vtabClassIdElementCount, voidPtrIrType));
+    std::expected<otava::intermediate::Type*, int> rv = emitter.MakeArrayType(vtabSize * 2 + otava::symbols::vtabClassIdElementCount, voidPtrIrType);
+    if (!rv) return rv;
+    otava::intermediate::Type* type = *rv;
+    prv = emitter.MakePtrType(type);
     otava::intermediate::Type* vptrType = *prv;
     return std::expected<otava::intermediate::Type*, int>(vptrType);
 }
@@ -747,7 +762,9 @@ std::expected<otava::intermediate::Value*, int> ClassTypeSymbol::GetVTabVariable
         std::expected<otava::intermediate::Type*, int> prv = emitter.MakePtrType(emitter.GetVoidType());
         if (!prv) return std::unexpected<int>(prv.error());
         otava::intermediate::Type* voidPtrIrType = *prv;
-        otava::intermediate::Type* arrayType = emitter.MakeArrayType(vtabSize * 2 + otava::symbols::vtabClassIdElementCount, voidPtrIrType);
+        std::expected<otava::intermediate::Type*, int> rv = emitter.MakeArrayType(vtabSize * 2 + otava::symbols::vtabClassIdElementCount, voidPtrIrType);
+        if (!rv) return std::unexpected<int>(rv.error());
+        otava::intermediate::Type* arrayType = *rv;
         std::expected<otava::intermediate::Value*, int> grv = emitter.EmitGlobalVariable(arrayType, VTabName(context), nullptr);
         if (!grv) return std::unexpected<int>(grv.error());
         vtabVariable = *grv;
@@ -876,7 +893,9 @@ std::expected<otava::intermediate::Type*, int> ClassTypeSymbol::IrType(Emitter& 
         otava::intermediate::MetadataStruct* metadataStruct = emitter.CreateMetadataStruct();
         metadataStruct->AddItem("fullName", emitter.CreateMetadataString(*sfname));
         otava::intermediate::MetadataRef* metadataRef = emitter.CreateMetadataRef(metadataStruct->Id());
-        otava::intermediate::Type* type = emitter.MakeStructureType(elementTypes, *sfname);
+        std::expected<otava::intermediate::Type*, int> srv = emitter.MakeStructureType(elementTypes, *sfname);
+        if (!srv) return std::unexpected<int>(srv.error());
+        otava::intermediate::Type* type = *srv;
         otava::intermediate::StructureType* structureType = static_cast<otava::intermediate::StructureType*>(type);
         structureType->SetMetadataRef(metadataRef);
         irType = type;
@@ -968,9 +987,18 @@ std::expected<bool, int> ClassTypeSymbol::GenerateCopyCtor(const soul::ast::Sour
     VariableSymbol* classTempVar = new VariableSymbol(U"@class_temp");
     classTempVar->SetDeclaredType(this);
     tempVars.push_back(std::unique_ptr<Symbol>(classTempVar));
-    args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(new BoundVariableNode(classTempVar, sourcePos), sourcePos, classTempVar->GetType()->AddPointer(context))));
+    std::expected<TypeSymbol*, int> pt = classTempVar->GetType()->AddPointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(
+        new BoundVariableNode(classTempVar, sourcePos), sourcePos, *pt)));
     VariableSymbol* constLvalueRefTempVar = new VariableSymbol(U"@const_lvalue_ref_temp");
-    constLvalueRefTempVar->SetDeclaredType(this->AddConst(context)->AddLValueRef(context));
+    pt = this->AddConst(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* type = *pt;
+    pt = type->AddLValueRef(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    type = *pt;
+    constLvalueRefTempVar->SetDeclaredType(type);
     tempVars.push_back(std::unique_ptr<Symbol>(constLvalueRefTempVar));
     args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundVariableNode(constLvalueRefTempVar, sourcePos)));
     std::vector<TypeSymbol*> templateArgs;
@@ -1313,13 +1341,15 @@ std::expected<bool, int> BeginClass(otava::ast::Node* node, Context* context)
     TypeSymbol* specialization = nullptr;
     std::expected<bool, int> rv = GetClassAttributes(node, name, kind, specialization, context);
     if (!rv) return rv;
-    context->GetSymbolTable()->BeginClass(name, kind, specialization, node, context);
+    rv = context->GetSymbolTable()->BeginClass(name, kind, specialization, node, context);
+    if (!rv) return rv;
     std::expected<std::vector<ClassTypeSymbol*>, int> brv = ResolveBaseClasses(node, context);
     if (!brv) return std::unexpected<int>(brv.error());
     std::vector<ClassTypeSymbol*> baseClasses = std::move(*brv);
     for (ClassTypeSymbol* baseClass : baseClasses)
     {
-        context->GetSymbolTable()->AddBaseClass(baseClass, node->GetSourcePos(), context);
+        rv = context->GetSymbolTable()->AddBaseClass(baseClass, node->GetSourcePos(), context);
+        if (!rv) return rv;
     }
     context->PushSetFlag(ContextFlags::parseMemberFunction);
     return std::expected<bool, int>(true);
@@ -1358,11 +1388,12 @@ std::expected<bool, int> EndClass(otava::ast::Node* node, Context* context)
         }
     }
     context->PopFlags();
-    context->GetSymbolTable()->EndClass();
+    std::expected<bool, int> rv = context->GetSymbolTable()->EndClass();
+    if (!rv) return rv;
     if (classTypeSymbol->Level() == 0)
     {
-        std::expected<bool, int> rv = ParseInlineMemberFunctions(specNode, classTypeSymbol, context);
-        if (!rv) return std::unexpected<int>(rv.error());
+        rv = ParseInlineMemberFunctions(specNode, classTypeSymbol, context);
+        if (!rv) return rv;
     }
     std::set<const Symbol*> visited;
     if (!classTypeSymbol->IsTemplate() && !classTypeSymbol->IsTemplateParameterInstantiation(context, visited))
@@ -1382,11 +1413,13 @@ std::expected<bool, int> ProcessElaboratedClassDeclaration(otava::ast::Node* nod
     if (!rv) return rv;
     if (context->GetFlag(ContextFlags::friendSpecifier))
     {
-        context->GetSymbolTable()->AddFriend(name, node, context);
+        rv = context->GetSymbolTable()->AddFriend(name, node, context);
+        if (!rv) return rv;
     }
     else
     {
-        context->GetSymbolTable()->AddForwardClassDeclaration(name, kind, specialization, node, context);
+        rv = context->GetSymbolTable()->AddForwardClassDeclaration(name, kind, specialization, node, context);
+        if (!rv) return rv;
     }
     return std::expected<bool, int>(true);
 }
@@ -1428,7 +1461,13 @@ InlineMemberFunctionParserVisitor::InlineMemberFunctionParserVisitor(Context* co
 
 void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode& node)
 {
-    Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
+    std::expected<Symbol*, int> s = context->GetSymbolTable()->GetSymbol(&node);
+    if (!s)
+    {
+        SetError(s.error());
+        return;
+    }
+    Symbol* symbol = *s;
     otava::ast::Node* fnBody = node.FunctionBody();
     otava::ast::ConstructorInitializerNode* ctorInitializerNode = nullptr;
     otava::ast::CompoundStatementNode* compoundStatementNode = nullptr;
@@ -1501,7 +1540,8 @@ std::expected<bool, int> ParseInlineMemberFunctions(otava::ast::Node* classSpeci
     InlineMemberFunctionParserVisitor visitor(context);
     classSpecifierNode->Accept(visitor);
     if (!visitor) return std::unexpected<int>(visitor.Error());
-    context->GetSymbolTable()->EndScope();
+    std::expected<bool, int> erv = context->GetSymbolTable()->EndScope();
+    if (!erv) return std::unexpected<int>(erv.error());
     return std::expected<bool, int>(true);
 }
 
@@ -1626,13 +1666,17 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
             if (!rv) return std::unexpected<int>(rv.error());
         }
         BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVar, sourcePos);
-        ParameterSymbol* thisParam = destructorDefinitionSymbol->ThisParam(context);
+        std::expected<ParameterSymbol*, int> tp = destructorDefinitionSymbol->ThisParam(context);
+        if (!tp) return std::unexpected<int>(tp.error());
+        ParameterSymbol* thisParam = *tp;
         std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
         if (!rrv) return std::unexpected<int>(rrv.error());
         TypeSymbol* referredType = *rrv;
         BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, referredType);
         boundVariableNode->SetThisPtr(thisPtr);
-        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariableNode, sourcePos, boundVariableNode->GetType()->AddPointer(context))));
+        std::expected<TypeSymbol*, int> pt = boundVariableNode->GetType()->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariableNode, sourcePos, *pt)));
         std::vector<TypeSymbol*> templateArgs;
         std::expected<std::unique_ptr<BoundFunctionCallNode>, int> rv = ResolveOverload(
             context->GetSymbolTable()->CurrentScope(), U"@destructor", templateArgs, args, sourcePos, context);
@@ -1650,10 +1694,14 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
     {
         ClassTypeSymbol* baseClass = classTypeSymbol->BaseClasses()[i];
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
-        ParameterSymbol* thisParam = destructorDefinitionSymbol->ThisParam(context);
+        std::expected<ParameterSymbol*, int> tp = destructorDefinitionSymbol->ThisParam(context);
+        if (!tp) return std::unexpected<int>(tp.error());
+        ParameterSymbol* thisParam = *tp;
         BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, thisParam->GetType());
+        std::expected<TypeSymbol*, int> pt = baseClass->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
         std::expected<FunctionSymbol*, int> rv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+            *pt, thisPtr->GetType(), sourcePos, context);
         if (!rv) return std::unexpected<int>(rv.error());
         FunctionSymbol* conversion = *rv;
         if (conversion)
@@ -1730,12 +1778,17 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
         {
             if (vptrHolderClass != classTypeSymbol)
             {
-                std::expected<TypeSymbol*, int> rrv = destructor->ThisParam(context)->GetReferredType(context);
+                std::expected<ParameterSymbol*, int> tp = destructor->ThisParam(context);
+                if (!tp) return std::unexpected<int>(tp.error());
+                ParameterSymbol* thisParam = *tp;
+                std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
                 if (!rrv) return std::unexpected<int>(rrv.error());
                 TypeSymbol* referredType = *rrv;
-                BoundExpressionNode* thisPtr = new BoundParameterNode(destructor->ThisParam(context), sourcePos, referredType);
+                BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, referredType);
+                std::expected<TypeSymbol*, int> pt = vptrHolderClass->AddPointer(context);
+                if (!pt) return std::unexpected<int>(pt.error());
                 std::expected<FunctionSymbol*, int> rv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                    vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+                    *pt, thisPtr->GetType(), sourcePos, context);
                 if (!rv) return std::unexpected<int>(rv.error());
                 FunctionSymbol* conversion = *rv;
                 if (conversion)
@@ -1751,10 +1804,13 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
             }
             else
             {
-                std::expected<TypeSymbol*, int> rrv = destructor->ThisParam(context)->GetReferredType(context);
+                std::expected<ParameterSymbol*, int> tp = destructor->ThisParam(context);
+                if (!tp) return std::unexpected<int>(tp.error());
+                ParameterSymbol* thisParam = *tp;
+                std::expected<TypeSymbol*, int> rrv = thisParam->GetReferredType(context);
                 if (!rrv) return std::unexpected<int>(rrv.error());
                 TypeSymbol* referredType = *rrv;
-                BoundExpressionNode* thisPtr = new BoundParameterNode(destructor->ThisParam(context), sourcePos, referredType);
+                BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, referredType);
                 BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classTypeSymbol, classTypeSymbol, sourcePos);
                 body->AddStatement(setVPtrStatement);
             }

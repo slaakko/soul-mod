@@ -139,7 +139,9 @@ std::expected<otava::intermediate::Type*, int> FunctionTypeSymbol::IrType(Emitte
         std::expected<otava::intermediate::Type*, int> rv = returnType->IrType(emitter, sourcePos, context);
         if (!rv) return rv;
         otava::intermediate::Type* retType = *rv;
-        type = emitter.MakeFunctionType(retType, paramTypes);
+        rv = emitter.MakeFunctionType(retType, paramTypes);
+        if (!rv) return rv;
+        type = *rv;
         emitter.SetType(Id(), type);
     }
     return std::expected<otava::intermediate::Type*, int>(type);

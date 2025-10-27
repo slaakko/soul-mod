@@ -411,7 +411,7 @@ public:
     void AddStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs, MetadataRef* mdRef);
     void AddArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
     void AddFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
-    void Resolve(Context* context);
+    std::expected<bool, int> Resolve(Context* context);
     std::expected<bool, int> ResolveType(TypeRef& typeRef, Context* context);
     std::expected<bool, int> Add(Type* type, Context* context);
     Type* Get(std::int32_t id) const;
@@ -431,9 +431,10 @@ public:
     inline DoubleType* GetDoubleType() const { return const_cast<DoubleType*>(&doubleType); }
     std::expected<PointerType*, int> MakePointerType(const soul::ast::Span& span, std::int32_t baseTypeId, std::int8_t pointerCount, Context* context);
     std::expected<Type*, int> MakePtrType(Type* baseType);
-    StructureType* GetStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
-    ArrayType* GetArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
-    FunctionType* GetFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
+    std::expected<StructureType*, int> GetStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
+    std::expected<ArrayType*, int> GetArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
+    std::expected<FunctionType*, int> GetFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, 
+        const std::vector<TypeRef>& paramTypeRefs);
     FwdDeclaredStructureType* GetFwdDeclaredStructureType(const util::uuid& id);
     FwdDeclaredStructureType* MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId, const std::string& comment);
     void AddFwdDependentType(FwdDeclaredStructureType* fwdType, Type* type);

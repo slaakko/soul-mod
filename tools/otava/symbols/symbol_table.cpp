@@ -1626,6 +1626,7 @@ FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, const std::
     functionSymbol->SetFunctionQualifiers(qualifiers);
     functionSymbol->SetLinkage(currentLinkage);
     functionSymbol->SetDeclarationFlags(flags);
+    if (node) functionSymbol->SetSourcePos(node->GetSourcePos());
     if ((flags & (DeclarationFlags::inlineFlag | DeclarationFlags::constExprFlag)) != DeclarationFlags::none)
     {
         functionSymbol->SetInline();
@@ -1683,6 +1684,7 @@ FunctionDefinitionSymbol* SymbolTable::AddOrGetFunctionDefinition(Scope* scope, 
     functionDefinition->SetFunctionQualifiers(qualifiers);
     functionDefinition->SetSpecialization(specialization);
     functionDefinition->SetParent(currentScope->SymbolScope()->GetSymbol());
+    if (node) functionDefinition->SetSourcePos(node->GetSourcePos());
     int index = 0;
     for (const auto& parameterType : parameterTypes)
     {

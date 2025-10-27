@@ -31,14 +31,14 @@ std::expected<int, int> BeginFunctionDefinition(otava::ast::Node* declSpecifierS
 std::expected<bool, int> EndFunctionDefinition(otava::ast::Node* functionDefinitionNode, int scopes, Context* context);
 std::expected<bool, int> ProcessMemberFunctionDefinition(otava::ast::Node* node, Context* context);
 std::expected<TypeSymbol*, int> ProcessExplicitInstantiationDeclaration(otava::ast::Node* node, Context* context);
-TypeSymbol* MapType(FunctionSymbol* functionSymbol, TypeSymbol* type, Context* context);
+std::expected<TypeSymbol*, int> MapType(FunctionSymbol* functionSymbol, TypeSymbol* type, Context* context);
 std::expected<bool, int> GenerateDynamicInitialization(VariableSymbol* variable, BoundExpressionNode* initializer, const soul::ast::SourcePos& sourcePos, Context* context);
 std::expected<std::unique_ptr<BoundFunctionCallNode>, int> MakeAtExitForVariable(VariableSymbol* variable, const soul::ast::SourcePos& sourcePos, Context* context);
 std::expected<bool, int> AddConvertingConstructorToConversionTable(FunctionSymbol* functionSymbol, const soul::ast::SourcePos& sourcePos, Context* context);
 bool HasNoReturnAttribute(otava::ast::Node* attributes);
 
-void Write(Writer& writer, DeclarationFlags flags);
-void Read(Reader& reader, DeclarationFlags& flags);
+std::expected<bool, int> Write(Writer& writer, DeclarationFlags flags);
+std::expected<bool, int> Read(Reader& reader, DeclarationFlags& flags);
 
 std::unexpected<int> ReturnDeclarationParsingError(const soul::ast::SourcePos& sourcePos, Context* context);
 

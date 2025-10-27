@@ -178,8 +178,11 @@ int main(int argc, const char** argv)
         }
         if (paths.size() < 2)
         {
-            PrintHelp();
-            return 1;
+            if (verbose)
+            {
+                std::cout << "single path given" << "\n";
+            }
+            return 0;
         }
         if (paths.size() == 2 && std::filesystem::is_regular_file(paths.front()) && std::filesystem::is_regular_file(paths.back()))
         {
@@ -199,7 +202,7 @@ int main(int argc, const char** argv)
         }
         else
         {
-            return 1;
+            return 0;
         }
 
     }

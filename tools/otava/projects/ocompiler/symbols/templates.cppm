@@ -43,8 +43,9 @@ public:
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
-    TypeSymbol* Unify(TypeSymbol* argType, Context* context) override;
-    TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
+    std::expected<TypeSymbol*, int> Unify(TypeSymbol* argType, Context* context) override;
+    std::expected<TypeSymbol*, int> UnifyTemplateArgumentType(
+        const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
 private:
     Symbol* constraint;
     util::uuid constraintId;
@@ -92,10 +93,10 @@ class ExplicitInstantiationSymbol : public Symbol
 public:
     ExplicitInstantiationSymbol();
     ExplicitInstantiationSymbol(ClassTemplateSpecializationSymbol* specialization_);
-    ~ExplicitInstantiationSymbol(); // delete functionDefinitionSymbols
+    ~ExplicitInstantiationSymbol(); 
     inline ClassTemplateSpecializationSymbol* Specialization() const { return specialization; }
     void AddFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol, const soul::ast::SourcePos& sourcePos, Context* context);
-    FunctionDefinitionSymbol* GetFunctionDefinitionSymbol(int index)  const;
+    std::expected<FunctionDefinitionSymbol*, int> GetFunctionDefinitionSymbol(int index)  const;
     FunctionDefinitionSymbol* Destructor() const;
     std::string SymbolKindStr() const override { return "explicit instantiation symbol"; }
     std::string SymbolDocKindStr() const override { return "explicit_instantiation"; }
@@ -111,11 +112,11 @@ private:
     FunctionDefinitionSymbol* destructor;
 };
 
-void BeginTemplateDeclaration(otava::ast::Node* node, Context* context);
-void EndTemplateDeclaration(otava::ast::Node* node, Context* context);
-void RemoveTemplateDeclaration(Context* context);
-void AddTemplateParameter(otava::ast::Node* templateParameterNode, int index, Context* context);
+std::expected<bool, int> BeginTemplateDeclaration(otava::ast::Node* node, Context* context);
+std::expected<bool, int> EndTemplateDeclaration(otava::ast::Node* node, Context* context);
+std::expected<bool, int> RemoveTemplateDeclaration(Context* context);
+std::expected<bool, int> AddTemplateParameter(otava::ast::Node* templateParameterNode, int index, Context* context);
 bool TemplateArgCanBeTypeId(otava::ast::Node* templateIdNode, int index);
-void ProcessExplicitInstantiation(otava::ast::Node* node, Context* context);
+std::expected<bool, int> ProcessExplicitInstantiation(otava::ast::Node* node, Context* context);
 
 } // namespace otava::symbols

@@ -39,7 +39,8 @@ bool NamespaceSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 std::expected<bool, int> NamespaceSymbol::Import(NamespaceSymbol* that, Context* context)
 {
     SymbolTable* symbolTable = context->GetSymbolTable();
-    symbolTable->BeginNamespace(that->Name(), nullptr, context);
+    std::expected<bool, int> rv = symbolTable->BeginNamespace(that->Name(), nullptr, context);
+    if (!rv) return rv;
     Scope* currentScope = symbolTable->CurrentScope();
     Symbol* symbol = currentScope->GetSymbol();
     NamespaceSymbol* ns = nullptr;
@@ -56,7 +57,7 @@ std::expected<bool, int> NamespaceSymbol::Import(NamespaceSymbol* that, Context*
         if (symbol->IsNamespaceSymbol())
         {
             NamespaceSymbol* thatNs = static_cast<NamespaceSymbol*>(symbol.get());
-            std::expected<bool, int> rv = ns->Import(thatNs, context);
+            rv = ns->Import(thatNs, context);
             if (!rv) return rv;
         }
         else
@@ -121,7 +122,8 @@ std::expected<bool, int> NamespaceSymbol::Import(NamespaceSymbol* that, Context*
         }
     }
     currentScope->Import(that->GetScope(), context);
-    symbolTable->EndNamespace();
+    rv = symbolTable->EndNamespace();
+    if (!rv) return rv;
     return std::expected<bool, int>(true);
 }
 
@@ -167,14 +169,21 @@ void NamespaceCreator::Visit(otava::ast::ColonColonNode& node)
 void NamespaceCreator::Visit(otava::ast::IdentifierNode& node)
 {
     first = false;
-    context->GetSymbolTable()->BeginNamespace(&node, context);
+    std::expected<bool, int> rv = context->GetSymbolTable()->BeginNamespace(&node, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
     currentScope = context->GetSymbolTable()->CurrentScope();
 }
 
-void BeginNamespace(otava::ast::Node* node, Context* context)
+std::expected<bool, int> BeginNamespace(otava::ast::Node* node, Context* context)
 {
     NamespaceCreator creator(context);
     node->Accept(creator);
+    if (!creator) return std::unexpected<int>(creator.Error());
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> EndNamespace(otava::ast::Node* node, int level, Context* context)
@@ -183,8 +192,7 @@ std::expected<bool, int> EndNamespace(otava::ast::Node* node, int level, Context
     {
         return Error("otava.symbols.namespace: EndNamespace(): namespace scope expected", node->GetSourcePos(), context);
     }
-    context->GetSymbolTable()->EndNamespace(level);
-    return std::expected<bool, int>(true);
+    return context->GetSymbolTable()->EndNamespace(level);
 }
 
 bool NamespaceLess::operator()(NamespaceSymbol* left, NamespaceSymbol* right) const

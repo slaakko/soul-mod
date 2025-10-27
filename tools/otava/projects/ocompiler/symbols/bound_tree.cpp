@@ -264,9 +264,15 @@ std::expected<Scope*, int> BoundExpressionNode::GetMemberScope(otava::ast::Node*
 {
     if (type)
     {
+        std::expected<TypeSymbol*, int> pt = type->PlainType(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* plainType = *pt;
         if (op->IsDotNode())
         {
-            std::expected<TypeSymbol*, int> rv = type->DirectType(context)->FinalType(sourcePos, context);
+            std::expected<TypeSymbol*, int> dt = type->DirectType(context);
+            if (!dt) return std::unexpected<int>(dt.error());
+            TypeSymbol* directType = *dt;
+            std::expected<TypeSymbol*, int> rv = directType->FinalType(sourcePos, context);
             if (!rv) return std::unexpected<int>(rv.error());
             TypeSymbol* finalType = *rv;
             TypeSymbol* baseType = finalType->GetBaseType();
@@ -274,15 +280,24 @@ std::expected<Scope*, int> BoundExpressionNode::GetMemberScope(otava::ast::Node*
         }
         else if (op->IsArrowNode() && type->IsPointerType())
         {
-            std::expected<TypeSymbol*, int> rv = type->DirectType(context)->FinalType(sourcePos, context);
+            std::expected<TypeSymbol*, int> dt = type->DirectType(context);
+            if (!dt) return std::unexpected<int>(dt.error());
+            TypeSymbol* directType = *dt;
+            std::expected<TypeSymbol*, int> rv = directType->FinalType(sourcePos, context);
             if (!rv) return std::unexpected<int>(rv.error());
             TypeSymbol* finalType = *rv;
-            TypeSymbol* baseType = finalType->RemovePointer(context)->GetBaseType();
+            std::expected<TypeSymbol*, int> pt = finalType->RemovePointer(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* type = *pt;
+            TypeSymbol* baseType = type->GetBaseType();
             return baseType->GetScope();
         }
-        else if (op->IsArrowNode() && type->PlainType(context)->IsClassTypeSymbol())
+        else if (op->IsArrowNode() && plainType->IsClassTypeSymbol())
         {
-            std::expected<TypeSymbol*, int> rv = type->PlainType(context)->DirectType(context)->FinalType(sourcePos, context);
+            std::expected<TypeSymbol*, int> dt = plainType->DirectType(context);
+            if (!dt) return std::unexpected<int>(dt.error());
+            TypeSymbol* directType = *dt;
+            std::expected<TypeSymbol*, int> rv = directType->FinalType(sourcePos, context);
             if (!rv) return std::unexpected<int>(rv.error());
             TypeSymbol* finalType = *rv;
             TypeSymbol* baseType = finalType;
@@ -306,7 +321,10 @@ std::expected<bool, int> BoundExpressionNode::ModifyTypes(const soul::ast::Sourc
 {
     if (type)
     {
-        std::expected<TypeSymbol*, int> rv = type->DirectType(context)->FinalType(sourcePos, context);
+        std::expected<TypeSymbol*, int> dt = type->DirectType(context);
+        if (!dt) return std::unexpected<int>(dt.error());
+        TypeSymbol* directType = *dt;
+        std::expected<TypeSymbol*, int> rv = directType->FinalType(sourcePos, context);
         if (!rv) return std::unexpected<int>(rv.error());
         TypeSymbol* finalType = *rv;
         type = finalType;
@@ -329,9 +347,10 @@ BoundExpressionNode* BoundValueExpressionNode::Clone() const
     return new BoundValueExpressionNode(value, GetType());
 }
 
-void BoundValueExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> BoundValueExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     emitter.Stack().Push(value);
+    return std::expected<bool, int>(true);
 }
 
 BoundCompileUnitNode::BoundCompileUnitNode() :
@@ -431,7 +450,10 @@ std::expected<otava::intermediate::Value*, int> BoundCompileUnitNode::CreateBoun
     {
         if (globalVariableSymbol->GetValue())
         {
-            initializer = globalVariableSymbol->GetValue()->IrValue(emitter, sourcePos, context);
+            std::expected<otava::intermediate::Value*, int> irv = globalVariableSymbol->GetValue()->IrValue(emitter, sourcePos, context);
+            if (!irv) return irv;
+            otava::intermediate::Value* irValue = *irv;
+            initializer = irValue;
         }
         else
         {
@@ -943,7 +965,10 @@ void BoundLiteralNode::Accept(BoundTreeVisitor& visitor)
 
 std::expected<bool, int> BoundLiteralNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    emitter.Stack().Push(value->IrValue(emitter, sourcePos, context));
+    std::expected<otava::intermediate::Value*, int> irv = value->IrValue(emitter, sourcePos, context);
+    if (!irv) return std::unexpected<int>(irv.error());
+    otava::intermediate::Value* irValue = *irv;
+    emitter.Stack().Push(irValue);
     return std::expected<bool, int>(true);
 }
 
@@ -968,7 +993,9 @@ std::expected<bool, int> BoundStringLiteralNode::Load(Emitter& emitter, Operatio
 {
     if (!irValue)
     {
-        irValue = value->IrValue(emitter, sourcePos, context);
+        std::expected<otava::intermediate::Value*, int> irv = value->IrValue(emitter, sourcePos, context);
+        if (!irv) return std::unexpected<int>(irv.error());
+        irValue = *irv;
     }
     emitter.Stack().Push(irValue);
     return std::expected<bool, int>(true);
@@ -1396,7 +1423,10 @@ std::expected<bool, int> BoundEnumConstant::Load(Emitter& emitter, OperationFlag
     }
     else
     {
-        emitter.Stack().Push(enumConstant->GetValue()->IrValue(emitter, sourcePos, context));
+        std::expected<otava::intermediate::Value*, int> irv = enumConstant->GetValue()->IrValue(emitter, sourcePos, context);
+        if (!irv) return std::unexpected<int>(irv.error());
+        otava::intermediate::Value* irValue = *irv;
+        emitter.Stack().Push(irValue);
     }
     return std::expected<bool, int>(true);
 }
@@ -1763,7 +1793,9 @@ std::expected<bool, int> BoundFunctionPtrCallNode::Load(Emitter& emitter, Operat
             irArgs.push_back(irArg);
         }
     }
-    otava::intermediate::Value* value = emitter.EmitCall(callee, irArgs);
+    std::expected<otava::intermediate::Value*, int> rv = emitter.EmitCall(callee, irArgs);
+    if (!rv) return std::unexpected<int>(rv.error());
+    otava::intermediate::Value* value = *rv;
     emitter.Stack().Push(value);
     return std::expected<bool, int>(true);
 }

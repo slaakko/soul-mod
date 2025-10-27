@@ -7,6 +7,8 @@ export module otava.symbols.variable.symbol;
 
 import std;
 import otava.symbols.symbol;
+import otava.symbols.reader;
+import otava.symbols.writer;
 import otava.ast.node;
 
 export namespace otava::symbols {
@@ -62,6 +64,6 @@ struct VariableLess
     bool operator()(VariableSymbol* left, VariableSymbol* right) const;
 };
 
-void SetDeclaredVariableType(VariableSymbol* variable, const soul::ast::SourcePos& sourcePos, Context* context);
+std::expected<bool, int> SetDeclaredVariableType(VariableSymbol* variable, const soul::ast::SourcePos& sourcePos, Context* context);
 
 } // namespace otava::symbols

@@ -2713,7 +2713,7 @@ std::expected<RegValue*, int> Function::GetRegRef(const soul::ast::Span& span, T
         }
         else
         {
-            return Error("error referencing register value " + std::to_string(reg) + ": type conflick", span, context, regValue->Span());
+            return Error("error referencing register value " + std::to_string(reg) + ": type conflict", span, context, regValue->Span());
         }
     }
     else

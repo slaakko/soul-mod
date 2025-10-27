@@ -75,7 +75,9 @@ std::expected<FunctionSymbol*, int> InstantiateInlineFunction(FunctionSymbol* fn
     {
         otava::ast::FunctionDefinitionNode* functionDefinitionNode = static_cast<otava::ast::FunctionDefinitionNode*>(node);
         InstantiationScope instantiationScope(fn->Parent()->GetScope());
-        std::expected<bool, int> prv = instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
+        std::expected<Scope*, int> nrv = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+        if (!nrv) return std::unexpected<int>(nrv.error());
+        std::expected<bool, int> prv = instantiationScope.PushParentScope(*nrv);
         if (!prv) return std::unexpected<int>(prv.error());
         prv = instantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
         if (!prv) return std::unexpected<int>(prv.error());
@@ -143,7 +145,8 @@ std::expected<FunctionSymbol*, int> InstantiateInlineFunction(FunctionSymbol* fn
         {
             return Error("otava.symbols.inline_functions: function definition symbol expected", node->GetSourcePos(), context);
         }
-        context->GetSymbolTable()->EndScope();
+        std::expected<bool, int> erv = context->GetSymbolTable()->EndScope();
+        if (!erv) return std::unexpected<int>(erv.error());
         prv = instantiationScope.PopParentScope();
         if (!prv) return std::unexpected<int>(prv.error());
         prv = instantiationScope.PopParentScope();

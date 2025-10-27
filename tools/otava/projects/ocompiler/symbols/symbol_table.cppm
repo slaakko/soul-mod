@@ -95,7 +95,9 @@ void SetProjectReady(bool projectReady_);
 
 struct ClassTemplateNameLess
 {
+    ClassTemplateNameLess();
     bool operator()(ClassTemplateSpecializationSymbol* left, ClassTemplateSpecializationSymbol* right) const;
+    int error;
 };
 
 class SymbolTable
@@ -105,7 +107,7 @@ public:
     inline void SetModule(Module* module_) { module = module_; }
     inline Module* GetModule() const { return module; }
     inline NamespaceSymbol* GlobalNs() const { return globalNs.get(); }
-    void Init();
+    std::expected<bool, int> Init();
     std::expected<bool, int> Import(const SymbolTable& that, FunctionDefinitionSymbolSet* functionDefinitionSymbolSet);
     std::expected<bool, int> Write(Writer& writer, Context* context);
     std::expected<bool, int> Read(Reader& reader);
@@ -120,65 +122,67 @@ public:
     inline void SetErrorTypeSymbol(TypeSymbol* errorTypeSymbol_) { errorTypeSymbol = errorTypeSymbol_; }
     inline Scope* CurrentScope() const { return currentScope; }
     void SetCurrentScope(Scope* scope);
-    Scope* GetNamespaceScope(const std::u32string& nsName, const soul::ast::SourcePos& sourcePos, Context* context);
+    std::expected<Scope*, int> GetNamespaceScope(const std::u32string& nsName, const soul::ast::SourcePos& sourcePos, Context* context);
     void PushScope();
-    void PopScope();
+    std::expected<bool, int> PopScope();
     void BeginScope(Scope* scope);
-    void EndScope();
-    void BeginScopeGeneric(Scope* scope, Context* context);
-    void EndScopeGeneric(Context* context);
+    std::expected<bool, int> EndScope();
+    std::expected<bool, int> BeginScopeGeneric(Scope* scope, Context* context);
+    std::expected<bool, int> EndScopeGeneric(Context* context);
     void PushTopScopeIndex();
     void PopTopScopeIndex();
     void SetTopScopeIndex(int topScopeIndex_) { topScopeIndex = topScopeIndex_; }
     inline int TopScopeIndex() const { return topScopeIndex; }
-    void BeginNamespace(const std::u32string& name, otava::ast::Node* node, Context* context);
-    void EndNamespace();
-    void BeginNamespace(otava::ast::Node* node, Context* context);
-    void EndNamespace(int level);
-    void BeginClass(const std::u32string& name, ClassKind classKind, TypeSymbol* spcialiation, otava::ast::Node* node, Context* context);
-    void AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
-    void EndClass();
-    void AddForwardClassDeclaration(const std::u32string& name, ClassKind classKind, TypeSymbol* specialization, otava::ast::Node* node, Context* context);
-    void AddFriend(const std::u32string& name, otava::ast::Node* node, Context* context);
-    void BeginEnumeratedType(const std::u32string& name, EnumTypeKind kind, TypeSymbol* underlyingType, otava::ast::Node* node, Context* context);
-    void EndEnumeratedType();
-    void AddForwardEnumDeclaration(const std::u32string& name, EnumTypeKind enumTypeKind, TypeSymbol* underlyingType, otava::ast::Node* node, Context* context);
-    void AddEnumerator(const std::u32string& name, Value* value, otava::ast::Node* node, Context* context);
-    BlockSymbol* BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context);
-    void EndBlock(Context* context);
-    void RemoveBlock();
-    void BeginTemplateDeclaration(otava::ast::Node* node, Context* context);
-    void EndTemplateDeclaration();
-    void RemoveTemplateDeclaration();
-    void AddTemplateParameter(const std::u32string& name, otava::ast::Node* node, Symbol* constraint, int index, ParameterSymbol* parameter,
+    std::expected<bool, int> BeginNamespace(const std::u32string& name, otava::ast::Node* node, Context* context);
+    std::expected<bool, int> EndNamespace();
+    std::expected<bool, int> BeginNamespace(otava::ast::Node* node, Context* context);
+    std::expected<bool, int> EndNamespace(int level);
+    std::expected<bool, int> BeginClass(const std::u32string& name, ClassKind classKind, TypeSymbol* spcialiation, otava::ast::Node* node, Context* context);
+    std::expected<bool, int> AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
+    std::expected<bool, int> EndClass();
+    std::expected<bool, int> AddForwardClassDeclaration(const std::u32string& name, ClassKind classKind, TypeSymbol* specialization, 
+        otava::ast::Node* node, Context* context);
+    std::expected<bool, int> AddFriend(const std::u32string& name, otava::ast::Node* node, Context* context);
+    std::expected<bool, int> BeginEnumeratedType(const std::u32string& name, EnumTypeKind kind, TypeSymbol* underlyingType, otava::ast::Node* node, Context* context);
+    std::expected<bool, int> EndEnumeratedType();
+    std::expected<bool, int> AddForwardEnumDeclaration(const std::u32string& name, EnumTypeKind enumTypeKind, TypeSymbol* underlyingType, otava::ast::Node* node, 
+        Context* context);
+    std::expected<bool, int> AddEnumerator(const std::u32string& name, Value* value, otava::ast::Node* node, Context* context);
+    std::expected<BlockSymbol*, int> BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context);
+    std::expected<bool, int> EndBlock(Context* context);
+    std::expected<bool, int> RemoveBlock();
+    std::expected<bool, int> BeginTemplateDeclaration(otava::ast::Node* node, Context* context);
+    std::expected<bool, int> EndTemplateDeclaration();
+    std::expected<bool, int> RemoveTemplateDeclaration();
+    std::expected<bool, int> AddTemplateParameter(const std::u32string& name, otava::ast::Node* node, Symbol* constraint, int index, ParameterSymbol* parameter,
         otava::ast::Node* defaultTemplateArgNode, Context* context);
-    FunctionSymbol* AddFunction(const std::u32string& name, const std::vector<TypeSymbol*>& specialization, otava::ast::Node* node, FunctionKind kind,
+    std::expected<FunctionSymbol*, int> AddFunction(const std::u32string& name, const std::vector<TypeSymbol*>& specialization, otava::ast::Node* node, FunctionKind kind,
         FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context);
     std::expected<bool, int> AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol, Context* context);
-    FunctionDefinitionSymbol* AddOrGetFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& specialization,
+    std::expected<FunctionDefinitionSymbol*, int> AddOrGetFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& specialization,
         const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, FunctionKind kind, DeclarationFlags declarationFlags,
         otava::ast::Node* node, otava::ast::Node* functionNode, bool& get, Context* context);
     ParameterSymbol* CreateParameter(const std::u32string& name, otava::ast::Node* node, TypeSymbol* type, Context* context);
-    VariableSymbol* AddVariable(const std::u32string& name, otava::ast::Node* node, TypeSymbol* declaredType, TypeSymbol* type,
+    std::expected<VariableSymbol*, int> AddVariable(const std::u32string& name, otava::ast::Node* node, TypeSymbol* declaredType, TypeSymbol* type,
         Value* value, DeclarationFlags flags, Context* context);
-    AliasTypeSymbol* AddAliasType(otava::ast::Node* idNnode, otava::ast::Node* aliasTypeNode, TypeSymbol* type, Context* context);
-    void AddUsingDeclaration(otava::ast::Node* node, Symbol* symbol, Context* context);
-    void AddUsingDirective(NamespaceSymbol* ns, otava::ast::Node* node, Context* context);
-    TypeSymbol* MakeCompoundType(TypeSymbol* baseType, Derivations derivations);
+    std::expected<AliasTypeSymbol*, int> AddAliasType(otava::ast::Node* idNnode, otava::ast::Node* aliasTypeNode, TypeSymbol* type, Context* context);
+    std::expected<bool, int> AddUsingDeclaration(otava::ast::Node* node, Symbol* symbol, Context* context);
+    std::expected<bool, int> AddUsingDirective(NamespaceSymbol* ns, otava::ast::Node* node, Context* context);
+    std::expected<TypeSymbol*, int> MakeCompoundType(TypeSymbol* baseType, Derivations derivations);
     void AddCompoundType(CompoundTypeSymbol* compoundType);
     void MapCompoundType(CompoundTypeSymbol* compoundType);
     CompoundTypeSymbol* GetCompoundType(const util::uuid& compoundTypeId) const;
-    TypeSymbol* MakeConstCharPtrType();
-    TypeSymbol* MakeConstChar8PtrType();
-    TypeSymbol* MakeConstChar16PtrType();
-    TypeSymbol* MakeConstChar32PtrType();
-    TypeSymbol* MakeConstWCharPtrType();
+    std::expected<TypeSymbol*, int> MakeConstCharPtrType();
+    std::expected<TypeSymbol*, int> MakeConstChar8PtrType();
+    std::expected<TypeSymbol*, int> MakeConstChar16PtrType();
+    std::expected<TypeSymbol*, int> MakeConstChar32PtrType();
+    std::expected<TypeSymbol*, int> MakeConstWCharPtrType();
     FunctionTypeSymbol* MakeFunctionTypeSymbol(FunctionSymbol* functionSymbol);
     FunctionGroupTypeSymbol* MakeFunctionGroupTypeSymbol(FunctionGroupSymbol* functionGroup);
     ClassGroupTypeSymbol* MakeClassGroupTypeSymbol(ClassGroupSymbol* classGroup);
     AliasGroupTypeSymbol* MakeAliasGroupTypeSymbol(AliasGroupSymbol* aliasGroup);
-    ConceptSymbol* AddConcept(const std::u32string& name, otava::ast::Node* node, Context* context);
-    ClassTemplateSpecializationSymbol* MakeClassTemplateSpecialization(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments);
+    std::expected<ConceptSymbol*, int> AddConcept(const std::u32string& name, otava::ast::Node* node, Context* context);
+    std::expected<ClassTemplateSpecializationSymbol*, int> MakeClassTemplateSpecialization(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments);
     AliasTypeTemplateSpecializationSymbol* MakeAliasTypeTemplateSpecialization(TypeSymbol* aliasTypeTemplate, const std::vector<Symbol*>& templateArguments);
     ArrayTypeSymbol* MakeArrayType(TypeSymbol* elementType, std::int64_t size);
     DependentTypeSymbol* MakeDependentTypeSymbol(otava::ast::Node* node);
@@ -187,21 +191,21 @@ public:
         LookupFlags flags);
     std::expected<Symbol*, int> LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, 
         Context* context, LookupFlags flags);
-    std::expected<Symbol*, int> LookupSymbol(Symbol* symbol);
+    Symbol* LookupSymbol(Symbol* symbol);
     void ResolveForwardDeclarations();
-    void CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs,
-        int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context);
+    std::expected<bool, int> CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName, 
+        const std::vector<TypeSymbol*>& templateArgs, int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context);
     void MapNode(otava::ast::Node* node);
     void MapNode(otava::ast::Node* node, Symbol* symbol);
     void MapNode(otava::ast::Node* node, Symbol* symbol, MapKind kind);
     otava::ast::Node* GetNodeNothrow(Symbol* symbol) const;
-    otava::ast::Node* GetNode(Symbol* symbol) const;
+    std::expected<otava::ast::Node*, int> GetNode(Symbol* symbol) const;
     void RemoveNode(otava::ast::Node* node);
     void RemoveSymbol(Symbol* symbol);
     otava::ast::Node* GetSpecifierNode(Symbol* symbol) const;
     void SetSpecifierNode(Symbol* symbol, otava::ast::Node* node);
     Symbol* GetSymbolNothrow(otava::ast::Node* node) const;
-    Symbol* GetSymbol(otava::ast::Node* node) const;
+    std::expected<Symbol*, int> GetSymbol(otava::ast::Node* node) const;
     TypeSymbol* GetTypeNoThrow(const util::uuid& id) const;
     TypeSymbol* GetType(const util::uuid& id) const;
     void MapType(TypeSymbol* type);
@@ -215,16 +219,16 @@ public:
     void MapClassGroup(ClassGroupSymbol* classGroup);
     void MapAliasGroup(AliasGroupSymbol* aliasGroup);
     void MapConcept(ConceptSymbol* cncp);
-    FunctionSymbol* GetFunction(const util::uuid& id) const;
-    FunctionDefinitionSymbol* GetFunctionDefinition(const util::uuid& id) const;
-    AliasTypeSymbol* GetAliasType(const util::uuid& id) const;
-    ClassTypeSymbol* GetClass(const util::uuid& id) const;
-    VariableSymbol* GetVariable(const util::uuid& id) const;
-    ConceptSymbol* GetConcept(const util::uuid& id) const;
-    Symbol* GetConstraint(const util::uuid& id) const;
-    FunctionGroupSymbol* GetFunctionGroup(const util::uuid& id) const;
-    ClassGroupSymbol* GetClassGroup(const util::uuid& id) const;
-    AliasGroupSymbol* GetAliasGroup(const util::uuid& id) const;
+    std::expected<FunctionSymbol*, int> GetFunction(const util::uuid& id) const;
+    std::expected<FunctionDefinitionSymbol*, int> GetFunctionDefinition(const util::uuid& id) const;
+    std::expected<AliasTypeSymbol*, int> GetAliasType(const util::uuid& id) const;
+    std::expected<ClassTypeSymbol*, int> GetClass(const util::uuid& id) const;
+    std::expected<VariableSymbol*, int> GetVariable(const util::uuid& id) const;
+    std::expected<ConceptSymbol*, int> GetConcept(const util::uuid& id) const;
+    std::expected<Symbol*, int> GetConstraint(const util::uuid& id) const;
+    std::expected<FunctionGroupSymbol*, int> GetFunctionGroup(const util::uuid& id) const;
+    std::expected<ClassGroupSymbol*, int> GetClassGroup(const util::uuid& id) const;
+    std::expected<AliasGroupSymbol*, int> GetAliasGroup(const util::uuid& id) const;
     TypeSymbol* GetFundamentalType(FundamentalTypeKind kind) const;
     inline void SetAddToRecomputeNameSet(bool addToRecomputeNameSet_) { addToRecomputeNameSet = addToRecomputeNameSet_; }
     inline bool AddToRecomputeNameSet() const { return addToRecomputeNameSet; }
@@ -249,7 +253,7 @@ public:
     inline Linkage CurrentLinkage() const { return currentLinkage; }
     void PushLinkage(Linkage linkage_);
     void PopLinkage();
-    ExplicitInstantiationSymbol* GetExplicitInstantiation(ClassTemplateSpecializationSymbol* classTemplateSpecialization) const;
+    std::expected<ExplicitInstantiationSymbol*, int> GetExplicitInstantiation(ClassTemplateSpecializationSymbol* classTemplateSpecialization) const;
     void AddExplicitInstantiation(ExplicitInstantiationSymbol* explicitInstantition);
     void MapExplicitInstantiation(ExplicitInstantiationSymbol* explicitInstantition);
     //const info::class_index& ClassIndex() const { return index; } // todo
@@ -261,19 +265,19 @@ public:
     void UnmapClassTemplateSpecialization(ClassTemplateSpecializationSymbol* sp);
     void AddAliasTypeTemplateSpecializationToSet(AliasTypeTemplateSpecializationSymbol* at);
     void AddArrayTypeToSet(ArrayTypeSymbol* a);
-    std::expected<bool, int> ImportAfterResolve();
+    void ImportAfterResolve();
     std::expected<bool, int> ToXml(const std::string& xmlFilePath) const;
     void InitTemplateParameterIds();
     void InitCompoundTypeIds();
     void InitLevelIds();
-    const util::uuid& GetTemplateParameterId(int index) const;
-    const util::uuid& GetCompoundTypeId(int index) const;
-    const util::uuid& GetLevelId(int level) const;
+    std::expected<util::uuid, int> GetTemplateParameterId(int index) const;
+    std::expected<util::uuid, int> GetCompoundTypeId(int index) const;
+    std::expected<util::uuid, int> GetLevelId(int level) const;
 private:
-    void CreateFundamentalTypes();
-    void AddFundamentalType(FundamentalTypeKind kind);
-    void CreateCoreSymbols();
-    void AddFundamentalTypeOperations();
+    std::expected<bool, int> CreateFundamentalTypes();
+    std::expected<bool, int> AddFundamentalType(FundamentalTypeKind kind);
+    std::expected<bool, int> CreateCoreSymbols();
+    std::expected<bool, int> AddFundamentalTypeOperations();
     void ImportSpecializations(const SymbolTable& that);
     void ImportArrayTypes(const SymbolTable& that);
     void ImportDependentTypes(const SymbolTable& that);
@@ -290,13 +294,13 @@ private:
     void ImportForwardDeclarations(const SymbolTable& that);
     void ImportSpecifierMap(const SymbolTable& that);
     void ImportClasses(const SymbolTable& that);
-    void ImportExplicitInstantiations(const SymbolTable& that);
+    std::expected<bool, int> ImportExplicitInstantiations(const SymbolTable& that);
     void ImportFunctionGroupTypes(const SymbolTable& that);
     void ImportClassGroups(const SymbolTable& that);
     void ImportAliasGroups(const SymbolTable& that);
     void ImportClassGroupTypes(const SymbolTable& that);
     void ImportAliasGroupTypes(const SymbolTable& that);
-    void ImportClassIndex(const SymbolTable& that);
+    // void ImportClassIndex(const SymbolTable& that); TODO
     void AddImportAfterResolve(const SymbolTable* that);
     Module* module;
     std::unique_ptr<NamespaceSymbol> globalNs;

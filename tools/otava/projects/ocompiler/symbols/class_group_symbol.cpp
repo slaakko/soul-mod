@@ -139,7 +139,9 @@ std::expected<bool, int> ClassGroupSymbol::Resolve(SymbolTable& symbolTable, Con
     if (!rv) return rv;
     for (const auto& classId : classIds)
     {
-        ClassTypeSymbol* cls = symbolTable.GetClass(classId);
+        std::expected<ClassTypeSymbol*, int> c = symbolTable.GetClass(classId);
+        if (!c) return std::unexpected<int>(c.error());
+        ClassTypeSymbol* cls = *c;
         if (std::find(classes.begin(), classes.end(), cls) == classes.end())
         {
             classes.push_back(cls);
@@ -180,7 +182,7 @@ struct ViableClassGreater
     }
 };
 
-int Match(Symbol* templateArg, TypeSymbol* specialization, int index, TemplateMatchInfo& info, Context* context)
+std::expected<int, int> Match(Symbol* templateArg, TypeSymbol* specialization, int index, TemplateMatchInfo& info, Context* context)
 {
     if (templateArg->IsCompoundTypeSymbol())
     {
@@ -194,7 +196,7 @@ int Match(Symbol* templateArg, TypeSymbol* specialization, int index, TemplateMa
             if (numMatchingDerivations > 0)
             {
                 info.kind = TemplateMatchKind::partialSpecialization;
-                return numMatchingDerivations;
+                return std::expected<int, int>(numMatchingDerivations);
             }
         }
     }
@@ -233,14 +235,16 @@ int Match(Symbol* templateArg, TypeSymbol* specialization, int index, TemplateMa
                                 auto it = info.templateParameterMap.find(templateParameter);
                                 if (it == info.templateParameterMap.end())
                                 {
-                                    templateArgumentType = argTypeSymbol->RemoveDerivations(templateTypeSymbol->GetDerivations(), context);
+                                    std::expected<TypeSymbol*, int> rd = argTypeSymbol->RemoveDerivations(templateTypeSymbol->GetDerivations(), context);
+                                    if (!rd) return std::unexpected<int>(rd.error());
+                                    templateArgumentType = *rd;
                                     if (templateArgumentType)
                                     {
                                         info.templateParameterMap[templateParameter] = templateArgumentType;
                                     }
                                     else
                                     {
-                                        return -1;
+                                        return std::expected<int, int>(-1);
                                     }
                                 }
                                 else
@@ -248,24 +252,26 @@ int Match(Symbol* templateArg, TypeSymbol* specialization, int index, TemplateMa
                                     templateArgumentType = it->second;
                                 }
                             }
-                            templateTypeSymbol = templateTypeSymbol->Unify(templateArgumentType, context);
+                            std::expected<TypeSymbol*, int> ud = templateTypeSymbol->Unify(templateArgumentType, context);
+                            if (!ud) return std::unexpected<int>(ud.error());
+                            templateTypeSymbol = *ud;
                             if (!templateTypeSymbol)
                             {
-                                return -1;
+                                return std::expected<int, int>(-1);
                             }
                             if (!TypesEqual(argTypeSymbol, templateTypeSymbol, context))
                             {
-                                return -1;
+                                return std::expected<int, int>(-1);
                             }
                         }
                     }
                     info.kind = TemplateMatchKind::explicitSpecialization;
-                    return 1;
+                    return std::expected<int, int>(1);
                 }
             }
         }
     }
-    return -1;
+    return std::expected<int, int>(-1);
 }
 
 std::vector<Symbol*> MakeTemplateArgs(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParamMap)
@@ -278,7 +284,7 @@ std::vector<Symbol*> MakeTemplateArgs(const std::map<TemplateParameterSymbol*, T
     return templateArgs;
 }
 
-ClassTypeSymbol* ClassGroupSymbol::GetBestMatchingClass(const std::vector<Symbol*>& templateArgs, TemplateMatchInfo& matchInfo, Context* context) const
+std::expected<ClassTypeSymbol*, int> ClassGroupSymbol::GetBestMatchingClass(const std::vector<Symbol*>& templateArgs, TemplateMatchInfo& matchInfo, Context* context) const
 {
     std::vector<std::pair<ClassTypeSymbol*, TemplateMatchInfo>> viableClasses;
     int arity = templateArgs.size();
@@ -294,7 +300,9 @@ ClassTypeSymbol* ClassGroupSymbol::GetBestMatchingClass(const std::vector<Symbol
                 for (int i = 0; i < arity; ++i)
                 {
                     Symbol* templateArg = templateArgs[i];
-                    int matchValue = Match(templateArg, specialization, i, info, context);
+                    std::expected<int, int> m = Match(templateArg, specialization, i, info, context);
+                    if (!m) return std::unexpected<int>(m.error());
+                    int matchValue = *m;
                     if (matchValue >= 0)
                     {
                         score += 2 * matchValue;
@@ -318,9 +326,9 @@ ClassTypeSymbol* ClassGroupSymbol::GetBestMatchingClass(const std::vector<Symbol
         {
             matchInfo.templateArgs = MakeTemplateArgs(matchInfo.templateParameterMap);
         }
-        return viableClasses[0].first;
+        return std::expected<ClassTypeSymbol*, int>(viableClasses[0].first);
     }
-    return nullptr;
+    return std::expected<ClassTypeSymbol*, int>(nullptr);
 }
 
 } // namespace otava::symbols

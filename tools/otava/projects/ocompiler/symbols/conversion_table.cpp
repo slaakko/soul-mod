@@ -86,8 +86,12 @@ std::expected<bool, int> ConversionTable::Make()
 
 std::expected<FunctionSymbol*, int> ConversionTable::GetConversion(TypeSymbol* paramType, TypeSymbol* argType, Context* context) const
 {
-    TypeSymbol* paramPlainType = paramType->PlainType(context);
-    TypeSymbol* argPlainType = argType->PlainType(context);
+    std::expected<TypeSymbol*, int> pt = paramType->PlainType(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* paramPlainType = *pt;
+    std::expected<TypeSymbol*, int> pa = argType->PlainType(context);
+    if (!pa) return std::unexpected<int>(pa.error());
+    TypeSymbol* argPlainType = *pa;;
     ConversionTableEntry entry(paramPlainType, argPlainType);
     if (entry.error) return std::unexpected<int>(entry.error);
     auto it = conversionMap.find(entry);

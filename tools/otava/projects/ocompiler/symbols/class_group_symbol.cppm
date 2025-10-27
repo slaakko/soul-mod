@@ -44,7 +44,7 @@ public:
     void AddForwardDeclaration(ForwardClassDeclarationSymbol* forwardDeclaration);
     ForwardClassDeclarationSymbol* GetForwardDeclaration(int arity) const;
     inline const std::vector<ForwardClassDeclarationSymbol*>& ForwardDeclarations() const { return forwardDeclarations; }
-    ClassTypeSymbol* GetBestMatchingClass(const std::vector<Symbol*>& templateArgs, TemplateMatchInfo& matchInfo, Context* context) const;
+    std::expected<ClassTypeSymbol*, int> GetBestMatchingClass(const std::vector<Symbol*>& templateArgs, TemplateMatchInfo& matchInfo, Context* context) const;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;

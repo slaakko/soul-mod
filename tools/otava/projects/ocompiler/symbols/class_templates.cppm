@@ -37,7 +37,8 @@ public:
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
-    TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
+    std::expected<TypeSymbol*, int> UnifyTemplateArgumentType(
+        const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     inline FunctionSymbol* Destructor() const { return destructor; }
     inline void SetDestructor(FunctionSymbol* destructor_) { destructor = destructor_; }
@@ -75,7 +76,8 @@ private:
     std::vector<util::uuid> instantiatedVirtualFunctionSpecializationIds;
 };
 
-util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, SymbolTable& symbolTable);
+std::expected<util::uuid, int> MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, 
+    SymbolTable& symbolTable);
 
 struct MemFunKey
 {

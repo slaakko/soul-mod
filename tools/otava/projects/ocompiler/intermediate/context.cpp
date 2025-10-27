@@ -91,9 +91,9 @@ std::expected<GlobalVariable*, int> Context::GetGlobalVariableForString(otava::i
     return data.GetGlobalVariableForString(stringValue, charType);
 }
 
-void Context::ResolveTypes()
+std::expected<bool, int> Context::ResolveTypes()
 {
-    types.Resolve(this);
+    return types.Resolve(this);
 }
 
 std::expected<bool, int> Context::ResolveType(TypeRef& typeRef)

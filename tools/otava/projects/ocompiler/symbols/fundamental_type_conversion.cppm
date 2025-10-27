@@ -90,7 +90,12 @@ struct FundamentalTypeConversion : public FunctionSymbol
             SetError(rv.error());
             return;
         }
-        SetReturnType(paramType_, context);
+        rv = SetReturnType(paramType_, context);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
     }
     TypeSymbol* ConversionParamType() const override
     {

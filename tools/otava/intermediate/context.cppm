@@ -1,4 +1,5 @@
 // =================================
+// =================================
 // Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
@@ -225,6 +226,8 @@ public:
     inline int InlinedFunctionCalls() const { return inlinedFunctionCalls; }
     inline int FunctionsInlined() const { return functionsInlined; }
     inline void IncFunctionsInlined() { ++functionsInlined; }
+    inline soul::lexer::LexerBase<char32_t>* GetLexer() const { return lexer; }
+    inline void SetLexer(soul::lexer::LexerBase<char32_t>* lexer_) { lexer = lexer_; }
 private:
     RegValue* MakeRegValue(Type* type);
     CompileUnit compileUnit;
@@ -245,6 +248,7 @@ private:
     int inlinedFunctionCalls;
     int functionsInlined;
     int totalFunctions;
+    soul::lexer::LexerBase<char32_t>* lexer;
 };
 
 } // otava::intermediate

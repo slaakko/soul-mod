@@ -147,7 +147,8 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     context.SetSymbolTable(symbolTable.get());
     if (config == "release")
     {
-        context.SetFileName((std::filesystem::path(mainFilePath).parent_path().parent_path().parent_path() / std::filesystem::path(mainFilePath).filename()).generic_string());
+        context.SetFileName(
+            (std::filesystem::path(mainFilePath).parent_path().parent_path().parent_path() / std::filesystem::path(mainFilePath).filename()).generic_string());
     }
     else
     {

@@ -35,9 +35,9 @@ public:
     }
     inline otava::intermediate::BasicBlock* CreateBasicBlock() { return context->CurrentFunction()->CreateBasicBlock(); }
     inline void SetCurrentBasicBlock(otava::intermediate::BasicBlock* bb) { context->SetCurrentBasicBlock(bb); }
-    otava::intermediate::Type* MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes, const std::string& comment);
-    otava::intermediate::Type* MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes);
-    otava::intermediate::Type* MakeArrayType(std::int64_t size, otava::intermediate::Type* elementType);
+    std::expected<otava::intermediate::Type*, int> MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes, const std::string& comment);
+    std::expected<otava::intermediate::Type*, int> MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes);
+    std::expected<otava::intermediate::Type*, int> MakeArrayType(std::int64_t size, otava::intermediate::Type* elementType);
     inline otava::intermediate::Type* MakeFwdDeclaredStructureType(const util::uuid& id, const std::string& comment)
     {
         return context->MakeFwdDeclaredStructureType(id, context->NextTypeId(), comment);
@@ -169,7 +169,7 @@ public:
     {
         return context->CreatePtrDiff(leftPtr, rightPtr);
     }
-    otava::intermediate::Value* EmitCall(otava::intermediate::Value* function, const std::vector<otava::intermediate::Value*>& args);
+    std::expected<otava::intermediate::Value*, int> EmitCall(otava::intermediate::Value* function, const std::vector<otava::intermediate::Value*>& args);
     inline otava::intermediate::Value* EmitRet(otava::intermediate::Value* value) { return context->CreateRet(value); }
     inline otava::intermediate::Value* EmitRetVoid() { return context->CreateRet(nullptr); }
     inline std::expected<otava::intermediate::Value*, int> GetParam(int index) const { return context->CurrentFunction()->GetParam(index); }

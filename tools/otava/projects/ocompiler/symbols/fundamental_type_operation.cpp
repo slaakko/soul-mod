@@ -474,7 +474,14 @@ FundamentalTypeDefaultCtor::FundamentalTypeDefaultCtor(TypeSymbol* type_, Contex
 {
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = type->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* ptrType = *pt;
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", ptrType);
     std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
@@ -546,7 +553,14 @@ FundamentalTypeCopyCtor::FundamentalTypeCopyCtor(TypeSymbol* type_, Context* con
 {
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = type->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* ptrType = *pt;
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", ptrType);
     std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
@@ -620,14 +634,28 @@ FundamentalTypeMoveCtor::FundamentalTypeMoveCtor(TypeSymbol* type_, Context* con
 {
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = type->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* ptrType = *pt;
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", ptrType);
     std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef(context));
+    pt = type->AddRValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* rvalueRefType = *pt;
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", rvalueRefType);
     rv = AddParameter(thatParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
@@ -699,7 +727,14 @@ FundamentalTypeCopyAssignment::FundamentalTypeCopyAssignment(TypeSymbol* type_, 
 {
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = type->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* ptrType = *pt;
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", ptrType);
     std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
@@ -713,7 +748,19 @@ FundamentalTypeCopyAssignment::FundamentalTypeCopyAssignment(TypeSymbol* type_, 
         SetError(rv.error());
         return;
     }
-    SetReturnType(type->AddLValueRef(context), context);
+    pt = type->AddLValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* lvalueRefType = *pt;
+    rv = SetReturnType(lvalueRefType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> FundamentalTypeCopyAssignment::Write(Writer& writer)
@@ -770,21 +817,47 @@ FundamentalTypeMoveAssignment::FundamentalTypeMoveAssignment(TypeSymbol* type_, 
 {
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = type->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* ptrType = *pt;
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", ptrType);
     std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef(context));
+    pt = type->AddRValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* rvalueRefType = *pt;
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", rvalueRefType);
     rv = AddParameter(thatParam, soul::ast::SourcePos(), context);
     if (!rv)
     {
         SetError(rv.error());
         return;
     }
-    SetReturnType(type->AddLValueRef(context), context);
+    pt = type->AddLValueRef(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* lvalueRefType = *pt;
+    rv = SetReturnType(lvalueRefType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 std::expected<bool, int> FundamentalTypeMoveAssignment::Write(Writer& writer)
@@ -845,7 +918,14 @@ TrivialDestructor::TrivialDestructor(TypeSymbol* type_, Context* context) : Func
 {
     SetFunctionKind(FunctionKind::destructor);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
+    std::expected<TypeSymbol*, int> pt = type->AddPointer(context);
+    if (!pt)
+    {
+        SetError(pt.error());
+        return;
+    }
+    TypeSymbol* ptrType = *pt;
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", ptrType);
     std::expected<bool, int> rv = AddParameter(thisParam, soul::ast::SourcePos(), context);
     if (!rv)
     {

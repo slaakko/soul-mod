@@ -403,7 +403,9 @@ std::expected<TypeSymbol*, int> DeclarationProcessor::ResolveBaseType(otava::ast
         }
         if (derivations != Derivations::none)
         {
-            baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+            std::expected<TypeSymbol*, int> c = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+            if (!c) return c;
+            baseType = *c;
         }
     }
     return std::expected<TypeSymbol*, int>(baseType);
@@ -1003,10 +1005,13 @@ void DeclarationProcessor::Visit(otava::ast::TypenameSpecifierNode& node)
     type = *rv;
 }
 
-VariableSymbol* ProcessSimpleDeclarator(SimpleDeclarator* simpleDeclarator, TypeSymbol* type, Value* value, DeclarationFlags flags, Context* context)
+std::expected<VariableSymbol*, int> ProcessSimpleDeclarator(SimpleDeclarator* simpleDeclarator, TypeSymbol* type, Value* value, DeclarationFlags flags, Context* context)
 {
-    VariableSymbol* variable = context->GetSymbolTable()->AddVariable(simpleDeclarator->Name(), simpleDeclarator->Node(), type, nullptr, value, flags, context);
-    return variable;
+    std::expected<VariableSymbol*, int> v = context->GetSymbolTable()->AddVariable(
+        simpleDeclarator->Name(), simpleDeclarator->Node(), type, nullptr, value, flags, context);
+    if (!v) return std::unexpected<int>(v.error());
+    VariableSymbol* variable = *v;
+    return std::expected<VariableSymbol*, int>(variable);
 }
 
 std::expected<VariableSymbol*, int> ProcessArrayDeclarator(ArrayDeclarator* arrayDeclarator, TypeSymbol* elementType, DeclarationFlags flags, Context* context)
@@ -1019,14 +1024,17 @@ std::expected<VariableSymbol*, int> ProcessArrayDeclarator(ArrayDeclarator* arra
     ArrayTypeSymbol* arrayTypeSymbol = context->GetSymbolTable()->MakeArrayType(elementType, arrayDeclarator->Size());
     std::expected<bool, int> rv = arrayTypeSymbol->Bind(arrayDeclarator->Node()->GetSourcePos(), context);
     if (!rv) return std::unexpected<int>(rv.error());
-    VariableSymbol* variable = context->GetSymbolTable()->AddVariable(arrayDeclarator->Name(), arrayDeclarator->Node(), arrayTypeSymbol, nullptr, nullptr, flags, context);
-    return variable;
+    std::expected<VariableSymbol*, int> v = context->GetSymbolTable()->AddVariable(
+        arrayDeclarator->Name(), arrayDeclarator->Node(), arrayTypeSymbol, nullptr, nullptr, flags, context);
+    if (!v) return v;
+    VariableSymbol* variable = *v;
+    return std::expected<VariableSymbol*, int>(variable);
 }
 
 std::expected<bool, int> ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbol* type, DeclarationFlags flags, otava::ast::Node* functionNode, 
     Context* context)
 {
-    FunctionSymbol* functionSymbol = context->GetSymbolTable()->AddFunction(
+    std::expected<FunctionSymbol*, int> f = context->GetSymbolTable()->AddFunction(
         functionDeclarator->Name(),
         functionDeclarator->TemplateArgs(),
         functionDeclarator->Node(),
@@ -1034,9 +1042,14 @@ std::expected<bool, int> ProcessFunctionDeclarator(FunctionDeclarator* functionD
         functionDeclarator->GetFunctionQualifiers(),
         flags,
         context);
+    if (!f) return std::unexpected<int>(f.error());
+    FunctionSymbol* functionSymbol = *f;
     context->SetSpecialization(functionSymbol, functionNode);
-    TypeSymbol* returnType = MapType(functionSymbol, type, context);
-    functionSymbol->SetReturnType(returnType, context);
+    std::expected<TypeSymbol*, int> m = MapType(functionSymbol, type, context);
+    if (!m) return std::unexpected<int>(m.error());
+    TypeSymbol* returnType = *m;
+    std::expected<bool, int> rv = functionSymbol->SetReturnType(returnType, context);
+    if (!rv) return rv;
     for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
     {
         soul::ast::SourcePos sourcePos;
@@ -1048,7 +1061,9 @@ std::expected<bool, int> ProcessFunctionDeclarator(FunctionDeclarator* functionD
             node = parameterDeclaration.declarator->Node();
             sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
         }
-        TypeSymbol* parameterType = MapType(functionSymbol, parameterDeclaration.type, context);
+        std::expected<TypeSymbol*, int> m = MapType(functionSymbol, parameterDeclaration.type, context);
+        if (!m) return std::unexpected<int>(m.error());
+        TypeSymbol* parameterType = *m;
         ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterType, context);
         if (parameterDeclaration.initializer)
         {
@@ -1061,7 +1076,9 @@ std::expected<bool, int> ProcessFunctionDeclarator(FunctionDeclarator* functionD
     if (classType)
     {
         std::int32_t functionIndex = 0;
-        SpecialFunctionKind specialFunctionKind = functionSymbol->GetSpecialFunctionKind(context);
+        std::expected<SpecialFunctionKind, int> s = functionSymbol->GetSpecialFunctionKind(context);
+        if (!s) return std::unexpected<int>(s.error());
+        SpecialFunctionKind specialFunctionKind = *s;
         if (specialFunctionKind != SpecialFunctionKind::none)
         {
             functionIndex = GetSpecialFunctionIndex(specialFunctionKind);
@@ -1084,7 +1101,7 @@ std::expected<bool, int> ProcessFunctionDeclarator(FunctionDeclarator* functionD
         std::expected<FunctionSymbol*, int> rv = InstantiateFunctionTemplate(functionSymbol, templateParameterMap, functionDeclarator->Node()->GetSourcePos(), context);
         if (!rv) return std::unexpected<int>(rv.error());
     }
-    auto rv = AddConvertingConstructorToConversionTable(functionSymbol, functionDeclarator->Node()->GetSourcePos(), context);
+    rv = AddConvertingConstructorToConversionTable(functionSymbol, functionDeclarator->Node()->GetSourcePos(), context);
     if (!rv) return rv;
     return std::expected<bool, int>(true);
 }
@@ -1106,7 +1123,9 @@ std::expected<bool, int> ProcessSimpleDeclaration(otava::ast::Node* node, otava:
                 SimpleDeclarator* simpleDeclarator = static_cast<SimpleDeclarator*>(declarator);
                 if (!simpleDeclarator->Name().empty())
                 {
-                    VariableSymbol* variable = ProcessSimpleDeclarator(simpleDeclarator, declaration.type, declaration.value, declaration.flags, context);
+                    std::expected<VariableSymbol*, int> v = ProcessSimpleDeclarator(simpleDeclarator, declaration.type, declaration.value, declaration.flags, context);
+                    if (!v) return std::unexpected<int>(v.error());
+                    VariableSymbol* variable = *v;
                     if (variable->IsGlobalVariable())
                     {
                         std::unique_ptr<BoundExpressionNode> variableInitializer(nullptr);
@@ -1135,7 +1154,7 @@ std::expected<bool, int> ProcessSimpleDeclaration(otava::ast::Node* node, otava:
             case DeclaratorKind::functionDeclarator:
             {
                 FunctionDeclarator* functionDeclarator = static_cast<FunctionDeclarator*>(declarator);
-                auto rv = ProcessFunctionDeclarator(functionDeclarator, declaration.type, declaration.flags, functionNode, context);
+                std::expected<bool, int> rv = ProcessFunctionDeclarator(functionDeclarator, declaration.type, declaration.flags, functionNode, context);
                 if (!rv) return rv;
                 break;
             }
@@ -1264,8 +1283,12 @@ std::expected<int, int> BeginFunctionDefinition(otava::ast::Node* declSpecifierS
             {
                 parameterTypes.push_back(parameterDeclaration.type);
             }
-            FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddOrGetFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
-                functionDeclarator->TemplateArgs(), parameterTypes, qualifiers, kind, declaration.flags, declarator, functionNode, get, context);
+            std::expected<FunctionDefinitionSymbol*, int> f = context->GetSymbolTable()->AddOrGetFunctionDefinition(functionDeclarator->GetScope(), 
+                functionDeclarator->Name(), functionDeclarator->TemplateArgs(), parameterTypes, qualifiers, kind, declaration.flags, declarator, 
+                functionNode, get, context);
+            if (!f) return std::unexpected<int>(f.error());
+            FunctionDefinitionSymbol* definition = *f;
+            TypeSymbol* fnDeclarationReturnType = nullptr;
             FunctionSymbol* fnDeclaration = definition->Declaration();
             if (fnDeclaration)
             {
@@ -1273,6 +1296,7 @@ std::expected<int, int> BeginFunctionDefinition(otava::ast::Node* declSpecifierS
                 {
                     definition->SetInline();
                 }
+                fnDeclarationReturnType = fnDeclaration->ReturnType();
             }
             if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) ||
                 context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) ||
@@ -1297,7 +1321,9 @@ std::expected<int, int> BeginFunctionDefinition(otava::ast::Node* declSpecifierS
                     node = parameterDeclaration.declarator->Node();
                     sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
                 }
-                TypeSymbol* parameterType = MapType(definition, parameterDeclaration.type, context);
+                std::expected<TypeSymbol*, int> m = MapType(definition, parameterDeclaration.type, context);
+                if (!m) return std::unexpected<int>(m.error());
+                TypeSymbol* parameterType = *m;
                 ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterType, context);
                 if (parameterDeclaration.initializer)
                 {
@@ -1320,14 +1346,35 @@ std::expected<int, int> BeginFunctionDefinition(otava::ast::Node* declSpecifierS
                 ++parameterIndex;
             }
             definition->AddDefinitionToGroup(context);
-            TypeSymbol* returnType = MapType(definition, declaration.type, context);
-            definition->SetReturnType(returnType, context);
-            context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context);
+            std::expected<TypeSymbol*, int> m = MapType(definition, declaration.type, context);
+            if (!m) return std::unexpected<int>(m.error());
+            TypeSymbol* returnType = *m;
+            std::expected<bool, int> rv = definition->SetReturnType(returnType, context);
+            if (!rv) return std::unexpected<int>(rv.error());
+            if (fnDeclarationReturnType && returnType && !TypesEqual(fnDeclarationReturnType, returnType, context))
+            {
+                std::set<const Symbol*> visited;
+                bool isTemplateParameterInstantiation = fnDeclaration->IsTemplateParameterInstantiation(context, visited) ||
+                    fnDeclarationReturnType->IsTemplateParameterInstantiation(context, visited) ||
+                    definition->IsTemplateParameterInstantiation(context, visited) ||
+                    returnType->IsTemplateParameterInstantiation(context, visited);
+                if (!isTemplateParameterInstantiation)
+                {
+                    std::expected<std::u32string, int> fname = definition->FullName();
+                    if (!fname) return std::unexpected<int>(fname.error());
+                    std::expected<std::string, int> sfname = util::ToUtf8(*fname);
+                    if (!sfname) return std::unexpected<int>(sfname.error());
+                    return Error("the return type of function '" + *sfname + "' definition differs from the return type of function declaration",
+                        definition->GetSourcePos(), fnDeclaration->GetSourcePos(), context);
+                }
+            }
+            rv = context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context);
+            if (!rv) return std::unexpected<int>(rv.error());
             if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) &&
                 !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) &&
                 !context->GetFlag(ContextFlags::instantiateInlineFunction))
             {
-                std::expected<bool, int> rv = definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
+                rv = definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
                 if (!rv) return std::unexpected<int>(rv.error());
             }
             ++scopes;
@@ -1370,7 +1417,9 @@ std::expected<bool, int> EndFunctionDefinition(otava::ast::Node* node, int scope
                     }
                 }
                 std::int32_t functionIndex = 0;
-                SpecialFunctionKind specialFunctionKind = functionDefinitionSymbol->GetSpecialFunctionKind(context);
+                std::expected<SpecialFunctionKind, int> s = functionDefinitionSymbol->GetSpecialFunctionKind(context);
+                if (!s) return std::unexpected<int>(s.error());
+                SpecialFunctionKind specialFunctionKind = *s;
                 if (specialFunctionKind != SpecialFunctionKind::none)
                 {
                     functionIndex = GetSpecialFunctionIndex(specialFunctionKind);
@@ -1396,7 +1445,8 @@ std::expected<bool, int> EndFunctionDefinition(otava::ast::Node* node, int scope
         }
         for (int i = 0; i < scopes; ++i)
         {
-            context->GetSymbolTable()->EndScopeGeneric(context);
+            std::expected<bool, int> rv = context->GetSymbolTable()->EndScopeGeneric(context);
+            if (!rv) return rv;
         }
         if (!context->GetFlag(ContextFlags::dontBind) && functionDefinitionSymbol)
         {
@@ -1525,7 +1575,7 @@ std::expected<TypeSymbol*, int> ProcessExplicitInstantiationDeclaration(otava::a
     return std::expected<TypeSymbol*, int>(processor.GetType());
 }
 
-TypeSymbol* MapType(FunctionSymbol* functionSymbol, TypeSymbol* type, Context* context)
+std::expected<TypeSymbol*, int> MapType(FunctionSymbol* functionSymbol, TypeSymbol* type, Context* context)
 {
     if (type)
     {
@@ -1537,12 +1587,14 @@ TypeSymbol* MapType(FunctionSymbol* functionSymbol, TypeSymbol* type, Context* c
             {
                 if (TypesEqual(type->GetBaseType(), specialization->ClassTemplate(), context))
                 {
-                    type = context->GetSymbolTable()->MakeCompoundType(specialization, type->GetDerivations());
+                    std::expected<TypeSymbol*, int> c = context->GetSymbolTable()->MakeCompoundType(specialization, type->GetDerivations());
+                    if (!c) return c;
+                    type = *c;
                 }
             }
         }
     }
-    return type;
+    return std::expected<TypeSymbol*, int>(type);
 }
 
 std::expected<bool, int> GenerateDynamicInitialization(VariableSymbol* variable, BoundExpressionNode* initializer, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -1553,7 +1605,9 @@ std::expected<bool, int> GenerateDynamicInitialization(VariableSymbol* variable,
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
     BoundVariableNode* boundGlobalVariable = new BoundVariableNode(variable, sourcePos);
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
-    args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundGlobalVariable, sourcePos, variable->GetType()->AddPointer(context))));
+    std::expected<TypeSymbol*, int> pt = variable->GetType()->AddPointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundGlobalVariable, sourcePos, *pt)));
     if (initializer)
     {
         if (initializer->IsBoundExpressionListNode())
@@ -1591,7 +1645,9 @@ std::expected<std::unique_ptr<BoundFunctionCallNode>, int> MakeAtExitForVariable
 {
     std::vector<std::unique_ptr<BoundExpressionNode>> dtorArgs;
     BoundVariableNode* boundGlobalVariable = new BoundVariableNode(variable, sourcePos);
-    dtorArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundGlobalVariable, sourcePos, variable->GetType()->AddPointer(context))));
+    std::expected<TypeSymbol*, int> pt = variable->GetType()->AddPointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    dtorArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundGlobalVariable, sourcePos, *pt)));
     std::vector<TypeSymbol*> templateArgs;
     auto rv = ResolveOverload(context->GetSymbolTable()->CurrentScope(), U"@destructor", templateArgs, dtorArgs, sourcePos, context);
     if (!rv) return std::unexpected<int>(rv.error());
@@ -1599,13 +1655,19 @@ std::expected<std::unique_ptr<BoundFunctionCallNode>, int> MakeAtExitForVariable
     std::unique_ptr<BoundFunctionCallNode> atExitCall;
     if (destructorCall.get() && !destructorCall->GetFunctionSymbol()->IsTrivialDestructor())
     {
-        TypeSymbol* voidPtrType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType)->AddPointer(context);
+        std::expected<TypeSymbol*, int> pt = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType)->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* voidPtrType = *pt;
         std::vector<std::unique_ptr<BoundExpressionNode>> atExitArgs;
         atExitArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundFunctionValueNode(destructorCall->GetFunctionSymbol(), sourcePos, voidPtrType)));
         BoundVariableNode* boundGlobalVariable = new BoundVariableNode(variable, sourcePos);
+        pt = boundGlobalVariable->GetType()->AddPointer(context);
+        if (!pt) return std::unexpected<int>(pt.error());
         atExitArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundVariableAsVoidPtrNode(new BoundAddressOfNode(
-            boundGlobalVariable, sourcePos, boundGlobalVariable->GetType()->AddPointer(context)), sourcePos, voidPtrType)));
-        Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+            boundGlobalVariable, sourcePos, *pt), sourcePos, voidPtrType)));
+        std::expected<Scope*, int> nrv = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+        if (!nrv) return std::unexpected<int>(nrv.error());
+        Scope* stdScope = *nrv;
         std::vector<TypeSymbol*> templateArgs;
         rv = ResolveOverload(stdScope, U"at_exit", templateArgs, atExitArgs, sourcePos, context);
         if (!rv) return std::unexpected<int>(rv.error());
@@ -1619,12 +1681,24 @@ std::expected<bool, int> AddConvertingConstructorToConversionTable(FunctionSymbo
     if (!functionSymbol->IsExplicit() && functionSymbol->GetFunctionKind() == FunctionKind::constructor && functionSymbol->MemFunArity(context) == 2)
     {
         std::expected<TypeSymbol*, int> rv = functionSymbol->MemFunParameters(context)[0]->GetType()->RemovePointer(context);
+        if (!functionSymbol->Valid()) return std::unexpected<int>(functionSymbol->GetError());
         if (!rv) return std::unexpected<int>(rv.error());
         TypeSymbol* type = *rv;
-        rv = type->DirectType(context)->FinalType(sourcePos, context);
+        rv = type->DirectType(context);
+        if (!rv) return std::unexpected<int>(rv.error());
+        TypeSymbol* dt = *rv;
+        rv = dt->FinalType(sourcePos, context);
         if (!rv) return std::unexpected<int>(rv.error());
         TypeSymbol* conversionParamType = *rv;
-        rv = functionSymbol->MemFunParameters(context)[1]->GetType()->PlainType(context)->DirectType(context)->FinalType(sourcePos, context);
+        rv = functionSymbol->MemFunParameters(context)[1]->GetType()->PlainType(context);
+        if (!rv) return std::unexpected<int>(rv.error());
+        if (!functionSymbol->Valid()) return std::unexpected<int>(functionSymbol->GetError());
+        TypeSymbol* plainType = *rv;
+        rv = plainType->DirectType(context);
+        if (!rv) return std::unexpected<int>(rv.error());
+        TypeSymbol* directType = *rv;
+        if (!rv) return std::unexpected<int>(rv.error());
+        rv = directType->FinalType(sourcePos, context);
         if (!rv) return std::unexpected<int>(rv.error());
         TypeSymbol* conversionArgType = *rv;
         if (!TypesEqual(conversionParamType, conversionArgType, context))

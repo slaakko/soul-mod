@@ -37,6 +37,6 @@ private:
     int ptrIndex;
 };
 
-bool FunctionTypesEqual(FunctionTypeSymbol* left, FunctionTypeSymbol* right);
+bool FunctionTypesEqual(FunctionTypeSymbol* left, FunctionTypeSymbol* right, Context* context);
 
 } // namespace otava::symbols

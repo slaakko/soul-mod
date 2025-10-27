@@ -183,13 +183,21 @@ void ConceptProcessor::Visit(otava::ast::ConceptDefinitionNode& node)
 
 void ConceptProcessor::Visit(otava::ast::IdentifierNode& node)
 {
-    conceptSymbol = context->GetSymbolTable()->AddConcept(node.Str(), &node, context);
+    std::expected<ConceptSymbol*, int> c = context->GetSymbolTable()->AddConcept(node.Str(), &node, context);
+    if (!c)
+    {
+        SetError(c.error());
+        return;
+    }
+    conceptSymbol = *c;
 }
 
-void ProcessConcept(otava::ast::Node* node, Context* context)
+std::expected<bool, int> ProcessConcept(otava::ast::Node* node, Context* context)
 {
     ConceptProcessor processor(context);
     node->Accept(processor);
+    if (!processor) return std::unexpected<int>(processor.Error());
+    return std::expected<bool, int>(true);
 }
 
 bool ConceptLess::operator()(ConceptSymbol* left, ConceptSymbol* right) const

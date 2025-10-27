@@ -14,7 +14,7 @@ namespace otava::intermediate {
 
 Context::Context() : 
     compileUnit(), inlineDepth(4), maxArithmeticOptimizationCount(8), flags(ContextFlags::none), functionsInlined(0), totalFunctions(0), currentBasicBlock(nullptr),
-    currentLineNumber(0)
+    currentLineNumber(0), lexer(nullptr)
 {
     compileUnit.SetContext(this);
     types.SetContext(this);

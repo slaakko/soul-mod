@@ -117,7 +117,7 @@ public:
     inline BoundFunctionNode* ReleaseBoundFunction() { return boundFunction.release(); }
     void PushBoundFunction(BoundFunctionNode* boundFunction_);
     void PopBoundFunction();
-    BoundExpressionNode* GetThisPtr(const soul::ast::SourcePos& sourcePos);
+    std::expected<BoundExpressionNode*, int> GetThisPtr(const soul::ast::SourcePos& sourcePos);
     EvaluationContext* GetEvaluationContext();
     std::string FileName() const;
     void SetFileName(const std::string& fileName_);

@@ -39,10 +39,12 @@ public:
     FunctionDefinitionSymbol* GetFunctionDefinition(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers) const;
     void AddFunctionDefinition(FunctionDefinitionSymbol* definition_, Context* context);
     void SetVTabIndex(FunctionSymbol* function, int vtabIndex, Context* context);
-    void CollectViableFunctions(int arity, const std::vector<TypeSymbol*>& templateArgs, std::vector<FunctionSymbol*>& viableFunctions, Context* context);
+    std::expected<bool, int> CollectViableFunctions(int arity, const std::vector<TypeSymbol*>& templateArgs, std::vector<FunctionSymbol*>& viableFunctions, 
+        Context* context);
     FunctionSymbol* GetMatchingSpecialization(FunctionSymbol* that, Context* context) const;
 private:
-    void CollectBestMatchingViableFunctionTemplates(int arity, const std::vector<TypeSymbol*>& templateArgs, std::vector<FunctionSymbol*>& viableFunctions, Context* context);
+    std::expected<bool, int> CollectBestMatchingViableFunctionTemplates(int arity, const std::vector<TypeSymbol*>& templateArgs, 
+        std::vector<FunctionSymbol*>& viableFunctions, Context* context);
     std::vector<FunctionSymbol*> functions;
     std::vector<util::uuid> functionIds;
     std::vector<FunctionDefinitionSymbol*> definitions;

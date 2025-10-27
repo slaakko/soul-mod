@@ -406,7 +406,13 @@ void DeclaratorProcessor::Visit(otava::ast::LvalueRefNode& node)
     Derivations derivations = Derivations::lvalueRefDerivation;
     if (baseType)
     {
-        baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+        std::expected<TypeSymbol*, int> c = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+        if (!c)
+        {
+            SetError(c.error());
+            return;
+        }
+        baseType = *c;
     }
 }
 
@@ -420,7 +426,13 @@ void DeclaratorProcessor::Visit(otava::ast::RvalueRefNode& node)
     }
     if (baseType)
     {
-        baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+        std::expected<TypeSymbol*, int> c = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+        if (!c)
+        {
+            SetError(c.error());
+            return;
+        }
+        baseType = *c;
     }
 }
 
@@ -431,7 +443,13 @@ void DeclaratorProcessor::Visit(otava::ast::PtrNode& node)
     derivations = otava::symbols::SetPointerCount(derivations, 1);
     if (baseType)
     {
-        baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+        std::expected<TypeSymbol*, int> c = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+        if (!c)
+        {
+            SetError(c.error());
+            return;
+        }
+        baseType = *c;
     }
 }
 

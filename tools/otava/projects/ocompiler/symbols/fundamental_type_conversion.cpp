@@ -288,7 +288,12 @@ FundamentalTypeBooleanConversion::FundamentalTypeBooleanConversion(TypeSymbol* t
         SetError(rv.error());
         return;
     }
-    SetReturnType(boolType, context);
+    rv = SetReturnType(boolType, context);
+    if (!rv)
+    {
+        SetError(rv.error());
+        return;
+    }
 }
 
 TypeSymbol* FundamentalTypeBooleanConversion::ConversionParamType() const

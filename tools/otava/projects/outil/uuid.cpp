@@ -152,6 +152,14 @@ std::expected<uuid, int> ParseUuid(const std::string& str)
     return std::expected<uuid, int>(id);
 }
 
+uuid ToUuid(const std::u32string& str)
+{
+    std::uint64_t x = std::hash<std::u32string>()(str);
+    uuid id;
+    IntsToUuid(x, 0, id);
+    return id;
+}
+
 void Rotate(uuid& id, int index)
 {
     std::rotate(id.begin(), id.begin() + index, id.end());

@@ -50,19 +50,21 @@ void Emitter::SetRegNumbers()
     context->CurrentFunction()->SetNumbers();
 }
 
-otava::intermediate::Type* Emitter::MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes, const std::string& comment)
+std::expected<otava::intermediate::Type*, int> Emitter::MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes, const std::string& comment)
 {
     std::vector<otava::intermediate::TypeRef> fieldTypeRefs;
     for (otava::intermediate::Type* elementType : elementTypes)
     {
         fieldTypeRefs.push_back(elementType->GetTypeRef());
     }
-    otava::intermediate::StructureType* structureType = context->GetStructureType(soul::ast::Span(), context->NextTypeId(), fieldTypeRefs);
+    std::expected<otava::intermediate::StructureType*, int> rv = context->GetStructureType(soul::ast::Span(), context->NextTypeId(), fieldTypeRefs);
+    if (!rv) return std::unexpected<int>(rv.error());
+    otava::intermediate::StructureType* structureType = *rv;
     structureType->SetComment(comment);
-    return structureType;
+    return std::expected<otava::intermediate::Type*, int>(structureType);
 }
 
-otava::intermediate::Type* Emitter::MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes)
+std::expected<otava::intermediate::Type*, int> Emitter::MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes)
 {
     otava::intermediate::TypeRef returnTypeRef = returnType->GetTypeRef();
     std::vector<otava::intermediate::TypeRef> paramTypeRefs;
@@ -70,13 +72,19 @@ otava::intermediate::Type* Emitter::MakeFunctionType(otava::intermediate::Type* 
     {
         paramTypeRefs.push_back(paramType->GetTypeRef());
     }
-    return context->GetFunctionType(soul::ast::Span(), context->NextTypeId(), returnTypeRef, paramTypeRefs);
+    std::expected<otava::intermediate::FunctionType*, int> rv = context->GetFunctionType(soul::ast::Span(), context->NextTypeId(), returnTypeRef, paramTypeRefs);
+    if (!rv) return std::unexpected<int>(rv.error());
+    otava::intermediate::FunctionType* functionType = *rv;
+    return std::expected<otava::intermediate::Type*, int>(functionType);
 }
 
-otava::intermediate::Type* Emitter::MakeArrayType(std::int64_t size, otava::intermediate::Type* elementType)
+std::expected<otava::intermediate::Type*, int> Emitter::MakeArrayType(std::int64_t size, otava::intermediate::Type* elementType)
 {
     otava::intermediate::TypeRef elementTypeRef = elementType->GetTypeRef();
-    return context->GetArrayType(soul::ast::Span(), context->NextTypeId(), size, elementTypeRef);
+    std::expected<otava::intermediate::ArrayType*, int> rv = context->GetArrayType(soul::ast::Span(), context->NextTypeId(), size, elementTypeRef);
+    if (!rv) return std::unexpected<int>(rv.error());
+    otava::intermediate::ArrayType* arrayType = *rv;
+    return std::expected<otava::intermediate::Type*, int>(arrayType);
 }
 
 otava::intermediate::Type* Emitter::GetOrInsertFwdDeclaredStructureType(const util::uuid& id, const std::string& comment)
@@ -155,7 +163,7 @@ std::expected<otava::intermediate::Value*, int> Emitter::EmitString32Value(const
     return std::expected<otava::intermediate::Value*, int>(globalVar);
 }
 
-otava::intermediate::Value* Emitter::EmitCall(otava::intermediate::Value* function, const std::vector<otava::intermediate::Value*>& args)
+std::expected<otava::intermediate::Value*, int> Emitter::EmitCall(otava::intermediate::Value* function, const std::vector<otava::intermediate::Value*>& args)
 {
     std::int32_t n = args.size();
     for (std::int32_t i = 0; i < n; ++i)
@@ -163,7 +171,10 @@ otava::intermediate::Value* Emitter::EmitCall(otava::intermediate::Value* functi
         otava::intermediate::Value* arg = args[i];
         context->CreateArg(arg);
     }
-    return context->CreateCall(function);
+    std::expected<otava::intermediate::Instruction*, int> rv = context->CreateCall(function);
+    if (!rv) return std::unexpected<int>(rv.error());
+    otava::intermediate::Instruction* call = *rv;
+    return std::expected<otava::intermediate::Value*, int>(call);
 }
 
 otava::intermediate::Type* Emitter::GetType(const util::uuid& id) const

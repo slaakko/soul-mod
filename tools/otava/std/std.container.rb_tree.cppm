@@ -187,7 +187,7 @@ public:
     {
         return const_iterator(header.get());
     }
-    inline compare cmp() { return comp; }
+    inline const compare& cmp() { return comp; }
     std::pair<iterator, bool> insert(const value_type& value)
     {
         if (!header) init();

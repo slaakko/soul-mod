@@ -264,6 +264,8 @@ public:
     void* IrObject(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
     bool IsExtern() const;
     virtual std::expected<soul::xml::Element*, int> ToXml() const;
+    inline void SetSourcePos(const soul::ast::SourcePos& sourcePos_) { sourcePos = sourcePos_; }
+    inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
 private:
     SymbolKind kind;
     SymbolFlags flags;
@@ -272,6 +274,7 @@ private:
     Symbol* parent;
     DeclarationFlags declarationFlags;
     Access access;
+    soul::ast::SourcePos sourcePos;
 };
 
 } // namespace otava::symbols

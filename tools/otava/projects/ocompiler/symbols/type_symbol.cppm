@@ -33,9 +33,9 @@ public:
     bool IsLValueRefType() const;
     bool IsRValueRefType() const;
     bool IsReferenceType() const;
-    virtual TypeSymbol* PlainType(Context* context) { return this; }
-    virtual std::expected<TypeSymbol*, int> FinalType(const soul::ast::SourcePos& sourcePos, Context* context) { return this; }
-    virtual TypeSymbol* DirectType(Context* context) { return this; }
+    virtual std::expected<TypeSymbol*, int> PlainType(Context* context) { return std::expected<TypeSymbol*, int>(this); }
+    virtual std::expected<TypeSymbol*, int> FinalType(const soul::ast::SourcePos& sourcePos, Context* context) { return std::expected<TypeSymbol*, int>(this); }
+    virtual std::expected<TypeSymbol*, int> DirectType(Context* context) { return std::expected<TypeSymbol*, int>(this); }
     virtual bool HasBaseClass(TypeSymbol* baseClass, int& distance, Context* context) const { return false; }
     virtual bool IsVoidType() const { return false; }
     virtual bool IsBoolType() const { return false; }
@@ -61,23 +61,24 @@ public:
     inline bool IsFunctionPtrType() { return IsPointerType() && PointerCount() == 1 && GetBaseType()->IsFunctionType(); }
     virtual int PointerCount() const { return 0; }
     virtual Derivations GetDerivations() const { return Derivations::none; }
-    virtual TypeSymbol* RemoveDerivations(Derivations sourceDerivations, Context* context);
-    virtual TypeSymbol* Unify(TypeSymbol* argType, Context* context);
-    virtual TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) 
+    virtual std::expected<TypeSymbol*, int> RemoveDerivations(Derivations sourceDerivations, Context* context);
+    virtual std::expected<TypeSymbol*, int> Unify(TypeSymbol* argType, Context* context);
+    virtual std::expected<TypeSymbol*, int> UnifyTemplateArgumentType(
+        const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context)
     { 
-        return nullptr; 
+        return std::expected<TypeSymbol*, int>(nullptr);
     }
     virtual bool IsComplete(std::set<const TypeSymbol*>& visited) const { return true; }
-    TypeSymbol* AddConst(Context* context);
-    TypeSymbol* RemoveConst(Context* context);
-    TypeSymbol* AddPointer(Context* context);
-    TypeSymbol* RemovePointer(Context* context);
-    TypeSymbol* AddLValueRef(Context* context);
-    TypeSymbol* RemoveLValueRef(Context* context);
-    TypeSymbol* AddRValueRef(Context* context);
-    TypeSymbol* RemoveRValueRef(Context* context);
-    TypeSymbol* RemoveReference(Context* context);
-    TypeSymbol* RemoveRefOrPtr(Context* context);
+    std::expected<TypeSymbol*, int> AddConst(Context* context);
+    std::expected<TypeSymbol*, int> RemoveConst(Context* context);
+    std::expected<TypeSymbol*, int> AddPointer(Context* context);
+    std::expected<TypeSymbol*, int> RemovePointer(Context* context);
+    std::expected<TypeSymbol*, int> AddLValueRef(Context* context);
+    std::expected<TypeSymbol*, int> RemoveLValueRef(Context* context);
+    std::expected<TypeSymbol*, int> AddRValueRef(Context* context);
+    std::expected<TypeSymbol*, int> RemoveRValueRef(Context* context);
+    std::expected<TypeSymbol*, int> RemoveReference(Context* context);
+    std::expected<TypeSymbol*, int> RemoveRefOrPtr(Context* context);
     std::expected<bool, int> AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     virtual std::expected<otava::intermediate::Type*, int> IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
     inline bool Valid() const { return error == 0; }

@@ -59,7 +59,7 @@ public:
     void AddFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
     GlobalVariable* AddGlobalVariable(const soul::ast::Span& span, Type* type, const std::string& variableName, Value* initializer);
     std::expected<GlobalVariable*, int> GetGlobalVariableForString(otava::intermediate::Value* stringValue, Type* charType);
-    void ResolveTypes();
+    std::expected<bool, int> ResolveTypes();
     inline void ResolveData() { data.ResolveAddressValues(); }
     std::expected<bool, int> ResolveType(TypeRef& typeRef);
     inline Value* GetBoolValue(bool value) { if (value) return GetTrueValue(); else return GetFalseValue(); }
@@ -119,7 +119,7 @@ public:
     inline Type* GetFloatType() { return types.GetFloatType(); }
     inline Type* GetDoubleType() { return types.GetDoubleType(); }
     inline std::expected<Type*, int> MakePtrType(Type* baseType) { return types.MakePtrType(baseType); }
-    inline StructureType* GetStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
+    inline std::expected<StructureType*, int> GetStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
     {
         return types.GetStructureType(span, typeId, fieldTypeRefs);
     }
@@ -133,11 +133,12 @@ public:
     }
     inline void AddFwdDependentType(FwdDeclaredStructureType* fwdType, Type* type) { types.AddFwdDependentType(fwdType, type); }
     inline void ResolveForwardReferences(const util::uuid& id, StructureType* structureType) { types.ResolveForwardReferences(id, structureType); }
-    inline ArrayType* GetArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef)
+    inline std::expected<ArrayType*, int> GetArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef)
     {
         return types.GetArrayType(span, typeId, size, elementTypeRef);
     }
-    inline FunctionType* GetFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
+    inline std::expected<FunctionType*, int> GetFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, 
+        const std::vector<TypeRef>& paramTypeRefs)
     {
         return types.GetFunctionType(span, typeId, returnTypeRef, paramTypeRefs);
     }
@@ -201,7 +202,7 @@ public:
     Instruction* CreateElemAddr(Value* ptr, Value* index, Type* type);
     Instruction* CreatePtrOffset(Value* ptr, Value* offset);
     Instruction* CreatePtrDiff(Value* leftPtr, Value* rightPtr);
-    Instruction* CreateCall(Value* function);
+    std::expected<Instruction*, int> CreateCall(Value* function);
     Instruction* CreateRet(Value* value);
     Instruction* CreateJump(BasicBlock* dest);
     Instruction* CreateBranch(Value* cond, BasicBlock* trueDest, BasicBlock* falseDest);

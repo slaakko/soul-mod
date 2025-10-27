@@ -56,13 +56,13 @@ public:
     std::expected<bool, int> Import(ModuleMapper& moduleMapper, const std::string& config, int optLevel);
     std::expected<bool, int> Import(Module* that, ModuleMapper& moduleMapper, const std::string& config, int optLevel);
     std::expected<bool, int> ResolveForwardDeclarations();
-    void ResolveAllForwardDeclarations();
+    std::expected<bool, int> ResolveAllForwardDeclarations();
     void AddDerivedClasses();
     std::expected<bool, int> Write(const std::string& root, const std::string& config, int optLevel, Context* context);
     std::expected<bool, int> Write(Writer& writer, Context* context);
     std::expected<bool, int> ReadHeader(Reader& reader, ModuleMapper& moduleMapper);
     std::expected<bool, int> CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config, int optLevel);
-    void Init();
+    std::expected<bool, int> Init();
     inline std::int32_t FileId() const { return fileId; }
     inline void SetFileId(std::int32_t fileId_) { fileId = fileId_; }
     std::int32_t Id() const;

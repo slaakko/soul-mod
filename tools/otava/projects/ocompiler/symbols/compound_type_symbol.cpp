@@ -27,7 +27,7 @@ CompoundTypeSymbol::CompoundTypeSymbol(TypeSymbol* baseType_, Derivations deriva
 {
 }
 
-TypeSymbol* CompoundTypeSymbol::PlainType(Context* context)
+std::expected<TypeSymbol*, int> CompoundTypeSymbol::PlainType(Context* context)
 {
     Derivations plainDerivations = Plain(derivations);
     return context->GetSymbolTable()->MakeCompoundType(BaseType(), plainDerivations);
@@ -125,7 +125,7 @@ std::expected<std::string, int> CompoundTypeSymbol::IrName(Context* context) con
     return std::expected<std::string, int>(irName);
 }
 
-TypeSymbol* CompoundTypeSymbol::RemoveDerivations(Derivations sourceDerivations, Context* context)
+std::expected<TypeSymbol*, int> CompoundTypeSymbol::RemoveDerivations(Derivations sourceDerivations, Context* context)
 {
     Derivations resultDerivations = Derivations::none;
     if (!HasDerivation(sourceDerivations, Derivations::constDerivation) && HasDerivation(derivations, Derivations::constDerivation))
@@ -148,15 +148,20 @@ TypeSymbol* CompoundTypeSymbol::RemoveDerivations(Derivations sourceDerivations,
     return context->GetSymbolTable()->MakeCompoundType(baseType, resultDerivations);
 }
 
-TypeSymbol* CompoundTypeSymbol::Unify(TypeSymbol* argType, Context* context)
+std::expected<TypeSymbol*, int> CompoundTypeSymbol::Unify(TypeSymbol* argType, Context* context)
 {
-    TypeSymbol* newBaseType = baseType->Unify(argType->GetBaseType(), context);
+    std::expected<TypeSymbol*, int> n = baseType->Unify(argType->GetBaseType(), context);
+    if (!n) return n;
+    TypeSymbol* newBaseType = *n;
     return context->GetSymbolTable()->MakeCompoundType(newBaseType, UnifyDerivations(derivations, argType->GetDerivations()));
 }
 
-TypeSymbol* CompoundTypeSymbol::UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context)
+std::expected<TypeSymbol*, int> CompoundTypeSymbol::UnifyTemplateArgumentType(
+    const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context)
 {
-    TypeSymbol* newBaseType = baseType->UnifyTemplateArgumentType(templateParameterMap, context);
+    std::expected<TypeSymbol*, int> n = baseType->UnifyTemplateArgumentType(templateParameterMap, context);
+    if (!n) return n;
+    TypeSymbol* newBaseType = *n;
     return context->GetSymbolTable()->MakeCompoundType(newBaseType, GetDerivations());
 }
 
@@ -200,9 +205,11 @@ std::expected<TypeSymbol*, int> CompoundTypeSymbol::FinalType(const soul::ast::S
     return context->GetSymbolTable()->MakeCompoundType(finalBaseType, derivations);
 }
 
-TypeSymbol* CompoundTypeSymbol::DirectType(Context* context)
+std::expected<TypeSymbol*, int> CompoundTypeSymbol::DirectType(Context* context)
 {
-    TypeSymbol* directBaseType = baseType->DirectType(context);
+    std::expected<TypeSymbol*, int> dt = baseType->DirectType(context);
+    if (!dt) return dt;
+    TypeSymbol* directBaseType = *dt;
     return context->GetSymbolTable()->MakeCompoundType(directBaseType, derivations);
 }
 
@@ -219,6 +226,42 @@ bool CompoundTypeSymbol::IsTemplateParameterInstantiation(Context* context, std:
     {
         visited.insert(this);
         return baseType->IsTemplateParameterInstantiation(context, visited);
+    }
+    return false;
+}
+
+bool CompoundTypeSymbol::IsBasicStringCharType(Context* context)
+{
+    if (PointerCount() == 0)
+    {
+        std::expected<TypeSymbol*, int> pt = PlainType(context);
+        if (!pt) return false;
+        TypeSymbol* plainType = *pt;
+        return plainType->IsBasicStringCharType(context);
+    }
+    return false;
+}
+
+bool CompoundTypeSymbol::IsBasicStringChar16Type(Context* context)
+{
+    if (PointerCount() == 0)
+    {
+        std::expected<TypeSymbol*, int> pt = PlainType(context);
+        if (!pt) return false;
+        TypeSymbol* plainType = *pt;
+        return plainType->IsBasicStringChar16Type(context);
+    }
+    return false;
+}
+
+bool CompoundTypeSymbol::IsBasicStringChar32Type(Context* context)
+{
+    if (PointerCount() == 0)
+    {
+        std::expected<TypeSymbol*, int> pt = PlainType(context);
+        if (!pt) return false;
+        TypeSymbol* plainType = *pt;
+        return plainType->IsBasicStringChar32Type(context);
     }
     return false;
 }
@@ -273,12 +316,14 @@ std::u32string MakeCompoundTypeName(TypeSymbol* baseType, Derivations derivation
     return name;
 }
 
-util::uuid MakeCompoundTypeId(TypeSymbol* baseType, Derivations derivations, SymbolTable& symbolTable)
+std::expected<util::uuid, int> MakeCompoundTypeId(TypeSymbol* baseType, Derivations derivations, SymbolTable& symbolTable)
 {
     util::uuid id = baseType->Id();
-    util::uuid derivationsId = symbolTable.GetCompoundTypeId(static_cast<int>(static_cast<std::uint8_t>(derivations)));
+    std::expected<util::uuid, int> i = symbolTable.GetCompoundTypeId(static_cast<int>(static_cast<std::uint8_t>(derivations)));
+    if (!i) return i;
+    util::uuid derivationsId = *i;
     util::Xor(id, derivationsId);
-    return id;
+    return std::expected<util::uuid, int>(id);
 }
 
 } // namespace otava::symbols

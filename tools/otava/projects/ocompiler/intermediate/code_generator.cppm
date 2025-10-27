@@ -111,7 +111,7 @@ private:
 };
 
 std::expected<otava::assembly::Register*, int> MakeIntegerRegOperand(Value* value, otava::assembly::Register* reg, CodeGenerator& codeGenerator);
-void EmitSwitch(SwitchInstruction& inst, CodeGenerator& codeGenerator);
+std::expected<bool, int> EmitSwitch(SwitchInstruction& inst, CodeGenerator& codeGenerator);
 
 std::expected<bool, int> GenerateCode(Context& context, CodeGenerator& codeGenerator, bool verbose);
 

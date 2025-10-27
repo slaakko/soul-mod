@@ -393,9 +393,9 @@ const std::vector<SpillData>& LinearScanRegisterAllocator::GetSpillData() const
     return spillDataVec;
 }
 
-std::unique_ptr<LinearScanRegisterAllocator> CreateLinearScanRegisterAllocator(Function& function, Context* context)
+std::unique_ptr<RegisterAllocator> CreateLinearScanRegisterAllocator(Function& function, Context* context)
 {
-    std::unique_ptr<LinearScanRegisterAllocator> registerAllocator(new LinearScanRegisterAllocator(function, context));
+    std::unique_ptr<RegisterAllocator> registerAllocator(new LinearScanRegisterAllocator(function, context));
     return registerAllocator;
 }
 

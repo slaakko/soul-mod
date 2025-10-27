@@ -98,14 +98,17 @@ int AliasTypeSymbol::Arity()
     }
 }
 
-TypeSymbol* AliasTypeSymbol::DirectType(Context* context)
+std::expected<TypeSymbol*, int> AliasTypeSymbol::DirectType(Context* context)
 {
     return referredType->DirectType(context);
 }
 
 std::expected<otava::intermediate::Type*, int> AliasTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    return DirectType(context)->IrType(emitter, sourcePos, context);
+    std::expected<TypeSymbol*, int> dt = DirectType(context);
+    if (!dt) return std::unexpected<int>(dt.error());
+    TypeSymbol* directType = *dt;
+    return directType->IrType(emitter, sourcePos, context);
 }
 
 std::expected<soul::xml::Element*, int> AliasTypeSymbol::ToXml() const
@@ -180,7 +183,8 @@ std::expected<bool, int> ProcessAliasDeclaration(otava::ast::Node* aliasDeclarat
     }
     else
     {
-        context->GetSymbolTable()->AddAliasType(idNode, aliasDeclarationNode, type, context);
+        std::expected<AliasTypeSymbol*, int> a = context->GetSymbolTable()->AddAliasType(idNode, aliasDeclarationNode, type, context);
+        if (!a) return std::unexpected<int>(a.error());
     }
     if (instantiate)
     {
@@ -194,7 +198,7 @@ bool AliasTypeLess::operator()(AliasTypeSymbol* left, AliasTypeSymbol* right) co
     return left->Name() < right->Name();
 }
 
-void AddTemporaryTypeAlias(otava::ast::Node* aliasDeclarationNode, Context* context)
+std::expected<bool, int> AddTemporaryTypeAlias(otava::ast::Node* aliasDeclarationNode, Context* context)
 {
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
@@ -202,10 +206,13 @@ void AddTemporaryTypeAlias(otava::ast::Node* aliasDeclarationNode, Context* cont
     {
         otava::ast::AliasDeclarationNode* alias = static_cast<otava::ast::AliasDeclarationNode*>(aliasDeclarationNode);
         otava::ast::Node* idNode = alias->Identifier();
-        AliasTypeSymbol* temporaryAlias = context->GetSymbolTable()->AddAliasType(idNode, aliasDeclarationNode, GenericTypeSymbol::Instance(), context);
+        std::expected<AliasTypeSymbol*, int> a = context->GetSymbolTable()->AddAliasType(idNode, aliasDeclarationNode, GenericTypeSymbol::Instance(), context);
+        if (!a) return std::unexpected<int>(a.error());
+        AliasTypeSymbol* temporaryAlias = *a;
         context->AddTemporaryAliasType(temporaryAlias);
     }
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> RemoveTemporaryAliasTypeSymbols(Context* context)

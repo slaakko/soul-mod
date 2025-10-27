@@ -59,7 +59,7 @@ std::expected<TypeSymbol*, int> GetFloatingPointType(otava::ast::Suffix suffix, 
     return GetFundamentalType(flags, sourcePos, context);
 }
 
-TypeSymbol* GetStringType(otava::ast::EncodingPrefix encodingPrefix, const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<TypeSymbol*, int> GetStringType(otava::ast::EncodingPrefix encodingPrefix, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     switch (encodingPrefix)
     {
@@ -178,7 +178,13 @@ void Evaluator::Visit(otava::ast::CharacterLiteralNode& node)
 void Evaluator::Visit(otava::ast::StringLiteralNode& node)
 {
     if (!Valid()) return;
-    TypeSymbol* type = GetStringType(node.GetEncodingPrefix(), node.GetSourcePos(), context);
+    std::expected<TypeSymbol*, int> s = GetStringType(node.GetEncodingPrefix(), node.GetSourcePos(), context);
+    if (!s)
+    {
+        SetError(s.error());
+        return;
+    }
+    TypeSymbol* type = *s;
     std::expected<std::string, int> rv = util::ToUtf8(node.Value());
     if (!rv)
     {
@@ -351,8 +357,20 @@ void Evaluator::Visit(otava::ast::BinaryExprNode& node)
     {
         ValueKind commonKind = CommonValueKind(left->GetValueKind(), right->GetValueKind());
         EvaluationContext* evaluationContext = context->GetEvaluationContext();
-        Value* leftConv = left->Convert(commonKind, *evaluationContext);
-        Value* rightConv = right->Convert(commonKind, *evaluationContext);
+        std::expected<Value*, int> l = left->Convert(commonKind, *evaluationContext);
+        if (!l)
+        {
+            SetError(l.error());
+            return;
+        }
+        Value* leftConv = *l;
+        std::expected<Value*, int> r = right->Convert(commonKind, *evaluationContext);
+        if (!r)
+        {
+            SetError(r.error());
+            return;
+        }
+        Value* rightConv = *r;
         switch (commonKind)
         {
             case ValueKind::integerValue:
@@ -577,7 +595,14 @@ void Evaluator::Visit(otava::ast::SizeOfTypeExprNode& node)
         return;
     }
     TypeSymbol* type = *trv;
-    trv = type->DirectType(context)->FinalType(node.GetSourcePos(), context);
+    std::expected<TypeSymbol*, int> dt = type->DirectType(context);
+    if (!dt)
+    {
+        SetError(dt.error());
+        return;
+    }
+    TypeSymbol* directType = *dt;
+    trv = directType->FinalType(node.GetSourcePos(), context);
     if (!trv)
     {
         SetError(rv.error());
@@ -613,6 +638,13 @@ void Evaluator::Visit(otava::ast::BracedInitListNode& node)
     TypeSymbol* type = context->DeclaredInitializerType();
     if (type)
     {
+        std::expected<TypeSymbol*, int> pt = type->PlainType(context);
+        if (!pt)
+        {
+            SetError(pt.error());
+            return;
+        }
+        TypeSymbol* plainType = *pt;
         if (type->IsArrayTypeSymbol())
         {
             ArrayTypeSymbol* arrayTypeSymbol = static_cast<ArrayTypeSymbol*>(type);
@@ -646,9 +678,9 @@ void Evaluator::Visit(otava::ast::BracedInitListNode& node)
             }
             value = arrayValue;
         }
-        else if (type->PlainType(context)->IsClassTypeSymbol())
+        else if (plainType->IsClassTypeSymbol())
         {
-            ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(type->PlainType(context));
+            ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(plainType);
             StructureValue* structureValue = context->GetSymbolTable()->GetModule()->GetEvaluationContext()->GetStructureValue(type);
             int index = 0;
             for (otava::ast::Node* field : node.Items())

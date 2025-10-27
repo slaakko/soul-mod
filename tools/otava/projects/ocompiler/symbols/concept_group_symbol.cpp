@@ -80,7 +80,9 @@ std::expected<bool, int> ConceptGroupSymbol::Resolve(SymbolTable& symbolTable, C
     if (!rv) return rv;
     for (const auto& conceptId : conceptIds)
     {
-        ConceptSymbol* cncp = symbolTable.GetConcept(conceptId);
+        std::expected<ConceptSymbol*, int> c = symbolTable.GetConcept(conceptId);
+        if (!c) return std::unexpected<int>(c.error());
+        ConceptSymbol* cncp = *c;
         if (std::find(concepts.begin(), concepts.end(), cncp) == concepts.end())
         {
             concepts.push_back(cncp);

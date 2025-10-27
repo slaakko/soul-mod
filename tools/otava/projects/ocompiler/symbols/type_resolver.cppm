@@ -20,7 +20,7 @@ std::expected<bool, int> CheckDuplicateSpecifier(DeclarationFlags flags, Declara
 
 enum class TypeResolverFlags : std::int32_t
 {
-    none = 0, dontInstantiate = 1 << 0, dontThrow = 1 << 1
+    none = 0, dontInstantiate = 1 << 0
 };
 
 constexpr TypeResolverFlags operator|(TypeResolverFlags left, TypeResolverFlags right)

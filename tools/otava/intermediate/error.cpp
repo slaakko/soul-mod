@@ -37,6 +37,11 @@ void Error(const std::string& message, const soul::ast::Span& span, Context* con
             throw IntermediateError(message + " at\n'" + context->FilePath() + "':" + std::to_string(lineColLen.line) + ":\n" +
                 context->ErrorLines(lineColLen));
         }
+        else if (context->GetLexer())
+        {
+            soul::lexer::LexerBase<char32_t>* lexer = context->GetLexer();
+            throw IntermediateError(message + " at\n'" + context->FilePath() + "':" + std::to_string(lexer->Line()));
+        }
         else
         {
             throw IntermediateError(message);
@@ -68,9 +73,14 @@ void Error(const std::string& message, const soul::ast::Span& span, Context* con
                 context->ErrorLines(lineColLen) + ": see reference line " + std::to_string(refLineColLen.line) + ":\n" +
                 context->ErrorLines(refLineColLen));
         }
+        else if (context->GetLexer())
+        {
+            soul::lexer::LexerBase<char32_t>* lexer = context->GetLexer();
+            throw IntermediateError(message + " at\n'" + context->FilePath() + "':" + std::to_string(lexer->Line()));
+        }
         else
         {
-            throw IntermediateError(message);
+            throw IntermediateError(message + " at\n'" + context->FilePath() + "'");
         }
     }
     else

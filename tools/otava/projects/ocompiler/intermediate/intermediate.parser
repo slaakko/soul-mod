@@ -28,7 +28,8 @@ parser IntermediateParser
     TypeDeclarations(otava::intermediate::Context* context)
         ::= TYPES LBRACE TypeDeclaration(context):typeDeclaration* RBRACE
         {
-            context->ResolveTypes();
+            auto rv = context->ResolveTypes();
+            if (!rv) return std::unexpected<int>(rv.error());
         }
         ;
 

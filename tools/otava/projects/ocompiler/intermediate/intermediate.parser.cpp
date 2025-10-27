@@ -309,7 +309,8 @@ std::expected<soul::parser::Match, int> IntermediateParser<LexerT>::TypeDeclarat
                 }
                 if (match.hit)
                 {
-                    context->ResolveTypes();
+                    auto rv = context->ResolveTypes();
+                    if (!rv) return std::unexpected<int>(rv.error());
                 }
                 *parentMatch7 = match;
             }

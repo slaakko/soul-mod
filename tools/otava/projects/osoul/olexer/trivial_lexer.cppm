@@ -16,12 +16,6 @@ struct TrivialLexer_Variables : public soul::lexer::Variables
 };
 
 template<typename CharT>
-struct TrivialLexer;
-
-template<typename CharT>
-soul::lexer::Lexer<TrivialLexer<CharT>, CharT> MakeLexer(const CharT* start, const CharT* end, const std::string& fileName);
-
-template<typename CharT>
 struct TrivialLexer
 {
     using Variables = TrivialLexer_Variables;

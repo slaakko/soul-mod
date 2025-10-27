@@ -2518,7 +2518,7 @@ RegValue* Function::GetRegRef(const soul::ast::Span& span, Type* type, std::int3
         }
         else
         {
-            Error("error referencing register value " + std::to_string(reg) + ": type conflick", span, context, regValue->Span());
+            Error("error referencing register value " + std::to_string(reg) + ": type conflict", span, context, regValue->Span());
         }
     }
     else
@@ -2817,7 +2817,8 @@ Function* Code::GetOrInsertFunction(const std::string& functionId, FunctionType*
     {
         if (function->GetType() != functionType)
         {
-            Error("function type conflicts with earlier declaration", soul::ast::Span(), context);
+            Error("type of function '" + function->Name()  + "' (" + function->GetType()->Name()  + ") conflicts with earlier declaration (" + 
+                functionType->Name() + ")", soul::ast::Span(), context);
             return nullptr;
         }
         else

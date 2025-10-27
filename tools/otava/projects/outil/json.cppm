@@ -131,8 +131,8 @@ public:
     JsonArray();
     void AddItem(std::unique_ptr<JsonValue>&& item);
     inline int Count() const { return static_cast<int>(items.size()); }
-    std::expected<JsonValue*, bool> GetItem(int index) const;
-    std::expected<JsonValue*, bool> operator[](int index) const;
+    std::expected<JsonValue*, int> GetItem(int index) const;
+    std::expected<JsonValue*, int> operator[](int index) const;
     JsonValue* Clone() const override;
     std::expected<std::string, int> ToString() const override;
     std::expected<bool, int> Write(CodeFormatter& formatter) override;

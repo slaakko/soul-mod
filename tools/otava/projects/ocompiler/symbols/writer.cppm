@@ -21,6 +21,9 @@ public:
     std::expected<bool, int> Write(Symbol* symbol);
     inline Context* GetContext() { return context; }
     inline void SetContext(Context* context_) { context = context_; }
+    inline bool Valid() const { return fileStream.Valid(); }
+    inline explicit operator bool() const { return Valid(); }
+    inline int GetError() const { return fileStream.Error(); }
 private:
     util::FileStream fileStream;
     util::BufferedStream bufferedStream;

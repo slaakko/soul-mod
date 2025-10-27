@@ -7,6 +7,8 @@ export module otava.symbols.variable.group.symbol;
 
 import std;
 import otava.symbols.symbol;
+import otava.symbols.reader;
+import otava.symbols.writer;
 
 export namespace otava::symbols {
 

@@ -60,7 +60,8 @@ void FunctionDeclarator::SetTemplateArgs(const std::vector<TypeSymbol*>& templat
     templateArgs = templateArgs_;
 }
 
-ArrayDeclarator::ArrayDeclarator(const std::u32string& name_, otava::ast::Node* node_, std::int64_t size_) : Declarator(DeclaratorKind::arrayDeclarator, name_, node_), size(size_)
+ArrayDeclarator::ArrayDeclarator(const std::u32string& name_, otava::ast::Node* node_, std::int64_t size_) : 
+    Declarator(DeclaratorKind::arrayDeclarator, name_, node_), size(size_)
 {
 }
 
@@ -214,7 +215,8 @@ private:
     otava::ast::Node* declarationNode;
 };
 
-DeclaratorProcessor::DeclaratorProcessor(Context* context_, DeclarationFlags flags_, TypeSymbol* baseType_, FunctionQualifiers qualifiers_, otava::ast::Node* declarationNode_) :
+DeclaratorProcessor::DeclaratorProcessor(Context* context_, DeclarationFlags flags_, TypeSymbol* baseType_, FunctionQualifiers qualifiers_, 
+    otava::ast::Node* declarationNode_) :
     context(context_), 
     flags(flags_),
     baseType(baseType_), 
@@ -864,22 +866,24 @@ void DeclaratorProcessor::Visit(otava::ast::ArrayDeclaratorNode& node)
     declaration = Declaration(flags, arrayType, new ArrayDeclarator(arrayName, &node, size));
 }
 
-std::unique_ptr<DeclarationList> ProcessInitDeclaratorList(TypeSymbol* baseType, otava::ast::Node* declarationNode, otava::ast::Node* initDeclaratorList, DeclarationFlags flags, Context* context)
+std::unique_ptr<DeclarationList> ProcessInitDeclaratorList(TypeSymbol* baseType, otava::ast::Node* declarationNode, otava::ast::Node* initDeclaratorList, 
+    DeclarationFlags flags, Context* context)
 {
     DeclaratorListProcessor processor(context, baseType, flags, declarationNode);
     initDeclaratorList->Accept(processor);
     return processor.GetDeclarations();
 }
 
-std::unique_ptr<DeclarationList> ProcessMemberDeclaratorList(TypeSymbol* baseType, otava::ast::Node* declarationNode, otava::ast::Node* memberDeclaratorList, DeclarationFlags flags, Context* context)
+std::unique_ptr<DeclarationList> ProcessMemberDeclaratorList(TypeSymbol* baseType, otava::ast::Node* declarationNode, 
+    otava::ast::Node* memberDeclaratorList, DeclarationFlags flags, Context* context)
 {
     DeclaratorListProcessor processor(context, baseType, flags, declarationNode);
     memberDeclaratorList->Accept(processor);
     return processor.GetDeclarations();
 }
 
-Declaration ProcessDeclarator(TypeSymbol* baseType, otava::ast::Node* declarator, otava::ast::Node* declarationNode, DeclarationFlags flags, FunctionQualifiers qualifiers, 
-    Context* context)
+Declaration ProcessDeclarator(TypeSymbol* baseType, otava::ast::Node* declarator, otava::ast::Node* declarationNode, DeclarationFlags flags, 
+    FunctionQualifiers qualifiers, Context* context)
 {
     DeclaratorProcessor processor(context, flags, baseType, qualifiers, declarationNode);
     if (declarator->Kind() == otava::ast::NodeKind::trailingQualifiersNode)

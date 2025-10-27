@@ -158,7 +158,12 @@ void ScopeResolver::Visit(otava::ast::TemplateIdNode& node)
     }
     TypeSymbol* type = *rv;
     currentScope = type->GetScope();
-    context->GetSymbolTable()->EndScope();
+    std::expected<bool, int> erv = context->GetSymbolTable()->EndScope();
+    if (!erv)
+    {
+        SetError(erv.error());
+        return;
+    }
 }
 
 std::expected<Scope*, int> ResolveScope(otava::ast::Node* nnsNode, Context* context)
@@ -177,9 +182,9 @@ std::expected<bool, int> BeginScope(otava::ast::Node* nnsNode, Context* context)
     return std::expected<bool, int>(true);
 }
 
-void EndScope(Context* context)
+std::expected<bool, int> EndScope(Context* context)
 {
-    context->GetSymbolTable()->EndScope();
+    return context->GetSymbolTable()->EndScope();
 }
 
 std::expected<bool, int> AddParentScope(otava::ast::Node* node, Context* context)

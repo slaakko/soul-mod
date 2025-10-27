@@ -245,7 +245,10 @@ std::expected<std::unique_ptr<BoundFunctionCallNode>, int> CreateBoundFunctionCa
     TypeSymbol* type = functionMatch.function->ReturnType();
     if (type)
     {
-        std::expected<TypeSymbol*, int> trv = type->DirectType(context)->FinalType(sourcePos, context);
+        std::expected<TypeSymbol*, int> dt = type->DirectType(context);
+        if (!dt) return std::unexpected<int>(dt.error());
+        TypeSymbol* directType = *dt;
+        std::expected<TypeSymbol*, int> trv = directType->FinalType(sourcePos, context);
         if (!trv) return std::unexpected<int>(trv.error());
         type = *trv;
     }
@@ -283,17 +286,24 @@ std::expected<std::unique_ptr<BoundFunctionCallNode>, int> CreateBoundFunctionCa
             TypeSymbol* type = nullptr;
             if (arg->GetType()->IsClassTypeSymbol() && arg->GetFlag(BoundExpressionFlags::bindToRvalueRef))
             {
-                type = arg->GetType()->AddRValueRef(context);
+                std::expected<TypeSymbol*, int> pt = arg->GetType()->AddRValueRef(context);
+                if (!pt) return std::unexpected<int>(pt.error());
+                type = *pt;
             }
             else
             {
-                type = arg->GetType()->AddLValueRef(context);
+                std::expected<TypeSymbol*, int> pt = arg->GetType()->AddLValueRef(context);
+                if (!pt) return std::unexpected<int>(pt.error());
+                type = *pt;
             }
             arg = new BoundAddressOfNode(arg, sourcePos, type);
         }
         else if (argumentMatch.preConversionFlags == OperationFlags::deref)
         {
-            arg = new BoundDereferenceNode(arg, sourcePos, arg->GetType()->RemoveReference(context));
+            std::expected<TypeSymbol*, int> pt = arg->GetType()->RemoveReference(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* type = *pt;
+            arg = new BoundDereferenceNode(arg, sourcePos, type);
         }
         if (argumentMatch.conversionFun)
         {
@@ -313,15 +323,27 @@ std::expected<std::unique_ptr<BoundFunctionCallNode>, int> CreateBoundFunctionCa
                 std::unexpected<int> w = Warning(warningMessage, sourcePos, context);
                 functionMatch.warning = util::GetErrorMessage(w.error());
             }
-            if (conversionFun->GetFunctionKind() == FunctionKind::conversionMemFn && argType->PlainType(context)->IsClassTypeSymbol())
+            std::expected<TypeSymbol*, int> pt = argType->PlainType(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* plainType = *pt;
+            if (conversionFun->GetFunctionKind() == FunctionKind::conversionMemFn && plainType->IsClassTypeSymbol())
             {
                 if (argType->IsReferenceType())
                 {
-                    arg = new BoundRefToPtrNode(arg, sourcePos, argType->RemoveReference(context)->AddPointer(context));
+                    pt = argType->RemoveReference(context);
+                    if (!pt) return std::unexpected<int>(pt.error());
+                    TypeSymbol* type = *pt;
+                    pt = type->AddPointer(context);
+                    if (!pt) return std::unexpected<int>(pt.error());
+                    type = *pt;
+                    arg = new BoundRefToPtrNode(arg, sourcePos, type);
                 }
                 else
                 {
-                    arg = new BoundAddressOfNode(arg, sourcePos, argType->GetBaseType()->AddPointer(context));
+                    pt = argType->GetBaseType()->AddPointer(context);
+                    if (!pt) return std::unexpected<int>(pt.error());
+                    TypeSymbol* type = *pt;
+                    arg = new BoundAddressOfNode(arg, sourcePos, type);
                 }
                 BoundFunctionCallNode* functionCall = new BoundFunctionCallNode(conversionFun, sourcePos, conversionFun->ReturnType());
                 functionCall->AddArgument(arg);
@@ -334,17 +356,26 @@ std::expected<std::unique_ptr<BoundFunctionCallNode>, int> CreateBoundFunctionCa
                 VariableSymbol* temporary = *trv;
                 BoundVariableNode* boundTemporary = new BoundVariableNode(temporary, sourcePos);
                 BoundFunctionCallNode* constructorCall = new BoundFunctionCallNode(conversionFun, sourcePos, nullptr);
-                BoundAddressOfNode* temporaryArg = new BoundAddressOfNode(boundTemporary, sourcePos, temporary->GetType()->AddPointer(context));
+                pt = temporary->GetType()->AddPointer(context);
+                if (!pt) return std::unexpected<int>(pt.error());
+                TypeSymbol* ptrType = *pt;
+                BoundAddressOfNode* temporaryArg = new BoundAddressOfNode(boundTemporary, sourcePos, ptrType);
                 constructorCall->AddArgument(temporaryArg);
                 if (argumentMatch.preConversionFlags == OperationFlags::addr)
                 {
                     std::expected<BoundExpressionNode*, int> brv = MakeLvalueExpression(arg, sourcePos, context);
                     if (!brv) return std::unexpected<int>(brv.error());
-                    arg = new BoundAddressOfNode(*brv, sourcePos, arg->GetType()->AddPointer(context));
+                    pt = arg->GetType()->AddPointer(context);
+                    if (!pt) return std::unexpected<int>(pt.error());
+                    TypeSymbol* ptrType = *pt;
+                    arg = new BoundAddressOfNode(*brv, sourcePos, ptrType);
                 }
                 else if (argumentMatch.preConversionFlags == OperationFlags::deref)
                 {
-                    arg = new BoundDereferenceNode(arg, sourcePos, arg->GetType()->RemoveReference(context));
+                    pt = arg->GetType()->RemoveReference(context);
+                    if (!pt) return std::unexpected<int>(pt.error());
+                    TypeSymbol* type = *pt;
+                    arg = new BoundDereferenceNode(arg, sourcePos, type);
                 }
                 constructorCall->AddArgument(arg);
                 BoundExpressionNode* boundTemporary2 = new BoundVariableNode(temporary, sourcePos);
@@ -352,11 +383,17 @@ std::expected<std::unique_ptr<BoundFunctionCallNode>, int> CreateBoundFunctionCa
                 {
                     std::expected<BoundExpressionNode*, int> brv = MakeLvalueExpression(boundTemporary2, sourcePos, context);
                     if (!brv) return std::unexpected<int>(brv.error());
-                    boundTemporary2 = new BoundAddressOfNode(*brv, sourcePos, boundTemporary2->GetType()->AddPointer(context));
+                    pt = boundTemporary2->GetType()->AddPointer(context);
+                    if (!pt) return std::unexpected<int>(pt.error());
+                    TypeSymbol* ptrType = *pt;
+                    boundTemporary2 = new BoundAddressOfNode(*brv, sourcePos, ptrType);
                 }
                 else if (argumentMatch.postConversionFlags == OperationFlags::deref)
                 {
-                    boundTemporary2 = new BoundDereferenceNode(boundTemporary2, sourcePos, boundTemporary2->GetType()->RemoveReference(context));
+                    pt = boundTemporary2->GetType()->RemoveReference(context);
+                    if (!pt) return std::unexpected<int>(pt.error());
+                    TypeSymbol* type = *pt;
+                    boundTemporary2 = new BoundDereferenceNode(boundTemporary2, sourcePos, type);
                 }
                 argumentMatch.postConversionFlags = OperationFlags::none;
                 BoundConstructTemporaryNode* constructTemporary = new BoundConstructTemporaryNode(constructorCall, boundTemporary2, sourcePos);
@@ -371,11 +408,17 @@ std::expected<std::unique_ptr<BoundFunctionCallNode>, int> CreateBoundFunctionCa
         {
             std::expected<BoundExpressionNode*, int> rv = MakeLvalueExpression(arg, sourcePos, context);
             if (!rv) return std::unexpected<int>(rv.error());
-            arg = new BoundAddressOfNode(*rv, sourcePos, arg->GetType()->AddPointer(context));
+            std::expected<TypeSymbol*, int> pt = arg->GetType()->AddPointer(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* ptrType = *pt;
+            arg = new BoundAddressOfNode(*rv, sourcePos, ptrType);
         }
         else if (argumentMatch.postConversionFlags == OperationFlags::deref)
         {
-            arg = new BoundDereferenceNode(arg, sourcePos, arg->GetType()->RemoveReference(context));
+            std::expected<TypeSymbol*, int> pt = arg->GetType()->RemoveReference(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* type = *pt;
+            arg = new BoundDereferenceNode(arg, sourcePos, type);
         }
         boundFunctionCall->AddArgument(arg);
     }
@@ -501,7 +544,9 @@ std::expected<bool, int> FindTemplateParameterMatch(TypeSymbol* argType, TypeSym
     auto it = functionMatch.templateParameterMap.find(templateParameter);
     if (it == functionMatch.templateParameterMap.cend())
     {
-        templateArgumentType = argType->RemoveDerivations(paramType->GetDerivations(), context);
+        std::expected<TypeSymbol*, int> rd = argType->RemoveDerivations(paramType->GetDerivations(), context);
+        if (!rd) return std::unexpected<int>(rd.error());
+        templateArgumentType = *rd;
         if (templateArgumentType)
         {
             functionMatch.templateParameterMap[templateParameter] = templateArgumentType;
@@ -515,7 +560,9 @@ std::expected<bool, int> FindTemplateParameterMatch(TypeSymbol* argType, TypeSym
     {
         templateArgumentType = it->second;
     }
-    paramType = paramType->Unify(templateArgumentType, context);
+    std::expected<TypeSymbol*, int> ud = paramType->Unify(templateArgumentType, context);
+    if (!ud) return std::unexpected<int>(ud.error());
+    paramType = *ud;
     if (!paramType)
     {
         return std::expected<bool, int>(false);
@@ -534,7 +581,13 @@ std::expected<bool, int> FindTemplateParameterMatch(TypeSymbol* argType, TypeSym
     {
         bool qualificationConversionMatch = false;
         ArgumentMatch argumentMatch;
-        if (TypesEqual(argType->PlainType(context), paramType->PlainType(context), context))
+        std::expected<TypeSymbol*, int> pa = argType->PlainType(context);
+        if (!pa) return std::unexpected<int>(pa.error());
+        TypeSymbol* plainArgType = *pa;
+        std::expected<TypeSymbol*, int> pt = paramType->PlainType(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* plainParamType = *pt;
+        if (TypesEqual(plainArgType, plainParamType, context))
         {
             qualificationConversionMatch = FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch);
             if (qualificationConversionMatch)
@@ -668,7 +721,9 @@ std::expected<bool, int> FindClassTemplateMatch(TypeSymbol* argType, TypeSymbol*
         {
             return std::expected<bool, int>(false);
         }
-        TypeSymbol* templateArgumentType = targetArgumentType->UnifyTemplateArgumentType(functionMatch.templateParameterMap, context);
+        std::expected<TypeSymbol*, int> ud = targetArgumentType->UnifyTemplateArgumentType(functionMatch.templateParameterMap, context);
+        if (!ud) return std::unexpected<int>(ud.error());
+        TypeSymbol* templateArgumentType = *ud;
         if (templateArgumentType)
         {
             targetTemplateArguments.push_back(templateArgumentType);
@@ -678,8 +733,12 @@ std::expected<bool, int> FindClassTemplateMatch(TypeSymbol* argType, TypeSymbol*
             return std::expected<bool, int>(false);
         }
     }
-    TypeSymbol* plainTargetType = context->GetSymbolTable()->MakeClassTemplateSpecialization(paramClassType, targetTemplateArguments);
-    paramType = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations());
+    std::expected<ClassTemplateSpecializationSymbol*, int> sp = context->GetSymbolTable()->MakeClassTemplateSpecialization(paramClassType, targetTemplateArguments);
+    if (!sp) return std::unexpected<int>(sp.error());
+    TypeSymbol* plainTargetType = *sp;
+    std::expected<TypeSymbol*, int> c = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations());
+    if (!c) return std::unexpected<int>(c.error());
+    paramType = *c;
     if (TypesEqual(argType, paramType, context))
     {
         ArgumentMatch argumentMatch;
@@ -694,7 +753,13 @@ std::expected<bool, int> FindClassTemplateMatch(TypeSymbol* argType, TypeSymbol*
     {
         bool qualificationConversionMatch = false;
         ArgumentMatch argumentMatch;
-        if (TypesEqual(argType->PlainType(context), paramType->PlainType(context), context))
+        std::expected<TypeSymbol*, int> pt = argType->PlainType(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* plainArgType = *pt;
+        pt = paramType->PlainType(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* plainParamType = *pt;
+        if (TypesEqual(plainArgType, plainParamType, context))
         {
             qualificationConversionMatch = FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch);
         }
@@ -743,7 +808,7 @@ std::expected<bool, int> FindClassTemplateMatch(TypeSymbol* argType, TypeSymbol*
     return std::expected<bool, int>(false);
 }
 
-bool PlainTemplateArgsEqual(const std::vector<Symbol*>& sourceTemplateArguments, const std::vector<Symbol*>& targetTemplateArguments, Context* context)
+std::expected<bool, int> PlainTemplateArgsEqual(const std::vector<Symbol*>& sourceTemplateArguments, const std::vector<Symbol*>& targetTemplateArguments, Context* context)
 {
     int n = sourceTemplateArguments.size();
     int m = targetTemplateArguments.size();
@@ -755,12 +820,18 @@ bool PlainTemplateArgsEqual(const std::vector<Symbol*>& sourceTemplateArguments,
         if (!sourceTemplateArg->IsTypeSymbol() || !targetTemplateArg->IsTypeSymbol()) return false;
         TypeSymbol* sourceType = static_cast<TypeSymbol*>(sourceTemplateArg);
         TypeSymbol* targetType = static_cast<TypeSymbol*>(targetTemplateArg);
-        if (!TypesEqual(sourceType->PlainType(context), targetType->PlainType(context), context))
+        std::expected<TypeSymbol*, int> pt = sourceType->PlainType(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* sourcePlainType = *pt;
+        pt = targetType->PlainType(context);
+        if (!pt) return std::unexpected<int>(pt.error());
+        TypeSymbol* targetPlainType = *pt;
+        if (!TypesEqual(sourcePlainType, targetPlainType, context))
         {
-            return false;
+            return std::expected<bool, int>(false);
         }
     }
-    return true;
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch,
@@ -847,7 +918,9 @@ std::expected<bool, int> FindClassTemplateSpecializationMatch(TypeSymbol* argTyp
             {
                 templateArgumentType = static_cast<TypeSymbol*>(templateArgumentSymbol);
             }
-            templateArgumentType = templateArgumentType->UnifyTemplateArgumentType(functionMatch.templateParameterMap, context);
+            std::expected<TypeSymbol*, int> ud = templateArgumentType->UnifyTemplateArgumentType(functionMatch.templateParameterMap, context);
+            if (!ud) return std::unexpected<int>(ud.error());
+            templateArgumentType = *ud;
             if (templateArgumentType)
             {
                 targetTemplateArguments.push_back(templateArgumentType);
@@ -857,8 +930,13 @@ std::expected<bool, int> FindClassTemplateSpecializationMatch(TypeSymbol* argTyp
                 return std::expected<bool, int>(false);
             }
         }
-        TypeSymbol* plainTargetType = context->GetSymbolTable()->MakeClassTemplateSpecialization(paramSpecializationType->ClassTemplate(), targetTemplateArguments);
-        TypeSymbol* compoundParamType = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations());
+        std::expected<ClassTemplateSpecializationSymbol*, int> sp = context->GetSymbolTable()->MakeClassTemplateSpecialization(
+            paramSpecializationType->ClassTemplate(), targetTemplateArguments);
+        if (!sp) return std::unexpected<int>(sp.error());
+        TypeSymbol* plainTargetType = *sp;
+        std::expected<TypeSymbol*, int> c = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations());
+        if (!c) return std::unexpected<int>(c.error());
+        TypeSymbol* compoundParamType = *c;
         if (TypesEqual(argType, compoundParamType, context))
         {
             ArgumentMatch argumentMatch;
@@ -873,7 +951,13 @@ std::expected<bool, int> FindClassTemplateSpecializationMatch(TypeSymbol* argTyp
         {
             ArgumentMatch argumentMatch;
             bool qualificationConversionMatch = false;
-            if (TypesEqual(argType->PlainType(context), compoundParamType->PlainType(context), context))
+            std::expected<TypeSymbol*, int> pt = argType->PlainType(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* plainArgType = *pt;
+            pt = compoundParamType->PlainType(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* plainParamType = *pt;
+            if (TypesEqual(plainArgType, plainParamType, context))
             {
                 qualificationConversionMatch = FindQualificationConversion(argType, compoundParamType, arg, functionMatch, argumentMatch);
             }
@@ -923,8 +1007,13 @@ std::expected<bool, int> FindClassTemplateSpecializationMatch(TypeSymbol* argTyp
                     if (plainTemplateArgsEqual)
                     {
                         ++functionMatch.numConversions;
-                        plainTargetType = context->GetSymbolTable()->MakeClassTemplateSpecialization(paramSpecializationType->ClassTemplate(), sourceTemplateArguments);
-                        compoundParamType = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations());
+                        std::expected<ClassTemplateSpecializationSymbol*, int> sp = context->GetSymbolTable()->MakeClassTemplateSpecialization(
+                            paramSpecializationType->ClassTemplate(), sourceTemplateArguments);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        plainTargetType = *sp;
+                        std::expected<TypeSymbol*, int> c = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations());
+                        if (!c) return std::unexpected<int>(c.error());
+                        compoundParamType = *c;
                         if (TypesEqual(argType, compoundParamType, context))
                         {
                             functionMatch.argumentMatches.push_back(ArgumentMatch());
@@ -933,7 +1022,13 @@ std::expected<bool, int> FindClassTemplateSpecializationMatch(TypeSymbol* argTyp
                         else
                         {
                             ArgumentMatch argumentMatch;
-                            if (TypesEqual(argType->PlainType(context), compoundParamType->PlainType(context), context))
+                            std::expected<TypeSymbol*, int> pt = argType->PlainType(context);
+                            if (!pt) return std::unexpected<int>(pt.error());
+                            TypeSymbol* plainArgType = *pt;
+                            pt = compoundParamType->PlainType(context);
+                            if (!pt) return std::unexpected<int>(pt.error());
+                            TypeSymbol* plainParamType = *pt;
+                            if (TypesEqual(plainArgType, plainParamType, context))
                             {
                                 qualificationConversionMatch = FindQualificationConversion(argType, compoundParamType, arg, functionMatch, argumentMatch);
                             }
@@ -1005,6 +1100,7 @@ std::expected<bool, int> FindConversions(FunctionMatch& functionMatch, const std
         if (i >= arity)
         {
             ParameterSymbol* parameter = functionMatch.function->MemFunParameters(context)[i];
+            if (!functionMatch.function->Valid()) return std::unexpected<int>(functionMatch.function->GetError());
             if (parameter->DefaultValue())
             {
                 std::expected<bool, int> rv = context->GetSymbolTable()->CurrentScope()->PushParentScope(functionMatch.function->GetScope());
@@ -1015,7 +1111,10 @@ std::expected<bool, int> FindConversions(FunctionMatch& functionMatch, const std
                 rv = context->GetSymbolTable()->CurrentScope()->PopParentScope();
                 if (!rv) return rv;
                 arg = defaultArg.get();
-                std::expected<TypeSymbol*, int> frv = arg->GetType()->DirectType(context)->FinalType(sourcePos, context);
+                std::expected<TypeSymbol*, int> dt = arg->GetType()->DirectType(context);
+                if (!dt) return std::unexpected<int>(dt.error());
+                TypeSymbol* directType = *dt;
+                std::expected<TypeSymbol*, int> frv = directType->FinalType(sourcePos, context);
                 if (!frv) return std::unexpected<int>(frv.error());
                 argType = *frv;
                 functionMatch.defaultArgs.push_back(std::move(defaultArg));
@@ -1031,6 +1130,7 @@ std::expected<bool, int> FindConversions(FunctionMatch& functionMatch, const std
             argType = arg->GetType();
         }
         ParameterSymbol* parameter = functionMatch.function->MemFunParameters(context)[i];
+        if (!functionMatch.function->Valid()) return std::unexpected<int>(functionMatch.function->GetError());
         context->PushSetFlag(ContextFlags::resolveDependentTypes | ContextFlags::resolveNestedTypes);
         context->PushTemplateParameterMap(&functionMatch.templateParameterMap);
         context->SetSourcePos(sourcePos);
@@ -1055,7 +1155,13 @@ std::expected<bool, int> FindConversions(FunctionMatch& functionMatch, const std
         {
             bool qualificationConversionMatch = false;
             ArgumentMatch argumentMatch;
-            if (TypesEqual(argType->PlainType(context), paramType->PlainType(context), context))
+            std::expected<TypeSymbol*, int> pt = argType->PlainType(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* plainArgType = *pt;
+            pt = paramType->PlainType(context);
+            if (!pt) return std::unexpected<int>(pt.error());
+            TypeSymbol* plainParamType = *pt;
+            if (TypesEqual(plainArgType, plainParamType, context))
             {
                 qualificationConversionMatch = FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch);
                 if (qualificationConversionMatch)
@@ -1335,7 +1441,9 @@ std::expected<std::unique_ptr<BoundFunctionCallNode>, int> ResolveOverload(Scope
             context->PushSetFlag(ContextFlags::skipNonstaticMemberFunctions);
             flagsPushed = true;
         }
-        context->GetSymbolTable()->CollectViableFunctions(scopeLookups, groupName, templateArgs, static_cast<int>(args.size()), viableFunctions, context);
+        std::expected<bool, int> m = context->GetSymbolTable()->CollectViableFunctions(scopeLookups, groupName, templateArgs, 
+            static_cast<int>(args.size()), viableFunctions, context);
+        if (!m) return std::unexpected<int>(m.error());
         if (flagsPushed)
         {
             context->PopFlags();

@@ -41,7 +41,8 @@ std::expected<bool, int> MakeNfas(soul::ast::re::LexerContext& lexerContext)
         util::CodeFormatter formatter(nfaFile);
         for (soul::ast::re::NfaState* state : lexerContext.NfaStates())
         {
-            state->Print(formatter);
+            auto rv = state->Print(formatter);
+            if (!rv) return rv;
         }
         if (lexerContext.Verbose())
         {
@@ -383,7 +384,8 @@ std::expected<bool, int> MakeDfa(soul::ast::re::LexerContext& lexerContext)
             return std::unexpected<int>(util::AllocateError("could not create file '" + dfaFilePath + "'"));
         }
         util::CodeFormatter formatter(dfaFile);
-        lexerContext.GetDfa().Print(lexerContext, formatter);
+        auto rv = lexerContext.GetDfa().Print(lexerContext, formatter);
+        if (!rv) return rv;
         if (lexerContext.Verbose())
         {
             std::cout << "==> " << dfaFilePath << "\n";
@@ -584,7 +586,8 @@ std::expected<bool, int> WriteLexer(soul::ast::re::LexerContext& lexerContext, s
     sourceFormatter.WriteLine("return &tokens;");
     sourceFormatter.DecIndent();
     sourceFormatter.WriteLine("}");
-    WriteVariables(lexerContext, interfaceFormatter, sourceFormatter);
+    auto rv = WriteVariables(lexerContext, interfaceFormatter, sourceFormatter);
+    if (!rv) return rv;
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<typename CharT>");
     interfaceFormatter.WriteLine("struct " + lexer->Name());

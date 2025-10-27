@@ -1,0 +1,3 @@
+project return_type;
+target=program;
+source <return_type.cpp>;
