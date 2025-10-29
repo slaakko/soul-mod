@@ -11,7 +11,6 @@ import otava.symbols.compound.type.symbol;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.function.group.symbol;
 import otava.symbols.class_group.symbol;
-import otava.symbols.alias.group.symbol;
 import otava.symbols.error;
 import otava.symbols.context;
 import otava.symbols.writer;

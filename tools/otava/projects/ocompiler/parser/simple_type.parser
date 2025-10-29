@@ -1,0 +1,103 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module otava.parser.simple.type;
+
+[interface]import otava.symbols.context;
+[implementation]import otava.ast;
+[implementation]import otava.token;
+[implementation]import otava.lexer;
+
+parser SimpleTypeParser
+{
+    lexer otava::lexer::OtavaLexer<char32_t>;
+
+    SimpleType : otava::ast::Node*
+        ::= CHAR
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::CharNode(*sp); 
+            }
+        |   CHAR8_T
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::Char8Node(*sp); 
+            }
+        |   CHAR16_T
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::Char16Node(*sp); 
+            }
+        |   CHAR32_T
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::Char32Node(*sp); 
+            }
+        |   WCHAR_T
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::WCharNode(*sp); 
+            }
+        |   BOOL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::BoolNode(*sp); 
+            }
+        |   SHORT
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::ShortNode(*sp); 
+            }
+        |   INT
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::IntNode(*sp); 
+            }
+        |   LONG
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::LongNode(*sp); 
+            }
+        |   SIGNED
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::SignedNode(*sp); 
+            }
+        |   UNSIGNED
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::UnsignedNode(*sp); 
+            }
+        |   FLOAT
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::FloatNode(*sp);
+            }
+        |   DOUBLE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::DoubleNode(*sp); 
+            }
+        |   VOID
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::VoidNode(*sp); 
+            }
+        ;
+}

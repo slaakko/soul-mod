@@ -190,7 +190,7 @@ void AddTemporaryTypeAlias(otava::ast::Node* aliasDeclarationNode, Context* cont
 
 void RemoveTemporaryAliasTypeSymbols(Context* context)
 {
-    for (const auto& temporaryAlias : context->TemporaryAliasTypes())
+    for (AliasTypeSymbol* temporaryAlias : context->TemporaryAliasTypes())
     {
         temporaryAlias->Group()->RemoveAliasType(temporaryAlias);
         Scope* scope = temporaryAlias->Parent()->GetScope()->SymbolScope();

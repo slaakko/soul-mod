@@ -32,11 +32,11 @@ class ClassGroupSymbol;
 
 std::int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind);
 
-using RecordedParseCompoundStatementFn = void (*)(otava::ast::CompoundStatementNode* compoundStatementNode, Context* context);
+using RecordedParseCompoundStatementFn = std::expected<bool, int>(*)(otava::ast::CompoundStatementNode* compoundStatementNode, Context* context);
 
 void SetRecordedParseCompoundStatementFn(RecordedParseCompoundStatementFn fn);
 
-using RecordedParseCtorInitializerFn = void (*)(otava::ast::ConstructorInitializerNode* ctorInitializerNode, Context* context);
+using RecordedParseCtorInitializerFn = std::expected<bool, int>(*)(otava::ast::ConstructorInitializerNode* ctorInitializerNode, Context* context);
 
 void SetRecordedParseCtorInitializerFn(RecordedParseCtorInitializerFn fn);
 
@@ -232,7 +232,7 @@ std::expected<bool, int> ParseInlineMemberFunctions(otava::ast::Node* classSpeci
 std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 std::expected<bool, int> GenerateDestructors(BoundCompileUnitNode* compileUnit, otava::symbols::Context* context);
 std::unexpected<int> ReturnMemberDeclarationParsingError(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-std::unexpected<int> ReturntatementParsingError(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+std::unexpected<int> ReturnStatementParsingError(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 
 struct ClassLess
 {

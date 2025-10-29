@@ -826,7 +826,7 @@ void DeclaratorProcessor::Visit(otava::ast::TemplateIdNode& node)
 {
     node.TemplateName()->Accept(*this);
     std::vector<TypeSymbol*> templateArgs;
-    for (const auto& item : node.Items())
+    for (otava::ast::Node* item : node.Items())
     {
         TypeSymbol* type = ResolveType(item, DeclarationFlags::none, context);
         templateArgs.push_back(type);

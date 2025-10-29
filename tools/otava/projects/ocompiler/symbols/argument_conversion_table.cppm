@@ -8,6 +8,7 @@ export module otava.symbols.argument.conversion.table;
 import std;
 import otava.symbols.container.symbol;
 import otava.symbols.function.symbol;
+import otava.symbols.context;
 
 import soul.ast.source.pos;
 

@@ -1,0 +1,205 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module otava.parser.initialization;
+
+[interface]import otava.symbols.context;
+[interface]import otava.ast;
+[implementation]import otava.token;
+[implementation]import otava.lexer;
+[implementation]import otava.parser.expression;
+[implementation]import otava.parser.identifier;
+[implementation]import otava.parser.punctuation;
+
+parser InitializationParser
+{
+    lexer otava::lexer::OtavaLexer<char32_t>;
+
+    using ExpressionParser.Expression;
+    using ExpressionParser.AssignmentExpression;
+    using ExpressionParser.ExpressionList;
+    using IdentifierParser.Identifier;
+    using PunctuationParser.Comma;
+    using PunctuationParser.Ellipsis;
+    using PunctuationParser.LBrace;
+    using PunctuationParser.RBrace;
+
+    Initializer(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> initializer, var std::unique_ptr<otava::ast::ExpressionListNode> exprListNode) : 
+        otava::ast::Node*
+        ::= 
+        (
+            BraceOrEqualInitializer(context):braceOrEqualInit{ initializer.reset(braceOrEqualInit); }
+        |   LPAREN
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                exprListNode.reset(new otava::ast::ExpressionListNode(*sp)); 
+                exprListNode->SetLParenPos(*sp); 
+            } 
+            ExpressionList(context, exprListNode.get()):expressionList 
+            RPAREN
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                exprListNode->SetRParenPos(*sp); 
+                initializer.reset(exprListNode.release()); 
+            }
+        )
+        {
+            return initializer.release();
+        }
+        ;
+
+    InitializerClause(otava::symbols::Context* context) : otava::ast::Node*
+        ::= BracedInitList(context):bracedInitList{ return bracedInitList; }
+        |   AssignmentExpression(context):assignmentExpr{ return assignmentExpr; }
+        ;
+
+    InitializerList(otava::symbols::Context* context, otava::ast::Node* container)
+        ::= 
+        (
+            InitializerClause(context):first
+            { 
+                auto rv = container->AddNode(first); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            } 
+            (
+                Comma:comma
+                { 
+                    auto rv = container->AddNode(comma); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                } 
+                InitializerClause(context):next
+                { 
+                    auto rv = container->AddNode(next); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )*
+            (
+                Ellipsis:ellipsis
+                { 
+                    auto rv = container->AddNode(ellipsis); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )?
+        )
+        ;
+
+    DesignatedInitializerList(otava::symbols::Context* context, otava::ast::Node* container)
+        ::= 
+        (
+            DesignatedInitializerClause(context):first
+            { 
+                auto rv = container->AddNode(first); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+            (
+                Comma:comma
+                { 
+                    auto rv = container->AddNode(comma); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+                DesignatedInitializerClause(context):next
+                { 
+                    auto rv = container->AddNode(next); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )*
+        )
+        ;
+
+    DesignatedInitializerClause(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            Designator(context):designator
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp; 
+            }
+            BraceOrEqualInitializer(context):initializer
+        )
+        {
+            return new otava::ast::DesignatedInitializerNode(sourcePos, designator, initializer);
+        }
+        ;
+
+    Designator(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            DOT
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            }
+            Identifier(context):identifier
+        )
+        {
+            return new otava::ast::DesignatorNode(sourcePos, identifier);
+        }
+        ;
+
+    ExprOrBracedInitList(otava::symbols::Context* context) : otava::ast::Node*
+        ::= BracedInitList(context):bracedInitList{ return bracedInitList; }
+        |   Expression(context):expr{ return expr; }
+        ;
+
+    BraceOrEqualInitializer(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= ASSIGN
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            } 
+            InitializerClause(context):initializer{ return new otava::ast::AssignmentInitNode(sourcePos, initializer); }
+        |   BracedInitList(context):bracedInitList{ return bracedInitList; }
+        ;
+
+    BracedInitList(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> initList) : otava::ast::Node*
+        ::= 
+        (
+            LBrace:lbrace
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                initList.reset(new otava::ast::BracedInitListNode(*sp)); 
+                auto rv = initList->AddNode(lbrace); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+            (   InitializerList(context, initList.get()):initializerList 
+            |   DesignatedInitializerList(context, initList.get()):designatedInitList
+            )
+            (
+                Comma:comma
+                { 
+                    auto rv = initList->AddNode(comma); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )?
+            RBrace:rbrace
+            { 
+                auto rv = initList->AddNode(rbrace); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+        |   LBrace:lbrace
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                initList.reset(new otava::ast::BracedInitListNode(*sp)); 
+                auto rv = initList->AddNode(lbrace); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+            RBrace:rbrace
+            { 
+                auto rv = initList->AddNode(rbrace); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+        )
+        {
+            return initList.release();
+        }
+        ;
+}

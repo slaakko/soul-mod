@@ -913,6 +913,7 @@ void SymbolTable::Read(Reader& reader)
 
 void SymbolTable::Resolve(Context* context)
 {
+    context->SetRequesterModule(GetModule());
     for (auto& specialization : classTemplateSpecializations)
     {
         MapClassTemplateSpecialization(static_cast<ClassTemplateSpecializationSymbol*>(specialization.get()));
@@ -976,6 +977,7 @@ void SymbolTable::Resolve(Context* context)
         compoundType->Resolve(*this, context);
     }
     conversionTable->Make();
+    context->SetRequesterModule(nullptr);
 }
 
 Symbol* SymbolTable::Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context) 

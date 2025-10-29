@@ -121,7 +121,7 @@ void Module::Import(Module* that, ModuleMapper& moduleMapper, const std::string&
 
 void Module::ResolveForwardDeclarations()
 {
-    for (const auto& fwdSymbol : symbolTable.ForwardDeclarations())
+    for (Symbol* fwdSymbol : symbolTable.ForwardDeclarations())
     {
         if (fwdSymbol->IsForwardClassDeclarationSymbol())
         {
@@ -168,7 +168,7 @@ void Module::ResolveForwardDeclarations()
 
 void Module::ResolveAllForwardDeclarations()
 {
-    for (const auto& fwdSymbol : symbolTable.AllForwardDeclarations())
+    for (Symbol* fwdSymbol : symbolTable.AllForwardDeclarations())
     {
         if (fwdSymbol->IsForwardClassDeclarationSymbol())
         {

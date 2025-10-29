@@ -7,6 +7,9 @@ export module otava.symbols.function.group.symbol;
 
 import std;
 import otava.symbols.symbol;
+import otava.symbols.function.kind;
+import otava.symbols.function.symbol;
+import otava.symbols.context;
 
 export namespace otava::symbols {
 
@@ -14,8 +17,6 @@ class FunctionSymbol;
 class FunctionDefinitionSymbol;
 class ParameterSymbol;
 class TypeSymbol;
-
-enum class FunctionQualifiers : std::int32_t;
 
 class FunctionGroupSymbol : public Symbol
 {

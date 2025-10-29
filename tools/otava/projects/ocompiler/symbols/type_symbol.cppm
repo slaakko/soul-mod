@@ -9,6 +9,7 @@ import std;
 import otava.symbols.container.symbol;
 import otava.symbols.derivations;
 import otava.symbols.template_param_compare;
+import otava.symbols.alias.group.symbol;
 import otava.intermediate.types;
 import otava.ast;
 import util.uuid;

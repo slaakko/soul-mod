@@ -5,8 +5,6 @@
 
 module otava.symbols.function.group.symbol;
 
-import otava.symbols.function.kind;
-import otava.symbols.function.symbol;
 import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.visitor;
@@ -15,7 +13,6 @@ import otava.symbols.type_compare;
 import otava.symbols.type.symbol;
 import otava.symbols.compound.type.symbol;
 import otava.symbols.templates;
-import otava.symbols.context;
 
 namespace otava::symbols {
 

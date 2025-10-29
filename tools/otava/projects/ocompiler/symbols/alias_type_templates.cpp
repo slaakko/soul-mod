@@ -5,8 +5,6 @@
 
 module otava.symbols.alias.type.templates;
 
-import otava.symbols.context;
-import otava.symbols.symbol.table;
 import otava.symbols.alias.type.symbol;
 import otava.symbols.error;
 import otava.symbols.type.symbol;

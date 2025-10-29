@@ -71,7 +71,7 @@ void ArraySizeComputer::Visit(otava::ast::AssignmentInitNode& node)
 void ArraySizeComputer::Visit(otava::ast::BracedInitListNode& node)
 {
     std::int64_t count = 0;
-    for (const auto& element : node.Items())
+    for (otava::ast::Node* element : node.Items())
     {
         if (element->IsLBraceNode() || element->IsRBraceNode()) continue;
         ++count;

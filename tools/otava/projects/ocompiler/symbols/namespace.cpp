@@ -6,7 +6,6 @@
 module otava.symbols.namespaces;
 
 import otava.ast;
-import otava.symbols.context;
 import otava.symbols.alias.group.symbol;
 import otava.symbols.concept_group.symbol;
 import otava.symbols.class_group.symbol;

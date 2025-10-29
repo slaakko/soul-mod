@@ -6,7 +6,6 @@
 module otava.symbols.variable.group.symbol;
 
 import otava.symbols.variable.symbol;
-import otava.symbols.symbol.table;
 import otava.symbols.visitor;
 
 namespace otava::symbols {

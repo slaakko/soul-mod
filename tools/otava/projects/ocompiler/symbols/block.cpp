@@ -5,9 +5,7 @@
 
 module otava.symbols.block;
 
-import otava.symbols.context;
 import otava.symbols.visitor;
-import otava.symbols.symbol.table;
 import otava.symbols.variable.symbol;
 import otava.symbols.function.kind;
 import otava.symbols.function.symbol;

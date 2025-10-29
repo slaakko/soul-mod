@@ -24,16 +24,16 @@ EncodingPrefix ParseEncodingPrefix(const char32_t*& p, const char32_t* e);
 bool IsHexChar(char32_t c);
 std::uint64_t ParseHexChar(char32_t c);
 char32_t ParseEscape(const char32_t*& p, const char32_t* e, bool& valid);
-otava::ast::IntegerLiteralNode* ParseIntegerLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
+std::expected<otava::ast::IntegerLiteralNode*, int> ParseIntegerLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token);
-otava::ast::FloatingLiteralNode* ParseFloatingLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
+std::expected<otava::ast::FloatingLiteralNode*, int> ParseFloatingLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token);
-otava::ast::CharacterLiteralNode* ParseCharacterLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
+std::expected<otava::ast::CharacterLiteralNode*, int> ParseCharacterLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token);
-otava::ast::RawStringLiteralNode* ParseRawStringLiteral(const soul::ast::SourcePos& sourcePos, soul::lexer::LexerBase<char32_t>& lexer);
-otava::ast::StringLiteralNode* ParseStringLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
+std::expected<otava::ast::RawStringLiteralNode*, int> ParseRawStringLiteral(const soul::ast::SourcePos& sourcePos, soul::lexer::LexerBase<char32_t>& lexer);
+std::expected<otava::ast::StringLiteralNode*, int> ParseStringLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token);
-otava::ast::IdentifierNode* ParseIdentifier(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
+std::expected<otava::ast::IdentifierNode*, int> ParseIdentifier(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token);
 
 } // namespace otava::token::parser

@@ -11,6 +11,8 @@ import otava.symbols.writer;
 import otava.symbols.visitor;
 import otava.symbols.emitter;
 import otava.symbols.type_compare;
+import otava.symbols.modules;
+import otava.symbols.context;
 import util;
 
 namespace otava::symbols {
@@ -30,7 +32,7 @@ void FunctionTypeSymbol::MakeName()
     ptrIndex = name.length();
     name.append(U")(");
     bool first = true;
-    for (const auto& parameterType : parameterTypes)
+    for (TypeSymbol* parameterType : parameterTypes)
     {
         if (first)
         {
@@ -57,7 +59,7 @@ void FunctionTypeSymbol::Write(Writer& writer)
     writer.GetBinaryStreamWriter().Write(returnType->Id());
     std::uint32_t paramTypeCount = parameterTypes.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(paramTypeCount);
-    for (const auto& paramType : parameterTypes)
+    for (TypeSymbol* paramType : parameterTypes)
     {
         writer.GetBinaryStreamWriter().Write(paramType->Id());
     }
@@ -82,7 +84,13 @@ void FunctionTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
     returnType = symbolTable.GetType(returnTypeId);
     if (!returnType)
     {
-        std::cout << "FunctionTypeSymbol::Resolve(): warning: return type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+        std::string note;
+        Module* requesterModule = context->GetRequesterModule();
+        if (requesterModule)
+        {
+            note = ": note: requester module is " + requesterModule->Name();
+        }
+        std::cout << "FunctionTypeSymbol::Resolve(): warning: return type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
     }
     for (const auto& parameterTypeId : parameterTypeIds)
     {
@@ -93,7 +101,13 @@ void FunctionTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
         }
         else
         {
-            std::cout << "FunctionTypeSymbol::Resolve(): warning: parameter type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
+            std::cout << "FunctionTypeSymbol::Resolve(): warning: parameter type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
         }
     }
 }
@@ -109,7 +123,7 @@ otava::intermediate::Type* FunctionTypeSymbol::IrType(Emitter& emitter, const so
     if (!type)
     {
         std::vector<otava::intermediate::Type*> paramTypes;
-        for (const auto& paramType : parameterTypes)
+        for (TypeSymbol* paramType : parameterTypes)
         {
             paramTypes.push_back(paramType->IrType(emitter, sourcePos, context));
         }

@@ -654,6 +654,11 @@ double ort_stod(const char* s, std::size_t* pos)
     return std::stod(s, pos);
 }
 
+double ort_strtod(const char* str, char** str_end)
+{
+    return std::strtod(str, str_end);
+}
+
 void ort_exit(int exitCode)
 {
     std::exit(exitCode);

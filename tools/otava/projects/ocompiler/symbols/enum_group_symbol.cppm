@@ -7,10 +7,11 @@ export module otava.symbols.enum_group.symbol;
 
 import std;
 import otava.symbols.symbol;
+import otava.symbols.context;
+import otava.symbols.enums;
+import otava.symbols.symbol.table;
 
 export namespace otava::symbols {
-
-class ForwardEnumDeclarationSymbol;
 
 class EnumGroupSymbol : public Symbol
 {

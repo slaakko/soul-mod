@@ -575,4 +575,9 @@ double stod(const string& str, size_t* idx = nullptr)
     return ort_stod(str.c_str(), idx);
 }
 
+double strtod(const char* str, char** str_end)
+{
+    return ort_strtod(str, str_end);
+}
+
 } // namespace std

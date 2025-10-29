@@ -16,7 +16,6 @@ import otava.symbols.alias.group.symbol;
 import otava.symbols.enum_group.symbol;
 import otava.symbols.concepts;
 import otava.symbols.value;
-import otava.symbols.symbol.table;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.fundamental.type.conversion;
 import otava.symbols.function.type.symbol;

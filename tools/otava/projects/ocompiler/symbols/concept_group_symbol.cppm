@@ -7,10 +7,10 @@ export module otava.symbols.concept_group.symbol;
 
 import std;
 import otava.symbols.symbol;
+import otava.symbols.concepts;
+import otava.symbols.symbol.table;
 
 export namespace otava::symbols {
-
-class ConceptSymbol;
 
 class ConceptGroupSymbol : public Symbol
 {

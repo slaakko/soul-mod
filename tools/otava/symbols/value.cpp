@@ -11,6 +11,7 @@ import otava.symbols.fundamental.type.symbol;
 import otava.symbols.emitter;
 import otava.symbols.enums;
 import otava.symbols.modules;
+import otava.symbols.context;
 import otava.symbols.symbol.table;
 import otava.symbols.symbol_map;
 import otava.symbols.type.symbol;
@@ -104,7 +105,13 @@ void Value::Resolve(SymbolTable& symbolTable, Context* context)
         type = symbolTable.GetType(typeId);
         if (!type)
         {
-            std::cout << "Value::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
+            std::cout << "Value::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
         }
     }
 }
@@ -613,7 +620,7 @@ void ArrayValue::Write(Writer& writer)
     Value::Write(writer);
     std::uint32_t count = elementValues.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
-    for (const auto& elementValue : elementValues)
+    for (Value* elementValue : elementValues)
     {
         writer.Write(elementValue);
     }
@@ -652,7 +659,7 @@ otava::intermediate::Value* ArrayValue::IrValue(Emitter& emitter, const soul::as
 {
     otava::intermediate::ArrayType* arrayType = static_cast<otava::intermediate::ArrayType*>(GetType()->IrType(emitter, sourcePos, context));
     std::vector<otava::intermediate::Value*> elements;
-    for (const auto& elementValue : elementValues)
+    for (Value* elementValue : elementValues)
     {
         elements.push_back(elementValue->IrValue(emitter, sourcePos, context));
     }
@@ -685,7 +692,7 @@ void StructureValue::Write(Writer& writer)
     Value::Write(writer);
     std::uint32_t count = fieldValues.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
-    for (const auto& fieldValue : fieldValues)
+    for (Value* fieldValue : fieldValues)
     {
         writer.Write(fieldValue);
     }
@@ -724,7 +731,7 @@ otava::intermediate::Value* StructureValue::IrValue(Emitter& emitter, const soul
 {
     otava::intermediate::StructureType* structureType = static_cast<otava::intermediate::StructureType*>(GetType()->IrType(emitter, sourcePos, context));
     std::vector<otava::intermediate::Value*> fields;
-    for (const auto& fieldValue : fieldValues)
+    for (Value* fieldValue : fieldValues)
     {
         fields.push_back(fieldValue->IrValue(emitter, sourcePos, context));
     }

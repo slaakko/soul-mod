@@ -1,0 +1,838 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module otava.parser.classes;
+
+[interface]import otava.symbols.context;
+[interface]import otava.ast;
+[implementation]import soul.ast.source.pos;
+[implementation]import soul.ast.lexer.pos.pair;
+[implementation]import otava.token;
+[implementation]import otava.lexer;
+[implementation]import otava.symbols;
+[implementation]import otava.parser.attribute;
+[implementation]import otava.parser.concepts;
+[implementation]import otava.parser.declaration;
+[implementation]import otava.parser.enums;
+[implementation]import otava.parser.expression;
+[implementation]import otava.parser.function;
+[implementation]import otava.parser.guard;
+[implementation]import otava.parser.identifier;
+[implementation]import otava.parser.initialization;
+[implementation]import otava.parser.punctuation;
+[implementation]import otava.parser.recorded.parse;
+[implementation]import otava.parser.templates;
+[implementation]import otava.parser.type;
+
+parser ClassParser
+{
+    lexer otava::lexer::OtavaLexer<char32_t>;
+
+    using AttributeParser.AttributeSpecifierSeq;
+    using ConceptParser.RequiresClause;
+    using DeclarationParser.AliasDeclaration;
+    using DeclarationParser.Declarator;
+    using DeclarationParser.DeclSpecifierSeq;
+    using DeclarationParser.EmptyDeclaration;
+    using DeclarationParser.UsingDeclaration;
+    using DeclarationParser.UsingEnumDeclaration;
+    using DeclarationParser.StaticAssertDeclaration;
+    using EnumParser.OpaqueEnumDeclaration;
+    using ExpressionParser.ExpressionList;
+    using FunctionParser.FunctionDefinition;
+    using FunctionParser.NoDeclSpecFunctionDefinition;
+    using GuardParser.MemberFunctionGuard;
+    using GuardParser.SavedCtorInitializerGuard;
+    using IdentifierParser.Identifier;
+    using IdentifierParser.NestedNameSpecifier;
+    using IdentifierParser.Unnamed;
+    using InitializationParser.BracedInitList;
+    using InitializationParser.BraceOrEqualInitializer;
+    using PunctuationParser.Comma;
+    using PunctuationParser.Ellipsis;
+    using PunctuationParser.Semicolon;
+    using TemplateParser.DeductionGuide;
+    using TemplateParser.ExplicitSpecialization;
+    using TemplateParser.SimpleTemplateId;
+    using TemplateParser.Template;
+    using TemplateParser.TemplateDeclaration;
+    using TypeParser.DeclTypeSpecifier;
+    using TypeParser.TypeName;
+
+    ClassSpecifier(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::ClassSpecifierNode> node, 
+        var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : otava::ast::Node*
+        ::= 
+        (
+            ClassHead(context):classHead
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            } 
+            LBRACE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                lbPos = *sp;
+                node.reset(new otava::ast::ClassSpecifierNode(sourcePos, classHead)); 
+                auto rv = otava::symbols::BeginClass(node.get(), context); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            } 
+            MemberSpecification(context, node.get()):memberSpec? 
+            RBRACE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                rbPos = *sp;
+            }
+        )
+        {
+            node->SetLBracePos(lbPos);
+            node->SetRBracePos(rbPos);
+            auto rv = otava::symbols::EndClass(node.get(), context);
+            if (!rv) return std::unexpected<int>(rv.error());
+            return node.release();
+        }
+        ;
+
+    ClassHead(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            ClassKey:classKey
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            } 
+            AttributeSpecifierSeq(context):attributes? 
+            (   (ClassHeadName(context):classHeadName ClassVirtSpecifier(context):classVirtSpecifier? BaseClause(context):baseClause?)
+                {
+                    return new otava::ast::ClassHeadNode(sourcePos, classKey, classHeadName, classVirtSpecifier, baseClause, attributes);
+                }
+            |   (Unnamed:unnamed BaseClause(context):baseClause2?)
+                {
+                    return new otava::ast::ClassHeadNode(sourcePos, classKey, unnamed, nullptr, baseClause2, attributes);
+                }
+            )
+        )
+        ;
+
+    ClassKey : otava::ast::Node*
+        ::= CLASS
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::ClassNode(*sp); 
+            }
+        |   STRUCT
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::StructNode(*sp);
+            }
+        |   UNION
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::UnionNode(*sp); 
+            }
+        ;
+
+    ClassHeadName(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= NestedNameSpecifier(context):nns
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp; 
+            }
+            ClassName(context):className
+            { 
+                return new otava::ast::QualifiedIdNode(sourcePos, nns, className); 
+            }
+        |   ClassName(context):className2{ return className2; }
+        ;
+
+    ClassName(otava::symbols::Context* context) : otava::ast::Node*
+        ::= SimpleTemplateId(context):templateId{ return templateId; }
+        |   Identifier(context):identifier{ return identifier; }
+        ;
+
+    ClassVirtSpecifier(otava::symbols::Context* context) : otava::ast::Node*
+        ::= FinalKeyword(context):finalKw{ return finalKw; }
+        ;
+
+    VirtSpecifierSeq(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node) : otava::ast::Node*
+        ::= 
+        (
+            VirtSpecifier(context):first
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                node.reset(new otava::ast::VirtSpecifierSequenceNode(*sp)); 
+                auto rv = node->AddNode(first); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            } 
+            (
+                VirtSpecifier(context):next
+                { 
+                    auto rv = node->AddNode(next); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )*
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    VirtSpecifier(otava::symbols::Context* context) : otava::ast::Node*
+        ::= OverrideKeyword(context):overrideKw{ return overrideKw; }
+        |   FinalKeyword(context):finalKw{ return finalKw; }
+        ;
+
+    OverrideKeyword(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            ID
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                std::u32string id = token->ToString(); 
+                pass = id == U"override"; 
+            }
+        )
+        {
+            return new otava::ast::OverrideNode(sourcePos);
+        }
+        ;
+
+    FinalKeyword(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            ID
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                std::u32string id = token->ToString(); 
+                pass = id == U"final"; 
+            }
+        )
+        {
+            return new otava::ast::FinalNode(sourcePos);
+        }
+        ;
+
+    BaseClause(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= COLON
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            } 
+            BaseSpecifierList(context):baseSpecifierList
+        {
+            return new otava::ast::BaseClauseNode(sourcePos, baseSpecifierList);
+        }
+        ;
+
+    BaseSpecifierList(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node) : otava::ast::Node*
+        ::= 
+        (
+            BaseSpecifier(context):first
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                node.reset(new otava::ast::BaseSpecifierListNode(*sp)); 
+                auto rv = node->AddNode(first); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            } 
+            (
+                Comma:comma
+                { 
+                    auto rv = node->AddNode(comma); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                } 
+                BaseSpecifier(context):next
+                { 
+                    auto rv = node->AddNode(next); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )*
+            (
+                Ellipsis:ellipsis
+                { 
+                    auto rv = node->AddNode(ellipsis); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )?
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    BaseSpecifier(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::Node> accessSpecifierNode, 
+        var std::unique_ptr<otava::ast::Node> virtualSpecifier, var bool virtualFirst) : otava::ast::Node*
+        ::= 
+        (
+            (   AttributeSpecifierSeq(context):attributes
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    sourcePos = *sp;
+                }
+            )?
+            (   VirtualSpecifier:virt
+                { 
+                    if (!sourcePos.IsValid()) 
+                    {
+                        auto sp = lexer.GetSourcePos(pos);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        sourcePos = *sp;
+                    }
+                    virtualSpecifier.reset(virt); 
+                    virtualFirst = true; 
+                } 
+                (
+                    AccessSpecifier:access
+                    { 
+                        if (!sourcePos.IsValid()) 
+                        {
+                            auto sp = lexer.GetSourcePos(pos);
+                            if (!sp) return std::unexpected<int>(sp.error());
+                            sourcePos = *sp;
+                        }
+                        accessSpecifierNode.reset(access); }
+                    )? 
+            |   AccessSpecifier:access2
+                { 
+                    if (!sourcePos.IsValid()) 
+                    {
+                        auto sp = lexer.GetSourcePos(pos);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        sourcePos = *sp;
+                    }
+                    accessSpecifierNode.reset(access2); 
+                } 
+                (
+                    VirtualSpecifier:virt2
+                    { 
+                        if (!sourcePos.IsValid()) 
+                        {
+                            auto sp = lexer.GetSourcePos(pos);
+                            if (!sp) return std::unexpected<int>(sp.error());
+                            sourcePos = *sp;
+                        }
+                        virtualSpecifier.reset(virt2); }
+                    )?
+            |   empty
+            )
+            ClassOrDeclType(context):classOrDeclType
+            { 
+                if (!sourcePos.IsValid()) 
+                {
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    sourcePos = *sp; 
+                }
+            }
+        )
+        {
+            return new otava::ast::BaseSpecifierNode(sourcePos, classOrDeclType, accessSpecifierNode.release(), virtualSpecifier.release(), attributes, virtualFirst);
+        }
+        ;
+
+    ClassOrDeclType(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos tmpPos) : otava::ast::Node*
+        ::= NestedNameSpecifier(context):nns
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            } 
+            Template:tmp{ tmpPos = sourcePos; } 
+            SimpleTemplateId(context):simpleTemplateId
+            { 
+                return new otava::ast::QualifiedIdNode(sourcePos, nns, new otava::ast::PrefixNode(tmpPos, tmp, simpleTemplateId)); 
+            }
+        |   NestedNameSpecifier(context):nns2
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            } 
+            Identifier(context):id
+            { 
+                return new otava::ast::QualifiedIdNode(sourcePos, nns2, id); 
+            }
+        |   TypeName(context):typeName2{ return typeName2; }
+        |   DeclTypeSpecifier(context):declTypeSpecifier{ return declTypeSpecifier; }
+        ;
+
+    MemberSpecification(otava::symbols::Context* context, otava::ast::Node* container, var std::unique_ptr<otava::ast::Node> accessSpecifierNode, 
+        var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos colonPos)
+        ::= 
+        (   AccessSpecifier:accessSpecifier
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+                accessSpecifierNode.reset(accessSpecifier); 
+            } 
+            COLON
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                colonPos = *sp;
+                otava::symbols::SetCurrentAccess(accessSpecifierNode.get(), context);
+                auto rv = container->AddNode(new otava::ast::BeginAccessGroupNode(sourcePos, accessSpecifierNode.release(), colonPos)); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+        |   MemberDeclarationReset(context):memberDeclaration
+            { 
+                auto rv = container->AddNode(memberDeclaration); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+        )+
+        ;
+
+    MemberDeclarationReset(otava::symbols::Context* context) : otava::ast::Node*
+        ::= empty{ context->PushResetFlag(otava::symbols::ContextFlags::virtualSeen); }
+            MemberDeclaration(context):memberDeclaration{ context->PopFlags(); return memberDeclaration; } / { context->PopFlags(); }
+        ;
+
+    MemberDeclaration(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::Node> declSpecifiersNode, 
+        var std::unique_ptr<otava::ast::Node> declaratorsNode, var bool nextIsRBrace) : otava::ast::Node*
+        ::= (
+                AttributeSpecifierSeq(context):attributes
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    sourcePos = *sp;
+                }
+            )? 
+            (
+                MemberDeclSpecifiers(context):declSpecifiers
+                { 
+                    if (!sourcePos.IsValid()) 
+                    {
+                        auto sp = lexer.GetSourcePos(pos);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        sourcePos = *sp;
+                    }
+                    declSpecifiersNode.reset(declSpecifiers); 
+                }
+            )? 
+            (
+                MemberDeclaratorList(context):declarators
+                { 
+                    if (!sourcePos.IsValid()) 
+                    {
+                        auto sp = lexer.GetSourcePos(pos);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        sourcePos = *sp;
+                    }
+                    declaratorsNode.reset(declarators); 
+                }
+            )? 
+            (
+                Semicolon:semicolon
+                { 
+                    if (!sourcePos.IsValid()) 
+                    {
+                        auto sp = lexer.GetSourcePos(pos);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        sourcePos = *sp;
+                    }
+                }
+            )
+            {
+                if (!declSpecifiersNode && !declaratorsNode) pass = false;
+                else
+                {
+                    otava::ast::MemberDeclarationNode* memberDeclarationNode = new otava::ast::MemberDeclarationNode(sourcePos, attributes, declSpecifiersNode.release(), 
+                        declaratorsNode.release(), semicolon);
+                    auto rv = otava::symbols::ProcessMemberDeclaration(memberDeclarationNode, nullptr, context);
+                    if (!rv) return std::unexpected<int>(rv.error());
+                    return memberDeclarationNode;
+                }
+            }
+        |   (
+                AttributeSpecifierSeq(context):attributes2
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    sourcePos = *sp;
+                }
+            )? 
+            RetMemberDeclSpecifiers(context):declSpecifiers2
+            { 
+                if (!sourcePos.IsValid()) 
+                {
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    sourcePos = *sp;
+                }
+                declSpecifiersNode.reset(declSpecifiers2); 
+            }
+            MemberDeclaratorList(context):declarators2
+            { 
+                declaratorsNode.reset(declarators2); 
+            }
+            Semicolon:semicolon2
+            {
+                otava::ast::MemberDeclarationNode* memberDeclarationNode = new otava::ast::MemberDeclarationNode(sourcePos, attributes2, declSpecifiersNode.release(), 
+                    declaratorsNode.release(), semicolon2);
+                auto rv = otava::symbols::ProcessMemberDeclaration(memberDeclarationNode, nullptr, context);
+                if (!rv) return std::unexpected<int>(rv.error());
+                return memberDeclarationNode;
+            }
+        |   MemberFunctionDefinition(context):memberFunctionDefinition
+            { 
+                std::unique_ptr<otava::ast::Node> memFunDefNode;
+                memFunDefNode.reset(memberFunctionDefinition);
+                auto rv = otava::symbols::ProcessMemberFunctionDefinition(memFunDefNode.get(), context);
+                if (!rv) return std::unexpected<int>(rv.error());
+                return memFunDefNode.release(); 
+            }
+        |   RetMemberFunctionDefinition(context):retMemberFunctionDefinition
+            { 
+                std::unique_ptr<otava::ast::Node> memFunDefNode;
+                memFunDefNode.reset(retMemberFunctionDefinition);
+                auto rv = otava::symbols::ProcessMemberFunctionDefinition(memFunDefNode.get(), context);
+                if (!rv) return std::unexpected<int>(rv.error());
+                return memFunDefNode.release(); 
+            }
+        |   UsingDeclaration(context):usingDeclaration{ return usingDeclaration; }
+        |   UsingEnumDeclaration(context):usingEnumDeclaration{ return usingEnumDeclaration; }
+        |   StaticAssertDeclaration(context):staticAssertDeclaration{ return staticAssertDeclaration; }
+        |   MemberTemplateDeclaration(context):templateDeclaration{ return templateDeclaration; }
+        |   ExplicitSpecialization(context):explicitSpecialization{ return explicitSpecialization; }
+        |   DeductionGuide(context):deductionGuide{ return deductionGuide; }
+        |   AliasDeclaration(context):aliasDeclaration{ return aliasDeclaration; }
+        |   OpaqueEnumDeclaration(context):opaqueEnumDeclaration{ return opaqueEnumDeclaration; }
+        |   EmptyDeclaration:emptyDeclaration{ return emptyDeclaration; }
+        |   RBraceNext:next{ nextIsRBrace = true; pass = false; }
+        |   empty
+            { 
+                if (!nextIsRBrace) 
+                {
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    std::unexpected<int> rv = otava::symbols::ReturnMemberDeclarationParsingError(*sp, context);
+                    return std::unexpected<int>(rv.error());
+                }
+                else
+                {
+                    pass = false;
+                }
+            }
+        ;
+
+    RBraceNext
+        ::= &(RBRACE)
+        ;
+
+    MemberDeclSpecifiers(otava::symbols::Context* context) : otava::ast::Node*
+        ::= DeclSpecifierSeq(context):declSpecifiers{ return declSpecifiers; }
+        ;
+
+    RetMemberDeclSpecifiers(otava::symbols::Context* context) : otava::ast::Node*
+        ::= empty{ context->PushSetFlag(otava::symbols::ContextFlags::retMemberDeclSpecifiers); }
+            DeclSpecifierSeq(context):declSpecifiers{ context->PopFlags(); return declSpecifiers; } / { context->PopFlags(); }
+        ;
+
+    MemberFunctionDefinition(otava::symbols::Context* context) : otava::ast::Node*
+        ::= NoDeclSpecFunctionDefinition(context):noDeclSpecFunctionDefinition{ return noDeclSpecFunctionDefinition; }
+        |   FunctionDefinition(context):functionDefinition{ return functionDefinition; }
+        ;
+
+    RetMemberFunctionDefinition(otava::symbols::Context* context) : otava::ast::Node*
+        ::= empty{ context->PushSetFlag(otava::symbols::ContextFlags::retMemberDeclSpecifiers); }
+            FunctionDefinition(context):functionDefinition{ context->PopFlags(); return functionDefinition; } / { context->PopFlags(); }
+        ;
+
+    MemberTemplateDeclaration(otava::symbols::Context* context) : otava::ast::Node*
+        ::= TemplateDeclaration(context):templateDeclaration{ return templateDeclaration; }
+        ;
+
+    MemberDeclaratorList(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node) : otava::ast::Node*
+        ::= 
+        (
+            MemberDeclarator(context):first
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                node.reset(new otava::ast::MemberDeclaratorListNode(*sp)); 
+                auto rv = node->AddNode(first); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+            (
+                Comma:comma
+                { 
+                    auto rv = node->AddNode(comma); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                } 
+                MemberDeclarator(context):next
+                { 
+                    auto rv = node->AddNode(next); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )*
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    MemberDeclarator(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::TrailingQualifiersNode> trailingQualifiersNode) : 
+        otava::ast::Node*
+        ::= 
+        (
+            Declarator(context):declarator
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            } 
+            (   RequiresClause(context):requiresClause{ return new otava::ast::InitDeclaratorNode(sourcePos, declarator, requiresClause); }
+            |   empty{ pass = !context->GetFlag(otava::symbols::ContextFlags::virtualSeen); } 
+                BraceOrEqualInitializer(context):initializer{ return new otava::ast::InitDeclaratorNode(sourcePos, declarator, initializer); }
+            |   empty{ trailingQualifiersNode.reset(new otava::ast::TrailingQualifiersNode(sourcePos, declarator)); }
+            )
+            (
+                VirtSpecifierSeq(context):virtSpecifierSeq
+                { 
+                    auto rv = trailingQualifiersNode->AddNode(virtSpecifierSeq); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )?
+            (
+                PureSpecifier:pureSpecifier
+                { 
+                    auto rv = trailingQualifiersNode->AddNode(pureSpecifier); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )?
+        )
+        {
+            if (trailingQualifiersNode->Nodes().IsEmpty())
+            {
+                return trailingQualifiersNode->ReleaseSubject();
+            }
+            else
+            {
+                return trailingQualifiersNode.release();
+            }
+        }
+        ;    
+
+
+    CtorInitializer(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= MemberFunctionGuard(context):memberFunctionGuard
+            CtorInitializerGuarded(context):ctorInitializerGuarded{ return ctorInitializerGuarded; }
+        |   SavedCtorInitializerGuard(context):savedCtorInitializer{ context->ResetFlag(otava::symbols::ContextFlags::parseSavedCtorInitializer); }
+            CtorInitializerSaved(context):ctorInitializerSaved{ return ctorInitializerSaved; }
+        |   CtorInitializerUnguarded(context):ctorInitializerUnguarded{ return ctorInitializerUnguarded; }
+        ;
+
+    CtorInitializerGuarded(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= COLON
+            {   
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+                std::expected<soul::ast::lexer::pos::pair::LexerPosPair, int> rv = otava::parser::recorded::parse::RecordCtorInitializer(lexer); 
+                if (!rv) return std::unexpected<int>(rv.error());
+                soul::ast::lexer::pos::pair::LexerPosPair lexerPosPair = std::move(*rv);
+                if (lexerPosPair.IsValid())
+                {
+                    otava::ast::ConstructorInitializerNode* ctorInitializerNode = new otava::ast::ConstructorInitializerNode(sourcePos);
+                    ctorInitializerNode->SetLexerPosPair(lexerPosPair);
+                    ctorInitializerNode->SetFunctionScope(context->GetSymbolTable()->CurrentScope());
+                    return ctorInitializerNode;
+                }
+                else
+                {
+                   pass = false;
+                }
+            }
+        ;
+
+    CtorInitializerUnguarded(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= COLON
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            } 
+            MemberInitializerList(context):memberInitializerList
+        {
+            return new otava::ast::ConstructorInitializerNode(sourcePos, memberInitializerList);
+        }
+        ;
+
+    CtorInitializerSaved(otava::symbols::Context* context, var otava::ast::ConstructorInitializerNode* ctorInitializerNode) : otava::ast::Node*
+        ::= empty
+            {
+                std::expected<otava::ast::ConstructorInitializerNode*, int> rv = otava::parser::recorded::parse::GetSavedCtorInitializerNode(context);
+                if (!rv) return std::unexpected<int>(rv.error());
+                ctorInitializerNode = *rv;
+                if (!ctorInitializerNode)
+                {
+                    pass = false;
+                }
+                else
+                {
+                    lexer.BeginRecordedParse(ctorInitializerNode->GetLexerPosPair()); 
+                    otava::symbols::Scope* functionScope = static_cast<otava::symbols::Scope*>(ctorInitializerNode->FunctionScope());
+                    context->GetSymbolTable()->BeginScope(functionScope);
+                }
+            }
+            MemberInitializerList(context):memberInitializerList
+            {
+                ctorInitializerNode->SetMemberInitializerListNode(memberInitializerList);
+                lexer.EndRecordedParse(); 
+                auto rv = context->GetSymbolTable()->EndScope();
+                if (!rv) return std::unexpected<int>(rv.error());
+                return ctorInitializerNode;
+            }
+        |   empty
+            {
+                lexer.EndRecordedParse(); 
+                pass = false;
+            }
+        ;
+
+    MemberInitializerList(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node) : otava::ast::Node*
+        ::= 
+        (   
+            MemberInitializer(context):first
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                node.reset(new otava::ast::MemberInitializerListNode(*sp)); 
+                auto rv = node->AddNode(first); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+            (
+                Comma:comma
+                { 
+                    auto rv = node->AddNode(comma); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                } 
+                MemberInitializer(context):next
+                { 
+                    auto rv = node->AddNode(next); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )*
+            (
+                Ellipsis:ellipsis
+                { 
+                    auto rv = node->AddNode(ellipsis); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )?
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    MemberInitializer(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::ExpressionListNode> exprListNode, 
+        var std::unique_ptr<otava::ast::Node> node) : otava::ast::Node*
+        ::= 
+        (   MemberInitializerId(context):id
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp; 
+            }
+            (
+                LPAREN{ exprListNode.reset(new otava::ast::ExpressionListNode(sourcePos)); exprListNode->SetLParenPos(sourcePos); } 
+                ExpressionList(context, exprListNode.get()):expressionList?
+                RPAREN{ exprListNode->SetRParenPos(sourcePos); node.reset(exprListNode.release()); }
+            |   BracedInitList(context):bracedInitList{ node.reset(bracedInitList); }
+            )
+        )
+        {
+            return new otava::ast::MemberInitializerNode(sourcePos, id, node.release());
+        }
+        ;
+
+    MemberInitializerId(otava::symbols::Context* context) : otava::ast::Node*
+        ::= ClassOrDeclType(context):classOrDeclType{ return classOrDeclType; }
+        |   Identifier(context):identifier{ return identifier; }
+        ;
+
+    PureSpecifier(var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos zeroPos) : otava::ast::Node*
+        ::= 
+        (
+            ASSIGN
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp; 
+            } 
+            INTEGER_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                zeroPos = *sp;
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                std::u32string value = token->ToString(); 
+                pass = value == U"0"; 
+            }
+        )
+        {
+            return new otava::ast::PureSpecifierNode(sourcePos, zeroPos);
+        }
+        ;
+
+    AccessSpecifier : otava::ast::Node*
+        ::= PUBLIC
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::PublicNode(*sp); 
+            }
+        |   PROTECTED
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::ProtectedNode(*sp); 
+            }
+        |   Private:privat{ return privat; }
+        ;
+
+    Private : otava::ast::Node*
+        ::= PRIVATE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::PrivateNode(*sp); 
+            }
+        ;
+
+    VirtualSpecifier : otava::ast::Node*
+        ::= VIRTUAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::VirtualNode(*sp); 
+            }
+        ;
+
+}

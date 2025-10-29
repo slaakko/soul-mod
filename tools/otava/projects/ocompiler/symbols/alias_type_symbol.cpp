@@ -12,7 +12,6 @@ import otava.symbols.symbol.table;
 import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.visitor;
-import otava.symbols.templates;
 import otava.symbols.alias.group.symbol;
 import otava.symbols.modules;
 import otava.symbols.expression.binder;

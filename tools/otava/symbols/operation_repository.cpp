@@ -1810,7 +1810,7 @@ FunctionPtrApply::FunctionPtrApply(FunctionTypeSymbol* functionType_, const soul
     SetAccess(Access::public_);
     ParameterSymbol* parameter = new ParameterSymbol(U"fn", functionType->AddPointer(context));
     AddSymbol(parameter, sourcePos, context);
-    for (const auto& parameterType : functionType->ParameterTypes())
+    for (TypeSymbol* parameterType : functionType->ParameterTypes())
     {
         ParameterSymbol* parameter = new ParameterSymbol(U"@param", parameterType);
         AddSymbol(parameter, sourcePos, context);
@@ -1895,7 +1895,7 @@ FunctionSymbol* OperationGroup::GetOperation(std::vector<std::unique_ptr<BoundEx
     if (it != arityOperationsMap.cend())
     {
         const std::vector<Operation*>& operations = it->second;
-        for (const auto& operation : operations)
+        for (Operation* operation : operations)
         {
             FunctionSymbol* op = operation->Get(args, sourcePos, context);
             if (op)
@@ -1904,7 +1904,7 @@ FunctionSymbol* OperationGroup::GetOperation(std::vector<std::unique_ptr<BoundEx
             }
         }
     }
-    for (const auto& operation : anyArityOperations)
+    for (Operation* operation : anyArityOperations)
     {
         FunctionSymbol* op = operation->Get(args, sourcePos, context);
         if (op)

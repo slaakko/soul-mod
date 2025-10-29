@@ -80,7 +80,7 @@ void ConceptGroupSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 
 void ConceptGroupSymbol::Merge(ConceptGroupSymbol* that)
 {
-    for (const auto& cncp : that->concepts)
+    for (ConceptSymbol* cncp : that->concepts)
     {
         if (std::find(concepts.cbegin(), concepts.cend(), cncp) == concepts.end())
         {

@@ -25,6 +25,10 @@ import otava.symbols.namespaces;
 import otava.symbols.scope;
 import otava.symbols.templates;
 import otava.symbols.type_compare;
+import otava.symbols.concepts;
+import otava.symbols.function.group.symbol;
+import otava.symbols.class_group.symbol;
+import otava.symbols.function.type.symbol;
 import util.uuid;
 //import class_info_index;
 

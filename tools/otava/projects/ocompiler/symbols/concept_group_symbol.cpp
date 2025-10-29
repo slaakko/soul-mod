@@ -5,11 +5,9 @@
 
 module otava.symbols.concept_group.symbol;
 
-import otava.symbols.concepts;
 import otava.symbols.visitor;
 import otava.symbols.writer;
 import otava.symbols.reader;
-import otava.symbols.symbol.table;
 
 namespace otava::symbols {
 

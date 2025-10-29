@@ -5,10 +5,8 @@
 
 module otava.symbols.enum_group.symbol;
 
-import otava.symbols.enums;
 import otava.symbols.writer;
 import otava.symbols.reader;
-import otava.symbols.symbol.table;
 import otava.symbols.visitor;
 
 namespace otava::symbols {

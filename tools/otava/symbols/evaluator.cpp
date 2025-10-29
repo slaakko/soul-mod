@@ -523,7 +523,7 @@ void Evaluator::Visit(otava::ast::BracedInitListNode& node)
             ArrayTypeSymbol* arrayTypeSymbol = static_cast<ArrayTypeSymbol*>(type);
             ArrayValue* arrayValue = context->GetSymbolTable()->GetModule()->GetEvaluationContext()->GetArrayValue(type);
             std::int64_t count = 0;
-            for (const auto& element : node.Items())
+            for (otava::ast::Node* element : node.Items())
             {
                 if (element->IsLBraceNode() || element->IsRBraceNode()) continue;
                 context->SetDeclaredInitializerType(arrayTypeSymbol->ElementType());
@@ -548,7 +548,7 @@ void Evaluator::Visit(otava::ast::BracedInitListNode& node)
             ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(type->PlainType(context));
             StructureValue* structureValue = context->GetSymbolTable()->GetModule()->GetEvaluationContext()->GetStructureValue(type);
             int index = 0;
-            for (const auto& field : node.Items())
+            for (otava::ast::Node* field : node.Items())
             {
                 if (field->IsLBraceNode() || field->IsRBraceNode()) continue;
                 context->SetDeclaredInitializerType(nullptr);

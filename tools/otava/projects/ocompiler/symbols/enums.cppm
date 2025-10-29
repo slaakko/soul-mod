@@ -10,6 +10,7 @@ import otava.symbols.scope;
 import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.type.symbol;
+import otava.symbols.context;
 import otava.ast.node;
 
 export namespace otava::symbols {

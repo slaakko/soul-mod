@@ -9,6 +9,8 @@ import std;
 import otava.symbols.type.symbol;
 import otava.symbols.symbol;
 import otava.symbols.template_param_compare;
+import otava.symbols.templates;
+import otava.symbols.context;
 
 export namespace otava::symbols {
 

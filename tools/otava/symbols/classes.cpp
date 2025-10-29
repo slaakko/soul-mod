@@ -187,7 +187,7 @@ void ClassTypeSymbol::AddDerivedClass(ClassTypeSymbol* derivedClass)
 
 bool ClassTypeSymbol::HasBaseClass(TypeSymbol* baseClass, int& distance, Context* context) const
 {
-    for (const auto& baseCls : baseClasses)
+    for (ClassTypeSymbol* baseCls : baseClasses)
     {
         if (TypesEqual(baseCls, baseClass, context))
         {
@@ -209,7 +209,7 @@ bool ClassTypeSymbol::HasBaseClass(TypeSymbol* baseClass, int& distance, Context
 
 bool ClassTypeSymbol::HasPolymorphicBaseClass() const
 {
-    for (const auto& baseCls : baseClasses)
+    for (ClassTypeSymbol* baseCls : baseClasses)
     {
         if (baseCls->IsPolymorphic())
         {
@@ -224,11 +224,11 @@ bool ClassTypeSymbol::IsTemplateParameterInstantiation(Context* context, std::se
     if (visited.find(this) == visited.end())
     {
         visited.insert(this);
-        for (const auto& memberVariable : memberVariables)
+        for (VariableSymbol* memberVariable : memberVariables)
         {
             if (memberVariable->IsTemplateParameterInstantiation(context, visited)) return true;
         }
-        for (const auto& staticMemberVar : staticMemberVariables)
+        for (VariableSymbol* staticMemberVar : staticMemberVariables)
         {
             if (staticMemberVar->IsTemplateParameterInstantiation(context, visited)) return true;
         }
@@ -260,7 +260,7 @@ void ClassTypeSymbol::Write(Writer& writer)
     writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(flags));
     std::uint32_t nb = baseClasses.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(nb);
-    for (const auto& baseClass : baseClasses)
+    for (ClassTypeSymbol* baseClass : baseClasses)
     {
         writer.GetBinaryStreamWriter().Write(baseClass->Id());
     }
@@ -273,7 +273,7 @@ void ClassTypeSymbol::Write(Writer& writer)
     writer.GetBinaryStreamWriter().Write(specializationId);
     writer.GetBinaryStreamWriter().Write(level);
     writer.GetBinaryStreamWriter().WriteULEB128UInt(objectLayout.size());
-    for (const auto& type : objectLayout)
+    for (TypeSymbol* type : objectLayout)
     {
         writer.GetBinaryStreamWriter().Write(type->Id());
     }
@@ -368,7 +368,13 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
         specialization = symbolTable.GetType(specializationId);
         if (!specialization)
         {
-            std::cout << "ClassTypeSymbol::Resolve(): warning: specialization type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
+            std::cout << "ClassTypeSymbol::Resolve(): warning: specialization type of '" + util::ToUtf8(FullName()) + "' not resolved" << note <<"\n";
         }
     }
     for (const auto& tid : objectLayoutIds)
@@ -380,7 +386,13 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
         }
         else
         {
-            std::cout << "ClassTypeSymbol::Resolve(): warning: object layout type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
+            std::cout << "ClassTypeSymbol::Resolve(): warning: object layout type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
         }
     }
     for (const auto& fnIndexId : functionIdMap)
@@ -409,11 +421,11 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
 
 bool ClassTypeSymbol::IsPolymorphic() const
 {
-    for (const auto& baseClass : baseClasses)
+    for (ClassTypeSymbol* baseClass : baseClasses)
     {
         if (baseClass->IsPolymorphic()) return true;
     }
-    for (const auto& memberFunction : memberFunctions)
+    for (FunctionSymbol* memberFunction : memberFunctions)
     {
         if (memberFunction->IsVirtual()) return true;
     }
@@ -424,7 +436,7 @@ void ClassTypeSymbol::MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Co
 {
     if (ObjectLayoutComputed())
     {
-        for (const auto& memberVar : memberVariables)
+        for (VariableSymbol* memberVar : memberVariables)
         {
             if (memberVar->LayoutIndex() == -1)
             {
@@ -436,7 +448,7 @@ void ClassTypeSymbol::MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Co
     if (ObjectLayoutComputed()) return;
     SetObjectLayoutComputed();
     objectLayout.clear();
-    for (const auto& baseClass : baseClasses)
+    for (ClassTypeSymbol* baseClass : baseClasses)
     {
         baseClass->MakeObjectLayout(sourcePos, context);
         objectLayout.push_back(baseClass);
@@ -455,7 +467,7 @@ void ClassTypeSymbol::MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Co
             objectLayout.push_back(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::unsignedCharType));
         }
     }
-    for (const auto& memberVar : memberVariables)
+    for (VariableSymbol* memberVar : memberVariables)
     {
         std::int32_t layoutIndex = objectLayout.size();
         memberVar->SetLayoutIndex(layoutIndex);
@@ -536,7 +548,7 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
         }
     }
     std::vector<FunctionSymbol*> virtualFunctions;
-    for (const auto& function : memberFunctions)
+    for (FunctionSymbol* function : memberFunctions)
     {
         FunctionSymbol* fn = function;
         if (function->IsFunctionDefinitionSymbol())
@@ -551,7 +563,7 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
         if ((fn->IsVirtual() || fn->IsDestructor()) && !fn->IsTrivialDestructor())
         {
             bool found = false;
-            for (const auto& existing : virtualFunctions)
+            for (FunctionSymbol* existing : virtualFunctions)
             {
                 if (FunctionMatches(fn, existing, context))
                 {
@@ -655,7 +667,7 @@ std::vector<ClassTypeSymbol*> ClassTypeSymbol::VPtrHolderClasses() const
     }
     else
     {
-        for (const auto& baseClass : baseClasses)
+        for (ClassTypeSymbol* baseClass : baseClasses)
         {
             std::vector<ClassTypeSymbol*> vptrHolderBaseClasses = baseClass->VPtrHolderClasses();
             for (ClassTypeSymbol* vptrHolderClass : vptrHolderBaseClasses)
@@ -805,7 +817,7 @@ FunctionSymbol* ClassTypeSymbol::GetFunctionByNodeId(std::int32_t nodeId) const
 
 FunctionSymbol* ClassTypeSymbol::GetConversionFunction(TypeSymbol* type, Context* context) const
 {
-    for (const auto& conversionFunction : conversionFunctions)
+    for (FunctionSymbol* conversionFunction : conversionFunctions)
     {
         if (TypesEqual(conversionFunction->ReturnType(), type, context))
         {
@@ -827,15 +839,15 @@ bool ClassTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
 {
     if (visited.find(this) != visited.end()) return true;
     visited.insert(this);
-    for (const auto& baseClass : baseClasses)
+    for (ClassTypeSymbol* baseClass : baseClasses)
     {
         if (!baseClass->IsComplete(visited)) return false;
     }
-    for (const auto& memberVariable : memberVariables)
+    for (VariableSymbol* memberVariable : memberVariables)
     {
         if (!memberVariable->GetType()->IsComplete(visited)) return false;
     }
-    for (const auto& staticMemberVariable : staticMemberVariables)
+    for (VariableSymbol* staticMemberVariable : staticMemberVariables)
     {
         if (!staticMemberVariable->GetType()->IsComplete(visited)) return false;
     }
@@ -877,7 +889,7 @@ std::pair<bool, std::int64_t> ClassTypeSymbol::Delta(ClassTypeSymbol* base, Emit
 int ClassTypeSymbol::TotalMemberCount() const
 {
     int totalMemberCount = 0;
-    for (const auto& baseClass : baseClasses)
+    for (ClassTypeSymbol* baseClass : baseClasses)
     {
         totalMemberCount += baseClass->TotalMemberCount();
     }
@@ -1140,7 +1152,7 @@ void BeginClass(otava::ast::Node* node, Context* context)
     GetClassAttributes(node, name, kind, specialization, context);
     context->GetSymbolTable()->BeginClass(name, kind, specialization, node, context);
     std::vector<ClassTypeSymbol*> baseClasses = ResolveBaseClasses(node, context);
-    for (const auto& baseClass : baseClasses)
+    for (ClassTypeSymbol* baseClass : baseClasses)
     {
         context->GetSymbolTable()->AddBaseClass(baseClass, node->GetSourcePos(), context);
     }
@@ -1569,7 +1581,7 @@ void AddClassInfo(ClassTypeSymbol* classTypeSymbol, Context* context)
         case ClassKind::union_: key = info::class_key::uni; break;
     }
     info::class_info info(id, key, util::ToUtf8(classTypeSymbol->FullName()));
-    for (const auto& base : classTypeSymbol->BaseClasses())
+    for (ClassTypeSymbol* base : classTypeSymbol->BaseClasses())
     {
         std::uint64_t h = 0;
         std::uint64_t l = 0;

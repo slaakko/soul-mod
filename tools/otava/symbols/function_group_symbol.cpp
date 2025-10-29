@@ -130,14 +130,14 @@ void FunctionGroupSymbol::Accept(Visitor& visitor)
 
 void FunctionGroupSymbol::Merge(FunctionGroupSymbol* that)
 {
-    for (const auto& function : that->functions)
+    for (FunctionSymbol* function : that->functions)
     {
         if (std::find(functions.cbegin(), functions.cend(), function) == functions.end())
         {
             functions.push_back(function);
         }
     }
-    for (const auto& definition : that->definitions)
+    for (FunctionDefinitionSymbol* definition : that->definitions)
     {
         if (std::find(definitions.cbegin(), definitions.cend(), definition) == definitions.end())
         {
@@ -149,7 +149,7 @@ void FunctionGroupSymbol::Merge(FunctionGroupSymbol* that)
 FunctionSymbol* FunctionGroupSymbol::ResolveFunction(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers,
     const std::vector<TypeSymbol*>& specialization, TemplateDeclarationSymbol* templateDeclaration, bool isSpecialization, Context* context) const
 {
-    for (const auto& function : functions)
+    for (FunctionSymbol* function : functions)
     {
         TemplateDeclarationSymbol* functionTemplateDeclaration = function->ParentTemplateDeclaration();
         if (templateDeclaration && !functionTemplateDeclaration || !templateDeclaration && functionTemplateDeclaration)
@@ -212,7 +212,7 @@ FunctionSymbol* FunctionGroupSymbol::ResolveFunction(const std::vector<TypeSymbo
 
 FunctionDefinitionSymbol* FunctionGroupSymbol::GetFunctionDefinition(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, Context* context) const
 {
-    for (const auto& functionDefinition : definitions)
+    for (FunctionDefinitionSymbol* functionDefinition : definitions)
     {
         if (functionDefinition->Arity() == parameterTypes.size())
         {
@@ -239,14 +239,14 @@ FunctionDefinitionSymbol* FunctionGroupSymbol::GetFunctionDefinition(const std::
 
 void FunctionGroupSymbol::SetVTabIndex(FunctionSymbol* function, int vtabIndex, Context* context)
 {
-    for (const auto& decl :  functions)
+    for (FunctionSymbol* decl :  functions)
     {
         if (decl != function && FunctionMatches(decl, function, context))
         {
             decl->SetVTabIndex(vtabIndex);
         }
     }
-    for (const auto& def : definitions)
+    for (FunctionDefinitionSymbol* def : definitions)
     {
         if (def != function && FunctionMatches(def, function, context))
         {
@@ -358,7 +358,7 @@ void FunctionGroupSymbol::CollectBestMatchingViableFunctionTemplates(int arity, 
     Context* context)
 {
     std::vector<std::pair<FunctionSymbol*, int>> functionScores;
-    for (const auto& function : functions)
+    for (FunctionSymbol* function : functions)
     {
         if (!function->IsTemplate()) continue;
         int score = MatchFunctionTemplate(function, templateArgs, context);
@@ -380,7 +380,7 @@ void FunctionGroupSymbol::CollectBestMatchingViableFunctionTemplates(int arity, 
         }
     }
     std::vector<std::pair<FunctionSymbol*, int>> functionDefScores;
-    for (const auto& functionDefinition : definitions)
+    for (FunctionDefinitionSymbol* functionDefinition : definitions)
     {
         if (!functionDefinition->IsTemplate()) continue;
         int score = MatchFunctionTemplate(functionDefinition, templateArgs, context);
@@ -411,7 +411,7 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, const std::vector<Ty
     }
     else
     {
-        for (const auto& function : functions)
+        for (FunctionSymbol* function : functions)
         {
             if (arity >= function->MinMemFunArity(context) && arity <= function->MemFunArity(context))
             {
@@ -423,7 +423,7 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, const std::vector<Ty
                 }
             }
         }
-        for (const auto& functionDefinition : definitions)
+        for (FunctionDefinitionSymbol* functionDefinition : definitions)
         {
             if ((functionDefinition->Qualifiers() & FunctionQualifiers::isDeleted) != FunctionQualifiers::none)
             {
@@ -444,14 +444,14 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, const std::vector<Ty
 
 FunctionSymbol* FunctionGroupSymbol::GetMatchingSpecialization(FunctionSymbol* specialization, Context* context) const
 {
-    for (const auto& function : functions)
+    for (FunctionSymbol* function : functions)
     {
         if (function->IsSpecialization() && FunctionMatches(function, specialization, context))
         {
             return function;
         }
     }
-    for (const auto& functionDefinition : definitions)
+    for (FunctionDefinitionSymbol* functionDefinition : definitions)
     {
         if (functionDefinition->IsSpecialization() && FunctionMatches(functionDefinition, specialization, context))
         {

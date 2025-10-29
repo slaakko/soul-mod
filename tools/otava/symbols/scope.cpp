@@ -479,7 +479,7 @@ ClassTemplateSpecializationSymbol* ContainerScope::GetClassTemplateSpecializatio
     }
     else
     {
-        for (const auto& parentScope : parentScopes)
+        for (Scope* parentScope : parentScopes)
         {
             if (visited.find(parentScope) == visited.end())
             {
@@ -510,7 +510,7 @@ void ContainerScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGrou
     Scope::Lookup(id, symbolGroupKinds, scopeLookup, flags, symbols, visited, context);
     if ((scopeLookup & ScopeLookup::parentScope) != ScopeLookup::none)
     {
-        for (const auto& parentScope : parentScopes)
+        for (Scope* parentScope : parentScopes)
         {
             if (symbols.empty() || (flags & LookupFlags::all) != LookupFlags::none)
             {
@@ -786,7 +786,7 @@ bool InstantiationScope::HasParentScope(const Scope* parentScope) const
 
 ClassTemplateSpecializationSymbol* InstantiationScope::GetClassTemplateSpecialization(std::set<Scope*>& visited) const
 {
-    for (const auto& parentScope : parentScopes)
+    for (Scope* parentScope : parentScopes)
     {
         if (visited.find(parentScope) == visited.end())
         {
@@ -832,7 +832,7 @@ void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbol
 {
     std::vector<Symbol*> foundSymbols;
     Scope::Lookup(id, symbolGroupKinds, ScopeLookup::thisScope, flags, foundSymbols, visited, context);
-    for (const auto& symbol : foundSymbols)
+    for (Symbol* symbol : foundSymbols)
     {
         if (symbol->IsBoundTemplateParameterSymbol())
         {

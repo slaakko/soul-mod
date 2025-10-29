@@ -306,7 +306,7 @@ void StatementBinder::GenerateBaseTerminators(const soul::ast::SourcePos& source
 {
     if (currentClass)
     {
-        for (const auto& baseClass : currentClass->BaseClasses())
+        for (ClassTypeSymbol* baseClass : currentClass->BaseClasses())
         {
             int index = GetBaseInitializerOrTerminatorIndex(baseClass);
             AddBaseTerminator(baseClass, index, sourcePos);
@@ -339,7 +339,7 @@ void StatementBinder::GenerateMemberTerminators(const soul::ast::SourcePos& sour
 {
     if (currentClass)
     {
-        for (const auto& mermberVar : currentClass->MemberVariables())
+        for (VariableSymbol* mermberVar : currentClass->MemberVariables())
         {
             AddMemberTerminator(mermberVar, sourcePos);
         }
@@ -438,7 +438,7 @@ void StatementBinder::CompleteMemberInitializers(const soul::ast::SourcePos& sou
     if (currentClass)
     {
         if (HasThisInitializer()) return;
-        for (const auto& memberVar : currentClass->MemberVariables())
+        for (VariableSymbol* memberVar : currentClass->MemberVariables())
         {
             int index = memberVar->Index();
             bool found = false;
@@ -490,7 +490,7 @@ void StatementBinder::CompleteBaseInitializers(const soul::ast::SourcePos& sourc
     if (currentClass)
     {
         if (HasThisInitializer()) return;
-        for (const auto& baseClass : currentClass->BaseClasses())
+        for (ClassTypeSymbol* baseClass : currentClass->BaseClasses())
         {
             int index = GetBaseInitializerOrTerminatorIndex(baseClass);
             bool found = false;
@@ -1415,7 +1415,7 @@ void StatementBinder::BindStaticLocalVariable(VariableSymbol* variable, otava::a
     std::string shaMaterial = util::ToUtf8(functionDefinitionSymbol->FullName());
     if (!functionDefinitionSymbol->Specialization().empty())
     {
-        for (const auto& type : functionDefinitionSymbol->Specialization())
+        for (TypeSymbol* type : functionDefinitionSymbol->Specialization())
         {
             shaMaterial.append(".").append(util::ToUtf8(type->FullName()));
         }

@@ -1,0 +1,250 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module otava.parser.literal;
+
+[interface]import otava.symbols.context;
+[implementation]import otava.ast;
+[implementation]import otava.token;
+[implementation]import otava.lexer;
+[implementation]import otava.token.parser;
+
+parser LiteralParser
+{
+    lexer otava::lexer::OtavaLexer<char32_t>;
+
+    Literal(otava::symbols::Context* context) : otava::ast::Node*
+        ::= UserDefinedLiteral(context):udLiteral
+            { 
+                return udLiteral; 
+            }
+        |   INTEGER_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                auto lit = otava::token::parser::ParseIntegerLiteral(*sp, lexer.FileName(), *token); 
+                if (!lit) return std::unexpected<int>(lit.error());
+                otava::ast::IntegerLiteralNode* node = *lit;
+                return node;
+            }
+        |   FLOATING_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                auto lit = otava::token::parser::ParseFloatingLiteral(*sp, lexer.FileName(), *token);
+                if (!lit) return std::unexpected<int>(lit.error());
+                otava::ast::FloatingLiteralNode* node = *lit;
+                return node;
+            }
+        |   CHARACTER_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                auto lit = otava::token::parser::ParseCharacterLiteral(*sp, lexer.FileName(), *token); 
+                if (!lit) return std::unexpected<int>(lit.error());
+                otava::ast::CharacterLiteralNode* node = *lit;
+                return node;
+            }
+        |   BEGIN_RAW_STRING_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                lexer.SetPos(pos); 
+                auto lit = otava::token::parser::ParseRawStringLiteral(*sp, lexer);
+                if (!lit) return std::unexpected<int>(lit.error());
+                otava::ast::RawStringLiteralNode* node = *lit;
+                return node;
+            }
+        |   STRING_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                auto lit = otava::token::parser::ParseStringLiteral(*sp, lexer.FileName(), *token); 
+                if (!lit) return std::unexpected<int>(lit.error());
+                otava::ast::StringLiteralNode* node = *lit;
+                return node;
+            }
+        |   TRUE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                return new otava::ast::BooleanLiteralNode(*sp, true, token->ToString()); 
+            }
+        |   FALSE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                return new otava::ast::BooleanLiteralNode(*sp, false, token->ToString()); 
+            }
+        |   NULLPTR
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                return new otava::ast::NullPtrLiteralNode(*sp, token->ToString()); 
+            }
+        ;
+
+    UserDefinedLiteral(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::int64_t p, var std::unique_ptr<otava::ast::Node> udLiteralNode) : 
+        otava::ast::Node*
+        ::= 
+        (   INTEGER_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp; 
+                p = pos; 
+            }
+            UdSuffix:udSuffix
+            { 
+                auto t = lexer.GetToken(p);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                auto l = otava::token::parser::ParseIntegerLiteral(sourcePos, lexer.FileName(), *token);
+                if (!l) return std::unexpected<int>(l.error());
+                udLiteralNode.reset(new otava::ast::UserDefinedLiteraNode(sourcePos, *l, udSuffix)); 
+            }
+        |   FLOATING_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp; 
+                p = pos; 
+            }
+            UdSuffix:udSuffix
+            { 
+                auto t = lexer.GetToken(p);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                auto l = otava::token::parser::ParseFloatingLiteral(sourcePos, lexer.FileName(), *token);
+                if (!l) return std::unexpected<int>(l.error());
+                udLiteralNode.reset(new otava::ast::UserDefinedLiteraNode(sourcePos, *l, udSuffix)); 
+            }
+        |   STRING_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp; 
+                p = pos; 
+            }
+            UdSuffix:udSuffix
+            { 
+                auto t = lexer.GetToken(p);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                auto l = otava::token::parser::ParseStringLiteral(sourcePos, lexer.FileName(), *token);
+                if (!l) return std::unexpected<int>(l.error());
+                udLiteralNode.reset(new otava::ast::UserDefinedLiteraNode(sourcePos, *l, udSuffix)); 
+            }
+        |   CHARACTER_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp; 
+                p = pos; 
+            }
+            UdSuffix:udSuffix
+            { 
+                auto t = lexer.GetToken(p);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                auto l = otava::token::parser::ParseCharacterLiteral(sourcePos, lexer.FileName(), *token);
+                if (!l) return std::unexpected<int>(l.error());
+                udLiteralNode.reset(new otava::ast::UserDefinedLiteraNode(sourcePos, *l, udSuffix)); 
+            }
+        )
+        {
+            return udLiteralNode.release();
+        }
+        ;
+
+    UdSuffix : otava::ast::Node*
+        ::= ID
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                auto id = otava::token::parser::ParseIdentifier(*sp, lexer.FileName(), *token); 
+                if (!id) return std::unexpected<int>(id.error());
+                otava::ast::IdentifierNode* node = *id;
+                return node;
+            }
+        ;
+
+    LiteralOperatorId(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, 
+        var soul::ast::SourcePos stringLitPos, var soul::ast::SourcePos idPos, var std::int64_t idp) : otava::ast::Node*
+        ::= 
+        (
+            OPERATOR
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            } 
+            STRING_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                stringLitPos = *sp; 
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                pass = token->ToString() == U""; 
+            } 
+            ID
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                idPos = *sp; 
+                idp = pos; 
+            }
+        )
+        {
+            auto t = lexer.GetToken(idp);
+            if (!t) return std::unexpected<int>(t.error());
+            const auto* token = *t;
+            auto i = otava::token::parser::ParseIdentifier(idPos, lexer.FileName(), *token);
+            if (!i) return std::unexpected<int>(i.error());
+            return new otava::ast::LiteralOperatorIdNode(sourcePos, *i, stringLitPos);
+        }
+        ;
+
+    StringLiteral(otava::symbols::Context* context) : otava::ast::Node*
+        ::= STRING_LITERAL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                auto lit = otava::token::parser::ParseStringLiteral(*sp, lexer.FileName(), *token); 
+                if (!lit) return std::unexpected<int>(lit.error());
+                otava::ast::StringLiteralNode* node = *lit;
+                return node;
+            }
+        ;
+}

@@ -54,7 +54,7 @@ void VariableGroupSymbol::AddVariable(VariableSymbol* variableSymbol)
 
 VariableSymbol* VariableGroupSymbol::GetVariable(int arity) const
 {
-    for (const auto& variable : variables)
+    for (VariableSymbol* variable : variables)
     {
         if (variable->Arity() == arity)
         {
@@ -104,7 +104,7 @@ void VariableGroupSymbol::Accept(Visitor& visitor)
 
 void VariableGroupSymbol::Merge(VariableGroupSymbol* that)
 {
-    for (const auto& variable : that->variables)
+    for (VariableSymbol* variable : that->variables)
     {
         if (std::find(variables.cbegin(), variables.cend(), variable) == variables.end())
         {

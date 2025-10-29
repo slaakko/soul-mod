@@ -1204,7 +1204,7 @@ void ExpressionBinder::Visit(otava::ast::TemplateIdNode& node)
         if (subject->IsBoundFunctionGroupNode())
         {
             BoundFunctionGroupNode* boundFunctionGroup = static_cast<BoundFunctionGroupNode*>(subject.get());
-            for (const auto& item : node.Items())
+            for (otava::ast::Node* item : node.Items())
             {
                 TypeSymbol* templateArg = ResolveType(item, DeclarationFlags::none, context);
                 boundFunctionGroup->AddTemplateArg(templateArg);

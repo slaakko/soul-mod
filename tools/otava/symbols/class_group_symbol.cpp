@@ -68,7 +68,7 @@ Symbol* ClassGroupSymbol::GetSingleSymbol()
 
 ClassTypeSymbol* ClassGroupSymbol::GetClass(int arity) const
 {
-    for (const auto& classTypeSymbol : classes)
+    for (ClassTypeSymbol* classTypeSymbol : classes)
     {
         if (classTypeSymbol->Arity() == arity)
         {
@@ -91,7 +91,7 @@ void ClassGroupSymbol::AddForwardDeclaration(ForwardClassDeclarationSymbol* forw
 
 ForwardClassDeclarationSymbol* ClassGroupSymbol::GetForwardDeclaration(int arity) const
 {
-    for (const auto& forwardDeclaration : forwardDeclarations)
+    for (ForwardClassDeclarationSymbol* forwardDeclaration : forwardDeclarations)
     {
         if (forwardDeclaration->Arity() == arity)
         {
@@ -144,14 +144,14 @@ void ClassGroupSymbol::Accept(Visitor& visitor)
 
 void ClassGroupSymbol::Merge(ClassGroupSymbol* that)
 {
-    for (const auto& cls : that->classes)
+    for (ClassTypeSymbol* cls : that->classes)
     {
         if (std::find(classes.cbegin(), classes.cend(), cls) == classes.end())
         {
             classes.push_back(cls);
         }
     }
-    for (const auto& fwd : that->forwardDeclarations)
+    for (ForwardClassDeclarationSymbol* fwd : that->forwardDeclarations)
     {
         ForwardClassDeclarationSymbol* prev = GetForwardDeclaration(fwd->Arity());
         if (!prev)
@@ -271,7 +271,7 @@ ClassTypeSymbol* ClassGroupSymbol::GetBestMatchingClass(const std::vector<Symbol
 {
     std::vector<std::pair<ClassTypeSymbol*, TemplateMatchInfo>> viableClasses;
     int arity = templateArgs.size();
-    for (const auto& cls : classes)
+    for (ClassTypeSymbol* cls : classes)
     {
         if (cls->Arity() == arity)
         {

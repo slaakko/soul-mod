@@ -7,11 +7,8 @@ module otava.symbols.overload.resolution;
 
 import otava.symbols.bound.tree;
 import otava.symbols.classes;
-import otava.symbols.context;
 import otava.symbols.error;
 import otava.symbols.function.group.symbol;
-import otava.symbols.function.kind;
-import otava.symbols.function.symbol;
 import otava.symbols.function.type.symbol;
 import otava.symbols.type.symbol;
 import otava.symbols.operation.repository;

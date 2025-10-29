@@ -1,0 +1,364 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module otava.parser.attribute;
+
+[interface]import otava.symbols.context;
+[interface]import otava.ast;
+[implementation]import otava.token;
+[implementation]import otava.lexer;
+[implementation]import otava.parser.expression;
+[implementation]import otava.parser.identifier;
+[implementation]import otava.parser.punctuation;
+[implementation]import otava.parser.type;
+
+parser AttributeParser
+{
+    lexer otava::lexer::OtavaLexer<char32_t>;
+
+    using ExpressionParser.ConstantExpression;
+    using IdentifierParser.Identifier;
+    using PunctuationParser.ColonColon;
+    using PunctuationParser.Comma;
+    using PunctuationParser.LParen;
+    using PunctuationParser.RParen;
+    using PunctuationParser.LBracket;
+    using PunctuationParser.RBracket;
+    using PunctuationParser.LBrace;
+    using PunctuationParser.RBrace;
+    using PunctuationParser.Ellipsis;
+    using TypeParser.TypeId;
+
+    AttributeSpecifierSeq(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node) : otava::ast::Node*
+        ::= 
+        (
+            AttributeSpecifier(context):first
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                node.reset(new otava::ast::AttributeSpecifierSequenceNode(*sp)); 
+                auto rv = node->AddNode(first); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+            (
+                AttributeSpecifier(context):next
+                { 
+                    auto rv = node->AddNode(next); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )*
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    AttributeSpecifier(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, 
+        var soul::ast::SourcePos lbPos1, var soul::ast::SourcePos lbPos2,
+        var soul::ast::SourcePos rbPos1, var soul::ast::SourcePos rbPos2,
+        var std::unique_ptr<otava::ast::AttributeSpecifierNode> attributeSpecifierNode) : otava::ast::Node*
+        ::= 
+        (
+            LBRACKET
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                lbPos1 = *sp;
+                sourcePos = lbPos1; 
+            }
+            LBRACKET
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                lbPos2 = *sp;
+                sourcePos = lbPos2; 
+                attributeSpecifierNode.reset(new otava::ast::AttributeSpecifierNode(sourcePos)); 
+            } 
+            (
+                AttributeUsingPrefix(context):usingPrefix{ attributeSpecifierNode->SetUsingPrefix(usingPrefix); }
+            )? 
+            AttributeList(context, attributeSpecifierNode.get()):attributeList
+            RBRACKET
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                rbPos1 = *sp;
+            } 
+            RBRACKET
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                rbPos2 = *sp; 
+                attributeSpecifierNode->SetBracketPositions(lbPos1, lbPos2, rbPos1, rbPos2); 
+                return attributeSpecifierNode.release(); 
+            }
+        |   AlignmentSpecifier(context):alignmentSpecifier{ return alignmentSpecifier; }
+        )
+        ;
+
+    AttributeList(otava::symbols::Context* context, otava::ast::Node* container)
+        ::= 
+        (
+            (   
+                Attribute(context):firstOpt
+                { 
+                    auto rv = container->AddNode(firstOpt); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )? 
+            (   
+                Comma:comma1
+                { 
+                    auto rv = container->AddNode(comma1); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                } 
+                (   Attribute(context):nextOpt
+                    { 
+                        auto rv = container->AddNode(nextOpt); 
+                        if (!rv) return std::unexpected<int>(rv.error());
+                    }
+                )?
+            )*
+        |   empty
+            {
+                auto rv = container->Clear(); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+            Attribute(context):first
+            { 
+                auto rv = container->AddNode(first); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            } 
+            (   Comma:comma2
+                { 
+                    auto rv = container->AddNode(comma2); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                } 
+                Attribute(context):next
+                { 
+                    auto rv = container->AddNode(next); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                } 
+                Ellipsis:ellipsis
+                { 
+                    auto rv = container->AddNode(ellipsis); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )*
+        )
+        ;
+
+    AttributeUsingPrefix(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos colonPos) : otava::ast::Node*
+        ::= 
+        (
+            USING
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            }
+            AttributeNamespace(context):ns 
+            COLON
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                colonPos = *sp;
+            }
+        )
+        {
+            return new otava::ast::AttributeUsingPrefixNode(sourcePos, ns, colonPos);
+        }
+        ;
+
+    AttributeNamespace(otava::symbols::Context* context) : otava::ast::Node*
+        ::= Identifier(context):ns{ return ns; }
+        ;
+
+    Attribute(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            AttributeToken(context):attributeToken
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            } 
+            AttributeArgumentClause(context):attributeArgs?
+        )
+        {
+            return new otava::ast::AttributeNode(sourcePos, attributeToken, attributeArgs);
+        }
+        ;
+
+    AttributeToken(otava::symbols::Context* context) : otava::ast::Node*
+        ::= AttributeScopedToken(context):scopedToken{ return scopedToken; }
+        |   Identifier(context):identifier{ return identifier; }
+        ;
+
+    AttributeScopedToken(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            AttributeNamespace(context):ns
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            } 
+            ColonColon:colonColon 
+            Identifier(context):identifier
+        )
+        {
+            return new otava::ast::AttributeScopedTokenNode(sourcePos, ns, colonColon, identifier);
+        }
+        ;
+
+    AttributeArgumentClause(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : otava::ast::Node*
+        ::= 
+        (
+            LPAREN
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                lpPos = *sp;
+            } 
+            BalancedTokenSeq(context):balancedTokenSeq? 
+            RPAREN
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                rpPos = *sp;
+            } 
+        )
+        {
+            return new otava::ast::AttributeArgumentsNode(sourcePos, balancedTokenSeq, lpPos, rpPos);
+        }
+        ;
+
+    BalancedTokenSeq(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> sequence) : otava::ast::Node*
+        ::= 
+        (
+            BalancedToken(context):first
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                sequence.reset(new otava::ast::BalancedTokenSequenceNode(*sp)); 
+                auto rv = sequence->AddNode(first); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+            (
+                BalancedToken(context):next
+                { 
+                    auto rv = sequence->AddNode(next); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )*
+        )
+        {
+            return sequence.release();
+        }
+        ;
+
+    BalancedToken(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> seq) : otava::ast::Node*
+        ::= 
+        (   LParen:lp
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                seq.reset(new otava::ast::BalancedTokenSequenceNode(*sp)); 
+                auto rv = seq->AddNode(lp); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            } 
+            BalancedTokenSeq(context):c1
+            { 
+                auto rv = seq->AddNode(c1); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            } 
+            RParen:rp
+            { 
+                auto rv = seq->AddNode(rp); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+        |   LBracket:lb
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                seq.reset(new otava::ast::BalancedTokenSequenceNode(*sp)); 
+                auto rv = seq->AddNode(lb); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            } 
+            BalancedTokenSeq(context):c2
+            { 
+                auto rv = seq->AddNode(c2); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            } 
+            RBracket:rb
+            { 
+                auto rv = seq->AddNode(rb); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+        |   LBrace:lbr
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                seq.reset(new otava::ast::BalancedTokenSequenceNode(*sp)); 
+                auto rv = seq->AddNode(lbr); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            } 
+            BalancedTokenSeq(context):c3
+            { 
+                auto rv = seq->AddNode(c3); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            } 
+            RBrace:rbr
+            { 
+                auto rv = seq->AddNode(rbr); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+        |   (any - (LPAREN | RPAREN | LBRACKET | RBRACKET | LBRACE | RBRACE))
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                seq.reset(new otava::ast::TokenNode(*sp, token->ToString())); 
+            }
+        )
+        {
+            return seq.release();
+        }
+        ;
+
+    AlignmentSpecifier(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> alignment, var soul::ast::SourcePos sourcePos, 
+        var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : otava::ast::Node*
+        ::= 
+        (   ALIGNAS
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            } 
+            LPAREN
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                lpPos = *sp;
+            }
+            (   TypeId(context):typeId{ alignment.reset(typeId); } 
+            |   ConstantExpression(context):constantExpr{ alignment.reset(constantExpr); }
+            )
+            Ellipsis:ellipsis?
+            RPAREN
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                rpPos = *sp;
+            }
+        )
+        {
+            return new otava::ast::AlignmentSpecifierNode(sourcePos, alignment.release(), ellipsis, lpPos, rpPos);
+        }
+        ;
+}

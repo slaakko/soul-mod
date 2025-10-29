@@ -130,7 +130,7 @@ void DefaultVisitor::Visit(ClassTemplateSpecializationSymbol& symbol)
     VisitContainer(symbol);
     SetVisitContainer(false);
     symbol.ClassTemplate()->Accept(*this);
-    for (const auto& templateArg : symbol.TemplateArguments())
+    for (Symbol* templateArg : symbol.TemplateArguments())
     {
         templateArg->Accept(*this);
     }

@@ -96,14 +96,26 @@ void VariableSymbol::Resolve(SymbolTable& symbolTable, Context* context)
     declaredType = symbolTable.GetType(declaredTypeId);
     if (!declaredType)
     {
-        std::cout << "VariableSymbol::Resolve(): warning: declared type not resolved" << "\n";
+        std::string note;
+        Module* requesterModule = context->GetRequesterModule();
+        if (requesterModule)
+        {
+            note = ": note: requester module is " + requesterModule->Name();
+        }
+        std::cout << "VariableSymbol::Resolve(): warning: declared type not resolved" << note << "\n";
     }
     if (initializerTypeId != util::nil_uuid())
     {
         initializerType = symbolTable.GetType(initializerTypeId);
         if (!initializerType)
         {
-            std::cout << "VariableSymbol::Resolve(): warning: initializer type not resolved" << "\n";
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
+            std::cout << "VariableSymbol::Resolve(): warning: initializer type not resolved" << note << "\n";
         }
     }
     if (valueId != util::nil_uuid())

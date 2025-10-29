@@ -189,6 +189,8 @@ public:
     inline void SetEmitter(Emitter* emitter_) { emitter = emitter_; }
     inline int ArgIndex() const { return argIndex; }
     void SetArgIndex(int argIndex_) { argIndex = argIndex_; }
+    inline void SetRequesterModule(Module* requesterModule_) { requesterModule = requesterModule_;  }
+    inline Module* GetRequesterModule() const { return requesterModule; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -228,6 +230,7 @@ private:
     int functionCallsInlined;
     int functionsInlined;
     int argIndex;
+    Module* requesterModule;
 };
 
 } // namespace otava::symbols

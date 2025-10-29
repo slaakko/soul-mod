@@ -123,7 +123,8 @@ char32_t ParseEscape(const char32_t*& p, const char32_t* e, bool& valid)
     valid = true;
     if (p != e)
     {
-        switch (*p)
+        char32_t c = *p;
+        switch (c)
         {
             case '\'':
             {
@@ -428,8 +429,7 @@ std::expected<otava::ast::IntegerLiteralNode*, int> ParseIntegerLiteral(const so
     }
 }
 
-/*
-otava::ast::FloatingLiteralNode* ParseFloatingLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
+std::expected<otava::ast::FloatingLiteralNode*, int> ParseFloatingLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token)
 {
     std::string s;
@@ -534,12 +534,15 @@ otava::ast::FloatingLiteralNode* ParseFloatingLiteral(const soul::ast::SourcePos
     suffix = ParseFloatingSuffix(p, e);
     if (p != e)
     {
-        throw std::runtime_error("invalid floating literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));
+        auto rv = util::ToUtf8(token.ToString());
+        if (!rv) return std::unexpected<int>(rv.error());
+        std::string tokenStr = *rv;
+        return std::unexpected<int>(util::AllocateError("invalid floating literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + tokenStr));
     }
-    return new otava::ast::FloatingLiteralNode(sourcePos, value, suffix, base, token.ToString());
+    return std::expected<otava::ast::FloatingLiteralNode*, int>(new otava::ast::FloatingLiteralNode(sourcePos, value, suffix, base, token.ToString()));
 }
 
-otava::ast::CharacterLiteralNode* ParseCharacterLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
+std::expected<otava::ast::CharacterLiteralNode*, int> ParseCharacterLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token)
 {
     bool valid = false;
@@ -586,15 +589,22 @@ otava::ast::CharacterLiteralNode* ParseCharacterLiteral(const soul::ast::SourceP
     }
     if (p != e || !valid)
     {
-        throw std::runtime_error("invalid character literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));
+        auto rv = util::ToUtf8(token.ToString());
+        if (!rv) return std::unexpected<int>(rv.error());
+        std::string tokenStr = *rv;
+        return std::unexpected<int>(util::AllocateError("invalid character literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + 
+            ": " + tokenStr));
     }
-    return new otava::ast::CharacterLiteralNode(sourcePos, value, encodingPrefix, token.ToString(), hasMultipleCharacters);
+    return std::expected<otava::ast::CharacterLiteralNode*, int>(new otava::ast::CharacterLiteralNode(sourcePos, value, encodingPrefix, 
+        token.ToString(), hasMultipleCharacters));
 }
 
-otava::ast::RawStringLiteralNode* ParseRawStringLiteral(const soul::ast::SourcePos& sourcePos, soul::lexer::LexerBase<char32_t>& lexer)
+std::expected<otava::ast::RawStringLiteralNode*, int> ParseRawStringLiteral(const soul::ast::SourcePos& sourcePos, soul::lexer::LexerBase<char32_t>& lexer)
 {
-    auto token = lexer.GetToken(lexer.GetPos());
-    const char32_t* start = token.match.begin;
+    auto t = lexer.GetToken(lexer.GetPos());
+    if (!t) return std::unexpected<int>(t.error());
+    const auto* token = *t;
+    const char32_t* start = token->match.begin;
     const char32_t* p = start;
     const char32_t* e = lexer.End();
     bool valid = false;
@@ -611,110 +621,110 @@ otava::ast::RawStringLiteralNode* ParseRawStringLiteral(const soul::ast::SourceP
     {
         switch (state)
         {
-        case 0:
-        {
-            if (*p == 'R')
+            case 0:
             {
-                state = 1;
-            }
-            else
-            {
-                stop = true;
-            }
-            break;
-        }
-        case 1:
-        {
-            if (*p == '"')
-            {
-                state = 2;
-            }
-            else
-            {
-                stop = true;
-            }
-            break;
-        }
-        case 2:
-        {
-            switch (*p)
-            {
-            case ' ': case ')': case '\\': case '\t': case '\v': case '\f': case '\n':
-            {
-                stop = true;
+                if (*p == 'R')
+                {
+                    state = 1;
+                }
+                else
+                {
+                    stop = true;
+                }
                 break;
             }
-            case '(':
+            case 1:
             {
-                dm.append(1, '"');
-                state = 3;
+                if (*p == '"')
+                {
+                    state = 2;
+                }
+                else
+                {
+                    stop = true;
+                }
                 break;
             }
-            default:
+            case 2:
             {
-                dm.append(1, *p);
+                switch (*p)
+                {
+                case ' ': case ')': case '\\': case '\t': case '\v': case '\f': case '\n':
+                {
+                    stop = true;
+                    break;
+                }
+                case '(':
+                {
+                    dm.append(1, '"');
+                    state = 3;
+                    break;
+                }
+                default:
+                {
+                    dm.append(1, *p);
+                    break;
+                }
+                }
                 break;
             }
-            }
-            break;
-        }
-        case 3:
-        {
-            switch (*p)
+            case 3:
             {
-            case ')':
-            {
-                tmp = U")";
-                index = 0;
-                state = 4;
-                break;
-            }
-            case '\n':
-            {
-                value.append(1, *p);
-                lexer.SetLine(lexer.Line() + 1);
-                break;
-            }
-            default:
-            {
-                value.append(1, *p);
-                break;
-            }
-            }
-            break;
-        }
-        case 4:
-        {
-            if (index == dm.length())
-            {
-                valid = true;
-            }
-            else if (*p == dm[index])
-            {
-                tmp.append(1, *p);
-                ++index;
-            }
-            else
-            {
-                value.append(tmp);
                 switch (*p)
                 {
                 case ')':
                 {
                     tmp = U")";
                     index = 0;
+                    state = 4;
+                    break;
+                }
+                case '\n':
+                {
+                    value.append(1, *p);
+                    lexer.SetLine(lexer.Line() + 1);
                     break;
                 }
                 default:
                 {
                     value.append(1, *p);
-                    state = 3;
                     break;
                 }
                 }
+                break;
             }
-            break;
-        }
+            case 4:
+            {
+                if (index == dm.length())
+                {
+                    valid = true;
+                }
+                else if (*p == dm[index])
+                {
+                    tmp.append(1, *p);
+                    ++index;
+                }
+                else
+                {
+                    value.append(tmp);
+                    switch (*p)
+                    {
+                    case ')':
+                    {
+                        tmp = U")";
+                        index = 0;
+                        break;
+                    }
+                    default:
+                    {
+                        value.append(1, *p);
+                        state = 3;
+                        break;
+                    }
+                    }
+                }
+                break;
+            }
         }
         if (!valid)
         {
@@ -733,16 +743,17 @@ otava::ast::RawStringLiteralNode* ParseRawStringLiteral(const soul::ast::SourceP
         lexer.SetCurrentMatchEnd(p);
         lexer.EraseTail();
         lexer.SetPos(p);
-        lexer.Increment();
+        std::expected<bool, int> rv = lexer.Increment();
+        if (!rv) return std::unexpected<int>(rv.error());
     }
     else
     {
-        throw std::runtime_error("invalid raw string literal in '" + lexer.FileName() + "' at line " + std::to_string(lexer.Line()));
+        return std::unexpected<int>(util::AllocateError("invalid raw string literal in '" + lexer.FileName() + "' at line " + std::to_string(lexer.Line())));
     }
-    return new otava::ast::RawStringLiteralNode(sourcePos, value, encodingPrefix, dm, rep);
+    return std::expected<otava::ast::RawStringLiteralNode*, int>(new otava::ast::RawStringLiteralNode(sourcePos, value, encodingPrefix, dm, rep));
 }
 
-otava::ast::StringLiteralNode* ParseStringLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
+std::expected<otava::ast::StringLiteralNode*, int> ParseStringLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token)
 {
     bool valid = false;
@@ -787,12 +798,16 @@ otava::ast::StringLiteralNode* ParseStringLiteral(const soul::ast::SourcePos& so
     }
     if (p != e || !valid)
     {
-        throw std::runtime_error("invalid string literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));
+        auto rv = util::ToUtf8(token.ToString());
+        if (!rv) return std::unexpected<int>(rv.error());
+        std::string tokenStr = *rv;
+        return std::unexpected<int>(util::AllocateError("invalid string literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " +
+            tokenStr));
     }
-    return new otava::ast::StringLiteralNode(sourcePos, value, encodingPrefix, token.ToString());
+    return std::expected<otava::ast::StringLiteralNode*, int>(new otava::ast::StringLiteralNode(sourcePos, value, encodingPrefix, token.ToString()));
 }
 
-otava::ast::IdentifierNode* ParseIdentifier(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
+std::expected<otava::ast::IdentifierNode*, int> ParseIdentifier(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token)
 {
     std::u32string s;
@@ -814,7 +829,7 @@ otava::ast::IdentifierNode* ParseIdentifier(const soul::ast::SourcePos& sourcePo
                     {
                         if (p != e && IsHexChar(*p))
                         {
-                            value = static_cast<char32_t>(16 * value + ParseHexChar(*p));
+                            value = static_cast<char32_t>(16 * static_cast<int>(value) + ParseHexChar(*p));
                         }
                         else
                         {
@@ -831,7 +846,7 @@ otava::ast::IdentifierNode* ParseIdentifier(const soul::ast::SourcePos& sourcePo
                     {
                         if (p != e && IsHexChar(*p))
                         {
-                            value = static_cast<char32_t>(16 * value + ParseHexChar(*p));
+                            value = static_cast<char32_t>(16 * static_cast<int>(value) + ParseHexChar(*p));
                         }
                         else
                         {
@@ -852,10 +867,12 @@ otava::ast::IdentifierNode* ParseIdentifier(const soul::ast::SourcePos& sourcePo
     }
     if (p != e || !valid)
     {
-        throw std::runtime_error("invalid identifier in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));
+        auto rv = util::ToUtf8(token.ToString());
+        if (!rv) return std::unexpected<int>(rv.error());
+        std::string tokenStr = *rv;
+        return std::unexpected<int>(util::AllocateError("invalid identifier in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + tokenStr));
     }
-    return new otava::ast::IdentifierNode(sourcePos, s);
+    return std::expected<otava::ast::IdentifierNode*, int>(new otava::ast::IdentifierNode(sourcePos, s));
 }
-*/
 
 } // namespace otava::token::parser

@@ -9,6 +9,8 @@ import otava.symbols.bound.tree;
 import std;
 import otava.ast.node;
 import otava.ast.visitor;
+import otava.symbols.function.symbol;
+import otava.symbols.context;
 
 export namespace otava::symbols {
 

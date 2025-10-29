@@ -379,7 +379,7 @@ void BoundCompileUnitNode::AddBoundNodeForClass(ClassTypeSymbol* cls, const soul
     if (boundClasses.find(cls) != boundClasses.end()) return;
     boundClasses.insert(cls);
     AddBoundNode(std::unique_ptr<BoundNode>(new BoundClassNode(cls, sourcePos)), context);
-    for (const auto& base : cls->BaseClasses())
+    for (ClassTypeSymbol* base : cls->BaseClasses())
     {
         AddBoundNodeForClass(base, sourcePos, context);
     }

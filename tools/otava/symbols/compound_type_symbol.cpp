@@ -12,6 +12,7 @@ import otava.symbols.visitor;
 import otava.symbols.symbol.table;
 import otava.symbols.classes;
 import otava.symbols.context;
+import otava.symbols.modules;
 import util;
 
 namespace otava::symbols {
@@ -62,7 +63,13 @@ void CompoundTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
     baseType = symbolTable.GetType(baseTypeId);
     if (!baseType)
     {
-        std::cout << "CompoundTypeSymbol::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << "\n";
+        std::string note;
+        Module* requesterModule = context->GetRequesterModule();
+        if (requesterModule)
+        {
+            note = ": note: requester module is " + requesterModule->Name();
+        }
+        std::cout << "CompoundTypeSymbol::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
     }
 }
 

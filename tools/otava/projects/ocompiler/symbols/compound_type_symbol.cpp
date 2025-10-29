@@ -5,7 +5,6 @@
 
 module otava.symbols.compound.type.symbol;
 
-import otava.symbols.emitter;
 import otava.symbols.writer;
 import otava.symbols.reader;
 import otava.symbols.visitor;

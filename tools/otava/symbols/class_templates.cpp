@@ -63,7 +63,7 @@ std::string ClassTemplateSpecializationSymbol::IrName(Context* context) const
 {
     std::string fullIrName = classTemplate->IrName(context);
     std::string shaMaterial;
-    for (const auto& templateArg : templateArguments)
+    for (Symbol* templateArg : templateArguments)
     {
         shaMaterial.append(1, '.').append(templateArg->IrName(context));
     }
@@ -151,7 +151,13 @@ void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable, Contex
                 }
                 else
                 {
-                    std::cout << "ClassTemplateSpecializationSymbol::Resolve(): warning: template argument not resolved" << "\n";
+                    std::string note;
+                    Module* requesterModule = context->GetRequesterModule();
+                    if (requesterModule)
+                    {
+                        note = ": note: requester module is " + requesterModule->Name();
+                    }
+                    std::cout << "ClassTemplateSpecializationSymbol::Resolve(): warning: template argument not resolved" << note << "\n";
                 }
             }
             else
@@ -176,7 +182,13 @@ void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable, Contex
     }
     else
     {
-        std::cout << "ClassTemplateSpecializationSymbol::Resolve(): warning: class template not resolved" << "\n";
+        std::string note;
+        Module* requesterModule = context->GetRequesterModule();
+        if (requesterModule)
+        {
+            note = ": note: requester module is " + requesterModule->Name();
+        }
+        std::cout << "ClassTemplateSpecializationSymbol::Resolve(): warning: class template not resolved" << note << "\n";
     }
 }
 
@@ -218,7 +230,7 @@ bool ClassTemplateSpecializationSymbol::IsTemplateParameterInstantiation(Context
     if (visited.find(this) == visited.end())
     {
         if (ClassTypeSymbol::IsTemplateParameterInstantiation(context, visited)) return true;
-        for (const auto& templateArg : templateArguments)
+        for (Symbol* templateArg : templateArguments)
         {
             if (templateArg->IsTemplateParameterInstantiation(context, visited)) return true;
         }
@@ -229,7 +241,7 @@ bool ClassTemplateSpecializationSymbol::IsTemplateParameterInstantiation(Context
 TypeSymbol* ClassTemplateSpecializationSymbol::FinalType(const soul::ast::SourcePos& sourcePos, Context* context) 
 {
     std::vector<Symbol*> templateArgs;
-    for (const auto& templateArg : templateArguments)
+    for (Symbol* templateArg : templateArguments)
     {
         if (templateArg->IsTypeSymbol())
         {
@@ -250,7 +262,7 @@ bool ClassTemplateSpecializationSymbol::IsComplete(std::set<const TypeSymbol*>& 
 {
     if (visited.find(this) != visited.end()) return true;
     visited.insert(this);
-    for (const auto& templateArg : templateArguments)
+    for (Symbol* templateArg : templateArguments)
     {
         if (templateArg->IsTypeSymbol())
         {
@@ -287,7 +299,7 @@ FunctionSymbol* ClassTemplateSpecializationSymbol::GetMatchingVirtualFunctionSpe
 
 bool ClassTemplateSpecializationSymbol::ContainsVirtualFunctionSpecialization(FunctionSymbol* specialization) const
 {
-    for (const auto& instance : instantiatedVirtualFunctionSpecializations)
+    for (FunctionSymbol* instance : instantiatedVirtualFunctionSpecializations)
     {
         if (instance == specialization) return true;
     }
@@ -457,7 +469,7 @@ void InstantiateVirtualFunctions(ClassTemplateSpecializationSymbol* specializati
     if (!specialization->IsTemplateParameterInstantiation(context, visited))
     {
         ClassTypeSymbol* classTemplate = specialization->ClassTemplate();
-        for (const auto& memFn : classTemplate->MemberFunctions())
+        for (FunctionSymbol* memFn : classTemplate->MemberFunctions())
         {
             otava::ast::Node* node = context->GetSymbolTable()->GetNode(memFn);
             if (node && IsVirtualFunctionNode(node))
@@ -466,7 +478,7 @@ void InstantiateVirtualFunctions(ClassTemplateSpecializationSymbol* specializati
             }
         }
     }
-    for (const auto& virtualMemFn : virtualFunctions)
+    for (FunctionSymbol* virtualMemFn : virtualFunctions)
     {
         std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
         FunctionSymbol* instance = InstantiateMemFnOfClassTemplate(virtualMemFn, specialization, templateParameterMap, sourcePos, context);

@@ -8,6 +8,7 @@ export module otava.symbols.namespaces;
 import std;
 import otava.ast.node;
 import otava.symbols.container.symbol;
+import otava.symbols.context;
 
 export namespace otava::symbols {
 

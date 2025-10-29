@@ -178,7 +178,13 @@ void ParameterSymbol::Resolve(SymbolTable& symbolTable, Context* context)
     type = symbolTable.GetType(typeId);
     if (!type)
     {
-        std::cout << "ParameterSymbol::Resolve(): warning: type of parameter '" + util::ToUtf8(Name()) + "' not resolved" << "\n";
+        std::string note;
+        Module* requesterModule = context->GetRequesterModule();
+        if (requesterModule)
+        {
+            note = ": note: requester module is " + requesterModule->Name();
+        }
+        std::cout << "ParameterSymbol::Resolve(): warning: type of parameter '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
     }
     if (defaultValueNodeId != -1)
     {
@@ -404,7 +410,7 @@ bool FunctionSymbol::IsTemplateParameterInstantiation(Context* context, std::set
     if (visited.find(this) == visited.end())
     {
         visited.insert(this);
-        for (const auto& parameter : MemFunParameters(context))
+        for (ParameterSymbol* parameter : MemFunParameters(context))
         {
             if (parameter->IsTemplateParameterInstantiation(context, visited)) return true;
         }
@@ -412,7 +418,7 @@ bool FunctionSymbol::IsTemplateParameterInstantiation(Context* context, std::set
         {
             if (returnType->IsTemplateParameterInstantiation(context, visited)) return true;
         }
-        for (const auto& localVariable : localVariables)
+        for (VariableSymbol* localVariable : localVariables)
         {
             if (localVariable->IsTemplateParameterInstantiation(context, visited)) return true;
         }
@@ -513,7 +519,7 @@ const std::vector<ParameterSymbol*>& FunctionSymbol::MemFunParameters(Context* c
     {
         memFunParameters.push_back(thisParam);
     }
-    for (const auto& parameter : parameters)
+    for (ParameterSymbol* parameter : parameters)
     {
         memFunParameters.push_back(parameter);
     }
@@ -652,7 +658,7 @@ std::u32string FunctionSymbol::FullName() const
     }
     fullName.append(U"::").append(Name()).append(U"(");
     bool first = true;
-    for (const auto& parameter : parameters)
+    for (ParameterSymbol* parameter : parameters)
     {
         if (first)
         {
@@ -817,7 +823,13 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
         returnType = symbolTable.GetType(returnTypeId);
         if (!returnType)
         {
-            std::cout << "FunctionSymbol::Resolve(): warning: return type of '" + util::ToUtf8(Name()) + "' not resolved" << "\n";
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
+            std::cout << "FunctionSymbol::Resolve(): warning: return type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
         }
         if (ReturnsClass())
         {
@@ -831,7 +843,13 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
             conversionParamType = symbolTable.GetType(conversionParamTypeId);
             if (!conversionParamType)
             {
-                std::cout << "FunctionSymbol::Resolve(): warning: conversion parameter type of '" + util::ToUtf8(Name()) + "' not resolved" << "\n";
+                std::string note;
+                Module* requesterModule = context->GetRequesterModule();
+                if (requesterModule)
+                {
+                    note = ": note: requester module is " + requesterModule->Name();
+                }
+                std::cout << "FunctionSymbol::Resolve(): warning: conversion parameter type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
             }
         }
         if (conversionArgTypeId != util::nil_uuid())
@@ -839,7 +857,13 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
             conversionArgType = symbolTable.GetType(conversionArgTypeId);
             if (!conversionArgType)
             {
-                std::cout << "FunctionSymbol::Resolve(): warning: conversion argument type of '" + util::ToUtf8(Name()) + "' not resolved" << "\n";
+                std::string note;
+                Module* requesterModule = context->GetRequesterModule();
+                if (requesterModule)
+                {
+                    note = ": note: requester module is " + requesterModule->Name();
+                }
+                std::cout << "FunctionSymbol::Resolve(): warning: conversion argument type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
             }
         }
     }
@@ -853,7 +877,13 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
         }
         else
         {
-            std::cout << "FunctionSymbol::Resolve(): warning: specialization type of '" + util::ToUtf8(Name()) + "' not resolved" << "\n";
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
+            std::cout << "FunctionSymbol::Resolve(): warning: specialization type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
         }
     }
 }
@@ -1008,7 +1038,7 @@ otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::
             returnIrType = emitter.GetVoidType();
         }
         std::vector<otava::intermediate::Type*> paramIrTypes;
-        for (const auto& param : MemFunParameters(context))
+        for (ParameterSymbol* param : MemFunParameters(context))
         {
             otava::intermediate::Type* paramIrType = nullptr;
             TypeSymbol* paramType = param->GetReferredType(context);
@@ -1203,7 +1233,7 @@ bool FunctionSymbol::IsDestructor() const
 
 void FunctionSymbol::CheckGenerateClassCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    for (const auto& parameter : MemFunParameters(context))
+    for (ParameterSymbol* parameter : MemFunParameters(context))
     {
         TypeSymbol* paramType = parameter->GetReferredType(context);
         if (paramType->IsClassTypeSymbol())

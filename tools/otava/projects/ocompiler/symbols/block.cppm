@@ -9,6 +9,9 @@ import std;
 import otava.ast.node;
 import soul.ast.source.pos;
 import otava.symbols.container.symbol;
+import otava.symbols.classes;
+import otava.symbols.context;
+import otava.symbols.symbol.table;
 
 export namespace otava::symbols {
 

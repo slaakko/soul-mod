@@ -7,6 +7,9 @@ export module otava.symbols.instantiation_queue;
 
 import std;
 import otava.symbols.template_param_compare;
+import otava.symbols.templates;
+import otava.symbols.function.kind;
+import otava.symbols.function.symbol;
 import soul.ast.source.pos;
 
 export namespace otava::symbols {

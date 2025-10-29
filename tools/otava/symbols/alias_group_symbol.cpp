@@ -58,7 +58,7 @@ void AliasGroupSymbol::AddAliasTypeSymbol(AliasTypeSymbol* aliasTypeSymbol, Cont
 
 AliasTypeSymbol* AliasGroupSymbol::GetAliasTypeSymbol(int arity) const
 {
-    for (const auto& aliasTypeSymbol : aliasTypeSymbols)
+    for (AliasTypeSymbol* aliasTypeSymbol : aliasTypeSymbols)
     {
         if (aliasTypeSymbol->Arity() == arity)
         {
@@ -108,7 +108,7 @@ void AliasGroupSymbol::Accept(Visitor& visitor)
 
 void AliasGroupSymbol::Merge(AliasGroupSymbol* that, Context* context)
 {
-    for (const auto& aliasType : that->aliasTypeSymbols)
+    for (AliasTypeSymbol* aliasType : that->aliasTypeSymbols)
     {
         AddAliasTypeSymbol(aliasType, context);
     }
@@ -126,7 +126,7 @@ AliasTypeSymbol* AliasGroupSymbol::GetBestMatchingAliasType(const std::vector<Sy
 {
     std::vector<std::pair<AliasTypeSymbol*, int>> viableAliasTypes;
     int arity = templateArgs.size();
-    for (const auto& alias : aliasTypeSymbols)
+    for (AliasTypeSymbol* alias : aliasTypeSymbols)
     {
         if (alias->Arity() == arity)
         {

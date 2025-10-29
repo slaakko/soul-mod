@@ -1,0 +1,344 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module otava.parser.lambda;
+
+[interface]import otava.symbols.context;
+[interface]import otava.ast;
+[implementation]import soul.ast.source.pos;
+[implementation]import soul.ast.lexer.pos.pair;
+[implementation]import otava.token;
+[implementation]import otava.lexer;
+[implementation]import otava.parser.attribute;
+[implementation]import otava.parser.concepts;
+[implementation]import otava.parser.declaration;
+[implementation]import otava.parser.function;
+[implementation]import otava.parser.identifier;
+[implementation]import otava.parser.initialization;
+[implementation]import otava.parser.punctuation;
+[implementation]import otava.parser.statement;
+[implementation]import otava.parser.templates;
+
+parser LambdaParser
+{
+    lexer otava::lexer::OtavaLexer<char32_t>;
+
+    using AttributeParser.AttributeSpecifierSeq;
+    using ConceptParser.RequiresClause;
+    using DeclarationParser.DeclSpecifierSeq;
+    using DeclarationParser.NoexceptSpecifier;
+    using DeclarationParser.TrailingReturnType;
+    using FunctionParser.ParameterDeclarationClause;
+    using IdentifierParser.Identifier;
+    using InitializationParser.Initializer;
+    using PunctuationParser.Comma;
+    using PunctuationParser.Ellipsis;
+    using StatementParser.CompoundStatement;
+    using TemplateParser.TemplateParameterList;
+    
+    LambdaExpression(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (   LambdaIntroducer(context):introducer
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            }
+            LambdaTemplateParams(context):templateParams?
+            LambdaDeclarator(context):declarator
+            CompoundStatement(context):body
+        )
+        {
+            return new otava::ast::LambdaExpressionNode(sourcePos, introducer, templateParams, declarator, body);
+        }
+        ;
+
+    LambdaIntroducer(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : 
+        otava::ast::Node*
+        ::= 
+        (
+            LBRACKET
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp; 
+                lbPos = sourcePos; 
+            }
+            LambdaCapture(context):capture?
+            RBRACKET
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                rbPos = *sp;
+            }
+        )
+        {
+            return new otava::ast::LambdaIntroducerNode(sourcePos, capture, lbPos, rbPos);
+        }
+        ;
+
+    LambdaCapture(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::Node> node) : otava::ast::Node*
+        ::= empty
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                node.reset(new otava::ast::LambdaCaptureNode(*sp)); 
+            }
+        (   CaptureList(context, node.get()):captureList
+        |   CaptureDefault:captureDefault
+            { 
+                auto rv = node->AddNode(captureDefault); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            } 
+            (
+                Comma:comma
+                { 
+                    auto rv = node->AddNode(comma); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                } 
+                CaptureList(context, node.get()):captureList2
+            )?
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    CaptureDefault : otava::ast::Node*
+        ::= AMP
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::DefaultRefCaptureNode(*sp); 
+            }
+        |   ASSIGN
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::DefaultCopyCaptureNode(*sp); 
+            }
+        ;
+
+    CaptureList(otava::symbols::Context* context, otava::ast::Node* container)
+        ::= Capture(context):first
+            { 
+                auto rv = container->AddNode(first); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
+            (
+                Comma:comma
+                { 
+                    auto rv = container->AddNode(comma); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+                Capture(context):next
+                { 
+                    auto rv = container->AddNode(next); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )*
+        ;
+
+    Capture(otava::symbols::Context* context) : otava::ast::Node*
+        ::= InitCapture(context):initCapture{ return initCapture; }
+        |   SimpleCapture(context):simpleCapture{ return simpleCapture; }
+        ;
+
+    InitCapture(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::Node> byRefCaptureNode) : otava::ast::Node*
+        ::= 
+        (
+            (
+                AMP
+                { 
+                    auto sp = lexer.GetSourcePos(pos); 
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    sourcePos = *sp; 
+                    byRefCaptureNode.reset(new otava::ast::ByRefCaptureNode(sourcePos)); 
+                }
+            )? 
+            (
+                Ellipsis:ellipsis
+                { 
+                    if (!sourcePos.IsValid()) 
+                    {
+                        auto sp = lexer.GetSourcePos(pos); 
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        sourcePos = *sp;
+                    }
+                }
+            )? 
+            Identifier(context):identifier
+            { 
+                if (!sourcePos.IsValid()) 
+                {
+                    auto sp = lexer.GetSourcePos(pos); 
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    sourcePos = *sp;
+                }
+            }
+            Initializer(context):initializer
+        )
+        {
+            return new otava::ast::InitCaptureNode(sourcePos, identifier, initializer, byRefCaptureNode.release(), ellipsis);
+        }
+        ;
+
+    SimpleCapture(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos thisPos, 
+        var std::unique_ptr<otava::ast::Node> byRefCaptureNode) : otava::ast::Node*
+        ::= 
+        (   STAR
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            }
+            THIS
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                thisPos = *sp; 
+                return new otava::ast::CurrentObjectCopyCapture(sourcePos, thisPos); 
+            }
+        |   THIS
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+                thisPos = sourcePos; 
+                return new otava::ast::CurrentObjectByRefCapture(sourcePos, thisPos); 
+            }
+        |   
+            (
+                (
+                    AMP
+                    { 
+                        auto sp = lexer.GetSourcePos(pos); 
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        sourcePos = *sp;
+                        byRefCaptureNode.reset(new otava::ast::ByRefCaptureNode(sourcePos)); 
+                    }
+                )? 
+                Identifier(context):identifier
+                { 
+                    if (!sourcePos.IsValid()) 
+                    {
+                        auto sp = lexer.GetSourcePos(pos); 
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        sourcePos = *sp;
+                    }
+                }
+                Ellipsis:ellipsis?
+            )
+        )
+        {
+            return new otava::ast::SimpleCaptureNode(sourcePos, identifier, byRefCaptureNode.release(), ellipsis);
+        }
+        ;
+
+    LambdaDeclarator(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos,
+        var std::unique_ptr<otava::ast::ParameterListNode> parameterList) : otava::ast::Node*
+        ::=
+        (
+            (
+                LPAREN
+                { 
+                    auto sp = lexer.GetSourcePos(pos); 
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    sourcePos = *sp;
+                    lpPos = sourcePos; 
+                    parameterList.reset(new otava::ast::ParameterListNode(sourcePos)); 
+                }
+                ParameterDeclarationClause(context, parameterList.get()):params 
+                RPAREN
+                { 
+                    auto sp = lexer.GetSourcePos(pos); 
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    rpPos = *sp;
+                    parameterList->SetLParenPos(lpPos); 
+                    parameterList->SetRParenPos(rpPos); 
+                }
+            )?
+            LambdaSpecifiers(context):specifiers
+            { 
+                if (!sourcePos.IsValid()) 
+                {
+                    auto sp = lexer.GetSourcePos(pos); 
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    sourcePos = *sp;
+                }
+            }
+            RequiresClause(context):requiresClause?
+        )
+        {
+            return new otava::ast::LambdaDeclaratorNode(sourcePos, parameterList.release(), specifiers, requiresClause);
+        }
+        ;
+
+    LambdaSpecifiers(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            (
+                DeclSpecifierSeq(context):declSpecifiers
+                { 
+                    auto sp = lexer.GetSourcePos(pos); 
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    sourcePos = *sp;
+                }
+            )?
+            (
+                NoexceptSpecifier(context):noexceptSpecifier
+                { 
+                    if (!sourcePos.IsValid()) 
+                    {
+                        auto sp = lexer.GetSourcePos(pos); 
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        sourcePos = *sp;
+                    }
+                }
+            )?
+            (
+                AttributeSpecifierSeq(context):attributes
+                { 
+                    if (!sourcePos.IsValid()) 
+                    {
+                        auto sp = lexer.GetSourcePos(pos); 
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        sourcePos = *sp;
+                    }
+                }
+            )?
+            (
+                TrailingReturnType(context):trailingReturnType
+                { 
+                    if (!sourcePos.IsValid()) 
+                    {
+                        auto sp = lexer.GetSourcePos(pos); 
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        sourcePos = *sp;
+                    }
+                }
+            )?
+        )
+        {
+            return new otava::ast::LambdaSpecifiersNode(sourcePos, declSpecifiers, noexceptSpecifier, attributes, trailingReturnType);
+        }
+        ;
+
+    LambdaTemplateParams(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            TemplateParameterList(context):templateParams
+            { 
+                auto sp = lexer.GetSourcePos(pos); 
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp; 
+            }
+            RequiresClause(context):requiresClause?
+        )
+        {
+            return new otava::ast::LambdaTemplateParamsNode(sourcePos, templateParams, requiresClause);
+        }
+        ;
+}

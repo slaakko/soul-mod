@@ -11,8 +11,6 @@ import otava.symbols.bound.tree;
 import otava.symbols.symbol.table;
 import otava.symbols.context;
 import otava.symbols.namespaces;
-import otava.symbols.reader;
-import otava.symbols.writer;
 import otava.symbols.type.symbol;
 import util;
 
