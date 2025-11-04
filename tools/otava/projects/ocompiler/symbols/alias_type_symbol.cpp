@@ -33,6 +33,16 @@ AliasTypeSymbol::AliasTypeSymbol(const std::u32string& name_, TypeSymbol* referr
 {
 }
 
+std::string AliasTypeSymbol::SymbolKindStr() const 
+{ 
+    return "alias type symbol"; 
+}
+
+std::string AliasTypeSymbol::SymbolDocKindStr() const 
+{
+    return "alias_type"; 
+}
+
 std::expected<bool, int> AliasTypeSymbol::Write(Writer& writer)
 {
     std::expected<bool, int> rv = TypeSymbol::Write(writer);

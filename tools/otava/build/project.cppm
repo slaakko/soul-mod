@@ -34,6 +34,8 @@ struct ProjectLess
     bool operator()(Project* left, Project* right) const;
 };
 
+std::int16_t MakeProjectId(const std::string& projectName);
+
 class Project
 {
 public:

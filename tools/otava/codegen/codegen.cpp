@@ -43,14 +43,14 @@ namespace otava::codegen {
 
 struct SwitchTarget
 {
-    SwitchTarget(otava::intermediate::BasicBlock* block_, otava::symbols::BoundStatementNode* statement_, const std::vector<otava::symbols::BoundExpressionNode*> exprs_);
+    SwitchTarget(otava::intermediate::BasicBlock* block_, otava::symbols::BoundStatementNode* statement_, const std::vector<otava::symbols::BoundExpressionNode*>& exprs_);
     otava::intermediate::BasicBlock* block;
     otava::symbols::BoundStatementNode* statement;
     std::vector<otava::symbols::BoundExpressionNode*> exprs;
 };
 
-SwitchTarget::SwitchTarget(otava::intermediate::BasicBlock* block_, otava::symbols::BoundStatementNode* statement_, const std::vector<otava::symbols::BoundExpressionNode*> exprs_) :
-    block(block_), statement(statement_), exprs(exprs_)
+SwitchTarget::SwitchTarget(otava::intermediate::BasicBlock* block_, otava::symbols::BoundStatementNode* statement_, 
+    const std::vector<otava::symbols::BoundExpressionNode*>& exprs_) : block(block_), statement(statement_), exprs(exprs_)
 {
 }
 
@@ -499,7 +499,7 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
                     if (!succeeded)
                     {
                         otava::symbols::ThrowException("could not resolve delta for classes '" + util::ToUtf8(cls->FullName()) + "' and '" + 
-                            util::ToUtf8(functionSymbol->ParentClassType()->FullName()), sourcePos, &context);
+                            util::ToUtf8(functionSymbol->ParentClassType()->FullName()) + "'", sourcePos, &context);
                     }
                     otava::intermediate::Value* deltaValue = emitter->EmitLong(delta);
                     otava::intermediate::Value* element1Value = emitter->EmitConversionValue(voidPtrIrType, functionValue);
@@ -1223,7 +1223,7 @@ void CodeGenerator::Visit(otava::symbols::BoundBreakStatementNode& node)
         }
     }
     emitter->EmitJump(breakBlock);
-    if (!InDirectSwitchStatement(&node) || (latestRet && !latestRet->IsConditionalStatementInBlock(latestRet->Block())))
+    if (!otava::symbols::InDirectSwitchStatement(&node) || (latestRet && !latestRet->IsConditionalStatementInBlock(latestRet->Block())))
     {
         otava::intermediate::BasicBlock* nextBlock = emitter->CreateBasicBlock();
         emitter->SetCurrentBasicBlock(nextBlock);

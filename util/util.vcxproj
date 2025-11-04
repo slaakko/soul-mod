@@ -168,6 +168,8 @@
     <ClCompile Include="compression.cppm" />
     <ClCompile Include="deflate_stream.cpp" />
     <ClCompile Include="deflate_stream.cppm" />
+    <ClCompile Include="process.cpp" />
+    <ClCompile Include="process.cppm" />
     <ClCompile Include="win_error.cpp" />
     <ClCompile Include="win_error.cppm" />
     <ClCompile Include="fiber.cpp" />

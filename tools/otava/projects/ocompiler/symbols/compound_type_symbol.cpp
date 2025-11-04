@@ -10,7 +10,6 @@ import otava.symbols.reader;
 import otava.symbols.visitor;
 import otava.symbols.symbol.table;
 import otava.symbols.classes;
-import otava.symbols.context;
 import util;
 
 namespace otava::symbols {
@@ -24,6 +23,68 @@ CompoundTypeSymbol::CompoundTypeSymbol(TypeSymbol* baseType_, Derivations deriva
     TypeSymbol(SymbolKind::compoundTypeSymbol, id_, MakeCompoundTypeName(baseType_, derivations_)),
     baseType(baseType_), derivations(derivations_), baseTypeId(util::nil_uuid())
 {
+}
+
+std::string CompoundTypeSymbol::SymbolKindStr() const 
+{
+    return "compound type symbol"; 
+}
+
+std::string CompoundTypeSymbol::SymbolDocKindStr() const 
+{ 
+    return "compound_type"; 
+}
+
+std::expected<std::u32string, int> CompoundTypeSymbol::FullName() const
+{
+    std::u32string fullName;;
+    if (HasDerivation(derivations, Derivations::constDerivation))
+    {
+        fullName.append(U"const ");
+    }
+    if (HasDerivation(derivations, Derivations::volatileDerivation))
+    {
+        fullName.append(U"volatile ");
+    }
+    auto baseFname = baseType->FullName();
+    if (!baseFname) return baseFname;
+    fullName.append(*baseFname);
+    int pointerCount = PointerCount();
+    if (pointerCount > 0)
+    {
+        if (baseType->PtrIndex() == -1)
+        {
+            fullName.append(pointerCount, '*');
+        }
+        else
+        {
+            std::u32string ptrStr(pointerCount, '*');
+            fullName.insert(baseType->PtrIndex(), ptrStr);
+        }
+    }
+    if (HasDerivation(derivations, Derivations::lvalueRefDerivation))
+    {
+        if (baseType->PtrIndex() == -1)
+        {
+            fullName.append(U"&");
+        }
+        else
+        {
+            fullName.insert(baseType->PtrIndex(), U"&");
+        }
+    }
+    else if (HasDerivation(derivations, Derivations::rvalueRefDerivation))
+    {
+        if (baseType->PtrIndex() == -1)
+        {
+            fullName.append(U"&&");
+        }
+        else
+        {
+            fullName.insert(baseType->PtrIndex(), U"&&");
+        }
+    }
+    return std::expected<std::u32string, int>(fullName);
 }
 
 std::expected<TypeSymbol*, int> CompoundTypeSymbol::PlainType(Context* context)

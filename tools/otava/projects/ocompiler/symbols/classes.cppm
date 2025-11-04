@@ -86,8 +86,8 @@ public:
     inline void SetClassKind(ClassKind classKind_) { classKind = classKind_; }
     inline TypeSymbol* Specialization() const { return specialization; }
     void SetSpecialization(TypeSymbol* specialization_, Context* context);
-    std::string SymbolKindStr() const override { return "class type symbol"; }
-    std::string SymbolDocKindStr() const override { return "class"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     TemplateDeclarationSymbol* ParentTemplateDeclaration() const;
     bool IsTemplate() const;
@@ -200,8 +200,8 @@ public:
     inline void SetSpecialization(TypeSymbol* specialization_) { specialization = specialization_; }
     inline void SetClassTypeSymbol(ClassTypeSymbol* classTypeSymbol_) { classTypeSymbol = classTypeSymbol_; }
     inline ClassTypeSymbol* GetClassTypeSymbol() const { return classTypeSymbol; }
-    std::string SymbolKindStr() const override { return "forward class declaration symbol"; }
-    std::string SymbolDocKindStr() const override { return "forward_class"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     TemplateDeclarationSymbol* ParentTemplateDeclaration();
     void Accept(Visitor& visitor) override;

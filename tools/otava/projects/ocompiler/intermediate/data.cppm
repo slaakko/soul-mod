@@ -355,7 +355,7 @@ class SymbolValue : public Value
 {
 public:
     SymbolValue(const soul::ast::Span& span_, Type* type_, const std::string& symbol_);
-    const std::string& Symbol() const { return symbol; }
+    std::string GetSymbol() const { return symbol; }
     inline Function* GetFunction() const { return function; }
     inline void SetFunction(Function* function_) { function = function_; }
     inline GlobalVariable* GetGlobalVariable() const { return globalVariable; }
@@ -382,12 +382,30 @@ private:
     Value* initializer;
 };
 
-template<class T>
+template<typename T>
+Value* MakeValue(T& value, Data* data, const Types& types);
+
+template<typename T>
 class ValueMap
 {
 public:
-    ValueMap();
-    Value* Get(const T& value, Data* data, const Types& types);
+    ValueMap()
+    {
+    }
+    Value* Get(const T& value, Data* data, const Types& types)
+    {
+        auto it = valueMap.find(value);
+        if (it != valueMap.cend())
+        {
+            return it->second;
+        }
+        else
+        {
+            Value* constantValue = MakeValue(value, data, types);
+            valueMap[value] = constantValue;
+            return constantValue;
+        }
+    }
 private:
     std::map<T, Value*> valueMap;
 };
@@ -465,25 +483,10 @@ private:
     std::int32_t nextStringValueId;
 };
 
-template<class T>
-ValueMap<T>::ValueMap()
+template<typename T>
+Value* MakeValue<T>(T& value, Data* data, const Types& types)
 {
-}
-
-template<class T>
-Value* ValueMap<T>::Get(const T& value, Data* data, const Types& types)
-{
-    auto it = valueMap.find(value);
-    if (it != valueMap.cend())
-    {
-        return it->second;
-    }
-    else
-    {
-        Value* constantValue = data->MakeValue(value, types);
-        valueMap[value] = constantValue;
-        return constantValue;
-    }
+    return data->MakeValue(value, types);
 }
 
 } // otava::intermediate

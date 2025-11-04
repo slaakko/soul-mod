@@ -16,6 +16,16 @@ EnumGroupSymbol::EnumGroupSymbol(const std::u32string& name_) : Symbol(SymbolKin
 {
 }
 
+std::string EnumGroupSymbol::SymbolKindStr() const 
+{ 
+    return "enum group symbol"; 
+}
+
+std::string EnumGroupSymbol::SymbolDocKindStr() const 
+{ 
+    return "enum_group"; 
+}
+
 bool EnumGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 {
     switch (scopeKind)

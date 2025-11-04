@@ -1,0 +1,200 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module otava.project_parser;
+
+[interface]import otava.build_project;
+[implementation]import otava.project_token;
+[implementation]import otava.project_lexer;
+[implementation]import otava.symbols;
+[implementation]import otava.token_parser;
+
+parser ProjectParser
+{
+    lexer otava::project_lexer::ProjectLexer<char32_t>;
+    main;
+
+    ProjectFile(var std::unique_ptr<otava::build::Project> projectFile) : otava::build::Project*
+        ::= 
+        (
+            ProjectDeclaration:projectDeclaration{ projectFile.reset(projectDeclaration); }
+            (   FilePath(projectFile.get()):filePath
+            |   Define(projectFile.get()):define
+            |   TargetDeclaration(projectFile.get()):target
+            )*
+        )
+        {
+            return projectFile.release();
+        }
+        ;
+
+    ProjectDeclaration : otava::build::Project*
+        ::= 
+        (
+            PROJECT QualifiedId:projectName SEMICOLON
+        )
+        {
+            return new otava::build::Project(lexer.FileName(), projectName);
+        }
+        ;
+
+    Define(otava::build::Project* projectFile, var std::string symbol, var std::int64_t value)
+        ::= DEFINE 
+            ID
+            { 
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                std::expected<std::string, int> s = util::ToUtf8(token->ToString());
+                if (!s) return std::unexpected<int>(s.error());
+                symbol = *s;
+            } 
+            (   ASSIGN 
+                VALUE
+                { 
+                    auto t = lexer.GetToken(pos);
+                    if (!t) return std::unexpected<int>(t.error());
+                    const auto* token = *t;
+                    std::expected<std::string, int> s = util::ToUtf8(token->ToString());
+                    if (!s) return std::unexpected<int>(s.error());
+                    std::string str = *s;
+                    value = std::stoll(str); 
+                }
+            |   empty{ value = 1; }
+            )
+            SEMICOLON
+        {
+            projectFile->AddDefine(symbol, value);
+        }
+        ;
+
+    TargetDeclaration(otava::build::Project* projectFile)
+        ::= (TARGET ASSIGN Target:target SEMICOLON){ projectFile->SetTarget(target); }
+        ;
+
+    Target : otava::build::Target
+        ::= PROGRAM{ return otava::build::Target::program; }
+        |   LIBRARY{ return otava::build::Target::library; }
+        ;
+
+    FilePath(otava::build::Project* projectFile)
+        ::= 
+        (   InterfaceFilePath:interfaceFilePath{ projectFile->AddInterfaceFilePath(interfaceFilePath); }
+        |   SourceFilePath:sourceFilePath{ projectFile->AddSourceFilePath(sourceFilePath); }
+        |   ResourceFilePath:resourceFilePath{ projectFile->AddResourceFilePath(resourceFilePath); }
+        |   ReferenceFilePath:referenceFilePath{ projectFile->AddReferenceFilePath(referenceFilePath); }
+        )
+		;
+
+    InterfaceFilePath(var std::string filePath) : std::string
+        ::= 
+        (
+            INTERFACE 
+            FILEPATH
+            { 
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                auto s = otava::token_parser::ParseFilePath(lexer.FileName(), *token); 
+                if (!s) return std::unexpected<int>(s.error());
+                filePath = *s;
+            } 
+            SEMICOLON
+        )
+        {
+            return filePath;
+        }
+        ;
+
+    SourceFilePath(var std::string filePath) : std::string
+        ::= 
+        (
+            SOURCE 
+            FILEPATH
+            { 
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                auto s = otava::token_parser::ParseFilePath(lexer.FileName(), *token); 
+                if (!s) return std::unexpected<int>(s.error());
+                filePath = *s;
+            } 
+            SEMICOLON
+        )
+        {
+            return filePath;
+        }
+        ;
+
+    ResourceFilePath(var std::string filePath) : std::string
+        ::= 
+        (
+            RESOURCE 
+            FILEPATH
+            { 
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                auto s = otava::token_parser::ParseFilePath(lexer.FileName(), *token); 
+                if (!s) return std::unexpected<int>(s.error());
+                filePath = *s;
+            } 
+            SEMICOLON
+        )
+        {
+            return filePath;
+        }
+        ;
+
+    ReferenceFilePath(var std::string filePath) : std::string
+        ::= 
+        (
+            REFERENCE 
+            FILEPATH
+            { 
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                auto s = otava::token_parser::ParseFilePath(lexer.FileName(), *token); 
+                if (!s) return std::unexpected<int>(s.error());
+                filePath = *s;
+            } 
+            SEMICOLON
+        )
+        {
+            return filePath;
+        }
+        ;
+
+    QualifiedId(var std::string str) : std::string
+		::= 
+        (
+            ID
+            { 
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                const auto* token = *t;
+                auto s = util::ToUtf8(token->ToString());
+                if (!s) return std::unexpected<int>(s.error());
+                str.append(*s); 
+            } 
+            (
+                DOT 
+                ID
+                { 
+                    auto t = lexer.GetToken(pos);
+                    if (!t) return std::unexpected<int>(t.error());
+                    const auto* token = *t;
+                    auto s = util::ToUtf8(token->ToString());
+                    if (!s) return std::unexpected<int>(s.error());
+                    str.append(1, '.').append(*s); 
+                }
+            )*
+        )
+        { 
+            return str; 
+        }
+		;
+}

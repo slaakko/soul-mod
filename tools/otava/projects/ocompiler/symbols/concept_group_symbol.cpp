@@ -15,6 +15,16 @@ ConceptGroupSymbol::ConceptGroupSymbol(const std::u32string& name_) : Symbol(Sym
 {
 }
 
+std::string ConceptGroupSymbol::SymbolKindStr() const 
+{ 
+    return "concept group symbol"; 
+}
+
+std::string ConceptGroupSymbol::SymbolDocKindStr() const 
+{ 
+    return "concept_group"; 
+}
+
 void ConceptGroupSymbol::AddConcept(ConceptSymbol* conceptSymbol)
 {
     if (std::find(concepts.begin(), concepts.end(), conceptSymbol) == concepts.end())

@@ -1103,6 +1103,12 @@ std::expected<bool, int> ProcessFunctionDeclarator(FunctionDeclarator* functionD
     }
     rv = AddConvertingConstructorToConversionTable(functionSymbol, functionDeclarator->Node()->GetSourcePos(), context);
     if (!rv) return rv;
+    if (!(context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate | ContextFlags::instantiateFunctionTemplate | ContextFlags::instantiateInlineFunction)))
+    {
+        functionSymbol->SetFlag(FunctionSymbolFlags::fixedIrName);
+        auto irn = functionSymbol->IrName(context);
+        if (!irn) return std::unexpected<int>(irn.error());
+    }
     return std::expected<bool, int>(true);
 }
 

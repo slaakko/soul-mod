@@ -144,6 +144,16 @@ ParameterSymbol::ParameterSymbol(const std::u32string& name_, TypeSymbol* type_)
 {
 }
 
+std::string ParameterSymbol::SymbolKindStr() const 
+{ 
+    return "parameter symbol"; 
+}
+
+std::string ParameterSymbol::SymbolDocKindStr() const 
+{
+    return "parameter"; 
+}
+
 std::expected<bool, int> ParameterSymbol::Write(Writer& writer)
 {
     std::expected<bool, int> rv = Symbol::Write(writer);
@@ -374,6 +384,16 @@ FunctionSymbol::FunctionSymbol(SymbolKind kind_, const std::u32string& name_) :
     error(0)
 {
     GetScope()->SetKind(ScopeKind::functionScope);
+}
+
+std::string FunctionSymbol::SymbolKindStr() const 
+{ 
+    return "function symbol"; 
+}
+
+std::string FunctionSymbol::SymbolDocKindStr() const 
+{ 
+    return "function"; 
 }
 
 std::u32string FunctionSymbol::GroupName() const
@@ -1369,7 +1389,9 @@ std::expected<std::string, int> FunctionSymbol::IrName(Context* context) const
         digestSource.append(compileUnitId);
         if (returnType)
         {
-            std::expected<std::string, int> irv = returnType->IrName(context);
+            std::expected<std::u32string, int> fname = returnType->FullName();
+            if (!fname) return std::unexpected<int>(fname.error());
+            std::expected<std::string, int> irv = util::ToUtf8(*fname);
             if (!irv) return irv;
             std::string retName = std::move(*irv);
             digestSource.append(retName);
@@ -1518,6 +1540,16 @@ FunctionDefinitionSymbol::FunctionDefinitionSymbol(SymbolKind kind_, const std::
     declarationId(),
     defIndex(-1)
 {
+}
+
+std::string FunctionDefinitionSymbol::SymbolKindStr() const 
+{ 
+    return "function definition symbol"; 
+}
+
+std::string FunctionDefinitionSymbol::SymbolDocKindStr() const 
+{ 
+    return "function_definition"; 
 }
 
 std::expected<bool, int> FunctionDefinitionSymbol::Write(Writer& writer)
@@ -1827,6 +1859,16 @@ ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDe
 ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(const std::u32string& name_) :
     FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, name_)
 {
+}
+
+std::string ExplicitlyInstantiatedFunctionDefinitionSymbol::SymbolKindStr() const 
+{ 
+    return "explicitly instantiated function definition symbol"; 
+}
+
+std::string ExplicitlyInstantiatedFunctionDefinitionSymbol::SymbolDocKindStr() const 
+{ 
+    return "explcitly_instantiated_function_definition"; 
 }
 
 std::expected<bool, int> ExplicitlyInstantiatedFunctionDefinitionSymbol::Write(Writer& writer)

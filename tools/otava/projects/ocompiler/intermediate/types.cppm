@@ -389,7 +389,7 @@ public:
     inline std::int8_t PointerCount() const { return pointerCount; }
     inline const TypeRef& BaseTypeRef() const { return baseTypeRef; }
     inline TypeRef& BaseTypeRef() { return baseTypeRef; }
-    inline Type* BaseType() const override { return baseTypeRef.GetType(); }
+    Type* BaseType() const override { return baseTypeRef.GetType(); }
     Value* MakeDefaultValue(Context& context) const override;
     void ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context) override;
 private:

@@ -30,6 +30,16 @@ EnumeratedTypeSymbol::EnumeratedTypeSymbol(const std::u32string& name_) :
     GetScope()->SetKind(ScopeKind::enumerationScope);
 }
 
+std::string EnumeratedTypeSymbol::SymbolKindStr() const 
+{ 
+    return "enumerated type symbol"; 
+}
+
+std::string EnumeratedTypeSymbol::SymbolDocKindStr() const 
+{ 
+    return "enum_type"; 
+}
+
 bool EnumeratedTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 {
     switch (scopeKind)
@@ -121,6 +131,16 @@ ForwardEnumDeclarationSymbol::ForwardEnumDeclarationSymbol(const std::u32string&
     underlyingTypeId()
 {
     GetScope()->SetKind(ScopeKind::enumerationScope);
+}
+
+std::string ForwardEnumDeclarationSymbol::SymbolKindStr() const 
+{ 
+    return "forward enum declaration symbol"; 
+}
+
+std::string ForwardEnumDeclarationSymbol::SymbolDocKindStr() const 
+{ 
+    return "forward_enum"; 
 }
 
 bool ForwardEnumDeclarationSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
@@ -217,6 +237,16 @@ std::expected<bool, int> ForwardEnumDeclarationSymbol::Resolve(SymbolTable& symb
 
 EnumConstantSymbol::EnumConstantSymbol(const std::u32string& name_) : Symbol(SymbolKind::enumConstantSymbol, name_), value(), valueId(), enumType(nullptr)
 {
+}
+
+std::string EnumConstantSymbol::SymbolKindStr() const 
+{ 
+    return "enum constant symbol"; 
+}
+
+std::string EnumConstantSymbol::SymbolDocKindStr() const 
+{ 
+    return "enum_constant"; 
 }
 
 bool EnumConstantSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const

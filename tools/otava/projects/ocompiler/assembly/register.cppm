@@ -71,9 +71,9 @@ public:
     Registers();
     inline const RegisterGroup* GetRegisterGroup(RegisterGroupKind kind) const { return regGroups[int(kind)].get(); }
     inline RegisterGroup* GetRegisterGroup(RegisterGroupKind kind) { return regGroups[int(kind)].get(); }
-    inline explicit operator bool() const { return Valid(); }
-    inline bool Valid() const { return error == 0; }
-    inline int Error() const { return error; }
+    explicit operator bool() const { return Valid(); }
+    bool Valid() const { return error == 0; }
+    int Error() const { return error; }
 private:
     std::vector<std::unique_ptr<RegisterGroup>> regGroups;
     int error;

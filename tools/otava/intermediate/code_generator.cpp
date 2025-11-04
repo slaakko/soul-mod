@@ -487,76 +487,76 @@ otava::assembly::Register* MakeIntegerRegOperand(Value* value, otava::assembly::
         otava::assembly::Context* assemblyContext = codeGenerator.Ctx()->AssemblyContext();
         switch (value->Kind())
         {
-        case ValueKind::boolValue:
-        {
-            BoolValue* v = static_cast<BoolValue*>(value);
-            inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 1));
-            break;
-        }
-        case ValueKind::sbyteValue:
-        {
-            SByteValue* v = static_cast<SByteValue*>(value);
-            inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 1));
-            break;
-        }
-        case ValueKind::byteValue:
-        {
-            ByteValue* v = static_cast<ByteValue*>(value);
-            inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 1));
-            break;
-        }
-        case ValueKind::shortValue:
-        {
-            ShortValue* v = static_cast<ShortValue*>(value);
-            inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 2));
-            break;
-        }
-        case ValueKind::ushortValue:
-        {
-            UShortValue* v = static_cast<UShortValue*>(value);
-            inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 2));
-            break;
-        }
-        case ValueKind::intValue:
-        {
-            IntValue* v = static_cast<IntValue*>(value);
-            inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 4));
-            break;
-        }
-        case ValueKind::uintValue:
-        {
-            UIntValue* v = static_cast<UIntValue*>(value);
-            inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 4));
-            break;
-        }
-        case ValueKind::longValue:
-        {
-            LongValue* v = static_cast<LongValue*>(value);
-            inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 8));
-            break;
-        }
-        case ValueKind::ulongValue:
-        {
-            ULongValue* v = static_cast<ULongValue*>(value);
-            inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 8));
-            break;
-        }
-        case ValueKind::nullValue:
-        {
-            inst->AddOperand(assemblyContext->MakeIntegerLiteral(0, 8));
-            break;
-        }
-        case ValueKind::symbolValue:
-        {
-            SymbolValue* v = static_cast<SymbolValue*>(value);
-            inst->AddOperand(assemblyContext->MakeSymbol(v->Symbol()));
-            break;
-        }
-        default:
-        {
-            codeGenerator.Error("error making reg operand: not implemented for value kind " + value->KindStr());
-            break;
-        }
+            case ValueKind::boolValue:
+            {
+                BoolValue* v = static_cast<BoolValue*>(value);
+                inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 1));
+                break;
+            }
+            case ValueKind::sbyteValue:
+            {
+                SByteValue* v = static_cast<SByteValue*>(value);
+                inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 1));
+                break;
+            }
+            case ValueKind::byteValue:
+            {
+                ByteValue* v = static_cast<ByteValue*>(value);
+                inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 1));
+                break;
+            }
+            case ValueKind::shortValue:
+            {
+                ShortValue* v = static_cast<ShortValue*>(value);
+                inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 2));
+                break;
+            }
+            case ValueKind::ushortValue:
+            {
+                UShortValue* v = static_cast<UShortValue*>(value);
+                inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 2));
+                break;
+            }
+            case ValueKind::intValue:
+            {
+                IntValue* v = static_cast<IntValue*>(value);
+                inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 4));
+                break;
+            }
+            case ValueKind::uintValue:
+            {
+                UIntValue* v = static_cast<UIntValue*>(value);
+                inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 4));
+                break;
+            }
+            case ValueKind::longValue:
+            {
+                LongValue* v = static_cast<LongValue*>(value);
+                inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 8));
+                break;
+            }
+            case ValueKind::ulongValue:
+            {
+                ULongValue* v = static_cast<ULongValue*>(value);
+                inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 8));
+                break;
+            }
+            case ValueKind::nullValue:
+            {
+                inst->AddOperand(assemblyContext->MakeIntegerLiteral(0, 8));
+                break;
+            }
+            case ValueKind::symbolValue:
+            {
+                SymbolValue* v = static_cast<SymbolValue*>(value);
+                inst->AddOperand(assemblyContext->MakeSymbol(v->Symbol()));
+                break;
+            }
+            default:
+            {
+                codeGenerator.Error("error making reg operand: not implemented for value kind " + value->KindStr());
+                break;
+            }
         }
         codeGenerator.Emit(inst);
 

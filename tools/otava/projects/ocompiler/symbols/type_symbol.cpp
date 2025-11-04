@@ -213,6 +213,16 @@ NestedTypeSymbol::NestedTypeSymbol(const std::u32string& name_) : TypeSymbol(Sym
 {
 }
 
+std::string NestedTypeSymbol::SymbolKindStr() const 
+{ 
+    return "nested type symbol"; 
+}
+
+std::string NestedTypeSymbol::SymbolDocKindStr() const 
+{ 
+    return "nested_type"; 
+}
+
 void NestedTypeSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -229,6 +239,16 @@ DependentTypeSymbol::DependentTypeSymbol(otava::ast::Node* node_) : TypeSymbol(S
         otava::ast::TypenameSpecifierNode* s = static_cast<otava::ast::TypenameSpecifierNode*>(node.get());
         SetName(s->Id()->Str());
     }
+}
+
+std::string DependentTypeSymbol::SymbolKindStr() const 
+{ 
+    return "dependent type symbol"; 
+}
+
+std::string DependentTypeSymbol::SymbolDocKindStr() const 
+{ 
+    return "dependent_type"; 
 }
 
 std::expected<bool, int> DependentTypeSymbol::Write(Writer& writer)
@@ -262,6 +282,16 @@ ErrorTypeSymbol::ErrorTypeSymbol() : TypeSymbol(SymbolKind::errorSymbol, U"<erro
 {
 }
 
+std::string ErrorTypeSymbol::SymbolKindStr() const 
+{ 
+    return "error type symbol"; 
+}
+
+std::string ErrorTypeSymbol::SymbolDocKindStr() const 
+{ 
+    return "error_type"; 
+}
+
 void ErrorTypeSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -275,6 +305,16 @@ FunctionGroupTypeSymbol::FunctionGroupTypeSymbol(FunctionGroupSymbol* functionGr
 FunctionGroupTypeSymbol::FunctionGroupTypeSymbol(const std::u32string& name_) :
     TypeSymbol(SymbolKind::functionGroupTypeSymbol, name_), functionGroupSymbol(nullptr)
 {
+}
+
+std::string FunctionGroupTypeSymbol::SymbolKindStr() const 
+{ 
+    return "function group type symbol"; 
+}
+
+std::string FunctionGroupTypeSymbol::SymbolDocKindStr() const 
+{ 
+    return "function_group_type"; 
 }
 
 std::expected<bool, int> FunctionGroupTypeSymbol::Write(Writer& writer)
@@ -320,6 +360,16 @@ ClassGroupTypeSymbol::ClassGroupTypeSymbol(ClassGroupSymbol* classGroupSymbol_) 
 {
 }
 
+std::string ClassGroupTypeSymbol::SymbolKindStr() const 
+{ 
+    return "class group type symbol"; 
+}
+
+std::string ClassGroupTypeSymbol::SymbolDocKindStr() const 
+{ 
+    return "class_group_type"; 
+}
+
 std::expected<bool, int> ClassGroupTypeSymbol::Write(Writer& writer)
 {
     std::expected<bool, int> rv = TypeSymbol::Write(writer);
@@ -363,6 +413,16 @@ AliasGroupTypeSymbol::AliasGroupTypeSymbol(AliasGroupSymbol* aliasGroupSymbol_) 
 {
 }
 
+std::string AliasGroupTypeSymbol::SymbolKindStr() const 
+{ 
+    return "alias group type symbol"; 
+}
+
+std::string AliasGroupTypeSymbol::SymbolDocKindStr() const 
+{ 
+    return "alias_group_type"; 
+}
+
 std::expected<bool, int> AliasGroupTypeSymbol::Write(Writer& writer)
 {
     std::expected<bool, int> rv = TypeSymbol::Write(writer);
@@ -404,6 +464,16 @@ TypeSymbol* GenericTypeSymbol::Instance()
 
 GenericTypeSymbol::GenericTypeSymbol() : TypeSymbol(SymbolKind::genericTypeSymbol, U"@generic_type")
 {
+}
+
+std::string GenericTypeSymbol::SymbolKindStr() const 
+{ 
+    return "generic type symbol"; 
+}
+
+std::string GenericTypeSymbol::SymbolDocKindStr() const 
+{ 
+    return "generic_type"; 
 }
 
 void GenericTypeSymbol::Accept(Visitor& visitor)

@@ -1425,7 +1425,7 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
             context->PushSetFlag(ContextFlags::suppress_warning);
             flagsPushed = true;
         }
-        std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverload(subjectScope, groupName, templateArgs, args, node.GetSourcePos(), context, ex1, 
+        std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverload(subjectScope, groupName, templateArgs, args, node.GetSourcePos(), context, ex1,
             resolutionFlags);
         if (flagsPushed)
         {

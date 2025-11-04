@@ -9,6 +9,7 @@ import std;
 import otava.symbols.type.symbol;
 import otava.symbols.derivations;
 import otava.symbols.templates;
+import otava.symbols.context;
 import otava.symbols.emitter;
 
 export namespace otava::symbols {
@@ -20,8 +21,8 @@ public:
     CompoundTypeSymbol(TypeSymbol* baseType_, Derivations derivations_, const util::uuid& id_);
     TypeSymbol* GetBaseType() override { return baseType; }
     const TypeSymbol* GetBaseType() const override { return baseType; }
-    std::string SymbolKindStr() const override { return "compound type symbol"; }
-    std::string SymbolDocKindStr() const override { return "compound_type"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     std::expected<TypeSymbol*, int> PlainType(Context* context) override;
     bool IsVoidPtrType() const override { return baseType->IsVoidType(); }
@@ -33,6 +34,7 @@ public:
     std::expected<TypeSymbol*, int> UnifyTemplateArgumentType(
         const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
     std::expected<std::string, int> IrName(Context* context) const override;
+    std::expected<std::u32string, int> FullName() const override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;

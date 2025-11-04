@@ -1,0 +1,5 @@
+project otava_project;
+tokens <project.token>;
+keywords <project.keyword>;
+expressions <project.expr>;
+lexer <project.lexer>;

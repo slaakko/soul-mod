@@ -18,6 +18,16 @@ AliasGroupSymbol::AliasGroupSymbol(const std::u32string& name_) : Symbol(SymbolK
 {
 }
 
+std::string AliasGroupSymbol::SymbolKindStr() const 
+{
+    return "alias group symbol"; 
+}
+
+std::string AliasGroupSymbol::SymbolDocKindStr() const 
+{ 
+    return "alias_group"; 
+}
+
 bool AliasGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 {
     switch (scopeKind)

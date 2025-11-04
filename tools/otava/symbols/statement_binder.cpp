@@ -1394,7 +1394,8 @@ void StatementBinder::Visit(otava::ast::BoundStatementNode& node)
     SetStatement(static_cast<BoundStatementNode*>(node.GetBoundStatementNode()));
 }
 
-void StatementBinder::BindStaticLocalVariable(VariableSymbol* variable, otava::ast::Node* initializerNode, otava::ast::SimpleDeclarationNode* declarationNode)
+void StatementBinder::BindStaticLocalVariable(VariableSymbol* variable, otava::ast::Node* initializerNode, 
+    otava::ast::SimpleDeclarationNode* declarationNode)
 {
     /*
         std::atomic_bool variable_initialized;
@@ -1420,7 +1421,8 @@ void StatementBinder::BindStaticLocalVariable(VariableSymbol* variable, otava::a
             shaMaterial.append(".").append(util::ToUtf8(type->FullName()));
         }
     }
-    shaMaterial.append(".").append(context->GetBoundCompileUnit()->Id());
+    shaMaterial.append(".").append(context->GetBoundCompileUnit()->Id()).
+        append(1, '_').append(std::to_string(context->GetBoundFunction()->Serial()));
     std::string sha = util::GetSha1MessageDigest(shaMaterial);
     otava::ast::Node* atomicBoolType = MakeTypeNameNodes(sourcePos, U"std::atomic_bool");
     otava::ast::DeclSpecifierSequenceNode* declSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
@@ -1474,6 +1476,11 @@ void StatementBinder::BindStaticLocalVariable(VariableSymbol* variable, otava::a
     if (symbol && symbol->IsVariableSymbol())
     {
         globalStaticVariableSymbol = static_cast<VariableSymbol*>(symbol);
+    }
+    else if (symbol && symbol->IsVariableGroupSymbol())
+    {
+        std::string irName = util::ToUtf8(globalStaticVarName);
+        ThrowException("ir name '" + irName + "' of function static global variable not unique", sourcePos, context);
     }
     else
     {
@@ -1552,6 +1559,14 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
 
 FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
+    if (!functionDefinitionSymbol->IsSpecialization())
+    {
+        if (functionDefinitionSymbol->Declaration())
+        {
+            functionDefinitionSymbol->Declaration()->SetFlag(FunctionSymbolFlags::fixedIrName);
+        }
+        functionDefinitionSymbol->SetFlag(FunctionSymbolFlags::fixedIrName);
+    }
     RemoveTemporaryAliasTypeSymbols(context);
     if (functionDefinitionSymbol->IsBound()) return functionDefinitionSymbol;
     if (functionDefinitionSymbol->IsTemplate()) return functionDefinitionSymbol;

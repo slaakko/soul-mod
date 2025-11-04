@@ -323,7 +323,8 @@ void ExplicitInstantiationSymbol::AddFunctionDefinitionSymbol(FunctionDefinition
         FunctionSymbol* declaration = functionDefinitionSymbol->Declaration();
         declaration->SetFlag(FunctionSymbolFlags::fixedIrName);
     }
-    ExplicitlyInstantiatedFunctionDefinitionSymbol* explicitlyInstantiatedSymbol = new ExplicitlyInstantiatedFunctionDefinitionSymbol(functionDefinitionSymbol, sourcePos, context);
+    ExplicitlyInstantiatedFunctionDefinitionSymbol* explicitlyInstantiatedSymbol = new ExplicitlyInstantiatedFunctionDefinitionSymbol(
+        functionDefinitionSymbol, sourcePos, context);
     explicitlyInstantiatedSymbol->SetFunctionKind(functionDefinitionSymbol->GetFunctionKind());
     functionDefinitionSymbols.push_back(std::unique_ptr<ExplicitlyInstantiatedFunctionDefinitionSymbol>(explicitlyInstantiatedSymbol));
     functionDefinitionSymbolMap[functionDefinitionSymbol->DefIndex()] = explicitlyInstantiatedSymbol;

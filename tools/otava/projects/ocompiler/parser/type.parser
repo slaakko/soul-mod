@@ -47,11 +47,28 @@ parser TypeParser
     TypeSpecifierSeq(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> sequence) : otava::ast::Node*
         ::= 
         (
-            TypeSpecifier(context):first{ sequence.reset(new otava::ast::TypeSpecifierSequenceNode(lexer.GetSourcePos(pos))); sequence->AddNode(first); } 
+            TypeSpecifier(context):first
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sequence.reset(new otava::ast::TypeSpecifierSequenceNode(*sp)); 
+                auto rv = sequence->AddNode(first); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            } 
             (
-                TypeSpecifier(context):next{ sequence->AddNode(next); }
+                TypeSpecifier(context):next
+                { 
+                    auto rv = sequence->AddNode(next); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
             )*
-            (AttributeSpecifierSeq(context):attributes{ sequence->AddNode(attributes); })?
+            (
+                AttributeSpecifierSeq(context):attributes
+                { 
+                    auto rv = sequence->AddNode(attributes); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )?
         )
         {
             return sequence.release();
@@ -67,7 +84,12 @@ parser TypeParser
     DefiningTypeId(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
         ::= 
         (
-            DefiningTypeSpecifierSeq(context):definingTypeSpecifierSeq{ sourcePos = lexer.GetSourcePos(pos); } 
+            DefiningTypeSpecifierSeq(context):definingTypeSpecifierSeq
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
+            } 
             AbstractDeclarator(context):abstractDeclararator?
         )
         {
@@ -78,11 +100,28 @@ parser TypeParser
     DefiningTypeSpecifierSeq(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node) : otava::ast::Node*
         ::= 
         (   
-            DefiningTypeSpecifierReset(context):first{ node.reset(new otava::ast::DefiningTypeSpecifierSequenceNode(lexer.GetSourcePos(pos))); node->AddNode(first); }
+            DefiningTypeSpecifierReset(context):first
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                node.reset(new otava::ast::DefiningTypeSpecifierSequenceNode(*sp)); 
+                auto rv = node->AddNode(first); 
+                if (!rv) return std::unexpected<int>(rv.error());
+            }
             (
-                DefiningTypeSpecifierReset(context):next{ node->AddNode(next); }
+                DefiningTypeSpecifierReset(context):next
+                { 
+                    auto rv = node->AddNode(next); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
             )*
-            (AttributeSpecifierSeq(context):attributes{ node->AddNode(attributes); })?
+            (
+                AttributeSpecifierSeq(context):attributes
+                { 
+                    auto rv = node->AddNode(attributes); 
+                    if (!rv) return std::unexpected<int>(rv.error());
+                }
+            )?
         )
         {
             return node.release();
@@ -135,44 +174,64 @@ parser TypeParser
 
     ElaboratedTypeSpecifier(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos nnsPos, var soul::ast::SourcePos tmpPos) : 
         otava::ast::Node*
-        ::= ClassKey:classKey{ sourcePos = lexer.GetSourcePos(pos); }
+        ::= ClassKey:classKey
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp; 
+            }
             AttributeSpecifierSeq(context):attributes?
             (
-                NestedNameSpecifier(context):nns{ nnsPos = lexer.GetSourcePos(pos); } 
+                NestedNameSpecifier(context):nns
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    nnsPos = *sp; 
+                } 
                 (   
-                    Template:tmp{ tmpPos = lexer.GetSourcePos(pos); }
+                    Template:tmp
+                    { 
+                        auto sp = lexer.GetSourcePos(pos);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        tmpPos = *sp; 
+                    }
                     SimpleTemplateId(context):simpleTemplateId
                     {
                         otava::ast::Node* node = new otava::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, 
                             new otava::ast::QualifiedIdNode(nnsPos, nns, new otava::ast::PrefixNode(tmpPos, tmp, simpleTemplateId)), attributes);
-                        otava::symbols::ProcessElaboratedClassDeclaration(node, context);
+                        auto rv = otava::symbols::ProcessElaboratedClassDeclaration(node, context);
+                        if (!rv) return std::unexpected<int>(rv.error());
                         return node;
                     }
                 |   SimpleTemplateId(context):simpleTemplateId2
                     {
                         otava::ast::Node* node = new otava::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, 
                             new otava::ast::QualifiedIdNode(nnsPos, nns, simpleTemplateId2), attributes);
-                        otava::symbols::ProcessElaboratedClassDeclaration(node, context);
+                        auto rv = otava::symbols::ProcessElaboratedClassDeclaration(node, context);
+                        if (!rv) return std::unexpected<int>(rv.error());
                         return node;
                     }
                 |   Identifier(context):identifier
                     {
                         otava::ast::Node* node = new otava::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, 
                             new otava::ast::QualifiedIdNode(nnsPos, nns, identifier), attributes);
-                        otava::symbols::ProcessElaboratedClassDeclaration(node, context);
+                        auto rv = otava::symbols::ProcessElaboratedClassDeclaration(node, context);
+                        if (!rv) return std::unexpected<int>(rv.error());
                         return node;
                     }
                 )
             |   SimpleTemplateId(context):simpleTemplateId3
                 {
                     otava::ast::Node* node = new otava::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, simpleTemplateId3, attributes);
-                    otava::symbols::ProcessElaboratedClassDeclaration(node, context);
+                    auto rv = otava::symbols::ProcessElaboratedClassDeclaration(node, context);
+                    if (!rv) return std::unexpected<int>(rv.error());
                     return node;
                 }
             |   Identifier(context):identifier2
                 {
                     otava::ast::Node* node = new otava::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, identifier2, attributes);
-                    otava::symbols::ProcessElaboratedClassDeclaration(node, context);
+                    auto rv = otava::symbols::ProcessElaboratedClassDeclaration(node, context);
+                    if (!rv) return std::unexpected<int>(rv.error());
                     return node;
                 }
             )
@@ -193,8 +252,19 @@ parser TypeParser
             }
         |   NotDefiningTypeSpecifierGuard(context):guard
             (
-                (   NestedNameSpecifier(context):nns1{ nns.reset(nns1); sourcePos = lexer.GetSourcePos(pos); } 
-                    Template:tmp{ tmpPos = lexer.GetSourcePos(pos); } 
+                (   NestedNameSpecifier(context):nns1
+                    { 
+                        nns.reset(nns1); 
+                        auto sp = lexer.GetSourcePos(pos);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        sourcePos = *sp; 
+                    } 
+                    Template:tmp
+                    { 
+                        auto sp = lexer.GetSourcePos(pos);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        tmpPos = *sp; 
+                    } 
                     SimpleTemplateId(context):simpleTemplateId
                     { 
                         return new otava::ast::QualifiedIdNode(sourcePos, nns.release(), new otava::ast::PrefixNode(tmpPos, tmp, simpleTemplateId)); 
@@ -202,14 +272,19 @@ parser TypeParser
                 |   NestedNameSpecifier(context):nns2
                     { 
                         nns.reset(nns2); 
-                        otava::symbols::BeginScope(nns.get(), context); sourcePos = lexer.GetSourcePos(pos); 
+                        auto rv = otava::symbols::BeginScope(nns.get(), context); 
+                        if (!rv) return std::unexpected<int>(rv.error());
+                        auto sp = lexer.GetSourcePos(pos);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        sourcePos = *sp; 
                     }
                     TypeName(context):typeName
                     { 
                         std::unique_ptr<otava::ast::Node> typeNameNode;
                         typeNameNode.reset(typeName);
                         isConstructorNameNode = context->IsConstructorNameNode(typeNameNode.get());
-                        otava::symbols::EndScope(context);
+                        auto rv = otava::symbols::EndScope(context);
+                        if (!rv) return std::unexpected<int>(rv.error());
                         if (isConstructorNameNode)
                         {
                             pass = false;
@@ -221,7 +296,8 @@ parser TypeParser
                     }
                     /
                     {
-                        otava::symbols::EndScope(context);
+                        auto rv = otava::symbols::EndScope(context);
+                        if (!rv) return std::unexpected<int>(rv.error());
                     }
                 |   empty{ if (isConstructorNameNode) pass = false; } 
                     TypeName(context):typeName2
@@ -259,7 +335,12 @@ parser TypeParser
         ::= 
         (
             empty{ context->PushResetFlag(otava::symbols::ContextFlags::hasDefiningTypeSpecifier); }
-            TypeSpecifierSeq(context):typeSpecifiers{ sourcePos = lexer.GetSourcePos(pos); } 
+            TypeSpecifierSeq(context):typeSpecifiers
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp; 
+            } 
             AbstractDeclarator(context):abstractDeclarator?
         )
         {
@@ -274,7 +355,14 @@ parser TypeParser
 
     TypenameSpecifier(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::Node> templateNode, 
         var bool typenameSeen, var std::unique_ptr<otava::ast::Node> leaf) : otava::ast::Node*
-        ::= TYPENAME{ sourcePos = lexer.GetSourcePos(pos); context->PushSetFlag(otava::symbols::ContextFlags::assumeType); typenameSeen = true; } 
+        ::= TYPENAME
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp; 
+                context->PushSetFlag(otava::symbols::ContextFlags::assumeType); 
+                typenameSeen = true; 
+            } 
             empty{ context->PushResetFlag(otava::symbols::ContextFlags::assumeType); } 
             NestedNameSpecifier(context):nns{ context->PopFlags(); } / { context->PopFlags(); }
             (   (Template:t{ templateNode.reset(t); })?
@@ -306,10 +394,25 @@ parser TypeParser
         otava::ast::Node*
         ::= 
         (
-            DECLTYPE{ sourcePos = lexer.GetSourcePos(pos); } 
-            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
+            DECLTYPE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp; 
+            } 
+            LPAREN
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                lpPos = *sp; 
+            } 
             Expression(context):expr 
-            RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+            RPAREN
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                rpPos = *sp; 
+            }
         )
         {
             return new otava::ast::DeclTypeSpecifierNode(sourcePos, expr, lpPos, rpPos);
@@ -320,22 +423,60 @@ parser TypeParser
         var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : otava::ast::Node*
         ::= 
         (
-            (TypeConstraint(context):typeConstraint{ sourcePos = lexer.GetSourcePos(pos); })? 
+            (
+                TypeConstraint(context):typeConstraint
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    sourcePos = *sp; 
+                }
+            )? 
             (
                 AUTO
                 { 
-                    if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
-                    autoPos = lexer.GetSourcePos(pos);
+                    if (!sourcePos.IsValid()) 
+                    {
+                        auto sp = lexer.GetSourcePos(pos);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        sourcePos = *sp;
+                    }
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    autoPos = *sp;
                     return new otava::ast::PlaceholderTypeSpecifierNode(sourcePos, typeConstraint, dtPos, autoPos, lpPos, rpPos);
                 } 
             )
             |
             (
                 (
-                    DECLTYPE{ dtPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); } 
-                    LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
-                    AUTO{ autoPos = lexer.GetSourcePos(pos); } 
-                    RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+                    DECLTYPE
+                    { 
+                        auto sp = lexer.GetSourcePos(pos);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        dtPos = *sp; 
+                        if (!sourcePos.IsValid()) 
+                        {
+                            sourcePos = dtPos; 
+                        } 
+                    }
+                    LPAREN
+                    { 
+                        auto sp = lexer.GetSourcePos(pos);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        lpPos = *sp; 
+                    } 
+                    AUTO
+                    { 
+                        auto sp = lexer.GetSourcePos(pos);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        autoPos = *sp; 
+                    } 
+                    RPAREN
+                    { 
+                        auto sp = lexer.GetSourcePos(pos);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        rpPos = *sp; 
+                    }
                 )
                 {
                     return new otava::ast::PlaceholderTypeSpecifierNode(sourcePos, typeConstraint, dtPos, autoPos, lpPos, rpPos);

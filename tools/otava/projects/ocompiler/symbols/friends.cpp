@@ -13,6 +13,16 @@ FriendSymbol::FriendSymbol(const std::u32string& name_) : Symbol(SymbolKind::fri
 {
 }
 
+std::string FriendSymbol::SymbolKindStr() const 
+{ 
+    return "friend symbol"; 
+}
+
+std::string FriendSymbol::SymbolDocKindStr() const 
+{ 
+    return "friend"; 
+}
+
 bool FriendSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 {
     switch (scopeKind)

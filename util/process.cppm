@@ -3,12 +3,12 @@
 // Distributed under the MIT license
 // =================================
 
-export module util.init.done;
+export module util.process;
 
 import std;
 
 export namespace util {
 
-void Done();
+int RunProcess(const char* commandLine);
 
 } // namespace util

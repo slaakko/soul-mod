@@ -26,11 +26,11 @@ public:
     using iterator = tree_type::iterator;
     using const_iterator = tree_type::const_iterator;
     
-    inline map() : tree() {}
-    inline map(const map& x) : tree(x.tree) {}
-    inline map(map&& x) : tree(std::move(x.tree)) {}
-    inline map& operator=(const map& x) { tree = x.tree; return *this; }
-    inline map& operator=(map&& x) { std::swap(tree, x.tree); return *this; }
+    map() : tree() {}
+    map(const map& x) : tree(x.tree) {}
+    map(map&& x) : tree(std::move(x.tree)) {}
+    map& operator=(const map& x) { tree = x.tree; return *this; }
+    map& operator=(map&& x) { std::swap(tree, x.tree); return *this; }
     
     inline iterator begin() { return tree.begin(); }
     inline const_iterator begin() const { return tree.cbegin(); }

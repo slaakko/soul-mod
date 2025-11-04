@@ -108,7 +108,7 @@ public:
     using TokenType = soul::lexer::Token<CharT, LexerBase<CharT>>;
     using TokenLineType = soul::lexer::TokenLine<CharT, LexerBase<CharT>>;
     using VariableClassType = Machine::Variables;
-    using PPHook = void (*)(LexerType* lexer, TokenType* token);
+    using PPHook = void(*)(LexerType* lxr, const TokenType* token);
 
     Lexer() :
         LexerBase<CharT>(), 

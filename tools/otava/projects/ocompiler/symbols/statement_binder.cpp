@@ -2276,7 +2276,7 @@ std::expected<bool, int> StatementBinder::BindStaticLocalVariable(
             shaMaterial.append(".").append(*sfname);
         }
     }
-    shaMaterial.append(".").append(context->GetBoundCompileUnit()->Id());
+    shaMaterial.append(".").append(context->GetBoundCompileUnit()->Id()).append(1, '_').append(std::to_string(context->GetBoundFunction()->Serial()));
     std::string sha = util::GetSha1MessageDigest(shaMaterial);
     std::expected<otava::ast::Node*, int> n = MakeTypeNameNodes(sourcePos, U"std::atomic_bool");
     if (!n) return std::unexpected<int>(n.error());
@@ -2357,6 +2357,13 @@ std::expected<bool, int> StatementBinder::BindStaticLocalVariable(
     if (symbol && symbol->IsVariableSymbol())
     {
         globalStaticVariableSymbol = static_cast<VariableSymbol*>(symbol);
+    }
+    else if (symbol && symbol->IsVariableGroupSymbol())
+    {
+        auto irn = util::ToUtf8(globalStaticVarName);
+        if (!irn) return std::unexpected<int>(irn.error());
+        std::string irName = *irn;
+        return Error("ir name '" + irName + "' of function static global not unique", sourcePos, context);
     }
     else
     {
@@ -2463,6 +2470,14 @@ std::expected<BoundStatementNode*, int> BindStatement(otava::ast::Node* statemen
 
 std::expected<FunctionDefinitionSymbol*, int> BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
+    if (!functionDefinitionSymbol->IsSpecialization())
+    {
+        if (functionDefinitionSymbol->Declaration())
+        {
+            functionDefinitionSymbol->Declaration()->SetFlag(FunctionSymbolFlags::fixedIrName);
+        }
+        functionDefinitionSymbol->SetFlag(FunctionSymbolFlags::fixedIrName);
+    }
     std::expected<bool, int> rv = RemoveTemporaryAliasTypeSymbols(context);
     if (!rv) return std::unexpected<int>(rv.error());
     if (functionDefinitionSymbol->IsBound()) return std::expected<FunctionDefinitionSymbol*, int>(functionDefinitionSymbol);

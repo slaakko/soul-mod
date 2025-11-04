@@ -39,6 +39,16 @@ VariableSymbol::VariableSymbol(const std::u32string& name_) :
 {
 }
 
+std::string VariableSymbol::SymbolKindStr() const 
+{ 
+    return "variable symbol"; 
+}
+
+std::string VariableSymbol::SymbolDocKindStr() const 
+{ 
+    return "variable"; 
+}
+
 std::expected<bool, int> VariableSymbol::Write(Writer& writer)
 {
     std::expected<bool, int> rv = Symbol::Write(writer);

@@ -197,7 +197,8 @@ void ClassTemplateSpecializationSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-TypeSymbol* ClassTemplateSpecializationSymbol::UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context)
+TypeSymbol* ClassTemplateSpecializationSymbol::UnifyTemplateArgumentType(
+    const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context)
 {
     std::vector<Symbol*> targetTemplateArguments;
     for (int i = 0; i < templateArguments.size(); ++i)
@@ -411,7 +412,8 @@ void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, co
         if (destructorFn)
         {
             std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
-            FunctionSymbol* instantiatedDestructor = InstantiateMemFnOfClassTemplate(destructorFn, specialization, templateParameterMap, sourcePos, context);
+            FunctionSymbol* instantiatedDestructor = InstantiateMemFnOfClassTemplate(destructorFn, specialization, 
+                templateParameterMap, sourcePos, context);
             instantiatedDestructor->SetFlag(FunctionSymbolFlags::fixedIrName);
             std::string irName = instantiatedDestructor->IrName(context);
             specialization->SetDestructor(instantiatedDestructor);
@@ -491,8 +493,8 @@ void InstantiateVirtualFunctions(ClassTemplateSpecializationSymbol* specializati
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
 }
 
-ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs, const soul::ast::SourcePos& sourcePos, 
-    Context* context)
+ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs, 
+    const soul::ast::SourcePos& sourcePos, Context* context)
 {
     if (classTemplate->IsClassTemplateSpecializationSymbol())
     {
@@ -507,6 +509,7 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
     }
     int arity = templateDeclaration->Arity();
     ClassTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, templateArgs);
+    specialization->IrName(context);
     int m = templateArgs.size();
     bool wasInstantiated = specialization->Instantiated();
     if (wasInstantiated && arity == m)

@@ -230,6 +230,7 @@ private:
     int functionCallsInlined;
     int functionsInlined;
     int argIndex;
+    int boundFunctionSerial;
     Module* requesterModule;
 };
 

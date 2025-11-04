@@ -94,8 +94,8 @@ class NestedTypeSymbol : public TypeSymbol
 {
 public:
     NestedTypeSymbol(const std::u32string& name_);
-    std::string SymbolKindStr() const override { return "nested type symbol"; }
-    std::string SymbolDocKindStr() const override { return "nested_type"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -104,8 +104,8 @@ class DependentTypeSymbol : public TypeSymbol
 public:
     DependentTypeSymbol(const std::u32string& name_);
     DependentTypeSymbol(otava::ast::Node* node_);
-    std::string SymbolKindStr() const override { return "dependent type symbol"; }
-    std::string SymbolDocKindStr() const override { return "dependent_type"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
@@ -118,8 +118,8 @@ class ErrorTypeSymbol : public TypeSymbol
 {
 public:
     ErrorTypeSymbol();
-    std::string SymbolKindStr() const override { return "error type symbol"; }
-    std::string SymbolDocKindStr() const override { return "error_type"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -128,8 +128,8 @@ class FunctionGroupTypeSymbol : public TypeSymbol
 public:
     FunctionGroupTypeSymbol(const std::u32string& name_);
     FunctionGroupTypeSymbol(FunctionGroupSymbol* functionGroupSymbol_);
-    std::string SymbolKindStr() const override { return "function group type symbol"; }
-    std::string SymbolDocKindStr() const override { return "function_group_type"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     FunctionGroupSymbol* FunctionGroup() const { return functionGroupSymbol; }
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -145,8 +145,8 @@ class ClassGroupTypeSymbol : public TypeSymbol
 public:
     ClassGroupTypeSymbol(const std::u32string& name_);
     ClassGroupTypeSymbol(ClassGroupSymbol* classGroupSymbol_);
-    std::string SymbolKindStr() const override { return "class group type symbol"; }
-    std::string SymbolDocKindStr() const override { return "class_group_type"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     ClassGroupSymbol* ClassGroup() const { return classGroupSymbol; }
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -162,8 +162,8 @@ class AliasGroupTypeSymbol : public TypeSymbol
 public:
     AliasGroupTypeSymbol(const std::u32string& name_);
     AliasGroupTypeSymbol(AliasGroupSymbol* aliasGroupSymbol_);
-    std::string SymbolKindStr() const override { return "alias group type symbol"; }
-    std::string SymbolDocKindStr() const override { return "alias_group_type"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     AliasGroupSymbol* AliasGroup() const { return aliasGroupSymbol; }
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -178,8 +178,8 @@ class GenericTypeSymbol : public TypeSymbol
 {
 public:
     static TypeSymbol* Instance();
-    std::string SymbolKindStr() const override { return "generic type symbol"; }
-    std::string SymbolDocKindStr() const override { return "generic_type"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     void Accept(Visitor& visitor) override;
 private:
     GenericTypeSymbol();

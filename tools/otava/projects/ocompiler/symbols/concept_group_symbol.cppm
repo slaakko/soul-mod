@@ -16,8 +16,8 @@ class ConceptGroupSymbol : public Symbol
 {
 public:
     ConceptGroupSymbol(const std::u32string& name_);
-    std::string SymbolKindStr() const override { return "concept group symbol"; }
-    std::string SymbolDocKindStr() const override { return "concept_group"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     Symbol* GetSingleSymbol() override;
     void AddConcept(ConceptSymbol* conceptSymbol);
     inline const std::vector<ConceptSymbol*>& Concepts() const { return concepts; }

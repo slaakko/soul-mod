@@ -154,6 +154,16 @@ ClassTypeSymbol::ClassTypeSymbol(SymbolKind kind_, const util::uuid& id_, const 
     GetScope()->SetKind(ScopeKind::classScope);
 }
 
+std::string ClassTypeSymbol::SymbolKindStr() const 
+{ 
+    return "class type symbol"; 
+}
+
+std::string ClassTypeSymbol::SymbolDocKindStr() const 
+{ 
+    return "class"; 
+}
+
 bool ClassTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 {
     switch (scopeKind)
@@ -1051,6 +1061,16 @@ ForwardClassDeclarationSymbol::ForwardClassDeclarationSymbol(const std::u32strin
     group(nullptr)
 {
     GetScope()->SetKind(ScopeKind::classScope);
+}
+
+std::string ForwardClassDeclarationSymbol::SymbolKindStr() const 
+{
+    return "forward class declaration symbol"; 
+}
+
+std::string ForwardClassDeclarationSymbol::SymbolDocKindStr() const 
+{ 
+    return "forward_class"; 
 }
 
 bool ForwardClassDeclarationSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const

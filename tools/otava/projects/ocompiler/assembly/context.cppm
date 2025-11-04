@@ -7,12 +7,12 @@ export module otava.assembly.context;
 
 import otava.assembly.reg;
 import otava.assembly.expr;
+import otava.assembly.symbol;
 import std;
 
 export namespace otava::assembly {
 
 class IntegerLiteral;
-class Symbol;
 class Macro;
 class Function;
 class File;
@@ -22,11 +22,11 @@ class Context
 {
 public:
     Context();
-    inline void SetFile(File* file_) { file = file_; }
-    inline File* GetFile() const { return file; }
+    void SetFile(File* file_) { file = file_; }
+    File* GetFile() const { return file; }
     inline RegisterPool* GetRegisterPool() { return registerPool.get(); }
     void ResetRegisterPool();
-    inline void SetCurrentFunction(Function* function) { currentFunction = function; }
+    void SetCurrentFunction(Function* function) { currentFunction = function; }
     std::expected<Register*, int> GetLocalReg(std::int64_t size);
     std::expected<Register*, int> GetGlobalReg(std::int64_t size, RegisterGroupKind regGroupKind);
     std::expected<Register*, int> GetGlobalReg(std::int64_t size, RegisterGroupKind regGroupKind, bool used);

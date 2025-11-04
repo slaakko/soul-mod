@@ -54,7 +54,7 @@ LiveRange GetLiveRange(Instruction* inst)
 }
 
 LinearScanRegisterAllocator::LinearScanRegisterAllocator(Function& function, Context* context_) :
-    frame(), liveRanges(), activeInteger(), activeFP(), frameLocations(), registerGroups(), context(context_)
+    frame(), liveRanges(), activeInteger(), activeFP(), frameLocations(), registerGroups(), context(context_), rangeInstructionMap()
 {
     ComputeLiveRanges(function);
 }
@@ -97,9 +97,14 @@ void LinearScanRegisterAllocator::RemoveFromActive(const LiveRange& range, bool 
     {
         activeFP.erase(range);
     }
-    for (Instruction* inst : GetInstructions(range))
+    const std::vector<Instruction*>* insts = GetInstructions(range);
+    if (insts)
     {
-        locations[inst] = locations[inst] & ~Locations::reg;
+        const std::vector<Instruction*>& r = *insts;
+        for (Instruction* inst : r)
+        {
+            locations[inst] = locations[inst] & ~Locations::reg;
+        }
     }
 }
 
@@ -224,27 +229,32 @@ void LinearScanRegisterAllocator::Spill(Instruction* inst)
         integer = true;
     }
     LiveRange range = GetLiveRange(inst);
-    for (Instruction* instToSpill : GetInstructions(spill))
+    const std::vector<Instruction*>* insts = GetInstructions(spill);
+    if (insts)
     {
-        registerGroups[inst] = registerGroups[instToSpill];
-        AllocateFrameLocation(instToSpill, true);
-        locations[instToSpill] = Locations::frame;
-        locations[inst] = locations[inst] | Locations::reg;
-        if (integer)
+        const std::vector<Instruction*>& r = *insts;
+        for (Instruction* instToSpill : r)
         {
-            activeInteger.erase(spill);
-            activeInteger.insert(range);
+            registerGroups[inst] = registerGroups[instToSpill];
+            AllocateFrameLocation(instToSpill, true);
+            locations[instToSpill] = Locations::frame;
+            locations[inst] = locations[inst] | Locations::reg;
+            if (integer)
+            {
+                activeInteger.erase(spill);
+                activeInteger.insert(range);
+            }
+            else
+            {
+                activeFP.erase(spill);
+                activeFP.insert(range);
+            }
+            SpillData spillData;
+            spillData.registerGroupToSpill = registerGroups[instToSpill];
+            spillData.spillToFrameLocation = frameLocations[instToSpill];
+            spillData.instToSpill = instToSpill;
+            spillDataVec.push_back(spillData);
         }
-        else
-        {
-            activeFP.erase(spill);
-            activeFP.insert(range);
-        }
-        SpillData spillData;
-        spillData.registerGroupToSpill = registerGroups[instToSpill];
-        spillData.spillToFrameLocation = frameLocations[instToSpill];
-        spillData.instToSpill = instToSpill;
-        spillDataVec.push_back(spillData);
     }
 }
 
@@ -266,17 +276,16 @@ LiveRange LinearScanRegisterAllocator::GetLiveRange(Instruction* inst) const
     }
 }
 
-const std::vector<Instruction*>& LinearScanRegisterAllocator::GetInstructions(const LiveRange& range) const
+const std::vector<Instruction*>* LinearScanRegisterAllocator::GetInstructions(const LiveRange& range) const
 {
-    static std::vector<Instruction*> empty;
     auto it = rangeInstructionMap.find(range);
-    if (it != rangeInstructionMap.cend())
+    if (it != rangeInstructionMap.end())
     {
-        return it->second;
+        return &it->second;
     }
     else
     {
-        return empty;
+        return nullptr;
     }
 }
 
@@ -306,9 +315,14 @@ void LinearScanRegisterAllocator::ExpireOldRanges(const LiveRange& range)
     {
         if (activeRange.end >= range.start) break;
         toRemove.push_back(activeRange);
-        for (Instruction* inst : GetInstructions(activeRange))
+        const std::vector<Instruction*>* insts = GetInstructions(activeRange);
+        if (insts)
         {
-            AddFreeRegGroupToPool(inst);
+            const std::vector<Instruction*>& r = *insts;
+            for (Instruction* inst : r)
+            {
+                AddFreeRegGroupToPool(inst);
+            }
         }
     }
     for (const auto& r : toRemove)
@@ -320,9 +334,14 @@ void LinearScanRegisterAllocator::ExpireOldRanges(const LiveRange& range)
     {
         if (activeRange.end >= range.start) break;
         toRemove.push_back(activeRange);
-        for (Instruction* inst : GetInstructions(activeRange))
+        const std::vector<Instruction*>* insts = GetInstructions(activeRange);
+        if (insts)
         {
-            AddFreeRegGroupToPool(inst);
+            const std::vector<Instruction*>& r = *insts;
+            for (Instruction* inst : r)
+            {
+                AddFreeRegGroupToPool(inst);
+            }
         }
     }
     for (const auto& r : toRemove)

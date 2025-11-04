@@ -16,7 +16,7 @@ enum class ProjectTarget
 
 class Project;
 
-void MakeProjectFile(Project* project, const std::string& projectFilePath, const std::vector<std::string> asmFiles, const std::vector<std::string>& cppFiles,
+void MakeProjectFile(Project* project, const std::string& projectFilePath, const std::vector<std::string>& asmFiles, const std::vector<std::string>& cppFiles,
     const std::vector<std::string>& resourceFiles,
     const std::string& libraryDirs, const std::vector<std::unique_ptr<Project>>& referencedProjects, const std::string& config, int optLevel, 
     const std::string& classIndexFilePath, ProjectTarget target, bool verbose);

@@ -27,6 +27,16 @@ ConstraintExprSymbol::ConstraintExprSymbol(otava::ast::Node* constraintExprNode_
 {
 }
 
+std::string ConstraintExprSymbol::SymbolKindStr() const 
+{ 
+    return "constraint expression symbol"; 
+}
+
+std::string ConstraintExprSymbol::SymbolDocKindStr() const 
+{ 
+    return "constraint_expr"; 
+}
+
 void ConstraintExprSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -64,6 +74,16 @@ std::expected<bool, int> ConstraintExprSymbol::Resolve(SymbolTable& symbolTable,
 
 ConceptSymbol::ConceptSymbol(const std::u32string& name_) : Symbol(SymbolKind::conceptSymbol, name_), constraintExpr(nullptr)
 {
+}
+
+std::string ConceptSymbol::SymbolKindStr() const 
+{ 
+    return "concept symbol"; 
+}
+
+std::string ConceptSymbol::SymbolDocKindStr() const 
+{ 
+    return "concept"; 
 }
 
 void ConceptSymbol::SetConstraintExpr(ConstraintExprSymbol* constraintExpr_)

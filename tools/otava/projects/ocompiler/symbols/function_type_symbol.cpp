@@ -23,6 +23,16 @@ FunctionTypeSymbol::FunctionTypeSymbol(const std::u32string& name_) : TypeSymbol
 {
 }
 
+std::string FunctionTypeSymbol::SymbolKindStr() const 
+{ 
+    return "function type symbol"; 
+}
+
+std::string FunctionTypeSymbol::SymbolDocKindStr() const 
+{ 
+    return "function_type"; 
+}
+
 void FunctionTypeSymbol::MakeName()
 {
     std::u32string name = returnType->Name();

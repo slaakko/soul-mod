@@ -20,8 +20,8 @@ class VariableGroupSymbol : public Symbol
 {
 public:
     VariableGroupSymbol(const std::u32string& name_);
-    std::string SymbolKindStr() const override { return "variable group symbol"; }
-    std::string SymbolDocKindStr() const override { return "variable_group"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     Symbol* GetSingleSymbol() override;
     void AddVariable(VariableSymbol* variableSymbol);

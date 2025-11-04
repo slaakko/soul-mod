@@ -641,7 +641,7 @@ std::expected<otava::assembly::Register*, int> MakeIntegerRegOperand(Value* valu
             case ValueKind::symbolValue:
             {
                 SymbolValue* v = static_cast<SymbolValue*>(value);
-                inst->AddOperand(assemblyContext->MakeSymbol(v->Symbol()));
+                inst->AddOperand(assemblyContext->MakeSymbol(v->GetSymbol()));
                 break;
             }
             default:
@@ -2719,7 +2719,8 @@ std::expected<otava::assembly::Value*, int> MakeCalleeOperand(Value* value, otav
         {
             SymbolValue* symbolValue = static_cast<SymbolValue*>(value);
             otava::assembly::Context* assemblyContext = codeGenerator.Ctx()->AssemblyContext();
-            return assemblyContext->MakeSymbol(symbolValue->Symbol());
+            otava::assembly::Value* symbol = assemblyContext->MakeSymbol(symbolValue->GetSymbol());
+            return std::expected<otava::assembly::Value*, int>(symbol);
         }
         else
         {
@@ -4104,7 +4105,7 @@ void CodeGenerator::Visit(ConversionValue& value)
 void CodeGenerator::Visit(SymbolValue& value)
 {
     if (!Valid()) return;
-    EmitDataValue(std::unique_ptr<otava::assembly::Value>(new otava::assembly::Symbol(value.Symbol())), otava::assembly::OpCode::DQ);
+    EmitDataValue(std::unique_ptr<otava::assembly::Value>(new otava::assembly::Symbol(value.GetSymbol())), otava::assembly::OpCode::DQ);
     currentOffset += 8;
 }
 

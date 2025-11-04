@@ -231,6 +231,7 @@ private:
     int functionCallsInlined;
     int functionsInlined;
     int argIndex;
+    int boundFunctionSerial;
 };
 
 } // namespace otava::symbols

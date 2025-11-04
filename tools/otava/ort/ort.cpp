@@ -663,3 +663,15 @@ void ort_exit(int exitCode)
 {
     std::exit(exitCode);
 }
+
+int ort_run_process(const char* commandLine)
+{
+    try
+    {
+        return util::RunProcess(commandLine);
+    }
+    catch (const std::exception&)
+    {
+        return 999;
+    }
+}

@@ -1,0 +1,9 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+keywords otava.solution_keyword
+{
+    ("solution", SOLUTION), ("project", PROJECT)
+}

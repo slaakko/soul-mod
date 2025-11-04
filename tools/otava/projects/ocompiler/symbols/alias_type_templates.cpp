@@ -34,6 +34,16 @@ void AliasTypeTemplateSpecializationSymbol::AddTemplateArgument(Symbol* template
     templateArguments.push_back(templateArgument);
 }
 
+std::string AliasTypeTemplateSpecializationSymbol::SymbolKindStr() const 
+{ 
+    return "alias type specialization symbol"; 
+}
+
+std::string AliasTypeTemplateSpecializationSymbol::SymbolDocKindStr() const 
+{ 
+    return "alias_type_specialization"; 
+}
+
 std::expected<bool, int> AliasTypeTemplateSpecializationSymbol::Write(Writer& writer)
 {
     std::expected<bool, int> rv = AliasTypeSymbol::Write(writer);

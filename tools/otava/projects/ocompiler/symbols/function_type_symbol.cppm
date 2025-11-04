@@ -18,8 +18,8 @@ public:
     FunctionTypeSymbol(const std::u32string& name_);
     bool IsFunctionType() const override { return true; }
     void MakeName();
-    std::string SymbolKindStr() const override { return "function type symbol"; }
-    std::string SymbolDocKindStr() const override { return "function_type"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     inline TypeSymbol* ReturnType() const { return returnType; }
     inline void SetReturnType(TypeSymbol* returnType_) { returnType = returnType_; }
     inline const std::vector<TypeSymbol*>& ParameterTypes() const { return parameterTypes; }

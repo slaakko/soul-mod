@@ -1,0 +1,77 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module otava.parser.translation.unit;
+
+[interface]import otava.symbols.context;
+[interface]import otava.ast;
+[implementation]import soul.ast.source.pos;
+[implementation]import soul.ast.lexer.pos.pair;
+[implementation]import otava.token;
+[implementation]import otava.lexer;
+[implementation]import otava.parser.declaration;
+[implementation]import otava.parser.modules;
+
+parser TranslationUnitParser 
+{
+    lexer otava::lexer::OtavaLexer<char32_t>;
+    main;
+
+    using ModuleParser.GlobalModuleFragment;
+    using ModuleParser.ModuleDeclaration;
+    using ModuleParser.PrivateModuleFragment;
+    using DeclarationParser.DeclarationSeq;
+    
+    TranslationUnit(otava::symbols::Context* context) : otava::ast::Node*
+        ::= 
+        (   ModuleUnit(context):moduleUnit
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::TranslationUnitNode(*sp, moduleUnit); 
+            }
+        |   DeclarationSeq(context):declarations
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::TranslationUnitNode(*sp, declarations); 
+            }
+        |   empty
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new otava::ast::TranslationUnitNode(*sp, nullptr); 
+            }
+        )
+        ;
+
+    ModuleUnit(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            (
+                GlobalModuleFragment(context):globalModuleFragment
+                { 
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    sourcePos = *sp;
+                }
+            )? 
+            ModuleDeclaration(context):moduleDeclaration
+            { 
+                if (!sourcePos.IsValid()) 
+                {
+                    auto sp = lexer.GetSourcePos(pos);
+                    if (!sp) return std::unexpected<int>(sp.error());
+                    sourcePos = *sp;
+                }
+            } 
+            DeclarationSeq(context):declarations? 
+            PrivateModuleFragment(context):privateModuleFragment?
+        )
+        {
+            return new otava::ast::ModuleUnitNode(sourcePos, globalModuleFragment, moduleDeclaration, declarations, privateModuleFragment);
+        }
+        ;
+}

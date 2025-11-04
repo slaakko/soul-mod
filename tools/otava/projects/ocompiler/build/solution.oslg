@@ -1,0 +1,5 @@
+project otava.solution_oslg;
+tokens <solution.token>;
+keywords <solution.keyword>;
+expressions <solution.expr>;
+lexer <solution.lexer>;

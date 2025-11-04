@@ -589,7 +589,7 @@ void BoundClassNode::Accept(BoundTreeVisitor& visitor)
 BoundFunctionNode::BoundFunctionNode(FunctionDefinitionSymbol* functionDefinitionSymbol_, const soul::ast::SourcePos& sourcePos_) :
     BoundNode(BoundNodeKind::boundFunctionNode, sourcePos_),
     functionDefinitionSymbol(functionDefinitionSymbol_),
-    body()
+    body(), serial(-1)
 {
 }
 

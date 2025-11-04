@@ -1,0 +1,3 @@
+project otava.pp.parser.ospg;
+tokens <../lexer/otava.token>;
+parser <pp.parser>;

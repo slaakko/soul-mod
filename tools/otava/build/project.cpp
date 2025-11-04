@@ -12,6 +12,11 @@ import util;
 
 namespace otava::build {
 
+std::int16_t MakeProjectId(const std::string& projectName)
+{
+    return static_cast<std::int16_t>(std::hash<std::string>()(projectName) & 0x7FFF);
+}
+
 std::int32_t MakeFileId(std::int16_t projectId, std::int16_t fileIndex)
 {
     return static_cast<std::int32_t>(projectId) << 16 | static_cast<std::int32_t>(fileIndex);
@@ -67,7 +72,7 @@ Project::Project(const std::string& filePath_, const std::string& name_) :
 
 std::int16_t Project::Id() const
 {
-    return static_cast<std::int16_t>(std::hash<std::string>()(name) & 0x7FFF);
+    return MakeProjectId(name);
 }
 
 void Project::AddDefine(const std::string& symbol, std::int64_t value)

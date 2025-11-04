@@ -84,6 +84,11 @@ Value::Value(SymbolKind symbolKind_, const std::u32string& rep_, TypeSymbol* typ
 {
 }
 
+std::u32string Value::ToString() const 
+{ 
+    return Rep(); 
+}
+
 std::expected<bool, int> Value::Write(Writer& writer)
 {
     std::expected<bool, int> rv = Symbol::Write(writer);
@@ -170,6 +175,56 @@ ValueKind Value::GetValueKind() const
     return ValueKind::none;
 }
 
+bool Value::IsBoolValue() const 
+{ 
+    return GetValueKind() == ValueKind::boolValue; 
+}
+
+bool Value::IsIntegerValue() const 
+{ 
+    return GetValueKind() == ValueKind::integerValue; 
+}
+
+bool Value::IsFloatingValue() const 
+{ 
+    return GetValueKind() == ValueKind::floatingValue; 
+}
+
+bool Value::IsStringValue() const 
+{ 
+    return GetValueKind() == ValueKind::stringValue; 
+}
+
+bool Value::IsCharValue() const 
+{ 
+    return GetValueKind() == ValueKind::charValue; 
+}
+
+bool Value::IsNullPtrValue() const 
+{ 
+    return GetValueKind() == ValueKind::nullPtrValue; 
+}
+
+bool Value::IsSymbolValue() const 
+{ 
+    return GetValueKind() == ValueKind::symbolValue; 
+}
+
+bool Value::IsInvokeValue() const 
+{ 
+    return GetValueKind() == ValueKind::invokeValue; 
+}
+
+bool Value::IsArrayValue() const 
+{ 
+    return GetValueKind() == ValueKind::arrayValue; 
+}
+
+TypeSymbol* Value::GetType() const
+{
+    return type;
+}
+
 std::expected<otava::intermediate::Value*, int> Value::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     return Error("cannot evaluate statically", sourcePos, context);
@@ -185,6 +240,26 @@ BoolValue::BoolValue(const std::u32string& rep_, TypeSymbol* type_) : Value(Symb
 
 BoolValue::BoolValue(bool value_, const std::u32string& rep_, TypeSymbol* type_) : Value(SymbolKind::boolValueSymbol, rep_, type_), value(value_)
 {
+}
+
+std::string BoolValue::SymbolKindStr() const 
+{ 
+    return "bool value"; 
+}
+
+std::string BoolValue::SymbolDocKindStr() const 
+{
+    return "bool_value"; 
+}
+
+BoolValue* BoolValue::ToBoolValue(EvaluationContext& context) 
+{ 
+    return this; 
+}
+
+Value* BoolValue::Clone() const 
+{ 
+    return new BoolValue(value, Rep(), GetType()); 
 }
 
 std::expected<Value*, int> BoolValue::Convert(ValueKind kind, EvaluationContext& context)
@@ -255,9 +330,24 @@ IntegerValue::IntegerValue(std::int64_t value_, const std::u32string& rep_, Type
 {
 }
 
+std::string IntegerValue::SymbolKindStr() const 
+{
+    return "integer value"; 
+}
+
+std::string IntegerValue::SymbolDocKindStr() const 
+{ 
+    return "integer_value"; 
+}
+
 BoolValue* IntegerValue::ToBoolValue(EvaluationContext& context)
 {
     if (value) return context.GetBoolValue(true); else return context.GetBoolValue(false);
+}
+
+Value* IntegerValue::Clone() const 
+{ 
+    return new IntegerValue(value, Rep(), GetType()); 
 }
 
 std::expected<Value*, int> IntegerValue::Convert(ValueKind kind, EvaluationContext& context)
@@ -323,9 +413,24 @@ FloatingValue::FloatingValue(double value_, const std::u32string& rep_, TypeSymb
 {
 }
 
+std::string FloatingValue::SymbolKindStr() const 
+{
+    return "floating value"; 
+}
+
+std::string FloatingValue::SymbolDocKindStr() const 
+{ 
+    return "floating_value"; 
+}
+
 BoolValue* FloatingValue::ToBoolValue(EvaluationContext& context)
 {
     if (value) return context.GetBoolValue(true); else return context.GetBoolValue(false);
+}
+
+Value* FloatingValue::Clone() const 
+{ 
+    return new FloatingValue(value, Rep(), GetType()); 
 }
 
 std::expected<Value*, int> FloatingValue::Convert(ValueKind kind, EvaluationContext& context)
@@ -388,6 +493,21 @@ BoolValue* NullPtrValue::ToBoolValue(EvaluationContext& context)
     return context.GetBoolValue(false);
 }
 
+Value* NullPtrValue::Clone() const 
+{ 
+    return new NullPtrValue(GetType()); 
+}
+
+std::string NullPtrValue::SymbolKindStr() const 
+{ 
+    return "nullptr value"; 
+}
+
+std::string NullPtrValue::SymbolDocKindStr() const 
+{ 
+    return "nullptr_value"; 
+}
+
 std::expected<Value*, int> NullPtrValue::Convert(ValueKind kind, EvaluationContext& context)
 {
     switch (kind)
@@ -428,6 +548,16 @@ StringValue::StringValue(const std::string& value_, TypeSymbol* type_) : Value(S
 {
 }
 
+std::string StringValue::SymbolKindStr() const 
+{ 
+    return "string value"; 
+}
+
+std::string StringValue::SymbolDocKindStr() const 
+{ 
+    return "string_value"; 
+}
+
 BoolValue* StringValue::ToBoolValue(EvaluationContext& context)
 {
     return context.GetBoolValue(false);
@@ -436,6 +566,11 @@ BoolValue* StringValue::ToBoolValue(EvaluationContext& context)
 std::expected<Value*, int> StringValue::Convert(ValueKind kind, EvaluationContext& context)
 {
     return std::expected<Value*, int>(this);
+}
+
+Value* StringValue::Clone() const 
+{ 
+    return new StringValue(value, GetType()); 
 }
 
 std::expected<bool, int>  StringValue::Write(Writer& writer)
@@ -500,9 +635,24 @@ CharValue::CharValue(char32_t value_, TypeSymbol* type_) : Value(SymbolKind::cha
 {
 }
 
+std::string CharValue::SymbolKindStr() const 
+{ 
+    return "char value"; 
+}
+
+std::string CharValue::SymbolDocKindStr() const 
+{ 
+    return "char_value"; 
+}
+
 BoolValue* CharValue::ToBoolValue(EvaluationContext& context)
 {
     return context.GetBoolValue(false);
+}
+
+Value* CharValue::Clone() const 
+{ 
+    return new CharValue(value, GetType()); 
 }
 
 std::expected<Value*, int> CharValue::Convert(ValueKind kind, EvaluationContext& context)
@@ -550,6 +700,16 @@ SymbolValue::SymbolValue(Symbol* symbol_) : Value(SymbolKind::symbolValueSymbol,
 {
 }
 
+std::string SymbolValue::SymbolKindStr() const 
+{
+    return "symbol value"; 
+}
+
+std::string SymbolValue::SymbolDocKindStr() const 
+{ 
+    return "symbol_value"; 
+}
+
 std::expected<Value*, int> SymbolValue::Convert(ValueKind kind, EvaluationContext& context)
 {
     switch (kind)
@@ -588,6 +748,11 @@ std::expected<Value*, int> SymbolValue::Convert(ValueKind kind, EvaluationContex
 BoolValue* SymbolValue::ToBoolValue(EvaluationContext& context)
 {
     return context.GetBoolValue(false);
+}
+
+Value* SymbolValue::Clone() const 
+{ 
+    return new SymbolValue(symbol); 
 }
 
 bool SymbolValue::IsExportSymbol(Context* context) const
@@ -655,6 +820,16 @@ InvokeValue::InvokeValue(Value* subject_) : Value(SymbolKind::invokeValueSymbol,
 {
 }
 
+std::string InvokeValue::SymbolKindStr() const 
+{ 
+    return "invoke value"; 
+}
+
+std::string InvokeValue::SymbolDocKindStr() const 
+{ 
+    return "invoke_value"; 
+}
+
 std::expected<Value*, int> InvokeValue::Convert(ValueKind kind, EvaluationContext& context)
 {
     return std::expected<Value*, int>(this);
@@ -663,6 +838,11 @@ std::expected<Value*, int> InvokeValue::Convert(ValueKind kind, EvaluationContex
 BoolValue* InvokeValue::ToBoolValue(EvaluationContext& context)
 {
     return context.GetBoolValue(false);
+}
+
+Value* InvokeValue::Clone() const 
+{ 
+    return new InvokeValue(subject->Clone()); 
 }
 
 bool InvokeValue::IsExportSymbol(Context* context) const
@@ -709,6 +889,16 @@ std::u32string InvokeValue::ToString() const
 
 ArrayValue::ArrayValue(TypeSymbol* type_) : Value(SymbolKind::arrayValueSymbol, std::u32string(), type_)
 {
+}
+
+std::string ArrayValue::SymbolKindStr() const 
+{
+    return "array value"; 
+}
+
+std::string ArrayValue::SymbolDocKindStr() const 
+{ 
+    return "array_value"; 
 }
 
 void ArrayValue::AddElementValue(Value* elementValue)
@@ -796,6 +986,16 @@ Value* ArrayValue::Clone() const
 
 StructureValue::StructureValue(TypeSymbol* type_) : Value(SymbolKind::structureValueSymbol, std::u32string(), type_)
 {
+}
+
+std::string StructureValue::SymbolKindStr() const 
+{ 
+    return "structure value"; 
+}
+
+std::string StructureValue::SymbolDocKindStr() const 
+{ 
+    return "structure_value"; 
 }
 
 void StructureValue::AddFieldValue(Value* fieldValue)

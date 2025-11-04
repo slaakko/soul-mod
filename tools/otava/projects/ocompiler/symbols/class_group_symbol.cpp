@@ -21,6 +21,16 @@ ClassGroupSymbol::ClassGroupSymbol(const std::u32string& name_) : Symbol(SymbolK
 {
 }
 
+std::string ClassGroupSymbol::SymbolKindStr() const 
+{
+    return "class group symbol"; 
+}
+
+std::string ClassGroupSymbol::SymbolDocKindStr() const 
+{ 
+    return "class_group"; 
+}
+
 bool ClassGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 {
     switch (scopeKind)

@@ -22,8 +22,8 @@ public:
     ConstraintExprSymbol();
     ConstraintExprSymbol(otava::ast::Node* constraintExprNode_);
     inline otava::ast::Node* GetConstraintExprNode() const { return constraintExprNode; }
-    std::string SymbolKindStr() const override { return "concept expression symbol"; }
-    std::string SymbolDocKindStr() const override { return "concept_expr"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
@@ -38,8 +38,8 @@ class ConceptSymbol : public Symbol
 public:
     ConceptSymbol(const std::u32string& name_);
     int Arity();
-    std::string SymbolKindStr() const override { return "concept symbol"; }
-    std::string SymbolDocKindStr() const override { return "concept"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     TemplateDeclarationSymbol* ParentTemplateDeclaration();
     void Accept(Visitor& visitor) override;

@@ -26,8 +26,8 @@ class EnumeratedTypeSymbol : public TypeSymbol
 {
 public:
     EnumeratedTypeSymbol(const std::u32string& name_);
-    std::string SymbolKindStr() const override { return "enumerated type symbol"; }
-    std::string SymbolDocKindStr() const override { return "enum_type"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     inline EnumTypeKind GetEnumTypeKind() const { return kind; }
     inline void SetEnumTypeKind(EnumTypeKind kind_) { kind = kind_; }
@@ -57,8 +57,8 @@ public:
     void SetUnderlyingType(TypeSymbol* underlyingType_) { underlyingType = underlyingType_; }
     void SetEnumeratedTypeSymbol(EnumeratedTypeSymbol* enumTypeSymbol_) { enumTypeSymbol = enumTypeSymbol_; }
     EnumeratedTypeSymbol* GetEnumeratedTypeSymbol() const { return enumTypeSymbol; }
-    std::string SymbolKindStr() const override { return "forward enum declaration symbol"; }
-    std::string SymbolDocKindStr() const override { return "forward_enum"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(Writer& writer) override;
@@ -78,8 +78,8 @@ public:
     EnumConstantSymbol(const std::u32string& name_);
     Value* GetValue() const { return value; }
     void SetValue(Value* value_) { value = value_; }
-    std::string SymbolKindStr() const override { return "enum constant symbol"; }
-    std::string SymbolDocKindStr() const override { return "enum_constant"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;

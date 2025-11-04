@@ -24,8 +24,8 @@ class ParameterSymbol : public Symbol
 public:
     ParameterSymbol(const std::u32string& name_);
     ParameterSymbol(const std::u32string& name_, TypeSymbol* type_);
-    std::string SymbolKindStr() const override { return "parameter symbol"; }
-    std::string SymbolDocKindStr() const override { return "parameter"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     inline TypeSymbol* GetType() const { return type; }
     std::expected<TypeSymbol*, int> GetReferredType(Context* context) const;
@@ -59,8 +59,8 @@ public:
     int MinArity() const;
     int MinMemFunArity(Context* context) const;
     inline bool HasDefaultParams() const { return MinArity() < Arity(); }
-    std::string SymbolKindStr() const override { return "function symbol"; }
-    std::string SymbolDocKindStr() const override { return "function"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     virtual FunctionKind GetFunctionKind() const { return kind; }
     inline void SetFunctionKind(FunctionKind kind_) { kind = kind_; }
@@ -204,8 +204,8 @@ public:
     FunctionDefinitionSymbol(const std::u32string& name_);
     FunctionDefinitionSymbol(SymbolKind kind_, const std::u32string& name_);
     FunctionKind GetFunctionKind() const override;
-    std::string SymbolKindStr() const override { return "function definition symbol"; }
-    std::string SymbolDocKindStr() const override { return "function_definition"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     void SetDeclaration(FunctionSymbol* declaration_) { declaration = declaration_; }
     FunctionSymbol* Declaration() const { return declaration; }
     std::expected<std::string, int> IrName(Context* context) const override;

@@ -110,6 +110,9 @@ extern "C" float ort_stof(const char* s, std::size_t* idx);
 extern "C" double ort_stod(const char* s, std::size_t* idx);
 extern "C" double ort_strtod(const char* str, char** str_end);
 extern "C" void ort_exit(int exitCode);
+extern "C" int ort_run_process(const char* commandLine);
+extern "C" void ort_set_random_seed(std::uint64_t seed);
+extern "C" void ort_reset_rng();
 
 using FILE = void;
 int stdin_ = 0;

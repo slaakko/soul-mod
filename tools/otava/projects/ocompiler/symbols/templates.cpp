@@ -35,6 +35,16 @@ TypenameConstraintSymbol::TypenameConstraintSymbol() : TypeSymbol(SymbolKind::ty
 {
 }
 
+std::string TypenameConstraintSymbol::SymbolKindStr() const 
+{ 
+    return "typename constraint symbol"; 
+}
+
+std::string TypenameConstraintSymbol::SymbolDocKindStr() const 
+{ 
+    return "typename_constraint"; 
+}
+
 void TypenameConstraintSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -59,6 +69,16 @@ TemplateParameterSymbol::TemplateParameterSymbol(Symbol* constraint_, const std:
     defaultTemplateArgNodeId(-1),
     parameterSymbol(nullptr)
 {
+}
+
+std::string TemplateParameterSymbol::SymbolKindStr() const 
+{ 
+    return "template parameter symbol"; 
+}
+
+std::string TemplateParameterSymbol::SymbolDocKindStr() const 
+{ 
+    return "template_paremeter"; 
 }
 
 std::expected<bool, int> TemplateParameterSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -180,6 +200,16 @@ BoundTemplateParameterSymbol::BoundTemplateParameterSymbol(const std::u32string&
 {
 }
 
+std::string BoundTemplateParameterSymbol::SymbolKindStr() const 
+{ 
+    return "bound template parameter symbol"; 
+}
+
+std::string BoundTemplateParameterSymbol::SymbolDocKindStr() const 
+{ 
+    return "bound_template_paremeter"; 
+}
+
 void BoundTemplateParameterSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -188,6 +218,16 @@ void BoundTemplateParameterSymbol::Accept(Visitor& visitor)
 TemplateDeclarationSymbol::TemplateDeclarationSymbol() : ContainerSymbol(SymbolKind::templateDeclarationSymbol, std::u32string())
 {
     GetScope()->SetKind(ScopeKind::templateDeclarationScope);
+}
+
+std::string TemplateDeclarationSymbol::SymbolKindStr() const 
+{ 
+    return "template declaration symbol"; 
+}
+
+std::string TemplateDeclarationSymbol::SymbolDocKindStr() const 
+{ 
+    return "template_declaration"; 
 }
 
 std::expected<bool, int> TemplateDeclarationSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -374,6 +414,16 @@ ExplicitInstantiationSymbol::ExplicitInstantiationSymbol() :
 ExplicitInstantiationSymbol::ExplicitInstantiationSymbol(ClassTemplateSpecializationSymbol* specialization_) :
     Symbol(SymbolKind::explicitInstantiationSymbol, U"@explicit_instantiation"), specialization(specialization_), destructor(nullptr)
 {
+}
+
+std::string ExplicitInstantiationSymbol::SymbolKindStr() const 
+{ 
+    return "explicit instantiation symbol"; 
+}
+
+std::string ExplicitInstantiationSymbol::SymbolDocKindStr() const 
+{ 
+    return "explicit_instantiation"; 
 }
 
 ExplicitInstantiationSymbol::~ExplicitInstantiationSymbol()

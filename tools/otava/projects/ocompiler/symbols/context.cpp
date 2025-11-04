@@ -64,7 +64,8 @@ Context::Context() :
     functionCallsInlined(0),
     functionsInlined(0),
     emitter(nullptr),
-    argIndex(0)
+    argIndex(0),
+    boundFunctionSerial(0)
 {
 }
 
@@ -253,6 +254,7 @@ void Context::PushBoundFunction(BoundFunctionNode* boundFunction_)
 {
     boundFunctionStack.push(std::unique_ptr<BoundFunctionNode>(boundFunction.release()));
     boundFunction.reset(boundFunction_);
+    boundFunction->SetSerial(boundFunctionSerial++);
 }
 
 void Context::PopBoundFunction()

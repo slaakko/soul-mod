@@ -486,7 +486,7 @@ void VerifierVisitor::Visit(ProcedureCallInstruction& inst)
         if (inst.Callee()->IsSymbolValue())
         {
             SymbolValue* calleeSymbolValue = static_cast<SymbolValue*>(inst.Callee());
-            std::expected<Function*, int> rv = GetContext()->AddFunctionDeclaration(inst.Span(), calleeType, calleeSymbolValue->Symbol());
+            std::expected<Function*, int> rv = GetContext()->AddFunctionDeclaration(inst.Span(), calleeType, calleeSymbolValue->GetSymbol());
             if (!rv)
             {
                 SetError(rv.error());
@@ -1094,7 +1094,7 @@ void VerifierVisitor::Visit(FunctionCallInstruction& inst)
         if (inst.Callee()->IsSymbolValue())
         {
             SymbolValue* calleeSymbolValue = static_cast<SymbolValue*>(inst.Callee());
-            std::expected<Function*, int> rv = GetContext()->AddFunctionDeclaration(inst.Span(), calleeType, calleeSymbolValue->Symbol());
+            std::expected<Function*, int> rv = GetContext()->AddFunctionDeclaration(inst.Span(), calleeType, calleeSymbolValue->GetSymbol());
             if (!rv)
             {
                 SetError(rv.error());

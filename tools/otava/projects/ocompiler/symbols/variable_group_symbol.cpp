@@ -14,6 +14,16 @@ VariableGroupSymbol::VariableGroupSymbol(const std::u32string& name_) : Symbol(S
 {
 }
 
+std::string VariableGroupSymbol::SymbolKindStr() const 
+{ 
+    return "variable group symbol"; 
+}
+
+std::string VariableGroupSymbol::SymbolDocKindStr() const 
+{ 
+    return "variable_group"; 
+}
+
 bool VariableGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 {
     switch (scopeKind)

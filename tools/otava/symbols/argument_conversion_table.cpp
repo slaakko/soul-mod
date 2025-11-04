@@ -862,8 +862,8 @@ FunctionSymbol* FunctionToFunctionPtrArgumentConversion::Get(TypeSymbol* paramTy
                 bool found = true;
                 for (int i = 0; i < n; ++i)
                 {
-                    TypeSymbol* leftType = functionType->ParameterTypes()[i];
-                    TypeSymbol* rightType = functionSymbol->Parameters()[i]->GetType();
+                    TypeSymbol* leftType = functionType->ParameterTypes()[i]->DirectType(context)->FinalType(sourcePos, context);;
+                    TypeSymbol* rightType = functionSymbol->Parameters()[i]->GetType()->DirectType(context)->FinalType(sourcePos, context);
                     FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
                         leftType, rightType, sourcePos, context);
                     if (!conversion)
@@ -874,8 +874,8 @@ FunctionSymbol* FunctionToFunctionPtrArgumentConversion::Get(TypeSymbol* paramTy
                 }
                 if (found)
                 {
-                    TypeSymbol* leftType = functionType->ReturnType();
-                    TypeSymbol* rightType = functionSymbol->ReturnType();
+                    TypeSymbol* leftType = functionType->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
+                    TypeSymbol* rightType = functionSymbol->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
                     FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
                         leftType, rightType, sourcePos, context);
                     if (conversion)
@@ -893,8 +893,8 @@ FunctionSymbol* FunctionToFunctionPtrArgumentConversion::Get(TypeSymbol* paramTy
                 bool found = true;
                 for (int i = 0; i < n; ++i)
                 {
-                    TypeSymbol* leftType = functionType->ParameterTypes()[i];
-                    TypeSymbol* rightType = functionDefinitionSymbol->Parameters()[i]->GetType();
+                    TypeSymbol* leftType = functionType->ParameterTypes()[i]->DirectType(context)->FinalType(sourcePos, context);
+                    TypeSymbol* rightType = functionDefinitionSymbol->Parameters()[i]->GetType()->DirectType(context)->FinalType(sourcePos, context);
                     FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
                         leftType, rightType, sourcePos, context);
                     if (!conversion)
@@ -905,8 +905,8 @@ FunctionSymbol* FunctionToFunctionPtrArgumentConversion::Get(TypeSymbol* paramTy
                 }
                 if (found)
                 {
-                    TypeSymbol* leftType = functionType->ReturnType();
-                    TypeSymbol* rightType = functionDefinitionSymbol->ReturnType();
+                    TypeSymbol* leftType = functionType->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
+                    TypeSymbol* rightType = functionDefinitionSymbol->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
                     FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
                         leftType, rightType, sourcePos, context);
                     if (conversion)

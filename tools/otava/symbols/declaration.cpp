@@ -779,6 +779,11 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
         InstantiateFunctionTemplate(functionSymbol, templateParameterMap, functionDeclarator->Node()->GetSourcePos(), context);
     }
     AddConvertingConstructorToConversionTable(functionSymbol, functionDeclarator->Node()->GetSourcePos(), context);
+    if (!(context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate | ContextFlags::instantiateFunctionTemplate | ContextFlags::instantiateInlineFunction)))
+    {
+        functionSymbol->SetFlag(FunctionSymbolFlags::fixedIrName);
+        functionSymbol->IrName(context);
+    }
 }
 
 void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context)

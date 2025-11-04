@@ -18,8 +18,8 @@ class NamespaceSymbol : public ContainerSymbol
 {
 public:
     NamespaceSymbol(const std::u32string& name_);
-    std::string SymbolKindStr() const override { return "namespace symbol"; }
-    std::string SymbolDocKindStr() const override { return "namespace"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     std::expected<bool, int> Import(NamespaceSymbol* that, Context* context);
     void Accept(Visitor& visitor) override;

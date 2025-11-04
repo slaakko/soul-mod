@@ -8,7 +8,6 @@ reference <../../oxml/odom/odom.project>;
 reference <../assembly/assembly.project>;
 reference <../intermediate/intermediate.project>;
 reference <../ast/ast.project>;
-interface <value.cppm>;
 interface <alias_group_symbol.cppm>;
 source <alias_group_symbol.cpp>;
 interface <alias_type_symbol.cppm>;

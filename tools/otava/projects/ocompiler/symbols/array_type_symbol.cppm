@@ -19,8 +19,8 @@ class ArrayTypeSymbol : public TypeSymbol
 public:
     ArrayTypeSymbol(const std::u32string& name_);
     ArrayTypeSymbol(TypeSymbol* elementType_, std::int64_t size_);
-    std::string SymbolKindStr() const override { return "array type symbol"; }
-    std::string SymbolDocKindStr() const override { return "array_type"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;

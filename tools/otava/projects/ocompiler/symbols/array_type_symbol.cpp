@@ -44,6 +44,16 @@ ArrayTypeSymbol::ArrayTypeSymbol(TypeSymbol* elementType_, std::int64_t size_) :
     GetScope()->SetKind(ScopeKind::arrayScope);
 }
 
+std::string ArrayTypeSymbol::SymbolKindStr() const 
+{
+    return "array type symbol"; 
+}
+
+std::string ArrayTypeSymbol::SymbolDocKindStr() const 
+{ 
+    return "array_type"; 
+}
+
 bool ArrayTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 {
     switch (scopeKind)

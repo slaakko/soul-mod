@@ -1187,8 +1187,17 @@ std::expected<FunctionSymbol*, int> FunctionToFunctionPtrArgumentConversion::Get
                 bool found = true;
                 for (int i = 0; i < n; ++i)
                 {
-                    TypeSymbol* leftType = functionType->ParameterTypes()[i];
-                    TypeSymbol* rightType = functionSymbol->Parameters()[i]->GetType();
+                    auto t = functionType->ParameterTypes()[i]->DirectType(context);
+                    if (!t) return std::unexpected<int>(t.error());
+                    TypeSymbol* leftType = *t;
+                    t = leftType->FinalType(sourcePos, context);
+                    if (!t) return std::unexpected<int>(t.error());
+                    leftType = *t;
+                    t = functionSymbol->Parameters()[i]->GetType()->DirectType(context);
+                    TypeSymbol* rightType = *t;
+                    t = rightType->FinalType(sourcePos, context);
+                    if (!t) return std::unexpected<int>(t.error());
+                    rightType = *t;
                     std::expected<FunctionSymbol*, int> rv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
                         leftType, rightType, sourcePos, context);
                     if (!rv) return rv;
@@ -1201,8 +1210,17 @@ std::expected<FunctionSymbol*, int> FunctionToFunctionPtrArgumentConversion::Get
                 }
                 if (found)
                 {
-                    TypeSymbol* leftType = functionType->ReturnType();
-                    TypeSymbol* rightType = functionSymbol->ReturnType();
+                    auto t = functionType->ReturnType()->DirectType(context);
+                    if (!t) return std::unexpected<int>(t.error());
+                    TypeSymbol* leftType = *t;
+                    t = leftType->FinalType(sourcePos, context);
+                    if (!t) return std::unexpected<int>(t.error());
+                    leftType = *t;
+                    t = functionSymbol->ReturnType()->DirectType(context);
+                    TypeSymbol* rightType = *t;
+                    t = rightType->FinalType(sourcePos, context);
+                    if (!t) return std::unexpected<int>(t.error());
+                    rightType = *t;
                     std::expected<FunctionSymbol*, int> rv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
                         leftType, rightType, sourcePos, context);
                     if (!rv) return rv;
@@ -1227,8 +1245,17 @@ std::expected<FunctionSymbol*, int> FunctionToFunctionPtrArgumentConversion::Get
                 bool found = true;
                 for (int i = 0; i < n; ++i)
                 {
-                    TypeSymbol* leftType = functionType->ParameterTypes()[i];
-                    TypeSymbol* rightType = functionDefinitionSymbol->Parameters()[i]->GetType();
+                    auto t = functionType->ParameterTypes()[i]->DirectType(context);
+                    if (!t) return std::unexpected<int>(t.error());
+                    TypeSymbol* leftType = *t;
+                    t = leftType->FinalType(sourcePos, context);
+                    if (!t) return std::unexpected<int>(t.error());
+                    leftType = *t;
+                    t = functionDefinitionSymbol->Parameters()[i]->GetType()->DirectType(context);
+                    TypeSymbol* rightType = *t;
+                    t = rightType->FinalType(sourcePos, context);
+                    if (!t) return std::unexpected<int>(t.error());
+                    rightType = *t;
                     std::expected<FunctionSymbol*, int> rv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
                         leftType, rightType, sourcePos, context);
                     if (!rv) return rv;
@@ -1241,8 +1268,17 @@ std::expected<FunctionSymbol*, int> FunctionToFunctionPtrArgumentConversion::Get
                 }
                 if (found)
                 {
-                    TypeSymbol* leftType = functionType->ReturnType();
-                    TypeSymbol* rightType = functionDefinitionSymbol->ReturnType();
+                    auto t = functionType->ReturnType()->DirectType(context);
+                    if (!t) return std::unexpected<int>(t.error());
+                    TypeSymbol* leftType = *t;
+                    t = leftType->FinalType(sourcePos, context);
+                    if (!t) return std::unexpected<int>(t.error());
+                    leftType = *t;
+                    t = functionDefinitionSymbol->ReturnType()->DirectType(context);
+                    TypeSymbol* rightType = *t;
+                    t = rightType->FinalType(sourcePos, context);
+                    if (!t) return std::unexpected<int>(t.error());
+                    rightType = *t;
                     std::expected<FunctionSymbol*, int> rv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
                         leftType, rightType, sourcePos, context);
                     if (!rv) return rv;

@@ -136,6 +136,16 @@ FundamentalTypeSymbol::FundamentalTypeSymbol(FundamentalTypeKind kind_) : TypeSy
     SetName(*rv);
 }
 
+std::string FundamentalTypeSymbol::SymbolKindStr() const 
+{ 
+    return "fundamental type symbol"; 
+}
+
+std::string FundamentalTypeSymbol::SymbolDocKindStr() const 
+{ 
+    return "fundamental_type"; 
+}
+
 bool FundamentalTypeSymbol::IsIntegralType() const
 {
     switch (fundamentalTypeKind)

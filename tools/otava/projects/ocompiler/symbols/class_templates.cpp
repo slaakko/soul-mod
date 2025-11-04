@@ -48,6 +48,16 @@ ClassTemplateSpecializationSymbol::ClassTemplateSpecializationSymbol(const util:
     GetScope()->SetKind(ScopeKind::classScope);
 }
 
+std::string ClassTemplateSpecializationSymbol::SymbolKindStr() const 
+{ 
+    return "specialization symbol"; 
+}
+
+std::string ClassTemplateSpecializationSymbol::SymbolDocKindStr() const 
+{ 
+    return "specialization"; 
+}
+
 void ClassTemplateSpecializationSymbol::SetClassTemplate(ClassTypeSymbol* classTemplate_)
 {
     classTemplate = classTemplate_;

@@ -514,7 +514,8 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         }
         moduleMapper.AddModule(project->ReleaseModule(file));
         std::string asmFileName = otava::codegen::GenerateCode(
-            context, config, optLevel, (flags & BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, std::vector<std::string>());
+        context, config, optLevel, (flags & BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, 
+            std::vector<std::string>());
         module->Write(project->Root(), config, optLevel, &context);
         if ((flags & BuildFlags::verbose) != BuildFlags::none)
         {
@@ -622,7 +623,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
             allCompileUnitInitFunctionNames.push_back(fileName);
         }
         std::string mainAsmFileName = GenerateMainUnit(moduleMapper, util::Path::Combine(util::Path::GetDirectoryName(projectFilePath), cppFileName), 
-            mainFunctionIrName, mainFunctionParams, allCompileUnitInitFunctionNames, config, optLevel);
+            mainFunctionIrName, mainFunctionParams, allCompileUnitInitFunctionNames, config, optLevel, project);
         asmFileNames.push_back(mainAsmFileName);
         projectTarget = ProjectTarget::program;
         classIndexFilePath = util::Path::Combine(util::Path::GetDirectoryName(projectFilePath), "class_index.bin");

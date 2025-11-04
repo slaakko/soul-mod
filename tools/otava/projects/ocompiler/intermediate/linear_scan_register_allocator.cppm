@@ -16,9 +16,9 @@ class Instruction;
 
 struct LiveRange
 {
-    inline LiveRange() : start(-1), end(-1) {}
-    inline LiveRange(int start_, int end_) : start(start_), end(end_) {}
-    inline bool Valid() const { return start != -1 && end != -1; }
+    LiveRange() : start(-1), end(-1) {}
+    LiveRange(int start_, int end_) : start(start_), end(end_) {}
+    bool Valid() const { return start != -1 && end != -1; }
     int start;
     int end;
 };
@@ -71,7 +71,7 @@ public:
     void Spill(Instruction* inst);
     LiveRange GetLiveRange(Instruction* inst) const;
     Frame& GetFrame() override { return frame; }
-    const std::vector<Instruction*>& GetInstructions(const LiveRange& range) const;
+    const std::vector<Instruction*>* GetInstructions(const LiveRange& range) const;
     std::expected<RegisterAllocationAction, int> Run(Instruction* inst) override;
     Locations GetLocations(Instruction* inst) const override;
     void AddRegisterLocation(Instruction* inst, otava::assembly::RegisterGroup* regGroup) override;

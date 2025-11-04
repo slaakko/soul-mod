@@ -582,4 +582,14 @@ std::uint64_t random64()
     return ort_random64();
 }
 
+void reset_rng()
+{
+    ort_reset_rng();
+}
+
+void set_random_seed(std::uint64_t seed)
+{
+    ort_set_random_seed(seed);
+}
+
 } // std

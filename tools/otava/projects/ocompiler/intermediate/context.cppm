@@ -63,8 +63,8 @@ public:
     inline void ResolveData() { data.ResolveAddressValues(); }
     std::expected<bool, int> ResolveType(TypeRef& typeRef);
     inline Value* GetBoolValue(bool value) { if (value) return GetTrueValue(); else return GetFalseValue(); }
-    inline Value* GetTrueValue() { return data.GetTrueValue(types); }
-    inline Value* GetFalseValue() { return data.GetFalseValue(types); }
+    Value* GetTrueValue() { return data.GetTrueValue(types); }
+    Value* GetFalseValue() { return data.GetFalseValue(types); }
     Value* GetBooleanLiteral(const soul::ast::Span& span, Type* type, bool value);
     inline Value* GetSByteValue(std::int8_t value) { return data.GetSByteValue(value, types); }
     inline Value* GetByteValue(std::uint8_t value) { return data.GetByteValue(value, types); }

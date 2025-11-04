@@ -20,6 +20,16 @@ FunctionGroupSymbol::FunctionGroupSymbol(const std::u32string& name_) : Symbol(S
 {
 }
 
+std::string FunctionGroupSymbol::SymbolKindStr() const 
+{ 
+    return "function group symbol"; 
+}
+
+std::string FunctionGroupSymbol::SymbolDocKindStr() const 
+{ 
+    return "function_group"; 
+}
+
 bool FunctionGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 {
     switch (scopeKind)

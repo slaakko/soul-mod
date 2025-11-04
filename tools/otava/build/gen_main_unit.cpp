@@ -133,7 +133,7 @@ std::string GenerateMainWrapper(otava::symbols::Context* context, int numParams)
 }
 
 std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const std::string& mainFilePath, const std::string& mainFunctionIrName, int numParams, 
-    const std::vector<std::string>& compileUnitInitFnNames, const std::string& config, int optLevel)
+    const std::vector<std::string>& compileUnitInitFnNames, const std::string& config, int optLevel, Project* project)
 {
     otava::symbols::Module* core = moduleMapper.GetModule("std.core", config, optLevel);
     otava::symbols::Module main("main");

@@ -26,8 +26,8 @@ public:
     inline void SetReferredType(TypeSymbol* referredType_) { referredType = referredType_; }
     TypeSymbol* ReferredType() const { return referredType; }
     std::expected<TypeSymbol*, int> DirectType(Context* context) override;
-    std::string SymbolKindStr() const override { return "alias type symbol"; }
-    std::string SymbolDocKindStr() const override { return "alias_type"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;

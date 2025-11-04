@@ -21,10 +21,9 @@ void MakeResourceFile(const std::string& resourceFilePath, const std::string& cl
     formatter.WriteLine("CLASS_INDEX RCDATA \"" + classIndexFilePath + "\"");
 }
 
-void MakeProjectFile(Project* project, const std::string& projectFilePath, const std::vector<std::string> asmFiles, const std::vector<std::string>& cppFiles, 
-    const std::vector<std::string>& resourceFiles, 
-    const std::string& libraryDirs, const std::vector<std::unique_ptr<Project>>& referencedProjects, const std::string& config, int optLevel, 
-    const std::string& classIndexFilePath, ProjectTarget target, bool verbose)
+void MakeProjectFile(Project* project, const std::string& projectFilePath, const std::vector<std::string>& asmFiles, const std::vector<std::string>& cppFiles, 
+    const std::vector<std::string>& resourceFiles, const std::string& libraryDirs, const std::vector<std::unique_ptr<Project>>& referencedProjects, 
+    const std::string& config, int optLevel,  const std::string& classIndexFilePath, ProjectTarget target, bool verbose)
 {
     std::string references;
     if (!referencedProjects.empty())

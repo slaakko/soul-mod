@@ -54,7 +54,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateDeclarat
             if (match.hit)
             {
                 templateHeadNode.reset(templateHead.release());
-                sourcePos = lexer.GetSourcePos(pos);
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                sourcePos = *sp;
             }
             *parentMatch1 = match;
         }
@@ -86,7 +88,8 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateDeclarat
                             concepDefinition.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
-                                otava::symbols::EndTemplateDeclaration(templateHeadNode.get(), context);
+                                auto rv = otava::symbols::EndTemplateDeclaration(templateHeadNode.get(), context);
+                                if (!rv) return std::unexpected<int>(rv.error());
                                 {
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TemplateDeclaration");
@@ -113,7 +116,8 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateDeclarat
                                     declaration.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
                                     {
-                                        otava::symbols::EndTemplateDeclaration(templateHeadNode.get(), context);
+                                        auto rv = otava::symbols::EndTemplateDeclaration(templateHeadNode.get(), context);
+                                        if (!rv) return std::unexpected<int>(rv.error());
                                         {
                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TemplateDeclaration");
@@ -143,7 +147,8 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateDeclarat
                                 soul::parser::Match match(true);
                                 if (match.hit)
                                 {
-                                    otava::symbols::RemoveTemplateDeclaration(context);
+                                    auto rv = otava::symbols::RemoveTemplateDeclaration(context);
+                                    if (!rv) return std::unexpected<int>(rv.error());
                                     pass = false;
                                 }
                                 if (match.hit && !pass)
@@ -220,11 +225,14 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateHead(Lex
                         }
                         if (match.hit)
                         {
-                            sourcePos = lexer.GetSourcePos(pos);
+                            auto sp = lexer.GetSourcePos(pos);
+                            if (!sp) return std::unexpected<int>(sp.error());
+                            sourcePos = *sp;
                             templateHeadNode.reset(new otava::ast::TemplateHeadNode(sourcePos));
                             if (begin)
                             {
-                                otava::symbols::BeginTemplateDeclaration(templateHeadNode.get(), context);
+                                auto rv = otava::symbols::BeginTemplateDeclaration(templateHeadNode.get(), context);
+                                if (!rv) return std::unexpected<int>(rv.error());
                             }
                         }
                         *parentMatch4 = match;
@@ -374,7 +382,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateParamete
                             }
                             if (match.hit)
                             {
-                                soul::ast::SourcePos sourcePos = lexer.GetSourcePos(pos);
+                                auto sp = lexer.GetSourcePos(pos);
+                                if (!sp) return std::unexpected<int>(sp.error());
+                                soul::ast::SourcePos sourcePos = *sp;
                                 node.reset(new otava::ast::TemplateParameterListNode(sourcePos));
                                 laPos = sourcePos;
                             }
@@ -398,8 +408,10 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateParamete
                                 if (match.hit)
                                 {
                                     templateParameterNode.reset(first.release());
-                                    otava::symbols::AddTemplateParameter(templateParameterNode.get(), index, context);
-                                    node->AddNode(templateParameterNode.release());
+                                    auto rv = otava::symbols::AddTemplateParameter(templateParameterNode.get(), index, context);
+                                    if (!rv) return std::unexpected<int>(rv.error());
+                                    rv = node->AddNode(templateParameterNode.release());
+                                    if (!rv) return std::unexpected<int>(rv.error());
                                     index = index + 1;
                                 }
                                 *parentMatch7 = match;
@@ -438,7 +450,8 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateParamete
                                                 comma.reset(static_cast<otava::ast::Node*>(match.value));
                                                 if (match.hit)
                                                 {
-                                                    node->AddNode(comma.release());
+                                                    auto rv = node->AddNode(comma.release());
+                                                    if (!rv) return std::unexpected<int>(rv.error());
                                                 }
                                                 *parentMatch12 = match;
                                             }
@@ -460,8 +473,10 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateParamete
                                                     if (match.hit)
                                                     {
                                                         templateParameterNode.reset(next.release());
-                                                        otava::symbols::AddTemplateParameter(templateParameterNode.get(), index, context);
-                                                        node->AddNode(templateParameterNode.release());
+                                                        auto rv = otava::symbols::AddTemplateParameter(templateParameterNode.get(), index, context);
+                                                        if (!rv) return std::unexpected<int>(rv.error());
+                                                        rv = node->AddNode(templateParameterNode.release());
+                                                        if (!rv) return std::unexpected<int>(rv.error());
                                                         index = index + 1;
                                                     }
                                                     *parentMatch14 = match;
@@ -508,7 +523,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateParamete
                         }
                         if (match.hit)
                         {
-                            raPos = lexer.GetSourcePos(pos);
+                            auto sp = lexer.GetSourcePos(pos);
+                            if (!sp) return std::unexpected<int>(sp.error());
+                            raPos = *sp;
                         }
                         *parentMatch16 = match;
                     }
@@ -678,7 +695,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TypeParameter(Le
                     templateHead.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
-                        sourcePos = lexer.GetSourcePos(pos);
+                        auto sp = lexer.GetSourcePos(pos);
+                        if (!sp) return std::unexpected<int>(sp.error());
+                        sourcePos = *sp;
                     }
                     *parentMatch3 = match;
                 }
@@ -720,7 +739,12 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TypeParameter(Le
                             key.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
-                                if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                                if (!sourcePos.IsValid())
+                                {
+                                    auto sp = lexer.GetSourcePos(pos);
+                                    if (!sp) return std::unexpected<int>(sp.error());
+                                    sourcePos = *sp;
+                                }
                             }
                             *parentMatch8 = match;
                         }
@@ -953,7 +977,12 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TypeParameter(Le
                                     constraint.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
                                     {
-                                        if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                                        if (!sourcePos.IsValid())
+                                        {
+                                            auto sp = lexer.GetSourcePos(pos);
+                                            if (!sp) return std::unexpected<int>(sp.error());
+                                            sourcePos = *sp;
+                                        }
                                     }
                                     *parentMatch30 = match;
                                 }
@@ -1265,11 +1294,13 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::Typename(LexerT&
         }
         if (match.hit)
         {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Typename");
                 #endif
-                return soul::parser::Match(true, new otava::ast::TypenameNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::TypenameNode(*sp));
             }
         }
         *parentMatch0 = match;
@@ -1314,11 +1345,13 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::Class(LexerT& le
         }
         if (match.hit)
         {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Class");
                 #endif
-                return soul::parser::Match(true, new otava::ast::ClassNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::ClassNode(*sp));
             }
         }
         *parentMatch0 = match;
@@ -1401,7 +1434,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateId(Lexer
                                                 if (match.hit)
                                                 {
                                                     templateName.reset(operatorFunctionId.release());
-                                                    sourcePos = lexer.GetSourcePos(pos);
+                                                    auto sp = lexer.GetSourcePos(pos);
+                                                    if (!sp) return std::unexpected<int>(sp.error());
+                                                    sourcePos = *sp;
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -1423,7 +1458,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateId(Lexer
                                                         if (match.hit)
                                                         {
                                                             templateName.reset(literalOperatorId.release());
-                                                            sourcePos = lexer.GetSourcePos(pos);
+                                                            auto sp = lexer.GetSourcePos(pos);
+                                                            if (!sp) return std::unexpected<int>(sp.error());
+                                                            sourcePos = *sp;
                                                         }
                                                         *parentMatch11 = match;
                                                     }
@@ -1455,7 +1492,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateId(Lexer
                                             }
                                             if (match.hit)
                                             {
-                                                laPos = lexer.GetSourcePos(pos);
+                                                auto sp = lexer.GetSourcePos(pos);
+                                                if (!sp) return std::unexpected<int>(sp.error());
+                                                laPos = *sp;
                                                 ++vars->langleCount;
                                                 context->PushSetFlag(otava::symbols::ContextFlags::parsingTemplateId);
                                                 node.reset(new otava::ast::TemplateIdNode(sourcePos, templateName.release()));
@@ -1514,7 +1553,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateId(Lexer
                                     }
                                     if (match.hit)
                                     {
-                                        raPos = lexer.GetSourcePos(pos);
+                                        auto sp = lexer.GetSourcePos(pos);
+                                        if (!sp) return std::unexpected<int>(sp.error());
+                                        raPos = *sp;
                                         --vars->langleCount;
                                         context->PopFlags();
                                     }
@@ -1639,7 +1680,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::SimpleTemplateId
                             templateName.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
-                                sourcePos = lexer.GetSourcePos(pos);
+                                auto sp = lexer.GetSourcePos(pos);
+                                if (!sp) return std::unexpected<int>(sp.error());
+                                sourcePos = *sp;
                             }
                             *parentMatch5 = match;
                         }
@@ -1664,7 +1707,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::SimpleTemplateId
                                 }
                                 if (match.hit)
                                 {
-                                    laPos = lexer.GetSourcePos(pos);
+                                    auto sp = lexer.GetSourcePos(pos);
+                                    if (!sp) return std::unexpected<int>(sp.error());
+                                    laPos = *sp;
                                     ++vars->langleCount;
                                     context->PushSetFlag(otava::symbols::ContextFlags::parsingTemplateId);
                                     context->ResetRejectTemplateId();
@@ -1724,7 +1769,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::SimpleTemplateId
                         }
                         if (match.hit)
                         {
-                            raPos = lexer.GetSourcePos(pos);
+                            auto sp = lexer.GetSourcePos(pos);
+                            if (!sp) return std::unexpected<int>(sp.error());
+                            raPos = *sp;
                             --vars->langleCount;
                             context->PopFlags();
                         }
@@ -1862,7 +1909,8 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateArgument
                     left.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
-                        templateIdNode->AddNode(left.release());
+                        auto rv = templateIdNode->AddNode(left.release());
+                        if (!rv) return std::unexpected<int>(rv.error());
                         ++index;
                     }
                     *parentMatch3 = match;
@@ -1897,7 +1945,8 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateArgument
                                             comma.reset(static_cast<otava::ast::Node*>(match.value));
                                             if (match.hit)
                                             {
-                                                templateIdNode->AddNode(comma.release());
+                                                auto rv = templateIdNode->AddNode(comma.release());
+                                                if (!rv) return std::unexpected<int>(rv.error());
                                             }
                                             *parentMatch8 = match;
                                         }
@@ -1918,7 +1967,8 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateArgument
                                                 right.reset(static_cast<otava::ast::Node*>(match.value));
                                                 if (match.hit)
                                                 {
-                                                    templateIdNode->AddNode(right.release());
+                                                    auto rv = templateIdNode->AddNode(right.release());
+                                                    if (!rv) return std::unexpected<int>(rv.error());
                                                     ++index;
                                                 }
                                                 *parentMatch10 = match;
@@ -1974,7 +2024,10 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::TemplateArgument
                         }
                         if (match.hit)
                         {
-                            templateIdNode->AddNode(new otava::ast::EllipsisNode(lexer.GetSourcePos(pos)));
+                            auto sp = lexer.GetSourcePos(pos);
+                            if (!sp) return std::unexpected<int>(sp.error());
+                            auto rv = templateIdNode->AddNode(new otava::ast::EllipsisNode(*sp));
+                            if (!rv) return std::unexpected<int>(rv.error());
                         }
                         *parentMatch14 = match;
                     }
@@ -2337,7 +2390,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::DeductionGuide(L
                                                     explicitSpecifier.reset(static_cast<otava::ast::Node*>(match.value));
                                                     if (match.hit)
                                                     {
-                                                        sourcePos = lexer.GetSourcePos(pos);
+                                                        auto sp = lexer.GetSourcePos(pos);
+                                                        if (!sp) return std::unexpected<int>(sp.error());
+                                                        sourcePos = *sp;
                                                     }
                                                     *parentMatch11 = match;
                                                 }
@@ -2369,7 +2424,12 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::DeductionGuide(L
                                                 templateName.reset(static_cast<otava::ast::Node*>(match.value));
                                                 if (match.hit)
                                                 {
-                                                    if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                                                    if (!sourcePos.IsValid())
+                                                    {
+                                                        auto sp = lexer.GetSourcePos(pos);
+                                                        if (!sp) return std::unexpected<int>(sp.error());
+                                                        sourcePos = *sp;
+                                                    }
                                                 }
                                                 *parentMatch13 = match;
                                             }
@@ -2397,8 +2457,10 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::DeductionGuide(L
                                             }
                                             if (match.hit)
                                             {
-                                                lpPos = lexer.GetSourcePos(pos);
-                                                params.reset(new otava::ast::ParameterListNode(lexer.GetSourcePos(pos)));
+                                                auto sp = lexer.GetSourcePos(pos);
+                                                if (!sp) return std::unexpected<int>(sp.error());
+                                                lpPos = *sp;
+                                                params.reset(new otava::ast::ParameterListNode(lpPos));
                                             }
                                             *parentMatch15 = match;
                                         }
@@ -2440,7 +2502,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::DeductionGuide(L
                                     }
                                     if (match.hit)
                                     {
-                                        rpPos = lexer.GetSourcePos(pos);
+                                        auto sp = lexer.GetSourcePos(pos);
+                                        if (!sp) return std::unexpected<int>(sp.error());
+                                        rpPos = *sp;
                                     }
                                     *parentMatch18 = match;
                                 }
@@ -2546,11 +2610,13 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::Arrow(LexerT& le
         }
         if (match.hit)
         {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Arrow");
                 #endif
-                return soul::parser::Match(true, new otava::ast::ArrowNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::ArrowNode(*sp));
             }
         }
         *parentMatch0 = match;
@@ -2616,7 +2682,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::ExplicitInstanti
                                 extrn.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
-                                    sourcePos = lexer.GetSourcePos(pos);
+                                    auto sp = lexer.GetSourcePos(pos);
+                                    if (!sp) return std::unexpected<int>(sp.error());
+                                    sourcePos = *sp;
                                 }
                                 *parentMatch6 = match;
                             }
@@ -2648,7 +2716,12 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::ExplicitInstanti
                             tmp.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
-                                if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                                if (!sourcePos.IsValid())
+                                {
+                                    auto sp = lexer.GetSourcePos(pos);
+                                    if (!sp) return std::unexpected<int>(sp.error());
+                                    sourcePos = *sp;
+                                }
                             }
                             *parentMatch8 = match;
                         }
@@ -2676,7 +2749,8 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::ExplicitInstanti
         if (match.hit)
         {
             otava::ast::ExplicitInstantiationNode *node = new otava::ast::ExplicitInstantiationNode(sourcePos, extrn.release(), tmp.release(), declaration.release());
-            otava::symbols::ProcessExplicitInstantiation(node, context);
+            auto rv = otava::symbols::ProcessExplicitInstantiation(node, context);
+            if (!rv) return std::unexpected<int>(rv.error());
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExplicitInstantiation");
@@ -2748,7 +2822,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::ExplicitSpeciali
                                 tmp.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
-                                    sourcePos = lexer.GetSourcePos(pos);
+                                    auto sp = lexer.GetSourcePos(pos);
+                                    if (!sp) return std::unexpected<int>(sp.error());
+                                    sourcePos = *sp;
                                 }
                                 *parentMatch6 = match;
                             }
@@ -2772,7 +2848,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::ExplicitSpeciali
                                     }
                                     if (match.hit)
                                     {
-                                        laPos = lexer.GetSourcePos(pos);
+                                        auto sp = lexer.GetSourcePos(pos);
+                                        if (!sp) return std::unexpected<int>(sp.error());
+                                        laPos = *sp;
                                     }
                                     *parentMatch8 = match;
                                 }
@@ -2800,7 +2878,9 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::ExplicitSpeciali
                                 }
                                 if (match.hit)
                                 {
-                                    raPos = lexer.GetSourcePos(pos);
+                                    auto sp = lexer.GetSourcePos(pos);
+                                    if (!sp) return std::unexpected<int>(sp.error());
+                                    raPos = *sp;
                                 }
                                 *parentMatch10 = match;
                             }
@@ -2822,8 +2902,11 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::ExplicitSpeciali
                             soul::parser::Match match(true);
                             if (match.hit)
                             {
-                                templateHeadNode.reset(new otava::ast::TemplateHeadNode(lexer.GetSourcePos(pos)));
-                                otava::symbols::BeginTemplateDeclaration(templateHeadNode.get(), context);
+                                auto sp = lexer.GetSourcePos(pos);
+                                if (!sp) return std::unexpected<int>(sp.error());
+                                templateHeadNode.reset(new otava::ast::TemplateHeadNode(*sp));
+                                auto rv = otava::symbols::BeginTemplateDeclaration(templateHeadNode.get(), context);
+                                if (!rv) return std::unexpected<int>(rv.error());
                                 context->PushSetFlag(otava::symbols::ContextFlags::parsingTemplateDeclaration);
                             }
                             *parentMatch12 = match;
@@ -2853,7 +2936,8 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::ExplicitSpeciali
                         }
                         else
                         {
-                            otava::symbols::EndTemplateDeclaration(templateHeadNode.get(), context);
+                            auto rv = otava::symbols::EndTemplateDeclaration(templateHeadNode.get(), context);
+                            if (!rv) return std::unexpected<int>(rv.error());
                             context->PopFlags();
                         }
                         *parentMatch14 = match;
@@ -2866,7 +2950,8 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::ExplicitSpeciali
         }
         if (match.hit)
         {
-            otava::symbols::EndTemplateDeclaration(templateHeadNode.get(), context);
+            auto rv = otava::symbols::EndTemplateDeclaration(templateHeadNode.get(), context);
+            if (!rv) return std::unexpected<int>(rv.error());
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExplicitSpecialization");
@@ -2916,11 +3001,13 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::Extern(LexerT& l
         }
         if (match.hit)
         {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Extern");
                 #endif
-                return soul::parser::Match(true, new otava::ast::ExternNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::ExternNode(*sp));
             }
         }
         *parentMatch0 = match;
@@ -2965,11 +3052,13 @@ std::expected<soul::parser::Match, int> TemplateParser<LexerT>::Template(LexerT&
         }
         if (match.hit)
         {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Template");
                 #endif
-                return soul::parser::Match(true, new otava::ast::TemplateNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::TemplateNode(*sp));
             }
         }
         *parentMatch0 = match;

@@ -596,7 +596,8 @@ TypeSymbol* ResolveType(otava::ast::Node* node, DeclarationFlags flags, Context*
 {
     TypeResolver resolver(context, flags, resolverFlags);
     node->Accept(resolver);
-    return resolver.GetType();
+    TypeSymbol* type = resolver.GetType();
+    return type;
 }
 
 TypeSymbol* ResolveFwdDeclaredType(TypeSymbol* type, const soul::ast::SourcePos& sourcePos, Context* context)

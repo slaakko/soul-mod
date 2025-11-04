@@ -10,6 +10,7 @@ import util.uuid;
 import otava.ast.node;
 import otava.ast.templates;
 import otava.symbols.classes;
+import otava.symbols.emitter;
 import otava.symbols.templates;
 import otava.symbols.type.symbol;
 
@@ -25,8 +26,8 @@ public:
     ClassTemplateSpecializationSymbol(const util::uuid& id_, const std::u32string& name_);
     inline bool Instantiated() const { return instantiated; }
     inline void SetInstantiated() { instantiated = true; }
-    std::string SymbolKindStr() const override { return "specialization symbol"; }
-    std::string SymbolDocKindStr() const override { return "specialization"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     inline ClassTypeSymbol* ClassTemplate() const { return classTemplate; }
     void SetClassTemplate(ClassTypeSymbol* classTemplate_);
     const std::u32string& SimpleName() const override { return ClassTemplate()->SimpleName(); }

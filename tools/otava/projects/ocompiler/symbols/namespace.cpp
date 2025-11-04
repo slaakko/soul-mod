@@ -26,6 +26,16 @@ NamespaceSymbol::NamespaceSymbol(const std::u32string& name_) : ContainerSymbol(
     GetScope()->SetKind(ScopeKind::namespaceScope);
 }
 
+std::string NamespaceSymbol::SymbolKindStr() const 
+{ 
+    return "namespace symbol"; 
+}
+
+std::string NamespaceSymbol::SymbolDocKindStr() const 
+{ 
+    return "namespace"; 
+}
+
 bool NamespaceSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 {
     switch (scopeKind)

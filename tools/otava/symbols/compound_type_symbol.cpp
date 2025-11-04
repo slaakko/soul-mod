@@ -69,7 +69,7 @@ void CompoundTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
         {
             note = ": note: requester module is " + requesterModule->Name();
         }
-        std::cout << "CompoundTypeSymbol::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+        std::cout << "CompoundTypeSymbol::Resolve(): warning: type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
     }
 }
 
@@ -149,6 +149,56 @@ TypeSymbol* CompoundTypeSymbol::UnifyTemplateArgumentType(const std::map<Templat
 {
     TypeSymbol* newBaseType = baseType->UnifyTemplateArgumentType(templateParameterMap, context);
     return context->GetSymbolTable()->MakeCompoundType(newBaseType, GetDerivations());
+}
+
+std::u32string CompoundTypeSymbol::FullName() const
+{
+    std::u32string fullName;;
+    if (HasDerivation(derivations, Derivations::constDerivation))
+    {
+        fullName.append(U"const ");
+    }
+    if (HasDerivation(derivations, Derivations::volatileDerivation))
+    {
+        fullName.append(U"volatile ");
+    }
+    fullName.append(baseType->FullName());
+    int pointerCount = PointerCount();
+    if (pointerCount > 0)
+    {
+        if (baseType->PtrIndex() == -1)
+        {
+            fullName.append(pointerCount, '*');
+        }
+        else
+        {
+            std::u32string ptrStr(pointerCount, '*');
+            fullName.insert(baseType->PtrIndex(), ptrStr);
+        }
+    }
+    if (HasDerivation(derivations, Derivations::lvalueRefDerivation))
+    {
+        if (baseType->PtrIndex() == -1)
+        {
+            fullName.append(U"&");
+        }
+        else
+        {
+            fullName.insert(baseType->PtrIndex(), U"&");
+        }
+    }
+    else if (HasDerivation(derivations, Derivations::rvalueRefDerivation))
+    {
+        if (baseType->PtrIndex() == -1)
+        {
+            fullName.append(U"&&");
+        }
+        else
+        {
+            fullName.insert(baseType->PtrIndex(), U"&&");
+        }
+    }
+    return fullName;
 }
 
 otava::intermediate::Type* CompoundTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)

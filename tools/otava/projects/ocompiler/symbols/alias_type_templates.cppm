@@ -19,8 +19,8 @@ public:
     AliasTypeTemplateSpecializationSymbol(const std::u32string& name_);
     inline bool Instantiated() const { return instantiated; }
     inline void SetInstantiated() { instantiated = true; }
-    std::string SymbolKindStr() const override { return "alias type specialization symbol"; }
-    std::string SymbolDocKindStr() const override { return "alias_type_specialization"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     inline TypeSymbol* AliasTypeTemplate() const { return aliasTypeTemplate; }
     void SetAliasTypeTemplate(TypeSymbol* aliasTypeTemplate_);
     inline const std::vector<Symbol*>& TemplateArguments() const { return templateArguments; }

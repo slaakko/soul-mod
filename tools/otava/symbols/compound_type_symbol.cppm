@@ -30,6 +30,7 @@ public:
     TypeSymbol* Unify(TypeSymbol* argType, Context* context) override;
     TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
     std::string IrName(Context* context) const override;
+    std::u32string FullName() const override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;

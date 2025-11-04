@@ -817,7 +817,19 @@ StringValue* EvaluationContext::GetStringValue(const std::string& value, TypeSym
     }
     else
     {
-        StringValue* stringValue = new StringValue(value, type);
+        std::string escapedValue;
+        for (char c : value)
+        {
+            if (c == '\\')
+            {
+                escapedValue.append(2, '\\');
+            }
+            else
+            {
+                escapedValue.append(1, c);
+            }
+        }
+        StringValue* stringValue = new StringValue(escapedValue, type);
         stringValueMap[std::make_pair(value, type)] = stringValue;
         values.push_back(std::unique_ptr<Value>(stringValue));
         MapValue(stringValue);

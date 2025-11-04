@@ -29,6 +29,16 @@ BlockSymbol::~BlockSymbol()
     }
 }
 
+std::string BlockSymbol::SymbolKindStr() const 
+{ 
+    return "block symbol"; 
+}
+
+std::string BlockSymbol::SymbolDocKindStr() const 
+{ 
+    return "block"; 
+}
+
 void BlockSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);

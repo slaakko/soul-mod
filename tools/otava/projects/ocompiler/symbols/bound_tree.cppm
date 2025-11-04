@@ -288,12 +288,15 @@ public:
     inline BoundDtorTerminatorNode* DtorTerminator() const { return dtorTerminator.get(); }
     inline FunctionDefinitionSymbol* GetFunctionDefinitionSymbol() { return functionDefinitionSymbol; }
     void AddDefaultFunctionSymbol(FunctionSymbol* defaultFunctionSymbol);
+    inline int Serial() const { return serial; }
+    inline void SetSerial(int serial_) { serial = serial_; }
 private:
     FunctionDefinitionSymbol* functionDefinitionSymbol;
     std::unique_ptr<BoundCtorInitializerNode> ctorInitializer;
     std::unique_ptr<BoundDtorTerminatorNode> dtorTerminator;
     std::unique_ptr<BoundCompoundStatementNode> body;
     std::vector<FunctionSymbol*> defaultFunctionSymbols;
+    int serial;
 };
 
 class BoundStatementNode : public BoundNode

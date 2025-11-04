@@ -20,8 +20,8 @@ class BlockSymbol : public ContainerSymbol
 public:
     BlockSymbol();
     ~BlockSymbol();
-    std::string SymbolKindStr() const override { return "block symbol"; }
-    std::string SymbolDocKindStr() const override { return "block"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:

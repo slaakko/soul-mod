@@ -91,7 +91,7 @@ public:
             constructive_copy(elements, that.elements, sz);
         }
     }
-    inline vector(vector&& that) : elements(that.elements), sz(that.sz), res(that.res)
+    vector(vector&& that) : elements(that.elements), sz(that.sz), res(that.res)
     {
         that.elements = static_cast<T*>(nullptr);
         that.sz = 0;

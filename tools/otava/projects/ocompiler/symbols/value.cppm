@@ -32,25 +32,25 @@ class Value : public Symbol
 {
 public:
     Value(SymbolKind symbolKind_, const std::u32string& rep_, TypeSymbol* type_);
-    inline bool IsBoolValue() const { return GetValueKind() == ValueKind::boolValue; }
-    inline bool IsIntegerValue() const { return GetValueKind() == ValueKind::integerValue; }
-    inline bool IsFloatingValue() const { return GetValueKind() == ValueKind::floatingValue; }
-    inline bool IsStringValue() const { return GetValueKind() == ValueKind::stringValue; }
-    inline bool IsCharValue() const { return GetValueKind() == ValueKind::charValue; }
-    inline bool IsNullPtrValue() const { return GetValueKind() == ValueKind::nullPtrValue; }
-    inline bool IsSymbolValue() const { return GetValueKind() == ValueKind::symbolValue; }
-    inline bool IsInvokeValue() const { return GetValueKind() == ValueKind::invokeValue; }
-    inline bool IsArrayValue() const { return GetValueKind() == ValueKind::arrayValue; }
+    bool IsBoolValue() const;
+    bool IsIntegerValue() const;
+    bool IsFloatingValue() const;
+    bool IsStringValue() const;
+    bool IsCharValue() const;
+    bool IsNullPtrValue() const;
+    bool IsSymbolValue() const;
+    bool IsInvokeValue() const;
+    bool IsArrayValue() const;
     virtual BoolValue* ToBoolValue(EvaluationContext& context) = 0;
     virtual std::expected<Value*, int> Convert(ValueKind kind, EvaluationContext& context) = 0;
     virtual std::expected<otava::intermediate::Value*, int> IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
     ValueKind GetValueKind() const;
-    const std::u32string& Rep() const { return Name(); }
-    virtual std::u32string ToString() const { return Rep(); }
+    inline const std::u32string& Rep() const { return Name(); }
+    virtual std::u32string ToString() const;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
-    TypeSymbol* GetType() const { return type; }
+    TypeSymbol* GetType() const;
     virtual Value* Clone() const = 0;
 private:
     TypeSymbol* type;
@@ -68,16 +68,16 @@ public:
     BoolValue(TypeSymbol* type_);
     BoolValue(const std::u32string& rep_, TypeSymbol* type_);
     BoolValue(bool value_, const std::u32string& rep_, TypeSymbol* type_);
-    std::string SymbolKindStr() const override { return "bool value"; }
-    std::string SymbolDocKindStr() const override { return "bool_value"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     inline bool GetValue() const { return value; }
-    BoolValue* ToBoolValue(EvaluationContext& context) override { return this; }
+    BoolValue* ToBoolValue(EvaluationContext& context) override;
     std::expected<Value*, int> Convert(ValueKind kind, EvaluationContext& context) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
     std::expected<otava::intermediate::Value*, int> IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    Value* Clone() const override { return new BoolValue(value, Rep(), GetType()); }
+    Value* Clone() const override;
 private:
     bool value;
 };
@@ -88,16 +88,16 @@ public:
     IntegerValue(TypeSymbol* type_);
     IntegerValue(const std::u32string& rep_, TypeSymbol* type_);
     IntegerValue(std::int64_t value_, const std::u32string& rep_, TypeSymbol* type_);
-    std::string SymbolKindStr() const override { return "integer value"; }
-    std::string SymbolDocKindStr() const override { return "integer_value"; }
-    std::int64_t GetValue() const { return value; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
+    inline std::int64_t GetValue() const { return value; }
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     std::expected<Value*, int> Convert(ValueKind kind, EvaluationContext& context) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
     std::expected<otava::intermediate::Value*, int> IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    Value* Clone() const override { return new IntegerValue(value, Rep(), GetType()); }
+    Value* Clone() const override;
 private:
     std::int64_t value;
 };
@@ -108,8 +108,8 @@ public:
     FloatingValue(TypeSymbol* type_);
     FloatingValue(const std::u32string& rep_, TypeSymbol* type_);
     FloatingValue(double value_, const std::u32string& rep_, TypeSymbol* type_);
-    std::string SymbolKindStr() const override { return "floating value"; }
-    std::string SymbolDocKindStr() const override { return "floating_value"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     inline double GetValue() const { return value; }
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     std::expected<Value*, int> Convert(ValueKind kind, EvaluationContext& context) override;
@@ -117,7 +117,7 @@ public:
     std::expected<bool, int> Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
     std::expected<otava::intermediate::Value*, int> IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    Value* Clone() const override { return new FloatingValue(value, Rep(), GetType()); }
+    Value* Clone() const override;
 private:
     double value;
 };
@@ -128,13 +128,13 @@ public:
     NullPtrValue(TypeSymbol* type_);
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     std::expected<Value*, int> Convert(ValueKind kind, EvaluationContext& context) override;
-    std::string SymbolKindStr() const override { return "nullptr value"; }
-    std::string SymbolDocKindStr() const override { return "nullptr_value"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     std::expected<otava::intermediate::Value*, int> IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
-    Value* Clone() const override { return new NullPtrValue(GetType()); }
+    Value* Clone() const override;
 };
 
 class StringValue : public Value
@@ -145,13 +145,13 @@ public:
     inline const std::string& GetValue() const { return value; }
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     std::expected<Value*, int> Convert(ValueKind kind, EvaluationContext& context) override;
-    std::string SymbolKindStr() const override { return "string value"; }
-    std::string SymbolDocKindStr() const override { return "string_value"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
     std::expected<otava::intermediate::Value*, int> IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    Value* Clone() const override { return new StringValue(value, GetType()); }
+    Value* Clone() const override;
 private:
     std::string value;
 };
@@ -164,13 +164,13 @@ public:
     inline char32_t GetValue() const { return value; }
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     std::expected<Value*, int> Convert(ValueKind kind, EvaluationContext& context) override;
-    std::string SymbolKindStr() const override { return "char value"; }
-    std::string SymbolDocKindStr() const override { return "char_value"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
     std::expected<otava::intermediate::Value*, int> IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    Value* Clone() const override { return new CharValue(value, GetType()); }
+    Value* Clone() const override;
 private:
     char32_t value;
 };
@@ -182,8 +182,8 @@ public:
     SymbolValue(Symbol* symbol_);
     inline Symbol* GetSymbol() const { return symbol; }
     std::expected<Value*, int> Convert(ValueKind kind, EvaluationContext& context) override;
-    std::string SymbolKindStr() const override { return "symbol value"; }
-    std::string SymbolDocKindStr() const override { return "symbol_value"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     bool IsExportSymbol(Context* context) const override;
     std::expected<bool, int> Write(Writer& writer) override;
@@ -192,7 +192,7 @@ public:
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     std::u32string ToString() const override;
     std::expected<otava::intermediate::Value*, int> IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    Value* Clone() const override { return new SymbolValue(symbol); }
+    Value* Clone() const override;
 private:
     Symbol* symbol;
     util::uuid symbolId;
@@ -205,8 +205,8 @@ public:
     InvokeValue(Value* subject_);
     inline Value* Subject() const { return subject; }
     std::expected<Value*, int> Convert(ValueKind kind, EvaluationContext& context) override;
-    std::string SymbolKindStr() const override { return "invoke value"; }
-    std::string SymbolDocKindStr() const override { return "invoke_value"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     bool IsExportSymbol(Context* context) const override;
     std::expected<bool, int> Write(Writer& writer) override;
@@ -214,7 +214,7 @@ public:
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     std::u32string ToString() const override;
-    Value* Clone() const override { return new InvokeValue(subject->Clone()); }
+    Value* Clone() const override;
 private:
     Value* subject;
     util::uuid subjectId;
@@ -225,8 +225,8 @@ class ArrayValue : public Value
 public:
     ArrayValue(TypeSymbol* type_);
     void AddElementValue(Value* elementValue);
-    std::string SymbolKindStr() const override { return "array value"; }
-    std::string SymbolDocKindStr() const override { return "array_value"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
@@ -243,8 +243,8 @@ class StructureValue : public Value
 public:
     StructureValue(TypeSymbol* type_);
     void AddFieldValue(Value* fieldValue);
-    std::string SymbolKindStr() const override { return "array value"; }
-    std::string SymbolDocKindStr() const override { return "array_value"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;

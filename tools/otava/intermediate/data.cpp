@@ -1107,8 +1107,16 @@ Value* Data::MakeStringValue(const soul::ast::Span& span, const std::string& val
             }
             case 1:
             {
-                hex.append(1, c);
-                state = 2;
+                if (c == '\\')
+                {
+                    s.append(1, c);
+                    state = 0;
+                }
+                else
+                {
+                    hex.append(1, c);
+                    state = 2;
+                }
                 break;
             }
             case 2:

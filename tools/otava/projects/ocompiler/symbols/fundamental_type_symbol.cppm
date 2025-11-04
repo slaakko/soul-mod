@@ -31,8 +31,8 @@ public:
     inline FundamentalTypeKind GetFundamentalTypeKind() const { return fundamentalTypeKind; }
     inline bool IsAutoTypeSymbol() const { return fundamentalTypeKind == FundamentalTypeKind::autoType; }
     bool IsIntegralType() const override;
-    std::string SymbolKindStr() const override { return "fundamental type symbol"; }
-    std::string SymbolDocKindStr() const override { return "fundamental_type"; }
+    std::string SymbolKindStr() const override;
+    std::string SymbolDocKindStr() const override;
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
