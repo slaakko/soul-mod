@@ -1468,13 +1468,13 @@ void SymbolTable::MapType(TypeSymbol* type)
 
 void SymbolTable::UnmapType(TypeSymbol* type)
 {
-    auto it = symbolNodeMap.find(type);
+    auto it = symbolNodeMap.find(static_cast<Symbol*>(type));
     if (it != symbolNodeMap.end())
     {
         otava::ast::Node* node = it->second;
         nodeSymbolMap.erase(node);
     }
-    symbolNodeMap.erase(type);
+    symbolNodeMap.erase(static_cast<Symbol*>(type));
     typeMap.erase(type->Id());
 }
 
@@ -1674,11 +1674,12 @@ std::expected<bool, int> SymbolTable::AddForwardClassDeclaration(const std::u32s
     ForwardClassDeclarationSymbol* fwdDeclaration = classGroup->GetForwardDeclaration(forwardDeclarationSymbol->Arity());
     if (!fwdDeclaration)
     {
+        Symbol* s = forwardDeclarationSymbol.get();
         classGroup->AddForwardDeclaration(forwardDeclarationSymbol.get());
-        MapNode(node, forwardDeclarationSymbol.get());
-        forwardDeclarations.insert(forwardDeclarationSymbol.get());
-        allForwardDeclarations.insert(forwardDeclarationSymbol.get());
-        std::expected<bool, int> rv = currentScope->SymbolScope()->AddSymbol(forwardDeclarationSymbol.release(), node->GetSourcePos(), context);
+        MapNode(node, s);
+        forwardDeclarations.insert(s);
+        allForwardDeclarations.insert(s);
+        std::expected<bool, int> rv = currentScope->SymbolScope()->AddSymbol(static_cast<Symbol*>(forwardDeclarationSymbol.release()), node->GetSourcePos(), context);
         if (!rv) return rv;
     }
     return std::expected<bool, int>(true);
@@ -1740,9 +1741,10 @@ std::expected<bool, int> SymbolTable::AddForwardEnumDeclaration(const std::u32st
     std::expected<bool, int> rv = currentScope->SymbolScope()->AddSymbol(forwardDeclarationSymbol, node->GetSourcePos(), context);
     if (!rv) return rv;
     enumGroup->SetForwardDeclaration(forwardDeclarationSymbol);
-    MapNode(node, forwardDeclarationSymbol);
-    forwardDeclarations.insert(forwardDeclarationSymbol);
-    allForwardDeclarations.insert(forwardDeclarationSymbol);
+    Symbol* s = forwardDeclarationSymbol;
+    MapNode(node, s);
+    forwardDeclarations.insert(s);
+    allForwardDeclarations.insert(s);
     return std::expected<bool, int>(true);
 }
 
@@ -2552,7 +2554,7 @@ std::expected<ExplicitInstantiationSymbol*, int> SymbolTable::GetExplicitInstant
         {
             return std::unexpected<int>(error);
         }
-        return std::expected<ExplicitInstantiationSymbol*, int>(nullptr);
+        return std::expected<ExplicitInstantiationSymbol*, int>(static_cast<ExplicitInstantiationSymbol*>(nullptr));
     }
 }
 

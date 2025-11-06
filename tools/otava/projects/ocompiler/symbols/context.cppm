@@ -105,9 +105,9 @@ class Context
 public:
     Context();
     ~Context();
-    inline Lexer* GetLexer() { return lexer; }
+    Lexer* GetLexer() const;
     void SetLexer(Lexer* lexer_);
-    inline SymbolTable* GetSymbolTable() { return symbolTable; }
+    SymbolTable* GetSymbolTable();
     void SetSymbolTable(SymbolTable* symbolTable_);
     Module* GetModule();
     void SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_);

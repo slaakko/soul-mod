@@ -255,7 +255,7 @@ TypeSymbol* ParameterSymbol::GetReferredType(Context* context) const
     }
     if (type->IsCompoundType())
     {
-        referredType = context->GetSymbolTable()->MakeCompoundType(referredType, type->GetDerivations());
+        referredType = context->GetSymbolTable()->MakeCompoundType(referredType, type->GetDerivations(), context);
     }
     if (context->GetFlag(ContextFlags::resolveDependentTypes) && referredType->IsDependentTypeSymbol())
     {
@@ -1025,7 +1025,8 @@ FunctionTypeSymbol* FunctionSymbol::GetFunctionType(otava::symbols::Context* con
 
 otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const
 {
-    otava::intermediate::Type* type = emitter.GetType(Id());
+    util::uuid irId = IrId(context);
+    otava::intermediate::Type* type = emitter.GetType(irId);
     if (!type)
     {
         otava::intermediate::Type* returnIrType = nullptr;
@@ -1057,7 +1058,7 @@ otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::
             paramIrTypes.push_back(ReturnValueParam()->GetReferredType(context)->IrType(emitter, sourcePos, context));
         }
         type = emitter.MakeFunctionType(returnIrType, paramIrTypes);
-        emitter.SetType(Id(), type);
+        emitter.SetType(irId, type);
     }
     return type;
 }

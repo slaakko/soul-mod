@@ -186,9 +186,10 @@ std::expected<TypeSymbol*, int> TemplateParameterSymbol::UnifyTemplateArgumentTy
 
 bool TemplateParameterSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
 {
-    if (visited.find(this) == visited.end())
+    const Symbol* thisSymbol = this;
+    if (visited.find(thisSymbol) == visited.end())
     {
-        visited.insert(this);
+        visited.insert(thisSymbol);
     }
     return true;
 }

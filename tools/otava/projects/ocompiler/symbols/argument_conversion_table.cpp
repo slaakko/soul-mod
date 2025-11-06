@@ -93,7 +93,7 @@ std::expected<FunctionSymbol*, int> IdentityArgumentConversion::Get(TypeSymbol* 
         }
         return std::expected<FunctionSymbol*, int>(fn);
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 class DerivedToBaseConversion : public FunctionSymbol
@@ -178,7 +178,8 @@ std::expected<FunctionSymbol*, int>  DerivedToBaseArgumentConversion::Get(TypeSy
         paramType->IsReferenceType() && paramType->PointerCount() == 0 && argType->IsReferenceType() && argType->PointerCount() == 0) &&
         argType->GetBaseType()->HasBaseClass(paramType->GetBaseType(), distance, context))
     {
-        return std::expected<FunctionSymbol*, int>(new DerivedToBaseConversion(argType, paramType, distance, context));
+        FunctionSymbol* fn = new DerivedToBaseConversion(argType, paramType, distance, context);
+        return std::expected<FunctionSymbol*, int>(fn);
     }
     if (argType->GetBaseType()->HasBaseClass(paramType->GetBaseType(), distance, context))
     {
@@ -193,7 +194,7 @@ std::expected<FunctionSymbol*, int>  DerivedToBaseArgumentConversion::Get(TypeSy
         }
         return std::expected<FunctionSymbol*, int>(fn);
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 class BaseToDerivedConversion : public FunctionSymbol
@@ -287,7 +288,7 @@ std::expected<FunctionSymbol*, int> BaseToDerivedArgumentConversion::Get(TypeSym
         }
         return std::expected<FunctionSymbol*, int>(fn);
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 class NullPtrToPtrConversion : public FunctionSymbol
@@ -354,7 +355,7 @@ std::expected<FunctionSymbol*, int>  NullPtrToPtrArgumentConversion::Get(TypeSym
         }
         return std::expected<FunctionSymbol*, int>(fn);
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 class VoidPtrToPtrConversion : public FunctionSymbol
@@ -422,7 +423,7 @@ std::expected<FunctionSymbol*, int> VoidPtrToPtrArgumentConversion::Get(TypeSymb
         }
         return std::expected<FunctionSymbol*, int>(fn);
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 class PtrToVoidPtrConversion : public FunctionSymbol
@@ -489,7 +490,7 @@ std::expected<FunctionSymbol*, int> PtrToVoidPtrArgumentConversion::Get(TypeSymb
         }
         return std::expected<FunctionSymbol*, int>(fn);
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 class PtrToPtrConversion : public FunctionSymbol
@@ -560,7 +561,7 @@ std::expected<FunctionSymbol*, int> ReinterpretCastArgumentConversion::Get(TypeS
             return std::expected<FunctionSymbol*, int>(fn);
         }
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 class VoidPtrToUInt64Conversion : public FunctionSymbol
@@ -636,7 +637,7 @@ std::expected<FunctionSymbol*, int> VoidPtrToUInt64ArgumentConversion::Get(TypeS
         }
         return std::expected<FunctionSymbol*, int>(fn);
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 class UInt64ToVoidPtrConversion : public FunctionSymbol
@@ -707,7 +708,7 @@ std::expected<FunctionSymbol*, int> UInt64ToVoidPtrArgumentConversion::Get(TypeS
         }
         return std::expected<FunctionSymbol*, int>(fn);
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 class PtrToBooleanConversion : public FunctionSymbol
@@ -769,7 +770,10 @@ public:
 std::expected<FunctionSymbol*, int> PtrToBooleanArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, 
     ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    if (context->GetFlag(ContextFlags::skipFirstPtrToBooleanConversion) && context->ArgIndex() == 0) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (context->GetFlag(ContextFlags::skipFirstPtrToBooleanConversion) && context->ArgIndex() == 0)
+    {
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
+    }
     std::expected<TypeSymbol*, int> rv = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::boolType);
     if (!rv) return std::unexpected<int>(rv.error());
     TypeSymbol* boolType = *rv;
@@ -782,7 +786,7 @@ std::expected<FunctionSymbol*, int> PtrToBooleanArgumentConversion::Get(TypeSymb
         }
         return std::expected<FunctionSymbol*, int>(fn);
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 class ArrayToPtrConversion : public FunctionSymbol
@@ -935,7 +939,7 @@ std::expected<FunctionSymbol*, int> ArrayToPtrArgumentConversion::Get(TypeSymbol
             }
         }
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 class EnumTypeToUnderlyingTypeConversion : public FunctionSymbol
@@ -1020,7 +1024,7 @@ std::expected<FunctionSymbol*, int> EnumTypeToUnderlyingTypeArgumentConversion::
             return std::expected<FunctionSymbol*, int>(fn);
         }
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 class UnderlyingTypeToEnumTypeConversion : public FunctionSymbol
@@ -1105,7 +1109,7 @@ std::expected<FunctionSymbol*, int> UnderlyingTypeEnumTypeToArgumentConversion::
             return std::expected<FunctionSymbol*, int>(fn);
         }
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 class FunctionToFunctionPtrConversion : public FunctionSymbol
@@ -1303,7 +1307,7 @@ std::expected<FunctionSymbol*, int> FunctionToFunctionPtrArgumentConversion::Get
             }
         }
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 ArgumentConversionTable::ArgumentConversionTable()
@@ -1406,7 +1410,7 @@ std::expected<FunctionSymbol*, int> ArgumentConversionTable::GetArgumentConversi
             return std::expected<FunctionSymbol*, int>(conversionFunction);
         }
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 } // namespace otava::symbols

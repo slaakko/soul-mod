@@ -66,7 +66,7 @@ std::expected<std::vector<InstantiationRequest>*, int> InstantiationQueue::GetRe
             return std::expected<std::vector<InstantiationRequest>*, int>(requests);
         }
     }
-    return std::expected<std::vector<InstantiationRequest>*, int>(nullptr);
+    return std::expected<std::vector<InstantiationRequest>*, int>(static_cast<std::vector<InstantiationRequest>*>(nullptr));
 }
 
 std::expected<bool, int> InstantiateEnqueuedRequests(FunctionSymbol* functionTemplate, const soul::ast::SourcePos& sourcePos, Context* context)

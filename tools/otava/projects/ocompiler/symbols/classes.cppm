@@ -93,9 +93,9 @@ public:
     bool IsTemplate() const;
     std::expected<bool, int> MakeVTab(Context* context, const soul::ast::SourcePos& sourcePos);
     std::expected<bool, int> InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos, bool clear);
-    inline const std::vector<FunctionSymbol*>& VTab() const { return vtab; }
+    const std::vector<FunctionSymbol*>& VTab() const;
     std::expected<std::string, int> IrName(Context* context) const override;
-    inline const std::string& VTabName(Context* context) const { return vtabName; }
+    const std::string& VTabName(Context* context) const { return vtabName; }
     std::expected<bool, int> ComputeVTabName(Context* context);
     inline std::int32_t VPtrIndex() const { return vptrIndex; }
     inline void SetVPtrIndex(std::int32_t vptrIndex_) { vptrIndex = vptrIndex_; }
@@ -150,7 +150,7 @@ public:
     virtual ClassGroupSymbol* Group() const { return group; }
     inline void SetGroup(ClassGroupSymbol* group_) { group = group_; }
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
-    inline FunctionSymbol* CopyCtor() const { return copyCtor; }
+    FunctionSymbol* CopyCtor() const { return copyCtor; }
     std::expected<bool, int> GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context);
     void ResetCopyCtor() { copyCtor = nullptr; }
     std::expected<std::int64_t, int> Delta(ClassTypeSymbol* base, Emitter& emitter, Context* context);

@@ -628,6 +628,10 @@ void StatementBinder::Visit(otava::ast::ExpressionListNode& node)
         {
             otava::ast::Node* item = node.Items()[i];
             BoundExpressionNode* arg = BindExpression(item, context);
+            if (!arg)
+            {
+                ThrowException("could not bind expression", item->GetSourcePos(), context);
+            }
             initializerArgs.push_back(std::unique_ptr<BoundExpressionNode>(arg));
         }
     }
@@ -698,6 +702,10 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
 
     context->PushResetFlag(ContextFlags::returnRef);
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
+    if (!condition)
+    {
+        ThrowException("could not bind expression", node.Condition()->GetSourcePos(), context);
+    }
     if (condition->GetType()->IsReferenceType())
     {
         condition = new BoundDereferenceNode(condition, node.GetSourcePos(), condition->GetType()->GetBaseType());
@@ -742,6 +750,10 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
     // todo!!!
     context->PushResetFlag(ContextFlags::returnRef);
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
+    if (!condition)
+    {
+        ThrowException("could not bind expression", node.Condition()->GetSourcePos(), context);
+    }
     boundSwitchStatement->SetCondition(condition);
     context->PopFlags();
     context->PushSwitchCondType(condition->GetType());
@@ -762,6 +774,10 @@ void StatementBinder::Visit(otava::ast::CaseStatementNode& node)
         PrintWarning("case statement does not terminate in return, break or continue statement", node.GetSourcePos(), context);
     }
     BoundExpressionNode* caseExpr = BindExpression(node.CaseExpression(), context);
+    if (!caseExpr)
+    {
+        ThrowException("could not bind expression", node.CaseExpression()->GetSourcePos(), context);
+    }
     TypeSymbol* switchCondType = context->GetSwitchCondType();
     if (!TypesEqual(caseExpr->GetType(), switchCondType, context))
     {
@@ -818,6 +834,10 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
     BoundWhileStatementNode* boundWhileStatement = new BoundWhileStatementNode(node.GetSourcePos());
     context->PushResetFlag(ContextFlags::returnRef);
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
+    if (!condition)
+    {
+        ThrowException("could not bind expression", node.Condition()->GetSourcePos(), context);
+    }
     if (condition->GetType()->IsReferenceType())
     {
         condition = new BoundDereferenceNode(condition, node.GetSourcePos(), condition->GetType()->GetBaseType());
@@ -842,6 +862,10 @@ void StatementBinder::Visit(otava::ast::DoStatementNode& node)
     BoundDoStatementNode* boundDoStatement = new BoundDoStatementNode(node.GetSourcePos());
     context->PushResetFlag(ContextFlags::returnRef);
     BoundExpressionNode* condition = BindExpression(node.Expression(), context);
+    if (!condition)
+    {
+        ThrowException("could not bind expression", node.Expression()->GetSourcePos(), context);
+    }
     if (condition->GetType()->IsReferenceType())
     {
         condition = new BoundDereferenceNode(condition, node.GetSourcePos(), condition->GetType()->GetBaseType());
@@ -970,6 +994,10 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
     {
         context->PushResetFlag(ContextFlags::returnRef);
         BoundExpressionNode* condition = BindExpression(node.Condition(), context);
+        if (!condition)
+        {
+            ThrowException("could not bind expression", node.Condition()->GetSourcePos(), context);
+        }
         if (condition->GetType()->IsReferenceType())
         {
             condition = new BoundDereferenceNode(condition, node.GetSourcePos(), condition->GetType()->GetBaseType());
@@ -984,6 +1012,10 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
     if (node.LoopExpr())
     {
         BoundExpressionNode* loopExpr = BindExpression(node.LoopExpr(), context);
+        if (!loopExpr)
+        {
+            ThrowException("could not bind expression", node.LoopExpr()->GetSourcePos(), context);
+        }
         boundForStatement->SetLoopExpr(loopExpr);
     }
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
@@ -1019,6 +1051,10 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
             classReturnArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(returnValueParam,
                 node.GetSourcePos(), returnValueParam->GetReferredType(context))));
             BoundExpressionNode* expression = BindExpression(node.ReturnValue(), context);
+            if (!expression)
+            {
+                ThrowException("could not bind expression", node.ReturnValue()->GetSourcePos(), context);
+            }
             if (expression->IsBoundLocalVariable())
             {
                 std::vector<std::unique_ptr<BoundExpressionNode>> moveArgs;
@@ -1031,8 +1067,8 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
             }
             classReturnArgs.push_back(std::unique_ptr<BoundExpressionNode>(expression));
             std::vector<TypeSymbol*> templateArgs;
-            std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, classReturnArgs,
-                node.GetSourcePos(), context);
+            std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverloadThrow(
+                context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, classReturnArgs, node.GetSourcePos(), context);
             std::unique_ptr<BoundExpressionStatementNode> expressionStatement(new BoundExpressionStatementNode(node.GetSourcePos()));
             expressionStatement->SetExpr(constructorCall.release(), node.GetSourcePos(), context);
             SetStatement(expressionStatement.release());
@@ -1047,6 +1083,10 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
                 flagsPushed = true;
             }
             BoundExpressionNode* returnValueExpr = BindExpression(node.ReturnValue(), context);
+            if (!returnValueExpr)
+            {
+                ThrowException("could not bind expression", node.ReturnValue()->GetSourcePos(), context);
+            }
             if (!TypesEqual(returnValueExpr->GetType(), returnType, context))
             {
                 if (TypesEqual(returnValueExpr->GetType()->PlainType(context), returnType->PlainType(context), context))
@@ -1071,14 +1111,15 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
                     ArgumentMatch argumentMatch;
                     FunctionMatch functionMatch;
                     FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                        returnType, returnValueExpr->GetType()->DirectType(context)->FinalType(node.GetSourcePos(), context), returnValueExpr, node.GetSourcePos(), argumentMatch, 
-                        functionMatch, context);
+                        returnType, returnValueExpr->GetType()->DirectType(context)->FinalType(node.GetSourcePos(), context), returnValueExpr, 
+                        node.GetSourcePos(), argumentMatch,functionMatch, context);
                     if (conversion)
                     {
                         if (argumentMatch.preConversionFlags == OperationFlags::addr)
                         {
                             returnValueExpr = new BoundConversionNode(
-                                new BoundAddressOfNode(returnValueExpr, node.GetSourcePos(), returnValueExpr->GetType()->AddPointer(context)), conversion, node.GetSourcePos());
+                                new BoundAddressOfNode(returnValueExpr, node.GetSourcePos(), returnValueExpr->GetType()->AddPointer(context)), conversion, 
+                                node.GetSourcePos());
                         }
                         else
                         {
@@ -1107,6 +1148,10 @@ void StatementBinder::Visit(otava::ast::ExpressionStatementNode& node)
     if (node.Expression())
     {
         BoundExpressionNode* expr = BindExpression(node.Expression(), context);
+        if (!expr)
+        {
+            ThrowException("could not bind expression", node.Expression()->GetSourcePos(), context);
+        }
         if (expr->IsBoundConstructTemporaryNode())
         {
             BoundConstructTemporaryNode* ctNode = static_cast<BoundConstructTemporaryNode*>(expr);
@@ -1182,13 +1227,15 @@ void StatementBinder::Visit(otava::ast::SimpleDeclarationNode& node)
                     TypeSymbol* initializerType = initializer->GetType()->DirectType(context)->FinalType(node.GetSourcePos(), context);
                     if (variable->GetDeclaredType()->GetBaseType()->IsAutoTypeSymbol() && variable->GetDeclaredType()->GetDerivations() != Derivations::none)
                     {
-                        initializerType = context->GetSymbolTable()->MakeCompoundType(initializerType->GetBaseType(), variable->GetDeclaredType()->GetDerivations());
+                        initializerType = context->GetSymbolTable()->MakeCompoundType(initializerType->GetBaseType(), 
+                            variable->GetDeclaredType()->GetDerivations(), context);
                     }
                     variable->SetInitializerType(initializerType);
                 }
                 BoundVariableNode* boundVariable = new BoundVariableNode(variable, node.GetSourcePos());
                 std::vector<std::unique_ptr<BoundExpressionNode>> arguments;
-                arguments.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariable, node.GetSourcePos(), boundVariable->GetType()->AddPointer(context))));
+                arguments.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariable, node.GetSourcePos(), 
+                    boundVariable->GetType()->AddPointer(context))));
                 if (initializer)
                 {
                     if (initializer->IsBoundExpressionListNode())

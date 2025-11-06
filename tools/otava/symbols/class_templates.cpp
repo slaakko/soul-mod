@@ -72,6 +72,11 @@ std::string ClassTemplateSpecializationSymbol::IrName(Context* context) const
     return fullIrName;
 }
 
+util::uuid ClassTemplateSpecializationSymbol::IrId(Context* context) const 
+{
+    return MakeClassTemplateSpecializationSymbolIrId(classTemplate, templateArguments, context->GetSourcePos(), context);
+}
+
 void ClassTemplateSpecializationSymbol::Write(Writer& writer)
 {
     ClassTypeSymbol::Write(writer);
@@ -198,7 +203,7 @@ void ClassTemplateSpecializationSymbol::Accept(Visitor& visitor)
 }
 
 TypeSymbol* ClassTemplateSpecializationSymbol::UnifyTemplateArgumentType(
-    const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context)
+    const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     std::vector<Symbol*> targetTemplateArguments;
     for (int i = 0; i < templateArguments.size(); ++i)
@@ -213,7 +218,7 @@ TypeSymbol* ClassTemplateSpecializationSymbol::UnifyTemplateArgumentType(
         {
             return nullptr;
         }
-        TypeSymbol* templateArgumentType = sourceTemplateArgumentType->UnifyTemplateArgumentType(templateParameterMap, context);
+        TypeSymbol* templateArgumentType = sourceTemplateArgumentType->UnifyTemplateArgumentType(templateParameterMap, sourcePos, context);
         if (templateArgumentType)
         {
             targetTemplateArguments.push_back(templateArgumentType);
@@ -223,7 +228,7 @@ TypeSymbol* ClassTemplateSpecializationSymbol::UnifyTemplateArgumentType(
             return nullptr;
         }
     }
-    return context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, targetTemplateArguments);
+    return context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, targetTemplateArguments, sourcePos, context);
 }
 
 bool ClassTemplateSpecializationSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
@@ -307,29 +312,63 @@ bool ClassTemplateSpecializationSymbol::ContainsVirtualFunctionSpecialization(Fu
     return false;
 }
 
-util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, int level, SymbolTable& symbolTable)
+util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, int level, 
+    const soul::ast::SourcePos& sourcePos, Context* context)
 {
     util::uuid id = classTemplate->Id();
     int n = static_cast<int>(templateArguments.size());
     for (int i = 0; i < n; ++i)
     {
         Symbol* arg = templateArguments[i];
+        if (arg->IsTypeSymbol())
+        {
+            TypeSymbol* argType = static_cast<TypeSymbol*>(arg);
+            argType = argType->DirectType(context)->FinalType(sourcePos, context);
+        }
         util::uuid argId = arg->Id();
         if (arg->IsClassTemplateSpecializationSymbol())
         {
             ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(arg);
-            argId = MakeClassTemplateSpecializationSymbolId(sp->ClassTemplate(), sp->TemplateArguments(), level + 1, symbolTable);
+            argId = MakeClassTemplateSpecializationSymbolId(sp->ClassTemplate(), sp->TemplateArguments(), level + 1, sourcePos, context);
         }
         util::Rotate(argId, (i + level + 1) & (util::uuid::static_size() - 1));
         util::Xor(id, argId);
     }
-    util::Xor(id, symbolTable.GetLevelId(level));
+    util::Xor(id, context->GetSymbolTable()->GetLevelId(level));
     return id;
 }
 
-util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, SymbolTable& symbolTable)
+util::uuid MakeClassTemplateSpecializationSymbolIrId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, int level,
+    const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    return MakeClassTemplateSpecializationSymbolId(classTemplate, templateArguments, 0, symbolTable);
+    util::uuid id = classTemplate->IrId(context);
+    int n = static_cast<int>(templateArguments.size());
+    for (int i = 0; i < n; ++i)
+    {
+        Symbol* arg = templateArguments[i];
+        util::uuid argId = arg->IrId(context);
+        if (arg->IsClassTemplateSpecializationSymbol())
+        {
+            ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(arg);
+            argId = MakeClassTemplateSpecializationSymbolIrId(sp->ClassTemplate(), sp->TemplateArguments(), level + 1, sourcePos, context);
+        }
+        util::Rotate(argId, (i + level + 1) & (util::uuid::static_size() - 1));
+        util::Xor(id, argId);
+    }
+    util::Xor(id, context->GetSymbolTable()->GetLevelId(level));
+    return id;
+}
+
+util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, 
+    const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    return MakeClassTemplateSpecializationSymbolId(classTemplate, templateArguments, 0, sourcePos, context);
+}
+
+util::uuid MakeClassTemplateSpecializationSymbolIrId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments,
+    const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    return MakeClassTemplateSpecializationSymbolIrId(classTemplate, templateArguments, 0, sourcePos, context);
 }
 
 std::u32string MakeSpecializationName(TypeSymbol* templateSymbol, const std::vector<Symbol*>& templateArguments)
@@ -508,7 +547,7 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
             sourcePos, context);
     }
     int arity = templateDeclaration->Arity();
-    ClassTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, templateArgs);
+    ClassTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, templateArgs, sourcePos, context);
     specialization->IrName(context);
     int m = templateArgs.size();
     bool wasInstantiated = specialization->Instantiated();
@@ -566,7 +605,8 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
                     context->GetSymbolTable()->UnmapClassTemplateSpecialization(specialization);
                     std::string oldId = util::ToString(specialization->Id());
                     specialization->SetId(MakeClassTemplateSpecializationSymbolId(specialization->ClassTemplate(), specialization->TemplateArguments(), 
-                        *context->GetSymbolTable()));
+                        sourcePos, context));
+                    specialization->SetName(MakeSpecializationName(specialization->ClassTemplate(), specialization->TemplateArguments()));
                     context->GetSymbolTable()->MapClassTemplateSpecialization(specialization);
                 }
             }

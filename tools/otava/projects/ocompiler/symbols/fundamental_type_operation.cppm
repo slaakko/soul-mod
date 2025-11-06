@@ -159,7 +159,7 @@ public:
         emitter.Stack().Push(Op::Generate(emitter, value));
         return std::expected<bool, int>(true);
     }
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(static_cast<ParameterSymbol*>(nullptr)); }
 };
 
 template<class Op>
@@ -206,7 +206,7 @@ public:
         emitter.Stack().Push(Op::Generate(emitter, left, right));
         return std::expected<bool, int>(true);
     }
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(static_cast<ParameterSymbol*>(nullptr)); }
 };
 
 template<typename Op>
@@ -264,7 +264,7 @@ public:
         return std::expected<bool, int>(true);
     }
     bool IsCtorAssignmentOrArrow() const override { return true; }
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(static_cast<ParameterSymbol*>(nullptr)); }
 private:
     TypeSymbol* type;
 };
@@ -313,7 +313,7 @@ public:
         emitter.Stack().Push(Op::Generate(emitter, left, right));
         return std::expected<bool, int>(true);
     }
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(static_cast<ParameterSymbol*>(nullptr)); }
 };
 
 class FundamentalTypeNotOperation : public FundamentalTypeUnaryOperation<FundamentalTypeNot>
@@ -509,6 +509,7 @@ public:
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(static_cast<ParameterSymbol*>(nullptr)); }
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -525,7 +526,7 @@ public:
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(static_cast<ParameterSymbol*>(nullptr)); }
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -542,7 +543,7 @@ public:
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(static_cast<ParameterSymbol*>(nullptr)); }
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -559,7 +560,7 @@ public:
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(static_cast<ParameterSymbol*>(nullptr)); }
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -576,7 +577,7 @@ public:
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(static_cast<ParameterSymbol*>(nullptr)); }
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -589,7 +590,7 @@ public:
     TrivialDestructor(TypeSymbol* type_, Context* context);
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(static_cast<ParameterSymbol*>(nullptr)); }
 private:
     TypeSymbol* type;
 };

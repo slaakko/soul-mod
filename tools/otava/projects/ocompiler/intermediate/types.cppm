@@ -125,7 +125,7 @@ public:
     inline std::int32_t Id() const { return id; }
     void Write(util::CodeFormatter& formatter);
     virtual void WriteDeclaration(util::CodeFormatter& formatter);
-    inline Value* DefaultValue() { return defaultValue; }
+    Value* DefaultValue();
     inline void SetDefaultValue(Value* defaultValue_) { defaultValue = defaultValue_; }
     virtual Value* MakeDefaultValue(Context& context) const { return nullptr; }
     TypeRef GetTypeRef();
@@ -306,7 +306,7 @@ public:
     Value* MakeDefaultValue(Context& context) const override;
     inline const std::string& Comment() const { return comment; }
     void SetComment(const std::string& comment_);
-    inline void SetMetadataRef(MetadataRef* metadataRef_) { metadataRef = metadataRef_; }
+    void SetMetadataRef(MetadataRef* metadataRef_);
     inline MetadataRef* GetMetadataRef() const { return metadataRef; }
     void ResolveComment();
 private:

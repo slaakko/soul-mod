@@ -279,7 +279,7 @@ class DeclarationProcessor : public otava::ast::DefaultVisitor
 {
 public:
     DeclarationProcessor(Context* context_);
-    inline std::unique_ptr<DeclarationList> GetDeclarations();
+    std::unique_ptr<DeclarationList> GetDeclarations();
     inline TypeSymbol* GetType() const { return type; }
     void BeginProcessFunctionDefinition(otava::ast::Node* declSpecifierSeq, otava::ast::Node* declarator, otava::ast::Node* specifierNode);
     void Visit(otava::ast::SimpleDeclarationNode& node) override;

@@ -20,7 +20,7 @@ class Instantiator : public otava::ast::DefaultVisitor
 public:
     Instantiator(Context* context_, InstantiationScope* instantiationScope_);
     void SetFunctionNode(otava::ast::Node* functionNode_);
-    inline FunctionSymbol* GetSpecialization() const { return specialization; }
+    FunctionSymbol* GetSpecialization() const { return specialization; }
     inline std::vector<ClassTypeSymbol*> GetBaseClasses() { return std::move(baseClasses); }
     void Visit(otava::ast::ClassSpecifierNode& node) override;
     void Visit(otava::ast::BeginAccessGroupNode& node) override;

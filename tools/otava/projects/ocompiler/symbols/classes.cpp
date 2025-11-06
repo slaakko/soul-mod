@@ -231,9 +231,10 @@ bool ClassTypeSymbol::HasPolymorphicBaseClass() const
 
 bool ClassTypeSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
 {
-    if (visited.find(this) == visited.end())
+    const Symbol* thisSymbol = this;
+    if (visited.find(thisSymbol) == visited.end())
     {
-        visited.insert(this);
+        visited.insert(thisSymbol);
         for (VariableSymbol* memberVariable : memberVariables)
         {
             if (memberVariable->IsTemplateParameterInstantiation(context, visited)) return true;
@@ -621,6 +622,11 @@ bool Overrides(FunctionSymbol* f, FunctionSymbol* g, Context* context)
     return false;
 }
 
+const std::vector<FunctionSymbol*>& ClassTypeSymbol::VTab() const
+{ 
+    return vtab; 
+}
+
 std::expected<bool, int> ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos, bool clear)
 {
     if (!IsPolymorphic()) return std::expected<bool, int>(false);
@@ -973,8 +979,9 @@ FunctionSymbol* ClassTypeSymbol::GetConversionFunction(TypeSymbol* type, Context
 
 bool ClassTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
 {
-    if (visited.find(this) != visited.end()) return true;
-    visited.insert(this);
+    const TypeSymbol* thisTypeSymbol = this;
+    if (visited.find(thisTypeSymbol) != visited.end()) return true;
+    visited.insert(thisTypeSymbol);
     for (ClassTypeSymbol* baseClass : baseClasses)
     {
         if (!baseClass->IsComplete(visited)) return false;
@@ -1199,8 +1206,9 @@ std::expected<otava::intermediate::Type*, int> ForwardClassDeclarationSymbol::Ir
 
 bool ForwardClassDeclarationSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
 {
-    if (visited.find(this) != visited.end()) return true;
-    visited.insert(this);
+    const TypeSymbol* thisTypeSymbol = this;
+    if (visited.find(thisTypeSymbol) != visited.end()) return true;
+    visited.insert(thisTypeSymbol);
     if (classTypeSymbol)
     {
         return classTypeSymbol->IsComplete(visited);
@@ -1756,7 +1764,7 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
         functionGroup->AddFunction(trivialClassDestructor.get());
         std::expected<bool, int> rv = classTypeSymbol->AddSymbol(trivialClassDestructor.release(), sourcePos, context);
         if (!rv) return std::unexpected<int>(rv.error());
-        return std::expected<Symbol*, int>(trivialDestructor);
+        return std::expected<Symbol*, int>(static_cast<Symbol*>(trivialDestructor));
     }
     BoundFunctionNode* boundDestructor = new BoundFunctionNode(destructorDefinitionSymbol.get(), sourcePos);
     std::expected<FunctionGroupSymbol*, int> frv = classTypeSymbol->GetScope()->GroupScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
@@ -1840,7 +1848,7 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
     boundDestructor->SetDtorTerminator(terminator.release());
     std::expected<bool, int> nrv = context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(boundDestructor), context);
     if (!nrv) return std::unexpected<int>(nrv.error());
-    return std::expected<Symbol*, int>(destructor);
+    return std::expected<Symbol*, int>(static_cast<Symbol*>(destructor));
 }
 
 std::expected<bool, int> GenerateDestructors(BoundCompileUnitNode* boundCompileUnit, Context* context)

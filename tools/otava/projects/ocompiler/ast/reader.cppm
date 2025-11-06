@@ -25,7 +25,7 @@ public:
     std::expected<std::u32string, int> ReadStr();
     std::expected<bool, int> ReadBool();
     std::expected<Node*, int> ReadNode();
-    inline void SetNodeMap(NodeMap* nodeMap_) { nodeMap = nodeMap_; }
+    void SetNodeMap(NodeMap* nodeMap_);
     inline NodeMap* GetNodeMap() const { return nodeMap; }
 private:
     std::unique_ptr<util::FileStream> fileStream;

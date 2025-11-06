@@ -86,4 +86,9 @@ std::expected<Node*, int> Reader::ReadNode()
     }
 }
 
+void Reader::SetNodeMap(NodeMap* nodeMap_) 
+{ 
+    nodeMap = nodeMap_; 
+}
+
 } // namespace otava::ast

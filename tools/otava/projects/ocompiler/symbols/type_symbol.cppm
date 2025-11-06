@@ -65,10 +65,7 @@ public:
     virtual std::expected<TypeSymbol*, int> RemoveDerivations(Derivations sourceDerivations, Context* context);
     virtual std::expected<TypeSymbol*, int> Unify(TypeSymbol* argType, Context* context);
     virtual std::expected<TypeSymbol*, int> UnifyTemplateArgumentType(
-        const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context)
-    { 
-        return std::expected<TypeSymbol*, int>(nullptr);
-    }
+        const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context);
     virtual bool IsComplete(std::set<const TypeSymbol*>& visited) const { return true; }
     std::expected<TypeSymbol*, int> AddConst(Context* context);
     std::expected<TypeSymbol*, int> RemoveConst(Context* context);

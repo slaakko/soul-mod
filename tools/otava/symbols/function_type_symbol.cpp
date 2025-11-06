@@ -119,7 +119,8 @@ void FunctionTypeSymbol::Accept(Visitor& visitor)
 
 otava::intermediate::Type* FunctionTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    otava::intermediate::Type* type = emitter.GetType(Id());
+    util::uuid irId = IrId(context);
+    otava::intermediate::Type* type = emitter.GetType(irId);
     if (!type)
     {
         std::vector<otava::intermediate::Type*> paramTypes;
@@ -128,7 +129,7 @@ otava::intermediate::Type* FunctionTypeSymbol::IrType(Emitter& emitter, const so
             paramTypes.push_back(paramType->IrType(emitter, sourcePos, context));
         }
         type = emitter.MakeFunctionType(returnType->IrType(emitter, sourcePos, context), paramTypes);
-        emitter.SetType(Id(), type);
+        emitter.SetType(irId, type);
     }
     return type;
 }

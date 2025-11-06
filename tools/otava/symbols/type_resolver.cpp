@@ -45,7 +45,7 @@ void CheckDuplicateSpecifier(DeclarationFlags flags, DeclarationFlags flag, cons
 class TypeResolver : public otava::ast::DefaultVisitor
 {
 public:
-    TypeResolver(Context* context_, DeclarationFlags flags_, TypeResolverFlags resolverFlags_);
+    TypeResolver(Context* context_, const soul::ast::SourcePos& sourcePos_, DeclarationFlags flags_, TypeResolverFlags resolverFlags_);
     TypeSymbol* GetType();
     void ResolveBaseType(otava::ast::Node* node);
     void ResolveType();
@@ -89,9 +89,10 @@ private:
     bool typeResolved;
     bool createTypeSymbol;
     BoundExpressionNode* size;
+    soul::ast::SourcePos sourcePos;
 };
 
-TypeResolver::TypeResolver(Context* context_, DeclarationFlags flags_, TypeResolverFlags resolverFlags_) :
+TypeResolver::TypeResolver(Context* context_, const soul::ast::SourcePos& sourcePos_, DeclarationFlags flags_, TypeResolverFlags resolverFlags_) :
     context(context_), 
     type(nullptr), 
     baseType(nullptr), 
@@ -100,7 +101,8 @@ TypeResolver::TypeResolver(Context* context_, DeclarationFlags flags_, TypeResol
     pointerCount(0), 
     typeResolved(false), 
     createTypeSymbol(false),
-    size(nullptr)
+    size(nullptr),
+    sourcePos(sourcePos_)
 {
 }
 
@@ -150,7 +152,7 @@ void TypeResolver::ResolveType()
     }
     if (derivations != Derivations::none && type)
     {
-        type = context->GetSymbolTable()->MakeCompoundType(type, derivations);
+        type = context->GetSymbolTable()->MakeCompoundType(type, derivations, context);
     }
 }
 
@@ -536,7 +538,7 @@ void TypeResolver::Visit(otava::ast::TemplateIdNode& node)
         if (typeSymbol->IsClassTypeSymbol())
         {
             ClassTypeSymbol* classTemplate = static_cast<ClassTypeSymbol*>(typeSymbol);
-            ClassTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, templateArgs);
+            ClassTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, templateArgs, sourcePos, context);
             type = specialization;
         }
         else
@@ -594,7 +596,7 @@ TypeSymbol* ResolveType(otava::ast::Node* node, DeclarationFlags flags, Context*
 
 TypeSymbol* ResolveType(otava::ast::Node* node, DeclarationFlags flags, Context* context, TypeResolverFlags resolverFlags)
 {
-    TypeResolver resolver(context, flags, resolverFlags);
+    TypeResolver resolver(context, node->GetSourcePos(), flags, resolverFlags);
     node->Accept(resolver);
     TypeSymbol* type = resolver.GetType();
     return type;
@@ -606,7 +608,7 @@ TypeSymbol* ResolveFwdDeclaredType(TypeSymbol* type, const soul::ast::SourcePos&
     {
         CompoundTypeSymbol* compoundTypeSymbol = static_cast<CompoundTypeSymbol*>(type);
         TypeSymbol* resolvedType = context->GetSymbolTable()->MakeCompoundType(ResolveFwdDeclaredType(compoundTypeSymbol->GetBaseType(), sourcePos, context),
-            compoundTypeSymbol->GetDerivations());
+            compoundTypeSymbol->GetDerivations(), context);
         return resolvedType;
     }
     if (type->IsForwardClassDeclarationSymbol())

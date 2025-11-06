@@ -189,6 +189,7 @@ class ForwardClassDeclarationSymbol : public TypeSymbol
 public:
     ForwardClassDeclarationSymbol(const std::u32string& name_);
     int Arity();
+    util::uuid IrId(Context* context) const override;
     inline ClassKind GetClassKind() const { return classKind; }
     inline void SetClassKind(ClassKind classKind_) { classKind = classKind_; }
     inline TypeSymbol* Specialization() const { return specialization; }

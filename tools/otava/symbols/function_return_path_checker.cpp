@@ -196,15 +196,18 @@ FunctionReturnPathChecker::FunctionReturnPathChecker(Context* context_) : contex
 void FunctionReturnPathChecker::Visit(otava::ast::CompoundStatementNode& node)
 {
     int n = node.Count();
-    for (int i = 0; i < n; ++i)
+    if (n > 0)
     {
-        otava::ast::Node* statementNode = node.Nodes()[i];
-        if (TerminatesFunction(statementNode, context, false))
+        for (int i = 0; i < n; ++i)
         {
-            return;
+            otava::ast::Node* statementNode = node.Nodes()[i];
+            if (TerminatesFunction(statementNode, context, false))
+            {
+                return;
+            }
         }
+        ThrowException("not all control paths terminate in return statement", node.GetSourcePos(), context);
     }
-    ThrowException("not all control paths terminate in return statement", node.GetSourcePos(), context);
 }
 
 void CheckFunctionReturnPaths(otava::ast::Node* node, Context* context)

@@ -388,7 +388,7 @@ TypeSymbol* DeclarationProcessor::ResolveBaseType(otava::ast::Node* node)
         }
         if (derivations != Derivations::none)
         {
-            baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+            baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations, context);
         }
     }
     return baseType;
@@ -1210,7 +1210,7 @@ TypeSymbol* MapType(FunctionSymbol* functionSymbol, TypeSymbol* type, Context* c
             {
                 if (TypesEqual(type->GetBaseType(), specialization->ClassTemplate(), context))
                 {
-                    type = context->GetSymbolTable()->MakeCompoundType(specialization, type->GetDerivations());
+                    type = context->GetSymbolTable()->MakeCompoundType(specialization, type->GetDerivations(), context);
                 }
             }
         }

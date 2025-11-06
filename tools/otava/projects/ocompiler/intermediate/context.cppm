@@ -69,35 +69,23 @@ public:
     inline Value* GetSByteValue(std::int8_t value) { return data.GetSByteValue(value, types); }
     inline Value* GetByteValue(std::uint8_t value) { return data.GetByteValue(value, types); }
     inline Value* GetShortValue(std::int16_t value) { return data.GetShortValue(value, types); }
-    inline Value* GetUShortValue(std::uint16_t value) { return data.GetUShortValue(value, types); }
+    Value* GetUShortValue(std::uint16_t value);
     inline Value* GetIntValue(std::int32_t value) { return data.GetIntValue(value, types); }
-    inline Value* GetUIntValue(std::uint32_t value) { return data.GetUIntValue(value, types); }
-    inline Value* GetLongValue(std::int64_t value) { return data.GetLongValue(value, types); }
+    Value* GetUIntValue(std::uint32_t value);
+    Value* GetLongValue(std::int64_t value);
     inline Value* GetULongValue(std::uint64_t value) { return data.GetULongValue(value, types); }
-    inline Value* GetIntegerValue(Type* type, std::int64_t value) { return data.GetIntegerValue(type, value, types); }
+    Value* GetIntegerValue(Type* type, std::int64_t value);
     inline Value* GetFloatValue(float value) { return data.GetFloatValue(value, types); }
     inline Value* GetDoubleValue(double value) { return data.GetDoubleValue(value, types); }
-    inline Value* GetFloatingValue(Type* type, double value) { return data.GetFloatingValue(type, value, types); }
+    Value* GetFloatingValue(Type* type, double value);
     Value* GetNullValue(const soul::ast::Span& span, Type* type);
-    inline Value* MakeArrayValue(const soul::ast::Span& span, const std::vector<Value*>& elements, ArrayType* arrayType)
-    {
-        return data.MakeArrayValue(span, elements, arrayType);
-    }
-    inline Value* MakeStructureValue(const soul::ast::Span& span, const std::vector<Value*>& fieldValues, StructureType* structureType)
-    {
-        return data.MakeStructureValue(span, fieldValues, structureType);
-    }
-    inline Value* MakeStringValue(const soul::ast::Span& span, const std::string& value, bool crop)
-    {
-        return data.MakeStringValue(span, value, crop);
-    }
-    inline Value* MakeStringArrayValue(const soul::ast::Span& span, char prefix, const std::vector<Value*>& elements)
-    {
-        return data.MakeStringArrayValue(span, prefix, elements);
-    }
+    Value* MakeArrayValue(const soul::ast::Span& span, const std::vector<Value*>& elements, ArrayType* arrayType);
+    Value* MakeStructureValue(const soul::ast::Span& span, const std::vector<Value*>& fieldValues, StructureType* structureType);
+    Value* MakeStringValue(const soul::ast::Span& span, const std::string& value, bool crop);
+    Value* MakeStringArrayValue(const soul::ast::Span& span, char prefix, const std::vector<Value*>& elements);
     inline Value* MakeConversionValue(const soul::ast::Span& span, Type* type, Value* from) { return data.MakeConversionValue(span, type, from); }
     inline Value* MakeClsIdValue(const soul::ast::Span& span, Type* type, const std::string& clsIdStr) { return data.MakeClsIdValue(span, type, clsIdStr); }
-    inline Value* MakeSymbolValue(const soul::ast::Span& span, Type* type, const std::string& symbol) { return data.MakeSymbolValue(span, type, symbol); }
+    Value* MakeSymbolValue(const soul::ast::Span& span, Type* type, const std::string& symbol);
     inline std::expected<Value*, int> MakeIntegerLiteral(const soul::ast::Span& span, Type* type, const std::string& strValue)
     {
         return data.MakeIntegerLiteral(span, type, strValue, types);

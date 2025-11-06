@@ -93,6 +93,11 @@ bool Type::IsFloatingPointType() const
     }
 }
 
+Value* Type::DefaultValue()
+{ 
+    return defaultValue; 
+}
+
 std::expected<Type*, int> Type::AddPointer(Context* context) const
 {
     if (IsPointerType())
@@ -502,6 +507,11 @@ Value* StructureType::MakeDefaultValue(Context& context) const
 void StructureType::SetComment(const std::string& comment_)
 {
     comment = comment_;
+}
+
+void StructureType::SetMetadataRef(MetadataRef* metadataRef_) 
+{ 
+    metadataRef = metadataRef_; 
 }
 
 FwdDeclaredStructureType::FwdDeclaredStructureType(const util::uuid& id_, std::int32_t typeId_) :

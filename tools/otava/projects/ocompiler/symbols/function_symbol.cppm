@@ -117,11 +117,12 @@ public:
     void Accept(Visitor& visitor) override;
     virtual std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    std::expected<bool, int> GenerateVirtualFunctionCall(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+    std::expected<bool, int> GenerateVirtualFunctionCall(Emitter& emitter, std::vector<BoundExpressionNode*>& args, 
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     FunctionTypeSymbol* GetFunctionType(otava::symbols::Context* context);
     virtual std::expected<otava::intermediate::Type*, int> IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const;
     std::expected<std::string, int> IrName(Context* context) const override;
-    inline const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
+    const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
     std::expected<VariableSymbol*, int> CreateTemporary(TypeSymbol* type);
     virtual bool IsConst() const;
     virtual bool IsVirtual() const;
@@ -147,7 +148,7 @@ public:
     inline bool IsTrivialDestructor() const { return GetFlag(FunctionSymbolFlags::trivialDestructor); }
     std::expected<std::u32string, int> NextTemporaryName();
     inline void SetVTabIndex(std::int32_t vtabIndex_) { vtabIndex = vtabIndex_; }
-    inline virtual std::int32_t VTabIndex() const { return vtabIndex; }
+    virtual std::int32_t VTabIndex() const;
     inline FunctionDefinitionSymbol* Destructor() const { return destructor; }
     inline void SetDestructor(FunctionDefinitionSymbol* destructor_) { destructor = destructor_; }
     bool IsDestructor() const;

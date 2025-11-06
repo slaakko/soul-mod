@@ -55,7 +55,7 @@ public:
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override;
 private:
     ArrayTypeSymbol* arrayType;
     util::uuid arrayTypeId;
@@ -71,7 +71,7 @@ public:
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override;
 private:
     ArrayTypeSymbol* arrayType;
     util::uuid arrayTypeId;
@@ -87,7 +87,7 @@ public:
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override;
 private:
     ArrayTypeSymbol* arrayType;
     util::uuid arrayTypeId;
@@ -103,7 +103,7 @@ public:
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override;
 private:
     ArrayTypeSymbol* arrayType;
     util::uuid arrayTypeId;
@@ -119,7 +119,7 @@ public:
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override;
 private:
     ArrayTypeSymbol* arrayType;
     util::uuid arrayTypeId;
@@ -135,7 +135,7 @@ public:
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override;
 private:
     ArrayTypeSymbol* arrayType;
     util::uuid arrayTypeId;
@@ -151,7 +151,7 @@ public:
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override;
 private:
     ArrayTypeSymbol* arrayType;
     util::uuid arrayTypeId;

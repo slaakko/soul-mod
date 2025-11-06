@@ -110,7 +110,7 @@ public:
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override;
 private:
     util::uuid enumTypeId;
     EnumeratedTypeSymbol* enumType;
@@ -127,7 +127,7 @@ public:
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override;
 private:
     util::uuid enumTypeId;
     EnumeratedTypeSymbol* enumType;
@@ -144,7 +144,7 @@ public:
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override;
 private:
     util::uuid enumTypeId;
     EnumeratedTypeSymbol* enumType;
@@ -161,7 +161,7 @@ public:
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override;
 private:
     util::uuid enumTypeId;
     EnumeratedTypeSymbol* enumType;
@@ -178,7 +178,7 @@ public:
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override;
 private:
     util::uuid enumTypeId;
     EnumeratedTypeSymbol* enumType;
@@ -194,7 +194,7 @@ public:
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override;
 private:
     util::uuid enumTypeId;
     EnumeratedTypeSymbol* enumType;
@@ -210,7 +210,7 @@ public:
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override { return std::expected<ParameterSymbol*, int>(nullptr); }
+    std::expected<ParameterSymbol*, int> ThisParam(Context* context) const override;
 private:
     util::uuid enumTypeId;
     EnumeratedTypeSymbol* enumType;

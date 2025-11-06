@@ -108,7 +108,7 @@ class SymbolTable
 {
 public:
     SymbolTable();
-    inline void SetModule(Module* module_) { module = module_; }
+    void SetModule(Module* module_) { module = module_; }
     inline Module* GetModule() const { return module; }
     inline NamespaceSymbol* GlobalNs() const { return globalNs.get(); }
     std::expected<bool, int> Init();
@@ -250,7 +250,7 @@ public:
     inline const std::set<ClassTypeSymbol*>& Classes() const { return allClasses; }
     inline void SetNodeMap(otava::ast::NodeMap* nodeMap_) { nodeMap = nodeMap_; }
     inline otava::ast::NodeMap* GetNodeMap() { return nodeMap; }
-    inline void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
+    void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
     inline SymbolMap* GetSymbolMap() const { return symbolMap; }
     inline ConversionTable& GetConversionTable() { return *conversionTable; }
     inline const ConversionTable& GetConversionTable() const { return *conversionTable; }

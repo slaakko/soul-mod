@@ -96,11 +96,11 @@ public:
     virtual ~BoundNode();
     virtual void Accept(BoundTreeVisitor& visitor) = 0;
     inline BoundNodeKind Kind() const { return kind; }
-    virtual std::expected<Scope*, int> GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const { return nullptr; }
+    virtual std::expected<Scope*, int> GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const;
     inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
     inline bool IsBoundAddressOfNode() const { return kind == BoundNodeKind::boundAddressOfNode; }
     inline bool IsBoundDereferenceNode() const { return kind == BoundNodeKind::boundDereferenceNode; }
-    inline virtual bool IsReturnStatementNode() const { return kind == BoundNodeKind::boundReturnStatementNode; }
+    virtual bool IsReturnStatementNode() const;
     inline bool IsBoundCaseStatementNode() const { return kind == BoundNodeKind::boundCaseStatementNode; }
     inline bool IsBoundMemberExprNode() const { return kind == BoundNodeKind::boundMemberExprNode; }
     inline bool IsBoundTypeNode() const { return kind == BoundNodeKind::boundTypeNode; }
@@ -286,7 +286,7 @@ public:
     void SetDtorTerminator(BoundDtorTerminatorNode* dtorTerminator_);
     inline BoundCtorInitializerNode* CtorInitializer() const { return ctorInitializer.get(); }
     inline BoundDtorTerminatorNode* DtorTerminator() const { return dtorTerminator.get(); }
-    inline FunctionDefinitionSymbol* GetFunctionDefinitionSymbol() { return functionDefinitionSymbol; }
+    FunctionDefinitionSymbol* GetFunctionDefinitionSymbol() { return functionDefinitionSymbol; }
     void AddDefaultFunctionSymbol(FunctionSymbol* defaultFunctionSymbol);
     inline int Serial() const { return serial; }
     inline void SetSerial(int serial_) { serial = serial_; }
@@ -451,8 +451,8 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     inline BoundStatementNode* First() const { return first.get(); }
     inline BoundStatementNode* Second() const { return second.get(); }
-    bool IsReturnStatementNode() const override { return second->IsReturnStatementNode(); }
-    bool IsTerminator() const override { return second->IsTerminator(); }
+    bool IsReturnStatementNode() const override;
+    bool IsTerminator() const override;
 private:
     std::unique_ptr<BoundStatementNode> first;
     std::unique_ptr<BoundStatementNode> second;
@@ -540,7 +540,7 @@ public:
     BoundLiteralNode(Value* value_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     bool HasValue() const override { return true; }
-    inline Value* GetValue() const { return value; }
+    Value* GetValue() const;
     std::expected<bool, int> Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Clone() const override;
 private:
@@ -567,8 +567,8 @@ public:
     BoundVariableNode(VariableSymbol* variable_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     bool HasValue() const override { return true; }
-    inline VariableSymbol* GetVariable() const { return variable; }
-    inline BoundExpressionNode* ThisPtr() const { return thisPtr.get(); }
+    VariableSymbol* GetVariable() const;
+    BoundExpressionNode* ThisPtr() const;
     void SetThisPtr(BoundExpressionNode* thisPtr_);
     std::expected<bool, int> Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::expected<bool, int> Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
@@ -603,7 +603,7 @@ public:
     BoundEnumConstant(EnumConstantSymbol* enumConstant_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     bool HasValue() const override { return true; }
-    inline EnumConstantSymbol* EnumConstant() const { return enumConstant; }
+    EnumConstantSymbol* EnumConstant() const;
     std::expected<bool, int> Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Clone() const override;
 private:
@@ -937,7 +937,7 @@ class BoundGlobalVariableDefinitionNode : public BoundNode
 {
 public:
     BoundGlobalVariableDefinitionNode(VariableSymbol* globalVariable_, const soul::ast::SourcePos& sourcePos_);
-    inline VariableSymbol* GetGlobalVariable() const { return globalVariable; }
+    VariableSymbol* GetGlobalVariable() const { return globalVariable; }
     void Accept(BoundTreeVisitor& visitor) override;
 private:
     VariableSymbol* globalVariable;

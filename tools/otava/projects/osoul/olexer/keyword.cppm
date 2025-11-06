@@ -51,6 +51,9 @@ template<typename Char>
 class KeywordMap
 {
 public:
+    KeywordMap() : keywords(), keywordMap()
+    {
+    }
     constexpr KeywordMap(const soul::lexer::Keyword<Char>* keywords_) : keywords(keywords_)
     {
         const soul::lexer::Keyword<Char>* kw = keywords;

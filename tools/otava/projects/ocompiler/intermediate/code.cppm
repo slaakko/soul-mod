@@ -56,7 +56,7 @@ public:
     inline Instruction* Next() { return static_cast<Instruction*>(NextSibling()); }
     inline Instruction* Prev() { return static_cast<Instruction*>(PrevSibling()); }
     inline OpCode GetOpCode() const { return opCode; }
-    inline void SetMetadataRef(MetadataRef* metadataRef_) { metadataRef = metadataRef_; }
+    void SetMetadataRef(MetadataRef* metadataRef_) { metadataRef = metadataRef_; }
     inline MetadataRef* GetMetadataRef() const { return metadataRef; }
     bool IsLeader() const;
     bool IsTerminator() const;
@@ -766,7 +766,7 @@ public:
     void MoveRegValues(Function* toFunction);
     inline void SetMdId(int mdId_) { mdId = mdId_; }
     inline int MdId() const { return mdId; }
-    inline void SetMetadataRef(MetadataRef* metadataRef_) { metadataRef = metadataRef_; }
+    void SetMetadataRef(MetadataRef* metadataRef_) { metadataRef = metadataRef_; }
     inline MetadataRef* GetMetadataRef() const { return metadataRef; }
     void SetComment(const std::string& comment_);
     inline const std::string& Comment() const { return comment; }

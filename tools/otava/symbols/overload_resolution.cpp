@@ -633,7 +633,7 @@ bool FindClassTemplateMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExp
         {
             return false;
         }
-        TypeSymbol* templateArgumentType = targetArgumentType->UnifyTemplateArgumentType(functionMatch.templateParameterMap, context);
+        TypeSymbol* templateArgumentType = targetArgumentType->UnifyTemplateArgumentType(functionMatch.templateParameterMap, sourcePos, context);
         if (templateArgumentType)
         {
             targetTemplateArguments.push_back(templateArgumentType);
@@ -643,8 +643,8 @@ bool FindClassTemplateMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExp
             return false;
         }
     }
-    TypeSymbol* plainTargetType = context->GetSymbolTable()->MakeClassTemplateSpecialization(paramClassType, targetTemplateArguments);
-    paramType = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations());
+    TypeSymbol* plainTargetType = context->GetSymbolTable()->MakeClassTemplateSpecialization(paramClassType, targetTemplateArguments, sourcePos, context);
+    paramType = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations(), context);
     if (TypesEqual(argType, paramType, context))
     {
         ArgumentMatch argumentMatch;
@@ -796,7 +796,7 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
             {
                 templateArgumentType = static_cast<TypeSymbol*>(templateArgumentSymbol);
             }
-            templateArgumentType = templateArgumentType->UnifyTemplateArgumentType(functionMatch.templateParameterMap, context);
+            templateArgumentType = templateArgumentType->UnifyTemplateArgumentType(functionMatch.templateParameterMap, sourcePos, context);
             if (templateArgumentType)
             {
                 targetTemplateArguments.push_back(templateArgumentType);
@@ -806,8 +806,9 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
                 return false;
             }
         }
-        TypeSymbol* plainTargetType = context->GetSymbolTable()->MakeClassTemplateSpecialization(paramSpecializationType->ClassTemplate(), targetTemplateArguments);
-        TypeSymbol* compoundParamType = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations());
+        TypeSymbol* plainTargetType = context->GetSymbolTable()->MakeClassTemplateSpecialization(paramSpecializationType->ClassTemplate(), targetTemplateArguments,
+            sourcePos, context);
+        TypeSymbol* compoundParamType = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations(), context);
         if (TypesEqual(argType, compoundParamType, context))
         {
             ArgumentMatch argumentMatch;
@@ -870,8 +871,9 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
                     if (plainTemplateArgsEqual)
                     {
                         ++functionMatch.numConversions;
-                        plainTargetType = context->GetSymbolTable()->MakeClassTemplateSpecialization(paramSpecializationType->ClassTemplate(), sourceTemplateArguments);
-                        compoundParamType = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations());
+                        plainTargetType = context->GetSymbolTable()->MakeClassTemplateSpecialization(paramSpecializationType->ClassTemplate(), sourceTemplateArguments,
+                            sourcePos, context);
+                        compoundParamType = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations(), context);
                         if (TypesEqual(argType, compoundParamType, context))
                         {
                             functionMatch.argumentMatches.push_back(ArgumentMatch());
@@ -1203,7 +1205,7 @@ std::unique_ptr<BoundFunctionCallNode> ResolveIOManipFn(Scope* scope, const std:
             FunctionTypeSymbol* functionType = ioManipFnCall->GetFunctionSymbol()->GetFunctionType(context);
             Derivations derivations = Derivations::none;
             derivations = otava::symbols::SetPointerCount(derivations, 1);
-            TypeSymbol* functionPtrType = context->GetSymbolTable()->MakeCompoundType(functionType, derivations);
+            TypeSymbol* functionPtrType = context->GetSymbolTable()->MakeCompoundType(functionType, derivations, context);
             std::unique_ptr<BoundExpressionNode> ioManipArg(new BoundAddressOfNode(ioManipFnCall.release(), sourcePos, functionPtrType));
             std::vector<std::unique_ptr<BoundExpressionNode>> operatorPutOrGetArgs;
             BoundExpressionNode* arg = args[0]->Clone();

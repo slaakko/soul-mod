@@ -31,7 +31,7 @@ CompoundTypeSymbol::CompoundTypeSymbol(TypeSymbol* baseType_, Derivations deriva
 TypeSymbol* CompoundTypeSymbol::PlainType(Context* context)
 {
     Derivations plainDerivations = Plain(derivations);
-    return context->GetSymbolTable()->MakeCompoundType(BaseType(), plainDerivations);
+    return context->GetSymbolTable()->MakeCompoundType(BaseType(), plainDerivations, context);
 }
 
 void CompoundTypeSymbol::Write(Writer& writer)
@@ -136,19 +136,21 @@ TypeSymbol* CompoundTypeSymbol::RemoveDerivations(Derivations sourceDerivations,
     {
         resultDerivations = resultDerivations | Derivations::rvalueRefDerivation;
     }
-    return context->GetSymbolTable()->MakeCompoundType(baseType, resultDerivations);
+    return context->GetSymbolTable()->MakeCompoundType(baseType, resultDerivations, context);
 }
 
 TypeSymbol* CompoundTypeSymbol::Unify(TypeSymbol* argType, Context* context)
 {
     TypeSymbol* newBaseType = baseType->Unify(argType->GetBaseType(), context);
-    return context->GetSymbolTable()->MakeCompoundType(newBaseType, UnifyDerivations(derivations, argType->GetDerivations()));
+    return context->GetSymbolTable()->MakeCompoundType(newBaseType, UnifyDerivations(derivations, argType->GetDerivations()), context);
 }
 
-TypeSymbol* CompoundTypeSymbol::UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context)
+TypeSymbol* CompoundTypeSymbol::UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, 
+    const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    TypeSymbol* newBaseType = baseType->UnifyTemplateArgumentType(templateParameterMap, context);
-    return context->GetSymbolTable()->MakeCompoundType(newBaseType, GetDerivations());
+    TypeSymbol* newBaseType = baseType->UnifyTemplateArgumentType(templateParameterMap, sourcePos, context);
+    context->SetSourcePos(sourcePos);
+    return context->GetSymbolTable()->MakeCompoundType(newBaseType, GetDerivations(), context);
 }
 
 std::u32string CompoundTypeSymbol::FullName() const
@@ -203,7 +205,8 @@ std::u32string CompoundTypeSymbol::FullName() const
 
 otava::intermediate::Type* CompoundTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    otava::intermediate::Type* type = emitter.GetType(Id());
+    util::uuid irId = IrId(context);
+    otava::intermediate::Type* type = emitter.GetType(irId);
     if (!type)
     {
         type = baseType->IrType(emitter, sourcePos, context);
@@ -220,7 +223,7 @@ otava::intermediate::Type* CompoundTypeSymbol::IrType(Emitter& emitter, const so
         {
             type = emitter.MakePtrType(type);
         }
-        emitter.SetType(Id(), type);
+        emitter.SetType(irId, type);
     }
     return type;
 }
@@ -228,13 +231,14 @@ otava::intermediate::Type* CompoundTypeSymbol::IrType(Emitter& emitter, const so
 TypeSymbol* CompoundTypeSymbol::FinalType(const soul::ast::SourcePos& sourcePos, Context* context)
 {
     TypeSymbol* finalBaseType = baseType->FinalType(sourcePos, context);
-    return context->GetSymbolTable()->MakeCompoundType(finalBaseType, derivations);
+    context->SetSourcePos(sourcePos);
+    return context->GetSymbolTable()->MakeCompoundType(finalBaseType, derivations, context);
 }
 
 TypeSymbol* CompoundTypeSymbol::DirectType(Context* context)
 {
     TypeSymbol* directBaseType = baseType->DirectType(context);
-    return context->GetSymbolTable()->MakeCompoundType(directBaseType, derivations);
+    return context->GetSymbolTable()->MakeCompoundType(directBaseType, derivations, context);
 }
 
 bool CompoundTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
@@ -304,10 +308,18 @@ std::u32string MakeCompoundTypeName(TypeSymbol* baseType, Derivations derivation
     return name;
 }
 
-util::uuid MakeCompoundTypeId(TypeSymbol* baseType, Derivations derivations, SymbolTable& symbolTable)
+util::uuid CompoundTypeSymbol::IrId(Context* context) const
+{
+    util::uuid irId = baseType->IrId(context);
+    util::uuid derivationsId = context->GetSymbolTable()->GetCompoundTypeId(static_cast<int>(derivations));
+    util::Xor(irId, derivationsId);
+    return irId;
+}
+
+util::uuid MakeCompoundTypeId(TypeSymbol* baseType, Derivations derivations, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     util::uuid id = baseType->Id();
-    util::uuid derivationsId = symbolTable.GetCompoundTypeId(static_cast<int>(derivations));
+    util::uuid derivationsId = context->GetSymbolTable()->GetCompoundTypeId(static_cast<int>(derivations));
     util::Xor(id, derivationsId);
     return id;
 }

@@ -63,7 +63,8 @@ public:
     virtual Derivations GetDerivations() const { return Derivations::none; }
     virtual TypeSymbol* RemoveDerivations(Derivations sourceDerivations, Context* context);
     virtual TypeSymbol* Unify(TypeSymbol* argType, Context* context);
-    virtual TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) { return nullptr; }
+    virtual TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, 
+        const soul::ast::SourcePos& sourcePos, Context* context) { return nullptr; }
     virtual bool IsComplete(std::set<const TypeSymbol*>& visited) const { return true; }
     TypeSymbol* AddConst(Context* context);
     TypeSymbol* RemoveConst(Context* context);

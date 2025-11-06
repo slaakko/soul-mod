@@ -1955,7 +1955,8 @@ BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, Sy
     ExpressionBinder binder(context, symbolGroups);
     node->Accept(binder);
     scope = binder.GetScope();
-    return binder.GetBoundExpression();
+    BoundExpressionNode* expr = binder.GetBoundExpression();
+    return expr;
 }
 
 BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context)
@@ -1970,7 +1971,8 @@ BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, bo
     if (booleanChild && !expr->GetType()->IsBoolType())
     {
         FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            context->GetSymbolTable()->GetFundamentalType(otava::symbols::FundamentalTypeKind::boolType), expr->GetType(), node->GetSourcePos(), context);
+            context->GetSymbolTable()->GetFundamentalType(otava::symbols::FundamentalTypeKind::boolType), expr->GetType(), 
+            node->GetSourcePos(), context);
         if (!conversionFunction)
         {
             ThrowException("expression must be convertible to Boolean type value", expr->GetSourcePos(), context);

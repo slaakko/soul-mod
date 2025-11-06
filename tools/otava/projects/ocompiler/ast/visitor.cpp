@@ -215,7 +215,7 @@ void DefaultVisitor::Visit(TokenNode& node)
     if (!Valid()) return;
     BeginVisit(node);
     if (!Valid()) return;
-    VisitToken(node.Str(), node.GetSourcePos());
+    // VisitToken(node.Str(), node.GetSourcePos());
     if (!Valid()) return;
     EndVisit(node);
 }

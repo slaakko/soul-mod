@@ -206,6 +206,11 @@ ArrayTypeDefaultCtor::ArrayTypeDefaultCtor(ArrayTypeSymbol* arrayType_, Context*
     }
 }
 
+std::expected<ParameterSymbol*, int> ArrayTypeDefaultCtor::ThisParam(Context* context) const
+{ 
+    return std::expected<ParameterSymbol*, int>(nullptr); 
+}
+
 std::expected<bool, int> ArrayTypeDefaultCtor::Write(Writer& writer)
 {
     std::expected<bool, int> rv = FunctionSymbol::Write(writer);
@@ -323,6 +328,11 @@ ArrayTypeCopyCtor::ArrayTypeCopyCtor(ArrayTypeSymbol* arrayType_, Context* conte
     }
 }
 
+std::expected<ParameterSymbol*, int> ArrayTypeCopyCtor::ThisParam(Context* context) const
+{
+    return std::expected<ParameterSymbol*, int>(nullptr);
+}
+
 std::expected<bool, int> ArrayTypeCopyCtor::Write(Writer& writer)
 {
     std::expected<bool, int> rv = FunctionSymbol::Write(writer);
@@ -435,6 +445,11 @@ ArrayTypeMoveCtor::ArrayTypeMoveCtor(ArrayTypeSymbol* arrayType_, Context* conte
         SetError(rv.error());
         return;
     }
+}
+
+std::expected<ParameterSymbol*, int> ArrayTypeMoveCtor::ThisParam(Context* context) const
+{
+    return std::expected<ParameterSymbol*, int>(nullptr);
 }
 
 std::expected<bool, int> ArrayTypeMoveCtor::Write(Writer& writer)
@@ -572,6 +587,11 @@ ArrayTypeCopyAssignment::ArrayTypeCopyAssignment(ArrayTypeSymbol* arrayType_, Co
     }
 }
 
+std::expected<ParameterSymbol*, int> ArrayTypeCopyAssignment::ThisParam(Context* context) const
+{
+    return std::expected<ParameterSymbol*, int>(nullptr);
+}
+
 std::expected<bool, int> ArrayTypeCopyAssignment::Write(Writer& writer)
 {
     std::expected<bool, int> rv = FunctionSymbol::Write(writer);
@@ -702,6 +722,11 @@ ArrayTypeMoveAssignment::ArrayTypeMoveAssignment(ArrayTypeSymbol* arrayType_, Co
     }
 }
 
+std::expected<ParameterSymbol*, int> ArrayTypeMoveAssignment::ThisParam(Context* context) const
+{
+    return std::expected<ParameterSymbol*, int>(nullptr);
+}
+
 std::expected<bool, int> ArrayTypeMoveAssignment::Write(Writer& writer)
 {
     std::expected<bool, int> rv = FunctionSymbol::Write(writer);
@@ -817,6 +842,11 @@ ArrayTypeBegin::ArrayTypeBegin(ArrayTypeSymbol* arrayType_, Context* context) :
     }
 }
 
+std::expected<ParameterSymbol*, int> ArrayTypeBegin::ThisParam(Context* context) const
+{
+    return std::expected<ParameterSymbol*, int>(nullptr);
+}
+
 std::expected<bool, int> ArrayTypeBegin::Write(Writer& writer)
 {
     std::expected<bool, int> rv = FunctionSymbol::Write(writer);
@@ -896,6 +926,11 @@ ArrayTypeEnd::ArrayTypeEnd(ArrayTypeSymbol* arrayType_, Context* context) :
         SetError(rv.error());
         return;
     }
+}
+
+std::expected<ParameterSymbol*, int> ArrayTypeEnd::ThisParam(Context* context) const
+{
+    return std::expected<ParameterSymbol*, int>(nullptr);
 }
 
 std::expected<bool, int> ArrayTypeEnd::Write(Writer& writer)

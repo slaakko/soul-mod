@@ -266,7 +266,8 @@ std::expected<TypeSymbol*, int> ClassTemplateSpecializationSymbol::UnifyTemplate
 
 bool ClassTemplateSpecializationSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
 {
-    if (visited.find(this) == visited.end())
+    const Symbol* thisSymbol = this;
+    if (visited.find(thisSymbol) == visited.end())
     {
         if (ClassTypeSymbol::IsTemplateParameterInstantiation(context, visited)) return true;
         for (Symbol* templateArg : templateArguments)
@@ -307,8 +308,9 @@ std::expected<TypeSymbol*, int> ClassTemplateSpecializationSymbol::FinalType(con
 
 bool ClassTemplateSpecializationSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
 {
-    if (visited.find(this) != visited.end()) return true;
-    visited.insert(this);
+    const TypeSymbol* thisTypeSymbol = this;
+    if (visited.find(thisTypeSymbol) != visited.end()) return true;
+    visited.insert(thisTypeSymbol);
     for (Symbol* templateArg : templateArguments)
     {
         if (templateArg->IsTypeSymbol())
@@ -832,7 +834,7 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
     FunctionDefinitionSymbol* functionDefinitionSymbol = classTemplateRepository->GetFunctionDefinition(key);
     if (functionDefinitionSymbol)
     {
-        return std::expected<FunctionSymbol*, int>(functionDefinitionSymbol);
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(functionDefinitionSymbol));
     }
     std::expected<ExplicitInstantiationSymbol*, int> e = context->GetSymbolTable()->GetExplicitInstantiation(classTemplateSpecialization);
     if (!e) return std::unexpected<int>(e.error());
@@ -851,7 +853,7 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
                 if (!rv) return std::unexpected<int>(rv.error());
                 FunctionDefinitionSymbol* functionDefinitionSymbol = *rv;
                 functionDefinitionSymbol->SetDestructor(explicitInstantiation->Destructor());
-                return std::expected<FunctionSymbol*, int>(functionDefinitionSymbol);
+                return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(functionDefinitionSymbol));
             }
             else
             {
@@ -868,7 +870,7 @@ std::expected<FunctionSymbol*, int> InstantiateMemFnOfClassTemplate(FunctionSymb
         FunctionDefinitionSymbol* memFnSpecialization = classTemplateSpecialization->GetMemFnDefSymbol(memFnDefIndex);
         if (memFnSpecialization)
         {
-            return std::expected<FunctionSymbol*, int>(memFnSpecialization);
+            return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(memFnSpecialization));
         }
     }
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();

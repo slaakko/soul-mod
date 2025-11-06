@@ -3286,7 +3286,12 @@ std::expected<BoundExpressionNode*, int> BindExpression(otava::ast::Node* node, 
     node->Accept(binder);
     if (!binder) return std::unexpected<int>(binder.Error());
     scope = binder.GetScope();
-    return std::expected<BoundExpressionNode*, int>(binder.GetBoundExpression());
+    BoundExpressionNode* boundExpr = binder.GetBoundExpression();
+    if (!boundExpr)
+    {
+        return Error("could not bind expression", node->GetSourcePos(), context);
+    }
+    return std::expected<BoundExpressionNode*, int>(boundExpr);
 }
 
 std::expected<BoundExpressionNode*, int> BindExpression(otava::ast::Node* node, Context* context)
@@ -3314,6 +3319,10 @@ std::expected<BoundExpressionNode*, int> BindExpression(otava::ast::Node* node, 
             return Error("expression must be convertible to Boolean type value", expr->GetSourcePos(), context);
         }
         expr = new BoundConversionNode(expr, conversionFunction, expr->GetSourcePos());
+    }
+    if (!expr)
+    {
+        return Error("could not bind expression", node->GetSourcePos(), context);
     }
     return std::expected<BoundExpressionNode*, int>(expr);
 }

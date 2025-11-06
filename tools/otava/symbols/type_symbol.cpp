@@ -91,7 +91,7 @@ TypeSymbol* TypeSymbol::AddConst(Context* context)
 {
     SymbolTable* symbolTable = context->GetSymbolTable();
     Derivations derivations = Derivations::constDerivation;
-    return symbolTable->MakeCompoundType(this, derivations);
+    return symbolTable->MakeCompoundType(this, derivations, context);
 }
 
 TypeSymbol* TypeSymbol::RemoveConst(Context* context)
@@ -100,7 +100,7 @@ TypeSymbol* TypeSymbol::RemoveConst(Context* context)
     {
         SymbolTable* symbolTable = context->GetSymbolTable();
         CompoundTypeSymbol* compoundTypeSymbol = static_cast<CompoundTypeSymbol*>(this);
-        return symbolTable->MakeCompoundType(GetBaseType(), otava::symbols::RemoveConst(compoundTypeSymbol->GetDerivations()));
+        return symbolTable->MakeCompoundType(GetBaseType(), otava::symbols::RemoveConst(compoundTypeSymbol->GetDerivations()), context);
     }
     return this;
 }
@@ -110,7 +110,7 @@ TypeSymbol* TypeSymbol::AddPointer(Context* context)
     SymbolTable* symbolTable = context->GetSymbolTable();
     Derivations derivations = Derivations::none;
     derivations = otava::symbols::SetPointerCount(derivations, 1);
-    return symbolTable->MakeCompoundType(this, derivations);
+    return symbolTable->MakeCompoundType(this, derivations, context);
 }
 
 TypeSymbol* TypeSymbol::RemovePointer(Context* context)
@@ -119,7 +119,7 @@ TypeSymbol* TypeSymbol::RemovePointer(Context* context)
     {
         SymbolTable* symbolTable = context->GetSymbolTable();
         CompoundTypeSymbol* compoundTypeSymbol = static_cast<CompoundTypeSymbol*>(this);
-        return symbolTable->MakeCompoundType(GetBaseType(), otava::symbols::RemovePointer(compoundTypeSymbol->GetDerivations()));
+        return symbolTable->MakeCompoundType(GetBaseType(), otava::symbols::RemovePointer(compoundTypeSymbol->GetDerivations()), context);
     }
     return this;
 }
@@ -128,7 +128,7 @@ TypeSymbol* TypeSymbol::AddLValueRef(Context* context)
 {
     SymbolTable* symbolTable = context->GetSymbolTable();
     Derivations derivations = Derivations::lvalueRefDerivation;
-    return symbolTable->MakeCompoundType(this, derivations);
+    return symbolTable->MakeCompoundType(this, derivations, context);
 }
 
 TypeSymbol* TypeSymbol::RemoveLValueRef(Context* context)
@@ -137,7 +137,7 @@ TypeSymbol* TypeSymbol::RemoveLValueRef(Context* context)
     {
         SymbolTable* symbolTable = context->GetSymbolTable();
         CompoundTypeSymbol* compoundTypeSymbol = static_cast<CompoundTypeSymbol*>(this);
-        return symbolTable->MakeCompoundType(GetBaseType(), otava::symbols::RemoveLValueRef(compoundTypeSymbol->GetDerivations()));
+        return symbolTable->MakeCompoundType(GetBaseType(), otava::symbols::RemoveLValueRef(compoundTypeSymbol->GetDerivations()), context);
     }
     return this;
 }
@@ -146,7 +146,7 @@ TypeSymbol* TypeSymbol::AddRValueRef(Context* context)
 {
     SymbolTable* symbolTable = context->GetSymbolTable();
     Derivations derivations = Derivations::rvalueRefDerivation;
-    return symbolTable->MakeCompoundType(this, derivations);
+    return symbolTable->MakeCompoundType(this, derivations, context);
 }
 
 TypeSymbol* TypeSymbol::RemoveRValueRef(Context* context)
@@ -155,7 +155,7 @@ TypeSymbol* TypeSymbol::RemoveRValueRef(Context* context)
     {
         SymbolTable* symbolTable = context->GetSymbolTable();
         CompoundTypeSymbol* compoundTypeSymbol = static_cast<CompoundTypeSymbol*>(this);
-        return symbolTable->MakeCompoundType(GetBaseType(), otava::symbols::RemoveRValueRef(compoundTypeSymbol->GetDerivations()));
+        return symbolTable->MakeCompoundType(GetBaseType(), otava::symbols::RemoveRValueRef(compoundTypeSymbol->GetDerivations()), context);
     }
     return this;
 }

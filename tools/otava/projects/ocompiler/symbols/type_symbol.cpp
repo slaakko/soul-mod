@@ -199,6 +199,12 @@ std::expected<TypeSymbol*, int> TypeSymbol::Unify(TypeSymbol* argType, Context* 
     return std::expected<TypeSymbol*, int>(nullptr);
 }
 
+std::expected<TypeSymbol*, int> TypeSymbol::UnifyTemplateArgumentType(
+    const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context)
+{
+    return std::expected<TypeSymbol*, int>(nullptr);
+}
+
 std::expected<otava::intermediate::Type*, int> TypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     return Error("IRTYPE not implemented", sourcePos, context);

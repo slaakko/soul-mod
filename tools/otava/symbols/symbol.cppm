@@ -163,6 +163,7 @@ public:
     inline SymbolKind Kind() const { return kind; }
     inline const util::uuid& Id() const { return id; }
     void SetId(const util::uuid& id_) { id = id_; }
+    virtual util::uuid IrId(Context* context) const { return id; }
     inline const std::u32string& Name() const { return name; }
     void SetName(const std::u32string& name_);
     inline Access GetAccess() const { return access; }

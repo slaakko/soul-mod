@@ -23,6 +23,7 @@ class ClassTemplateSpecializationSymbol : public ClassTypeSymbol
 public:
     ClassTemplateSpecializationSymbol(const std::u32string& name_);
     ClassTemplateSpecializationSymbol(const util::uuid& id_, const std::u32string& name_);
+    util::uuid IrId(Context* context) const override;
     inline bool Instantiated() const { return instantiated; }
     inline void SetInstantiated() { instantiated = true; }
     std::string SymbolKindStr() const override { return "specialization symbol"; }
@@ -37,7 +38,8 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
-    TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
+    TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, 
+        const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     inline FunctionSymbol* Destructor() const { return destructor; }
     inline void SetDestructor(FunctionSymbol* destructor_) { destructor = destructor_; }
@@ -75,7 +77,11 @@ private:
     std::vector<util::uuid> instantiatedVirtualFunctionSpecializationIds;
 };
 
-util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, SymbolTable& symbolTable);
+util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, 
+    const soul::ast::SourcePos& sourcePos, Context* context);
+
+util::uuid MakeClassTemplateSpecializationSymbolIrId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments,
+    const soul::ast::SourcePos& sourcePos, Context* context);
 
 struct MemFunKey
 {

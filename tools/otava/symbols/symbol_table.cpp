@@ -1734,7 +1734,7 @@ ParameterSymbol* SymbolTable::CreateParameter(const std::u32string& name, otava:
     return parameterSymbol;
 }
 
-TypeSymbol* SymbolTable::MakeCompoundType(TypeSymbol* baseType, Derivations derivations)
+TypeSymbol* SymbolTable::MakeCompoundType(TypeSymbol* baseType, Derivations derivations, Context* context)
 {
     MapType(baseType);
     Derivations drv = derivations;
@@ -1748,7 +1748,7 @@ TypeSymbol* SymbolTable::MakeCompoundType(TypeSymbol* baseType, Derivations deri
     {
         return baseType;
     }
-    util::uuid id = MakeCompoundTypeId(baseType, drv, *this);
+    util::uuid id = MakeCompoundTypeId(baseType, drv, context->GetSourcePos(), context);
     CompoundTypeSymbol* compoundType = GetCompoundType(id);
     if (compoundType)
     {
@@ -1788,39 +1788,39 @@ CompoundTypeSymbol* SymbolTable::GetCompoundType(const util::uuid& compoundTypeI
     }
 }
 
-TypeSymbol* SymbolTable::MakeConstCharPtrType()
+TypeSymbol* SymbolTable::MakeConstCharPtrType(Context* context)
 {
     Derivations derivations = Derivations::constDerivation;
     derivations = SetPointerCount(derivations, 1);
-    return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::charType), derivations);
+    return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::charType), derivations, context);
 }
 
-TypeSymbol* SymbolTable::MakeConstChar8PtrType()
+TypeSymbol* SymbolTable::MakeConstChar8PtrType(Context* context)
 {
     Derivations derivations = Derivations::constDerivation;
     derivations = SetPointerCount(derivations, 1);
-    return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::char8Type), derivations);
+    return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::char8Type), derivations, context);
 }
 
-TypeSymbol* SymbolTable::MakeConstChar16PtrType()
+TypeSymbol* SymbolTable::MakeConstChar16PtrType(Context* context)
 {
     Derivations derivations = Derivations::constDerivation;
     derivations = SetPointerCount(derivations, 1);
-    return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::char16Type), derivations);
+    return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::char16Type), derivations, context);
 }
 
-TypeSymbol* SymbolTable::MakeConstChar32PtrType()
+TypeSymbol* SymbolTable::MakeConstChar32PtrType(Context* context)
 {
     Derivations derivations = Derivations::constDerivation;
     derivations = SetPointerCount(derivations, 1);
-    return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::char32Type), derivations);
+    return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::char32Type), derivations, context);
 }
 
-TypeSymbol* SymbolTable::MakeConstWCharPtrType()
+TypeSymbol* SymbolTable::MakeConstWCharPtrType(Context* context)
 {
     Derivations derivations = Derivations::constDerivation;
     derivations = SetPointerCount(derivations, 1);
-    return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::wcharType), derivations);
+    return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::wcharType), derivations, context);
 }
 
 FunctionTypeSymbol* SymbolTable::MakeFunctionTypeSymbol(FunctionSymbol* functionSymbol)
@@ -1894,9 +1894,10 @@ ConceptSymbol* SymbolTable::AddConcept(const std::u32string& name, otava::ast::N
     return conceptSymbol;
 }
 
-ClassTemplateSpecializationSymbol* SymbolTable::MakeClassTemplateSpecialization(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments)
+ClassTemplateSpecializationSymbol* SymbolTable::MakeClassTemplateSpecialization(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments,
+    const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    util::uuid id = MakeClassTemplateSpecializationSymbolId(classTemplate, templateArguments, *this);
+    util::uuid id = MakeClassTemplateSpecializationSymbolId(classTemplate, templateArguments, sourcePos, context);
     auto it = classTemplateSpecializationMap.find(id);
     if (it != classTemplateSpecializationMap.end())
     {

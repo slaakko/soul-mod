@@ -132,7 +132,7 @@ std::expected<BoundFunctionCallNode*, int> MakeDestructorCall(ClassTypeSymbol* c
         FunctionSymbol* dtorFunctionSymbol = static_cast<FunctionSymbol*>(dtorSymbol);
         if (dtorFunctionSymbol->GetFlag(FunctionSymbolFlags::trivialDestructor))
         {
-            return std::expected<BoundFunctionCallNode*, int>(nullptr);
+            return std::expected<BoundFunctionCallNode*, int>(static_cast<BoundFunctionCallNode*>(nullptr));
         }
         std::expected<std::string, int> rv = dtorSymbol->IrName(context);
         if (!rv) return std::unexpected<int>(rv.error());
@@ -141,7 +141,7 @@ std::expected<BoundFunctionCallNode*, int> MakeDestructorCall(ClassTypeSymbol* c
         destructorCall->AddArgument(arg->Clone());
         return std::expected<BoundFunctionCallNode*, int>(destructorCall.release());
     }
-    return std::expected<BoundFunctionCallNode*, int>(nullptr);
+    return std::expected<BoundFunctionCallNode*, int>(static_cast<BoundFunctionCallNode*>(nullptr));
 }
 
 StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_) :
@@ -1585,6 +1585,12 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
                 return;
             }
             BoundExpressionNode* expression = *brv;
+            if (!expression)
+            {
+                std::unexpected<int> result = Error("could not bind expression", node.ReturnValue()->GetSourcePos(), context);
+                SetError(result.error());
+                return;
+            }
             if (expression->IsBoundLocalVariable())
             {
                 std::vector<std::unique_ptr<BoundExpressionNode>> moveArgs;
@@ -1655,6 +1661,12 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
                 return;
             }
             BoundExpressionNode* returnValueExpr = *brv;
+            if (!returnValueExpr)
+            {
+                std::unexpected<int> result = Error("could not bind expression", node.ReturnValue()->GetSourcePos(), context);
+                SetError(result.error());
+                return;
+            }
             if (!TypesEqual(returnValueExpr->GetType(), returnType, context))
             {
                 std::expected<TypeSymbol*, int> pt = returnValueExpr->GetType()->PlainType(context);

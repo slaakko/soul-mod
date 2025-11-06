@@ -103,8 +103,8 @@ std::expected<FunctionSymbol*, int> PointerDefaultCtorOperation::Get(std::vector
 {
     BoundExpressionNode* arg = args[0].get();
     TypeSymbol* type = arg->GetType();
-    if (type->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(nullptr);
-    if (type->IsReferenceType()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (type->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
+    if (type->IsReferenceType()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* pointerType = *pt;
@@ -117,8 +117,8 @@ std::expected<FunctionSymbol*, int> PointerDefaultCtorOperation::Get(std::vector
     PointerDefaultCtor* function = new PointerDefaultCtor(pointerType, sourcePos, context);
     if (!function->Valid()) return std::unexpected<int>(function->GetError());
     functionMap[pointerType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 class PointerCopyCtor : public FunctionSymbol
@@ -200,15 +200,15 @@ std::expected<FunctionSymbol*, int> PointerCopyCtorOperation::Get(std::vector<st
 {
     BoundExpressionNode* arg = args[0].get();
     TypeSymbol* type = arg->GetType();
-    if (type->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(nullptr);
-    if (type->IsReferenceType()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (type->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
+    if (type->IsReferenceType()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* pointerType = *pt;
     pt = pointerType->AddRValueRef(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* rvalueRefType = *pt;
-    if (TypesEqual(args[1]->GetType(), rvalueRefType, context)) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (TypesEqual(args[1]->GetType(), rvalueRefType, context)) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
     {
@@ -221,8 +221,8 @@ std::expected<FunctionSymbol*, int> PointerCopyCtorOperation::Get(std::vector<st
         return std::unexpected<int>(function->GetError());
     }
     functionMap[pointerType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 class PointerMoveCtor : public FunctionSymbol
@@ -310,15 +310,18 @@ std::expected<FunctionSymbol*, int> PointerMoveCtorOperation::Get(std::vector<st
 {
     BoundExpressionNode* arg = args[0].get();
     TypeSymbol* type = arg->GetType();
-    if (type->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(nullptr);
-    if (type->IsReferenceType()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (type->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
+    if (type->IsReferenceType()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* pointerType = *pt;
     pt = pointerType->AddRValueRef(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* rvalueRefType = *pt;
-    if (!TypesEqual(args[1]->GetType(), rvalueRefType, context) && !args[1]->BindToRvalueRef()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!TypesEqual(args[1]->GetType(), rvalueRefType, context) && !args[1]->BindToRvalueRef())
+    {
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
+    }
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
     {
@@ -331,8 +334,8 @@ std::expected<FunctionSymbol*, int> PointerMoveCtorOperation::Get(std::vector<st
         return std::unexpected<int>(function->GetError());
     }
     functionMap[pointerType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 class PointerCopyAssignment : public FunctionSymbol
@@ -419,7 +422,7 @@ std::expected<FunctionSymbol*, int> PointerCopyAssignmentOperation::Get(std::vec
 {
     BoundExpressionNode* arg = args[0].get();
     TypeSymbol* type = arg->GetType();
-    if (type->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (type->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* t = *pt;
@@ -430,7 +433,10 @@ std::expected<FunctionSymbol*, int> PointerCopyAssignmentOperation::Get(std::vec
     pt = pointerType->AddRValueRef(context);
     if (!pt) return std::unexpected<int>(pt.error());
     t = *pt;
-    if (TypesEqual(args[1]->GetType(), t, context) || args[1]->BindToRvalueRef()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (TypesEqual(args[1]->GetType(), t, context) || args[1]->BindToRvalueRef())
+    {
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
+    }
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
     {
@@ -443,8 +449,8 @@ std::expected<FunctionSymbol*, int> PointerCopyAssignmentOperation::Get(std::vec
         return std::unexpected<int>(function->GetError());
     }
     functionMap[pointerType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 class PointerMoveAssignment : public FunctionSymbol
@@ -541,7 +547,7 @@ std::expected<FunctionSymbol*, int> PointerMoveAssignmentOperation::Get(std::vec
 {
     BoundExpressionNode* arg = args[0].get();
     TypeSymbol* type = arg->GetType();
-    if (type->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (type->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* tp = *pt;
@@ -551,7 +557,10 @@ std::expected<FunctionSymbol*, int> PointerMoveAssignmentOperation::Get(std::vec
     pt = pointerType->AddRValueRef(context);
     if (!pt) return std::unexpected<int>(pt.error());
     tp = *pt;
-    if (!TypesEqual(args[1]->GetType(), tp, context) && !args[1]->BindToRvalueRef()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!TypesEqual(args[1]->GetType(), tp, context) && !args[1]->BindToRvalueRef())
+    {
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
+    }
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
     {
@@ -564,8 +573,8 @@ std::expected<FunctionSymbol*, int> PointerMoveAssignmentOperation::Get(std::vec
         return std::unexpected<int>(function->GetError());
     }
     functionMap[pointerType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 class PointerPlusOffset : public FunctionSymbol
@@ -636,11 +645,11 @@ PointerPlusOffsetOperation::PointerPlusOffsetOperation() : Operation(U"operator+
 std::expected<FunctionSymbol*, int> PointerPlusOffsetOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, 
     Context* context)
 {
-    if (context->GetFlag(ContextFlags::noPtrOps)) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (context->GetFlag(ContextFlags::noPtrOps)) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     std::expected<TypeSymbol*, int> pt = args[0]->GetType()->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* leftType = *pt;
-    if (!leftType->IsPointerType()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!leftType->IsPointerType()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     TypeSymbol* rightType = args[1]->GetType();
     pt = rightType->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
@@ -650,7 +659,7 @@ std::expected<FunctionSymbol*, int> PointerPlusOffsetOperation::Get(std::vector<
         if (!context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
             rightType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), sourcePos, context))
         {
-            return std::expected<FunctionSymbol*, int>(nullptr);
+            return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
         }
     }
     auto it = functionMap.find(leftType);
@@ -665,8 +674,8 @@ std::expected<FunctionSymbol*, int> PointerPlusOffsetOperation::Get(std::vector<
         return std::unexpected<int>(function->GetError());
     }
     functionMap[leftType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 class OffsetPlusPointer : public FunctionSymbol
@@ -746,13 +755,13 @@ std::expected<FunctionSymbol*, int> OffsetPlusPointerOperation::Get(std::vector<
         if (!context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
             leftType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), sourcePos, context))
         {
-            return std::expected<FunctionSymbol*, int>(nullptr);
+            return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
         }
     }
     pt = args[1]->GetType()->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* rightType = *pt;
-    if (!rightType->IsPointerType()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!rightType->IsPointerType()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     auto it = functionMap.find(leftType);
     if (it != functionMap.cend())
     {
@@ -765,8 +774,8 @@ std::expected<FunctionSymbol*, int> OffsetPlusPointerOperation::Get(std::vector<
         return std::unexpected<int>(function->GetError());
     }
     functionMap[leftType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 class PointerMinusOffset : public FunctionSymbol
@@ -838,11 +847,11 @@ PointerMinusOffsetOperation::PointerMinusOffsetOperation() : Operation(U"operato
 std::expected<FunctionSymbol*, int> PointerMinusOffsetOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    if (context->GetFlag(ContextFlags::noPtrOps)) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (context->GetFlag(ContextFlags::noPtrOps)) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     std::expected<TypeSymbol*, int> pt = args[0]->GetType()->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* leftType = *pt;
-    if (!leftType->IsPointerType()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!leftType->IsPointerType()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     TypeSymbol* rightType = args[1]->GetType();
     pt = rightType->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
@@ -852,7 +861,7 @@ std::expected<FunctionSymbol*, int> PointerMinusOffsetOperation::Get(std::vector
         if (!context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
             rightType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), sourcePos, context))
         {
-            return std::expected<FunctionSymbol*, int>(nullptr);
+            return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
         }
     }
     auto it = functionMap.find(leftType);
@@ -868,8 +877,8 @@ std::expected<FunctionSymbol*, int> PointerMinusOffsetOperation::Get(std::vector
         return std::unexpected<int>(function->GetError());
     }
     functionMap[leftType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 class PointerMinusPointer : public FunctionSymbol
@@ -943,11 +952,11 @@ std::expected<FunctionSymbol*, int> PointerMinusPointerOperation::Get(std::vecto
     std::expected<TypeSymbol*, int> pt = args[0]->GetType()->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* leftType = *pt;
-    if (!leftType->IsPointerType()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!leftType->IsPointerType()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     pt = args[1]->GetType()->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* rightType = *pt;
-    if (!rightType->IsPointerType()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!rightType->IsPointerType()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     auto it = functionMap.find(leftType);
     if (it != functionMap.cend())
     {
@@ -962,8 +971,8 @@ std::expected<FunctionSymbol*, int> PointerMinusPointerOperation::Get(std::vecto
         return std::unexpected<int>(function->GetError());
     }
     functionMap[leftType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 class PointerEqual : public FunctionSymbol
@@ -1043,11 +1052,11 @@ std::expected<FunctionSymbol*, int> PointerEqualOperation::Get(std::vector<std::
     std::expected<TypeSymbol*, int> pt = args[0]->GetType()->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* leftType = *pt;
-    if (!leftType->IsPointerType() && !leftType->IsNullPtrType()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!leftType->IsPointerType() && !leftType->IsNullPtrType()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     pt = args[1]->GetType()->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* rightType = *pt;
-    if (!rightType->IsPointerType() && !rightType->IsNullPtrType()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!rightType->IsPointerType() && !rightType->IsNullPtrType()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     auto it = functionMap.find(leftType);
     if (it != functionMap.cend())
     {
@@ -1060,8 +1069,8 @@ std::expected<FunctionSymbol*, int> PointerEqualOperation::Get(std::vector<std::
         return std::unexpected<int>(function->GetError());
     }
     functionMap[leftType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 class PointerLess : public FunctionSymbol
@@ -1141,11 +1150,11 @@ std::expected<FunctionSymbol*, int> PointerLessOperation::Get(std::vector<std::u
     std::expected<TypeSymbol*, int> pt = args[0]->GetType()->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* leftType = *pt;
-    if (!leftType->IsPointerType()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!leftType->IsPointerType()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     pt = args[1]->GetType()->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* rightType = *pt;
-    if (!rightType->IsPointerType()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!rightType->IsPointerType()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     auto it = functionMap.find(leftType);
     if (it != functionMap.cend())
     {
@@ -1158,8 +1167,8 @@ std::expected<FunctionSymbol*, int> PointerLessOperation::Get(std::vector<std::u
         return std::unexpected<int>(function->GetError());
     }
     functionMap[leftType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 class PointerArrow : public FunctionSymbol
@@ -1224,7 +1233,7 @@ std::expected<FunctionSymbol*, int> PointerArrowOperation::Get(std::vector<std::
     Context* context)
 {
     TypeSymbol* operandType = args[0]->GetType();
-    if (operandType->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (operandType->PointerCount() <= 1) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     std::expected<TypeSymbol*, int> pt = operandType->RemovePointer(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* type = *pt;
@@ -1240,8 +1249,8 @@ std::expected<FunctionSymbol*, int> PointerArrowOperation::Get(std::vector<std::
         return std::unexpected<int>(function->GetError());
     }
     functionMap[type] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 class CopyRef : public FunctionSymbol
@@ -1310,13 +1319,13 @@ CopyRefOperation::CopyRefOperation() : Operation(U"@constructor", 2)
 std::expected<FunctionSymbol*, int> CopyRefOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     TypeSymbol* arg0Type = args[0]->GetType();
-    if (arg0Type->PointerCount() != 1) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (arg0Type->PointerCount() != 1) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     std::expected<TypeSymbol*, int> pt = arg0Type->RemovePointer(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* type = *pt;
-    if (!type->IsReferenceType()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!type->IsReferenceType()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     TypeSymbol* argType = args[1]->GetType();
-    if (!argType->IsReferenceType()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!argType->IsReferenceType()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     auto it = functionMap.find(type);
     if (it != functionMap.cend())
     {
@@ -1329,8 +1338,8 @@ std::expected<FunctionSymbol*, int> CopyRefOperation::Get(std::vector<std::uniqu
         return std::unexpected<int>(copyRef->GetError());
     }
     functionMap[type] = copyRef;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(copyRef));
-    return std::expected<FunctionSymbol*, int>(copyRef);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(copyRef)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(copyRef));
 }
 
 class ClassDefaultCtor : public FunctionDefinitionSymbol
@@ -1419,19 +1428,19 @@ std::expected<FunctionSymbol*, int> ClassDefaultCtorOperation::Get(std::vector<s
     pt = tp->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* plainType = *pt;
-    if (type->PointerCount() != 1 || !plainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (type->PointerCount() != 1 || !plainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations))
     {
-        return std::expected<FunctionSymbol*, int>(nullptr);
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     }
     FunctionSymbol* defaultCtor = classType->GetFunctionByIndex(defaultCtorIndex);
     if (defaultCtor)
     {
         return std::expected<FunctionSymbol*, int>(defaultCtor);
     }
-    if (classType->HasUserDefinedConstructor()) return std::expected<FunctionSymbol*, int>(nullptr);
-    auto it = functionMap.find(classType);
+    if (classType->HasUserDefinedConstructor()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
+    auto it = functionMap.find(static_cast<TypeSymbol*>(classType));
     if (it != functionMap.cend())
     {
         FunctionSymbol* function = it->second;
@@ -1446,8 +1455,8 @@ std::expected<FunctionSymbol*, int> ClassDefaultCtorOperation::Get(std::vector<s
     std::expected<bool, int> rv = GenerateImplementation(function, sourcePos, context);
     if (!rv) return std::unexpected<int>(rv.error());
     functionMap[classType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 std::expected<bool, int> ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDefaultCtor, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -1597,7 +1606,7 @@ std::expected<FunctionDefinitionSymbol*, int> GenerateClassDefaultCtor(ClassType
     std::expected<bool, int> rv = operation.GenerateImplementation(defaultCtor.get(), sourcePos, context);
     if (!rv) return std::unexpected<int>(rv.error());
     context->PopFlags();
-    return std::expected<FunctionDefinitionSymbol*, int>(defaultCtor.release());
+    return std::expected<FunctionDefinitionSymbol*, int>(static_cast<FunctionDefinitionSymbol*>(defaultCtor.release()));
 }
 
 class ClassCopyCtor : public FunctionDefinitionSymbol
@@ -1723,34 +1732,34 @@ std::expected<FunctionSymbol*, int> ClassCopyCtorOperation::Get(std::vector<std:
     pt = tp->RemoveConst(context);
     if (!pt) return std::unexpected<int>(pt.error());
     tp = *pt;
-    if (type->PointerCount() != 1 || !tp->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (type->PointerCount() != 1 || !tp->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     pt = args[1]->GetType()->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* plainType = *pt;
-    if (!plainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!plainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations))
     {
-        return std::expected<FunctionSymbol*, int>(nullptr);
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     }
     pt = classType->AddRValueRef(context);
     if (!pt) return std::unexpected<int>(pt.error());
     tp = *pt;
     if (TypesEqual(args[1]->GetType(), tp, context) || args[1]->BindToRvalueRef())
     {
-        return std::expected<FunctionSymbol*, int>(nullptr);
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     }
     int distance = 0;
     if (!TypesEqual(args[1]->GetType()->GetBaseType(), classType, context) && !args[1]->GetType()->GetBaseType()->HasBaseClass(classType, distance, context))
     {
-        return std::expected<FunctionSymbol*, int>(nullptr);
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     }
     FunctionSymbol* copyCtor = classType->GetFunctionByIndex(copyCtorIndex);
     if (copyCtor)
     {
         return std::expected<FunctionSymbol*, int>(copyCtor);
     }
-    auto it = functionMap.find(classType);
+    auto it = functionMap.find(static_cast<TypeSymbol*>(classType));
     if (it != functionMap.cend())
     {
         FunctionSymbol* function = it->second;
@@ -1761,8 +1770,8 @@ std::expected<FunctionSymbol*, int> ClassCopyCtorOperation::Get(std::vector<std:
     std::expected<bool, int> rv = GenerateImplementation(function, sourcePos, context);
     if (!rv) return std::unexpected<int>(rv.error());
     functionMap[classType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 std::expected<bool, int> ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -1945,7 +1954,7 @@ std::expected<FunctionDefinitionSymbol*, int> GenerateClassCopyCtor(ClassTypeSym
     std::expected<bool, int> rv = operation.GenerateImplementation(copyCtor.get(), sourcePos, context);
     if (!rv) return std::unexpected<int>(rv.error());
     context->PopFlags();
-    return std::expected<FunctionDefinitionSymbol*, int>(copyCtor.release());
+    return std::expected<FunctionDefinitionSymbol*, int>(static_cast<FunctionDefinitionSymbol*>(copyCtor.release()));
 }
 
 class ClassMoveCtor : public FunctionDefinitionSymbol
@@ -2054,34 +2063,34 @@ std::expected<FunctionSymbol*, int> ClassMoveCtorOperation::Get(std::vector<std:
     pt = tp->RemoveConst(context);
     if (!pt) return std::unexpected<int>(pt.error());
     tp = *pt;
-    if (type->PointerCount() != 1 || !tp->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (type->PointerCount() != 1 || !tp->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     pt = args[1]->GetType()->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* plainType = *pt;
-    if (!plainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!plainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations))
     {
-        return std::expected<FunctionSymbol*, int>(nullptr);
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     }
     pt = classType->AddRValueRef(context);
     if (!pt) return std::unexpected<int>(pt.error());
     tp = *pt;
     if (!TypesEqual(args[1]->GetType(), tp, context) && !args[1]->BindToRvalueRef())
     {
-        return std::expected<FunctionSymbol*, int>(nullptr);
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     }
     int distance = 0;
     if (!TypesEqual(args[1]->GetType()->GetBaseType(), classType, context) && !args[1]->GetType()->GetBaseType()->HasBaseClass(classType, distance, context))
     {
-        return std::expected<FunctionSymbol*, int>(nullptr);
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     }
     FunctionSymbol* moveCtor = classType->GetFunctionByIndex(moveCtorIndex);
     if (moveCtor)
     {
         return std::expected<FunctionSymbol*, int>(moveCtor);
     }
-    auto it = functionMap.find(classType);
+    auto it = functionMap.find(static_cast<TypeSymbol*>(classType));
     if (it != functionMap.cend())
     {
         FunctionSymbol* function = it->second;
@@ -2092,8 +2101,8 @@ std::expected<FunctionSymbol*, int> ClassMoveCtorOperation::Get(std::vector<std:
     std::expected<bool, int> rv = GenerateImplementation(function, sourcePos, context);
     if (!rv) return std::unexpected<int>(rv.error());
     functionMap[classType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 std::expected<bool, int> ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -2290,7 +2299,7 @@ std::expected<FunctionDefinitionSymbol*, int> GenerateClassMoveCtor(ClassTypeSym
     std::expected<bool, int> rv = operation.GenerateImplementation(classMoveCtor.get(), sourcePos, context);
     if (!rv) return std::unexpected<int>(rv.error());
     context->PopFlags();
-    return std::expected<FunctionDefinitionSymbol*, int>(classMoveCtor.release());
+    return std::expected<FunctionDefinitionSymbol*, int>(static_cast<FunctionDefinitionSymbol*>(classMoveCtor.release()));
 }
 
 class ClassCopyAssignment : public FunctionDefinitionSymbol
@@ -2407,31 +2416,31 @@ std::expected<FunctionSymbol*, int> ClassCopyAssignmentOperation::Get(std::vecto
     pt = tp->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* plainType = *pt;
-    if (type->PointerCount() != 1 || !plainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (type->PointerCount() != 1 || !plainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     pt = args[1]->GetType()->PlainType(context);
     TypeSymbol* rightPlainType = *pt;
-    if (!rightPlainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!rightPlainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     pt = type->GetBaseType();
     if (!pt) return std::unexpected<int>(pt.error());
     tp = *pt;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(tp);
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations))
     {
-        return std::expected<FunctionSymbol*, int>(nullptr);
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     }
     pt = classType->AddRValueRef(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* rvalueRefType = *pt;
     if (TypesEqual(args[1]->GetType(), rvalueRefType, context) || args[1]->BindToRvalueRef())
     {
-        return std::expected<FunctionSymbol*, int>(nullptr);
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     }
     FunctionSymbol* copyAssignment = classType->GetFunctionByIndex(copyAssignmentIndex);
     if (copyAssignment)
     {
         return std::expected<FunctionSymbol*, int>(copyAssignment);
     }
-    auto it = functionMap.find(classType);
+    auto it = functionMap.find(static_cast<TypeSymbol*>(classType));
     if (it != functionMap.cend())
     {
         FunctionSymbol* function = it->second;
@@ -2446,8 +2455,8 @@ std::expected<FunctionSymbol*, int> ClassCopyAssignmentOperation::Get(std::vecto
     std::expected<bool, int> rv = GenerateImplementation(function, sourcePos, context);
     if (!rv) return std::unexpected<int>(rv.error());
     functionMap[classType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 std::expected<bool, int> ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* classCopyAssignment, const soul::ast::SourcePos& sourcePos, 
@@ -2585,7 +2594,7 @@ std::expected<FunctionDefinitionSymbol*, int> GenerateClassCopyAssignment(ClassT
     std::expected<bool, int> rv = operation.GenerateImplementation(copyAssignment.get(), sourcePos, context);
     if (!rv) return std::unexpected<int>(rv.error());
     context->PopFlags();
-    return std::expected<FunctionDefinitionSymbol*, int>(copyAssignment.release());
+    return std::expected<FunctionDefinitionSymbol*, int>(static_cast<FunctionDefinitionSymbol*>(copyAssignment.release()));
 }
 
 class ClassMoveAssignment : public FunctionDefinitionSymbol
@@ -2693,29 +2702,29 @@ std::expected<FunctionSymbol*, int> ClassMoveAssignmentOperation::Get(std::vecto
     pt = tp->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* plainType = *pt;
-    if (type->PointerCount() != 1 || !plainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (type->PointerCount() != 1 || !plainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     pt = args[1]->GetType()->PlainType(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* rightPlainType = *pt;
-    if (!rightPlainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!rightPlainType->IsClassTypeSymbol()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations))
     {
-        return std::expected<FunctionSymbol*, int>(nullptr);
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     }
     pt = classType->AddRValueRef(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* rvalueRefType = *pt;
     if (!TypesEqual(args[1]->GetType(), rvalueRefType, context) && !args[1]->BindToRvalueRef())
     {
-        return std::expected<FunctionSymbol*, int>(nullptr);
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     }
     FunctionSymbol* moveAssignment = classType->GetFunctionByIndex(moveAssignmentIndex);
     if (moveAssignment)
     {
         return std::expected<FunctionSymbol*, int>(moveAssignment);
     }
-    auto it = functionMap.find(classType);
+    auto it = functionMap.find(static_cast<TypeSymbol*>(classType));
     if (it != functionMap.cend())
     {
         FunctionSymbol* function = it->second;
@@ -2726,8 +2735,8 @@ std::expected<FunctionSymbol*, int> ClassMoveAssignmentOperation::Get(std::vecto
     std::expected<bool, int> rv = GenerateImplementation(function, sourcePos, context);
     if (!rv) return std::unexpected<int>(rv.error());
     functionMap[classType] = function;
-    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
-    return std::expected<FunctionSymbol*, int>(function);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(function)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(function));
 }
 
 std::expected<bool, int> ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* classMoveAssignment, const soul::ast::SourcePos& sourcePos, 
@@ -2862,7 +2871,7 @@ std::expected<FunctionDefinitionSymbol*, int> GenerateClassMoveAssignment(ClassT
     std::expected<bool, int> rv = operation.GenerateImplementation(moveAssignment.get(), sourcePos, context);
     if (!rv) return std::unexpected<int>(rv.error());
     context->PopFlags();
-    return std::expected<FunctionDefinitionSymbol*, int>(moveAssignment.release());
+    return std::expected<FunctionDefinitionSymbol*, int>(static_cast<FunctionDefinitionSymbol*>(moveAssignment.release()));
 }
 
 class FunctionPtrApply : public FunctionSymbol
@@ -2952,21 +2961,21 @@ FunctionPtrApplyOperation::FunctionPtrApplyOperation() : Operation(U"operator()"
 std::expected<FunctionSymbol*, int> FunctionPtrApplyOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, 
     Context* context)
 {
-    if (args.size() < 1) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (args.size() < 1) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     TypeSymbol* type = args[0]->GetType();
-    if (type->PointerCount() != 1) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (type->PointerCount() != 1) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     std::expected<TypeSymbol*, int> pt = type->RemovePointer(context);
     if (!pt) return std::unexpected<int>(pt.error());
     TypeSymbol* pointeeType = *pt;
-    if (!pointeeType->IsFunctionTypeSymbol()) return std::expected<FunctionSymbol*, int>(nullptr);
+    if (!pointeeType->IsFunctionTypeSymbol()) return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     FunctionTypeSymbol* functionType = static_cast<FunctionTypeSymbol*>(pointeeType);
     FunctionPtrApply* apply = new FunctionPtrApply(functionType, sourcePos, context);
     if (!apply->Valid())
     {
         return std::unexpected<int>(apply->GetError());
     }
-    functions.push_back(std::unique_ptr<FunctionSymbol>(apply));
-    return std::expected<FunctionSymbol*, int>(apply);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(static_cast<FunctionSymbol*>(apply)));
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(apply));
 }
 
 Operation::Operation(const std::u32string& groupName_, int arity_) : groupName(groupName_), arity(arity_)
@@ -3021,7 +3030,7 @@ std::expected<FunctionSymbol*, int> OperationGroup::GetOperation(std::vector<std
             return op;
         }
     }
-    return std::expected<FunctionSymbol*, int>(nullptr);
+    return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
 }
 
 OperationRepository::OperationRepository()
@@ -3078,7 +3087,7 @@ std::expected<FunctionSymbol*, int> OperationRepository::GetOperation(const std:
     }
     else
     {
-        return std::expected<FunctionSymbol*, int>(nullptr);
+        return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
     }
 }
 

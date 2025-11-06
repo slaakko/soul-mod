@@ -653,6 +653,11 @@ EnumTypeDefaultCtor::EnumTypeDefaultCtor(EnumeratedTypeSymbol* enumType_, Contex
     }
 }
 
+std::expected<ParameterSymbol*, int> EnumTypeDefaultCtor::ThisParam(Context* context) const
+{ 
+    return std::expected<ParameterSymbol*, int>(nullptr); 
+}
+
 std::expected<bool, int> EnumTypeDefaultCtor::Write(Writer& writer)
 {
     std::expected<bool, int> rv = FunctionSymbol::Write(writer);
@@ -734,6 +739,11 @@ EnumTypeCopyCtor::EnumTypeCopyCtor(EnumeratedTypeSymbol* enumType_, Context* con
         SetError(rv.error());
         return;
     }
+}
+
+std::expected<ParameterSymbol*, int> EnumTypeCopyCtor::ThisParam(Context* context) const
+{
+    return std::expected<ParameterSymbol*, int>(nullptr);
 }
 
 std::expected<bool, int> EnumTypeCopyCtor::Write(Writer& writer)
@@ -822,6 +832,11 @@ EnumTypeMoveCtor::EnumTypeMoveCtor(EnumeratedTypeSymbol* enumType_, Context* con
     }
 }
 
+std::expected<ParameterSymbol*, int> EnumTypeMoveCtor::ThisParam(Context* context) const
+{
+    return std::expected<ParameterSymbol*, int>(nullptr);
+}
+
 std::expected<bool, int> EnumTypeMoveCtor::Write(Writer& writer)
 {
     std::expected<bool, int> rv = FunctionSymbol::Write(writer);
@@ -904,6 +919,11 @@ EnumTypeCopyAssignment::EnumTypeCopyAssignment(EnumeratedTypeSymbol* enumType_, 
         SetError(rv.error());
         return;
     }
+}
+
+std::expected<ParameterSymbol*, int> EnumTypeCopyAssignment::ThisParam(Context* context) const
+{
+    return std::expected<ParameterSymbol*, int>(nullptr);
 }
 
 std::expected<bool, int> EnumTypeCopyAssignment::Write(Writer& writer)
@@ -989,6 +1009,11 @@ EnumTypeMoveAssignment::EnumTypeMoveAssignment(EnumeratedTypeSymbol* enumType_, 
     }
 }
 
+std::expected<ParameterSymbol*, int> EnumTypeMoveAssignment::ThisParam(Context* context) const
+{
+    return std::expected<ParameterSymbol*, int>(nullptr);
+}
+
 std::expected<bool, int> EnumTypeMoveAssignment::Write(Writer& writer)
 {
     std::expected<bool, int> rv = FunctionSymbol::Write(writer);
@@ -1069,6 +1094,11 @@ EnumTypeEqual::EnumTypeEqual(EnumeratedTypeSymbol* enumType_, Context* context) 
     }
 }
 
+std::expected<ParameterSymbol*, int> EnumTypeEqual::ThisParam(Context* context) const
+{
+    return std::expected<ParameterSymbol*, int>(nullptr);
+}
+
 std::expected<bool, int> EnumTypeEqual::Write(Writer& writer)
 {
     std::expected<bool, int> rv = FunctionSymbol::Write(writer);
@@ -1145,6 +1175,11 @@ EnumTypeLess::EnumTypeLess(EnumeratedTypeSymbol* enumType_, Context* context) : 
         SetError(rv.error());
         return;
     }
+}
+
+std::expected<ParameterSymbol*, int> EnumTypeLess::ThisParam(Context* context) const
+{
+    return std::expected<ParameterSymbol*, int>(nullptr);
 }
 
 std::expected<bool, int> EnumTypeLess::Write(Writer& writer)

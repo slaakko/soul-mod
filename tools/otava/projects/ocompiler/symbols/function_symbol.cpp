@@ -320,9 +320,10 @@ ParameterSymbol* ParameterSymbol::Copy() const
 
 bool ParameterSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
 {
-    if (visited.find(this) == visited.end())
+    const Symbol* thisSymbol = this;
+    if (visited.find(thisSymbol) == visited.end())
     {
-        visited.insert(this);
+        visited.insert(thisSymbol);
         return type->IsTemplateParameterInstantiation(context, visited);
     }
     return false;
@@ -460,9 +461,10 @@ int FunctionSymbol::MinMemFunArity(Context* context) const
 
 bool FunctionSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
 {
-    if (visited.find(this) == visited.end())
+    const Symbol* thisSymbol = this;
+    if (visited.find(thisSymbol) == visited.end())
     {
-        visited.insert(this);
+        visited.insert(thisSymbol);
         for (ParameterSymbol* parameter : MemFunParameters(context))
         {
             if (parameter->IsTemplateParameterInstantiation(context, visited)) return true;
@@ -1481,6 +1483,11 @@ bool FunctionSymbol::IsStatic() const
 bool FunctionSymbol::IsExplicit() const
 {
     return (GetDeclarationFlags() & DeclarationFlags::explicitFlag) != DeclarationFlags::none;
+}
+
+std::int32_t FunctionSymbol::VTabIndex() const 
+{ 
+    return vtabIndex; 
 }
 
 bool FunctionSymbol::IsDestructor() const

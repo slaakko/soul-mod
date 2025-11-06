@@ -67,23 +67,23 @@ TypeSymbol* GetStringType(otava::ast::EncodingPrefix encodingPrefix, const soul:
     {
         case otava::ast::EncodingPrefix::u8:
         {
-            return context->GetSymbolTable()->MakeConstChar8PtrType();
+            return context->GetSymbolTable()->MakeConstChar8PtrType(context);
         }
         case otava::ast::EncodingPrefix::u:
         {
-            return context->GetSymbolTable()->MakeConstChar16PtrType();
+            return context->GetSymbolTable()->MakeConstChar16PtrType(context);
         }
         case otava::ast::EncodingPrefix::U:
         {
-            return context->GetSymbolTable()->MakeConstChar32PtrType();
+            return context->GetSymbolTable()->MakeConstChar32PtrType(context);
         }
         case otava::ast::EncodingPrefix::L:
         {
-            return context->GetSymbolTable()->MakeConstWCharPtrType();
+            return context->GetSymbolTable()->MakeConstWCharPtrType(context);
         }
         default:
         {
-            return context->GetSymbolTable()->MakeConstCharPtrType();
+            return context->GetSymbolTable()->MakeConstCharPtrType(context);
         }
     }
 }

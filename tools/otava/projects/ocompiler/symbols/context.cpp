@@ -78,6 +78,11 @@ Context::~Context()
     declarationMap.clear();
 }
 
+Lexer* Context::GetLexer() const
+{
+    return lexer;
+}
+
 void Context::SetLexer(Lexer* lexer_)
 {
     lexer = lexer_;
@@ -96,6 +101,11 @@ FunctionDefinitionSymbolSet* Context::GetFunctionDefinitionSymbolSet() const
 void Context::SetSymbolTable(SymbolTable* symbolTable_)
 {
     symbolTable = symbolTable_;
+}
+
+SymbolTable* Context::GetSymbolTable()
+{ 
+    return symbolTable; 
 }
 
 Module* Context::GetModule()
@@ -121,11 +131,11 @@ std::expected<BoundExpressionNode*, int> Context::GetThisPtr(const soul::ast::So
     ParameterSymbol* thisParam = *tp;
     if (thisParam)
     {
-        return std::expected<BoundExpressionNode*, int>(new BoundParameterNode(thisParam, sourcePos, thisParam->GetType()));
+        return std::expected<BoundExpressionNode*, int>(static_cast<BoundExpressionNode*>(new BoundParameterNode(thisParam, sourcePos, thisParam->GetType())));
     }
     else
     {
-        return std::expected<BoundExpressionNode*, int>(nullptr);
+        return std::expected<BoundExpressionNode*, int>(static_cast<BoundExpressionNode*>(nullptr));
     }
 }
 

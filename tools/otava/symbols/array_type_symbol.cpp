@@ -78,11 +78,12 @@ void ArrayTypeSymbol::Accept(Visitor& visitor)
 
 otava::intermediate::Type* ArrayTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    otava::intermediate::Type* type = emitter.GetType(Id());
+    util::uuid irId = IrId(context);
+    otava::intermediate::Type* type = emitter.GetType(irId);
     if (!type)
     {
         type = emitter.MakeArrayType(size, elementType->IrType(emitter, sourcePos, context));
-        emitter.SetType(Id(), type);
+        emitter.SetType(irId, type);
     }
     return type;
 }

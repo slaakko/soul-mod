@@ -134,6 +134,56 @@ Value* Context::GetNullValue(const soul::ast::Span& span, Type* type)
     return nullptr;
 }
 
+Value* Context::GetLongValue(std::int64_t value)
+{ 
+    return data.GetLongValue(value, types); 
+}
+
+Value* Context::GetUShortValue(std::uint16_t value)
+{ 
+    return data.GetUShortValue(value, types); 
+}
+
+Value* Context::GetUIntValue(std::uint32_t value)
+{ 
+    return data.GetUIntValue(value, types); 
+}
+
+Value* Context::GetIntegerValue(Type* type, std::int64_t value)
+{
+    return data.GetIntegerValue(type, value, types);
+}
+
+Value* Context::GetFloatingValue(Type* type, double value) 
+{ 
+    return data.GetFloatingValue(type, value, types); 
+}
+
+Value* Context::MakeSymbolValue(const soul::ast::Span& span, Type* type, const std::string& symbol)
+{ 
+    return data.MakeSymbolValue(span, type, symbol); 
+}
+
+Value* Context::MakeStringValue(const soul::ast::Span& span, const std::string& value, bool crop)
+{
+    return data.MakeStringValue(span, value, crop);
+}
+
+Value* Context::MakeStructureValue(const soul::ast::Span& span, const std::vector<Value*>& fieldValues, StructureType* structureType)
+{
+    return data.MakeStructureValue(span, fieldValues, structureType);
+}
+
+Value* Context::MakeArrayValue(const soul::ast::Span& span, const std::vector<Value*>& elements, ArrayType* arrayType)
+{
+    return data.MakeArrayValue(span, elements, arrayType);
+}
+
+Value* Context::MakeStringArrayValue(const soul::ast::Span& span, char prefix, const std::vector<Value*>& elements)
+{
+    return data.MakeStringArrayValue(span, prefix, elements);
+}
+
 std::expected<Function*, int> Context::AddFunctionDefinition(const soul::ast::Span& span, Type* type, const std::string& functionId, bool inline_, 
     bool linkOnce, bool createEntry, otava::intermediate::MetadataRef* metadataRef)
 {

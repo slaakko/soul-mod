@@ -472,6 +472,7 @@ void ClassTypeSymbol::MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Co
         std::int32_t layoutIndex = objectLayout.size();
         memberVar->SetLayoutIndex(layoutIndex);
         TypeSymbol* memberVarType = memberVar->GetType()->FinalType(sourcePos, context);
+        memberVar->SetDeclaredType(memberVarType);
         if (memberVarType->IsForwardClassDeclarationSymbol())
         {
             ThrowException("could not make object layout: incomplete types not allowed", sourcePos, context);
@@ -753,11 +754,12 @@ void ClassTypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
 
 otava::intermediate::Type* ClassTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    otava::intermediate::Type* irType = emitter.GetType(Id());
+    util::uuid irId = IrId(context);
+    otava::intermediate::Type* irType = emitter.GetType(irId);
     if (!irType)
     {
-        irType = emitter.GetOrInsertFwdDeclaredStructureType(Id(), util::ToUtf8(FullName()));
-        emitter.SetType(Id(), irType);
+        irType = emitter.GetOrInsertFwdDeclaredStructureType(irId, util::ToUtf8(FullName()));
+        emitter.SetType(irId, irType);
         MakeObjectLayout(sourcePos, context);
         int n = objectLayout.size();
         std::vector<otava::intermediate::Type*> elementTypes;
@@ -773,8 +775,8 @@ otava::intermediate::Type* ClassTypeSymbol::IrType(Emitter& emitter, const soul:
         otava::intermediate::StructureType* structureType = static_cast<otava::intermediate::StructureType*>(type);
         structureType->SetMetadataRef(metadataRef);
         irType = type;
-        emitter.SetType(Id(), irType);
-        emitter.ResolveForwardReferences(Id(), structureType);
+        emitter.SetType(irId, irType);
+        emitter.ResolveForwardReferences(irId, structureType);
     }
     return irType;
 }
@@ -988,6 +990,18 @@ int ForwardClassDeclarationSymbol::Arity()
     else
     {
         return 0;
+    }
+}
+
+util::uuid ForwardClassDeclarationSymbol::IrId(Context* context) const
+{
+    if (classTypeSymbol)
+    {
+        return classTypeSymbol->IrId(context);
+    }
+    else
+    {
+        return Id();
     }
 }
 

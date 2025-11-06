@@ -125,7 +125,8 @@ TypeSymbol* TemplateParameterSymbol::Unify(TypeSymbol* argType, Context* context
     return argType;
 }
 
-TypeSymbol* TemplateParameterSymbol::UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context)
+TypeSymbol* TemplateParameterSymbol::UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, 
+    const soul::ast::SourcePos& sourcePos, Context* context)
 {
     auto it = templateParameterMap.find(this);
     if (it != templateParameterMap.cend())

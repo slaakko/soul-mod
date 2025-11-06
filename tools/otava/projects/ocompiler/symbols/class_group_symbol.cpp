@@ -338,7 +338,7 @@ std::expected<ClassTypeSymbol*, int> ClassGroupSymbol::GetBestMatchingClass(cons
         }
         return std::expected<ClassTypeSymbol*, int>(viableClasses[0].first);
     }
-    return std::expected<ClassTypeSymbol*, int>(nullptr);
+    return std::expected<ClassTypeSymbol*, int>(static_cast<ClassTypeSymbol*>(nullptr));
 }
 
 } // namespace otava::symbols

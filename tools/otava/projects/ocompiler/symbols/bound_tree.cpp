@@ -245,6 +245,16 @@ BoundNode::~BoundNode()
 {
 }
 
+std::expected<Scope*, int> BoundNode::GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const
+{
+    return std::expected<Scope*, int>(static_cast<Scope*>(nullptr));
+}
+
+bool BoundNode::IsReturnStatementNode() const
+{ 
+    return kind == BoundNodeKind::boundReturnStatementNode; 
+}
+
 BoundExpressionNode::BoundExpressionNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
     BoundNode(kind_, sourcePos_), flags(BoundExpressionFlags::none), type(type_)
 {
@@ -276,7 +286,7 @@ std::expected<Scope*, int> BoundExpressionNode::GetMemberScope(otava::ast::Node*
             if (!rv) return std::unexpected<int>(rv.error());
             TypeSymbol* finalType = *rv;
             TypeSymbol* baseType = finalType->GetBaseType();
-            return baseType->GetScope();
+            return std::expected<Scope*, int>(baseType->GetScope());
         }
         else if (op->IsArrowNode() && type->IsPointerType())
         {
@@ -290,7 +300,7 @@ std::expected<Scope*, int> BoundExpressionNode::GetMemberScope(otava::ast::Node*
             if (!pt) return std::unexpected<int>(pt.error());
             TypeSymbol* type = *pt;
             TypeSymbol* baseType = type->GetBaseType();
-            return baseType->GetScope();
+            return std::expected<Scope*, int>(baseType->GetScope());
         }
         else if (op->IsArrowNode() && plainType->IsClassTypeSymbol())
         {
@@ -301,10 +311,10 @@ std::expected<Scope*, int> BoundExpressionNode::GetMemberScope(otava::ast::Node*
             if (!rv) return std::unexpected<int>(rv.error());
             TypeSymbol* finalType = *rv;
             TypeSymbol* baseType = finalType;
-            return baseType->GetScope();
+            return std::expected<Scope*, int>(baseType->GetScope());
         }
     }
-    return nullptr;
+    return std::expected<Scope*, int>(static_cast<Scope*>(nullptr));
 }
 
 bool BoundExpressionNode::GetFlag(BoundExpressionFlags flag) const
@@ -860,6 +870,16 @@ BoundSequenceStatementNode::BoundSequenceStatementNode(const soul::ast::SourcePo
 {
 }
 
+bool BoundSequenceStatementNode::IsReturnStatementNode() const 
+{ 
+    return second->IsReturnStatementNode(); 
+}
+
+bool BoundSequenceStatementNode::IsTerminator() const 
+{ 
+    return second->IsTerminator(); 
+}
+
 void BoundSequenceStatementNode::Accept(BoundTreeVisitor& visitor)
 {
     visitor.Visit(*this);
@@ -958,6 +978,11 @@ BoundLiteralNode::BoundLiteralNode(Value* value_, const soul::ast::SourcePos& so
 {
 }
 
+Value* BoundLiteralNode::GetValue() const
+{ 
+    return value; 
+}
+
 void BoundLiteralNode::Accept(BoundTreeVisitor& visitor)
 {
     visitor.Visit(*this);
@@ -1011,6 +1036,16 @@ BoundExpressionNode* BoundStringLiteralNode::Clone() const
 BoundVariableNode::BoundVariableNode(VariableSymbol* variable_, const soul::ast::SourcePos& sourcePos_) :
     BoundExpressionNode(BoundNodeKind::boundVariableNode, sourcePos_, variable_->GetReferredType()), variable(variable_)
 {
+}
+
+VariableSymbol* BoundVariableNode::GetVariable() const 
+{ 
+    return variable; 
+}
+
+BoundExpressionNode* BoundVariableNode::ThisPtr() const 
+{ 
+    return thisPtr.get(); 
 }
 
 void BoundVariableNode::Accept(BoundTreeVisitor& visitor)
@@ -1404,6 +1439,11 @@ BoundExpressionNode* BoundParameterNode::Clone() const
 BoundEnumConstant::BoundEnumConstant(EnumConstantSymbol* enumConstant_, const soul::ast::SourcePos& sourcePos_) :
     BoundExpressionNode(BoundNodeKind::boundEnumConstantNode, sourcePos_, enumConstant_->GetEnumType()), enumConstant(enumConstant_)
 {
+}
+
+EnumConstantSymbol* BoundEnumConstant::EnumConstant() const 
+{ 
+    return enumConstant; 
 }
 
 void BoundEnumConstant::Accept(BoundTreeVisitor& visitor)
