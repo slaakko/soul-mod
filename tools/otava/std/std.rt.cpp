@@ -5,6 +5,8 @@
 
 module std.rt;
 
+import std.trace;
+
 namespace std {
 
 rt_init::rt_init()

@@ -41,7 +41,7 @@ std::expected<std::unique_ptr<otava::build::Project>, int> ProjectParser<LexerT>
     {
         if (*lexer == soul::lexer::END_TOKEN)
         {
-            return value;
+            return std::expected<std::unique_ptr<otava::build::Project>, int>(std::move(value));
         }
         else
         {
@@ -52,7 +52,7 @@ std::expected<std::unique_ptr<otava::build::Project>, int> ProjectParser<LexerT>
     {
         return lexer.FarthestError();
     }
-    return value;
+    return std::expected<std::unique_ptr<otava::build::Project>, int>(std::move(value));
 }
 
 template<typename LexerT>

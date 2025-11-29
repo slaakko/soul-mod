@@ -124,7 +124,7 @@ void DerivedToBaseConversion::GenerateCode(Emitter& emitter, std::vector<BoundEx
     }
     otava::intermediate::Value* classPtr = emitter.Stack().Pop();
     otava::intermediate::Value* deltaValue = emitter.EmitLong(delta);
-    emitter.Stack().Push(emitter.EmitClassPtrConversion(classPtr, deltaValue, baseTypePtr->IrType(emitter, sourcePos, context)));
+    emitter.Stack().Push(emitter.EmitClassPtrConversion(classPtr, deltaValue, baseTypePtr->IrType(emitter, sourcePos, context), true));
 }
 
 class DerivedToBaseArgumentConversion : public ArgumentConversion
@@ -203,7 +203,7 @@ void BaseToDerivedConversion::GenerateCode(Emitter& emitter, std::vector<BoundEx
     }
     otava::intermediate::Value* classPtr = emitter.Stack().Pop();
     otava::intermediate::Value* deltaValue = emitter.EmitLong(delta);
-    emitter.Stack().Push(emitter.EmitClassPtrConversion(classPtr, deltaValue, derivedTypePtr->IrType(emitter, sourcePos, context)));
+    emitter.Stack().Push(emitter.EmitClassPtrConversion(classPtr, deltaValue, derivedTypePtr->IrType(emitter, sourcePos, context), true));
 }
 
 class BaseToDerivedArgumentConversion : public ArgumentConversion
@@ -924,6 +924,64 @@ FunctionSymbol* FunctionToFunctionPtrArgumentConversion::Get(TypeSymbol* paramTy
     return nullptr;
 }
 
+class AdjustDeletePtrConversionFn : public FunctionSymbol
+{
+public:
+    AdjustDeletePtrConversionFn(TypeSymbol* thisPtrBaseType_, Context* context);
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+private:
+    TypeSymbol* thisPtrBaseType;
+};
+
+AdjustDeletePtrConversionFn::AdjustDeletePtrConversionFn(TypeSymbol* thisPtrBaseType_, Context* context) : 
+    FunctionSymbol(U"@conversion"), thisPtrBaseType(thisPtrBaseType_)
+{
+    SetConversion();
+    SetAccess(Access::public_);
+    SetConversionKind(ConversionKind::explicitConversion);
+    TypeSymbol* voidType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType);
+    TypeSymbol* voidPtrType = voidType->AddPointer(context);
+    ParameterSymbol* arg = new ParameterSymbol(U"arg", voidPtrType);
+    AddParameter(arg, soul::ast::SourcePos(), context);
+    SetReturnType(voidPtrType, context);
+}
+
+void AdjustDeletePtrConversionFn::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    ClassTypeSymbol* classType = nullptr;
+    if (thisPtrBaseType->IsClassTypeSymbol())
+    {
+        classType = static_cast<ClassTypeSymbol*>(thisPtrBaseType);
+    }
+    else
+    {
+        ThrowException("class type expected", sourcePos, context);
+    }
+    std::vector<ClassTypeSymbol*> vptrHolderClasses = classType->VPtrHolderClasses();
+    if (vptrHolderClasses.empty())
+    {
+        ThrowException("no vptr holder classes for the class '" + util::ToUtf8(classType->FullName()) + "'", sourcePos, context);
+    }
+    otava::intermediate::Value* thisPtr = emitter.Stack().Pop();
+    emitter.Stack().Push(thisPtr);
+    ClassTypeSymbol* vptrHolderClass = vptrHolderClasses.front();
+    if (classType != vptrHolderClass)
+    {
+        thisPtr = emitter.EmitBitcast(thisPtr, vptrHolderClass->AddPointer(context)->IrType(emitter, sourcePos, context));
+    }
+    otava::intermediate::Value* vptrPtr = emitter.EmitElemAddr(thisPtr, emitter.EmitLong(vptrHolderClass->VPtrIndex()));
+    otava::intermediate::Value* voidVPtr = emitter.EmitLoad(vptrPtr);
+    otava::intermediate::Value* vptr = emitter.EmitBitcast(voidVPtr, classType->VPtrType(emitter));
+    otava::intermediate::Value* objectDeltaPtrElem = emitter.EmitElemAddr(thisPtr, emitter.EmitLong(vptrHolderClass->DeltaIndex()));
+    otava::intermediate::Type* deltaPtrType = emitter.MakePtrType(emitter.GetLongType());
+    otava::intermediate::Value* objectDeltaPtr = emitter.EmitBitcast(objectDeltaPtrElem, deltaPtrType);
+    otava::intermediate::Value* objectDelta = emitter.EmitLoad(objectDeltaPtr);
+    otava::intermediate::Value* adjustedObjectPtr = emitter.EmitClassPtrConversion(thisPtr, objectDelta, thisPtr->GetType(), false);
+    emitter.Stack().Push(adjustedObjectPtr);
+}
+
 ArgumentConversionTable::ArgumentConversionTable()
 {
     AddArgumentConversion(new IdentityArgumentConversion());
@@ -940,6 +998,19 @@ ArgumentConversionTable::ArgumentConversionTable()
     AddArgumentConversion(new EnumTypeToUnderlyingTypeArgumentConversion());
     AddArgumentConversion(new UnderlyingTypeEnumTypeToArgumentConversion());
     AddArgumentConversion(new FunctionToFunctionPtrArgumentConversion());
+}
+
+FunctionSymbol* ArgumentConversionTable::GetAdjustDeletePtrConversionFn(TypeSymbol* thisPtrBaseType, Context* context)
+{
+    auto it = adjustDeletePtrConversionFns.find(thisPtrBaseType);
+    if (it != adjustDeletePtrConversionFns.end())
+    {
+        return it->second;
+    }
+    FunctionSymbol* adjustDeletePtrConversion = new AdjustDeletePtrConversionFn(thisPtrBaseType, context);
+    conversionFunctions.push_back(std::unique_ptr<FunctionSymbol>(adjustDeletePtrConversion));
+    adjustDeletePtrConversionFns[thisPtrBaseType] = adjustDeletePtrConversion;
+    return adjustDeletePtrConversion;
 }
 
 void ArgumentConversionTable::AddArgumentConversion(ArgumentConversion* argumentConversion)

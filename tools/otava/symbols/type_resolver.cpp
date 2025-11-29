@@ -402,7 +402,7 @@ void TypeResolver::Visit(otava::ast::IdentifierNode& node)
         {
             ContainerScope* containerScope = static_cast<ContainerScope*>(scope);
             std::vector<Symbol*> symbols;
-            std::set<Scope*> visited;
+            std::set<const Scope*> visited;
             containerScope->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, LookupFlags::none, symbols, visited, context);
             if (!symbols.empty())
             {

@@ -1829,9 +1829,10 @@ std::expected<soul::xml::Element*, int> FunctionDefinitionSymbol::ToXml() const
     return std::expected<soul::xml::Element*, int>(element);
 }
 
-ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol,
+ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol_,
     const soul::ast::SourcePos& sourcePos, Context* context) :
-    FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, functionDefinitionSymbol->Name()), irName()
+    FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, functionDefinitionSymbol_->Name()), irName(), 
+    functionDefinitionSymbol(functionDefinitionSymbol_)
 {
     std::expected<std::string, int> irv = functionDefinitionSymbol->IrName(context);
     if (!irv)
@@ -1864,7 +1865,7 @@ ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDe
 }
 
 ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(const std::u32string& name_) :
-    FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, name_)
+    FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, name_), functionDefinitionSymbol(nullptr)
 {
 }
 
@@ -1884,6 +1885,16 @@ std::expected<bool, int> ExplicitlyInstantiatedFunctionDefinitionSymbol::Write(W
     if (!rv) return rv;
     rv = writer.GetBinaryStreamWriter().Write(irName);
     if (!rv) return rv;
+    if (!functionDefinitionSymbol->IsGenerated())
+    {
+        rv = writer.GetBinaryStreamWriter().Write(functionDefinitionSymbol->Id());
+        if (!rv) return rv;
+    }
+    else
+    {
+        rv = writer.GetBinaryStreamWriter().Write(util::nil_uuid());
+        if (!rv) return rv;
+    }
     return std::expected<bool, int>(true);
 }
 
@@ -1894,7 +1905,35 @@ std::expected<bool, int> ExplicitlyInstantiatedFunctionDefinitionSymbol::Read(Re
     std::expected<std::string, int> srv = reader.GetBinaryStreamReader().ReadUtf8String();
     if (!srv) return std::unexpected<int>(srv.error());
     irName = *srv;
+    rv = reader.GetBinaryStreamReader().ReadUuid(functionDefinitionId);
+    if (!rv) return rv;
     return std::expected<bool, int>(true);
+}
+
+std::expected<bool, int> ExplicitlyInstantiatedFunctionDefinitionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
+{
+    std::expected<bool, int> rv = FunctionDefinitionSymbol::Resolve(symbolTable, context);
+    if (!rv) return rv;
+    if (!functionDefinitionId.is_nil())
+    {
+        std::expected<FunctionDefinitionSymbol*, int> drv = symbolTable.GetFunctionDefinition(functionDefinitionId);
+        if (!drv) return std::unexpected<int>(drv.error());
+        functionDefinitionSymbol = *drv;
+    }
+    return std::expected<bool, int>(true);
+}
+
+std::expected<otava::intermediate::Type*, int> ExplicitlyInstantiatedFunctionDefinitionSymbol::IrType(Emitter& emitter,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const
+{
+    if (functionDefinitionSymbol)
+    {
+        return functionDefinitionSymbol->IrType(emitter, sourcePos, context);
+    }
+    else
+    {
+        return FunctionDefinitionSymbol::IrType(emitter, sourcePos, context);
+    }
 }
 
 bool FunctionLess::operator()(FunctionSymbol* left, FunctionSymbol* right) const

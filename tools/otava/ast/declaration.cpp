@@ -56,7 +56,12 @@ Node* SimpleDeclarationNode::Clone() const
     {
         clonedAttributes = attributes->Clone();
     }
-    SimpleDeclarationNode* clone = new SimpleDeclarationNode(GetSourcePos(), clonedDeclSpecifiers, clonedInitDeclaratorList, clonedAttributes, semicolon->Clone());
+    Node* clonedSemicolon = nullptr;
+    if (semicolon)
+    {
+        clonedSemicolon = semicolon->Clone();
+    }
+    SimpleDeclarationNode* clone = new SimpleDeclarationNode(GetSourcePos(), clonedDeclSpecifiers, clonedInitDeclaratorList, clonedAttributes, clonedSemicolon);
     return clone;
 }
 

@@ -41,7 +41,7 @@ public:
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
     TypeSymbol* DirectType(Context* context) override;
-    bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
+    bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const override;
     bool IsBasicStringCharType(Context* context) override { return PointerCount() == 0 && PlainType(context)->IsBasicStringCharType(context); }
     bool IsBasicStringChar16Type(Context* context) override { return PointerCount() == 0 && PlainType(context)->IsBasicStringChar16Type(context); }
     bool IsBasicStringChar32Type(Context* context) override { return PointerCount() == 0 && PlainType(context)->IsBasicStringChar32Type(context); }

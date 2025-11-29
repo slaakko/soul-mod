@@ -176,6 +176,10 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     int np = numParams;
     std::string asmFilename = otava::codegen::GenerateCode(context, config, optLevel, true, mainWrapperIrName, np, true, compileUnitInitFnNames);
     std::ofstream mainFile(mainFilePath);
+    if (!mainFile)
+    {
+        throw std::runtime_error("could not create file '" + mainFilePath + "'");
+    }
     util::CodeFormatter formatter(mainFile);
     formatter.WriteLine("extern \"C\" void ort_init();");
     formatter.WriteLine("extern \"C\" void ort_done();");

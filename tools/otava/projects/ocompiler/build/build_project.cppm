@@ -7,7 +7,6 @@ export module otava.build_project;
 
 import std;
 import soul.lexer.file.map;
-//import class_info_index;
 import otava.symbols;
 import otava.symbols.function_definition_symbol_set;
 
@@ -76,8 +75,13 @@ public:
     std::expected<bool, int> ResolveForwardDeclarationsAndAddDerivedClasses(otava::symbols::ModuleMapper& moduleMapper, const std::string& config, int optLevel);
     inline void SetTarget(Target target_) { target = target_; }
     inline Target GetTarget() const { return target; }
-    //inline info::class_index& Index() { return index; }
+    inline otava::symbols::class_index& Index() { return index; }
     inline otava::symbols::FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() { return &functionDefinitionSymbolSet; }
+    inline otava::symbols::TraceInfo& GetTraceInfo() { return traceInfo; };
+    std::expected<bool, int> ReadTraceInfo(const std::string& moduleDir);
+    std::expected<bool, int> WriteTraceInfo(const std::string& moduleDir);
+    std::expected<bool, int> ReadClassIndex(const std::string& moduleDir);
+    std::expected<bool, int> WriteClassIndex(const std::string& moduleDir);
 private:
     soul::lexer::FileMap* fileMap;
     std::string filePath;
@@ -100,8 +104,9 @@ private:
     bool loaded;
     std::vector<std::string> moduleNames;
     std::vector<Define> defines;
-    //info::class_index index;
+    otava::symbols::class_index index;
     otava::symbols::FunctionDefinitionSymbolSet functionDefinitionSymbolSet;
+    otava::symbols::TraceInfo traceInfo;
 };
 
 } // namespace otava::build

@@ -306,7 +306,7 @@ std::expected<TypeSymbol*, int> ClassTemplateSpecializationSymbol::FinalType(con
     return std::expected<TypeSymbol*, int>(specialization);
 }
 
-bool ClassTemplateSpecializationSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
+bool ClassTemplateSpecializationSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const
 {
     const TypeSymbol* thisTypeSymbol = this;
     if (visited.find(thisTypeSymbol) != visited.end()) return true;
@@ -316,7 +316,7 @@ bool ClassTemplateSpecializationSymbol::IsComplete(std::set<const TypeSymbol*>& 
         if (templateArg->IsTypeSymbol())
         {
             TypeSymbol* templateArgType = static_cast<TypeSymbol*>(templateArg);
-            if (!templateArgType->IsComplete(visited)) return false;
+            if (!templateArgType->IsComplete(visited, incompleteType)) return false;
         }
     }
     return true;
@@ -447,11 +447,12 @@ ClassTemplateSpecializationSymbol* GetClassTemplateSpecializationArgType(TypeSym
 std::expected<bool, int> InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     std::set<const Symbol*> tpi_visited;
-    if (specialization->IsTemplateParameterInstantiation(context, tpi_visited)) return;
-    if (specialization->Destructor()) return;
+    if (specialization->IsTemplateParameterInstantiation(context, tpi_visited)) return std::expected<bool, int>(true);
+    if (specialization->Destructor()) return std::expected<bool, int>(true);
     std::set<const TypeSymbol*> visited;
-    if (!specialization->IsComplete(visited)) return;
-    if (specialization->InstantiatingDestructor()) return;
+    const TypeSymbol* incompleteType = nullptr;
+    if (!specialization->IsComplete(visited, incompleteType)) return std::expected<bool, int>(true);
+    if (specialization->InstantiatingDestructor()) return std::expected<bool, int>(true);
     specialization->SetInstantiatingDestructor(true);
     context->PushResetFlag(ContextFlags::skipFunctionDefinitions);
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
@@ -488,9 +489,9 @@ class VirtualFunctionNodeClassifierVisitor : public otava::ast::DefaultVisitor
 {
 public:
     VirtualFunctionNodeClassifierVisitor();
-    void Visit(otava::ast::VirtualNode& node);
-    void Visit(otava::ast::OverrideNode& node);
-    void Visit(otava::ast::FinalNode& node);
+    void Visit(otava::ast::VirtualNode& node) override;
+    void Visit(otava::ast::OverrideNode& node) override;
+    void Visit(otava::ast::FinalNode& node) override;
     bool GetValue() const { return value; }
 private:
     bool value;
@@ -720,8 +721,7 @@ std::expected<ClassTemplateSpecializationSymbol*, int> InstantiateClassTemplate(
     std::set<const Symbol*> visited;
     if (!specialization->IsTemplateParameterInstantiation(context, visited))
     {
-        //AddClassInfo(specialization, context); // todo
-        std::expected<bool, int> rv = InstantiateDestructor(specialization, sourcePos, context);
+        rv = InstantiateDestructor(specialization, sourcePos, context);
         if (!rv) return std::unexpected<int>(rv.error());
         rv = InstantiateVirtualFunctions(specialization, sourcePos, context);
         if (!rv) return std::unexpected<int>(rv.error());

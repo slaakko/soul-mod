@@ -45,9 +45,17 @@ std::expected<Symbol*, int> Reader::ReadSymbol()
         std::expected<Symbol*, int> crv = CreateSymbol(kind, name, symbolTable);
         if (!crv) return crv;
         Symbol* symbol = *crv;
+#ifdef DEBUG_SYMBOL_IO
+        std::expected<std::string, int> sname = util::ToUtf8(symbol->Name());
+        if (!sname) return std::unexpected<int>(sname.error());
+        std::cout << ">reading " << SymbolKindToString(kind) << " '" << *sname << "'\n";
+#endif 
         std::expected<bool, int> rv = symbol->Read(*this);
         if (!rv) return std::unexpected<int>(rv.error());
         symbolTable->GetSymbolMap()->AddSymbol(symbol);
+#ifdef DEBUG_SYMBOL_IO
+        std::cout << "<read " << SymbolKindToString(kind) << " '" << *sname << "'\n";
+#endif 
         return std::expected<Symbol*, int>(symbol);
     }
 }

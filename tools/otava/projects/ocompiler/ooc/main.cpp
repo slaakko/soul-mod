@@ -54,9 +54,9 @@ std::string Version()
 
 int main(int argc, const char** argv)
 {
-    std::cout << "*********************************************" << "\n";
+    std::cout << "**********************************************" << "\n";
     std::cout << "* Otava (for Otava) C++ Compiler version " << Version() << "\n";
-    std::cout << "*********************************************" << "\n";
+    std::cout << "**********************************************" << "\n";
     otava::parser::recorded::parse::Init();
     soul::lexer::FileMap fileMap;
     std::vector<std::string> files;
@@ -239,7 +239,7 @@ int main(int argc, const char** argv)
             auto fp = util::GetFullPath(arg);
             if (!fp)
             {
-                std::cerr << util::GetErrorMessage(fp.error()) << std::endl;
+                std::cerr << util::GetErrorMessage(fp.error(), true) << std::endl;
                 return 1;
             }
             files.push_back(std::move(*fp));
@@ -269,7 +269,7 @@ int main(int argc, const char** argv)
             auto p = otava::build::ParseProjectFile(file);
             if (!p)
             {
-                std::cerr << util::GetErrorMessage(p.error()) << std::endl;
+                std::cerr << util::GetErrorMessage(p.error(), true) << std::endl;
                 return 1;
             }
             std::unique_ptr<otava::build::Project> project = std::move(*p);
@@ -311,7 +311,7 @@ int main(int argc, const char** argv)
             auto rv = otava::build::Build(fileMap, project.get(), config, optLevel, buildFlags, projectSet);
             if (!rv)
             {
-                std::cerr << util::GetErrorMessage(rv.error()) << std::endl;
+                std::cerr << util::GetErrorMessage(rv.error(), true) << std::endl;
                 return 1;
             }
         }
@@ -320,7 +320,7 @@ int main(int argc, const char** argv)
             auto s = otava::build::ParseSolutionFile(file);
             if (!s)
             {
-                std::cerr << util::GetErrorMessage(s.error()) << std::endl;
+                std::cerr << util::GetErrorMessage(s.error(), true) << std::endl;
                 return 1;
             }
             std::unique_ptr<otava::build::Solution> solution = std::move(*s);
@@ -357,7 +357,7 @@ int main(int argc, const char** argv)
             auto rv = otava::build::Build(fileMap, solution.get(), config, optLevel, buildFlags, projectSet);
             if (!rv)
             {
-                std::cerr << util::GetErrorMessage(rv.error()) << std::endl;
+                std::cerr << util::GetErrorMessage(rv.error(), true) << std::endl;
                 return 1;
             }
         }

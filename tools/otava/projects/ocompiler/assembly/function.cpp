@@ -27,7 +27,7 @@ void LinkOnceDeclaration::Write(util::CodeFormatter& formatter)
     formatter.WriteLine("LINK_ONCE " + Name());
 }
 
-Function::Function(const std::string& name_) : name(name_), activeFunctionPart(FunctionPart::body)
+Function::Function(const std::string& name_) : name(name_), activeFunctionPart(FunctionPart::body), body(this)
 {
 }
 
@@ -42,7 +42,7 @@ void Function::AddInstruction(Instruction* inst)
         }
         case FunctionPart::body:
         {
-            body.push_back(std::unique_ptr<Instruction>(inst));
+            body.AddChild(inst);
             break;
         }
         case FunctionPart::epilogue:
@@ -51,11 +51,6 @@ void Function::AddInstruction(Instruction* inst)
             break;
         }
     }
-}
-
-void Function::InsertInstruction(int index, Instruction* inst)
-{
-    body.insert(body.begin() + index, std::unique_ptr<Instruction>(inst));
 }
 
 void Function::SetActiveFunctionPart(FunctionPart activeFunctionPart_)
@@ -111,9 +106,11 @@ void Function::Write(util::CodeFormatter& formatter)
     {
         instruction->Write(formatter);
     }
-    for (const auto& instruction : body)
+    Instruction* instruction = FirstInstruction();
+    while (instruction)
     {
         instruction->Write(formatter);
+        instruction = instruction->Next();
     }
     for (const auto& instruction : epilogue)
     {

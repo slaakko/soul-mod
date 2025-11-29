@@ -37,7 +37,8 @@ Symbol* ConceptGroupSymbol::GetSingleSymbol()
 {
     if (concepts.size() == 1)
     {
-        return concepts.front();
+        Symbol* sym = concepts.front();
+        return sym;
     }
     else
     {
@@ -101,9 +102,10 @@ std::expected<bool, int> ConceptGroupSymbol::Resolve(SymbolTable& symbolTable, C
 
 void ConceptGroupSymbol::Merge(ConceptGroupSymbol* that)
 {
+    if (this == that) return;
     for (ConceptSymbol* cncp : that->concepts)
     {
-        if (std::find(concepts.cbegin(), concepts.cend(), cncp) == concepts.end())
+        if (std::find(concepts.begin(), concepts.end(), cncp) == concepts.end())
         {
             concepts.push_back(cncp);
         }

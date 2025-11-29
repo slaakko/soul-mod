@@ -139,6 +139,7 @@ StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* fu
     resolveMemberVariable(false),
     resolveInitializerArguments(false),
     setVPtrStatementsGenerated(false),
+    setLineCodeGenerated(false),
     postfix(false),
     globalStaticVariableSymbol(nullptr)
 {
@@ -249,6 +250,7 @@ void StatementBinder::Visit(otava::ast::ConstructorNode& node)
         context->GetBoundFunction()->SetCtorInitializer(ctorInitializer);
     }
     node.Right()->Accept(*this);
+    boundStatement->SetSourcePos(node.GetSourcePos());
     context->GetBoundFunction()->SetBody(static_cast<BoundCompoundStatementNode*>(boundStatement));
     AddConvertingConstructorToConversionTable(functionDefinitionSymbol, node.GetSourcePos(), context);
 }
@@ -668,6 +670,16 @@ void StatementBinder::Visit(otava::ast::CompoundStatementNode& node)
             currentCompoundStatement->AddStatement(boundStatement);
         }
     }
+    if (!setLineCodeGenerated)
+    {
+        setLineCodeGenerated = true;
+        otava::ast::Node* setLineStatementNode = context->GetBoundFunction()->GetSetLineStatementNode();
+        if (setLineStatementNode)
+        {
+            BoundStatementNode* boundStatement = BindStatement(setLineStatementNode, functionDefinitionSymbol, context);
+            context->GetBoundFunction()->SetBoundSetLineStatement(boundStatement);
+        }
+    }
     context->GetSymbolTable()->EndScopeGeneric(context);
     SetStatement(currentCompoundStatement);
 }
@@ -1041,9 +1053,16 @@ void StatementBinder::Visit(otava::ast::ContinueStatementNode& node)
 
 void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
 {
+    TypeSymbol* voidType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::voidType);
     BoundReturnStatementNode* boundReturnStatement = new BoundReturnStatementNode(node.GetSourcePos());
     if (node.ReturnValue())
     {
+        if (!context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ReturnType() || 
+            TypesEqual(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ReturnType()->DirectType(context)->FinalType(node.GetSourcePos(), context), 
+                voidType, context))
+        {
+            ThrowException("cannot return a value", node.ReturnValue()->GetSourcePos(), context);
+        }
         if (context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ReturnsClass())
         {
             std::vector<std::unique_ptr<BoundExpressionNode>> classReturnArgs;
@@ -1138,6 +1157,12 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
                 context->PopFlags();
             }
         }
+    }
+    else if (context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ReturnType() && 
+        !TypesEqual(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ReturnType()->DirectType(context)->FinalType(node.GetSourcePos(), context),
+        voidType, context))
+    {
+        ThrowException("must return a value", node.GetSourcePos(), context);
     }
     SetStatement(boundReturnStatement);
 }
@@ -1606,6 +1631,20 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
 
 FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
+    TraceInfo* traceInfo = context->GetTraceInfo();
+    if (traceInfo)
+    {
+        int64_t sourceFileId = traceInfo->GetSourceFileId(context->GetModule()->FilePath());
+        if (sourceFileId != -1)
+        {
+            traceInfo->AddFunctionTraceInfo(sourceFileId, context->GetModule()->Id(), util::ToUtf8(functionDefinitionSymbol->FullName()));
+        }
+        else
+        {
+            SetExceptionThrown();
+            throw std::runtime_error("source file id for source file '" + context->GetModule()->FilePath() + "' not set");
+        }
+    }
     if (!functionDefinitionSymbol->IsSpecialization())
     {
         if (functionDefinitionSymbol->Declaration())
@@ -1622,6 +1661,7 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
     if (functionDefinitionSymbol->IsTemplateParameterInstantiation(context, visited)) return functionDefinitionSymbol;
     functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
+    GenerateEnterFunctionCode(functionDefinitionNode, functionDefinitionSymbol, context);
     functionDefinitionNode->Accept(binder);
     functionDefinitionSymbol = binder.GetFunctionDefinitionSymbol();
     bool hasNoReturnAttribute = false;
@@ -1632,6 +1672,7 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
     if (functionDefinitionSymbol->ReturnType() && 
         !functionDefinitionSymbol->ReturnType()->IsVoidType() && 
         functionDefinitionSymbol->GroupName() != U"main" && 
+        functionDefinitionSymbol->GroupName() != U"@destructor" && 
         !hasNoReturnAttribute)
     {
         CheckFunctionReturnPaths(functionDefinitionNode, context);

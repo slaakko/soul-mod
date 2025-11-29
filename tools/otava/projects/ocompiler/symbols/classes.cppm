@@ -149,7 +149,7 @@ public:
     FunctionSymbol* GetConversionFunction(TypeSymbol* type, Context* context) const;
     virtual ClassGroupSymbol* Group() const { return group; }
     inline void SetGroup(ClassGroupSymbol* group_) { group = group_; }
-    bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
+    bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const override;
     FunctionSymbol* CopyCtor() const { return copyCtor; }
     std::expected<bool, int> GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context);
     void ResetCopyCtor() { copyCtor = nullptr; }
@@ -210,7 +210,7 @@ public:
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     std::expected<TypeSymbol*, int> FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::expected<otava::intermediate::Type*, int> IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
+    bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const override;
     inline ClassGroupSymbol* Group() const { return group; }
     inline void SetGroup(ClassGroupSymbol* group_) { group = group_; }
 private:
@@ -223,7 +223,6 @@ private:
 
 std::expected<bool, int> BeginClass(otava::ast::Node* node, Context* context);
 std::expected<bool, int> EndClass(otava::ast::Node* node, Context* context);
-// void AddClassInfo(ClassTypeSymbol* classTypeSymbol, Context* context); // todo
 std::expected<bool, int> ProcessElaboratedClassDeclaration(otava::ast::Node* node, otava::symbols::Context* context);
 void SetCurrentAccess(otava::ast::Node* node, otava::symbols::Context* context);
 std::expected<bool, int> GetClassAttributes(otava::ast::Node* node, std::u32string& name, otava::symbols::ClassKind& kind, TypeSymbol*& specialization, Context* context);

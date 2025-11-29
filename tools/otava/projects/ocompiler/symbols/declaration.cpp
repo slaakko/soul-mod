@@ -47,9 +47,9 @@ namespace otava::symbols {
 struct ArraySizeComputer : public otava::ast::DefaultVisitor
 {
     ArraySizeComputer();
-    void Visit(otava::ast::InitDeclaratorNode& node);
-    void Visit(otava::ast::AssignmentInitNode& node);
-    void Visit(otava::ast::BracedInitListNode& node);
+    void Visit(otava::ast::InitDeclaratorNode& node) override;
+    void Visit(otava::ast::AssignmentInitNode& node) override;
+    void Visit(otava::ast::BracedInitListNode& node) override;
     std::int64_t size;
 };
 
@@ -93,8 +93,8 @@ class NoReturnAttributeMatcher : public otava::ast::DefaultVisitor
 {
 public:
     NoReturnAttributeMatcher();
-    void Visit(otava::ast::AttributeNode& node);
-    void Visit(otava::ast::IdentifierNode& node);
+    void Visit(otava::ast::AttributeNode& node) override;
+    void Visit(otava::ast::IdentifierNode& node) override;
     inline bool GetValue() const { return value; }
 private:
     bool matchId;

@@ -44,10 +44,6 @@ void LoadImportedModules(Project* project, otava::symbols::Module* module, otava
             module->AddImportedModule(projectModule);
             module->AddDependsOnModule(projectModule);
             LoadImportedModules(project, module, projectModule, moduleMapper, config, optLevel);
-            if (project->GetTarget() == Target::program)
-            {
-                project->Index().imp(projectModule->GetSymbolTable()->ClassIndex(), true);
-            }
         }
         else
         {
@@ -56,10 +52,6 @@ void LoadImportedModules(Project* project, otava::symbols::Module* module, otava
             module->AddDependsOnModule(childModule);
             module->Import(childModule, moduleMapper, config, optLevel);
             LoadImportedModules(project, module, childModule, moduleMapper, config, optLevel);
-            if (project->GetTarget() == Target::program)
-            {
-                project->Index().imp(childModule->GetSymbolTable()->ClassIndex(), true);
-            }
         }
     }
 }
@@ -120,7 +112,7 @@ void Project::LoadModules(otava::symbols::ModuleMapper& moduleMapper, const std:
 {
     if (loaded) return;
     loaded = true;
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">project '" << Name() << "' loading modules" << "\n";
 #endif
     for (const auto& module : modules)
@@ -134,7 +126,7 @@ void Project::LoadModules(otava::symbols::ModuleMapper& moduleMapper, const std:
     for (const auto& module : modules)
     {
         if (!module) continue;
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
         std::cout << ">" << module->Name() << "\n";
 #endif
         for (const auto& exportedModuleName : module->ExportModuleNames())
@@ -168,18 +160,14 @@ void Project::LoadModules(otava::symbols::ModuleMapper& moduleMapper, const std:
                 for (otava::symbols::Module* exportedModule : importedModule->ExportedModules())
                 {
                     module->Import(exportedModule, moduleMapper, config, optLevel);
-                    if (GetTarget() == Target::program)
-                    {
-                        index.imp(module->GetSymbolTable()->ClassIndex(), true);
-                    }
                 }
             }
         }
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
         std::cout << "<" << module->Name() << "\n";
 #endif
     }
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << "<project '" << Name() << "' modules loaded" << "\n";
 #endif
 }
@@ -309,6 +297,42 @@ void Project::ResolveForwardDeclarationsAndAddDerivedClasses(otava::symbols::Mod
     }
     projectModule.ResolveForwardDeclarations();
     projectModule.AddDerivedClasses();
+}
+
+void Project::ReadTraceInfo(const std::string& moduleDir)
+{
+    std::string traceInfoFilePath = util::GetFullPath(util::Path::Combine(moduleDir, "trace.info"));
+    util::FileStream file(traceInfoFilePath, util::OpenMode::read | util::OpenMode::binary);
+    util::BufferedStream bufStream(file);
+    util::BinaryStreamReader reader(bufStream);
+    traceInfo.Read(reader);
+}
+
+void Project::WriteTraceInfo(const std::string& moduleDir)
+{
+    std::string traceInfoFilePath = util::GetFullPath(util::Path::Combine(moduleDir, "trace.info"));
+    util::FileStream file(traceInfoFilePath, util::OpenMode::write | util::OpenMode::binary);
+    util::BufferedStream bufStream(file);
+    util::BinaryStreamWriter writer(bufStream);
+    traceInfo.Write(writer);
+}
+
+void Project::ReadClassIndex(const std::string& moduleDir)
+{
+    std::string classIndexFilePath = util::GetFullPath(util::Path::Combine(moduleDir, "class.index"));
+    util::FileStream file(classIndexFilePath, util::OpenMode::read | util::OpenMode::binary);
+    util::BufferedStream bufStream(file);
+    util::BinaryStreamReader reader(bufStream);
+    index.read(reader);
+}
+
+void Project::WriteClassIndex(const std::string& moduleDir)
+{
+    std::string classIndexFilePath = util::GetFullPath(util::Path::Combine(moduleDir, "class.index"));
+    util::FileStream file(classIndexFilePath, util::OpenMode::write | util::OpenMode::binary);
+    util::BufferedStream bufStream(file);
+    util::BinaryStreamWriter writer(bufStream);
+    index.write(writer);
 }
 
 } // namespace otava::build

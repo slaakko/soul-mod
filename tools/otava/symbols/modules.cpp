@@ -25,6 +25,19 @@ import otava.ast.error;
 
 namespace otava::symbols {
 
+std::string MakeModuleDirPath(const std::string& root, const std::string& config, int optLevel)
+{
+    if (config == "release")
+    {
+        return util::GetFullPath(util::Path::Combine(util::Path::Combine(root, config),
+            std::to_string(otava::symbols::GetOptLevel(optLevel, true))));
+    }
+    else
+    {
+        return util::GetFullPath(util::Path::Combine(root, config));
+    }
+}
+
 std::string MakeModuleFilePath(const std::string& root, const std::string& config, int optLevel, const std::string& moduleName)
 {
     if (config == "release")
@@ -369,57 +382,57 @@ void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std:
     symbolTable.SetSymbolMap(moduleMapper.GetSymbolMap());
     reader.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
     symbolTable.SetNodeMap(moduleMapper.GetNodeMap());
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">module '" << Name() << "' read symbol table" << "\n";
 #endif
     symbolTable.Read(reader);
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << "<module '" << Name() << "' read symbol table" << "\n";
 #endif
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">module '" << Name() << "' read evaluation context" << "\n";
 #endif
     evaluationContext.Read(reader);
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << "<module '" << Name() << "' read evaluation context" << "\n";
 #endif
     otava::ast::Reader astReader(&reader.GetBinaryStreamReader());
     astReader.SetNodeMap(moduleMapper.GetNodeMap());
     astFile.reset(new otava::ast::File());
     astFile->Read(astReader);
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">module '" << Name() << "' import" << "\n";
 #endif
     Import(moduleMapper, config, optLevel);
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << "<module '" << Name() << "' import" << "\n";
 #endif
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">module '" << Name() << "' read maps" << "\n";
 #endif
     symbolTable.ReadMaps(reader, moduleMapper.GetNodeMap());
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << "<module '" << Name() << "' read maps" << "\n";
 #endif
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">module '" << Name() << "' resolve symbols" << "\n";
 #endif
     symbolTable.Resolve(reader.GetContext());
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << "<module '" << Name() << "' resolve symbols" << "\n";
 #endif
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">module '" << Name() << "' resolve evaluation context" << "\n";
 #endif
     evaluationContext.Resolve(symbolTable, reader.GetContext());
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << "<module '" << Name() << "' resolve evaluation context" << "\n";
 #endif
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">module '" << Name() << "' import after resolve" << "\n";
 #endif
     symbolTable.ImportAfterResolve();
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << "<module '" << Name() << "' import after resolve" << "\n";
 #endif
     reading = false;
@@ -478,7 +491,7 @@ std::string ModuleMapper::GetModuleFilePath(const std::string& moduleName, const
 
 Module* ModuleMapper::GetModule(const std::string& moduleName, const std::string& config, int optLevel)
 {
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">module mapper get module '" << moduleName << "'" << "\n";
 #endif
     std::lock_guard<std::recursive_mutex> lock(mtx);
@@ -504,42 +517,42 @@ Module* ModuleMapper::GetModule(const std::string& moduleName, const std::string
 
 Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::string& moduleFilePath, const std::string& config, int optLevel)
 {
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">module mapper load module '" << moduleName << "'" << "\n";
 #endif
     Reader reader(moduleFilePath);
     std::unique_ptr<Module> module(new Module(moduleName));
     module->SetFilePath(moduleFilePath);
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">module mapper read header '" << moduleName << "'" << "\n";
 #endif
     module->ReadHeader(reader, *this);
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << "<module mapper read header '" << moduleName << "'" << "\n";
 #endif
     Module* modulePtr = module.get();
     moduleMap[moduleName] = modulePtr;
     for (const std::string& importedModuleName : module->ImportModuleNames())
     {
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
         std::cout << ">module mapper import '" << moduleName << "' <- '" << importedModuleName << "'" << "\n";
 #endif
         Module* importedModule = GetModule(importedModuleName, config, optLevel);
         module->AddImportedModule(importedModule);
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
         std::cout << "<module mapper import '" << moduleName << "' <- '" << importedModuleName << "'" << "\n";
 #endif
     }
     SetCurrentModule(module.get());
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">module mapper complete read '" << moduleName << "'" << "\n";
 #endif
     module->CompleteRead(reader, *this, config, optLevel);
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << "<module mapper complete read '" << moduleName << "'" << "\n";
 #endif
     modules.push_back(std::move(module));
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">module mapper load module '" << moduleName << "'" << "\n";
 #endif
     return modulePtr;

@@ -1016,7 +1016,14 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                 }
                 else
                 {
-                    ThrowException("ambiguous reference to variable '" + util::ToUtf8(variableGroup->Name()) + "'", node.GetSourcePos(), context);
+                    if (variableGroup->Variables().empty())
+                    {
+                        ThrowException("variable '" + util::ToUtf8(variableGroup->Name()) + "' not found", node.GetSourcePos(), context);
+                    }
+                    else
+                    {
+                        ThrowException("ambiguous reference to variable '" + util::ToUtf8(variableGroup->Name()) + "'", node.GetSourcePos(), context);
+                    }
                 }
                 break;
             }
@@ -1816,19 +1823,25 @@ void ExpressionBinder::Visit(otava::ast::DeletePtrNode& node)
     std::vector<std::unique_ptr<BoundExpressionNode>> dtorArgs;
     dtorArgs.push_back(std::unique_ptr<BoundExpressionNode>(ptr->Clone()));
     std::vector<TypeSymbol*> templateArgs;
-    std::unique_ptr<BoundFunctionCallNode> dtor = ResolveOverloadThrow(
+    std::unique_ptr<BoundFunctionCallNode> dtorCall = ResolveOverloadThrow(
         context->GetSymbolTable()->CurrentScope(), U"@destructor", templateArgs, dtorArgs, node.GetSourcePos(), context);
     std::vector<std::unique_ptr<BoundExpressionNode>> opDeleteArgs;
-    opDeleteArgs.push_back(std::unique_ptr<BoundExpressionNode>(ptr->Clone()));
-    if (dtor->GetFunctionSymbol()->IsVirtual())
+    if (dtorCall->GetFunctionSymbol()->IsVirtual())
     {
-        dtor->SetFlag(BoundExpressionFlags::virtualCall);
+        dtorCall->SetFlag(BoundExpressionFlags::virtualCall);
+        TypeSymbol* thisPtrBaseType = ptr->GetType()->GetBaseType();
+        FunctionSymbol* conversionFn = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetAdjustDeletePtrConversionFn(thisPtrBaseType, context);
+        opDeleteArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(ptr->Clone(), conversionFn, node.GetSourcePos())));
     }
-    std::unique_ptr<BoundFunctionCallNode> opDeleteCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope(), U"operator delete", templateArgs,
-        opDeleteArgs, node.GetSourcePos(), context);
-    if (!dtor->GetFunctionSymbol()->IsTrivialDestructor())
+    else
     {
-        boundExpression = new BoundExpressionSequenceNode(node.GetSourcePos(), dtor.release(), opDeleteCall.release());
+        opDeleteArgs.push_back(std::unique_ptr<BoundExpressionNode>(ptr->Clone()));
+    }
+    std::unique_ptr<BoundFunctionCallNode> opDeleteCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope(), 
+        U"operator delete", templateArgs, opDeleteArgs, node.GetSourcePos(), context);
+    if (!dtorCall->GetFunctionSymbol()->IsTrivialDestructor())
+    {
+        boundExpression = new BoundExpressionSequenceNode(node.GetSourcePos(), dtorCall.release(), opDeleteCall.release());
     }
     else
     {

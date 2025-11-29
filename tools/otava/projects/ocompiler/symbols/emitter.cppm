@@ -47,7 +47,7 @@ public:
         context->AddFwdDependentType(fwdDeclaredType, type);
     }
     otava::intermediate::Type* GetOrInsertFwdDeclaredStructureType(const util::uuid& id, const std::string& comment);
-    void ResolveForwardReferences(const util::uuid& typeId, otava::intermediate::StructureType* structureType);
+    std::expected<bool, int> ResolveForwardReferences(const util::uuid& typeId, otava::intermediate::StructureType* structureType);
     inline otava::intermediate::Type* GetVoidType() { return context->GetVoidType(); }
     inline otava::intermediate::Type* GetBoolType() { return context->GetBoolType(); }
     inline otava::intermediate::Type* GetSByteType() { return context->GetSByteType(); }
@@ -199,6 +199,8 @@ public:
     inline otava::intermediate::MetadataLong* CreateMetadataLong(std::int64_t value) { return context->CreateMetadataLong(value); }
     inline otava::intermediate::MetadataString* CreateMetadataString(const std::string& value) { return context->CreateMetadataString(value, false); }
     inline otava::intermediate::MetadataRef* CreateMetadataRef(int nodeId) { return context->CreateMetadataRef(soul::ast::Span(), nodeId); }
+    inline int Line() const { return line; }
+    inline void SetLine(int line_) { line = line_; }
 private:
     otava::intermediate::Context* context;
     IrValueStack* stack;
@@ -207,6 +209,7 @@ private:
     std::map<std::u32string, otava::intermediate::Value*> vtabVariableMap;
     otava::intermediate::Value* retValue;
     std::map<util::uuid, otava::intermediate::StructureType*> forwardDeclarationMap;
+    int line;
 };
 
 } // namespace otava::symbols

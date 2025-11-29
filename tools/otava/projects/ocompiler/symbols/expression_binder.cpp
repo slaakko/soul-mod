@@ -1606,7 +1606,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                     }
                     boundExpression = boundVariable;
                 }
-                else
+                else 
                 {
                     std::expected<std::string, int> name = util::ToUtf8(variableGroup->Name());
                     if (!name)
@@ -1614,9 +1614,18 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                         SetError(name.error());
                         return;
                     }
-                    std::unexpected<int> result = Error("ambiguous reference to variable '" + *name + "'", node.GetSourcePos(), context);
-                    SetError(result.error());
-                    return;
+                    if (variableGroup->Empty())
+                    {
+                        std::unexpected<int> result = Error("variable '" + *name + "' not found", node.GetSourcePos(), context);
+                        SetError(result.error());
+                        return;
+                    }
+                    else
+                    {
+                        std::unexpected<int> result = Error("ambiguous reference to variable '" + *name + "'", node.GetSourcePos(), context);
+                        SetError(result.error());
+                        return;
+                    }
                 }
                 break;
             }

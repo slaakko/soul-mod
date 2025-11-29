@@ -65,7 +65,7 @@ public:
     virtual TypeSymbol* Unify(TypeSymbol* argType, Context* context);
     virtual TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, 
         const soul::ast::SourcePos& sourcePos, Context* context) { return nullptr; }
-    virtual bool IsComplete(std::set<const TypeSymbol*>& visited) const { return true; }
+    virtual bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const { return true; }
     TypeSymbol* AddConst(Context* context);
     TypeSymbol* RemoveConst(Context* context);
     TypeSymbol* AddPointer(Context* context);

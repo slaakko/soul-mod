@@ -169,6 +169,8 @@
     <ClCompile Include="rand.cppm" />
     <ClCompile Include="threading.cpp" />
     <ClCompile Include="threading.cppm" />
+    <ClCompile Include="trace.cpp" />
+    <ClCompile Include="trace.cppm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\soul\lexer\lexer.vcxproj">

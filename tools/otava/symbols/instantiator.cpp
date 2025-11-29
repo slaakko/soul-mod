@@ -128,9 +128,9 @@ void Instantiator::Visit(otava::ast::FunctionDefinitionNode& node)
     if (context->GetFlag(ContextFlags::skipFunctionDefinitions)) return;
     bool get = false;
     int scopes = BeginFunctionDefinition(node.DeclSpecifiers(), node.Declarator(), functionNode, node.Specifiers(), get, context);
-    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || 
-        context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) ||
-        context->GetFlag(ContextFlags::instantiateInlineFunction))
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate | 
+        ContextFlags::instantiateMemFnOfClassTemplate |
+        ContextFlags::instantiateInlineFunction))
     {
         if (functionNode)
         {

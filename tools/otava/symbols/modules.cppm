@@ -22,6 +22,7 @@ class Reader;
 class Visitor;
 class FunctionDefinitionSymbolSet;
 
+std::string MakeModuleDirPath(const std::string& root, const std::string& config, int optLevel);
 std::string MakeModuleFilePath(const std::string& root, const std::string& config, int optLevel, const std::string& moduleName);
 
 class ModuleMapper;

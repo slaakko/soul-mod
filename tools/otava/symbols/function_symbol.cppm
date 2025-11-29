@@ -237,14 +237,18 @@ private:
 class ExplicitlyInstantiatedFunctionDefinitionSymbol : public FunctionDefinitionSymbol
 {
 public:
-    ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol, const soul::ast::SourcePos& sourcePos, Context* context);
+    ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol_, const soul::ast::SourcePos& sourcePos, Context* context);
     ExplicitlyInstantiatedFunctionDefinitionSymbol(const std::u32string& name_);
     std::string SymbolKindStr() const override { return "explicitly instantiated function definition symbol"; }
     std::string SymbolDocKindStr() const override { return "explcitly_instantiated_function_definition"; }
     std::string IrName(Context* context) const override { return irName; }
+    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
 private:
+    FunctionDefinitionSymbol* functionDefinitionSymbol;
+    util::uuid functionDefinitionId;
     std::string irName;
 };
 

@@ -48,7 +48,7 @@ void WriteClassIndex(const std::string& classIndexFilePath, info::class_index& i
     util::FileStream fileStream(classIndexFilePath, util::OpenMode::write | util::OpenMode::binary);
     util::BufferedStream bufferedStream(fileStream);
     util::BinaryStreamWriter writer(bufferedStream);
-    index.write(writer, true);
+    index.write(writer);
 }
 
 void Visit(std::int32_t fileId, Project* project, std::vector<int>& topologicalOrder, std::set<int>& visited)
@@ -92,11 +92,11 @@ public:
     ModuleDependencyVisitor(std::int32_t file_, Project* project_, const std::string& fileName_, bool implementationUnit_);
     otava::symbols::Module* GetModule() { return module.release(); }
     const std::string& InterfaceUnitName() const { return interfaceUnitName; }
-    void Visit(otava::ast::ModuleDeclarationNode& node);
-    void Visit(otava::ast::TranslationUnitNode& node);
-    void Visit(otava::ast::ExportDeclarationNode& node);
-    void Visit(otava::ast::ImportDeclarationNode& node);
-    void Visit(otava::ast::ModuleNameNode& node);
+    void Visit(otava::ast::ModuleDeclarationNode& node) override;
+    void Visit(otava::ast::TranslationUnitNode& node) override;
+    void Visit(otava::ast::ExportDeclarationNode& node) override;
+    void Visit(otava::ast::ImportDeclarationNode& node) override;
+    void Visit(otava::ast::ModuleNameNode& node) override;
 private:
     Project* project;
     std::string fileName;
@@ -250,6 +250,7 @@ void WriteFilesFile(const std::string& projectFilesPath, const std::vector<std::
 void BuildSequentially(Project* project, const std::string& config, int optLevel, BuildFlags flags)
 {
     otava::symbols::SetProjectReady(false);
+    std::string moduleDirPath = otava::symbols::MakeModuleDirPath(project->Root(), config, otava::symbols::GetOptLevel(optLevel, config == "release"));
     util::uuid projectId = otava::symbols::MakeProjectId(project->Name());
     if ((flags & BuildFlags::seed) != BuildFlags::none)
     {
@@ -457,6 +458,10 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         {
             context.SetReleaseConfig();
         }
+        if (!context.ReleaseConfig())
+        {
+            context.SetTraceInfo(&project->GetTraceInfo());
+        }
         context.SetOptLevel(optLevel);
         context.SetFileMap(&project->GetFileMap());
         context.SetInstantiationQueue(&instantiationQueue);
@@ -464,6 +469,10 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         std::string compileUnitId = "compile_unit_" + util::GetSha1MessageDigest(filePath);
         context.GetBoundCompileUnit()->SetId(compileUnitId);
         otava::symbols::Module* module = project->GetModule(file);
+        if (!context.ReleaseConfig())
+        {
+            project->GetTraceInfo().AddSourceFileInfo(module->Id(), filePath);
+        }
         module->SetImportIndex(importIndex++);
         module->GetNodeIdFactory()->SetModuleId(module->Id());
         module->SetFilePath(filePath);
@@ -485,7 +494,6 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         module->SetFile(new otava::ast::File(util::Path::GetFileName(filePath), node.release()));
         module->SetImplementationUnitNames(implementationNameMap[module->Name()]);
         //projectModule.Import(module, moduleMapper, config, optLevel);
-        project->Index().imp(module->GetSymbolTable()->ClassIndex(), true);
         if ((flags & BuildFlags::symbolXml) != BuildFlags::none)
         {
             std::string dirPath;
@@ -516,6 +524,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         std::string asmFileName = otava::codegen::GenerateCode(
         context, config, optLevel, (flags & BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, 
             std::vector<std::string>());
+        project->Index().import(module->GetSymbolTable()->ClassIndex());
         module->Write(project->Root(), config, optLevel, &context);
         if ((flags & BuildFlags::verbose) != BuildFlags::none)
         {
@@ -558,6 +567,10 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         {
             context.SetReleaseConfig();
         }
+        if (!context.ReleaseConfig())
+        {
+            context.SetTraceInfo(&project->GetTraceInfo());
+        }
         context.SetOptLevel(optLevel);
         context.SetFileMap(&project->GetFileMap());
         context.SetInstantiationQueue(&instantiationQueue);
@@ -565,6 +578,10 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         std::string compileUnitId = "compile_unit_" + util::GetSha1MessageDigest(filePath);
         context.GetBoundCompileUnit()->SetId(compileUnitId);
         otava::symbols::Module* module = project->GetModule(file);
+        if (!context.ReleaseConfig())
+        {
+            project->GetTraceInfo().AddSourceFileInfo(module->Id(), filePath);
+        }
         module->SetKind(otava::symbols::ModuleKind::implementationModule);
         module->SetImportIndex(importIndex++);
         module->GetNodeIdFactory()->SetModuleId(module->Id());
@@ -585,7 +602,6 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
             otava::ast::WriteXml(node.get(), xmlFilePath);
         }
         module->SetFile(new otava::ast::File(util::Path::GetFileName(filePath), node.release()));
-        project->Index().imp(module->GetSymbolTable()->ClassIndex(), true);
         if (!interfaceUnitName.empty())
         {
             otava::symbols::Module* interfaceUnitModule = moduleMapper.GetModule(interfaceUnitName, config, optLevel);
@@ -594,6 +610,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         }
         std::string asmFileName = otava::codegen::GenerateCode(
             context, config, optLevel, (flags& BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, std::vector<std::string>());
+        project->Index().import(module->GetSymbolTable()->ClassIndex());
         asmFileNames.push_back(asmFileName);
         otava::symbols::BoundFunctionNode* initFn = context.GetBoundCompileUnit()->GetCompileUnitInitializationFunction();
         if (initFn)
@@ -609,8 +626,11 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         }
     }
     projectModule.AddDerivedClasses();
+    project->WriteTraceInfo(moduleDirPath);
+    project->WriteClassIndex(moduleDirPath);
     ProjectTarget projectTarget = ProjectTarget::library;
     std::string classIndexFilePath;
+    std::string traceBinPath;
     if (project->GetTarget() == Target::program)
     {
         if (mainFunctionIrName.empty())
@@ -626,7 +646,25 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
             mainFunctionIrName, mainFunctionParams, allCompileUnitInitFunctionNames, config, optLevel, project);
         asmFileNames.push_back(mainAsmFileName);
         projectTarget = ProjectTarget::program;
-        classIndexFilePath = util::Path::Combine(util::Path::GetDirectoryName(projectFilePath), "class_index.bin");
+        otava::symbols::TraceBin traceBin;
+        for (const auto& referencedProject : project->ReferencedProjects())
+        {
+            std::string moduleDirPath = otava::symbols::MakeModuleDirPath(referencedProject->Root(), config, otava::symbols::GetOptLevel(optLevel, config == "release"));
+            referencedProject->ReadTraceInfo(moduleDirPath);
+            if (config != "release")
+            {
+                traceBin.Import(referencedProject->GetTraceInfo());
+            }
+            referencedProject->ReadClassIndex(moduleDirPath);
+            project->Index().import(referencedProject->Index());
+        }
+        if (config != "release")
+        {
+            traceBin.Import(project->GetTraceInfo());
+            traceBinPath = util::GetFullPath(util::Path::Combine(moduleDirPath, "trace.bin"));
+            otava::symbols::WriteTraceBin(traceBin, traceBinPath);
+        }
+        classIndexFilePath = util::GetFullPath(util::Path::Combine(moduleDirPath, "class_index.bin"));
         WriteClassIndex(classIndexFilePath, project->Index());
     }
     else
@@ -655,7 +693,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         }
     }
     MakeProjectFile(project, projectFilePath, asmFileNames, cppFileNames, resourceFileNames,
-        libraryDirs, project->ReferencedProjects(), config, optLevel, classIndexFilePath, projectTarget, (flags& BuildFlags::verbose) != BuildFlags::none);
+        libraryDirs, project->ReferencedProjects(), config, optLevel, classIndexFilePath, traceBinPath, projectTarget, (flags& BuildFlags::verbose) != BuildFlags::none);
     MSBuild(projectFilePath, config);
     std::string projectFilesPath = util::GetFullPath(util::Path::Combine(project->Root(), project->Name() + ".files"));
     WriteFilesFile(projectFilesPath, files);

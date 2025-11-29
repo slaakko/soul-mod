@@ -502,9 +502,16 @@ std::expected<bool, int> SequenceNode::AddNode(Node* node)
     return std::expected<bool, int>(true);
 }
 
-void SequenceNode::Clear()
+void SequenceNode::InsertNode(int index, Node* node)
+{
+    node->SetParent(this);
+    nodes.Insert(index, node);
+}
+
+std::expected<bool, int> SequenceNode::Clear()
 {
     nodes.Clear();
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> SequenceNode::Write(Writer& writer)
@@ -556,10 +563,11 @@ std::expected<bool, int> ListNode::AddNode(Node* node)
     return std::expected<bool, int>(true);
 }
 
-void ListNode::Clear()
+std::expected<bool, int> ListNode::Clear()
 {
     nodes.Clear();
     items.clear();
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> ListNode::Write(Writer& writer)

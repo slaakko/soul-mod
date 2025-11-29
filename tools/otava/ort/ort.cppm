@@ -92,3 +92,4 @@ export extern "C" double ort_stod(const char* s, std::size_t* pos);
 export extern "C" double ort_strtod(const char* str, char** str_end);
 export extern "C" void ort_exit(int exitCode);
 export extern "C" int ort_run_process(const char* commandLine);
+export extern "C" void ort_debug_break();

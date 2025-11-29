@@ -679,6 +679,7 @@ std::expected<bool, int> EnumTypeDefaultCtor::Read(Reader& reader)
 std::expected<bool, int> EnumTypeDefaultCtor::Resolve(SymbolTable& symbolTable, Context* context)
 {
     std::expected<bool, int> rv = FunctionSymbol::Resolve(symbolTable, context);
+    if (!rv) return rv;
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
     if (type && type->IsEnumeratedTypeSymbol())
     {

@@ -143,7 +143,7 @@ void AddToUsesVec(std::vector<Instruction*>& uses, Value* value)
 }
 
 Instruction::Instruction(const soul::ast::Span& span_, Type* type_, OpCode opCode_) :
-    Value(span_, ValueKind::instruction, type_), opCode(opCode_), metadataRef(nullptr), index(-1), regValueIndex(-1), assemblyIndex(-1)
+    Value(span_, ValueKind::instruction, type_), util::Component(), opCode(opCode_), metadataRef(nullptr), index(-1), regValueIndex(-1), assemblyInstruction(nullptr)
 {
 }
 
@@ -765,7 +765,7 @@ std::expected<Value*, int> RetInstruction::Clone(CloneContext& cloneContext) con
     clone->AddToUses();
     return std::expected<Value*, int>(static_cast<Value*>(clone));
 }
-
+ 
 void RetInstruction::Write(util::CodeFormatter& formatter)
 {
     formatter.Write(util::Format("ret ", 8));
@@ -2228,7 +2228,7 @@ void NoOperationInstruction::Write(util::CodeFormatter& formatter)
     formatter.Write("nop");
 }
 
-BasicBlock::BasicBlock(const soul::ast::Span& span_, std::int32_t id_) : span(span_), id(id_), instructions(this)
+BasicBlock::BasicBlock(const soul::ast::Span& span_, std::int32_t id_) : util::Component(), span(span_), id(id_), instructions(this)
 {
 }
 
@@ -2274,7 +2274,7 @@ std::expected<bool, int> BasicBlock::CloneInstructions(CloneContext& cloneContex
 void BasicBlock::VisitInstructions(Visitor& visitor)
 {
     Instruction* inst = FirstInstruction();
-    while (inst != nullptr)
+    while (inst)
     {
         inst->Accept(visitor);
         inst = inst->Next();
@@ -2492,7 +2492,9 @@ void BasicBlock::Write(util::CodeFormatter& formatter)
 Function::Function(const soul::ast::Span& span_, FunctionType* type_, const std::string& name_, bool once_, bool definition_, bool createEntry,
     MetadataRef* metadataRef_, Context* context) :
     Value(span_, ValueKind::function, type_),
-    flags(FunctionFlags::none), span(span_), type(type_), name(name_), metadataRef(metadataRef_), basicBlocks(this), nextRegNumber(0), nextBBNumber(0), mdId(-1)
+    util::Component(),
+    flags(FunctionFlags::none), span(span_), type(type_), name(name_), metadataRef(metadataRef_), 
+    basicBlocks(this), nextRegNumber(0), nextBBNumber(0), mdId(-1)
 {
     SetContainer(context->GetCode().Functions());
     if (createEntry)
@@ -2969,7 +2971,7 @@ std::expected<bool, int> Function::Write(util::CodeFormatter& formatter)
     formatter.WriteLine("function " + ptrType->Name() + " " + name + mdIdStr);
     if (basicBlocks.IsEmpty())
     {
-        return;
+        return std::expected<bool, int>(true);
     }
     SetNumbers();
     formatter.WriteLine("{");
@@ -2999,7 +3001,7 @@ std::expected<bool, int> Function::Write(util::CodeFormatter& formatter)
     return std::expected<bool, int>(true);
 }
 
-Code::Code() : context(nullptr), currentFunction(nullptr), functions(this), totalFunctions(0)
+Code::Code() : util::Component(), context(nullptr), currentFunction(nullptr), functions(this), totalFunctions(0)
 {
 }
 
@@ -3063,7 +3065,7 @@ std::expected<Function*, int> Code::AddFunctionDefinition(const soul::ast::Span&
             return std::expected<Function*, int>(prev);
         }
     }
-    Function* function = new Function(span, functionType, functionId, linkOnce, true, createEntry, metadataRef, GetContext());
+    Function* function = new Function(span, functionType, functionId, linkOnce, true, createEntry, metadataRef, context);
     if (inline_)
     {
         function->SetInline();
@@ -3088,7 +3090,7 @@ std::expected<Function*, int> Code::AddFunctionDeclaration(const soul::ast::Span
         }
         return prev;
     }
-    Function* function = new Function(span, functionType, functionId, false, false, false, nullptr, GetContext());
+    Function* function = new Function(span, functionType, functionId, false, false, false, nullptr, context);
     functions.AddChild(function);
     functionMap[function->Name()] = function;
     return std::expected<Function*, int>(function);

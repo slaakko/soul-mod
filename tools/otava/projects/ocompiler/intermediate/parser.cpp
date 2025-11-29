@@ -35,7 +35,7 @@ std::expected<bool, int> Parse(const std::string& filePath, Context& context, bo
     std::expected<bool, int> rv = otava::intermediate::parser::IntermediateParser<LexerType>::Parse(lexer, &context);
     if (!rv) return rv;
     context.GetTypes().ResolveComments();
-    context.GetFileMap().AddFileContent(fileIndex, std::move(content), lexer.GetLineStartIndeces());
+    //context.GetFileMap().AddFileContent(fileIndex, std::move(content), lexer.GetLineStartIndeces());
     return std::expected<bool, int>(true);
 }
 

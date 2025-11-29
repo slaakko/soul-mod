@@ -25,6 +25,7 @@ class Reader;
 class Visitor;
 class FunctionDefinitionSymbolSet;
 
+std::expected<std::string, int> MakeModuleDirPath(const std::string& root, const std::string& config, int optLevel);
 std::expected<std::string, int> MakeModuleFilePath(const std::string& root, const std::string& config, int optLevel, const std::string& moduleName);
 
 class ModuleMapper;

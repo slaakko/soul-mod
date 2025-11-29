@@ -2,6 +2,7 @@ module std.atomic;
 
 import std.rt;
 import std.atexit;
+import std.trace;
 
 namespace std {
 

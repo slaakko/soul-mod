@@ -253,7 +253,7 @@ void Metadata::ResolveMetadataReferences()
 
 std::expected<bool, int> Metadata::Write(util::CodeFormatter& formatter)
 {
-    if (metadataNodes.empty()) return;
+    if (metadataNodes.empty()) return std::expected<bool, int>(false);
     formatter.WriteLine();
     formatter.WriteLine("metadata");
     formatter.WriteLine("{");

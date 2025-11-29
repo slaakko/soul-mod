@@ -241,11 +241,15 @@ TypeSymbol* CompoundTypeSymbol::DirectType(Context* context)
     return context->GetSymbolTable()->MakeCompoundType(directBaseType, derivations, context);
 }
 
-bool CompoundTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
+bool CompoundTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const
 {
     if (visited.find(this) != visited.end()) return true;
     visited.insert(this);
-    return baseType->IsComplete(visited);
+    if (PointerCount() > 0 || HasDerivation(derivations, Derivations::refMask))
+    {
+        return true;
+    }
+    return baseType->IsComplete(visited, incompleteType);
 }
 
 bool CompoundTypeSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const 

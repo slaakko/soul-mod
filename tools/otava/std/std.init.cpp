@@ -2,6 +2,7 @@ module std.init;
 
 import std.thread.mutex;
 import std.atexit;
+import std.trace;
 
 namespace std {
 

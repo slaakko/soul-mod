@@ -113,6 +113,12 @@ extern "C" void ort_exit(int exitCode);
 extern "C" int ort_run_process(const char* commandLine);
 extern "C" void ort_set_random_seed(std::uint64_t seed);
 extern "C" void ort_reset_rng();
+extern "C" void ort_debug_break();
+extern "C" void ort_push_function(void* traceEntry);
+extern "C" void ort_pop_function(void* traceEntry);
+extern "C" int ort_generate_stack_trace();
+extern "C" const char* ort_get_stack_trace(int traceId);
+extern "C" void ort_free_stack_trace(int traceId);
 
 using FILE = void;
 int stdin_ = 0;

@@ -67,6 +67,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline std::uint64_t Value() const { return value; }
+    inline void SetValue(std::uint64_t value_) { value = value_; }
     inline Suffix GetSuffix() const { return suffix; }
     inline Base GetBase() const { return base; }
 private:

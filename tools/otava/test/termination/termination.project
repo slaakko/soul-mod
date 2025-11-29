@@ -1,0 +1,3 @@
+project termination;
+target=program;
+source <termination.cpp>;

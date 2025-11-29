@@ -1,6 +1,7 @@
 module std.thread.mutex;
 
 import std.rt;
+import std.trace;
 
 namespace std {
 

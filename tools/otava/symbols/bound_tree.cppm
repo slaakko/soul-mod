@@ -7,7 +7,7 @@ export module otava.symbols.bound.tree;
 
 import std;
 import soul.ast.source.pos;
-import otava.ast.node;
+import otava.ast;
 import otava.symbols.emitter;
 import otava.intermediate;
 import otava.symbols.class_templates;
@@ -84,7 +84,8 @@ enum class BoundNodeKind
     boundConjunctionNode, boundDisjunctionNode, boundExpressionSequenceNode, boundConstructExpressionNode,
     boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundPtrToRefNode, boundDefaultInitNode,
     boundTemporaryNode, boundConstructTemporaryNode, boundCtorInitializerNode, boundDtorTerminatorNode, boundEmptyDestructorNode,
-    boundThrowExpressionNode, boundTryStatementNode, boundHandlerNode, boundFunctionValueNode, boundVariableAsVoidPtrNode
+    boundThrowExpressionNode, boundTryStatementNode, boundHandlerNode, boundFunctionValueNode, boundVariableAsVoidPtrNode, 
+    boundAdjustedThisPtrNode
 };
 
 std::string BoundNodeKindStr(BoundNodeKind nodeKind);
@@ -98,6 +99,7 @@ public:
     inline BoundNodeKind Kind() const { return kind; }
     virtual Scope* GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const { return nullptr; }
     inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
+    void SetSourcePos(const soul::ast::SourcePos& sourcePos_) { sourcePos = sourcePos_; }
     inline bool IsBoundAddressOfNode() const { return kind == BoundNodeKind::boundAddressOfNode; }
     inline bool IsBoundDereferenceNode() const { return kind == BoundNodeKind::boundDereferenceNode; }
     inline virtual bool IsReturnStatementNode() const { return kind == BoundNodeKind::boundReturnStatementNode; }
@@ -270,6 +272,7 @@ private:
 };
 
 class BoundCompoundStatementNode;
+class BoundReturnStatementNode;
 
 class BoundFunctionNode : public BoundNode
 {
@@ -287,6 +290,10 @@ public:
     void AddDefaultFunctionSymbol(FunctionSymbol* defaultFunctionSymbol);
     inline void SetSerial(int serial_) { serial = serial_; };
     inline int Serial() const { return serial; }
+    inline void SetSetLineStatementNode(otava::ast::Node* setLineStatementNode_) { setLineStatementNode.reset(setLineStatementNode_); }
+    inline otava::ast::Node* GetSetLineStatementNode() const { return setLineStatementNode.get(); }
+    inline void SetBoundSetLineStatement(BoundStatementNode* boundSetLineStatement_) { boundSetLineStatement.reset(boundSetLineStatement_); }
+    inline BoundStatementNode* GetBoundSetLineStatement() const { return boundSetLineStatement.get(); }
 private:
     FunctionDefinitionSymbol* functionDefinitionSymbol;
     std::unique_ptr<BoundCtorInitializerNode> ctorInitializer;
@@ -294,6 +301,8 @@ private:
     std::unique_ptr<BoundCompoundStatementNode> body;
     std::vector<std::unique_ptr<FunctionSymbol>> defaultFunctionSymbols;
     int serial;
+    std::unique_ptr<otava::ast::Node> setLineStatementNode;
+    std::unique_ptr<BoundStatementNode> boundSetLineStatement;
 };
 
 class BoundStatementNode : public BoundNode
@@ -538,6 +547,7 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     bool HasValue() const override { return true; }
     inline Value* GetValue() const { return value; }
+    inline void SetValue(Value* value_) { value = value_; }
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Clone() const override;
 private:
@@ -971,6 +981,23 @@ public:
 private:
     std::unique_ptr<BoundExpressionNode> addrOfBoundVariable;
 };
+
+/*
+class BoundAdjustedThisPtrNode : public BoundExpressionNode
+{
+public:
+    BoundAdjustedThisPtrNode(ClassTypeSymbol* forClass_, ClassTypeSymbol* vptrHolderClass_, TypeSymbol* voidPtrType, 
+        const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    BoundExpressionNode* Clone() const override;
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+private:
+    ClassTypeSymbol* forClass;
+    ClassTypeSymbol* vptrHolderClass;
+    std::unique_ptr<BoundValueExpressionNode> boundValueExpr;
+    std::unique_ptr<BoundConversionNode> conversion;
+};
+*/
 
 bool InDirectSwitchStatement(BoundStatementNode* statement);
 

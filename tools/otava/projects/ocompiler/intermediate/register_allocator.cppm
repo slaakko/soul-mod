@@ -31,7 +31,7 @@ class RegisterAllocator
 public:
     RegisterAllocator();
     virtual ~RegisterAllocator();
-    virtual RegisterAllocationAction Run(Instruction* inst) = 0;
+    virtual std::expected<RegisterAllocationAction, int> Run(Instruction* inst) = 0;
     virtual const std::vector<SpillData>& GetSpillData() const = 0;
     virtual Locations GetLocations(Instruction* inst) const = 0;
     virtual otava::assembly::RegisterGroup* GetRegisterGroup(Instruction* inst) const = 0;

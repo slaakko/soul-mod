@@ -5,6 +5,8 @@
 
 module otava.assembly.reg;
 
+import otava.assembly.context;
+
 namespace otava::assembly {
 
 std::string regName[] =
@@ -18,12 +20,103 @@ std::string regName[] =
     ""
 };
 
+GlobalReg RegisterGroupKindToGlobalReg(RegisterGroupKind groupKind)
+{
+    switch (groupKind)
+    {
+        case RegisterGroupKind::rax: return GlobalReg::rax;
+        case RegisterGroupKind::rbx: return GlobalReg::rbx;
+        case RegisterGroupKind::rcx: return GlobalReg::rcx;
+        case RegisterGroupKind::rdx: return GlobalReg::rdx;
+        case RegisterGroupKind::r8: return GlobalReg::r8;
+        case RegisterGroupKind::r9: return GlobalReg::r9;
+        case RegisterGroupKind::r10: return GlobalReg::r10;
+        case RegisterGroupKind::r11: return GlobalReg::r11;
+    }
+    return GlobalReg::none;
+}
+
+std::string GlobalRegsToString(GlobalReg regs)
+{
+    std::string s;
+    if ((regs & GlobalReg::rax) != GlobalReg::none)
+    {
+        if (!s.empty())
+        {
+            s.append(1, ' ');
+        }
+        s.append("rax");
+    }
+    if ((regs & GlobalReg::rbx) != GlobalReg::none)
+    {
+        if (!s.empty())
+        {
+            s.append(1, ' ');
+        }
+        s.append("rbx");
+    }
+    if ((regs & GlobalReg::rcx) != GlobalReg::none)
+    {
+        if (!s.empty())
+        {
+            s.append(1, ' ');
+        }
+        s.append("rcx");
+    }
+    if ((regs & GlobalReg::rdx) != GlobalReg::none)
+    {
+        if (!s.empty())
+        {
+            s.append(1, ' ');
+        }
+        s.append("rdx");
+    }
+    if ((regs & GlobalReg::r8) != GlobalReg::none)
+    {
+        if (!s.empty())
+        {
+            s.append(1, ' ');
+        }
+        s.append("r8");
+    }
+    if ((regs & GlobalReg::r9) != GlobalReg::none)
+    {
+        if (!s.empty())
+        {
+            s.append(1, ' ');
+        }
+        s.append("r9");
+    }
+    if ((regs & GlobalReg::r10) != GlobalReg::none)
+    {
+        if (!s.empty())
+        {
+            s.append(1, ' ');
+        }
+        s.append("r10");
+    }
+    if ((regs & GlobalReg::r11) != GlobalReg::none)
+    {
+        if (!s.empty())
+        {
+            s.append(1, ' ');
+        }
+        s.append("r11");
+    }
+    return s;
+}
+
 Register::Register() : Value(ValueKind::reg, std::string()), kind(), group(), size(0)
 {
 }
 
 Register::Register(RegisterKind kind_, RegisterGroupKind group_, int size_) : Value(ValueKind::reg, regName[int(kind_)]), kind(kind_), group(group_), size(size_)
 {
+}
+
+void Register::FreeRegs(Context* context)
+{
+    context->GetRegisterPool()->FreeGlobalReg(this);
 }
 
 RegisterGroup::RegisterGroup() : kind(RegisterGroupKind::max), nonvolatile(false)
@@ -324,7 +417,7 @@ Registers::Registers()
     regGroups.push_back(std::unique_ptr<RegisterGroup>(xmm15));
 }
 
-RegisterPool::RegisterPool(Registers& registers_) : registers(registers_), localRegisterCount(0), localXMMRegisterCount(0)
+RegisterPool::RegisterPool(Registers& registers_) : registers(registers_), localRegisterCount(0), localXMMRegisterCount(0), usedGlobalRegs(GlobalReg::none)
 {
     AddLocalRegisterGroup(registers.GetRegisterGroup(RegisterGroupKind::rsi));
     AddLocalRegisterGroup(registers.GetRegisterGroup(RegisterGroupKind::rdi));
@@ -404,6 +497,22 @@ RegisterGroup* RegisterPool::GetRegisterGroup(RegisterGroupKind regGroupKind, bo
         usedNonvolatileRegs.insert(regGroup);
     }
     return regGroup;
+}
+
+void RegisterPool::UseGlobalReg(Register* reg)
+{
+    GlobalReg globalReg = RegisterGroupKindToGlobalReg(reg->Group());
+    if ((usedGlobalRegs & globalReg) != GlobalReg::none)
+    {
+        throw std::runtime_error("global register " + GlobalRegsToString(globalReg) + " in use");
+    }
+    usedGlobalRegs = usedGlobalRegs | globalReg;
+}
+
+void RegisterPool::FreeGlobalReg(Register* reg)
+{
+    GlobalReg globalReg = RegisterGroupKindToGlobalReg(reg->Group());
+    usedGlobalRegs = usedGlobalRegs & ~globalReg;
 }
 
 bool RegisterGroupLess::operator()(RegisterGroup* left, RegisterGroup* right) const

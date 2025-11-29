@@ -1035,11 +1035,15 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
                 {
                     if (startRule->ReturnType()->IsPtrType())
                     {
-                        formatter->WriteLine("return value;");
+                        formatter->Write("return std::expected<std::unique_ptr<");
+                        startRule->ReturnType()->WriteNonPtrType(*formatter);
+                        formatter->WriteLine(">, int>(std::move(value));");
                     }
                     else
                     {
-                        formatter->WriteLine("return value->value;");
+                        formatter->Write("return std::expected<soul::parser::Value<");
+                        rule->ReturnType()->Write(*formatter);
+                        formatter->WriteLine(">>(value->value);");
                     }
                 }
                 else
@@ -1071,11 +1075,15 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
                 {
                     if (startRule->ReturnType()->IsPtrType())
                     {
-                        formatter->WriteLine("return value;");
+                        formatter->Write("return std::expected<std::unique_ptr<");
+                        startRule->ReturnType()->WriteNonPtrType(*formatter);
+                        formatter->WriteLine(">, int>(std::move(value));");
                     }
                     else
                     {
-                        formatter->WriteLine("return value->value;");
+                        formatter->Write("return std::expected<soul::parser::Value<");
+                        rule->ReturnType()->Write(*formatter);
+                        formatter->WriteLine(">>(value->value);");
                     }
                 }
                 else

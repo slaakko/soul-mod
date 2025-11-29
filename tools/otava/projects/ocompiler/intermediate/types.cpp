@@ -129,8 +129,9 @@ std::expected<Type*, int> Type::RemovePointer(const soul::ast::Span& span, Conte
     }
 }
 
-void Type::ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context)
+std::expected<bool, int> Type::ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context)
 {
+    return std::expected<bool, int>(true);
 }
 
 std::expected<StructureType*, int> Type::GetStructurePointeeType(const soul::ast::Span& span, Context* context) const
@@ -671,13 +672,14 @@ Value* PointerType::MakeDefaultValue(Context& context) const
     return context.GetNullValue(soul::ast::Span(), const_cast<PointerType*>(this));
 }
 
-void PointerType::ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context)
+std::expected<bool, int> PointerType::ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context)
 {
     Type* baseType = BaseType();
     if (baseType == fwdDeclaredType)
     {
         baseTypeRef.SetType(structureType);
     }
+    return std::expected<bool, int>(true);
 }
 
 std::string PointerType::Name() const
@@ -981,7 +983,7 @@ void Types::AddFwdDependentType(FwdDeclaredStructureType* fwdType, Type* type)
     }
 }
 
-void Types::ResolveForwardReferences(const util::uuid& id, StructureType* structureType)
+std::expected<bool, int> Types::ResolveForwardReferences(const util::uuid& id, StructureType* structureType)
 {
     FwdDeclaredStructureType* fwdType = GetFwdDeclaredStructureType(id);
     if (fwdType)
@@ -992,11 +994,13 @@ void Types::ResolveForwardReferences(const util::uuid& id, StructureType* struct
             std::vector<Type*>& dependentTypes = it->second;
             for (Type* dependentType : dependentTypes)
             {
-                dependentType->ReplaceForwardReference(fwdType, structureType, context);
+                std::expected<bool, int> rv = dependentType->ReplaceForwardReference(fwdType, structureType, context);
+                if (!rv) return rv;
             }
             fwdDeclarationMap.erase(id);
         }
     }
+    return std::expected<bool, int>(true);
 }
 
 void Types::ResolveComments()

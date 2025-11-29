@@ -28,6 +28,30 @@ enum class RegisterGroupKind
     max
 };
 
+enum class GlobalReg : std::uint8_t
+{
+    none = 0, rax = 1 << 0, rbx = 1 << 1, rcx = 1 << 2, rdx = 1 << 3, r8 = 1 << 4, r9 = 1 << 5, r10 = 1 << 6, r11 = 1 << 7
+};
+
+constexpr GlobalReg operator|(GlobalReg left, GlobalReg right)
+{
+    return GlobalReg(static_cast<std::uint8_t>(left) | static_cast<std::uint8_t>(right));
+}
+
+constexpr GlobalReg operator&(GlobalReg left, GlobalReg right)
+{
+    return GlobalReg(static_cast<std::uint8_t>(left) & static_cast<std::uint8_t>(right));
+}
+
+constexpr GlobalReg operator~(GlobalReg reg)
+{
+    return GlobalReg(~std::uint8_t(reg));
+}
+
+GlobalReg RegisterGroupKindToGlobalReg(RegisterGroupKind groupKind);
+
+std::string GlobalRegsToString(GlobalReg regs);
+
 class Register : public Value
 {
 public:
@@ -37,6 +61,7 @@ public:
     inline RegisterGroupKind Group() const { return group; }
     inline int Size() const { return size; }
     inline bool IsFloatingPointReg() const { return group >= RegisterGroupKind::xmm0 && group <= RegisterGroupKind::xmm15; }
+    void FreeRegs(Context* context) override;
 private:
     RegisterKind kind;
     RegisterGroupKind group;
@@ -97,6 +122,8 @@ public:
     inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedNonvolatileRegs() const { return usedNonvolatileRegs; }
     inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedLocalXMMRegs() const { return usedLocalXMMRegs; }
     inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedNonvolatileXMMRegs() const { return usedNonvolatileXMMRegs; }
+    void UseGlobalReg(Register* reg);
+    void FreeGlobalReg(Register* reg);
 private:
     Registers& registers;
     int localRegisterCount;
@@ -104,6 +131,7 @@ private:
     std::set<RegisterGroup*, RegisterGroupLess> localRegisterPool;
     std::set<RegisterGroup*, RegisterGroupLess> localXMMRegisterPool;
     std::map<RegisterGroupKind, RegisterGroup*> globalRegisterMap;
+    GlobalReg usedGlobalRegs;
     std::set<RegisterGroup*, RegisterGroupLess> usedLocalRegs;
     std::set<RegisterGroup*, RegisterGroupLess> usedNonvolatileRegs;
     std::set<RegisterGroup*, RegisterGroupLess> usedLocalXMMRegs;

@@ -186,12 +186,15 @@ public:
     IrValueStack& Stack() { return *stack; }
     inline otava::intermediate::Value* RetValue() const { return retValue; }
     inline void SetRetValue(otava::intermediate::Value* retValue_) { retValue = retValue_; }
-    otava::intermediate::Value* EmitClassPtrConversion(otava::intermediate::Value* classPtr, otava::intermediate::Value* delta, otava::intermediate::Type* destType);
+    otava::intermediate::Value* EmitClassPtrConversion(otava::intermediate::Value* classPtr, otava::intermediate::Value* delta, otava::intermediate::Type* destType,
+        bool checkNull);
     inline otava::intermediate::MetadataStruct* CreateMetadataStruct() { return context->CreateMetadataStruct(); }
     inline otava::intermediate::MetadataBool* CreateMetadataBool(bool value) { return context->CreateMetadataBool(value); }
     inline otava::intermediate::MetadataLong* CreateMetadataLong(std::int64_t value) { return context->CreateMetadataLong(value); }
     inline otava::intermediate::MetadataString* CreateMetadataString(const std::string& value) { return context->CreateMetadataString(value, false); }
     inline otava::intermediate::MetadataRef* CreateMetadataRef(int nodeId) { return context->CreateMetadataRef(soul::ast::Span(), nodeId); }
+    inline int Line() const { return line; }
+    inline void SetLine(int line_) { line = line_; }
 private:
     otava::intermediate::Context* context;
     IrValueStack* stack;
@@ -200,6 +203,7 @@ private:
     std::map<std::u32string, otava::intermediate::Value*> vtabVariableMap;
     otava::intermediate::Value* retValue;
     std::map<util::uuid, otava::intermediate::StructureType*> forwardDeclarationMap;
+    int line;
 };
 
 } // namespace otava::symbols

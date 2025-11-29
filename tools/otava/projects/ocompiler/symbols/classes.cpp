@@ -428,13 +428,13 @@ std::expected<bool, int> ClassTypeSymbol::Resolve(SymbolTable& symbolTable, Cont
     if (!rv) return rv;
     for (const util::uuid& baseClassId : baseClassIds)
     {
-        std::expected<Symbol*, int> rv= symbolTable.GetSymbolMap()->GetSymbol(symbolTable.GetModule(), SymbolKind::null, baseClassId);
-        if (!rv) return std::unexpected<int>(rv.error());
-        Symbol* baseClassSymbol = *rv;
+        std::expected<Symbol*, int> srv = symbolTable.GetSymbolMap()->GetSymbol(symbolTable.GetModule(), SymbolKind::null, baseClassId);
+        if (!srv) return std::unexpected<int>(srv.error());
+        Symbol* baseClassSymbol = *srv;
         if (baseClassSymbol->IsClassTypeSymbol())
         {
-            std::expected<bool, int> brv = GetScope()->AddBaseScope(baseClassSymbol->GetScope(), soul::ast::SourcePos(), nullptr);
-            if (!brv) return brv;
+            rv = GetScope()->AddBaseScope(baseClassSymbol->GetScope(), soul::ast::SourcePos(), nullptr);
+            if (!rv) return rv;
             baseClasses.push_back(static_cast<ClassTypeSymbol*>(baseClassSymbol));
         }
     }
@@ -585,7 +585,7 @@ std::expected<bool, int> ClassTypeSymbol::MakeVTab(Context* context, const soul:
 {
     if (!IsClassTemplateSpecializationSymbol())
     {
-        if (VTabInitialized()) return;
+        if (VTabInitialized()) return std::expected<bool, int>(false);
         SetVTabInitialized();
     }
     std::expected<bool, int> rv = ComputeVTabName(context);
@@ -699,6 +699,31 @@ std::expected<bool, int> ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>&
                     if (!vname) return std::unexpected<int>(vname.error());
                     return Error("overriding function should be declared with override or final specifier: (" +
                         *sfname + " overrides " + *vname + ")", sourcePos, context);
+                }
+                TypeSymbol* fr = nullptr;
+                if (f->ReturnType())
+                {
+                    auto fp = f->ReturnType()->DirectType(context);
+                    if (!fp) return std::unexpected<int>(fp.error());
+                    fr = *fp;
+                    fp = fr->FinalType(sourcePos, context);
+                    if (!fp) return std::unexpected<int>(fp.error());
+                    fr = *fp;
+                }
+                TypeSymbol* vr = nullptr;
+                if (v->ReturnType())
+                {
+                    auto fp = v->ReturnType()->DirectType(context);
+                    if (!fp) return std::unexpected<int>(fp.error());
+                    vr = *fp;
+                    fp = vr->FinalType(sourcePos, context);
+                    if (!fp) return std::unexpected<int>(fp.error());
+                    vr = *fp;
+                }
+                if (fr && vr && !TypesEqual(fr, vr, context))
+                {
+                    return Error("the return type of the overriding function differs from the return type of base class function",
+                        f->GetSourcePos(), v->GetSourcePos(), context);
                 }
                 vtab[j] = f;
                 f->SetVTabIndex(j);
@@ -916,7 +941,8 @@ std::expected<otava::intermediate::Type*, int> ClassTypeSymbol::IrType(Emitter& 
         structureType->SetMetadataRef(metadataRef);
         irType = type;
         emitter.SetType(Id(), irType);
-        emitter.ResolveForwardReferences(Id(), structureType);
+        rv = emitter.ResolveForwardReferences(Id(), structureType);
+        if (!rv) return std::unexpected<int>(rv.error());
     }
     return std::expected<otava::intermediate::Type*, int>(irType);
 }
@@ -977,29 +1003,25 @@ FunctionSymbol* ClassTypeSymbol::GetConversionFunction(TypeSymbol* type, Context
     return nullptr;
 }
 
-bool ClassTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
+bool ClassTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const
 {
     const TypeSymbol* thisTypeSymbol = this;
     if (visited.find(thisTypeSymbol) != visited.end()) return true;
     visited.insert(thisTypeSymbol);
     for (ClassTypeSymbol* baseClass : baseClasses)
     {
-        if (!baseClass->IsComplete(visited)) return false;
+        if (!baseClass->IsComplete(visited, incompleteType)) return false;
     }
     for (VariableSymbol* memberVariable : memberVariables)
     {
-        if (!memberVariable->GetType()->IsComplete(visited)) return false;
-    }
-    for (VariableSymbol* staticMemberVariable : staticMemberVariables)
-    {
-        if (!staticMemberVariable->GetType()->IsComplete(visited)) return false;
+        if (!memberVariable->GetType()->IsComplete(visited, incompleteType)) return false;
     }
     return true;
 }
 
 std::expected<bool, int> ClassTypeSymbol::GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    if (copyCtor) return;
+    if (copyCtor) return std::expected<bool, int>(true);
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
     VariableSymbol* classTempVar = new VariableSymbol(U"@class_temp");
     classTempVar->SetDeclaredType(this);
@@ -1204,17 +1226,22 @@ std::expected<otava::intermediate::Type*, int> ForwardClassDeclarationSymbol::Ir
     }
 }
 
-bool ForwardClassDeclarationSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
+bool ForwardClassDeclarationSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const
 {
     const TypeSymbol* thisTypeSymbol = this;
     if (visited.find(thisTypeSymbol) != visited.end()) return true;
     visited.insert(thisTypeSymbol);
     if (classTypeSymbol)
     {
-        return classTypeSymbol->IsComplete(visited);
+        return classTypeSymbol->IsComplete(visited, incompleteType);
     }
     else
     {
+        const TypeSymbol* ict = incompleteType;
+        if (!ict)
+        {
+            incompleteType = this;
+        }
         return false;
     }
 }
@@ -1391,7 +1418,6 @@ std::expected<bool, int> EndClass(otava::ast::Node* node, Context* context)
         return Error("otava.symbols.classes: EndClass(): class scope expected", node->GetSourcePos(), context);
     }
     ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(symbol);
-    // AddClassInfo(classTypeSymbol, context); todo
     otava::ast::Node* specNode = context->GetSymbolTable()->GetSpecifierNode(classTypeSymbol);
     if (specNode && specNode->IsClassSpecifierNode())
     {
@@ -1405,7 +1431,8 @@ std::expected<bool, int> EndClass(otava::ast::Node* node, Context* context)
     if (!classTypeSymbol->IsTemplate() && !classTypeSymbol->HasUserDefinedDestructor())
     {
         std::set<const TypeSymbol*> visited;
-        if (classTypeSymbol->IsComplete(visited))
+        const TypeSymbol* incompleteType = nullptr;
+        if (classTypeSymbol->IsComplete(visited, incompleteType))
         {
             std::expected<Symbol*, int> rv = GenerateDestructor(classTypeSymbol, node->GetSourcePos(), context);
             if (!rv) return std::unexpected<int>(rv.error());
@@ -1592,7 +1619,7 @@ class TrivialClassDtor : public FunctionSymbol
 {
 public:
     TrivialClassDtor();
-    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
 };
 
@@ -1603,9 +1630,10 @@ TrivialClassDtor::TrivialClassDtor() : FunctionSymbol(U"@destructor")
     SetFlag(FunctionSymbolFlags::trivialDestructor);
 }
 
-void TrivialClassDtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+std::expected<bool, int> TrivialClassDtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
+    return std::expected<bool, int>(true);
 }
 
 std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
@@ -1638,10 +1666,29 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
             if (!sp->Destructor())
             {
                 std::set<const TypeSymbol*> visited;
-                if (sp->IsComplete(visited))
+                const TypeSymbol* incompleteType = nullptr;
+                if (sp->IsComplete(visited, incompleteType))
                 {
                     std::expected<bool, int> rv = InstantiateDestructor(sp, sourcePos, context);
                     if (!rv) return std::unexpected<int>(rv.error());
+                }
+                else
+                {
+                    std::string note;
+                    if (incompleteType)
+                    {
+                        auto fname = incompleteType->FullName();
+                        if (!fname) return std::unexpected<int>(fname.error());
+                        auto sfname = util::ToUtf8(*fname);
+                        if (!sfname) return std::unexpected<int>(sfname.error());
+                        note.append(": note incomplete type is '" + *sfname + "'");
+                    }
+                    auto spfname = sp->FullName();
+                    if (!spfname) return std::unexpected<int>(spfname.error());
+                    auto spnsfname = util::ToUtf8(*spfname);
+                    if (!spnsfname) return std::unexpected<int>(spnsfname.error());
+                    return Error("cannot create destructor for class template specialization '" + *spnsfname + "' because it is incomplete at this point" + note,
+                        sourcePos, context);
                 }
             }
             destructorFn = sp->Destructor();
@@ -1823,7 +1870,7 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
                 {
                     BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
                     BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, classTypeSymbol, vptrHolderClass, sourcePos);
-                    body->AddStatement(setVPtrStatement);
+                    terminator->AddSetVPtrStatement(setVPtrStatement);
                 }
                 else
                 {
@@ -1840,7 +1887,7 @@ std::expected<Symbol*, int> GenerateDestructor(ClassTypeSymbol* classTypeSymbol,
                 TypeSymbol* referredType = *rrv;
                 BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, referredType);
                 BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classTypeSymbol, classTypeSymbol, sourcePos);
-                body->AddStatement(setVPtrStatement);
+                terminator->AddSetVPtrStatement(setVPtrStatement);
             }
         }
     }
@@ -1868,33 +1915,6 @@ std::expected<bool, int> GenerateDestructors(BoundCompileUnitNode* boundCompileU
     }
     return std::expected<bool, int>(true);
 }
-
-/*
-void AddClassInfo(ClassTypeSymbol* classTypeSymbol, Context* context)
-{
-    std::uint64_t clsidh = 0;
-    std::uint64_t clsidl = 0;
-    util::UuidToInts(classTypeSymbol->Id(), clsidh, clsidl);
-    ClassKind kind = classTypeSymbol->GetClassKind();
-    info::class_id id = std::make_pair(clsidh, clsidl);
-    info::class_key key = info::class_key::cls;
-    switch (kind)
-    {
-        case ClassKind::class_: key = info::class_key::cls; break;
-        case ClassKind::struct_: key = info::class_key::strct; break;
-        case ClassKind::union_: key = info::class_key::uni; break;
-    }
-    info::class_info info(id, key, util::ToUtf8(classTypeSymbol->FullName()));
-    for (const auto& base : classTypeSymbol->BaseClasses())
-    {
-        std::uint64_t h = 0;
-        std::uint64_t l = 0;
-        util::UuidToInts(base->Id(), h, l);
-        info.add_base(std::make_pair(h, l));
-    }
-    context->GetSymbolTable()->ClassIndex().add_class(info);
-}
-*/
 
 std::expected<std::int64_t, int> Delta(ClassTypeSymbol* left, ClassTypeSymbol* right, Emitter& emitter, Context* context)
 {

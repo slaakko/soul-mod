@@ -15,6 +15,7 @@ export namespace otava::symbols {
 class BoundExpressionNode;
 class Context;
 class TypeSymbol;
+class ClassTypeSymbol;
 
 struct ArgumentMatch;
 struct FunctionMatch;
@@ -32,11 +33,13 @@ public:
     ArgumentConversionTable();
     void AddArgumentConversion(ArgumentConversion* argumentConversion);
     FunctionSymbol* GetArgumentConversion(TypeSymbol* paramType, TypeSymbol* argType, const soul::ast::SourcePos& sourcePos, Context* context);
-    FunctionSymbol* GetArgumentConversion(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, const soul::ast::SourcePos& sourcePos, ArgumentMatch& argumentMatch,
-        FunctionMatch& functionMatch, Context* context);
+    FunctionSymbol* GetArgumentConversion(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, const soul::ast::SourcePos& sourcePos, 
+        ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, Context* context);
+    FunctionSymbol* GetAdjustDeletePtrConversionFn(TypeSymbol* thisPtrBaseType, Context* context);
 private:
     std::vector<std::unique_ptr<ArgumentConversion>> argumentConversions;
     std::vector<std::unique_ptr<FunctionSymbol>> conversionFunctions;
+    std::map<TypeSymbol*, FunctionSymbol*> adjustDeletePtrConversionFns;
 };
 
 } // namespace otava::symbols

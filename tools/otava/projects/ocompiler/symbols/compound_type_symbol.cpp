@@ -273,12 +273,16 @@ std::expected<TypeSymbol*, int> CompoundTypeSymbol::DirectType(Context* context)
     return context->GetSymbolTable()->MakeCompoundType(directBaseType, derivations);
 }
 
-bool CompoundTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
+bool CompoundTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const
 {
     const TypeSymbol* thisTypeSymbol = this;
     if (visited.find(thisTypeSymbol) != visited.end()) return true;
     visited.insert(thisTypeSymbol);
-    return baseType->IsComplete(visited);
+    if (PointerCount() > 0 || HasDerivation(derivations, Derivations::refMask))
+    {
+        return true;
+    }
+    return baseType->IsComplete(visited, incompleteType);
 }
 
 bool CompoundTypeSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const

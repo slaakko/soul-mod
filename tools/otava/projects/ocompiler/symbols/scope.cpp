@@ -474,7 +474,7 @@ Scope* ContainerScope::GetClassScope() const
     {
         return const_cast<Scope*>(static_cast<const Scope*>(this));
     }
-    for (Scope* parentScope : ParentScopes())
+    for (Scope* parentScope : parentScopes)
     {
         Scope* classScope = parentScope->GetClassScope();
         if (classScope)
@@ -491,7 +491,7 @@ Scope* ContainerScope::GetNamespaceScope() const
     {
         return const_cast<Scope*>(static_cast<const Scope*>(this));
     }
-    for (Scope* parentScope : ParentScopes())
+    for (Scope* parentScope : parentScopes)
     {
         Scope* namespaceScope = parentScope->GetNamespaceScope();
         if (namespaceScope)
@@ -502,7 +502,7 @@ Scope* ContainerScope::GetNamespaceScope() const
     return nullptr;
 }
 
-void ContainerScope::AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context)
+std::expected<bool, int> ContainerScope::AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     if (baseScope->IsContainerScope())
     {
@@ -511,6 +511,7 @@ void ContainerScope::AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& 
         Install(baseClassSymbol, context);
     }
     baseScopes.push_back(baseScope);
+    return  std::expected<bool, int>(true);
 }
 
 Symbol* ContainerScope::GetSymbol()
@@ -616,7 +617,7 @@ std::expected<bool, int> ContainerScope::AddUsingDirective(NamespaceSymbol* ns, 
     {
         for (UsingDirectiveScope* scope : usingDirectiveScopes)
         {
-            if (scope->Ns() == ns) return;
+            if (scope->Ns() == ns) return std::expected<bool, int>(true);
         }
         UsingDirectiveScope* usingDirectiveScope = new UsingDirectiveScope(ns);
         scopes.push_back(std::unique_ptr<Scope>(usingDirectiveScope));

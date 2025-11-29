@@ -1,5 +1,7 @@
 module std.new_delete_op;
 
+import std.trace;
+
 void* operator new(size_t size)
 {
     return std::malloc(size);

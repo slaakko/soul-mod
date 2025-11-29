@@ -84,7 +84,7 @@ FunctionMatch::FunctionMatch(FunctionSymbol* function_, Context* context_) :
 {
 }
 
-FunctionMatch& FunctionMatch::operator=(const FunctionMatch& that)
+FunctionMatch& FunctionMatch::operator=(const FunctionMatch& that) : defaultArgs()
 {
     function = that.function;
     context = that.context;
@@ -539,7 +539,7 @@ std::expected<bool, int> FindTemplateParameterMatch(TypeSymbol* argType, TypeSym
     TemplateParameterSymbol* templateParameter = static_cast<TemplateParameterSymbol*>(paramType->GetBaseType());
     TypeSymbol* templateArgumentType = nullptr;
     auto it = functionMatch.templateParameterMap.find(templateParameter);
-    if (it == functionMatch.templateParameterMap.cend())
+    if (it == functionMatch.templateParameterMap.end())
     {
         std::expected<TypeSymbol*, int> rd = argType->RemoveDerivations(paramType->GetDerivations(), context);
         if (!rd) return std::unexpected<int>(rd.error());
@@ -1289,6 +1289,11 @@ std::expected<std::unique_ptr<FunctionMatch>, int> SelectBestMatchingFunction(co
         }
         std::unique_ptr<FunctionMatch> functionMatch(new FunctionMatch(viableFunction, context));
         SetTemplateArgs(viableFunction, functionMatch->templateParameterMap, templateArgs);
+/*
+        auto sfname = util::ToUtf8(*fname);
+        if (!sfname) return std::unexpected<int>(sfname.error());
+        std::cout << *sfname << "\n";
+*/
         std::expected<bool, int> crv = FindConversions(*functionMatch, args, sourcePos, context);
         if (!crv) return std::unexpected<int>(crv.error());
         if (*crv)

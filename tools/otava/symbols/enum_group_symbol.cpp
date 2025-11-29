@@ -114,6 +114,7 @@ void EnumGroupSymbol::Accept(Visitor& visitor)
 
 void EnumGroupSymbol::Merge(EnumGroupSymbol* that)
 {
+    if (this == that) return;
     if (!enumType && that->enumType)
     {
         enumType = that->enumType;

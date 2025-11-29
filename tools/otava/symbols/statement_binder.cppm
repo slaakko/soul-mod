@@ -79,6 +79,7 @@ private:
     bool resolveMemberVariable;
     bool resolveInitializerArguments;
     bool setVPtrStatementsGenerated;
+    bool setLineCodeGenerated;
     std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> baseInitializers;
     std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> memberInitializers;
     std::vector<std::unique_ptr<BoundStatementNode>> setVPtrStatements;

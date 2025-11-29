@@ -5,6 +5,7 @@
 
 export module otava.intermediate.code;
 
+import otava.assembly;
 import otava.intermediate.data;
 import util;
 import std;
@@ -95,15 +96,15 @@ public:
     void RemoveFromUses();
     virtual void ReplaceValue(Value* use, Value* value);
     virtual void Write(util::CodeFormatter& formatter) = 0;
-    inline void SetAssemblyIndex(int assemblyIndex_) { assemblyIndex = assemblyIndex_; }
-    inline int AssemblyIndex() const { return assemblyIndex; }
+    inline otava::assembly::Instruction* AssemblyInstruction() const { return assemblyInstruction; }
+    inline void SetAssemblyInstruction(otava::assembly::Instruction* assemblyInstruction_) { assemblyInstruction = assemblyInstruction_; }
 private:
     OpCode opCode;
     MetadataRef* metadataRef;
     int index;
     int regValueIndex;
-    int assemblyIndex;
     std::vector<Instruction*> users;
+    otava::assembly::Instruction* assemblyInstruction;
 };
 
 class StoreInstruction : public Instruction

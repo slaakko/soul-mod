@@ -297,7 +297,6 @@ private:
     void ImportAliasGroups(const SymbolTable& that);
     void ImportClassGroupTypes(const SymbolTable& that);
     void ImportAliasGroupTypes(const SymbolTable& that);
-    void ImportClassIndex(const SymbolTable& that);
     void AddImportAfterResolve(const SymbolTable* that);
     Module* module;
     std::unique_ptr<NamespaceSymbol> globalNs;

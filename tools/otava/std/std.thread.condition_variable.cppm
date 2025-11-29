@@ -2,6 +2,7 @@ export module std.thread.condition.variable;
 
 import std.type.fundamental;
 import std.thread.mutex;
+import std.trace;
 
 export namespace std {
 

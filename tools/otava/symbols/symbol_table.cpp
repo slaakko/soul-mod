@@ -141,9 +141,9 @@ void SymbolTable::EndScope()
 
 void SymbolTable::BeginScopeGeneric(Scope* scope, Context* context)
 {
-    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || 
-        context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) || 
-        context->GetFlag(ContextFlags::instantiateInlineFunction))
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate |
+        ContextFlags::instantiateMemFnOfClassTemplate |
+        ContextFlags::instantiateInlineFunction))
     {
         CurrentScope()->PushParentScope(scope);
     }
@@ -155,9 +155,9 @@ void SymbolTable::BeginScopeGeneric(Scope* scope, Context* context)
 
 void SymbolTable::EndScopeGeneric(Context* context)
 {
-    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || 
-        context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) ||
-        context->GetFlag(ContextFlags::instantiateInlineFunction))
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate | 
+        ContextFlags::instantiateMemFnOfClassTemplate |
+        ContextFlags::instantiateInlineFunction))
     {
         CurrentScope()->PopParentScope();
     }
@@ -218,7 +218,7 @@ void SymbolTable::Init()
 
 void SymbolTable::Import(const SymbolTable& that, FunctionDefinitionSymbolSet* functionDefinitionSymbolSet)
 {
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">import symbol table '" << module->Name() << "' <- '" << that.GetModule()->Name() << "'\n";
 #endif
     Context context;
@@ -251,12 +251,11 @@ void SymbolTable::Import(const SymbolTable& that, FunctionDefinitionSymbolSet* f
     errorTypeSymbol = that.errorTypeSymbol;
     MapConstraint(typenameConstraintSymbol);
     conversionTable->Import(that.GetConversionTable());
-    ImportClassIndex(that);
     AddImportAfterResolve(&that);
     templateParameterIds = that.templateParameterIds;
     compoundTypeIds = that.compoundTypeIds;
     levelIds = that.levelIds;
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << "<import symbol table '" << module->Name() << "' <- '" << that.GetModule()->Name() << "'\n";
 #endif
 }
@@ -454,14 +453,6 @@ void SymbolTable::ImportAliasGroupTypes(const SymbolTable& that)
     }
 }
 
-void SymbolTable::ImportClassIndex(const SymbolTable& that)
-{
-    for (const auto& id_info : that.ClassIndex().get_map())
-    {
-        ClassIndex().map_class(id_info.second);
-    }
-}
-
 void SymbolTable::WriteMaps(Writer& writer, Context* context)
 {
     std::vector<std::pair<otava::ast::Node*, Symbol*>> exportNodeSymbols;
@@ -485,7 +476,7 @@ void SymbolTable::WriteMaps(Writer& writer, Context* context)
         {
             nodeId = -1;
         }
-        writer.GetBinaryStreamWriter().Write(static_cast<std::int32_t>(node->Kind()));
+        writer.GetBinaryStreamWriter().Write(static_cast<std::uint16_t>(node->Kind()));
         writer.GetBinaryStreamWriter().Write(nodeId);
         writer.GetBinaryStreamWriter().Write(symbol->Id());
     }
@@ -506,10 +497,6 @@ void SymbolTable::WriteMaps(Writer& writer, Context* context)
         Symbol* symbol = m.first;
         otava::ast::Node* node = m.second;
         writer.GetBinaryStreamWriter().Write(symbol->Id());
-    #ifdef DEBUG_WRITE_MAPS
-        writer.GetBinaryStreamWriter().Write(static_cast<std::int32_t>(symbol->Kind()));
-        writer.GetBinaryStreamWriter().Write(util::ToUtf8(symbol->FullName()));
-    #endif
         std::int64_t nodeId = node->InternalId();
         if (node->IsInternallyMapped())
         {
@@ -543,10 +530,16 @@ void SymbolTable::WriteMaps(Writer& writer, Context* context)
 
 void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap)
 {
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << ">read maps " << GetModule()->Name() << "\n";
+#endif
     std::uint32_t nns = reader.GetBinaryStreamReader().ReadULEB128UInt();
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << nns << " node symbol map" << "\n";
+#endif
     for (std::uint32_t i = 0; i < nns; ++i)
     {
-        otava::ast::NodeKind kind = static_cast<otava::ast::NodeKind>(reader.GetBinaryStreamReader().ReadInt());
+        otava::ast::NodeKind kind = static_cast<otava::ast::NodeKind>(reader.GetBinaryStreamReader().ReadUShort());
         std::int64_t nodeId = reader.GetBinaryStreamReader().ReadLong();
         util::uuid symbolId;
         reader.GetBinaryStreamReader().ReadUuid(symbolId);
@@ -566,15 +559,13 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap)
         }
     }
     std::uint32_t nsn = reader.GetBinaryStreamReader().ReadULEB128UInt();
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << nsn << " symbol node map" << "\n";
+#endif
     for (std::uint32_t i = 0; i < nsn; ++i)
     {
         util::uuid symbolId;
         reader.GetBinaryStreamReader().ReadUuid(symbolId);
-#ifdef DEBUG_WRITE_MAPS
-        std::int32_t ski = reader.GetBinaryStreamReader().ReadInt();
-        SymbolKind sk = static_cast<SymbolKind>(ski);
-        std::string fullName = reader.GetBinaryStreamReader().ReadUtf8String();
-#endif
         std::int64_t nodeId = reader.GetBinaryStreamReader().ReadLong();
         if (nodeId != -1)
         {
@@ -588,14 +579,14 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap)
             else
             {
                 std::cout << "SymbolTable::ReadMaps: warning: symbol-node map: symbol for id '" + util::ToString(symbolId) + "' not found";
-#ifdef DEBUG_WRITE_MAPS
-                std::cout << ": note: symbol kind=" << SymbolKindToString(sk) << ", symbol name=" << fullName;
-#endif
                 std::cout << "\n";
             }
         }
     }
     std::uint32_t nfwd = reader.GetBinaryStreamReader().ReadULEB128UInt();
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << nfwd << " forward declarations" << "\n";
+#endif
     for (std::uint32_t i = 0; i < nfwd; ++i)
     {
         util::uuid fwdId;
@@ -605,6 +596,9 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap)
         allForwardDeclarations.insert(symbol);
     }
     std::uint32_t nspec = reader.GetBinaryStreamReader().ReadULEB128UInt();
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << nspec << " specifier node map" << "\n";
+#endif
     for (std::uint32_t i = 0; i < nspec; ++i)
     {
         util::uuid symbolId;
@@ -616,6 +610,9 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap)
         allSpecifierNodeMap[symbol] = node;
     }
     std::uint32_t nc = reader.GetBinaryStreamReader().ReadULEB128UInt();
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << nc << " classes " << "\n";
+#endif
     for (std::uint32_t i = 0; i < nc; ++i)
     {
         util::uuid clsId;
@@ -627,6 +624,9 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap)
             allClasses.insert(static_cast<ClassTypeSymbol*>(symbol));
         }
     }
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << "<read maps " << GetModule()->Name() << "\n";
+#endif
 }
 
 void SymbolTable::Write(Writer& writer, Context* context)
@@ -721,11 +721,13 @@ void SymbolTable::Write(Writer& writer, Context* context)
     {
         writer.Write(aliasGroupType.get());
     }
-    index.write(writer.GetBinaryStreamWriter());
 }
 
 void SymbolTable::Read(Reader& reader)
 {
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << ">read " << GetModule()->Name() << "\n";
+#endif
     Context context;
     context.SetFunctionDefinitionSymbolSet(reader.GetFunctionDefinitionSymbolSet());
     context.SetSymbolTable(this);
@@ -759,6 +761,9 @@ void SymbolTable::Read(Reader& reader)
     }
     globalNs->Read(reader);
     std::uint32_t scount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << scount << " class sp " << "\n";
+#endif
     for (std::uint32_t i = 0; i < scount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
@@ -789,6 +794,9 @@ void SymbolTable::Read(Reader& reader)
         }
     }
     std::uint32_t acount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << acount << " alias sp " << "\n";
+#endif
     for (std::uint32_t i = 0; i < acount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
@@ -804,6 +812,9 @@ void SymbolTable::Read(Reader& reader)
         }
     }
     std::uint32_t arrayCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << arrayCount << " array" << "\n";
+#endif
     for (std::uint32_t i = 0; i < arrayCount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
@@ -819,6 +830,9 @@ void SymbolTable::Read(Reader& reader)
         }
     }
     std::uint32_t dependentTypeCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << dependentTypeCount << " dependent" << "\n";
+#endif
     for (std::uint32_t i = 0; i < dependentTypeCount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
@@ -834,6 +848,9 @@ void SymbolTable::Read(Reader& reader)
         }
     }
     std::uint32_t ccount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << ccount << " compound" << "\n";
+#endif
     for (std::uint32_t i = 0; i < ccount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
@@ -849,6 +866,9 @@ void SymbolTable::Read(Reader& reader)
         }
     }
     std::uint32_t ecount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << ecount << " explicit" << "\n";
+#endif
     for (std::uint32_t i = 0; i < ecount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
@@ -864,6 +884,9 @@ void SymbolTable::Read(Reader& reader)
         }
     }
     std::uint32_t fcount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << fcount << " function group type" << "\n";
+#endif
     for (std::uint32_t i = 0; i < fcount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
@@ -879,6 +902,9 @@ void SymbolTable::Read(Reader& reader)
         }
     }
     std::uint32_t ctcount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << ctcount << " class group type" << "\n";
+#endif
     for (std::uint32_t i = 0; i < ctcount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
@@ -894,6 +920,9 @@ void SymbolTable::Read(Reader& reader)
         }
     }
     std::uint32_t atcount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << atcount << " alias group type" << "\n";
+#endif
     for (std::uint32_t i = 0; i < atcount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
@@ -908,7 +937,12 @@ void SymbolTable::Read(Reader& reader)
             throw std::runtime_error("otava.symbols.symbol_table: class group type symbol expected");
         }
     }
-    index.read(reader.GetBinaryStreamReader());
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << "index" << "\n";
+#endif
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << "<read " << GetModule()->Name() << "\n";
+#endif
 }
 
 void SymbolTable::Resolve(Context* context)
@@ -1027,7 +1061,7 @@ Symbol* SymbolTable::LookupSymbol(Symbol* symbol)
         if (!scope) break;
         Symbol* lookupSymbol = components[i];
         std::vector<Symbol*> symbols;
-        std::set<Scope*> visited;
+        std::set<const Scope*> visited;
         scope->Lookup(lookupSymbol->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, LookupFlags::none, symbols, visited, nullptr);
         if (symbols.size() == 1)
         {
@@ -1077,7 +1111,7 @@ void SymbolTable::CollectViableFunctions(const std::vector<std::pair<Scope*, Sco
     int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context)
 {
     std::vector<Symbol*> symbols;
-    std::set<Scope*> visited;
+    std::set<const Scope*> visited;
     for (const auto& [scope, lookup] : scopeLookups)
     {
         scope->Lookup(groupName, SymbolGroupKind::functionSymbolGroup, lookup, LookupFlags::dontResolveSingle | LookupFlags::all, symbols, visited, context);
@@ -1400,6 +1434,7 @@ void SymbolTable::BeginClass(const std::u32string& name, ClassKind classKind, Ty
     Symbol* symbol = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, node->GetSourcePos(), context, LookupFlags::dontResolveSingle);
     ClassGroupSymbol* classGroup = currentScope->GroupScope()->GetOrInsertClassGroup(name, node->GetSourcePos(), context);
     ClassTypeSymbol* classTypeSymbol = new ClassTypeSymbol(name);
+    classTypeSymbol->SetSourcePos(node->GetSourcePos());
     classTypeSymbol->SetLevel(classLevel++);
     AddClass(classTypeSymbol);
     classTypeSymbol->SetAccess(CurrentAccess());
@@ -1671,9 +1706,9 @@ FunctionDefinitionSymbol* SymbolTable::AddOrGetFunctionDefinition(Scope* scope, 
     std::unique_ptr<FunctionDefinitionSymbol> functionDefinition(new FunctionDefinitionSymbol(name));
     functionDefinition->SetGroup(functionGroup);
     functionDefinition->SetDeclarationFlags(declarationFlags);
-    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || 
-        context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) || 
-        context->GetFlag(ContextFlags::instantiateInlineFunction))
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate | 
+        ContextFlags::instantiateMemFnOfClassTemplate | 
+        ContextFlags::instantiateInlineFunction))
     {
         functionDefinition->SetSpecialization();
     }

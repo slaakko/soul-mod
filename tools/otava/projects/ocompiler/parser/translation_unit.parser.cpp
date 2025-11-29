@@ -43,7 +43,7 @@ std::expected<std::unique_ptr<otava::ast::Node>, int> TranslationUnitParser<Lexe
     {
         if (*lexer == soul::lexer::END_TOKEN)
         {
-            return value;
+            return std::expected<std::unique_ptr<otava::ast::Node>, int>(std::move(value));
         }
         else
         {
@@ -54,7 +54,7 @@ std::expected<std::unique_ptr<otava::ast::Node>, int> TranslationUnitParser<Lexe
     {
         return lexer.FarthestError();
     }
-    return value;
+    return std::expected<std::unique_ptr<otava::ast::Node>, int>(std::move(value));
 }
 
 template<typename LexerT>

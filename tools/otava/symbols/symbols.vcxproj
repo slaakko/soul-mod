@@ -273,6 +273,8 @@
     <ClCompile Include="templates.cppm" />
     <ClCompile Include="template_param_compare.cpp" />
     <ClCompile Include="template_param_compare.cppm" />
+    <ClCompile Include="trace.cpp" />
+    <ClCompile Include="trace.cppm" />
     <ClCompile Include="type_compare.cpp" />
     <ClCompile Include="type_compare.cppm" />
     <ClCompile Include="type_resolver.cpp" />

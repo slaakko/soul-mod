@@ -20,6 +20,7 @@ class UnaryExpr : public Value
 public:
     UnaryExpr(ValueKind kind_, Value* value_, const std::string& str_);
     inline Value* GetValue() const { return value; }
+    void FreeRegs(Context* context) override;;
 private:
     Value* value;
 };
@@ -32,6 +33,7 @@ public:
     inline Value* Right() { return right; }
     inline Operator Op() const { return op; }
     std::string ToString() const override;
+    void FreeRegs(Context* context) override;;
 private:
     Value* left;
     Value* right;

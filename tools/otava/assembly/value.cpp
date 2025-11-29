@@ -20,4 +20,8 @@ void Value::SetName(const std::string& name_)
     name = name_;
 }
 
+void Value::FreeRegs(Context* context)
+{
+}
+
 } // otava::assembly

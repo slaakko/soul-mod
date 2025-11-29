@@ -104,6 +104,7 @@ void VariableGroupSymbol::Accept(Visitor& visitor)
 
 void VariableGroupSymbol::Merge(VariableGroupSymbol* that)
 {
+    if (this == that) return;
     for (VariableSymbol* variable : that->variables)
     {
         if (std::find(variables.cbegin(), variables.cend(), variable) == variables.end())

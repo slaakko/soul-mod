@@ -126,7 +126,7 @@ public:
     bool IsContainerScope() const override { return true; }
     Scope* GetClassScope() const override;
     Scope* GetNamespaceScope() const override;
-    void AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    std::expected<bool, int> AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context) override;
     Symbol* GetSymbol() override;
     ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(std::set<Scope*>& visited) const override;
     inline ContainerSymbol* GetContainerSymbol() const { return containerSymbol; }

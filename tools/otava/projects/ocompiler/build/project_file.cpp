@@ -15,7 +15,7 @@ import util.path;
 
 namespace otava::build {
 
-std::expected<bool, int> MakeResourceFile(const std::string& resourceFilePath, const std::string& classIndexFilePath)
+std::expected<bool, int> MakeClassIndexResourceFile(const std::string& resourceFilePath, const std::string& classIndexFilePath)
 {
     std::ofstream resourceFile(resourceFilePath);
     if (!resourceFile) return std::unexpected<int>(util::AllocateError("could not create file '" + resourceFilePath + "'"));
@@ -24,9 +24,18 @@ std::expected<bool, int> MakeResourceFile(const std::string& resourceFilePath, c
     return std::expected<bool, int>(true);
 }
 
+std::expected<bool, int> MakeTraceDataResourceFile(const std::string& resourceFilePath, const std::string& traceBinFilePath)
+{
+    std::ofstream resourceFile(resourceFilePath);
+    if (!resourceFile) return std::unexpected<int>(util::AllocateError("could not create file '" + traceBinFilePath + "'"));
+    util::CodeFormatter formatter(resourceFile);
+    formatter.WriteLine("TRACE_DATA RCDATA \"" + traceBinFilePath + "\"");
+    return std::expected<bool, int>(true);
+}
+
 std::expected<bool, int> MakeProjectFile(Project* project, const std::string& projectFilePath, const std::vector<std::string>& asmFiles, 
     const std::vector<std::string>& cppFiles, const std::vector<std::string>& resourceFiles, const std::string& libraryDirs, 
-    const std::vector<Project*>& referencedProjects, const std::string& config, int optLevel, const std::string& classIndexFilePath, 
+    const std::vector<Project*>& referencedProjects, const std::string& config, int optLevel, const std::string& classIndexFilePath, const std::string& traceBinFilePath,
     ProjectTarget target, bool verbose)
 {
     std::string references;
@@ -49,7 +58,12 @@ std::expected<bool, int> MakeProjectFile(Project* project, const std::string& pr
     }
     if (target == ProjectTarget::program && !classIndexFilePath.empty())
     {
-        std::expected<bool, int> rv = MakeResourceFile(util::Path::Combine(util::Path::GetDirectoryName(projectFilePath), "class_index.rc"), classIndexFilePath);
+        std::expected<bool, int> rv = MakeClassIndexResourceFile(util::Path::Combine(util::Path::GetDirectoryName(projectFilePath), "class_index.rc"), classIndexFilePath);
+        if (!rv) return rv;
+    }
+    if (target == ProjectTarget::program && !traceBinFilePath.empty())
+    {
+        std::expected<bool, int> rv = MakeTraceDataResourceFile(util::Path::Combine(util::Path::GetDirectoryName(projectFilePath), "trace_data.rc"), traceBinFilePath);
         if (!rv) return rv;
     }
     util::uuid projectUuid = util::random_uuid();
@@ -483,8 +497,16 @@ std::expected<bool, int> MakeProjectFile(Project* project, const std::string& pr
         soul::xml::Element* rcCompile = soul::xml::MakeElement("ResourceCompile");
         if (!classIndexFilePath.empty())
         {
-            rcCompile->SetAttribute("Include", "class_index.rc");
-            rv = rcItemGroup->AppendChild(rcCompile);
+            soul::xml::Element* classIndexRcCompile = soul::xml::MakeElement("ResourceCompile");
+            classIndexRcCompile->SetAttribute("Include", "class_index.rc");
+            rv = rcItemGroup->AppendChild(classIndexRcCompile);
+            if (!rv) return rv;
+        }
+        if (!traceBinFilePath.empty())
+        {
+            soul::xml::Element* traceDataRcCompile = soul::xml::MakeElement("ResourceCompile");
+            traceDataRcCompile->SetAttribute("Include", "trace_data.rc");
+            rv = rcItemGroup->AppendChild(traceDataRcCompile);
             if (!rv) return rv;
         }
         for (const auto& resourceFile : resourceFiles)

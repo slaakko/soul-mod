@@ -1,6 +1,7 @@
 export module std.iterator;
 
 import std.type.fundamental;
+import std.trace;
 
 export namespace std {
 

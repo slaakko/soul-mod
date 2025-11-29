@@ -114,7 +114,7 @@ class AliasDeclarationProcessor : public otava::ast::DefaultVisitor
 {
 public:
     AliasDeclarationProcessor(Context* context_);
-    void Visit(otava::ast::AliasDeclarationNode& node);
+    void Visit(otava::ast::AliasDeclarationNode& node) override;
     otava::ast::Node* GetIdNode() const { return idNode; }
     TypeSymbol* GetType() const { return type; }
 private:

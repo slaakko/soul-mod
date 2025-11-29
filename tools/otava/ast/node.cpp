@@ -224,6 +224,12 @@ void SequenceNode::AddNode(Node* node)
     nodes.Add(node);
 }
 
+void SequenceNode::InsertNode(int index, Node* node)
+{
+    node->SetParent(this);
+    nodes.Insert(index, node);
+}
+
 void SequenceNode::Clear()
 {
     nodes.Clear();

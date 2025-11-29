@@ -11,7 +11,7 @@ import util;
 
 namespace otava::symbols {
 
-Emitter::Emitter() : context(new otava::intermediate::Context()), stack(new IrValueStack()), retValue(nullptr)
+Emitter::Emitter() : context(new otava::intermediate::Context()), stack(new IrValueStack()), retValue(nullptr), line(0)
 {
 }
 
@@ -207,13 +207,42 @@ void Emitter::SetVTabVariable(const std::u32string& className, otava::intermedia
     vtabVariableMap[className] = vtabVariable;
 }
 
-otava::intermediate::Value* Emitter::EmitClassPtrConversion(otava::intermediate::Value* classPtr, otava::intermediate::Value* delta, otava::intermediate::Type* destType)
+otava::intermediate::Value* Emitter::EmitClassPtrConversion(otava::intermediate::Value* classPtr, otava::intermediate::Value* delta, 
+    otava::intermediate::Type* destType, bool checkNull)
 {
-    if (delta->IsZero()) return EmitBitcast(classPtr, destType);
-    otava::intermediate::Type* bytePtrType = MakePtrType(GetByteType());
-    otava::intermediate::Value* adjustableClassPtr = EmitBitcast(classPtr, bytePtrType);
-    otava::intermediate::Value* adjustedClassPtr = EmitPtrOffset(adjustableClassPtr, delta);
-    return EmitBitcast(adjustedClassPtr, destType);
+    if (delta->IsZero())
+    {
+        return EmitBitcast(classPtr, destType);
+    }
+    if (checkNull)
+    {
+        otava::intermediate::BasicBlock* adjust = CreateBasicBlock();
+        otava::intermediate::BasicBlock* storeNull = CreateBasicBlock();
+        otava::intermediate::BasicBlock* load = CreateBasicBlock();
+        otava::intermediate::Type* bytePtrType = MakePtrType(GetByteType());
+        otava::intermediate::Value* result = EmitLocal(bytePtrType);
+        otava::intermediate::Value* adjustableClassPtr = EmitBitcast(classPtr, bytePtrType);
+        otava::intermediate::Value* null = EmitNull(bytePtrType);
+        otava::intermediate::Value* isNull = EmitEqual(adjustableClassPtr, null);
+        EmitBranch(isNull, storeNull, adjust);
+        SetCurrentBasicBlock(storeNull);
+        EmitStore(null, result);
+        EmitJump(load);
+        SetCurrentBasicBlock(adjust);
+        otava::intermediate::Value* adjustedClassPtr = EmitPtrOffset(adjustableClassPtr, delta);
+        EmitStore(adjustedClassPtr, result);
+        EmitJump(load);
+        SetCurrentBasicBlock(load);
+        otava::intermediate::Value* loadedResult = EmitLoad(result);
+        return EmitBitcast(loadedResult, destType);
+    }
+    else
+    {
+        otava::intermediate::Type* bytePtrType = MakePtrType(GetByteType());
+        otava::intermediate::Value* adjustableClassPtr = EmitBitcast(classPtr, bytePtrType);
+        otava::intermediate::Value* adjustedClassPtr = EmitPtrOffset(adjustableClassPtr, delta);
+        return EmitBitcast(adjustedClassPtr, destType);
+    }
 }
 
 } // namespace otava::symbols

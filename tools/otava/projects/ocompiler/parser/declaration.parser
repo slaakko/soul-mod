@@ -346,11 +346,11 @@ parser DeclarationParser
                 {
                     node.reset(new otava::ast::LinkageSpecificationNode(sourcePos, extrn, linkageNode.release(), declarations, lbPos, rbPos));
                 }
-            )
             |   Declaration(context):declaration
                 {
                     node.reset(new otava::ast::LinkageSpecificationNode(sourcePos, extrn, linkageNode.release(), declaration, soul::ast::SourcePos(), soul::ast::SourcePos())); 
                 }
+            )
         )
         {
             context->PopFlags();

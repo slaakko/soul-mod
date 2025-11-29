@@ -33,7 +33,8 @@ constexpr Locations operator~(Locations locs)
 struct FrameLocation
 {
     FrameLocation() : reg(otava::assembly::RegisterGroupKind::rbp), index(-1), offset(0), size(0), macro(nullptr) {}
-    FrameLocation(otava::assembly::RegisterGroupKind reg_, int index_, std::int64_t offset_, std::int64_t size_) : reg(reg_), index(index_), offset(offset_), size(size_), macro(nullptr) {}
+    FrameLocation(otava::assembly::RegisterGroupKind reg_, int index_, std::int64_t offset_, std::int64_t size_) : 
+        reg(reg_), index(index_), offset(offset_), size(size_), macro(nullptr) {}
     void Dump();
     inline bool Valid() const { return index != -1; }
     otava::assembly::RegisterGroupKind reg;

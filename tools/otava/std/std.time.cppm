@@ -2,6 +2,7 @@ export module std.time;
 
 import std.type.fundamental;
 import std.rt;
+import std.trace;
 
 export namespace std {
 

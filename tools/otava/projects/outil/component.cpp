@@ -33,7 +33,7 @@ Container::~Container()
 void Container::AddChild(Component* child)
 {
     Container* container = child->GetContainer();
-    if (container)
+    if (container && container != this)
     {
         std::unique_ptr<Component> removedChild = container->RemoveChild(child);
         child = removedChild.release();

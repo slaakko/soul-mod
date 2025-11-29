@@ -50,7 +50,8 @@ Symbol* FunctionGroupSymbol::GetSingleSymbol()
 {
     if (functions.size() == 1)
     {
-        return functions.front();
+        Symbol* sym = functions.front();
+        return sym;
     }
     else
     {
@@ -157,16 +158,17 @@ void FunctionGroupSymbol::Accept(Visitor& visitor)
 
 void FunctionGroupSymbol::Merge(FunctionGroupSymbol* that)
 {
+    if (this == that) return;
     for (FunctionSymbol* function : that->functions)
     {
-        if (std::find(functions.cbegin(), functions.cend(), function) == functions.end())
+        if (std::find(functions.begin(), functions.end(), function) == functions.end())
         {
             functions.push_back(function);
         }
     }
     for (FunctionDefinitionSymbol* definition : that->definitions)
     {
-        if (std::find(definitions.cbegin(), definitions.cend(), definition) == definitions.end())
+        if (std::find(definitions.begin(), definitions.end(), definition) == definitions.end())
         {
             definitions.push_back(definition);
         }

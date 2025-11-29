@@ -47,7 +47,8 @@ Symbol* AliasGroupSymbol::GetSingleSymbol()
 {
     if (aliasTypeSymbols.size() == 1)
     {
-        return aliasTypeSymbols.front();
+        Symbol* sym = aliasTypeSymbols.front();
+        return sym;
     }
     else
     {
@@ -68,8 +69,9 @@ struct ReferredTypeEqual
 
 void AliasGroupSymbol::AddAliasTypeSymbol(AliasTypeSymbol* aliasTypeSymbol, Context* context)
 {
+    ReferredTypeEqual referredTypeEqual(aliasTypeSymbol, context);
     if (std::find(aliasTypeSymbols.begin(), aliasTypeSymbols.end(), aliasTypeSymbol) == aliasTypeSymbols.end() &&
-        std::find_if(aliasTypeSymbols.begin(), aliasTypeSymbols.end(), ReferredTypeEqual(aliasTypeSymbol, context)) == aliasTypeSymbols.end())
+        std::find_if(aliasTypeSymbols.begin(), aliasTypeSymbols.end(), referredTypeEqual) == aliasTypeSymbols.end())
     {
         aliasTypeSymbol->SetGroup(this);
         aliasTypeSymbols.push_back(aliasTypeSymbol);
@@ -141,6 +143,7 @@ void AliasGroupSymbol::Accept(Visitor& visitor)
 
 void AliasGroupSymbol::Merge(AliasGroupSymbol* that, Context* context)
 {
+    if (this == that) return;
     for (AliasTypeSymbol* aliasType : that->aliasTypeSymbols)
     {
         AddAliasTypeSymbol(aliasType, context);

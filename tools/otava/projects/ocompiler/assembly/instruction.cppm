@@ -7,6 +7,7 @@ export module otava.assembly.instruction;
 
 import std;
 import util.code.formatter;
+import util.component;
 
 export namespace otava::assembly {
 
@@ -45,7 +46,7 @@ enum class OpCode
 
 std::string OpCodeStr(OpCode opCode);
 
-class Instruction
+class Instruction : public util::Component
 {
 public:
     Instruction(OpCode opCode_);
@@ -60,6 +61,8 @@ public:
     void Write(util::CodeFormatter& formatter);
     int Length() const;
     inline void SetWriteln() { writeln = true; }
+    inline Instruction* Next() const { return static_cast<Instruction*>(NextSibling()); }
+    inline Instruction* Prev() const { return static_cast<Instruction*>(PrevSibling()); }
 private:
     std::string label;
     bool nocolon;

@@ -238,7 +238,7 @@ std::expected<bool, int> SymbolTable::Init()
 
 std::expected<bool, int> SymbolTable::Import(const SymbolTable& that, FunctionDefinitionSymbolSet* functionDefinitionSymbolSet)
 {
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">import symbol table '" << module->Name() << "' <- '" << that.GetModule()->Name() << "'\n";
 #endif
     Context context;
@@ -273,12 +273,11 @@ std::expected<bool, int> SymbolTable::Import(const SymbolTable& that, FunctionDe
     errorTypeSymbol = that.errorTypeSymbol;
     MapConstraint(typenameConstraintSymbol);
     conversionTable->Import(that.GetConversionTable());
-    // ImportClassIndex(that); TODO
     AddImportAfterResolve(&that);
     templateParameterIds = that.templateParameterIds;
     compoundTypeIds = that.compoundTypeIds;
     levelIds = that.levelIds;
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << "<import symbol table '" << module->Name() << "' <- '" << that.GetModule()->Name() << "'\n";
 #endif
     return std::expected<bool, int>(true);
@@ -483,16 +482,6 @@ void SymbolTable::ImportAliasGroupTypes(const SymbolTable& that)
     }
 }
 
-/*  TODO:
-void SymbolTable::ImportClassIndex(const SymbolTable& that)
-{
-    for (const auto& id_info : that.ClassIndex().get_map())
-    {
-        ClassIndex().map_class(id_info.second);
-    }
-}
-*/
-
 std::expected<bool, int> SymbolTable::WriteMaps(Writer& writer, Context* context)
 {
     std::vector<std::pair<otava::ast::Node*, Symbol*>> exportNodeSymbols;
@@ -543,17 +532,6 @@ std::expected<bool, int> SymbolTable::WriteMaps(Writer& writer, Context* context
         otava::ast::Node* node = m.second;
         rv = writer.GetBinaryStreamWriter().Write(symbol->Id());
         if (!rv) return rv;
-#ifdef DEBUG_WRITE_MAPS
-        rv = writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(symbol->Kind()));
-        if (!rv) return rv;
-        std::expected<std::u32string, int> fname = symbol->FullName();
-        if (!fname) return std::unexpected<int>(fname.error());
-        std::expected<std::string, int> sfname = util::ToUtf8(*fname);
-        if (!sfname) return std::unexpected<int>(sfname.error());
-        std::string s = std::move(*sfname);
-        rv = writer.GetBinaryStreamWriter().Write(s);
-        if (!rv) return rv;
-#endif
         std::int64_t nodeId = node->InternalId();
         if (node->IsInternallyMapped())
         {
@@ -596,15 +574,21 @@ std::expected<bool, int> SymbolTable::WriteMaps(Writer& writer, Context* context
 
 std::expected<bool, int> SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap)
 {
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << ">read maps " << GetModule()->Name() << "\n";
+#endif
     std::expected<std::uint32_t, int> nrv = reader.GetBinaryStreamReader().ReadULEB128UInt();
     if (!nrv) return std::unexpected<int>(nrv.error());
     std::uint32_t nns = *nrv;
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << nns << " node symbol map" << "\n";
+#endif
     for (std::int32_t i = 0; i < static_cast<std::int32_t>(nns); ++i)
     {
         std::expected<std::uint16_t, int> urv = reader.GetBinaryStreamReader().ReadUShort();
         if (!urv) return std::unexpected<int>(urv.error());
-        std::uint16_t u = *urv;
-        otava::ast::NodeKind kind = static_cast<otava::ast::NodeKind>(u);
+        std::uint16_t k = *urv;
+        otava::ast::NodeKind kind = static_cast<otava::ast::NodeKind>(k);
         std::expected<std::int64_t, int> n = reader.GetBinaryStreamReader().ReadLong();
         if (!n) return std::unexpected<int>(n.error());
         std::int64_t nodeId = *n;
@@ -631,20 +615,14 @@ std::expected<bool, int> SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeM
     nrv = reader.GetBinaryStreamReader().ReadULEB128UInt();
     if (!nrv) return std::unexpected<int>(nrv.error());
     std::uint32_t nsn = *nrv;
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << nsn << " symbol node map" << "\n";
+#endif
     for (std::int32_t i = 0; i < static_cast<std::int32_t>(nsn); ++i)
     {
         util::uuid symbolId;
         std::expected<bool, int> rv = reader.GetBinaryStreamReader().ReadUuid(symbolId);
         if (!rv)  return rv;
-#ifdef DEBUG_WRITE_MAPS
-        std::expected<std::uint8_t, int> brv = reader.GetBinaryStreamReader().ReadByte();
-        if (!brv) return std::unexpected<int>(brv.error());
-        std::uint8_t ski = *brv;
-        SymbolKind sk = static_cast<SymbolKind>(ski);
-        std::expected<std::string, int> srv = reader.GetBinaryStreamReader().ReadUtf8String();
-        if (!srv) return std::unexpected<int>(srv.error());
-        std::string fullName = *srv;
-#endif
         std::expected<std::int64_t, int> lrv = reader.GetBinaryStreamReader().ReadLong();
         if (!lrv) return std::unexpected<int>(lrv.error());
         std::int64_t nodeId = *lrv;
@@ -662,9 +640,6 @@ std::expected<bool, int> SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeM
             else
             {
                 std::cout << "SymbolTable::ReadMaps: warning: symbol-node map: symbol for id '" + util::ToString(symbolId) + "' not found";
-#ifdef DEBUG_WRITE_MAPS
-                std::cout << ": note: symbol kind=" << SymbolKindToString(sk) << ", symbol name=" << fullName;
-#endif
                 std::cout << "\n";
             }
         }
@@ -672,6 +647,9 @@ std::expected<bool, int> SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeM
     nrv = reader.GetBinaryStreamReader().ReadULEB128UInt();
     if (!nrv) return std::unexpected<int>(nrv.error());
     std::uint32_t nfwd = *nrv;
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << nfwd << " forward declarations" << "\n";
+#endif
     for (std::int32_t i = 0; i < static_cast<std::int32_t>(nfwd); ++i)
     {
         util::uuid fwdId;
@@ -686,6 +664,9 @@ std::expected<bool, int> SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeM
     nrv = reader.GetBinaryStreamReader().ReadULEB128UInt();
     if (!nrv) return std::unexpected<int>(nrv.error());
     std::uint32_t nspec = *nrv;
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << nspec << " specifier node map" << "\n";
+#endif
     for (std::int32_t i = 0; i < static_cast<std::int32_t>(nspec); ++i)
     {
         util::uuid symbolId;
@@ -706,6 +687,9 @@ std::expected<bool, int> SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeM
     nrv = reader.GetBinaryStreamReader().ReadULEB128UInt();
     if (!nrv) return std::unexpected<int>(nrv.error());
     std::uint32_t nc = *nrv;
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << nc << " classes " << "\n";
+#endif
     for (std::int32_t i = 0; i < static_cast<std::int32_t>(nc); ++i)
     {
         util::uuid clsId;
@@ -720,6 +704,9 @@ std::expected<bool, int> SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeM
             allClasses.insert(static_cast<ClassTypeSymbol*>(symbol));
         }
     }
+#ifdef DEBUG_SYMBOL_IO
+    std::cout << "<read maps " << GetModule()->Name() << "\n";
+#endif
     return std::expected<bool, int>(true);
 }
 
@@ -842,7 +829,6 @@ std::expected<bool, int> SymbolTable::Write(Writer& writer, Context* context)
         rv = writer.Write(aliasGroupType.get());
         if (!rv) return rv;
     }
-    //index.write(writer.GetBinaryStreamWriter()); TODO
     return std::expected<bool, int>(true);
 }
 
@@ -1070,7 +1056,6 @@ std::expected<bool, int> SymbolTable::Read(Reader& reader)
             return std::unexpected<int>(util::AllocateError("otava.symbols.symbol_table: class group type symbol expected"));
         }
     }
-    //index.read(reader.GetBinaryStreamReader()); TODO
     return std::expected<bool, int>(true);
 }
 
@@ -1542,7 +1527,10 @@ std::expected<bool, int> SymbolTable::BeginNamespace(const std::u32string& name,
     {
         std::expected<Symbol*, int> s = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, sourcePos, 
             context, LookupFlags::dontResolveSingle);
-        if (!s) return std::unexpected<int>(s.error());
+        if (!s)
+        {
+            return std::unexpected<int>(s.error());
+        }
         Symbol* symbol = *s;
         if (symbol)
         {
@@ -1554,7 +1542,7 @@ std::expected<bool, int> SymbolTable::BeginNamespace(const std::u32string& name,
                     MapNode(node, namespaceSymbol);
                 }
                 BeginScope(namespaceSymbol->GetScope());
-                return;
+                return std::expected<bool, int>(true);
             }
             else
             {
@@ -1569,7 +1557,10 @@ std::expected<bool, int> SymbolTable::BeginNamespace(const std::u32string& name,
             MapNode(node, namespaceSymbol);
         }
         std::expected<bool, int> rv = currentScope->SymbolScope()->AddSymbol(namespaceSymbol, sourcePos, context);
-        if (!rv) return rv;
+        if (!rv)
+        {
+            return rv;
+        }
         BeginScope(namespaceSymbol->GetScope());
     }
     return std::expected<bool, int>(true);

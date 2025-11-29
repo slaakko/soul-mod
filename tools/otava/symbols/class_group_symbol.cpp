@@ -144,6 +144,7 @@ void ClassGroupSymbol::Accept(Visitor& visitor)
 
 void ClassGroupSymbol::Merge(ClassGroupSymbol* that)
 {
+    if (this == that) return;
     for (ClassTypeSymbol* cls : that->classes)
     {
         if (std::find(classes.cbegin(), classes.cend(), cls) == classes.end())

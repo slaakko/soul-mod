@@ -36,6 +36,7 @@ export import std.time;
 export import std.thread;
 export import std.thread.condition.variable;
 export import std.thread.mutex;
+export import std.trace;
 export import std.type_traits;
 export import std.utf;
 export import std.utilities.pair;

@@ -43,7 +43,7 @@ public:
     std::expected<otava::intermediate::Type*, int> IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::expected<TypeSymbol*, int> FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::expected<TypeSymbol*, int> DirectType(Context* context) override;
-    bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
+    bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const override;
     bool IsBasicStringCharType(Context* context) override;
     bool IsBasicStringChar16Type(Context* context) override;
     bool IsBasicStringChar32Type(Context* context) override;

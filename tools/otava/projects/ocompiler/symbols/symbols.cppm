@@ -14,6 +14,7 @@ export import otava.symbols.array.type.symbol;
 export import otava.symbols.block;
 export import otava.symbols.bound.tree;
 export import otava.symbols.bound.tree.visitor;
+export import otava.symbols.class_info_index;
 export import otava.symbols.classes;
 export import otava.symbols.class_group.symbol;
 export import otava.symbols.class_templates;

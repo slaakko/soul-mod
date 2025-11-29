@@ -7,7 +7,9 @@ module otava.assembly.instruction;
 
 import util.text.util;
 import otava.assembly.value;
+import otava.assembly.reg;
 import otava.assembly.literal;
+import otava.assembly.context;
 
 namespace otava::assembly {
 
@@ -160,6 +162,14 @@ Instruction* MakeInst(OpCode opCode, Value* left, Value* right)
     inst->AddOperand(left);
     inst->AddOperand(right);
     return inst;
+}
+
+void FreeGlobalRegs(Context* context, Instruction* inst)
+{
+    for (Value* operand : inst->Operands())
+    { 
+        operand->FreeRegs(context);
+    }
 }
 
 } // namespace otava::assembly

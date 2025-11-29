@@ -45,7 +45,7 @@ void UsingDeclarationProcessor::Visit(otava::ast::QualifiedIdNode& node)
 void UsingDeclarationProcessor::Visit(otava::ast::IdentifierNode& node)
 {
     std::vector<Symbol*> symbols;
-    std::set<Scope*> visited;
+    std::set<const Scope*> visited;
     scope->Lookup(node.Str(), SymbolGroupKind::all, ScopeLookup::thisScope, LookupFlags::none, symbols, visited, context);
     if (symbols.empty())
     {

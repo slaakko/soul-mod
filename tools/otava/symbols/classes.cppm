@@ -43,6 +43,7 @@ void SetRecordedParseCtorInitializerFn(RecordedParseCtorInitializerFn fn);
 class TemplateDeclarationSymbol;
 class TemplateParameterSymbol;
 class BoundCompileUnitNode;
+class BoundFunctionNode;
 
 enum class ClassKind
 {
@@ -144,7 +145,7 @@ public:
     FunctionSymbol* GetConversionFunction(TypeSymbol* type, Context* context) const;
     virtual ClassGroupSymbol* Group() const { return group; }
     inline void SetGroup(ClassGroupSymbol* group_) { group = group_; }
-    bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
+    bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const override;
     inline FunctionSymbol* CopyCtor() const { return copyCtor; }
     void GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context);
     void ResetCopyCtor() { copyCtor = nullptr; }
@@ -206,7 +207,7 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
+    bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const override;
     inline ClassGroupSymbol* Group() const { return group; }
     inline void SetGroup(ClassGroupSymbol* group_) { group = group_; }
 private:
@@ -219,7 +220,6 @@ private:
 
 void BeginClass(otava::ast::Node* node, Context* context);
 void EndClass(otava::ast::Node* node, Context* context);
-void AddClassInfo(ClassTypeSymbol* classTypeSymbol, Context* context);
 void ProcessElaboratedClassDeclaration(otava::ast::Node* node, otava::symbols::Context* context);
 void SetCurrentAccess(otava::ast::Node* node, otava::symbols::Context* context);
 void GetClassAttributes(otava::ast::Node* node, std::u32string& name, otava::symbols::ClassKind& kind, TypeSymbol*& specialization, Context* context);

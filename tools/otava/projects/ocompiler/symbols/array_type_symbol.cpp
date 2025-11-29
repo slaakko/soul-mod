@@ -246,7 +246,7 @@ std::expected<bool, int> ArrayTypeDefaultCtor::Resolve(SymbolTable& symbolTable,
 std::expected<bool, int> ArrayTypeDefaultCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    if ((flags & OperationFlags::defaultInit) == OperationFlags::none) return;
+    if ((flags & OperationFlags::defaultInit) == OperationFlags::none) return std::expected<bool, int>(false);
     std::expected<otava::intermediate::Instruction*, int> rv = emitter.EmitLocal(emitter.GetLongType());
     if (!rv) return std::unexpected<int>(rv.error());
     otava::intermediate::Value* loopIndexVar = *rv;

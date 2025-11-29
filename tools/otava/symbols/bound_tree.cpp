@@ -523,7 +523,8 @@ void BoundClassNode::Accept(BoundTreeVisitor& visitor)
 BoundFunctionNode::BoundFunctionNode(FunctionDefinitionSymbol* functionDefinitionSymbol_, const soul::ast::SourcePos& sourcePos_) :
     BoundNode(BoundNodeKind::boundFunctionNode, sourcePos_),
     functionDefinitionSymbol(functionDefinitionSymbol_), 
-    body(), serial(-1)
+    body(), 
+    serial(-1)
 {
 }
 
@@ -891,7 +892,16 @@ void BoundLiteralNode::Accept(BoundTreeVisitor& visitor)
 
 void BoundLiteralNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    emitter.Stack().Push(value->IrValue(emitter, sourcePos, context));
+    if (emitter.Line())
+    {
+        Value* lineValue = context->GetEvaluationContext()->GetIntegerValue(emitter.Line(), util::ToUtf32(std::to_string(emitter.Line())),
+            context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType));
+        emitter.Stack().Push(lineValue->IrValue(emitter, sourcePos, context));
+    }
+    else
+    {
+        emitter.Stack().Push(value->IrValue(emitter, sourcePos, context));
+    }
 }
 
 BoundExpressionNode* BoundLiteralNode::Clone() const
@@ -2341,6 +2351,58 @@ void BoundVariableAsVoidPtrNode::ModifyTypes(const soul::ast::SourcePos& sourceP
     BoundExpressionNode::ModifyTypes(sourcePos, context);
     addrOfBoundVariable->ModifyTypes(sourcePos, context);
 }
+
+/*
+BoundAdjustedThisPtrNode::BoundAdjustedThisPtrNode(ClassTypeSymbol* forClass_, 
+    ClassTypeSymbol* vptrHolderClass_, TypeSymbol* voidPtrType, const soul::ast::SourcePos& sourcePos_) : 
+    BoundExpressionNode(BoundNodeKind::boundAdjustedThisPtrNode, sourcePos_, voidPtrType), 
+    forClass(forClass_), vptrHolderClass(vptrHolderClass_)
+{
+}
+
+void BoundAdjustedThisPtrNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+BoundExpressionNode* BoundAdjustedThisPtrNode::Clone() const
+{
+    return new BoundAdjustedThisPtrNode(forClass, vptrHolderClass, GetType(), GetSourcePos());
+}
+
+void BoundAdjustedThisPtrNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    otava::intermediate::Value* loadedThisPtr = emitter.Stack().Pop();
+    if (forClass != vptrHolderClass)
+    {
+        loadedThisPtr = emitter.EmitBitcast(loadedThisPtr, vptrHolderClass->AddPointer(context)->IrType(emitter, sourcePos, context));
+    }
+    otava::intermediate::Value* vptrPtr = emitter.EmitElemAddr(loadedThisPtr, emitter.EmitLong(vptrHolderClass->VPtrIndex()));
+    otava::intermediate::Value* voidVPtr = emitter.EmitLoad(vptrPtr);
+    otava::intermediate::Value* vptr = emitter.EmitBitcast(voidVPtr, forClass->VPtrType(emitter));
+    otava::intermediate::Value* objectDeltaPtrElem = emitter.EmitElemAddr(loadedThisPtr, emitter.EmitLong(vptrHolderClass->DeltaIndex()));
+    otava::intermediate::Type* deltaPtrType = emitter.MakePtrType(emitter.GetLongType());
+    otava::intermediate::Value* objectDeltaPtr = emitter.EmitBitcast(objectDeltaPtrElem, deltaPtrType);
+    otava::intermediate::Value* objectDelta = emitter.EmitLoad(objectDeltaPtr);
+    otava::intermediate::Value* adjustedObjectPtr = emitter.EmitClassPtrConversion(loadedThisPtr, objectDelta, loadedThisPtr->GetType(), false);
+    auto [success, delta] = Delta(forClass, static_cast<ClassTypeSymbol*>(thisPtr->GetType()->GetBaseType()), emitter, context);
+    if (!success)
+    {
+        ThrowException("classes have no inheritance relationship", sourcePos, context);
+    }
+    otava::intermediate::Value* deltaValue = emitter.EmitLong(delta);
+    otava::intermediate::Value* adjustedThisPtr = emitter.EmitClassPtrConversion(adjustedObjectPtr, deltaValue, 
+        thisPtr->GetType()->IrType(emitter, sourcePos, context), false);
+    boundValueExpr.reset(new BoundValueExpressionNode(adjustedThisPtr, forClass));
+    FunctionSymbol* ptrToVoidPtrCnversionFn = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+        GetType(), forClass->AddPointer(context), sourcePos, context);
+    if (ptrToVoidPtrCnversionFn)
+    {
+        conversion.reset(new BoundConversionNode(boundValueExpr.release(), ptrToVoidPtrCnversionFn, sourcePos));
+        conversion->Load(emitter, flags, sourcePos, context);
+    }
+}
+*/
 
 bool InDirectSwitchStatement(BoundStatementNode* statement)
 {

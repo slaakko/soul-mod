@@ -18,6 +18,7 @@ import otava.symbols.templates;
 import otava.symbols.template_param_compare;
 import otava.symbols.alias.type.symbol;
 import otava.symbols.bound.tree;
+import otava.symbols.trace;
 
 export namespace otava::symbols {
 
@@ -110,6 +111,8 @@ public:
     SymbolTable* GetSymbolTable();
     void SetSymbolTable(SymbolTable* symbolTable_);
     Module* GetModule();
+    inline TraceInfo* GetTraceInfo() const { return traceInfo; }
+    inline void SetTraceInfo(TraceInfo* traceInfo_) { traceInfo = traceInfo_; }
     void SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_);
     FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() const;
     inline BoundCompileUnitNode* GetBoundCompileUnit() const { return boundCompileUnit.get(); }
@@ -195,6 +198,7 @@ public:
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
+    TraceInfo* traceInfo;
     Emitter* emitter;
     std::unique_ptr<BoundCompileUnitNode> boundCompileUnit;
     std::unique_ptr<BoundFunctionNode> boundFunction;

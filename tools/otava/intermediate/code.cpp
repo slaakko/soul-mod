@@ -108,7 +108,7 @@ void AddToUsesVec(std::vector<Instruction*>& uses, Value* value)
 }
 
 Instruction::Instruction(const soul::ast::Span& span_, Type* type_, OpCode opCode_) :
-    Value(span_, ValueKind::instruction, type_), opCode(opCode_), metadataRef(nullptr), index(-1), regValueIndex(-1), assemblyIndex(-1)
+    Value(span_, ValueKind::instruction, type_), opCode(opCode_), metadataRef(nullptr), index(-1), regValueIndex(-1), assemblyInstruction(nullptr)
 {
 }
 

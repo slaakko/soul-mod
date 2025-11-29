@@ -44,7 +44,7 @@ public:
     inline FunctionSymbol* Destructor() const { return destructor; }
     inline void SetDestructor(FunctionSymbol* destructor_) { destructor = destructor_; }
     std::expected<TypeSymbol*, int> FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
-    bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
+    bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const override;
     inline bool InstantiatingDestructor() const { return instantiatingDestructor; }
     inline void SetInstantiatingDestructor(bool instantiating) { instantiatingDestructor = instantiating; }
     void AddInstantiatedVirtualFunctionSpecialization(FunctionSymbol* specialization);

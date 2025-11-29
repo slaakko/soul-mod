@@ -9,6 +9,8 @@ import std;
 
 export namespace otava::assembly {
 
+class Context;
+
 enum class ValueKind
 {
     integerLiteral, floatLiteral, doubleLiteral, stringLiteral, symbol, macro, reg, binaryExpr, content, sizePrefix
@@ -34,6 +36,7 @@ public:
     virtual bool CanSplit() const { return false; }
     virtual Value* Split(int length) { return nullptr; }
     virtual bool IsEmpty() const { return false; }
+    virtual void FreeRegs(Context* context);
 private:
     ValueKind kind;
     std::string name;

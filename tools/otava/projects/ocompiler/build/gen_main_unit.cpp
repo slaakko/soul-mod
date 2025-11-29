@@ -176,12 +176,15 @@ std::expected<std::string, int> GenerateMainUnit(
     context.SetSymbolTable(symbolTable.get());
     if (config == "release")
     {
-        context.SetFileName(
-            (std::filesystem::path(mainFilePath).parent_path().parent_path().parent_path() / std::filesystem::path(mainFilePath).filename()).generic_string());
+        std::string fp = util::Path::GetDirectoryName(util::Path::GetDirectoryName(util::Path::GetDirectoryName(mainFilePath)));
+        std::string fn = util::Path::GetFileName(mainFilePath);
+        context.SetFileName(util::Path::Combine(fp, fn));
     }
     else
     {
-        context.SetFileName((std::filesystem::path(mainFilePath).parent_path().parent_path() / std::filesystem::path(mainFilePath).filename()).generic_string());
+        std::string fp = util::Path::GetDirectoryName(util::Path::GetDirectoryName(mainFilePath));
+        std::string fn = util::Path::GetFileName(mainFilePath);
+        context.SetFileName(util::Path::Combine(fp, fn));
     }
     context.GetBoundCompileUnit()->SetId("main_unit");
     std::expected<otava::symbols::FunctionSymbol*, int> f = context.GetSymbolTable()->AddFunction(U"__global_init__", std::vector<otava::symbols::TypeSymbol*>(), nullptr,

@@ -28,6 +28,10 @@ public:
     {
         return nodes[index].release();
     }
+    void Insert(int index, T* node)
+    {
+        nodes.insert(nodes.begin() + index, std::unique_ptr<T>(node));
+    }
     inline std::vector<std::unique_ptr<T>>& Nodes() { return nodes; }
     inline std::vector<std::unique_ptr<T>>::iterator begin() { return nodes.begin(); }
     inline std::vector<std::unique_ptr<T>>::const_iterator begin() const { return nodes.begin(); }

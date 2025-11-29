@@ -200,6 +200,7 @@ public:
     NodeType Type() const override { return NodeType::sequence; }
     int Count() const override { return nodes.Count(); }
     void AddNode(Node* node) override;
+    void InsertNode(int index, Node* node);
     void Clear() override;
     inline NodeList<Node>& Nodes() { return nodes; }
     inline const NodeList<Node>& Nodes() const { return nodes; }

@@ -207,7 +207,7 @@ std::expected<TypeSymbol*, int> TypeSymbol::UnifyTemplateArgumentType(
 
 std::expected<otava::intermediate::Type*, int> TypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    return Error("IRTYPE not implemented", sourcePos, context);
+    return Error("IRTYPE not implemented for " + SymbolKindToString(Kind()), sourcePos, context);
 }
 
 std::expected<bool, int> TypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)

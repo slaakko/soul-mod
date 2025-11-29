@@ -1,5 +1,7 @@
 module std.container.rb_tree;
 
+import std.stream;
+
 namespace std {
 
 rb_node_base::rb_node_base(rb_node_base* parent_) : parent(parent_), left(nullptr), right(nullptr), color(rb_node_color::black)
@@ -8,16 +10,28 @@ rb_node_base::rb_node_base(rb_node_base* parent_) : parent(parent_), left(nullpt
 
 rb_node_base::~rb_node_base()
 {
+#ifdef DEBUG_RB_TREE
+    std::cout << ">delete " << static_cast<std::uint64_t>(static_cast<void*>(this)) << "\n";
+#endif
     if (left && left != this)
     {
+#ifdef DEBUG_RB_TREE
+        std::cout << "delete left " << static_cast<std::uint64_t>(static_cast<void*>(left)) << "\n";
+#endif
         delete left;
     }
     if (right && right != this)
     {
+#ifdef DEBUG_RB_TREE
+        std::cout << "delete right " << static_cast<std::uint64_t>(static_cast<void*>(right)) << "\n";
+#endif
         delete right;
     }
+#ifdef DEBUG_RB_TREE
+    std::cout << "<delete " << static_cast<std::uint64_t>(static_cast<void*>(this)) << "\n";
+#endif
 }
-
+    
 bool rb_node_base::is_header_node() const
 {
     return color == rb_node_color::red && parent && parent->get_parent() == this;

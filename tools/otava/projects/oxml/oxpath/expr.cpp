@@ -976,14 +976,14 @@ std::string NodeTestStr(NodeTestKind nodeTest)
 {
     switch (nodeTest)
     {
-    case NodeTestKind::piLiteralTest: return "pi-literal-test";
-    case NodeTestKind::commentNodeTest: return "comment-node-test";
-    case NodeTestKind::textNodeTest: return "text-node-test";
-    case NodeTestKind::piNodeTest: return "pi-node-test";
-    case NodeTestKind::anyNodeTest: return "any-node-test";
-    case NodeTestKind::principalNodeTest: return "principal-node-test";
-    case NodeTestKind::prefixTest: return "prefix-node-test";
-    case NodeTestKind::nameTest: return "name-node-test";
+        case NodeTestKind::piLiteralTest: return "pi-literal-test";
+        case NodeTestKind::commentNodeTest: return "comment-node-test";
+        case NodeTestKind::textNodeTest: return "text-node-test";
+        case NodeTestKind::piNodeTest: return "pi-node-test";
+        case NodeTestKind::anyNodeTest: return "any-node-test";
+        case NodeTestKind::principalNodeTest: return "principal-node-test";
+        case NodeTestKind::prefixTest: return "prefix-node-test";
+        case NodeTestKind::nameTest: return "name-node-test";
     }
     return "<unknown node-test>";
 }
@@ -1000,37 +1000,37 @@ bool NodeTest::Select(soul::xml::Node* node, soul::xml::Axis axis) const
 {
     switch (kind)
     {
-    case NodeTestKind::commentNodeTest:
-    {
-        return node->IsCommentNode();
-    }
-    case NodeTestKind::textNodeTest:
-    {
-        return node->IsTextNode();
-    }
-    case NodeTestKind::piNodeTest:
-    {
-        return node->IsProcessingInstructionNode();
-    }
-    case NodeTestKind::anyNodeTest:
-    {
-        return true;
-    }
-    case NodeTestKind::principalNodeTest:
-    {
-        if (axis == soul::xml::Axis::attribute)
+        case NodeTestKind::commentNodeTest:
         {
-            return node->IsAttributeNode();
+            return node->IsCommentNode();
         }
-        else if (axis == soul::xml::Axis::ns)
+        case NodeTestKind::textNodeTest:
         {
-            return false; // todo namespace axis not supported
+            return node->IsTextNode();
         }
-        else
+        case NodeTestKind::piNodeTest:
         {
-            return node->IsElementNode();
+            return node->IsProcessingInstructionNode();
         }
-    }
+        case NodeTestKind::anyNodeTest:
+        {
+            return true;
+        }
+        case NodeTestKind::principalNodeTest:
+        {
+            if (axis == soul::xml::Axis::attribute)
+            {
+                return node->IsAttributeNode();
+            }
+            else if (axis == soul::xml::Axis::ns)
+            {
+                return false; // todo namespace axis not supported
+            }
+            else
+            {
+                return node->IsElementNode();
+            }
+        }
     }
     return false;
 }

@@ -120,7 +120,10 @@ public:
         return types.MakeFwdDeclaredStructureType(id, typeId, comment);
     }
     inline void AddFwdDependentType(FwdDeclaredStructureType* fwdType, Type* type) { types.AddFwdDependentType(fwdType, type); }
-    inline void ResolveForwardReferences(const util::uuid& id, StructureType* structureType) { types.ResolveForwardReferences(id, structureType); }
+    inline std::expected<bool, int> ResolveForwardReferences(const util::uuid& id, StructureType* structureType) 
+    { 
+        return types.ResolveForwardReferences(id, structureType); 
+    }
     inline std::expected<ArrayType*, int> GetArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef)
     {
         return types.GetArrayType(span, typeId, size, elementTypeRef);
@@ -130,11 +133,11 @@ public:
     {
         return types.GetFunctionType(span, typeId, returnTypeRef, paramTypeRefs);
     }
-    inline Function* CurrentFunction() const { return code.CurrentFunction(); }
-    inline void SetCurrentFunction(Function* function) { code.SetCurrentFunction(function); }
+    inline Function* CurrentFunction() const { return code->CurrentFunction(); }
+    inline void SetCurrentFunction(Function* function) { code->SetCurrentFunction(function); }
     inline std::expected<Function*, int> GetOrInsertFunction(const std::string& functionId, FunctionType* functionType)
     {
-        return code.GetOrInsertFunction(functionId, functionType);
+        return code->GetOrInsertFunction(functionId, functionType);
     }
     std::expected<Function*, int> AddFunctionDefinition(const soul::ast::Span& span, Type* type, const std::string& functionId, bool inline_, bool linkOnce, bool createEntry,
         otava::intermediate::MetadataRef* metadataRef);

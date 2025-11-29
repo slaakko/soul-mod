@@ -22,7 +22,7 @@ public:
     inline void SetNextSibling(Component* nextSibling_) { nextSibling = nextSibling_; }
     inline Component* PrevSibling() const { return prevSibling; }
     inline void SetPrevSibling(Component* prevSibling_) { prevSibling = prevSibling_; }
-    void LinkBefore(Component* component)
+    inline void LinkBefore(Component* component)
     {
         if (prevSibling)
         {
@@ -32,7 +32,7 @@ public:
         component->nextSibling = this;
         prevSibling = component;
     }
-    void LinkAfter(Component* component)
+    inline void LinkAfter(Component* component)
     {
         if (nextSibling)
         {
@@ -42,7 +42,7 @@ public:
         component->nextSibling = nextSibling;
         nextSibling = component;
     }
-    void Unlink()
+    inline void Unlink()
     {
         if (prevSibling)
         {
@@ -77,6 +77,5 @@ private:
     Component* firstChild;
     Component* lastChild;
 };
-
 
 } // namespace util

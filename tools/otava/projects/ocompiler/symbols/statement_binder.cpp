@@ -472,7 +472,7 @@ std::expected<bool, int> StatementBinder::GenerateMemberTerminators(const soul::
 std::expected<bool, int> StatementBinder::AddMemberTerminator(VariableSymbol* memberVar, const soul::ast::SourcePos& sourcePos)
 {
     TypeSymbol* memberVarType = memberVar->GetType();
-    if (memberVarType->IsPointerType() || memberVarType->IsReferenceType()) return;
+    if (memberVarType->IsPointerType() || memberVarType->IsReferenceType()) return std::expected<bool, int>(true);
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
     BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVar, sourcePos);
     std::expected<BoundExpressionNode*, int> tp = context->GetThisPtr(sourcePos);
@@ -595,7 +595,7 @@ std::expected<bool, int> StatementBinder::CompleteMemberInitializers(const soul:
 {
     if (currentClass)
     {
-        if (HasThisInitializer()) return;
+        if (HasThisInitializer()) return std::expected<bool, int>(true);
         for (VariableSymbol* memberVar : currentClass->MemberVariables())
         {
             int index = memberVar->Index();
@@ -656,7 +656,7 @@ std::expected<bool, int> StatementBinder::CompleteBaseInitializers(const soul::a
 {
     if (currentClass)
     {
-        if (HasThisInitializer()) return;
+        if (HasThisInitializer()) return std::expected<bool, int>(true);
         for (ClassTypeSymbol* baseClass : currentClass->BaseClasses())
         {
             int index = GetBaseInitializerOrTerminatorIndex(baseClass);
@@ -1564,9 +1564,40 @@ void StatementBinder::Visit(otava::ast::ContinueStatementNode& node)
 
 void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
 {
+    auto vp = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::voidType);
+    if (!vp)
+    {
+        SetError(vp.error());
+        return;
+    }
+    TypeSymbol* voidType = *vp;
     BoundReturnStatementNode* boundReturnStatement = new BoundReturnStatementNode(node.GetSourcePos());
     if (node.ReturnValue())
     {
+        TypeSymbol* returnType = nullptr;
+        if (context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ReturnType())
+        {
+            auto fp = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ReturnType()->DirectType(context);
+            if (!fp)
+            {
+                SetError(fp.error());
+                return;
+            }
+            returnType = *fp;
+            fp = returnType->FinalType(node.GetSourcePos(), context);
+            if (!fp)
+            {
+                SetError(fp.error());
+                return;
+            }
+            returnType = *fp;
+        }
+        if (!returnType || TypesEqual(returnType, voidType, context))
+        {
+            std::unexpected<int> result = Error("cannot return a value", node.ReturnValue()->GetSourcePos(), context);
+            SetError(result.error());
+            return;
+        }
         if (context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ReturnsClass())
         {
             std::vector<std::unique_ptr<BoundExpressionNode>> classReturnArgs;
@@ -1776,6 +1807,33 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
             {
                 context->PopFlags();
             }
+        }
+    }
+    else
+    {
+        TypeSymbol* returnType = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ReturnType();
+        if (returnType)
+        {
+            auto fp = returnType->DirectType(context);
+            if (!fp)
+            {
+                SetError(fp.error());
+                return;
+            }
+            returnType = *fp;
+            fp = returnType->FinalType(node.GetSourcePos(), context);
+            if (!fp)
+            {
+                SetError(fp.error());
+                return;
+            }
+            returnType = *fp;
+        }
+        if (returnType && !TypesEqual(returnType, voidType, context))
+        {
+            std::unexpected<int> result = Error("must return a value", node.GetSourcePos(), context);
+            SetError(result.error());
+            return;
         }
     }
     SetStatement(boundReturnStatement);
@@ -2499,6 +2557,8 @@ std::expected<FunctionDefinitionSymbol*, int> BindFunction(otava::ast::Node* fun
     if (functionDefinitionSymbol->IsTemplateParameterInstantiation(context, visited)) return std::expected<FunctionDefinitionSymbol*, int>(functionDefinitionSymbol);
     functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
+    rv = GenerateEnterFunctionCode(functionDefinitionNode, functionDefinitionSymbol, context);
+    if (!rv) return std::unexpected<int>(rv.error());
     functionDefinitionNode->Accept(binder);
     if (!binder) return std::unexpected<int>(binder.Error());
     functionDefinitionSymbol = binder.GetFunctionDefinitionSymbol();

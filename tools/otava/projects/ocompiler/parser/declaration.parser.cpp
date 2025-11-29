@@ -2196,52 +2196,22 @@ std::expected<soul::parser::Match, int> DeclarationParser<LexerT>::LinkageSpecif
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                std::int64_t save = lexer.GetPos();
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch4 = &match;
                     {
-                        soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch5 = &match;
+                        std::int64_t pos = lexer.GetPos();
+                        std::expected<soul::parser::Match, int> m = otava::parser::templates::TemplateParser<LexerT>::Extern(lexer);
+                        if (!m) return std::unexpected<int>(m.error());
+                        soul::parser::Match match = *m;
+                        extrn.reset(static_cast<otava::ast::Node*>(match.value));
+                        if (match.hit)
                         {
-                            std::int64_t pos = lexer.GetPos();
-                            std::expected<soul::parser::Match, int> m = otava::parser::templates::TemplateParser<LexerT>::Extern(lexer);
-                            if (!m) return std::unexpected<int>(m.error());
-                            soul::parser::Match match = *m;
-                            extrn.reset(static_cast<otava::ast::Node*>(match.value));
-                            if (match.hit)
-                            {
-                                auto sp = lexer.GetSourcePos(pos);
-                                if (!sp) return std::unexpected<int>(sp.error());
-                                sourcePos = *sp;
-                            }
-                            *parentMatch5 = match;
-                        }
-                        *parentMatch4 = match;
-                    }
-                    if (match.hit)
-                    {
-                        soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch6 = &match;
-                        {
-                            soul::parser::Match match(false);
-                            soul::parser::Match* parentMatch7 = &match;
-                            {
-                                std::int64_t pos = lexer.GetPos();
-                                std::expected<soul::parser::Match, int> m = otava::parser::literal::LiteralParser<LexerT>::StringLiteral(lexer, context);
-                                if (!m) return std::unexpected<int>(m.error());
-                                soul::parser::Match match = *m;
-                                linkage.reset(static_cast<otava::ast::Node*>(match.value));
-                                if (match.hit)
-                                {
-                                    linkageNode.reset(linkage.release());
-                                    context->PushSetFlag(otava::symbols::ContextFlags::linkageDeclaration);
-                                }
-                                *parentMatch7 = match;
-                            }
-                            *parentMatch6 = match;
+                            auto sp = lexer.GetSourcePos(pos);
+                            if (!sp) return std::unexpected<int>(sp.error());
+                            sourcePos = *sp;
                         }
                         *parentMatch4 = match;
                     }
@@ -2250,11 +2220,41 @@ std::expected<soul::parser::Match, int> DeclarationParser<LexerT>::LinkageSpecif
                 if (match.hit)
                 {
                     soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch5 = &match;
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch6 = &match;
+                        {
+                            std::int64_t pos = lexer.GetPos();
+                            std::expected<soul::parser::Match, int> m = otava::parser::literal::LiteralParser<LexerT>::StringLiteral(lexer, context);
+                            if (!m) return std::unexpected<int>(m.error());
+                            soul::parser::Match match = *m;
+                            linkage.reset(static_cast<otava::ast::Node*>(match.value));
+                            if (match.hit)
+                            {
+                                linkageNode.reset(linkage.release());
+                                context->PushSetFlag(otava::symbols::ContextFlags::linkageDeclaration);
+                            }
+                            *parentMatch6 = match;
+                        }
+                        *parentMatch5 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
+            }
+            if (match.hit)
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch7 = &match;
+                {
+                    soul::parser::Match match(false);
                     soul::parser::Match* parentMatch8 = &match;
                     {
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch9 = &match;
                         {
+                            std::int64_t save = lexer.GetPos();
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch10 = &match;
                             {
@@ -2354,36 +2354,36 @@ std::expected<soul::parser::Match, int> DeclarationParser<LexerT>::LinkageSpecif
                                 *parentMatch10 = match;
                             }
                             *parentMatch9 = match;
+                            if (!match.hit)
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch19 = &match;
+                                lexer.SetPos(save);
+                                {
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch20 = &match;
+                                    {
+                                        std::int64_t pos = lexer.GetPos();
+                                        std::expected<soul::parser::Match, int> m = otava::parser::declaration::DeclarationParser<LexerT>::Declaration(lexer, context);
+                                        if (!m) return std::unexpected<int>(m.error());
+                                        soul::parser::Match match = *m;
+                                        declaration.reset(static_cast<otava::ast::Node*>(match.value));
+                                        if (match.hit)
+                                        {
+                                            node.reset(new otava::ast::LinkageSpecificationNode(sourcePos, extrn.release(), linkageNode.release(), declaration.release(), soul::ast::SourcePos(), soul::ast::SourcePos()));
+                                        }
+                                        *parentMatch20 = match;
+                                    }
+                                    *parentMatch19 = match;
+                                }
+                                *parentMatch9 = match;
+                            }
                         }
                         *parentMatch8 = match;
                     }
-                    *parentMatch3 = match;
+                    *parentMatch7 = match;
                 }
                 *parentMatch2 = match;
-                if (!match.hit)
-                {
-                    soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch19 = &match;
-                    lexer.SetPos(save);
-                    {
-                        soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch20 = &match;
-                        {
-                            std::int64_t pos = lexer.GetPos();
-                            std::expected<soul::parser::Match, int> m = otava::parser::declaration::DeclarationParser<LexerT>::Declaration(lexer, context);
-                            if (!m) return std::unexpected<int>(m.error());
-                            soul::parser::Match match = *m;
-                            declaration.reset(static_cast<otava::ast::Node*>(match.value));
-                            if (match.hit)
-                            {
-                                node.reset(new otava::ast::LinkageSpecificationNode(sourcePos, extrn.release(), linkageNode.release(), declaration.release(), soul::ast::SourcePos(), soul::ast::SourcePos()));
-                            }
-                            *parentMatch20 = match;
-                        }
-                        *parentMatch19 = match;
-                    }
-                    *parentMatch2 = match;
-                }
             }
             *parentMatch1 = match;
         }

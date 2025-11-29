@@ -108,6 +108,7 @@ void AliasGroupSymbol::Accept(Visitor& visitor)
 
 void AliasGroupSymbol::Merge(AliasGroupSymbol* that, Context* context)
 {
+    if (this == that) return;
     for (AliasTypeSymbol* aliasType : that->aliasTypeSymbols)
     {
         AddAliasTypeSymbol(aliasType, context);

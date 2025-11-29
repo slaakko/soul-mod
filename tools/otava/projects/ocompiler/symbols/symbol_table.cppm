@@ -29,8 +29,8 @@ import otava.symbols.concepts;
 import otava.symbols.function.group.symbol;
 import otava.symbols.class_group.symbol;
 import otava.symbols.function.type.symbol;
+import otava.symbols.class_info_index;
 import util.uuid;
-//import class_info_index;
 
 export namespace otava::symbols {
 
@@ -260,8 +260,8 @@ public:
     std::expected<ExplicitInstantiationSymbol*, int> GetExplicitInstantiation(ClassTemplateSpecializationSymbol* classTemplateSpecialization) const;
     void AddExplicitInstantiation(ExplicitInstantiationSymbol* explicitInstantition);
     void MapExplicitInstantiation(ExplicitInstantiationSymbol* explicitInstantition);
-    //const info::class_index& ClassIndex() const { return index; } // todo
-    //info::class_index& ClassIndex() { return index; } // todo
+    const otava::symbols::class_index& ClassIndex() const { return index; }
+    otava::symbols::class_index& ClassIndex() { return index; }
     ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(const util::uuid& id) const;
     void AddClassTemplateSpecialization(ClassTemplateSpecializationSymbol* sp);
     void MapClassTemplateSpecialization(ClassTemplateSpecializationSymbol* sp);
@@ -304,7 +304,6 @@ private:
     void ImportAliasGroups(const SymbolTable& that);
     void ImportClassGroupTypes(const SymbolTable& that);
     void ImportAliasGroupTypes(const SymbolTable& that);
-    // void ImportClassIndex(const SymbolTable& that); TODO
     void AddImportAfterResolve(const SymbolTable* that);
     Module* module;
     std::unique_ptr<NamespaceSymbol> globalNs;
@@ -366,7 +365,7 @@ private:
     Linkage currentLinkage;
     std::stack<Linkage> linkageStack;
     std::vector<ParameterSymbol*> returnValueParametersToResolve;
-    //info::class_index index; // todo
+    otava::symbols::class_index index;
     std::vector<const SymbolTable*> importAfterResolve;
     std::vector<util::uuid> templateParameterIds;
     std::vector<util::uuid> compoundTypeIds;

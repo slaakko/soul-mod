@@ -290,6 +290,10 @@ public:
     void AddDefaultFunctionSymbol(FunctionSymbol* defaultFunctionSymbol);
     inline int Serial() const { return serial; }
     inline void SetSerial(int serial_) { serial = serial_; }
+    void SetSetLineStatementNode(otava::ast::Node* setLineStatementNode_);
+    inline otava::ast::Node* GetSetLineStatementNode() const { return setLineStatementNode.get(); }
+    void SetBoundSetLineStatement(BoundStatementNode* boundSetLineStatement_);
+    inline BoundStatementNode* GetBoundSetLineStatement() const { return boundSetLineStatement.get(); }
 private:
     FunctionDefinitionSymbol* functionDefinitionSymbol;
     std::unique_ptr<BoundCtorInitializerNode> ctorInitializer;
@@ -297,6 +301,8 @@ private:
     std::unique_ptr<BoundCompoundStatementNode> body;
     std::vector<FunctionSymbol*> defaultFunctionSymbols;
     int serial;
+    std::unique_ptr<otava::ast::Node> setLineStatementNode;
+    std::unique_ptr<BoundStatementNode> boundSetLineStatement;
 };
 
 class BoundStatementNode : public BoundNode

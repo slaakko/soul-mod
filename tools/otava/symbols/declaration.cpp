@@ -48,9 +48,9 @@ namespace otava::symbols {
 struct ArraySizeComputer : public otava::ast::DefaultVisitor
 {
     ArraySizeComputer();
-    void Visit(otava::ast::InitDeclaratorNode& node);
-    void Visit(otava::ast::AssignmentInitNode& node);
-    void Visit(otava::ast::BracedInitListNode& node);
+    void Visit(otava::ast::InitDeclaratorNode& node) override;
+    void Visit(otava::ast::AssignmentInitNode& node) override;
+    void Visit(otava::ast::BracedInitListNode& node) override;
     std::int64_t size;
 };
 
@@ -94,8 +94,8 @@ class NoReturnAttributeMatcher : public otava::ast::DefaultVisitor
 {
 public:
     NoReturnAttributeMatcher();
-    void Visit(otava::ast::AttributeNode& node);
-    void Visit(otava::ast::IdentifierNode& node);
+    void Visit(otava::ast::AttributeNode& node) override;
+    void Visit(otava::ast::IdentifierNode& node) override;
     inline bool Value() const { return value; }
 private:
     bool matchId;
@@ -924,9 +924,9 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
 {   
     get = false;
     int scopes = 0;
-    if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && 
-        !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) && 
-        !context->GetFlag(ContextFlags::instantiateInlineFunction))
+    if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate | 
+        ContextFlags::instantiateMemFnOfClassTemplate | 
+        ContextFlags::instantiateInlineFunction))
     {
         context->GetSymbolTable()->CurrentScope()->PopParentScope();
     }
@@ -959,10 +959,10 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                 }
                 fnDeclarationReturnType = fnDeclaration->ReturnType();
             }
-            if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || 
-                context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) || 
-                context->GetFlag(ContextFlags::instantiateInlineFunction) ||
-                context->GetFlag(ContextFlags::generateMainWrapper))
+            if (context->GetFlag(ContextFlags::instantiateFunctionTemplate | 
+                ContextFlags::instantiateMemFnOfClassTemplate | 
+                ContextFlags::instantiateInlineFunction |
+                ContextFlags::generateMainWrapper))
             {
                 context->SetSpecialization(definition, functionNode);
             }
@@ -1021,9 +1021,9 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                 }
             }
             context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context);
-            if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && 
-                !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) && 
-                !context->GetFlag(ContextFlags::instantiateInlineFunction))
+            if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate |
+                ContextFlags::instantiateMemFnOfClassTemplate | 
+                ContextFlags::instantiateInlineFunction))
             {
                 definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
             }

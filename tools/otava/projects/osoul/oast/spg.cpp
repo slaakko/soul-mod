@@ -327,7 +327,7 @@ std::expected<bool, int> ChoiceParser::SetOptimizationFlag(int& count)
     {
         if (parent->IsDifferenceParser())
         {
-            return;
+            return std::expected<bool, int>(false);
         }
         parent = parent->Parent();
     }

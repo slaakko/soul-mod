@@ -264,7 +264,7 @@ TypeSymbol* ClassTemplateSpecializationSymbol::FinalType(const soul::ast::Source
     return specialization;
 }
 
-bool ClassTemplateSpecializationSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
+bool ClassTemplateSpecializationSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const
 {
     if (visited.find(this) != visited.end()) return true;
     visited.insert(this);
@@ -273,7 +273,7 @@ bool ClassTemplateSpecializationSymbol::IsComplete(std::set<const TypeSymbol*>& 
         if (templateArg->IsTypeSymbol())
         {
             TypeSymbol* templateArgType = static_cast<TypeSymbol*>(templateArg);
-            if (!templateArgType->IsComplete(visited)) return false;
+            if (!templateArgType->IsComplete(visited, incompleteType)) return false;
         }
     }
     return true;
@@ -359,7 +359,7 @@ util::uuid MakeClassTemplateSpecializationSymbolIrId(ClassTypeSymbol* classTempl
     return id;
 }
 
-util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, 
+util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments,
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
     return MakeClassTemplateSpecializationSymbolId(classTemplate, templateArguments, 0, sourcePos, context);
@@ -435,7 +435,8 @@ void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, co
     if (specialization->IsTemplateParameterInstantiation(context, tpi_visited)) return;
     if (specialization->Destructor()) return;
     std::set<const TypeSymbol*> visited;
-    if (!specialization->IsComplete(visited)) return;
+    const TypeSymbol* incompleteType = nullptr;
+    if (!specialization->IsComplete(visited, incompleteType)) return;
     if (specialization->InstantiatingDestructor()) return;
     specialization->SetInstantiatingDestructor(true);
     context->PushResetFlag(ContextFlags::skipFunctionDefinitions);
@@ -467,9 +468,9 @@ class VirtualFunctionNodeClassifierVisitor : public otava::ast::DefaultVisitor
 {
 public:
     VirtualFunctionNodeClassifierVisitor();
-    void Visit(otava::ast::VirtualNode& node);
-    void Visit(otava::ast::OverrideNode& node);
-    void Visit(otava::ast::FinalNode& node);
+    void Visit(otava::ast::VirtualNode& node) override;
+    void Visit(otava::ast::OverrideNode& node) override;
+    void Visit(otava::ast::FinalNode& node) override;
     bool Value() const { return value; }
 private:
     bool value;
@@ -672,9 +673,9 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
         std::set<const Symbol*> visited;
         if (!specialization->IsTemplateParameterInstantiation(context, visited))
         {
-            AddClassInfo(specialization, context);
             InstantiateDestructor(specialization, sourcePos, context);
             InstantiateVirtualFunctions(specialization, sourcePos, context);
+            context->GetSymbolTable()->AddClass(specialization);
         }
     }
     catch (const std::exception& ex)

@@ -728,7 +728,7 @@ void FunctionSymbol::Write(Writer& writer)
     writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(qualifiers));
     writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(linkage));
     writer.GetBinaryStreamWriter().Write(index);
-    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(flags));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::int32_t>(flags));
     if (returnType)
     {
         writer.GetBinaryStreamWriter().Write(returnType->Id());
@@ -784,7 +784,7 @@ void FunctionSymbol::Read(Reader& reader)
     qualifiers = static_cast<FunctionQualifiers>(reader.GetBinaryStreamReader().ReadByte());
     linkage = static_cast<Linkage>(reader.GetBinaryStreamReader().ReadByte());
     index = reader.GetBinaryStreamReader().ReadInt();
-    flags = static_cast<FunctionSymbolFlags>(reader.GetBinaryStreamReader().ReadByte());
+    flags = static_cast<FunctionSymbolFlags>(reader.GetBinaryStreamReader().ReadInt());
     reader.GetBinaryStreamReader().ReadUuid(returnTypeId);
     if (ReturnsClass())
     {
@@ -984,7 +984,7 @@ void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<B
             otava::intermediate::Type* deltaPtrType = emitter.MakePtrType(emitter.GetLongType());
             otava::intermediate::Value* objectDeltaPtr = emitter.EmitBitcast(objectDeltaPtrElem, deltaPtrType);
             otava::intermediate::Value* objectDelta = emitter.EmitLoad(objectDeltaPtr);
-            otava::intermediate::Value* adjustedObjectPtr = emitter.EmitClassPtrConversion(thisPtr, objectDelta, thisPtr->GetType());
+            otava::intermediate::Value* adjustedObjectPtr = emitter.EmitClassPtrConversion(thisPtr, objectDelta, thisPtr->GetType(), false);
             if (VTabIndex() == -1)
             {
                 ThrowException("invalid vtab index", sourcePos, context);
@@ -995,7 +995,7 @@ void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<B
             otava::intermediate::Value* deltaPtrElem = emitter.EmitElemAddr(vptr, emitter.EmitLong(vtabClassIdElementCount + 2 * VTabIndex() + 1));
             otava::intermediate::Value* deltaPtr = emitter.EmitBitcast(deltaPtrElem, deltaPtrType);
             otava::intermediate::Value* delta = emitter.EmitLoad(deltaPtr);
-            otava::intermediate::Value* adjustedThisPtr = emitter.EmitClassPtrConversion(adjustedObjectPtr, delta, thisPtr->GetType());
+            otava::intermediate::Value* adjustedThisPtr = emitter.EmitClassPtrConversion(adjustedObjectPtr, delta, thisPtr->GetType(), false);
             emitter.Stack().Push(adjustedThisPtr);
         }
     }
@@ -1520,9 +1520,10 @@ soul::xml::Element* FunctionDefinitionSymbol::ToXml() const
     return element;
 }
 
-ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol,
+ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol_,
     const soul::ast::SourcePos& sourcePos, Context* context) : 
-    FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, functionDefinitionSymbol->Name()), 
+    FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, functionDefinitionSymbol_->Name()),
+    functionDefinitionSymbol(functionDefinitionSymbol_),
     irName(functionDefinitionSymbol->IrName(context))
 {
     SetDeclarationFlags(functionDefinitionSymbol->GetDeclarationFlags());
@@ -1539,7 +1540,7 @@ ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDe
 }
 
 ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(const std::u32string& name_) : 
-    FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, name_)
+    FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, name_), functionDefinitionSymbol(nullptr)
 {
 }
 
@@ -1547,12 +1548,43 @@ void ExplicitlyInstantiatedFunctionDefinitionSymbol::Write(Writer& writer)
 {
     FunctionDefinitionSymbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(irName);
+    if (!functionDefinitionSymbol->IsGenerated())
+    {
+        writer.GetBinaryStreamWriter().Write(functionDefinitionSymbol->Id());
+    }
+    else
+    {
+        writer.GetBinaryStreamWriter().Write(util::nil_uuid());
+    }
 }
 
 void ExplicitlyInstantiatedFunctionDefinitionSymbol::Read(Reader& reader)
 {
     FunctionDefinitionSymbol::Read(reader);
     irName = reader.GetBinaryStreamReader().ReadUtf8String();
+    reader.GetBinaryStreamReader().ReadUuid(functionDefinitionId);
+}
+
+void ExplicitlyInstantiatedFunctionDefinitionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
+{
+    FunctionDefinitionSymbol::Resolve(symbolTable, context);
+    if (!functionDefinitionId.is_nil())
+    {
+        functionDefinitionSymbol = symbolTable.GetFunctionDefinition(functionDefinitionId);
+    }
+}
+
+otava::intermediate::Type* ExplicitlyInstantiatedFunctionDefinitionSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, 
+    otava::symbols::Context* context) const
+{
+    if (functionDefinitionSymbol)
+    {
+        return functionDefinitionSymbol->IrType(emitter, sourcePos, context);
+    }
+    else
+    {
+        return FunctionDefinitionSymbol::IrType(emitter, sourcePos, context);
+    }
 }
 
 bool FunctionLess::operator()(FunctionSymbol* left, FunctionSymbol* right) const

@@ -203,7 +203,8 @@ public:
     NodeType Type() const override { return NodeType::sequence; }
     int Count() const override { return nodes.Count(); }
     std::expected<bool, int> AddNode(Node* node) override;
-    void Clear() override;
+    void InsertNode(int index, Node* node);
+    std::expected<bool, int> Clear() override;
     inline NodeList<Node>& Nodes() { return nodes; }
     inline const NodeList<Node>& Nodes() const { return nodes; }
 private:
@@ -219,7 +220,7 @@ public:
     NodeType Type() const override { return NodeType::list; }
     int Count() const override { return nodes.Count(); }
     std::expected<bool, int> AddNode(Node* node) override;
-    void Clear() override;
+    std::expected<bool, int> Clear() override;
     inline NodeList<Node>& Nodes() { return nodes; }
     inline const NodeList<Node>& Nodes() const { return nodes; }
     inline const std::vector<Node*>& Items() const { return items; }

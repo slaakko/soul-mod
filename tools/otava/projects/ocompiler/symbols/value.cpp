@@ -396,7 +396,7 @@ void IntegerValue::Accept(Visitor& visitor)
 std::expected<otava::intermediate::Value*, int> IntegerValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     std::expected<otava::intermediate::Type*, int> irt = GetType()->IrType(emitter, sourcePos, context);
-    if (irt) return std::unexpected<int>(irt.error());
+    if (!irt) return std::unexpected<int>(irt.error());
     otava::intermediate::Type* irType = *irt;
     return std::expected<otava::intermediate::Value*, int>(emitter.EmitIntegerValue(irType, value));
 }

@@ -19,7 +19,7 @@ void PreprocessPPLine(soul::lexer::Lexer<otava::lexer::OtavaLexer<char32_t>, cha
     auto ppl = otava::pp::lexer::MakeLexer(token->match.begin, token->match.end, lxr->FileName());
     if (!ppl)
     {
-        std::cerr << util::GetErrorMessage(ppl.error()) << "\n";
+        std::cerr << util::GetErrorMessage(ppl.error(), true) << "\n";
         std::exit(1);
     }
     auto& ppLexer = *ppl;
@@ -28,7 +28,7 @@ void PreprocessPPLine(soul::lexer::Lexer<otava::lexer::OtavaLexer<char32_t>, cha
     auto rv = otava::pp::parser::PPParser<LexerType>::Parse(ppLexer, state);
     if (!rv)
     {
-        std::cerr << util::GetErrorMessage(rv.error()) << "\n";
+        std::cerr << util::GetErrorMessage(rv.error(), true) << "\n";
         std::exit(1);
     }
 }

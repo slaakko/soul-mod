@@ -9,7 +9,6 @@ import std;
 import soul.lexer.file.map;
 import class_info_index;
 import otava.symbols;
-import otava.symbols.function_definition_symbol_set;
 
 export namespace otava::build_project {}
 
@@ -81,6 +80,11 @@ public:
     inline Target GetTarget() const { return target; }
     inline info::class_index& Index() { return index; }
     inline otava::symbols::FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() { return &functionDefinitionSymbolSet; }
+    inline otava::symbols::TraceInfo& GetTraceInfo() { return traceInfo; };
+    void ReadTraceInfo(const std::string& moduleDir);
+    void WriteTraceInfo(const std::string& moduleDir);
+    void ReadClassIndex(const std::string& moduleDir);
+    void WriteClassIndex(const std::string& moduleDir);
 private:
     soul::lexer::FileMap* fileMap;
     std::string filePath;
@@ -105,6 +109,7 @@ private:
     std::vector<Define> defines;
     info::class_index index;
     otava::symbols::FunctionDefinitionSymbolSet functionDefinitionSymbolSet;
+    otava::symbols::TraceInfo traceInfo;
 };
 
 } // namespace otava::build

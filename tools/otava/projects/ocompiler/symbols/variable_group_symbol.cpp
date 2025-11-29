@@ -43,7 +43,8 @@ Symbol* VariableGroupSymbol::GetSingleSymbol()
 {
     if (variables.size() == 1)
     {
-        return variables.front();
+        Symbol* sym = variables.front();
+        return sym;
     }
     else
     {
@@ -124,9 +125,10 @@ void VariableGroupSymbol::Accept(Visitor& visitor)
 
 void VariableGroupSymbol::Merge(VariableGroupSymbol* that)
 {
+    if (this == that) return;
     for (VariableSymbol* variable : that->variables)
     {
-        if (std::find(variables.cbegin(), variables.cend(), variable) == variables.end())
+        if (std::find(variables.begin(), variables.end(), variable) == variables.end())
         {
             variables.push_back(variable);
         }

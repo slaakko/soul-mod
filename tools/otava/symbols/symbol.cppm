@@ -98,7 +98,7 @@ enum class Access : std::int32_t
 
 std::string AccessStr(Access access);
 
-enum class SymbolKind : std::int32_t
+enum class SymbolKind : std::uint8_t
 {
     null, 
     classGroupSymbol, conceptGroupSymbol, functionGroupSymbol, variableGroupSymbol, aliasGroupSymbol, enumGroupSymbol,

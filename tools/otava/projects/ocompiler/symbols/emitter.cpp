@@ -11,7 +11,7 @@ import util;
 
 namespace otava::symbols {
 
-Emitter::Emitter() : context(new otava::intermediate::Context()), stack(new IrValueStack()), retValue(nullptr)
+Emitter::Emitter() : context(new otava::intermediate::Context()), stack(new IrValueStack()), retValue(nullptr), line(0)
 {
 }
 
@@ -100,9 +100,9 @@ otava::intermediate::Type* Emitter::GetOrInsertFwdDeclaredStructureType(const ut
     }
 }
 
-void Emitter::ResolveForwardReferences(const util::uuid& typeId, otava::intermediate::StructureType* structureType)
+std::expected<bool, int> Emitter::ResolveForwardReferences(const util::uuid& typeId, otava::intermediate::StructureType* structureType)
 {
-    context->ResolveForwardReferences(typeId, structureType);
+    return context->ResolveForwardReferences(typeId, structureType);
 }
 
 otava::intermediate::Value* Emitter::EmitBool(bool value)

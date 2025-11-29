@@ -16,7 +16,7 @@ class Function;
 template<typename PtrT>
 inline void AddPtrToSet(PtrT* ptr, std::vector<PtrT*>& set)
 {
-    if (std::find(set.cbegin(), set.cend(), ptr) == set.cend())
+    if (std::find(set.begin(), set.end(), ptr) == set.end())
     {
         set.push_back(ptr);
     }
@@ -40,7 +40,7 @@ bool RemovePtrFromSet(PtrT* ptr, std::vector<PtrT*>& set)
 template<typename PtrT>
 inline bool PtrInSet(PtrT* ptr, const std::vector<PtrT*>& set)
 {
-    return std::find(set.cbegin(), set.cend(), ptr) != set.cend();
+    return std::find(set.begin(), set.end(), ptr) != set.end();
 }
 
 std::expected<bool, int> ReplaceInstructionWithValue(Instruction* inst, Value* value);

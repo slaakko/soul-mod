@@ -202,7 +202,7 @@ TypeSymbol* TypeSymbol::Unify(TypeSymbol* argType, Context* context)
 
 otava::intermediate::Type* TypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    ThrowException("IRTYPE not implemented", sourcePos, context);
+    ThrowException("IRTYPE not implemented for " + SymbolKindToString(Kind()), sourcePos, context);
 }
 
 void TypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)

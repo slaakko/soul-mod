@@ -130,6 +130,7 @@ void FunctionGroupSymbol::Accept(Visitor& visitor)
 
 void FunctionGroupSymbol::Merge(FunctionGroupSymbol* that)
 {
+    if (this == that) return;
     for (FunctionSymbol* function : that->functions)
     {
         if (std::find(functions.cbegin(), functions.cend(), function) == functions.end())

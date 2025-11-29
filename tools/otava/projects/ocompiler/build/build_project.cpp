@@ -39,10 +39,6 @@ std::expected<bool, int> LoadImportedModules(Project* project, otava::symbols::M
             module->AddDependsOnModule(projectModule);
             auto rv = LoadImportedModules(project, module, projectModule, moduleMapper, config, optLevel);
             if (!rv) return rv;
-            if (project->GetTarget() == Target::program)
-            {
-                //project->Index().imp(projectModule->GetSymbolTable()->ClassIndex(), true); TODO
-            }
         }
         else
         {
@@ -55,10 +51,6 @@ std::expected<bool, int> LoadImportedModules(Project* project, otava::symbols::M
             if (!rv) return rv;
             rv = LoadImportedModules(project, module, childModule, moduleMapper, config, optLevel);
             if (!rv) return rv;
-            if (project->GetTarget() == Target::program)
-            {
-                //project->Index().imp(childModule->GetSymbolTable()->ClassIndex(), true); TODO
-            }
         }
     }
     return std::expected<bool, int>(true);
@@ -122,16 +114,16 @@ const std::string& Project::GetModuleSourceFilePath(std::int32_t fileId) const
 
 std::expected<bool, int> Project::InitModules()
 {
-    if (initialized) return;
+    if (initialized) return std::expected<bool, int>(true);
     initialized = true;
     return MapFiles();
 }
 
 std::expected<bool, int> Project::LoadModules(otava::symbols::ModuleMapper& moduleMapper, const std::string& config, int optLevel)
 {
-    if (loaded) return;
+    if (loaded) return std::expected<bool, int>(true);
     loaded = true;
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << ">project '" << Name() << "' loading modules" << "\n";
 #endif
     for (const auto& module : modules)
@@ -145,7 +137,7 @@ std::expected<bool, int> Project::LoadModules(otava::symbols::ModuleMapper& modu
     for (const auto& module : modules)
     {
         if (!module) continue;
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
         std::cout << ">" << module->Name() << "\n";
 #endif
         for (const auto& exportedModuleName : module->ExportModuleNames())
@@ -182,20 +174,17 @@ std::expected<bool, int> Project::LoadModules(otava::symbols::ModuleMapper& modu
                 {
                     auto rv = module->Import(exportedModule, moduleMapper, config, optLevel);
                     if (!rv) return rv;
-                    if (GetTarget() == Target::program)
-                    {
-                        // index.imp(module->GetSymbolTable()->ClassIndex(), true); TODO
-                    }
                 }
             }
         }
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
         std::cout << "<" << module->Name() << "\n";
 #endif
     }
-#ifdef DEBUG_WRITE_MAPS
+#ifdef DEBUG_SYMBOL_IO
     std::cout << "<project '" << Name() << "' modules loaded" << "\n";
 #endif
+    return std::expected<bool, int>(true);
 }
 
 void Project::SetModule(std::int32_t fileId, otava::symbols::Module* module)
@@ -267,7 +256,8 @@ std::expected<bool, int> Project::MapFiles()
 bool Project::UpToDate(const std::string& config, int optLevel, int error) const
 {
     error = 0;
-    if (!std::filesystem::exists(outputFilePath))
+    std::filesystem::path o = outputFilePath;
+    if (!std::filesystem::exists(o))
     {
         return false;
     }
@@ -347,6 +337,63 @@ std::expected<bool, int> Project::ResolveForwardDeclarationsAndAddDerivedClasses
     auto rv = projectModule.ResolveForwardDeclarations();
     if (!rv) return rv;
     projectModule.AddDerivedClasses();
+    return std::expected<bool, int>(true);
+}
+
+
+std::expected<bool, int> Project::ReadTraceInfo(const std::string& moduleDir)
+{
+    std::expected<std::string, int> srv = util::GetFullPath(util::Path::Combine(moduleDir, "trace.info"));
+    if (!srv) return std::unexpected<int>(srv.error());
+    std::string traceInfoFilePath = *srv;
+    util::FileStream file(traceInfoFilePath, util::OpenMode::read | util::OpenMode::binary);
+    if (!file) return std::unexpected<int>(util::AllocateError("could not open file '" + traceInfoFilePath + "'"));
+    util::BufferedStream bufStream(file);
+    util::BinaryStreamReader reader(bufStream);
+    std::expected<bool, int> rv = traceInfo.Read(reader);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
+}
+
+std::expected<bool, int> Project::WriteTraceInfo(const std::string& moduleDir)
+{
+    std::expected<std::string, int> srv = util::GetFullPath(util::Path::Combine(moduleDir, "trace.info"));
+    if (!srv) return std::unexpected<int>(srv.error());
+    std::string traceInfoFilePath = *srv;
+    util::FileStream file(traceInfoFilePath, util::OpenMode::write | util::OpenMode::binary);
+    if (!file) return std::unexpected<int>(util::AllocateError("could not create file '" + traceInfoFilePath + "'"));
+    util::BufferedStream bufStream(file);
+    util::BinaryStreamWriter writer(bufStream);
+    std::expected<bool, int> rv = traceInfo.Write(writer);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
+}
+
+std::expected<bool, int> Project::ReadClassIndex(const std::string& moduleDir)
+{
+    std::expected<std::string, int> srv = util::GetFullPath(util::Path::Combine(moduleDir, "class.index"));
+    if (!srv) return std::unexpected<int>(srv.error());
+    std::string classIndexFilePath = *srv;
+    util::FileStream file(classIndexFilePath, util::OpenMode::read | util::OpenMode::binary);
+    if (!file) return std::unexpected<int>(util::AllocateError("could not open file '" + classIndexFilePath + "'"));
+    util::BufferedStream bufStream(file);
+    util::BinaryStreamReader reader(bufStream);
+    std::expected<bool, int> rv = index.read(reader);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
+}
+
+std::expected<bool, int> Project::WriteClassIndex(const std::string& moduleDir)
+{
+    std::expected<std::string, int> srv = util::GetFullPath(util::Path::Combine(moduleDir, "class.index"));
+    if (!srv) return std::unexpected<int>(srv.error());
+    std::string classIndexFilePath = *srv;
+    util::FileStream file(classIndexFilePath, util::OpenMode::write | util::OpenMode::binary);
+    if (!file) return std::unexpected<int>(util::AllocateError("could not create file '" + classIndexFilePath + "'"));
+    util::BufferedStream bufStream(file);
+    util::BinaryStreamWriter writer(bufStream);
+    std::expected<bool, int> rv = index.write(writer);
+    if (!rv) return rv;
     return std::expected<bool, int>(true);
 }
 

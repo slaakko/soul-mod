@@ -1,6 +1,7 @@
 export module std.utilities.utility;
 
 import std.type_traits;
+import std.trace;
 
 export namespace std {
 

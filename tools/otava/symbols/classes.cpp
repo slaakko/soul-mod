@@ -598,6 +598,21 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
                     ThrowException("overriding function should be declared with override or final specifier: (" + 
                         util::ToUtf8(f->FullName()) + " overrides " + util::ToUtf8(v->FullName()) + ")", sourcePos, context);
                 }
+                TypeSymbol* fr = nullptr;
+                if (f->ReturnType())
+                {
+                    fr = f->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
+                }
+                TypeSymbol* vr = nullptr;
+                if (v->ReturnType())
+                {
+                    vr = v->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
+                }
+                if (fr && vr && !TypesEqual(fr, vr, context))
+                {
+                    ThrowException("the return type of the overriding function differs from the return type of base class function", 
+                        f->GetSourcePos(), v->GetSourcePos(), context);
+                }
                 vtab[j] = f;
                 f->SetVTabIndex(j);
                 if (f->Group())
@@ -837,21 +852,17 @@ FunctionSymbol* ClassTypeSymbol::GetConversionFunction(TypeSymbol* type, Context
     return nullptr;
 }
 
-bool ClassTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
+bool ClassTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const
 {
     if (visited.find(this) != visited.end()) return true;
     visited.insert(this);
     for (ClassTypeSymbol* baseClass : baseClasses)
     {
-        if (!baseClass->IsComplete(visited)) return false;
+        if (!baseClass->IsComplete(visited, incompleteType)) return false;
     }
     for (VariableSymbol* memberVariable : memberVariables)
     {
-        if (!memberVariable->GetType()->IsComplete(visited)) return false;
-    }
-    for (VariableSymbol* staticMemberVariable : staticMemberVariables)
-    {
-        if (!staticMemberVariable->GetType()->IsComplete(visited)) return false;
+        if (!memberVariable->GetType()->IsComplete(visited, incompleteType)) return false;
     }
     return true;
 }
@@ -1030,16 +1041,21 @@ otava::intermediate::Type* ForwardClassDeclarationSymbol::IrType(Emitter& emitte
     }
 }
 
-bool ForwardClassDeclarationSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
+bool ForwardClassDeclarationSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const
 {
     if (visited.find(this) != visited.end()) return true;
     visited.insert(this);
     if (classTypeSymbol)
     {
-        return classTypeSymbol->IsComplete(visited);
+        return classTypeSymbol->IsComplete(visited, incompleteType);
     }
     else
     {
+        const TypeSymbol* ict = incompleteType;
+        if (!ict)
+        {
+            incompleteType = this;
+        }
         return false;
     }
 }
@@ -1178,10 +1194,9 @@ void EndClass(otava::ast::Node* node, Context* context)
     Symbol* symbol = context->GetSymbolTable()->CurrentScope()->GetSymbol();
     if (!symbol->IsClassTypeSymbol())
     {
-        ThrowException("cpp20.symbols.classes: EndClass(): class scope expected", node->GetSourcePos(), context);
+        ThrowException("otava.symbols.classes: EndClass(): class scope expected", node->GetSourcePos(), context);
     }
     ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(symbol);
-    AddClassInfo(classTypeSymbol, context);
     otava::ast::Node* specNode = context->GetSymbolTable()->GetSpecifierNode(classTypeSymbol);
     if (specNode && specNode->IsClassSpecifierNode())
     {
@@ -1195,7 +1210,8 @@ void EndClass(otava::ast::Node* node, Context* context)
     if (!classTypeSymbol->IsTemplate() && !classTypeSymbol->HasUserDefinedDestructor())
     {
         std::set<const TypeSymbol*> visited;
-        if (classTypeSymbol->IsComplete(visited))
+        const TypeSymbol* incompleteType = nullptr;
+        if (classTypeSymbol->IsComplete(visited, incompleteType))
         {
             GenerateDestructor(classTypeSymbol, node->GetSourcePos(), context);
         }
@@ -1377,8 +1393,8 @@ void TrivialClassDtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressio
 
 Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    Symbol* dtorFunctionGroupSymbol = classTypeSymbol->GetScope()->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, sourcePos, context, 
-        LookupFlags::dontResolveSingle);
+    Symbol* dtorFunctionGroupSymbol = classTypeSymbol->GetScope()->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, 
+        sourcePos, context, LookupFlags::dontResolveSingle);
     Symbol* destructorFn = nullptr;
     if (dtorFunctionGroupSymbol && dtorFunctionGroupSymbol->IsFunctionGroupSymbol())
     {
@@ -1403,9 +1419,21 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
             if (!sp->Destructor())
             {
                 std::set<const TypeSymbol*> visited;
-                if (sp->IsComplete(visited))
+                const TypeSymbol* incompleteType = nullptr;
+                if (sp->IsComplete(visited, incompleteType))
                 {
                     InstantiateDestructor(sp, sourcePos, context);
+                }
+                else
+                {
+                    std::string note;
+                    if (incompleteType)
+                    {
+                        note.append(": note incomplete type is '" + util::ToUtf8(incompleteType->FullName()) + "'");
+                    }
+                    ThrowException("cannot create destructor for class template specialization '" +
+                        util::ToUtf8(sp->FullName()) + "' because it is incomplete at this point" +
+                        note, sourcePos, context);
                 }
             }
             destructorFn = sp->Destructor();
@@ -1545,7 +1573,7 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
                 {
                     BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
                     BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, classTypeSymbol, vptrHolderClass, sourcePos);
-                    body->AddStatement(setVPtrStatement);
+                    terminator->AddSetVPtrStatement(setVPtrStatement);
                 }
                 else
                 {
@@ -1556,7 +1584,7 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
             {
                 BoundExpressionNode* thisPtr = new BoundParameterNode(destructor->ThisParam(context), sourcePos, destructor->ThisParam(context)->GetReferredType(context));
                 BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classTypeSymbol, classTypeSymbol, sourcePos);
-                body->AddStatement(setVPtrStatement);
+                terminator->AddSetVPtrStatement(setVPtrStatement);
             }
         }
     }
@@ -1570,7 +1598,7 @@ void GenerateDestructors(BoundCompileUnitNode* boundCompileUnit, Context* contex
 {
     for (auto& classType : boundCompileUnit->GenerateDestructorList())
     {
-        soul::ast::SourcePos sourcePos;
+        soul::ast::SourcePos sourcePos = classType->GetSourcePos();
         TypeSymbol* finalType = classType->FinalType(sourcePos, context);
         if (finalType->IsClassTypeSymbol())
         {
@@ -1578,31 +1606,6 @@ void GenerateDestructors(BoundCompileUnitNode* boundCompileUnit, Context* contex
             GenerateDestructor(finalClass, sourcePos, context);
         }
     }
-}
-
-void AddClassInfo(ClassTypeSymbol* classTypeSymbol, Context* context)
-{
-    std::uint64_t clsidh = 0;
-    std::uint64_t clsidl = 0;
-    util::UuidToInts(classTypeSymbol->Id(), clsidh, clsidl);
-    ClassKind kind = classTypeSymbol->GetClassKind();
-    info::class_id id = std::make_pair(clsidh, clsidl);
-    info::class_key key = info::class_key::cls;
-    switch (kind)
-    {
-        case ClassKind::class_: key = info::class_key::cls; break;
-        case ClassKind::struct_: key = info::class_key::strct; break;
-        case ClassKind::union_: key = info::class_key::uni; break;
-    }
-    info::class_info info(id, key, util::ToUtf8(classTypeSymbol->FullName()));
-    for (ClassTypeSymbol* base : classTypeSymbol->BaseClasses())
-    {
-        std::uint64_t h = 0;
-        std::uint64_t l = 0;
-        util::UuidToInts(base->Id(), h, l);
-        info.add_base(std::make_pair(h, l));
-    }
-    context->GetSymbolTable()->ClassIndex().add_class(info);
 }
 
 std::pair<bool, std::int64_t> Delta(ClassTypeSymbol* left, ClassTypeSymbol* right, Emitter& emitter, Context* context)

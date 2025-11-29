@@ -675,3 +675,8 @@ int ort_run_process(const char* commandLine)
         return 999;
     }
 }
+
+void ort_debug_break()
+{
+    __debugbreak();
+}

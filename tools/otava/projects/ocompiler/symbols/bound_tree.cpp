@@ -393,7 +393,7 @@ std::expected<bool, int> BoundCompileUnitNode::AddBoundNode(std::unique_ptr<Boun
         std::set<const Symbol*> visited;
         if (boundFunction->GetFunctionDefinitionSymbol()->IsTemplateParameterInstantiation(context, visited))
         {
-            return;
+            return std::expected<bool, int>(false);
         }
         FunctionDefinitionSymbolSet* functionDefinitionSymbolSet = context->GetFunctionDefinitionSymbolSet();
         FunctionDefinitionSymbol* functionDefinition = boundFunction->GetFunctionDefinitionSymbol();
@@ -402,7 +402,7 @@ std::expected<bool, int> BoundCompileUnitNode::AddBoundNode(std::unique_ptr<Boun
         if (!is) return std::unexpected<int>(is.error());
         if (functionDefinitionSymbolSet->FunctionDefinitionSymbolFound(functionDefinition))
         {
-            return;
+            return std::expected<bool, int>(false);
         }
         functionDefinitionSymbolSet->AddFunctionDefinitionSymbol(functionDefinition);
     }
@@ -634,6 +634,16 @@ void BoundFunctionNode::SetDtorTerminator(BoundDtorTerminatorNode* dtorTerminato
 void BoundFunctionNode::AddDefaultFunctionSymbol(FunctionSymbol* defaultFunctionSymbol)
 {
     defaultFunctionSymbols.push_back(defaultFunctionSymbol);
+}
+
+void BoundFunctionNode::SetSetLineStatementNode(otava::ast::Node* setLineStatementNode_)
+{
+    setLineStatementNode.reset(setLineStatementNode_);
+}
+
+void BoundFunctionNode::SetBoundSetLineStatement(BoundStatementNode* boundSetLineStatement_)
+{ 
+    boundSetLineStatement.reset(boundSetLineStatement_); 
 }
 
 BoundStatementNode::BoundStatementNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) :
@@ -990,10 +1000,26 @@ void BoundLiteralNode::Accept(BoundTreeVisitor& visitor)
 
 std::expected<bool, int> BoundLiteralNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    std::expected<otava::intermediate::Value*, int> irv = value->IrValue(emitter, sourcePos, context);
-    if (!irv) return std::unexpected<int>(irv.error());
-    otava::intermediate::Value* irValue = *irv;
-    emitter.Stack().Push(irValue);
+    if (emitter.Line())
+    {
+        std::expected<std::u32string, int> rep = util::ToUtf32(std::to_string(emitter.Line()));
+        if (!rep) return std::unexpected<int>(rep.error());
+        std::expected<TypeSymbol*, int> trv = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType);
+        if (!trv) return std::unexpected<int>(trv.error());
+        TypeSymbol* intType = *trv;
+        Value* lineValue = context->GetEvaluationContext()->GetIntegerValue(emitter.Line(), *rep, intType);
+        std::expected<otava::intermediate::Value*, int> irv = lineValue->IrValue(emitter, sourcePos, context);
+        if (!irv) return std::unexpected<int>(irv.error());
+        otava::intermediate::Value* irValue = *irv;
+        emitter.Stack().Push(irValue);;
+    }
+    else
+    {
+        std::expected<otava::intermediate::Value*, int> irv = value->IrValue(emitter, sourcePos, context);
+        if (!irv) return std::unexpected<int>(irv.error());
+        otava::intermediate::Value* irValue = *irv;
+        emitter.Stack().Push(irValue);
+    }
     return std::expected<bool, int>(true);
 }
 

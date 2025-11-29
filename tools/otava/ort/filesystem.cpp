@@ -454,7 +454,8 @@ bool fs_exists(void* p)
 {
     try
     {
-        return std::filesystem::exists(*static_cast<std::filesystem::path*>(p));
+        std::filesystem::path path = *static_cast<std::filesystem::path*>(p);
+        return std::filesystem::exists(path);
     }
     catch (...)
     {

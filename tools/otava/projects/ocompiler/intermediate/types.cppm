@@ -109,7 +109,7 @@ public:
     std::expected<Type*, int> AddPointer(Context* context) const;
     std::expected<Type*, int> RemovePointer(const soul::ast::Span& span, Context* context) const;
     inline bool IsFwdDeclaredStructureType() const { return kind == TypeKind::fwdDeclaredStructureType; }
-    virtual void ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context);
+    virtual std::expected<bool, int> ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context);
     inline std::int32_t NextTypeId() { return nextTypeId++; }
     virtual std::string Name() const = 0;
     inline bool IsStructureType() const { return kind == TypeKind::structureType; }
@@ -391,7 +391,7 @@ public:
     inline TypeRef& BaseTypeRef() { return baseTypeRef; }
     Type* BaseType() const override { return baseTypeRef.GetType(); }
     Value* MakeDefaultValue(Context& context) const override;
-    void ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context) override;
+    std::expected<bool, int> ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context) override;
 private:
     std::int8_t pointerCount;
     TypeRef baseTypeRef;
@@ -438,7 +438,7 @@ public:
     FwdDeclaredStructureType* GetFwdDeclaredStructureType(const util::uuid& id);
     FwdDeclaredStructureType* MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId, const std::string& comment);
     void AddFwdDependentType(FwdDeclaredStructureType* fwdType, Type* type);
-    void ResolveForwardReferences(const util::uuid& id, StructureType* structureType);
+    std::expected<bool, int> ResolveForwardReferences(const util::uuid& id, StructureType* structureType);
     void ResolveComments();
     inline std::int32_t NextTypeId() { return nextTypeId++; }
     void Write(util::CodeFormatter& formatter);

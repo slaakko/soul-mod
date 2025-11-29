@@ -27,6 +27,7 @@ public:
     void AddVariable(VariableSymbol* variableSymbol);
     VariableSymbol* GetVariable(int arity) const;
     inline const std::vector<VariableSymbol*>& Variables() const { return variables; }
+    inline bool Empty() const { return variables.empty(); }
     std::expected<bool, int> Write(Writer& writer) override;
     std::expected<bool, int> Read(Reader& reader) override;
     std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;

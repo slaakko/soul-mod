@@ -203,7 +203,7 @@ Symbol* Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind,
     LookupFlags flags) const
 {
     std::vector<Symbol*> symbols;
-    std::set<Scope*> visited;
+    std::set<const Scope*> visited;
     Lookup(id, symbolGroupKind, scopeLookup, flags, symbols, visited, context);
     if (symbols.empty())
     {
@@ -258,7 +258,7 @@ Scope* Scope::SymbolScope()
 }
 
 void Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags, 
-    std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const
+    std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const
 {
     if (symbols.empty() || (flags & LookupFlags::all) != LookupFlags::none)
     {
@@ -427,7 +427,7 @@ Scope* ContainerScope::GetClassScope() const
     {
         return const_cast<Scope*>(static_cast<const Scope*>(this));
     }
-    for (Scope* parentScope : ParentScopes())
+    for (Scope* parentScope : parentScopes)
     {
         Scope* classScope = parentScope->GetClassScope();
         if (classScope)
@@ -444,7 +444,7 @@ Scope* ContainerScope::GetNamespaceScope() const
     {
         return const_cast<Scope*>(static_cast<const Scope*>(this));
     }
-    for (Scope* parentScope : ParentScopes())
+    for (Scope* parentScope : parentScopes)
     {
         Scope* namespaceScope = parentScope->GetNamespaceScope();
         if (namespaceScope)
@@ -505,7 +505,7 @@ std::string ContainerScope::FullName() const
 }
 
 void ContainerScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags, 
-    std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const
+    std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const
 {
     Scope::Lookup(id, symbolGroupKinds, scopeLookup, flags, symbols, visited, context);
     if ((scopeLookup & ScopeLookup::parentScope) != ScopeLookup::none)
@@ -712,7 +712,7 @@ std::string UsingDeclarationScope::FullName() const
 }
 
 void UsingDeclarationScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags, 
-    std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const
+    std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const
 {
     Scope::Lookup(id, symbolGroupKinds, ScopeLookup::thisScope, flags, symbols, visited, context);
 }
@@ -723,7 +723,7 @@ UsingDirectiveScope::UsingDirectiveScope(NamespaceSymbol* ns_) : Scope(), ns(ns_
 }
 
 void UsingDirectiveScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags, 
-    std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const
+    std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const
 {
     if (visited.find(ns->GetScope()) == visited.end())
     {
@@ -828,7 +828,7 @@ Scope* InstantiationScope::GetNamespaceScope() const
 }
 
 void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags,
-    std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const
+    std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const
 {
     std::vector<Symbol*> foundSymbols;
     Scope::Lookup(id, symbolGroupKinds, ScopeLookup::thisScope, flags, foundSymbols, visited, context);

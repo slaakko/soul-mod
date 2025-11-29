@@ -42,6 +42,7 @@ int GetOptLevel(int level, bool release)
 Context::Context() : 
     symbolTable(nullptr), 
     lexer(nullptr), 
+    traceInfo(nullptr),
     flags(ContextFlags::none), 
     optLevel(-1),
     node(nullptr), 

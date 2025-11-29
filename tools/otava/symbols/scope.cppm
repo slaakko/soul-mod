@@ -88,7 +88,7 @@ public:
     virtual Symbol* GetSymbol() { return nullptr; }
     virtual ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(std::set<Scope*>& visited) const { return nullptr; }
     virtual void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags, 
-        std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const;
+        std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const;
     virtual void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol);
     virtual std::vector<Scope*> ParentScopes() const { return std::vector<Scope*>(); }
@@ -117,7 +117,7 @@ class ContainerScope : public Scope
 public:
     ContainerScope();
     void Import(Scope* that, Context* context) override;
-    inline std::vector<Scope*> ParentScopes() const override { return parentScopes; }
+    std::vector<Scope*> ParentScopes() const override { return parentScopes; }
     void AddParentScope(Scope* parentScope) override;
     void PushParentScope(Scope* parentScope) override;
     void PopParentScope() override;
@@ -134,7 +134,7 @@ public:
     void AddUsingDirective(NamespaceSymbol* ns, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::string FullName() const override;
     void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags, 
-        std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const override;
+        std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const override;
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol) override;
     ClassGroupSymbol* GetOrInsertClassGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
@@ -160,7 +160,7 @@ public:
     UsingDeclarationScope(ContainerScope* parentScope_);
     std::string FullName() const override;
     void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags, 
-        std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const override;
+        std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const override;
 private:
     ContainerScope* parentScope;
 };
@@ -170,7 +170,7 @@ class UsingDirectiveScope : public Scope
 public:
     UsingDirectiveScope(NamespaceSymbol* ns_);
     void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags, 
-        std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const override;
+        std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const override;
     std::string FullName() const override;
     NamespaceSymbol* Ns() const { return ns; }
 private:
@@ -188,7 +188,7 @@ public:
     Scope* GetNamespaceScope() const override;
     ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(std::set<Scope*>& visited) const override;
     void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags, 
-        std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const override;
+        std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const override;
     void PushParentScope(Scope* parentScope_) override;
     void PopParentScope() override;
     bool HasParentScope(const Scope* parentScope) const override;

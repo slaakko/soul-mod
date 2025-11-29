@@ -93,15 +93,15 @@ public:
     void RemoveFromUses();
     virtual void ReplaceValue(Value* use, Value* value);
     virtual void Write(util::CodeFormatter& formatter) = 0;
-    inline void SetAssemblyIndex(int assemblyIndex_) { assemblyIndex = assemblyIndex_; }
-    inline int AssemblyIndex() const { return assemblyIndex; }
+    inline otava::assembly::Instruction* AssemblyInstruction() const { return assemblyInstruction; }
+    inline void SetAssemblyInstruction(otava::assembly::Instruction* assemblyInstruction_) { assemblyInstruction = assemblyInstruction_; }
 private:
     OpCode opCode;
     MetadataRef* metadataRef;
     int index;
     int regValueIndex;
-    int assemblyIndex;
     std::vector<Instruction*> users;
+    otava::assembly::Instruction* assemblyInstruction;
 };
 
 class StoreInstruction : public Instruction
@@ -800,7 +800,7 @@ public:
     Code& operator=(const Code&) = delete;
     inline Context* GetContext() const { return context; }
     inline void SetContext(Context* context_) { context = context_; }
-    inline util::Container* Functions() const { return const_cast<util::Container*>(&functions); }
+    inline util::Container* Functions() const { return &functions; }
     inline Function* CurrentFunction() const { return currentFunction; }
     void SetCurrentFunction(Function* function);
     std::expected<Function*, int> GetOrInsertFunction(const std::string& functionId, FunctionType* functionType);

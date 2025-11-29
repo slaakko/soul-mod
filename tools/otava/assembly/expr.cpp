@@ -31,6 +31,11 @@ UnaryExpr::UnaryExpr(ValueKind kind_, Value* value_, const std::string& str_) : 
 {
 }
 
+void UnaryExpr::FreeRegs(Context* context)
+{
+    value->FreeRegs(context);
+}
+
 BinaryExpr::BinaryExpr(Value* left_, Value* right_, Operator op_) : Value(ValueKind::binaryExpr, MakeBinaryExprStr(left_, right_, op_)), left(left_), right(right_), op(op_)
 {
 }
@@ -38,6 +43,12 @@ BinaryExpr::BinaryExpr(Value* left_, Value* right_, Operator op_) : Value(ValueK
 std::string BinaryExpr::ToString() const
 {
     return MakeBinaryExprStr(left, right, op);
+}
+
+void BinaryExpr::FreeRegs(Context* context)
+{
+    left->FreeRegs(context);
+    right->FreeRegs(context);
 }
 
 Content::Content(Value* value_) : UnaryExpr(ValueKind::content, value_, "[" + value_->ToString() + "]")

@@ -144,7 +144,7 @@ public:
     }
     void clear()
     {
-        if (!header)
+        if (!header.get())
         {
             return;
         }
@@ -190,7 +190,10 @@ public:
     inline const compare& cmp() { return comp; }
     std::pair<iterator, bool> insert(const value_type& value)
     {
-        if (!header) init();
+        if (!header.get())
+        {
+            init();
+        }
         node_type* x = root();
         node_type* p = header.get();
         bool c = true;
@@ -207,7 +210,7 @@ public:
                 x = static_cast<node_type*>(x->get_right());
             }
         }
-        iterator j(p);
+        iterator j = p;
         if (c)
         {
             if (j == begin())
@@ -229,7 +232,10 @@ public:
     }
     std::pair<iterator, bool> insert(value_type&& value)
     {
-        if (!header) init();
+        if (!header.get())
+        {
+            init();
+        }
         node_type* x = root();
         node_type* p = header.get();
         bool c = true;
@@ -246,7 +252,7 @@ public:
                 x = static_cast<node_type*>(x->get_right());
             }
         }
-        iterator j(p);
+        iterator j = p;
         if (c)
         {
             if (j == begin())
@@ -404,6 +410,14 @@ public:
     {
         return static_cast<node_type*>(header->get_parent());
     }
+    void check()
+    {
+        node_type* r = root();
+        if (r)
+        {
+            r->check();
+        }
+    }
 private:
     void init()
     {
@@ -446,7 +460,10 @@ private:
     }
     iterator insert(node_type* x, node_type* p, const value_type& value)
     {
-        if (!header) init();
+        if (!header.get())
+        {
+            init();
+        }
         node_type* n = new node_type(value, p);
         if (p == header.get() || x != nullptr || comp(key_of(value), key_of(p->value())))
         {
@@ -475,7 +492,10 @@ private:
     }
     iterator insert(node_type* x, node_type* p, value_type&& value)
     {
-        if (!header) init();
+        if (!header.get())
+        {
+            init();
+        }
         node_type* n = new node_type(std::move(value), p);
         if (p == header.get() || x != nullptr || comp(key_of(n->value()), key_of(p->value())))
         {

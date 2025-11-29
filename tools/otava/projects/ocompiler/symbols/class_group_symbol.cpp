@@ -64,11 +64,13 @@ Symbol* ClassGroupSymbol::GetSingleSymbol()
 {
     if (classes.size() == 1)
     {
-        return classes.front();
+        Symbol* sym = classes.front();
+        return sym;
     }
     else if (forwardDeclarations.size() == 1)
     {
-        return forwardDeclarations.front();
+        Symbol* sym = forwardDeclarations.front();
+        return sym;
     }
     else
     {
@@ -167,9 +169,10 @@ void ClassGroupSymbol::Accept(Visitor& visitor)
 
 void ClassGroupSymbol::Merge(ClassGroupSymbol* that)
 {
+    if (this == that) return;
     for (ClassTypeSymbol* cls : that->classes)
     {
-        if (std::find(classes.cbegin(), classes.cend(), cls) == classes.end())
+        if (std::find(classes.begin(), classes.end(), cls) == classes.end())
         {
             classes.push_back(cls);
         }

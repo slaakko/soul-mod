@@ -7,10 +7,12 @@ export module otava.assembly.instruction;
 
 import std;
 import util.code.formatter;
+import util.component;
 
 export namespace otava::assembly {
 
 class Value;
+class Context;
 
 enum class OpCode
 {
@@ -45,7 +47,7 @@ enum class OpCode
 
 std::string OpCodeStr(OpCode opCode);
 
-class Instruction
+class Instruction : public util::Component
 {
 public:
     Instruction(OpCode opCode_);
@@ -55,11 +57,13 @@ public:
     inline void SetNoColon() { nocolon = true; }
     void AddOperand(Value* operand);
     inline bool HasOperands() const { return !operands.empty(); }
-    inline     OpCode GetOpCode() const { return opCode; }
+    inline OpCode GetOpCode() const { return opCode; }
     inline const std::vector<Value*>& Operands() const { return operands; }
     void Write(util::CodeFormatter& formatter);
     int Length() const;
     inline void SetWriteln() { writeln = true; }
+    inline Instruction* Next() const { return static_cast<Instruction*>(NextSibling()); }
+    inline Instruction* Prev() const { return static_cast<Instruction*>(PrevSibling()); }
 private:
     std::string label;
     bool nocolon;
@@ -70,5 +74,7 @@ private:
 
 Instruction* MakeInst(OpCode opCode, Value* operand);
 Instruction* MakeInst(OpCode opCode, Value* left, Value* right);
+
+void FreeGlobalRegs(Context* context, Instruction* inst);
 
 } // namespace otava::assembly

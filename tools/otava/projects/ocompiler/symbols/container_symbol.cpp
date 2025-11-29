@@ -116,7 +116,7 @@ std::expected<bool, int> ContainerSymbol::AddSymbol(Symbol* symbol, const soul::
     return std::expected<bool, int>(true);
 }
 
-std::unique_ptr<Symbol> ContainerSymbol::RemoveSymbol(Symbol* symbol)
+std::expected<std::unique_ptr<Symbol>, int> ContainerSymbol::RemoveSymbol(Symbol* symbol)
 {
     if (symbol->CanInstall())
     {
@@ -131,7 +131,7 @@ std::unique_ptr<Symbol> ContainerSymbol::RemoveSymbol(Symbol* symbol)
             return std::unique_ptr<Symbol>(symbol);
         }
     }
-    return std::unique_ptr<Symbol>();
+    return std::expected<std::unique_ptr<Symbol>, int>(std::unique_ptr<Symbol>());
 }
 
 std::expected<bool, int> ContainerSymbol::Write(Writer& writer)

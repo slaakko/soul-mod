@@ -2384,7 +2384,7 @@ std::expected<bool, int> EmitIntegerArgOperand(Instruction* argInst, std::int64_
                 rrv = regGroup->GetReg(8);
                 if (!rrv) return std::unexpected<int>(rrv.error());
                 instruction->AddOperand(*rrv);
-                return;
+                return std::expected<bool, int>(true);
             }
             else
             {
@@ -2425,7 +2425,7 @@ std::expected<bool, int> EmitFloatingPointArgOperand(Instruction* argInst, std::
                 rrv = regGroup->GetReg(8);
                 if (!rrv) return std::unexpected<int>(rrv.error());
                 instruction->AddOperand(*rrv);
-                return;
+                return std::expected<bool, int>(true);
             }
             else
             {
@@ -2469,14 +2469,14 @@ std::expected<bool, int> EmitIntegerArg(ArgInstruction& inst, CallFrame* callFra
             if (!rv) return std::unexpected<int>(rv.error());
             otava::assembly::Instruction* storeInst = *rv;
             Instruction* instToSpill = spillData.instToSpill;
-            Instruction* next = instToSpill->Next();
-            if (next)
+            otava::assembly::Instruction* assemblyInstruction = instToSpill->AssemblyInstruction();
+            if (assemblyInstruction)
             {
-                int assemblyIndex = next->AssemblyIndex();
-                if (assemblyIndex != -1)
-                {
-                    codeGenerator.AssemblyFunction()->InsertInstruction(assemblyIndex, storeInst->Clone());
-                }
+                assemblyInstruction->LinkAfter(storeInst->Clone());
+            }
+            else
+            {
+                codeGenerator.AssemblyFunction()->AddInstruction(storeInst->Clone());
             }
             codeGenerator.RegAllocator()->RemoveFromRegisterGroups(instToSpill);
         }
@@ -2573,14 +2573,14 @@ std::expected<bool, int> EmitFloatingPointArg(ArgInstruction& inst, CallFrame* c
             if (!rv)  return std::unexpected<int>(rv.error());
             otava::assembly::Instruction* storeInst = *rv;
             Instruction* instToSpill = spillData.instToSpill;
-            Instruction* next = instToSpill->Next();
-            if (next)
+            otava::assembly::Instruction* assemblyInstruction = instToSpill->AssemblyInstruction();
+            if (assemblyInstruction)
             {
-                int assemblyIndex = next->AssemblyIndex();
-                if (assemblyIndex != -1)
-                {
-                    codeGenerator.AssemblyFunction()->InsertInstruction(assemblyIndex, storeInst->Clone());
-                }
+                assemblyInstruction->LinkAfter(storeInst->Clone());
+            }
+            else
+            {
+                codeGenerator.AssemblyFunction()->AddInstruction(storeInst->Clone());
             }
             codeGenerator.RegAllocator()->RemoveFromRegisterGroups(instToSpill);
         }
@@ -2755,14 +2755,14 @@ std::expected<bool, int> EmitProcedureCall(ProcedureCallInstruction& inst, const
                 storeInst = *rv;
             }
             Instruction* instToSpill = spillData.instToSpill;
-            Instruction* next = instToSpill->Next();
-            if (next)
+            otava::assembly::Instruction* assemblyInstruction = instToSpill->AssemblyInstruction();
+            if (assemblyInstruction)
             {
-                int assemblyIndex = next->AssemblyIndex();
-                if (assemblyIndex != -1)
-                {
-                    codeGenerator.AssemblyFunction()->InsertInstruction(assemblyIndex, storeInst->Clone());
-                }
+                assemblyInstruction->LinkAfter(storeInst->Clone());
+            }
+            else
+            {
+                codeGenerator.AssemblyFunction()->AddInstruction(storeInst->Clone());
             }
             codeGenerator.RegAllocator()->RemoveFromRegisterGroups(instToSpill);
         }
@@ -2806,14 +2806,14 @@ std::expected<bool, int> EmitFunctionCall(FunctionCallInstruction& inst, const s
                 storeInst = *rv;
             }
             Instruction* instToSpill = spillData.instToSpill;
-            Instruction* next = instToSpill->Next();
-            if (next)
+            otava::assembly::Instruction* assemblyInstruction = instToSpill->AssemblyInstruction();
+            if (assemblyInstruction)
             {
-                int assemblyIndex = next->AssemblyIndex();
-                if (assemblyIndex != -1)
-                {
-                    codeGenerator.AssemblyFunction()->InsertInstruction(assemblyIndex, storeInst->Clone());
-                }
+                assemblyInstruction->LinkAfter(storeInst->Clone());
+            }
+            else
+            {
+                codeGenerator.AssemblyFunction()->AddInstruction(storeInst->Clone());
             }
             codeGenerator.RegAllocator()->RemoveFromRegisterGroups(instToSpill);
         }
@@ -3107,6 +3107,7 @@ void CodeGenerator::Emit(otava::assembly::Instruction* assemblyInstruction)
         leader = false;
         assemblyInstruction->SetLabel("@" + std::to_string(currentInst->Parent()->Id()));
     }
+    currentInst->SetAssemblyInstruction(assemblyInstruction);
     assemblyFunction->AddInstruction(assemblyInstruction);
 }
 
@@ -3280,14 +3281,14 @@ void CodeGenerator::Visit(BasicBlock& basicBlock)
                         storeInst = *rv;
                     }
                     Instruction* instToSpill = spillData.instToSpill;
-                    Instruction* next = instToSpill->Next();
-                    if (next)
+                    otava::assembly::Instruction* assemblyInstruction = instToSpill->AssemblyInstruction();
+                    if (assemblyInstruction)
                     {
-                        int assemblyIndex = next->AssemblyIndex();
-                        if (assemblyIndex != -1)
-                        {
-                            assemblyFunction->InsertInstruction(assemblyIndex, storeInst->Clone());
-                        }
+                        assemblyInstruction->LinkAfter(storeInst->Clone());
+                    }
+                    else
+                    {
+                        assemblyFunction->AddInstruction(storeInst->Clone());
                     }
                     registerAllocator->RemoveFromRegisterGroups(instToSpill);
                 }
@@ -3302,7 +3303,6 @@ void CodeGenerator::Visit(BasicBlock& basicBlock)
 void CodeGenerator::Visit(RetInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     if (inst.IsFloatingPointInstruction())
     {
         auto rv = EmitFloatingPointRet(inst, *this);
@@ -3326,7 +3326,6 @@ void CodeGenerator::Visit(RetInstruction& inst)
 void CodeGenerator::Visit(SignExtendInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitSignExtend(inst, *this);
     if (!rv)
     {
@@ -3338,7 +3337,6 @@ void CodeGenerator::Visit(SignExtendInstruction& inst)
 void CodeGenerator::Visit(ZeroExtendInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitZeroExtend(inst, *this);
     if (!rv)
     {
@@ -3350,7 +3348,6 @@ void CodeGenerator::Visit(ZeroExtendInstruction& inst)
 void CodeGenerator::Visit(FloatingPointExtendInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitFloatingPointExtend(inst, *this);
     if (!rv)
     {
@@ -3362,7 +3359,6 @@ void CodeGenerator::Visit(FloatingPointExtendInstruction& inst)
 void CodeGenerator::Visit(ParamInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     if (inst.IsFloatingPointInstruction())
     {
         auto rv = EmitFloatingPointParam(inst, *this);
@@ -3386,7 +3382,6 @@ void CodeGenerator::Visit(ParamInstruction& inst)
 void CodeGenerator::Visit(LoadInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     if (inst.IsFloatingPointInstruction())
     {
         std::expected<bool, int> rv = EmitFloatingPointLoad(inst, *this);
@@ -3410,7 +3405,6 @@ void CodeGenerator::Visit(LoadInstruction& inst)
 void CodeGenerator::Visit(StoreInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     if (inst.IsFloatingPointInstruction())
     {
         auto rv = EmitFloatingPointStore(inst, *this);
@@ -3434,14 +3428,12 @@ void CodeGenerator::Visit(StoreInstruction& inst)
 void CodeGenerator::Visit(ArgInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     args.push_back(&inst);
 }
 
 void CodeGenerator::Visit(ProcedureCallInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitProcedureCall(inst, args, *this);
     if (!rv)
     {
@@ -3454,7 +3446,6 @@ void CodeGenerator::Visit(ProcedureCallInstruction& inst)
 void CodeGenerator::Visit(FunctionCallInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitFunctionCall(inst, args, *this);
     if (!rv)
     {
@@ -3467,7 +3458,6 @@ void CodeGenerator::Visit(FunctionCallInstruction& inst)
 void CodeGenerator::Visit(ElemAddrInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     std::expected<bool, int> rv = EmitElemAddr(inst, *this);
     if (!rv)
     {
@@ -3479,7 +3469,6 @@ void CodeGenerator::Visit(ElemAddrInstruction& inst)
 void CodeGenerator::Visit(PtrOffsetInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitPtrOffset(inst, *this);
     if (!rv)
     {
@@ -3491,7 +3480,6 @@ void CodeGenerator::Visit(PtrOffsetInstruction& inst)
 void CodeGenerator::Visit(PtrDiffInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitPtrDiff(inst, *this);
     if (!rv)
     {
@@ -3503,7 +3491,6 @@ void CodeGenerator::Visit(PtrDiffInstruction& inst)
 void CodeGenerator::Visit(TruncateInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     if (inst.GetType()->IsIntegerType() || inst.GetType()->IsBooleanType())
     {
         auto rv = EmitIntegerTruncate(inst, *this);
@@ -3527,7 +3514,6 @@ void CodeGenerator::Visit(TruncateInstruction& inst)
 void CodeGenerator::Visit(AddInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     if (inst.GetType()->IsIntegerType())
     {
         auto rv = EmitIntegerBinOpInst(inst, *this);
@@ -3551,7 +3537,6 @@ void CodeGenerator::Visit(AddInstruction& inst)
 void CodeGenerator::Visit(SubInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     if (inst.GetType()->IsIntegerType())
     {
         auto rv = EmitIntegerBinOpInst(inst, *this);
@@ -3575,7 +3560,6 @@ void CodeGenerator::Visit(SubInstruction& inst)
 void CodeGenerator::Visit(MulInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     if (inst.GetType()->IsIntegerType())
     {
         auto rv = EmitIntegerBinOpInst(inst, *this);
@@ -3599,7 +3583,6 @@ void CodeGenerator::Visit(MulInstruction& inst)
 void CodeGenerator::Visit(DivInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     if (inst.GetType()->IsIntegerType())
     {
         auto rv = EmitIntegerBinOpInst(inst, *this);
@@ -3623,7 +3606,6 @@ void CodeGenerator::Visit(DivInstruction& inst)
 void CodeGenerator::Visit(ModInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitIntegerBinOpInst(inst, *this);
     if (!rv)
     {
@@ -3635,7 +3617,6 @@ void CodeGenerator::Visit(ModInstruction& inst)
 void CodeGenerator::Visit(AndInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitIntegerBinOpInst(inst, *this);
     if (!rv)
     {
@@ -3647,7 +3628,6 @@ void CodeGenerator::Visit(AndInstruction& inst)
 void CodeGenerator::Visit(OrInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitIntegerBinOpInst(inst, *this);
     if (!rv)
     {
@@ -3659,7 +3639,6 @@ void CodeGenerator::Visit(OrInstruction& inst)
 void CodeGenerator::Visit(XorInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitIntegerBinOpInst(inst, *this);
     if (!rv)
     {
@@ -3671,7 +3650,6 @@ void CodeGenerator::Visit(XorInstruction& inst)
 void CodeGenerator::Visit(ShlInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitIntegerBinOpInst(inst, *this);
     if (!rv)
     {
@@ -3683,7 +3661,6 @@ void CodeGenerator::Visit(ShlInstruction& inst)
 void CodeGenerator::Visit(ShrInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitIntegerBinOpInst(inst, *this);
     if (!rv)
     {
@@ -3695,7 +3672,6 @@ void CodeGenerator::Visit(ShrInstruction& inst)
 void CodeGenerator::Visit(BitcastInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitBitcast(inst, *this);
     if (!rv)
     {
@@ -3707,7 +3683,6 @@ void CodeGenerator::Visit(BitcastInstruction& inst)
 void CodeGenerator::Visit(IntToFloatInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitIntToFloat(inst, *this);
     if (!rv)
     {
@@ -3719,7 +3694,6 @@ void CodeGenerator::Visit(IntToFloatInstruction& inst)
 void CodeGenerator::Visit(FloatToIntInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitFloatToInt(inst, *this);
     if (!rv)
     {
@@ -3731,7 +3705,6 @@ void CodeGenerator::Visit(FloatToIntInstruction& inst)
 void CodeGenerator::Visit(IntToPtrInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitIntToPtr(inst, *this);
     if (!rv)
     {
@@ -3743,7 +3716,6 @@ void CodeGenerator::Visit(IntToPtrInstruction& inst)
 void CodeGenerator::Visit(PtrToIntInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitPtrToInt(inst, *this);
     if (!rv)
     {
@@ -3755,7 +3727,6 @@ void CodeGenerator::Visit(PtrToIntInstruction& inst)
 void CodeGenerator::Visit(EqualInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     if (inst.Left()->GetType()->IsFloatingPointType())
     {
         auto rv = EmitFloatingPointEqual(inst, *this);
@@ -3779,7 +3750,6 @@ void CodeGenerator::Visit(EqualInstruction& inst)
 void CodeGenerator::Visit(LessInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     if (inst.Left()->GetType()->IsFloatingPointType())
     {
         auto rv = EmitFloatingPointLess(inst, *this);
@@ -3803,14 +3773,12 @@ void CodeGenerator::Visit(LessInstruction& inst)
 void CodeGenerator::Visit(JmpInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     EmitJmp(inst, *this);
 }
 
 void CodeGenerator::Visit(BranchInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitBranch(inst, *this);
     if (!rv)
     {
@@ -3822,7 +3790,6 @@ void CodeGenerator::Visit(BranchInstruction& inst)
 void CodeGenerator::Visit(NotInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitNot(inst, *this);
     if (!rv)
     {
@@ -3834,7 +3801,6 @@ void CodeGenerator::Visit(NotInstruction& inst)
 void CodeGenerator::Visit(NegInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     if (inst.IsFloatingPointInstruction())
     {
         auto rv = EmitFloatingPointNeg(inst, *this);
@@ -3858,14 +3824,12 @@ void CodeGenerator::Visit(NegInstruction& inst)
 void CodeGenerator::Visit(NoOperationInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     EmitNop(inst, *this);
 }
 
 void CodeGenerator::Visit(SwitchInstruction& inst)
 {
     if (!Valid()) return;
-    inst.SetAssemblyIndex(assemblyFunction->Index());
     auto rv = EmitSwitch(inst, *this);
     if (!rv)
     {
