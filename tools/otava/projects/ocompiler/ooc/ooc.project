@@ -1,5 +1,6 @@
 project ooc;
 target=program;
+define TRACE;
 reference <../../outil/outil.project>;
 reference <../../osoul/oast/oast.project>;
 reference <../../osoul/olexer/olexer.project>;
@@ -13,6 +14,7 @@ reference <../../oxml/odom_parser/odom_parser.project>;
 reference <../../oxml/oxpath/oxpath.project>;
 reference <../assembly/assembly.project>;
 reference <../intermediate/intermediate.project>;
+reference <../optimizer/optimizer.project>;
 reference <../ast/ast.project>;
 reference <../lexer/lexer.project>;
 reference <../symbols/symbols.project>;

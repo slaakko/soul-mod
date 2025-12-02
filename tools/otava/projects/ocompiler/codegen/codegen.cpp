@@ -35,7 +35,7 @@ import otava.symbols.modules;
 import otava.symbols.overload.resolution;
 import otava.symbols.symbol.table;
 import otava.symbols.enums;
-//import otava.opt;
+import otava.opt;
 import std;
 import util;
 
@@ -922,22 +922,40 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
         assemblyFilePath = *fp;
     }
     std::unique_ptr<otava::intermediate::CodeGenerator> codeGenerator;
-/*  TODO
     if (context.ReleaseConfig())
     {
         intermediateContext.SetFilePath(optimizedIntermediateFilePath);
-        otava::optimizer::Optimize(&intermediateContext);
-        intermediateContext.WriteFile();
-        otava::intermediate::Parse(optimizedIntermediateFilePath, optimizationContext, verbose);
-        otava::intermediate::Verify(optimizationContext);
+        rv = otava::optimizer::Optimize(&intermediateContext);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
+        rv = intermediateContext.WriteFile();
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
+        rv = otava::intermediate::Parse(optimizedIntermediateFilePath, optimizationContext, verbose);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
+        rv = otava::intermediate::Verify(optimizationContext);
+        if (!rv)
+        {
+            SetError(rv.error());
+            return;
+        }
         finalContext = &optimizationContext;
         codeGenerator.reset(new otava::optimizer::OptimizingCodeGenerator(finalContext, assemblyFilePath));
     }
     else
     {
-*/
         codeGenerator.reset(new otava::intermediate::CodeGenerator(finalContext, assemblyFilePath));
-    //}
+    }
     rv = otava::intermediate::GenerateCode(*finalContext, *codeGenerator, verbose);
     if (!rv)
     {

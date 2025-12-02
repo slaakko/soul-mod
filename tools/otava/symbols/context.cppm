@@ -96,6 +96,7 @@ class AliasTypeSymbol;
 class TypeSymbol;
 class ClassTemplateSpecializationSymbol;
 class Emitter;
+class Project;
 
 int GetOptLevel(int level, bool release);
 
@@ -194,11 +195,14 @@ public:
     void SetArgIndex(int argIndex_) { argIndex = argIndex_; }
     inline void SetRequesterModule(Module* requesterModule_) { requesterModule = requesterModule_;  }
     inline Module* GetRequesterModule() const { return requesterModule; }
+    inline Project* CurrentProject() const { return currentProject; }
+    inline void SetCurrentProject(Project* project) { currentProject = project; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
     TraceInfo* traceInfo;
     Emitter* emitter;
+    Project* currentProject;
     std::unique_ptr<BoundCompileUnitNode> boundCompileUnit;
     std::unique_ptr<BoundFunctionNode> boundFunction;
     std::stack<std::unique_ptr<BoundFunctionNode>> boundFunctionStack;

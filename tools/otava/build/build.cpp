@@ -210,6 +210,7 @@ void ScanDependencies(Project* project, std::int32_t fileId, bool implementation
     lexer.SetRuleNameMapPtr(otava::parser::spg::rules::GetRuleNameMapPtr());
     otava::symbols::Context context;
     context.SetLexer(&lexer);
+    context.SetCurrentProject(project);
     using LexerType = decltype(lexer);
     std::unique_ptr<otava::ast::Node> node = otava::parser::module_dependency::ModuleDependencyParser<LexerType>::Parse(lexer, &context);
     project->GetFileMap().AddFileContent(fileId, std::move(content), lexer.GetLineStartIndeces());
@@ -432,6 +433,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     for (std::int32_t file : topologicalOrder)
     {
         const std::string& filePath = project->GetFileMap().GetFilePath(file);
+        std::cout << "> " << filePath << "\n";
         files.push_back(std::make_pair(file, filePath));
         const auto& fileContent = project->GetFileMap().GetFileContent(file).first;
         auto lexer = otava::lexer::MakeLexer(fileContent.c_str(), fileContent.c_str() + fileContent.length(), filePath);
@@ -454,11 +456,12 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         otava::symbols::Context context;
         otava::symbols::Emitter emitter;
         context.SetEmitter(&emitter);
+        context.SetCurrentProject(project);
         if (config == "release")
         {
             context.SetReleaseConfig();
         }
-        if (!context.ReleaseConfig())
+        if (!context.ReleaseConfig() || context.CurrentProject() && context.CurrentProject()->HasDefine("TRACE"))
         {
             context.SetTraceInfo(&project->GetTraceInfo());
         }
@@ -469,7 +472,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         std::string compileUnitId = "compile_unit_" + util::GetSha1MessageDigest(filePath);
         context.GetBoundCompileUnit()->SetId(compileUnitId);
         otava::symbols::Module* module = project->GetModule(file);
-        if (!context.ReleaseConfig())
+        if (!context.ReleaseConfig() || context.CurrentProject() && context.CurrentProject()->HasDefine("TRACE"))
         {
             project->GetTraceInfo().AddSourceFileInfo(module->Id(), filePath);
         }
@@ -549,6 +552,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         std::string interfaceUnitName;
         ScanDependencies(project, file, true, interfaceUnitName);
         const std::string& filePath = project->GetFileMap().GetFilePath(file);
+        std::cout << "> " << filePath << "\n";
         files.push_back(std::make_pair(file, filePath));
         const auto& fileContent = project->GetFileMap().GetFileContent(file).first;
         auto lexer = otava::lexer::MakeLexer(fileContent.c_str(), fileContent.c_str() + fileContent.length(), filePath);
@@ -563,11 +567,12 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         otava::symbols::Emitter emitter;
         otava::symbols::Context context;
         context.SetEmitter(&emitter);
+        context.SetCurrentProject(project);
         if (config == "release")
         {
             context.SetReleaseConfig();
         }
-        if (!context.ReleaseConfig())
+        if (!context.ReleaseConfig() || context.CurrentProject() && context.CurrentProject()->HasDefine("TRACE"))
         {
             context.SetTraceInfo(&project->GetTraceInfo());
         }
@@ -578,7 +583,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         std::string compileUnitId = "compile_unit_" + util::GetSha1MessageDigest(filePath);
         context.GetBoundCompileUnit()->SetId(compileUnitId);
         otava::symbols::Module* module = project->GetModule(file);
-        if (!context.ReleaseConfig())
+        if (!context.ReleaseConfig() || context.CurrentProject() && context.CurrentProject()->HasDefine("TRACE"))
         {
             project->GetTraceInfo().AddSourceFileInfo(module->Id(), filePath);
         }
@@ -651,14 +656,14 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         {
             std::string moduleDirPath = otava::symbols::MakeModuleDirPath(referencedProject->Root(), config, otava::symbols::GetOptLevel(optLevel, config == "release"));
             referencedProject->ReadTraceInfo(moduleDirPath);
-            if (config != "release")
+            if (config != "release" || referencedProject->HasDefine("TRACE"))
             {
                 traceBin.Import(referencedProject->GetTraceInfo());
             }
             referencedProject->ReadClassIndex(moduleDirPath);
             project->Index().import(referencedProject->Index());
         }
-        if (config != "release")
+        if (config != "release" || project->HasDefine("TRACE"))
         {
             traceBin.Import(project->GetTraceInfo());
             traceBinPath = util::GetFullPath(util::Path::Combine(moduleDirPath, "trace.bin"));

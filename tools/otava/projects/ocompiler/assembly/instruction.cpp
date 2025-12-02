@@ -430,13 +430,15 @@ int Instruction::Length() const
     if (!label.empty())
     {
         std::string c = ":";
-        length = static_cast<int>(util::Format(label + c, 8, util::FormatWidth::min, util::FormatJustify::left).length());
+        std::string s = util::Format(label + c, 8, util::FormatWidth::min, util::FormatJustify::left);
+        length = static_cast<int>(s.length());
     }
     else
     {
         length += 8;
     }
-    length += static_cast<int>(util::Format(OpCodeStr(opCode), 16).length());
+    std::string s = util::Format(OpCodeStr(opCode), 16);
+    length += static_cast<int>(s.length());
     bool first = true;
     for (Value* operand : operands)
     {

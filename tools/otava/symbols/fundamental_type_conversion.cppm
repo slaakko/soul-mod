@@ -211,24 +211,9 @@ public:
     TypeSymbol* ConversionArgType() const override;
     ConversionKind GetConversionKind() const override;
     std::int32_t ConversionDistance() const override;
-    void Write(Writer& writer) override
-    {
-        FunctionSymbol::Write(writer);
-        writer.GetBinaryStreamWriter().Write(paramType->Id());
-        writer.GetBinaryStreamWriter().Write(argType->Id());
-    }
-    void Read(Reader& reader) override
-    {
-        FunctionSymbol::Read(reader);
-        reader.GetBinaryStreamReader().ReadUuid(paramTypeId);
-        reader.GetBinaryStreamReader().ReadUuid(argTypeId);
-    }
-    void Resolve(SymbolTable& symbolTable, Context* context) override
-    {
-        FunctionSymbol::Resolve(symbolTable, context);
-        paramType = symbolTable.GetType(paramTypeId);
-        argType = symbolTable.GetType(argTypeId);
-    }
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
 private:

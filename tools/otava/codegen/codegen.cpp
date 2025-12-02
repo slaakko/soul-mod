@@ -9,6 +9,7 @@ import otava.symbols.emitter;
 import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.fundamental.type.symbol;
+import otava.symbols.project;
 import otava.intermediate.code;
 import otava.intermediate.compile_unit;
 import otava.intermediate.context;
@@ -433,7 +434,7 @@ void CodeGenerator::Reset()
     boundFunction = nullptr;
     currentBlock = nullptr;
     line = 0;
-    emitLineNumbers = !context.ReleaseConfig();
+    emitLineNumbers = !context.ReleaseConfig() || context.CurrentProject() && context.CurrentProject()->HasDefine("TRACE");
 }
 
 void CodeGenerator::StatementPrefix()

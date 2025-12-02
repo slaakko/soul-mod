@@ -72,6 +72,15 @@ void Project::AddDefine(const std::string& symbol, std::int64_t value)
     defines.push_back(Define(symbol, value));
 }
 
+bool Project::HasDefine(const std::string& symbol) const
+{
+    for (const auto& define : defines)
+    {
+        if (define.symbol == symbol) return true;
+    }
+    return false;
+}
+
 void Project::AddRoots(otava::symbols::ModuleMapper& moduleMapper)
 {
     for (const auto& referenceFilePath : referenceFilePaths)

@@ -176,7 +176,7 @@ std::expected<bool, int> ContainerSymbol::Read(Reader& reader)
         {
             std::expected<std::string, int> name = util::ToUtf8(Name());
             if (!name) return std::unexpected<int>(name.error());
-            return std::unexpected<int>(util::AllocateError("ContainerSymbol::read: '" + *name + "': null symbol read"));
+            return std::unexpected<int>(util::AllocateError("ContainerSymbol::Read: '" + *name + "': null symbol read"));
         }
     }
     return std::expected<bool, int>(true);

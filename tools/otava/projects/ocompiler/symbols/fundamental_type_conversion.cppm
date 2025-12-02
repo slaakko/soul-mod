@@ -238,39 +238,11 @@ public:
     TypeSymbol* ConversionArgType() const override;
     ConversionKind GetConversionKind() const override;
     std::int32_t ConversionDistance() const override;
-    std::expected<bool, int> Write(Writer& writer) override
-    {
-        std::expected<bool, int> rv = FunctionSymbol::Write(writer);
-        if (!rv) return rv;
-        rv = writer.GetBinaryStreamWriter().Write(paramType->Id());
-        if (!rv) return rv;
-        rv = writer.GetBinaryStreamWriter().Write(argType->Id());
-        if (!rv) return rv;
-        return std::expected<bool, int>(true);
-    }
-    std::expected<bool, int> Read(Reader& reader) override
-    {
-        std::expected<bool, int> rv = FunctionSymbol::Read(reader);
-        if (!rv) return rv;
-        rv = reader.GetBinaryStreamReader().ReadUuid(paramTypeId);
-        if (!rv) return rv;
-        rv = reader.GetBinaryStreamReader().ReadUuid(argTypeId);
-        if (!rv) return rv;
-        return std::expected<bool, int>(true);
-    }
-    std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override
-    {
-        std::expected<bool, int> rv = FunctionSymbol::Resolve(symbolTable, context);
-        if (!rv) return rv;
-        paramType = symbolTable.GetType(paramTypeId);
-        argType = symbolTable.GetType(argTypeId);
-        return std::expected<bool, int>(true);
-    }
+    std::expected<bool, int> Write(Writer& writer) override;
+    std::expected<bool, int> Read(Reader& reader) override;
+    std::expected<bool, int> Resolve(SymbolTable& symbolTable, Context* context) override;
     std::expected<bool, int> GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
-    {
-        return std::expected<bool, int>(true);
-    }
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
 private:
     TypeSymbol* paramType;
     TypeSymbol* argType;
@@ -279,4 +251,3 @@ private:
 };
 
 } // namespace otava::symbols
-

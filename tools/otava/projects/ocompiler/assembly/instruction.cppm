@@ -57,7 +57,7 @@ public:
     void AddOperand(Value* operand);
     inline bool HasOperands() const { return !operands.empty(); }
     inline OpCode GetOpCode() const { return opCode; }
-    inline const std::vector<Value*>& Operands() const { return operands; }
+    const std::vector<Value*>& Operands() const { return operands; }
     void Write(util::CodeFormatter& formatter);
     int Length() const;
     inline void SetWriteln() { writeln = true; }

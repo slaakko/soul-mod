@@ -14,7 +14,7 @@ import otava.symbols.compound.type.symbol;
 import otava.symbols.conversion.table;
 import otava.symbols.type.symbol;
 import otava.parser.recorded.parse;
-//import otava.opt;
+import otava.opt;
 import soul.lexer.file.map;
 import util;
 
@@ -256,7 +256,12 @@ int main(int argc, const char** argv)
     }
     if (optLevel != -1)
     {
-        //otava::optimizer::Optimizer::Instance().SetOptimizations(std::to_string(optLevel)); TODO
+        std::expected<bool, int> rv = otava::optimizer::Optimizer::Instance().SetOptimizations(std::to_string(optLevel));
+        if (!rv)
+        {
+            std::cerr << util::GetErrorMessage(rv.error(), true) << std::endl;
+            return 1;
+        }
     }
     for (const auto& file : files)
     {

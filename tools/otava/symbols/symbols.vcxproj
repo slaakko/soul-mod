@@ -250,6 +250,7 @@
     <ClCompile Include="operation_repository.cppm" />
     <ClCompile Include="overload_resolution.cpp" />
     <ClCompile Include="overload_resolution.cppm" />
+    <ClCompile Include="project.cppm" />
     <ClCompile Include="reader.cpp" />
     <ClCompile Include="reader.cppm" />
     <ClCompile Include="scope.cpp" />

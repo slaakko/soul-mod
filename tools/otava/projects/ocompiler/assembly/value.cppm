@@ -30,7 +30,7 @@ public:
     inline const std::string& Name() const { return name; }
     void SetName(const std::string& name_);
     virtual std::string ToString() const { return Name(); }
-    inline int Length() const { return ToString().length(); }
+    int Length() const;
     virtual bool CanSplit() const { return false; }
     virtual Value* Split(int length) { return nullptr; }
     virtual bool IsEmpty() const { return false; }

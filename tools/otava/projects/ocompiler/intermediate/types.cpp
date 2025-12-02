@@ -991,13 +991,18 @@ std::expected<bool, int> Types::ResolveForwardReferences(const util::uuid& id, S
         auto it = fwdDeclarationMap.find(id);
         if (it != fwdDeclarationMap.end())
         {
-            std::vector<Type*>& dependentTypes = it->second;
-            for (Type* dependentType : dependentTypes)
+            std::vector<Type*>* dependentTypes = &it->second;
+            if (dependentTypes)
             {
-                std::expected<bool, int> rv = dependentType->ReplaceForwardReference(fwdType, structureType, context);
-                if (!rv) return rv;
+                auto end = dependentTypes->end();
+                for (auto it = dependentTypes->begin(); it != end; ++it)
+                {
+                    Type* dependentType = *it;
+                    std::expected<bool, int> rv = dependentType->ReplaceForwardReference(fwdType, structureType, context);
+                    if (!rv) return rv;
+                }
+                fwdDeclarationMap.erase(id);
             }
-            fwdDeclarationMap.erase(id);
         }
     }
     return std::expected<bool, int>(true);

@@ -20,4 +20,10 @@ void Value::SetName(const std::string& name_)
     name = name_;
 }
 
+int Value::Length() const
+{
+    std::string s = ToString();
+    return s.length();
+}
+
 } // otava::assembly

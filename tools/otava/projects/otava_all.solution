@@ -19,6 +19,7 @@ project <oxml/oxpath/oxpath.project>;
 project <oxml/oxpath_test/oxpath_test.project>;
 project <ocompiler/assembly/assembly.project>;
 project <ocompiler/intermediate/intermediate.project>;
+project <ocompiler/optimizer/optimizer.project>;
 project <ocompiler/ast/ast.project>;
 project <ocompiler/lexer/lexer.project>;
 project <ocompiler/symbols/symbols.project>;

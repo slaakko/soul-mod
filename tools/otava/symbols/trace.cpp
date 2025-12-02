@@ -10,6 +10,7 @@ import otava.symbols.context;
 import otava.symbols.modules;
 import otava.symbols.declaration;
 import otava.symbols.statement.binder;
+import otava.symbols.project;
 
 namespace otava::symbols {
 
@@ -241,7 +242,7 @@ void WriteTraceBin(TraceBin& traceBin, const std::string& traceBinPath)
 
 void GenerateEnterFunctionCode(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* fn, Context* context)
 {
-    if (context->ReleaseConfig()) return;
+    if (context->ReleaseConfig() && !(context->CurrentProject() && context->CurrentProject()->HasDefine("TRACE"))) return;
     if (!context->GetTraceInfo()) return;
     Module* module = context->GetModule();
     if (module->Name() == "std.trace" ||
@@ -252,6 +253,7 @@ void GenerateEnterFunctionCode(otava::ast::Node* functionDefinitionNode, Functio
     {
         return;
     }
+    if (context->ReleaseConfig() && fn->IsInline()) return;
     std::int64_t fnId = context->GetTraceInfo()->GetFunctionId(util::ToUtf8(fn->FullName()));
     if (fnId != -1)
     {

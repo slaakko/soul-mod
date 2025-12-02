@@ -35,7 +35,7 @@ struct ProjectLess
 
 std::int16_t MakeProjectId(const std::string& projectName);
 
-class Project
+class Project : public otava::symbols::Project
 {
 public:
     Project(const std::string& filePath_, const std::string& name_);
@@ -75,6 +75,7 @@ public:
     inline const std::vector<std::string>& ModuleNames() const { return moduleNames; }
     inline const std::vector<Define>& Defines() const { return defines; }
     void AddDefine(const std::string& symbol, std::int64_t value);
+    bool HasDefine(const std::string& symbol) const override;
     void ResolveForwardDeclarationsAndAddDerivedClasses(otava::symbols::ModuleMapper& moduleMapper, const std::string& config, int optLevel);
     inline void SetTarget(Target target_) { target = target_; }
     inline Target GetTarget() const { return target; }

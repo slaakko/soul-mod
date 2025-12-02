@@ -271,8 +271,8 @@ FundamentalTypeBoolToIntConversion::FundamentalTypeBoolToIntConversion(TypeSymbo
 {
 }
 
-FundamentalTypeBooleanConversion::FundamentalTypeBooleanConversion() : FunctionSymbol(SymbolKind::fundamentalTypeBoolean, U"@conversion"), argType(), argTypeId(), paramType(),
-    paramTypeId()
+FundamentalTypeBooleanConversion::FundamentalTypeBooleanConversion() : 
+    FunctionSymbol(SymbolKind::fundamentalTypeBoolean, U"@conversion"), argType(), argTypeId(), paramType(), paramTypeId()
 {
 }
 
@@ -294,6 +294,37 @@ FundamentalTypeBooleanConversion::FundamentalTypeBooleanConversion(TypeSymbol* t
         SetError(rv.error());
         return;
     }
+}
+
+std::expected<bool, int> FundamentalTypeBooleanConversion::Write(Writer& writer) 
+{
+    std::expected<bool, int> rv = FunctionSymbol::Write(writer);
+    if (!rv) return rv;
+    rv = writer.GetBinaryStreamWriter().Write(paramType->Id());
+    if (!rv) return rv;
+    rv = writer.GetBinaryStreamWriter().Write(argType->Id());
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
+}
+
+std::expected<bool, int> FundamentalTypeBooleanConversion::Read(Reader& reader) 
+{
+    std::expected<bool, int> rv = FunctionSymbol::Read(reader);
+    if (!rv) return rv;
+    rv = reader.GetBinaryStreamReader().ReadUuid(paramTypeId);
+    if (!rv) return rv;
+    rv = reader.GetBinaryStreamReader().ReadUuid(argTypeId);
+    if (!rv) return rv;
+    return std::expected<bool, int>(true);
+}
+
+std::expected<bool, int> FundamentalTypeBooleanConversion::Resolve(SymbolTable& symbolTable, Context* context) 
+{
+    std::expected<bool, int> rv = FunctionSymbol::Resolve(symbolTable, context);
+    if (!rv) return rv;
+    paramType = symbolTable.GetType(paramTypeId);
+    argType = symbolTable.GetType(argTypeId);
+    return std::expected<bool, int>(true);
 }
 
 TypeSymbol* FundamentalTypeBooleanConversion::ConversionParamType() const

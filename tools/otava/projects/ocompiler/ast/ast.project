@@ -1,5 +1,6 @@
 project otava.ast;
 target=library;
+define TRACE;
 reference <../../outil/outil.project>;
 reference <../../osoul/oast/oast.project>;
 reference <../../oxml/odom/odom.project>;

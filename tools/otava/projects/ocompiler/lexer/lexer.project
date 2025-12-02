@@ -1,5 +1,6 @@
 project otava.lexer;
 target=library;
+define TRACE;
 reference <../../outil/outil.project>;
 reference <../../osoul/oast/oast.project>;
 reference <../../osoul/olexer/olexer.project>;

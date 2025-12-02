@@ -43,6 +43,7 @@ Context::Context() :
     symbolTable(nullptr), 
     lexer(nullptr), 
     traceInfo(nullptr),
+    currentProject(nullptr),
     flags(ContextFlags::none), 
     optLevel(-1),
     node(nullptr), 

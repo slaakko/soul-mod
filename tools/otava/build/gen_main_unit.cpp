@@ -143,6 +143,7 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     otava::symbols::Emitter emitter;
     otava::symbols::Context context;
     context.SetEmitter(&emitter);
+    context.SetCurrentProject(project);
     context.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
     context.SetSymbolTable(symbolTable.get());
     if (config == "release")

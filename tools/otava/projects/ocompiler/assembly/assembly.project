@@ -1,5 +1,6 @@
 project otava.assembly;
 target=library;
+define TRACE;
 reference <../../outil/outil.project>;
 interface <assembly.cppm>;
 interface <context.cppm>;

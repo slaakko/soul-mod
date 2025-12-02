@@ -30,6 +30,7 @@ export import otava.symbols.modules;
 export import otava.symbols.namespaces;
 export import otava.symbols.operation.repository;
 export import otava.symbols.overload.resolution;
+export import otava.symbols.project;
 export import otava.symbols.scope;
 export import otava.symbols.scope.resolver;
 export import otava.symbols.statement.binder;

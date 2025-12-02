@@ -2711,7 +2711,8 @@ std::expected<otava::assembly::Value*, int> MakeCalleeOperand(Value* value, otav
     {
         std::expected<otava::assembly::Register*, int> rv = MakeIntegerRegOperand(value, reg, codeGenerator);
         if (!rv) return std::unexpected<int>(rv.error());
-        return std::expected<otava::assembly::Value*, int>(static_cast<otava::assembly::Value*>(*rv));
+        otava::assembly::Register* reg = *rv;
+        return std::expected<otava::assembly::Value*, int>(static_cast<otava::assembly::Value*>(reg));
     }
     else
     {
@@ -3196,6 +3197,9 @@ void CodeGenerator::Visit(Function& function)
     else
     {
         std::string fullFunctionName = function.ResolveFullName();
+#ifdef DEBUG_CODEGEN
+        std::cout << "> " << function.Name() << " : " << fullFunctionName << "\n";
+#endif
         if (function.IsLinkOnce())
         {
             file.GetDeclarationSection().AddLinkOnceDeclaration(new otava::assembly::LinkOnceDeclaration(function.Name()));
@@ -3229,12 +3233,18 @@ void CodeGenerator::Visit(Function& function)
             SetError(rv.error());
             return;
         }
+#ifdef DEBUG_CODEGEN
+        std::cout << "<" << function.Name() << " : " << fullFunctionName << "\n";
+#endif
     }
 }
 
 void CodeGenerator::Visit(BasicBlock& basicBlock)
 {
     if (!Valid()) return;
+#ifdef DEBUG_CODEGEN
+    std::cout << ">bb " << basicBlock.Id() << "\n";
+#endif
     Instruction* inst = basicBlock.FirstInstruction();
     leader = true;
     while (inst)
@@ -3242,7 +3252,13 @@ void CodeGenerator::Visit(BasicBlock& basicBlock)
         currentInst = inst;
         if (inst->IsArgInstruction() || inst->IsProcedureCallInstruction() || inst->IsFunctionCallInstruction())
         {
+#ifdef DEBUG_CODEGEN
+            std::cout << ">inst " << inst->Name() << "\n";
+#endif
             inst->Accept(*this);
+#ifdef DEBUG_CODEGEN
+            std::cout << "<inst " << inst->Name() << "\n";
+#endif
             if (!Valid()) return;
         }
         else
@@ -3293,11 +3309,20 @@ void CodeGenerator::Visit(BasicBlock& basicBlock)
                     registerAllocator->RemoveFromRegisterGroups(instToSpill);
                 }
             }
+#ifdef DEBUG_CODEGEN
+            std::cout << ">inst " << inst->Name() << "\n";
+#endif
             inst->Accept(*this);
+#ifdef DEBUG_CODEGEN
+            std::cout << "<inst " << inst->Name() << "\n";
+#endif
             if (!Valid()) return;
         }
         inst = inst->Next();
     }
+#ifdef DEBUG_CODEGEN
+    std::cout << "<bb " << basicBlock.Id() << "\n";
+#endif
 }
 
 void CodeGenerator::Visit(RetInstruction& inst)

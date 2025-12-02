@@ -1,5 +1,6 @@
 project otava.codegen;
 target=library;
+define TRACE;
 reference <../../outil/outil.project>;
 reference <../../osoul/oast/oast.project>;
 reference <../../osoul/olexer/olexer.project>;
@@ -8,6 +9,7 @@ reference <../../osoul/oparser/oparser.project>;
 reference <../../oxml/odom/odom.project>;
 reference <../assembly/assembly.project>;
 reference <../intermediate/intermediate.project>;
+reference <../optimizer/optimizer.project>;
 reference <../ast/ast.project>;
 reference <../lexer/lexer.project>;
 reference <../symbols/symbols.project>;

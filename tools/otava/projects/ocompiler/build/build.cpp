@@ -37,7 +37,7 @@ import otava.symbols.class_info_index;
 import otava.pp;
 import otava.pp.state;
 import otava.codegen;
-//import otava.opt;
+import otava.opt;
 import soul.lexer.xml.parsing.log;
 import util;
 
@@ -571,6 +571,7 @@ std::expected<bool, int> BuildSequentially(Project* project, const std::string& 
     for (std::int32_t file : topologicalOrder)
     {
         const std::string& filePath = project->GetFileMap().GetFilePath(file);
+        std::cout << "> " << filePath << "\n";
         files.push_back(std::make_pair(file, filePath));
         std::expected<std::pair<std::u32string, std::vector<int>>*, int> fc = project->GetFileMap().GetFileContent(file);
         if (!fc) return std::unexpected<int>(fc.error());
@@ -697,14 +698,12 @@ std::expected<bool, int> BuildSequentially(Project* project, const std::string& 
             compileUnitInitFunctionNames.push_back(std::move(irName));
         }
         totalFunctionsCompiled += context.TotalFunctionsCompiled();
-/*      TODO
         if (context.ReleaseConfig() && otava::optimizer::HasOptimization(otava::optimizer::Optimizations::inlining))
         {
             inliningEnabled = true;
             functionsInlined += context.FunctionsInlined();
             functionCallsInlined += context.FunctionCallsInlined();
         }
-*/
     }
     for (std::int32_t file : project->SourceFiles())
     {
@@ -712,6 +711,7 @@ std::expected<bool, int> BuildSequentially(Project* project, const std::string& 
         auto rv = ScanDependencies(project, file, true, interfaceUnitName);
         if (!rv) return rv;;
         const std::string& filePath = project->GetFileMap().GetFilePath(file);
+        std::cout << "> " << filePath << "\n";
         files.push_back(std::make_pair(file, filePath));
         std::expected<std::pair<std::u32string, std::vector<int>>*, int> fc = project->GetFileMap().GetFileContent(file);
         if (!fc) return std::unexpected<int>(fc.error());
@@ -799,14 +799,12 @@ std::expected<bool, int> BuildSequentially(Project* project, const std::string& 
             compileUnitInitFunctionNames.push_back(std::move(irName));
         }
         totalFunctionsCompiled += context.TotalFunctionsCompiled();
-/*      TODO
         if (context.ReleaseConfig() && otava::optimizer::HasOptimization(otava::optimizer::Optimizations::inlining))
         {
             inliningEnabled = true;
             functionsInlined += context.FunctionsInlined();
             functionCallsInlined += context.FunctionCallsInlined();
         }
-*/
     }
     projectModule.AddDerivedClasses();
     ProjectTarget projectTarget = ProjectTarget::library;
