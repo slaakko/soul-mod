@@ -868,11 +868,12 @@ std::expected<FunctionSymbol*, int> ArrayToPtrArgumentConversion::Get(TypeSymbol
         if (!rv) return std::unexpected<int>(rv.error());
         argType = *rv;
     }
-    if (argType->RemovePointer(context)->IsArrayTypeSymbol())
+    std::expected<TypeSymbol*, int> pt = argType->RemovePointer(context);
+    if (!pt) return std::unexpected<int>(pt.error());
+    TypeSymbol* type = *pt;
+    if (type->IsArrayTypeSymbol())
     {
-        std::expected<TypeSymbol*, int> pt = argType->RemovePointer(context);
-        if (!pt) return std::unexpected<int>(pt.error());
-        ArrayTypeSymbol* arrayType = *pt;
+        ArrayTypeSymbol* arrayType = static_cast<ArrayTypeSymbol*>(type);
         pt = arrayType->ElementType()->AddPointer(context);
         if (!pt) return std::unexpected<int>(pt.error());
         TypeSymbol* elementType = *pt;

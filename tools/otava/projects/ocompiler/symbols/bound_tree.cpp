@@ -298,8 +298,8 @@ std::expected<Scope*, int> BoundExpressionNode::GetMemberScope(otava::ast::Node*
             TypeSymbol* finalType = *rv;
             std::expected<TypeSymbol*, int> pt = finalType->RemovePointer(context);
             if (!pt) return std::unexpected<int>(pt.error());
-            TypeSymbol* type = *pt;
-            TypeSymbol* baseType = type->GetBaseType();
+            TypeSymbol* tp = *pt;
+            TypeSymbol* baseType = tp->GetBaseType();
             return std::expected<Scope*, int>(baseType->GetScope());
         }
         else if (op->IsArrowNode() && plainType->IsClassTypeSymbol())

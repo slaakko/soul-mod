@@ -149,7 +149,7 @@ public:
     virtual void Visit(SymbolValue& value) {}
     inline bool Valid() const { return error == 0; }
     inline operator bool() const { return Valid(); }
-    inline void SetError(int error_) { error = error_; }
+    void SetError(int error_);
     inline int GetError() const { return error; }
 private:
     Context* context;

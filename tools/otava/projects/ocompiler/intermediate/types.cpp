@@ -223,6 +223,12 @@ void Type::IncCount()
 {
 }
 
+std::string Type::Info() const
+{
+    std::string info = Name();
+    return info;
+}
+
 VoidType::VoidType() : Type(soul::ast::Span(), TypeKind::fundamentalType, voidTypeId)
 {
 }
@@ -442,7 +448,16 @@ void StructureType::ResolveComment()
             }
         }
     }
+}
 
+std::string StructureType::Info() const
+{
+    std::string info = Type::Info();
+    if (!comment.empty())
+    {
+        info.append("=").append(comment);
+    }
+    return info;
 }
 
 void StructureType::WriteDeclaration(util::CodeFormatter& formatter)
@@ -530,6 +545,16 @@ void FwdDeclaredStructureType::SetComment(const std::string& comment_)
     comment = comment_;
 }
 
+std::string FwdDeclaredStructureType::Info() const
+{
+    std::string info = "FWD<" + Type::Info() + ">";
+    if (!comment.empty())
+    {
+        info.append("=").append(comment);
+    }
+    return info;
+}
+
 ArrayType::ArrayType(const soul::ast::Span& span_, std::int32_t typeId_, std::int64_t elementCount_, const TypeRef& elementTypeRef_) :
     Type(span_, TypeKind::arrayType, typeId_), elementCount(elementCount_), elementTypeRef(elementTypeRef_)
 {
@@ -579,6 +604,13 @@ Value* ArrayType::MakeDefaultValue(Context& context) const
 {
     std::vector<Value*> elements;
     return context.MakeArrayValue(soul::ast::Span(), elements, const_cast<ArrayType*>(this));
+}
+
+std::string ArrayType::Info() const
+{
+    std::string info = Type::Info();
+    info.append("=").append("[").append(std::to_string(elementCount)).append(" x ").append(ElementType()->Info()).append("]");
+    return info;
 }
 
 FunctionType::FunctionType(const soul::ast::Span& span_, std::int32_t typeId_, const TypeRef& returnTypeRef_, const std::vector<TypeRef>& paramTypeRefs_) :
@@ -662,6 +694,24 @@ bool FunctionType::IsUnaryOperationType() const
     return false;
 }
 
+std::string FunctionType::Info() const
+{
+    std::string info = Type::Info();
+    info.append("=FN:").append(ReturnType()->Info());
+    info.append("(");
+    int n = Arity();
+    for (int i = 0; i < n; ++i)
+    {
+        if (i > 0)
+        {
+            info.append(", ");
+        }
+        info.append(ParamType(i)->Info());
+    }
+    info.append(")");
+    return info;
+}
+
 PointerType::PointerType(const soul::ast::Span& span_, std::int32_t typeId_, std::int8_t pointerCount_, std::int32_t baseTypeId_) :
     Type(span_, TypeKind::pointerType, typeId_), pointerCount(pointerCount_), baseTypeRef(span_, baseTypeId_)
 {
@@ -685,6 +735,13 @@ std::expected<bool, int> PointerType::ReplaceForwardReference(FwdDeclaredStructu
 std::string PointerType::Name() const
 {
     return baseTypeRef.GetType()->Name() + "*";
+}
+
+std::string PointerType::Info() const
+{
+    std::string info = Type::Info();
+    info.append("=").append(BaseType()->Info()).append("*");
+    return info;
 }
 
 std::expected<Type*, int> GetElemType(Value* ptr, Value* index, const soul::ast::Span& span, Context* context)

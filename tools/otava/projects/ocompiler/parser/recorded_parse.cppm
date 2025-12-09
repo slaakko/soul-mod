@@ -25,7 +25,7 @@ std::expected<otava::ast::CompoundStatementNode*, int> GetSavedCompoundStatement
 void PushSavedCtorInitializerNode(otava::ast::ConstructorInitializerNode* node, otava::symbols::Context* context);
 void PopSavedCtorInitializerNode(otava::symbols::Context* context);
 std::expected<otava::ast::ConstructorInitializerNode*, int> GetSavedCtorInitializerNode(otava::symbols::Context* context);
-std::expected<bool, int> RecordedParseCompoundStatement(otava::ast::CompoundStatementNode* node, otava::symbols::Context* context);
-std::expected<bool, int> RecordedParseCtorInitializer(otava::ast::ConstructorInitializerNode* node, otava::symbols::Context* context);
+void RecordedParseCompoundStatement(otava::ast::CompoundStatementNode* node, otava::symbols::Context* context, int* error);
+void RecordedParseCtorInitializer(otava::ast::ConstructorInitializerNode* node, otava::symbols::Context* context, int* error);
 
 } // namespace otava::parser::recorded::parse

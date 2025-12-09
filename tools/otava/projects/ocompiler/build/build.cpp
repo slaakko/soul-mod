@@ -242,7 +242,7 @@ void ModuleDependencyVisitor::Visit(otava::ast::ModuleNameNode& node)
             SetError(s.error());
             return;
         }
-        interfaceUnitName = std::move(*s);
+        interfaceUnitName = *s;
         module.reset(new otava::symbols::Module(*s + ".cpp"));
         module->AddImportModuleName("std.type.fundamental");
         module->AddImportModuleName(*s);

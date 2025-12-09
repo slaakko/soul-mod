@@ -110,7 +110,6 @@ public:
     std::expected<Type*, int> RemovePointer(const soul::ast::Span& span, Context* context) const;
     inline bool IsFwdDeclaredStructureType() const { return kind == TypeKind::fwdDeclaredStructureType; }
     virtual std::expected<bool, int> ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context);
-    inline std::int32_t NextTypeId() { return nextTypeId++; }
     virtual std::string Name() const = 0;
     inline bool IsStructureType() const { return kind == TypeKind::structureType; }
     std::expected<StructureType*, int> GetStructurePointeeType(const soul::ast::Span& span, Context* context) const;
@@ -131,12 +130,12 @@ public:
     TypeRef GetTypeRef();
     virtual Type* BaseType() const { return const_cast<Type*>(this); }
     virtual void IncCount();
+    virtual std::string Info() const;
 private:
     soul::ast::Span span;
     TypeKind kind;
     std::int32_t id;
     Value* defaultValue;
-    std::int32_t nextTypeId;
 };
 
 class VoidType : public Type
@@ -309,6 +308,7 @@ public:
     void SetMetadataRef(MetadataRef* metadataRef_);
     inline MetadataRef* GetMetadataRef() const { return metadataRef; }
     void ResolveComment();
+    std::string Info() const override;
 private:
     void ComputeSizeAndOffsets() const;
     std::vector<TypeRef> fieldTypeRefs;
@@ -330,6 +330,7 @@ public:
     inline const util::uuid& Id() const { return id; }
     inline const std::string& Comment() const { return comment; }
     void SetComment(const std::string& comment_);
+    std::string Info() const override;
 private:
     util::uuid id;
     std::string comment;
@@ -351,6 +352,7 @@ public:
     inline Type* ElementType() const { return elementTypeRef.GetType(); }
     void WriteDeclaration(util::CodeFormatter& formatter) override;
     Value* MakeDefaultValue(Context& context) const override;
+    std::string Info() const override;
 private:
     std::int64_t elementCount;
     TypeRef elementTypeRef;
@@ -374,6 +376,7 @@ public:
     inline Type* ParamType(int index) const { return paramTypeRefs[index].GetType(); }
     void WriteDeclaration(util::CodeFormatter& formatter) override;
     bool IsUnaryOperationType() const;
+    std::string Info() const override;
 private:
     TypeRef returnTypeRef;
     std::vector<TypeRef> paramTypeRefs;
@@ -392,6 +395,7 @@ public:
     Type* BaseType() const override { return baseTypeRef.GetType(); }
     Value* MakeDefaultValue(Context& context) const override;
     std::expected<bool, int> ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context) override;
+    std::string Info() const override;
 private:
     std::int8_t pointerCount;
     TypeRef baseTypeRef;

@@ -23,6 +23,11 @@ BoundTreeVisitor::~BoundTreeVisitor()
 {
 }
 
+void BoundTreeVisitor::SetError(int error_)
+{
+    error = error_;
+}
+
 void DefaultBoundTreeVisitor::Visit(BoundCompileUnitNode& node)
 {
     for (const auto& node : node.BoundNodes())

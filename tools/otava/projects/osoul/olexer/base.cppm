@@ -53,6 +53,7 @@ public:
     virtual int File() const = 0;
     virtual int Line() const = 0;
     virtual void SetLine(std::int32_t line_) = 0;
+    virtual std::unexpected<int> FarthestError() = 0;
     virtual soul::lexer::ClassMap<CharT>* GetClassMap() const = 0;
     virtual void SetClassMap(soul::lexer::ClassMap<CharT>* classMap) = 0;
     virtual Variables* GetVariables() const = 0;

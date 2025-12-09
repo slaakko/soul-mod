@@ -78,12 +78,19 @@ void SetRecordedParseCompoundStatementFn(RecordedParseCompoundStatementFn fn)
     recordedParseCompoundStatementFn = fn;
 }
 
-void RecordedParseCompoundStatement(otava::ast::CompoundStatementNode* compoundStatementNode, Context* context)
+std::expected<bool, int> RecordedParseCompoundStatement(otava::ast::CompoundStatementNode* compoundStatementNode, Context* context)
 {
     if (recordedParseCompoundStatementFn)
     {
-        recordedParseCompoundStatementFn(compoundStatementNode, context);
+        int error = 0;
+        recordedParseCompoundStatementFn(compoundStatementNode, context, &error);
+        if (error != 0)
+        {
+            return std::unexpected<int>(error);
+        }
+        return std::expected<bool, int>(true);
     }
+    return std::unexpected<int>(util::AllocateError("recorded parser not set"));
 }
 
 RecordedParseCtorInitializerFn recordedParseInitializerFn = nullptr;
@@ -93,9 +100,19 @@ void SetRecordedParseCtorInitializerFn(RecordedParseCtorInitializerFn fn)
     recordedParseInitializerFn = fn;
 }
 
-void RecordedParseCtorInitializer(otava::ast::ConstructorInitializerNode* ctorInitializerNode, Context* context)
+std::expected<bool, int> RecordedParseCtorInitializer(otava::ast::ConstructorInitializerNode* ctorInitializerNode, Context* context)
 {
-    recordedParseInitializerFn(ctorInitializerNode, context);
+    if (recordedParseInitializerFn)
+    {
+        int error = 0;
+        recordedParseInitializerFn(ctorInitializerNode, context, &error);
+        if (error != 0)
+        {
+            return std::unexpected<int>(error);
+        }
+        return std::expected<bool, int>(true);
+    }
+    return std::unexpected<int>(util::AllocateError("recorded parser not set"));
 }
 
 ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) :
@@ -1543,14 +1560,24 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
     {
         if (ctorInitializerNode->GetLexerPosPair().IsValid())
         {
-            RecordedParseCtorInitializer(ctorInitializerNode, context);
+            std::expected<bool, int> rv = RecordedParseCtorInitializer(ctorInitializerNode, context);
+            if (!rv)
+            {
+                SetError(rv.error());
+                return;
+            }
         }
     }
     if (compoundStatementNode)
     {
         if (compoundStatementNode->GetLexerPosPair().IsValid())
         {
-            RecordedParseCompoundStatement(compoundStatementNode, context);
+            std::expected<bool, int> rv = RecordedParseCompoundStatement(compoundStatementNode, context);
+            if (!rv)
+            {
+                SetError(rv.error());
+                return;
+            }
         }
     }
     FunctionSymbol* functionSymbol = nullptr;

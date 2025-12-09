@@ -2555,6 +2555,13 @@ std::expected<FunctionDefinitionSymbol*, int> BindFunction(otava::ast::Node* fun
     if (context->GetFlag(ContextFlags::parseMemberFunction)) return std::expected<FunctionDefinitionSymbol*, int>(functionDefinitionSymbol);
     std::set<const Symbol*> visited;
     if (functionDefinitionSymbol->IsTemplateParameterInstantiation(context, visited)) return std::expected<FunctionDefinitionSymbol*, int>(functionDefinitionSymbol);
+#ifdef DEBUG_FUNCTIONS
+    auto fname = functionDefinitionSymbol->FullName();
+    if (!fname) return std::unexpected<int>(fname.error());
+    auto sfname = util::ToUtf8(*fname);
+    if (!sfname) return std::unexpected<int>(sfname.error());
+    std::cout << ">" << *sfname << "\n";
+#endif
     functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
     rv = GenerateEnterFunctionCode(functionDefinitionNode, functionDefinitionSymbol, context);
@@ -2576,6 +2583,9 @@ std::expected<FunctionDefinitionSymbol*, int> BindFunction(otava::ast::Node* fun
         std::expected<bool, int> rv = CheckFunctionReturnPaths(functionDefinitionNode, context);
         if (!rv) return std::unexpected<int>(rv.error());
     }
+#ifdef DEBUG_FUNCTIONS
+    std::cout << "<" << *sfname << "\n";
+#endif
     return std::expected<FunctionDefinitionSymbol*, int>(functionDefinitionSymbol);
 }
 

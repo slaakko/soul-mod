@@ -195,6 +195,8 @@ public:
     inline void SetEmitter(Emitter* emitter_) { emitter = emitter_; }
     inline int ArgIndex() const { return argIndex; }
     void SetArgIndex(int argIndex_) { argIndex = argIndex_; }
+    void SetDebugBreak();
+    void CheckDebugBreak();
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -236,6 +238,7 @@ private:
     int functionsInlined;
     int argIndex;
     int boundFunctionSerial;
+    bool debugBreak;
 };
 
 } // namespace otava::symbols

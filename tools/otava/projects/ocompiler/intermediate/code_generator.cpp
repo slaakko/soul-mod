@@ -1286,6 +1286,7 @@ std::expected<bool, int> EmitIntegerBinOpInst(BinaryInstruction& inst, CodeGener
     {
         return codeGenerator.Error("error emitting integer binary operation instruction: reg group for inst not found");
     }
+    return std::expected<bool, int>(true);
 }
 
 std::expected<bool, int> EmitFloatingPointBinOpInst(BinaryInstruction& inst, CodeGenerator& codeGenerator)

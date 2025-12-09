@@ -2518,12 +2518,12 @@ RegValue* Function::GetRegRef(const soul::ast::Span& span, Type* type, std::int3
         }
         else
         {
-            Error("error referencing register value " + std::to_string(reg) + ": type conflict", span, context, regValue->Span());
+            Error("error referencing register value " + std::to_string(reg) + " in function " + Name() + ": type conflict", span, context, regValue->Span());
         }
     }
     else
     {
-        Error("error referencing register: register " + std::to_string(reg) + " not found", span, context);
+        Error("error referencing register in function " + Name() + ": register " + std::to_string(reg) + " not found", span, context);
     }
     return nullptr;
 }

@@ -572,6 +572,45 @@ bool lexicographical_compare(I1 first1, I1 last1, I2 first2, I2 last2, Compare c
     return first1 == last1 && first2 != last2;
 }
 
+template<typename I>
+bool next_permutation(I first, I last)
+{
+    if (first == last)
+    {
+        return false;
+    }
+    I i = first;
+    ++i;
+    if (i == last)
+    {
+        return false;
+    }
+    i = last;
+    --i;
+    while (true)
+    {
+        I ii = i;
+        --i;
+        if (*i < *ii)
+        {
+            I j = last;
+            --j;
+            while (*i >= *j)
+            {
+                --j;
+            }
+            swap(*i, *j);
+            reverse(ii, last);
+            return true;
+        }
+        if (i == first)
+        {
+            reverse(first, last);
+            return false;
+        }
+    }
+}
+
 std::uint32_t random()
 {
     return ort_random();

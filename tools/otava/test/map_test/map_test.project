@@ -1,0 +1,3 @@
+project map_test;
+target=program;
+source <map_test.cpp>;

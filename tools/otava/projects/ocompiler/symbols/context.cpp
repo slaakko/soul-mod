@@ -66,7 +66,8 @@ Context::Context() :
     functionsInlined(0),
     emitter(nullptr),
     argIndex(0),
-    boundFunctionSerial(0)
+    boundFunctionSerial(0),
+    debugBreak(false)
 {
 }
 
@@ -380,6 +381,19 @@ void Context::PopTemplateParameterMap()
 {
     templateParameterMap = templateParameterMapStack.top();
     templateParameterMapStack.pop();
+}
+
+void Context::SetDebugBreak()
+{
+    debugBreak = true;
+}
+
+void Context::CheckDebugBreak()
+{
+    if (debugBreak)
+    {
+        ort_debug_break();
+    }
 }
 
 } // namespace otava::symbols

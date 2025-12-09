@@ -32,11 +32,11 @@ class ClassGroupSymbol;
 
 std::int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind);
 
-using RecordedParseCompoundStatementFn = std::expected<bool, int>(*)(otava::ast::CompoundStatementNode* compoundStatementNode, Context* context);
+using RecordedParseCompoundStatementFn = void(*)(otava::ast::CompoundStatementNode* compoundStatementNode, Context* context, int* error);
 
 void SetRecordedParseCompoundStatementFn(RecordedParseCompoundStatementFn fn);
 
-using RecordedParseCtorInitializerFn = std::expected<bool, int>(*)(otava::ast::ConstructorInitializerNode* ctorInitializerNode, Context* context);
+using RecordedParseCtorInitializerFn = void(*)(otava::ast::ConstructorInitializerNode* ctorInitializerNode, Context* context, int* error);
 
 void SetRecordedParseCtorInitializerFn(RecordedParseCtorInitializerFn fn);
 

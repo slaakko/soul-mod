@@ -14,10 +14,6 @@ import util;
 
 namespace otava::parser::recorded::parse {
 
-std::expected<bool, int> RecordedParseCompoundStatement(otava::ast::CompoundStatementNode* node, otava::symbols::Context* context);
-
-std::expected<bool, int> RecordedParseCtorInitializer(otava::ast::ConstructorInitializerNode* node, otava::symbols::Context* context);
-
 void Init()
 {
     otava::symbols::SetRecordedParseCompoundStatementFn(RecordedParseCompoundStatement);
@@ -135,28 +131,58 @@ std::expected<otava::ast::ConstructorInitializerNode*, int> GetSavedCtorInitiali
     return std::expected<otava::ast::ConstructorInitializerNode*, int>(ctorInitializerNode);
 }
 
-std::expected<bool, int> RecordedParseCompoundStatement(otava::ast::CompoundStatementNode* node, otava::symbols::Context* context)
+void RecordedParseCompoundStatement(otava::ast::CompoundStatementNode* node, otava::symbols::Context* context, int* error)
 {
     context->PushSetFlag(otava::symbols::ContextFlags::parseSavedMemberFunctionBody);
     PushSavedCompoundStatementNode(node, context);
     using Lexer = soul::lexer::Lexer<otava::lexer::OtavaLexer<char32_t>, char32_t>;
-    auto rv = otava::parser::statement::StatementParser<Lexer>::CompoundStatement(*static_cast<Lexer*>(context->GetLexer()), context);
-    if (!rv) return std::unexpected<int>(rv.error());
+    std::expected<soul::parser::Match, int> rv = otava::parser::statement::StatementParser<Lexer>::CompoundStatement(*static_cast<Lexer*>(context->GetLexer()), context);
+    if (!rv)
+    {
+        if (error)
+        {
+            *error = rv.error();
+        }
+        return;
+    }
+    soul::parser::Match match = *rv;
+    if (!match.hit)
+    {
+        if (error)
+        {
+            *error = util::AllocateError("statement parsing error");
+        }
+        return;
+    }
     PopSavedCompoundStatementNode(context);
     context->PopFlags();
-    return std::expected<bool, int>(true);
 }
 
-std::expected<bool, int> RecordedParseCtorInitializer(otava::ast::ConstructorInitializerNode* node, otava::symbols::Context* context)
+void RecordedParseCtorInitializer(otava::ast::ConstructorInitializerNode* node, otava::symbols::Context* context, int* error)
 {
     context->PushSetFlag(otava::symbols::ContextFlags::parseSavedCtorInitializer);
     PushSavedCtorInitializerNode(node, context);
     using Lexer = soul::lexer::Lexer<otava::lexer::OtavaLexer<char32_t>, char32_t>;
-    auto rv = otava::parser::classes::ClassParser<Lexer>::CtorInitializer(*static_cast<Lexer*>(context->GetLexer()), context);
-    if (!rv) return std::unexpected<int>(rv.error());
+    std::expected<soul::parser::Match, int> rv = otava::parser::classes::ClassParser<Lexer>::CtorInitializer(*static_cast<Lexer*>(context->GetLexer()), context);
+    if (!rv)
+    {
+        if (error)
+        {
+            *error = rv.error();
+        }
+        return;
+    }
+    soul::parser::Match match = *rv;
+    if (!match.hit)
+    {
+        if (error)
+        {
+            *error = util::AllocateError("initializer parsing error");
+        }
+        return;
+    }
     PopSavedCtorInitializerNode(context);
     context->PopFlags();
-    return std::expected<bool, int>(true);
 }
 
 } // namespace otava::parser::recorded::parse

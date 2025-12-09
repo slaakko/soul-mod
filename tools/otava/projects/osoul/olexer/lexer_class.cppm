@@ -572,7 +572,7 @@ public:
         if (!el) return el;
         return "parsing error at '" + fileName + ":" + std::to_string(GetLine(pos)) + "':\n" + *el + parserStateStr;
     }
-    std::unexpected<int> FarthestError()
+    std::unexpected<int> FarthestError() override
     {
         std::cout.flush();
         parsing_error_thrown = true;

@@ -1411,7 +1411,7 @@ std::expected<Symbol*, int> SymbolTable::GetSymbol(otava::ast::Node* node) const
     Symbol* symbol = GetSymbolNothrow(node);
     if (symbol)
     {
-        return symbol;
+        return std::expected<Symbol*, int>(symbol);
     }
     else
     {

@@ -124,7 +124,7 @@ public:
     inline bool Valid() const { return error == 0; }
     inline explicit operator bool() const { return Valid(); }
     inline int GetError() const { return error; }
-    inline void SetError(int error_) { error = error_; }
+    void SetError(int error_);
 private:
     int error;
 };

@@ -1659,6 +1659,13 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
     if (context->GetFlag(ContextFlags::parseMemberFunction)) return functionDefinitionSymbol;
     std::set<const Symbol*> visited;
     if (functionDefinitionSymbol->IsTemplateParameterInstantiation(context, visited)) return functionDefinitionSymbol;
+#ifdef DEBUG_FUNCTIONS
+    std::cout << ">" << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
+    if (functionDefinitionSymbol->FullName() == U"std::destroy(util::StreamObserver**, long long int)")
+    {
+        int x = 0;
+    }
+#endif
     functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
     GenerateEnterFunctionCode(functionDefinitionNode, functionDefinitionSymbol, context);
@@ -1677,6 +1684,9 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
     {
         CheckFunctionReturnPaths(functionDefinitionNode, context);
     }
+#ifdef DEBUG_FUNCTIONS
+    std::cout << "<" << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
+#endif
     return functionDefinitionSymbol;
 }
 

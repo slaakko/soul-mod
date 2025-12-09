@@ -1,6 +1,7 @@
 project otava.build;
 target=library;
 define TRACE;
+//define DEBUG_SYMBOL_IO;
 reference <../../outil/outil.project>;
 reference <../../osoul/oast/oast.project>;
 reference <../../osoul/olexer/olexer.project>;

@@ -1205,7 +1205,7 @@ std::expected<Value*, int> Data::MakeIntegerLiteral(const soul::ast::Span& span,
         case sbyteTypeId:
         {
             std::int64_t value = std::stoll(strValue);
-            if (value < -128 || value > 127)
+            if (value < -128ll || value > 127ll)
             {
                 return Error("error making literal: range error: sbyte value expected", span, context);
             }
@@ -1214,7 +1214,7 @@ std::expected<Value*, int> Data::MakeIntegerLiteral(const soul::ast::Span& span,
         case byteTypeId:
         {
             std::int64_t value = std::stoll(strValue);
-            if (value < 0 || value > 255)
+            if (value < 0ll || value > 255ll)
             {
                 return Error("error making literal: range error: byte value expected", span, context);
             }
@@ -1223,7 +1223,7 @@ std::expected<Value*, int> Data::MakeIntegerLiteral(const soul::ast::Span& span,
         case shortTypeId:
         {
             std::int64_t value = std::stoll(strValue);
-            if (value < -32768 || value > 32767)
+            if (value < -32768ll || value > 32767ll)
             {
                 return Error("error making literal: range error: short value expected", span, context);
             }
@@ -1232,7 +1232,7 @@ std::expected<Value*, int> Data::MakeIntegerLiteral(const soul::ast::Span& span,
         case ushortTypeId:
         {
             std::int64_t value = std::stoll(strValue);
-            if (value < 0 || value > 65535)
+            if (value < 0ll || value > 65535ll)
             {
                 return Error("error making literal: range error: ushort value expected", span, context);
             }
@@ -1241,7 +1241,7 @@ std::expected<Value*, int> Data::MakeIntegerLiteral(const soul::ast::Span& span,
         case intTypeId:
         {
             std::int64_t value = std::stoll(strValue);
-            if (value < -2147483648 || value > 2147483647)
+            if (value < -2147483648ll || value > 2147483647ll)
             {
                 return Error("error making literal: range error: int value expected", span, context);
             }
@@ -1250,9 +1250,10 @@ std::expected<Value*, int> Data::MakeIntegerLiteral(const soul::ast::Span& span,
         case uintTypeId:
         {
             std::int64_t value = std::stoll(strValue);
-            if (value < 0 || value > 4294967295)
+            if (value < 0ll || value > 4294967295ll)
             {
-                return Error("error making literal: range error: uint value expected", span, context);
+                return Error("error making literal: range error: uint value expected: note source str is '" + 
+                    strValue + "' and value is " + std::to_string(value), span, context);
             }
             return std::expected<Value*, int>(GetUIntValue(static_cast<std::uint32_t>(value), types));
         }

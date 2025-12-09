@@ -173,15 +173,15 @@ std::expected<bool, int> BinaryStreamWriter::WriteULEB128UInt(std::uint32_t x)
 {
     do
     {
-        std::uint8_t b = x & 0x7FU;
+        std::uint8_t b = x & 0x7Fu;
         x >>= 7u;
-        if (x != 0)
+        if (x != 0u)
         {
             b |= static_cast<std::uint8_t>(0x80);
         }
         std::expected<bool, int> rv = Write(b);
         if (!rv) return rv;
-    } while (x != 0);
+    } while (x != 0u);
     return std::expected<bool, int>(true);
 }
 
@@ -189,15 +189,15 @@ std::expected<bool, int> BinaryStreamWriter::WriteULEB128ULong(std::uint64_t x)
 {
     do
     {
-        std::uint8_t b = x & 0x7F;
-        x >>= 7;
-        if (x != 0)
+        std::uint8_t b = x & 0x7Fu;
+        x >>= 7u;
+        if (x != 0u)
         {
             b |= static_cast<std::uint8_t>(0x80);
         }
         std::expected<bool, int> rv = Write(b);
         if (!rv) return rv;
-    } while (x != 0);
+    } while (x != 0u);
     return std::expected<bool, int>(true);
 }
 
