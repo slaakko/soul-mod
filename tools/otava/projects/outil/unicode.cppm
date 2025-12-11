@@ -118,9 +118,9 @@ class BinaryProperty
 {
 public:
     BinaryProperty(BinaryPropertyId id_, const std::string& shortName_, const std::string& longName_);
-    BinaryPropertyId Id() const { return id; }
-    const std::string& ShortName() const { return shortName; }
-    const std::string& LongName() const { return longName; }
+    inline BinaryPropertyId Id() const { return id; }
+    inline const std::string& ShortName() const { return shortName; }
+    inline const std::string& LongName() const { return longName; }
 private:
     BinaryPropertyId id;
     std::string shortName;
@@ -146,7 +146,8 @@ private:
 
 inline std::expected<const BinaryProperty*, int> GetBinaryProperty(BinaryPropertyId id)
 {
-    return BinaryPropertyTable::Instance().GetBinaryProperty(id);
+    std::expected<const BinaryProperty*, int> s = BinaryPropertyTable::Instance().GetBinaryProperty(id);
+    return s;
 }
 
 inline std::expected<const BinaryProperty*, int> GetBinaryPropertyByShortName(const std::string& shortName)
@@ -197,11 +198,11 @@ class Block
 {
 public:
     Block(BlockId id_, const std::string& shortName_, const std::string& longName_, char32_t start, char32_t end_);
-    BlockId Id() const { return id; }
-    const std::string& ShortName() const { return shortName; }
-    const std::string& LongName() const { return longName; }
-    char32_t Start() const { return start; }
-    char32_t End() const { return end; }
+    inline BlockId Id() const { return id; }
+    inline const std::string& ShortName() const { return shortName; }
+    inline const std::string& LongName() const { return longName; }
+    inline char32_t Start() const { return start; }
+    inline char32_t End() const { return end; }
 private:
     BlockId id;
     std::string shortName;
@@ -277,9 +278,9 @@ class GeneralCategory
 {
 public:
     GeneralCategory(GeneralCategoryId id_, const std::string& shortName_, const std::string& longName_);
-    GeneralCategoryId Id() const { return id; }
-    const std::string& ShortName() const { return shortName; }
-    const std::string& LongName() const { return longName; }
+    inline GeneralCategoryId Id() const { return id; }
+    inline const std::string& ShortName() const { return shortName; }
+    inline const std::string& LongName() const { return longName; }
 private:
     GeneralCategoryId id;
     std::string shortName;
@@ -351,7 +352,7 @@ public:
     static AgeTable& Instance();
     std::expected<const Age*, int> GetAge(AgeId id) const;
     std::expected<const Age*, int> GetAge(const std::string& version) const;
-    const std::vector<Age>& Ages() const { return ages; }
+    inline const std::vector<Age>& Ages() const { return ages; }
 private:
     AgeTable();
     std::map<AgeId, const Age*> ageIdMap;
@@ -404,9 +405,9 @@ class Script
 {
 public:
     Script(ScriptId id_, const std::string& shortName_, const std::string& longName_);
-    ScriptId Id() const { return id; }
-    const std::string& ShortName() const { return shortName; }
-    const std::string& LongName() const { return longName; }
+    inline ScriptId Id() const { return id; }
+    inline const std::string& ShortName() const { return shortName; }
+    inline const std::string& LongName() const { return longName; }
 private:
     ScriptId id;
     std::string shortName;
@@ -420,7 +421,7 @@ public:
     std::expected<const Script*, int> GetScript(ScriptId id) const;
     std::expected<const Script*, int> GetScriptByShortName(const std::string& shortName) const;
     std::expected<const Script*, int> GetScriptByLongName(const std::string& longName) const;
-    const std::vector<Script>& Scripts() const { return scripts; }
+    inline const std::vector<Script>& Scripts() const { return scripts; }
 private:
     ScriptTable();
     std::vector<Script> scripts;
@@ -465,71 +466,71 @@ public:
             binaryProperties = binaryProperties & ~bit;
         }
     }
-    GeneralCategoryId GetGeneralCategory() const
+    inline GeneralCategoryId GetGeneralCategory() const
     {
         return generalCategory;
     }
-    bool HasGeneralCategory(GeneralCategoryId generalCategory_) const
+    inline bool HasGeneralCategory(GeneralCategoryId generalCategory_) const
     {
         return (generalCategory & generalCategory_) != GeneralCategoryId::none;
     }
-    void SetGeneralCategory(GeneralCategoryId generalCategory_)
+    inline void SetGeneralCategory(GeneralCategoryId generalCategory_)
     {
         generalCategory = generalCategory_;
     }
-    char32_t Upper() const
+    inline char32_t Upper() const
     {
         return upper;
     }
-    void SetUpper(char32_t upper_)
+    inline void SetUpper(char32_t upper_)
     {
         upper = upper_;
     }
-    char32_t Lower() const
+    inline char32_t Lower() const
     {
         return lower;
     }
-    void SetLower(char32_t lower_)
+    inline void SetLower(char32_t lower_)
     {
         lower = lower_;
     }
-    char32_t Title() const
+    inline char32_t Title() const
     {
         return title;
     }
-    void SetTitle(char32_t title_)
+    inline void SetTitle(char32_t title_)
     {
         title = title_;
     }
-    char32_t Folding() const
+    inline char32_t Folding() const
     {
         return folding;
     }
-    void SetFolding(char32_t folding_)
+    inline void SetFolding(char32_t folding_)
     {
         folding = folding_;
     }
-    BlockId GetBlock() const
+    inline BlockId GetBlock() const
     {
         return block;
     }
-    void SetBlock(BlockId block_)
+    inline void SetBlock(BlockId block_)
     {
         block = block_;
     }
-    AgeId GetAge() const
+    inline AgeId GetAge() const
     {
         return age;
     }
-    void SetAge(AgeId age_)
+    inline void SetAge(AgeId age_)
     {
         age = age_;
     }
-    ScriptId GetScript() const
+    inline ScriptId GetScript() const
     {
         return script;
     }
-    void SetScript(ScriptId script_)
+    inline void SetScript(ScriptId script_)
     {
         script = script_;
     }
@@ -562,9 +563,9 @@ class NumericType
 {
 public:
     NumericType(NumericTypeId id_, const std::string& shortName_, const std::string& longName_);
-    NumericTypeId Id() const { return id; }
-    const std::string& ShortName() const { return shortName; }
-    const std::string& LongName() const { return longName; }
+    inline NumericTypeId Id() const { return id; }
+    inline const std::string& ShortName() const { return shortName; }
+    inline const std::string& LongName() const { return longName; }
 private:
     NumericTypeId id;
     std::string shortName;
@@ -578,7 +579,7 @@ public:
     std::expected<const NumericType*, int> GetNumericType(NumericTypeId id) const;
     std::expected<const NumericType*, int> GetNumericTypeByShortName(const std::string& shortName) const;
     std::expected<const NumericType*, int> GetNumericTypeByLongName(const std::string& longName) const;
-    const std::vector<NumericType>& NumericTypes() const { return numericTypes; }
+    inline const std::vector<NumericType>& NumericTypes() const { return numericTypes; }
 private:
     NumericTypeTable();
     std::vector<NumericType> numericTypes;
@@ -612,9 +613,9 @@ class BidiClass
 {
 public:
     BidiClass(BidiClassId id_, const std::string& shortName_, const std::string& longName_);
-    BidiClassId Id() const { return id; }
-    const std::string& ShortName() const { return shortName; }
-    const std::string& LongName() const { return longName; }
+    inline BidiClassId Id() const { return id; }
+    inline const std::string& ShortName() const { return shortName; }
+    inline const std::string& LongName() const { return longName; }
 private:
     BidiClassId id;
     std::string shortName;
@@ -628,7 +629,7 @@ public:
     std::expected<const BidiClass*, int> GetBidiClass(BidiClassId id) const;
     std::expected<const BidiClass*, int> GetBidiClassByShortName(const std::string& shortName) const;
     std::expected<const BidiClass*, int> GetBidiClassByLongName(const std::string& longName) const;
-    const std::vector<BidiClass>& BidiClasses() const { return bidiClasses; }
+    inline const std::vector<BidiClass>& BidiClasses() const { return bidiClasses; }
 private:
     BidiClassTable();
     std::vector<BidiClass> bidiClasses;
@@ -662,9 +663,9 @@ class BidiPairedBracketType
 {
 public:
     BidiPairedBracketType(BidiPairedBracketTypeId id_, const std::string& shortName_, const std::string& longName_);
-    BidiPairedBracketTypeId Id() const { return id; }
-    const std::string& ShortName() const { return shortName; }
-    const std::string& LongName() const { return longName; }
+    inline BidiPairedBracketTypeId Id() const { return id; }
+    inline const std::string& ShortName() const { return shortName; }
+    inline const std::string& LongName() const { return longName; }
 private:
     BidiPairedBracketTypeId id;
     std::string shortName;
@@ -678,7 +679,7 @@ public:
     std::expected<const BidiPairedBracketType*, int> GetBidiPairedBracketType(BidiPairedBracketTypeId id) const;
     std::expected<const BidiPairedBracketType*, int> GetBidiPairedBracketTypeByShortName(const std::string& shortName) const;
     std::expected<const BidiPairedBracketType*, int> GetBidiPairedBracketTypeByLongName(const std::string& longName) const;
-    const std::vector<BidiPairedBracketType>& BidiPairedBracketTypes() const { return bidiPairedBracketTypes; }
+    inline const std::vector<BidiPairedBracketType>& BidiPairedBracketTypes() const { return bidiPairedBracketTypes; }
 private:
     BidiPairedBracketTypeTable();
     std::vector<BidiPairedBracketType> bidiPairedBracketTypes;
@@ -712,8 +713,8 @@ class AliasType
 {
 public:
     AliasType(AliasTypeId id_, const std::string& name_);
-    AliasTypeId Id() const { return id; }
-    const std::string& Name() const { return name; }
+    inline AliasTypeId Id() const { return id; }
+    inline const std::string& Name() const { return name; }
 private:
     AliasTypeId id;
     std::string name;
@@ -725,7 +726,7 @@ public:
     static AliasTypeTable& Instance();
     std::expected<const AliasType*, int> GetAliasType(AliasTypeId id) const;
     std::expected<const AliasType*, int> GetAliasType(const std::string& typeName) const;
-    const std::vector<AliasType>& AliasTypes() const { return aliasTypes; }
+    inline const std::vector<AliasType>& AliasTypes() const { return aliasTypes; }
 private:
     AliasTypeTable();
     std::vector<AliasType> aliasTypes;
@@ -748,8 +749,8 @@ class Alias
 public:
     Alias();
     Alias(AliasTypeId typeId_, const std::string& name_);
-    AliasTypeId TypeId() const { return typeId; }
-    const std::string& Name() const { return name; }
+    inline AliasTypeId TypeId() const { return typeId; }
+    inline const std::string& Name() const { return name; }
     std::expected<bool, int> Write(BinaryStreamWriter& writer);
     std::expected<bool, int> Read(BinaryStreamReader& reader);
 private:
@@ -761,109 +762,109 @@ class ExtendedCharacterInfo
 {
 public:
     ExtendedCharacterInfo();
-    const std::string& CharacterName() const
+    inline const std::string& CharacterName() const
     {
         return characterName;
     }
     void SetCharacterName(const std::string& characterName_);
-    const std::string& Unicode1Name() const
+    inline const std::string& Unicode1Name() const
     {
         return unicode1Name;
     }
     void SetUnicode1Name(const std::string& unicode1Name_);
-    std::uint8_t GetCanonicalCombiningClass() const
+    inline std::uint8_t GetCanonicalCombiningClass() const
     {
         return canonicalCombiningClass;
     }
-    void SetCanonicalCombiningClass(std::uint8_t canonicalCombiningClass_)
+    inline void SetCanonicalCombiningClass(std::uint8_t canonicalCombiningClass_)
     {
         canonicalCombiningClass = canonicalCombiningClass_;
     }
-    const std::u32string& FullUpper() const
+    inline const std::u32string& FullUpper() const
     {
         return fullUpper;
     }
-    std::u32string& FullUpper()
+    inline std::u32string& FullUpper()
     {
         return fullUpper;
     }
-    const std::u32string& FullLower() const
+    inline const std::u32string& FullLower() const
     {
         return fullLower;
     }
-    std::u32string& FullLower()
+    inline std::u32string& FullLower()
     {
         return fullLower;
     }
-    const std::u32string& FullTitle() const
+    inline const std::u32string& FullTitle() const
     {
         return fullTitle;
     }
-    std::u32string& FullTitle()
+    inline std::u32string& FullTitle()
     {
         return fullTitle;
     }
-    const std::u32string& FullFolding() const
+    inline const std::u32string& FullFolding() const
     {
         return fullFolding;
     }
-    std::u32string& FullFolding()
+    inline std::u32string& FullFolding()
     {
         return fullFolding;
     }
-    BidiClassId GetBidiClass() const
+    inline BidiClassId GetBidiClass() const
     {
         return bidiClass;
     }
-    void SetBidiClass(BidiClassId bidiClass_)
+    inline void SetBidiClass(BidiClassId bidiClass_)
     {
         bidiClass = bidiClass_;
     }
-    NumericTypeId GetNumericType() const
+    inline NumericTypeId GetNumericType() const
     {
         return numericType;
     }
-    void SetNumericType(NumericTypeId numericType_)
+    inline void SetNumericType(NumericTypeId numericType_)
     {
         numericType = numericType_;
     }
-    const std::string& GetNumericValue() const
+    inline const std::string& GetNumericValue() const
     {
         return numericValue;
     }
-    void SetNumericValue(const std::string& numericValue_)
+    inline void SetNumericValue(const std::string& numericValue_)
     {
         numericValue = numericValue_;
     }
-    const std::vector<Alias>& Aliases() const
+    inline const std::vector<Alias>& Aliases() const
     {
         return aliases;
     }
-    std::vector<Alias>& Aliases()
+    inline std::vector<Alias>& Aliases()
     {
         return aliases;
     }
-    char32_t GetBidiMirroringGlyph() const
+    inline char32_t GetBidiMirroringGlyph() const
     {
         return bidiMirroringGlyph;
     }
-    void SetBidiMirroringGlyph(char32_t bidiMirroringGlyph_)
+    inline void SetBidiMirroringGlyph(char32_t bidiMirroringGlyph_)
     {
         bidiMirroringGlyph = bidiMirroringGlyph_;
     }
-    BidiPairedBracketTypeId GetBidiPairedBracketType() const
+    inline BidiPairedBracketTypeId GetBidiPairedBracketType() const
     {
         return bidiPairedBracketType;
     }
-    void SetBidiPairedBracketType(BidiPairedBracketTypeId bidiPairedBracketType_)
+    inline void SetBidiPairedBracketType(BidiPairedBracketTypeId bidiPairedBracketType_)
     {
         bidiPairedBracketType = bidiPairedBracketType_;
     }
-    char32_t GetBidiPairedBracket() const
+    inline char32_t GetBidiPairedBracket() const
     {
         return bidiPairedBracket;
     }
-    void SetBidiPairedBracket(char32_t bidiPairedBracket_)
+    inline void SetBidiPairedBracket(char32_t bidiPairedBracket_)
     {
         bidiPairedBracket = bidiPairedBracket_;
     }
