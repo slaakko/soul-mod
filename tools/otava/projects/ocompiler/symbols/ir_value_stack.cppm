@@ -19,17 +19,6 @@ public:
     }
     inline otava::intermediate::Value* Pop()
     {
-        if (s.empty())
-        {
-            ort_debug_break();
-            int t = ort_generate_stack_trace();
-            const char* trace = ort_get_stack_trace(t);
-            if (trace)
-            {
-                std::cout << trace;
-            }
-            ort_free_stack_trace(t);
-        }
         otava::intermediate::Value* top = s.back();
         s.pop_back();
         return top;

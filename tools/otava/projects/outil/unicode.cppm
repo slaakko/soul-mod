@@ -135,7 +135,7 @@ public:
     bool IsBinaryProperty(const std::string& shortName) const;
     std::expected<const BinaryProperty*, int> GetBinaryPropertyByShortName(const std::string& shortName) const;
     std::expected<const BinaryProperty*, int> GetBinaryPropertyByLongName(const std::string& longName) const;
-    const std::vector<BinaryProperty>& BinaryProperties() const { return binaryProperties; }
+    inline const std::vector<BinaryProperty>& BinaryProperties() const { return binaryProperties; }
 private:
     BinaryPropertyTable();
     std::map<BinaryPropertyId, const BinaryProperty*> binaryPropertyIdMap;
@@ -146,8 +146,7 @@ private:
 
 inline std::expected<const BinaryProperty*, int> GetBinaryProperty(BinaryPropertyId id)
 {
-    std::expected<const BinaryProperty*, int> s = BinaryPropertyTable::Instance().GetBinaryProperty(id);
-    return s;
+    return BinaryPropertyTable::Instance().GetBinaryProperty(id);
 }
 
 inline std::expected<const BinaryProperty*, int> GetBinaryPropertyByShortName(const std::string& shortName)
@@ -218,7 +217,7 @@ public:
     std::expected<const Block*, int> GetBlock(BlockId blockId) const;
     std::expected<const Block*, int> GetBlockByShortName(const std::string& shortName) const;
     std::expected<const Block*, int> GetBlockByLongName(const std::string& longName) const;
-    const std::vector<Block>& Blocks() const { return blocks; }
+    inline const std::vector<Block>& Blocks() const { return blocks; }
 private:
     BlockTable();
     std::map<BlockId, const Block*> blockIdMap;
@@ -294,7 +293,7 @@ public:
     std::expected<const GeneralCategory*, int> GetGeneralCategory(GeneralCategoryId generalCategoryId) const;
     std::expected<const GeneralCategory*, int> GetGeneralCategoryByShortName(const std::string& shortName) const;
     std::expected<const GeneralCategory*, int> GetGeneralCategoryByLongName(const std::string& shortName) const;
-    const std::vector<GeneralCategory>& GeneralCategories() const { return generalCategories; }
+    inline const std::vector<GeneralCategory>& GeneralCategories() const { return generalCategories; }
 private:
     GeneralCategoryTable();
     std::map<GeneralCategoryId, const GeneralCategory*> generalCategoryIdMap;

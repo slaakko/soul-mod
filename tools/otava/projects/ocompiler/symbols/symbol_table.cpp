@@ -1592,10 +1592,6 @@ std::expected<bool, int> SymbolTable::BeginClass(const std::u32string& name, Cla
     auto sname = util::ToUtf8(name);
     if (!sname) return std::unexpected<int>(sname.error());
     std::cout << ">class " << *sname << "\n";
-    if (*sname == "SynchronizedQueue")
-    {
-        ort_debug_break();
-    }
 #endif
     std::expected<Symbol*, int> s = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, node->GetSourcePos(), 
         context, LookupFlags::dontResolveSingle);

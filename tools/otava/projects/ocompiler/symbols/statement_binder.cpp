@@ -2575,6 +2575,10 @@ std::expected<FunctionDefinitionSymbol*, int> BindFunction(otava::ast::Node* fun
 #ifdef DEBUG_FUNCTIONS
     std::cout << ">" << *sfname << "\n";
 #endif
+    if (functionDefinitionSymbol->GroupName() == U"GetBinaryProperty")
+    {
+        ort_debug_break();
+    }
     functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
     rv = GenerateEnterFunctionCode(functionDefinitionNode, functionDefinitionSymbol, context);
