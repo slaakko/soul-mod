@@ -430,7 +430,6 @@ void CodeGenerator::Reset()
     sequenceSecond = nullptr;
     currentBlockId = -1;
     blockExits.clear();
-    emitter->SetRetValue(nullptr);
     boundFunction = nullptr;
     currentBlock = nullptr;
     line = 0;
@@ -793,13 +792,6 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
 {
     boundFunction = &node;
     functionDefinition = node.GetFunctionDefinitionSymbol();
-    otava::intermediate::Value* retValue = nullptr;
-    if (functionDefinition->ReturnType() && !functionDefinition->ReturnType()->IsVoidType() && !functionDefinition->ReturnsClass())
-    {
-        retValue = functionDefinition->ReturnType()->DirectType(&context)->FinalType(node.GetSourcePos(), 
-            &context)->IrType(*emitter, node.GetSourcePos(), &context)->DefaultValue();
-    }
-    emitter->SetRetValue(retValue);
     if ((functionDefinition->Qualifiers() & otava::symbols::FunctionQualifiers::isDeleted) != otava::symbols::FunctionQualifiers::none)
     {
         return;

@@ -20,13 +20,13 @@ std::unexpected<int> UnicodeError(const std::string& message_);
 
 std::expected<std::u32string, int> ToUtf32(const std::string& utf8Str);
 std::expected<std::u32string, int> ToUtf32(const std::u16string& utf16Str);
-std::expected<std::u32string, int> ToUtf32(const std::u32string& utf32Str) { return std::expected<std::u32string, int>(utf32Str); }
+std::expected<std::u32string, int> ToUtf32(const std::u32string& utf32Str);
 std::expected<std::u16string, int> ToUtf16(const std::u32string& utf32Str);
-std::expected<std::u16string, int> ToUtf16(const std::u16string& utf16Str) { return std::expected<std::u16string, int>(utf16Str); }
+std::expected<std::u16string, int> ToUtf16(const std::u16string& utf16Str);
 std::expected<std::u16string, int> ToUtf16(const std::string& u8str);
 std::expected<std::string, int> ToUtf8(const std::u32string& utf32Str);
 std::expected<std::string, int> ToUtf8(const std::u16string& utf16Str);
-std::expected<std::string, int> ToUtf8(const std::string& utf8Str) { return std::expected<std::string, int>(utf8Str); }
+std::expected<std::string, int> ToUtf8(const std::string& utf8Str);
 
 class Utf8ToUtf32Engine
 {

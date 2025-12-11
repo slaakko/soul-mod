@@ -190,8 +190,6 @@ public:
     otava::intermediate::Value* GetVTabVariable(const std::u32string& className) const;
     void SetVTabVariable(const std::u32string& className, otava::intermediate::Value* vtabVariable);
     IrValueStack& Stack() { return *stack; }
-    inline otava::intermediate::Value* RetValue() const { return retValue; }
-    inline void SetRetValue(otava::intermediate::Value* retValue_) { retValue = retValue_; }
     std::expected<otava::intermediate::Value*, int> EmitClassPtrConversion(otava::intermediate::Value* classPtr, otava::intermediate::Value* delta, 
         otava::intermediate::Type* destType);
     inline otava::intermediate::MetadataStruct* CreateMetadataStruct() { return context->CreateMetadataStruct(); }
@@ -207,7 +205,6 @@ private:
     std::map<util::uuid, otava::intermediate::Type*> typeMap;
     std::map<void*, otava::intermediate::Value*> irObjectMap;
     std::map<std::u32string, otava::intermediate::Value*> vtabVariableMap;
-    otava::intermediate::Value* retValue;
     std::map<util::uuid, otava::intermediate::StructureType*> forwardDeclarationMap;
     int line;
 };

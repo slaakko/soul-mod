@@ -1771,9 +1771,10 @@ bool BoundFunctionCallNode::CallsClassConstructor(ClassTypeSymbol*& cls, BoundEx
 {
     if (functionSymbol->GetFunctionKind() != otava::symbols::FunctionKind::constructor) return false;
     if (args.empty()) return false;
-    firstArg = args[0].get();
-    if (!firstArg->IsBoundAddressOfNode()) return false;
-    BoundAddressOfNode* addrOf = static_cast<BoundAddressOfNode*>(firstArg);
+    BoundExpressionNode* farg = args[0].get();
+    firstArg = farg;
+    if (!farg->IsBoundAddressOfNode()) return false;
+    BoundAddressOfNode* addrOf = static_cast<BoundAddressOfNode*>(farg);
     TypeSymbol* subjectType = addrOf->Subject()->GetType();
     if (!subjectType->IsClassTypeSymbol()) return false;
     cls = static_cast<ClassTypeSymbol*>(subjectType);

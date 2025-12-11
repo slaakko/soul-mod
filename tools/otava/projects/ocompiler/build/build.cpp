@@ -616,6 +616,10 @@ std::expected<bool, int> BuildSequentially(Project* project, const std::string& 
         std::expected<otava::symbols::Module*, int> m = project->GetModule(file);
         if (!m) return std::unexpected<int>(m.error());
         otava::symbols::Module* module = *m;
+        if (!context.ReleaseConfig())
+        {
+            project->GetTraceInfo().AddSourceFileInfo(module->Id(), filePath);
+        }
         module->SetImportIndex(importIndex++);
         module->GetNodeIdFactory()->SetModuleId(module->Id());
         module->SetFilePath(filePath);
@@ -748,6 +752,10 @@ std::expected<bool, int> BuildSequentially(Project* project, const std::string& 
         auto m = project->GetModule(file);
         if (!m) return std::unexpected<int>(m.error());
         otava::symbols::Module* module = *m;
+        if (!context.ReleaseConfig())
+        {
+            project->GetTraceInfo().AddSourceFileInfo(module->Id(), filePath);
+        }
         module->SetKind(otava::symbols::ModuleKind::implementationModule);
         module->SetImportIndex(importIndex++);
         module->GetNodeIdFactory()->SetModuleId(module->Id());

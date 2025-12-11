@@ -158,7 +158,7 @@ std::expected<bool, int> DerivedToBaseConversion::GenerateCode(Emitter& emitter,
     std::expected<otava::intermediate::Type*, int> irv = baseTypePtr->IrType(emitter, sourcePos, context);
     if (!irv) return std::unexpected<int>(irv.error());
     std::expected<otava::intermediate::Value*, int> crv = emitter.EmitClassPtrConversion(classPtr, deltaValue, *irv);
-    if (crv) return std::unexpected<int>(crv.error());
+    if (!crv) return std::unexpected<int>(crv.error());
     emitter.Stack().Push(*crv);
     return std::expected<bool, int>(true);
 }
@@ -1160,7 +1160,7 @@ std::expected<bool, int> FunctionToFunctionPtrConversion::GenerateCode(Emitter& 
     if (!rv) return std::unexpected<int>(rv.error());
     std::string irName = std::move(*rv);
     std::expected<otava::intermediate::Type*, int> trv = function->IrType(emitter, sourcePos, context);
-    if (trv) return std::unexpected<int>(trv.error());
+    if (!trv) return std::unexpected<int>(trv.error());
     otava::intermediate::Type* irType = *trv;
     std::expected<otava::intermediate::Function*, int> frv = emitter.GetOrInsertFunction(irName, static_cast<otava::intermediate::FunctionType*>(irType));
     if (!frv) return std::unexpected<int>(frv.error());
@@ -1199,6 +1199,7 @@ std::expected<FunctionSymbol*, int> FunctionToFunctionPtrArgumentConversion::Get
                     if (!t) return std::unexpected<int>(t.error());
                     leftType = *t;
                     t = functionSymbol->Parameters()[i]->GetType()->DirectType(context);
+                    if (!t) return std::unexpected<int>(t.error());
                     TypeSymbol* rightType = *t;
                     t = rightType->FinalType(sourcePos, context);
                     if (!t) return std::unexpected<int>(t.error());
@@ -1222,6 +1223,7 @@ std::expected<FunctionSymbol*, int> FunctionToFunctionPtrArgumentConversion::Get
                     if (!t) return std::unexpected<int>(t.error());
                     leftType = *t;
                     t = functionSymbol->ReturnType()->DirectType(context);
+                    if (!t) return std::unexpected<int>(t.error());
                     TypeSymbol* rightType = *t;
                     t = rightType->FinalType(sourcePos, context);
                     if (!t) return std::unexpected<int>(t.error());
@@ -1257,6 +1259,7 @@ std::expected<FunctionSymbol*, int> FunctionToFunctionPtrArgumentConversion::Get
                     if (!t) return std::unexpected<int>(t.error());
                     leftType = *t;
                     t = functionDefinitionSymbol->Parameters()[i]->GetType()->DirectType(context);
+                    if (!t) return std::unexpected<int>(t.error());
                     TypeSymbol* rightType = *t;
                     t = rightType->FinalType(sourcePos, context);
                     if (!t) return std::unexpected<int>(t.error());
@@ -1280,6 +1283,7 @@ std::expected<FunctionSymbol*, int> FunctionToFunctionPtrArgumentConversion::Get
                     if (!t) return std::unexpected<int>(t.error());
                     leftType = *t;
                     t = functionDefinitionSymbol->ReturnType()->DirectType(context);
+                    if (!t) return std::unexpected<int>(t.error());
                     TypeSymbol* rightType = *t;
                     t = rightType->FinalType(sourcePos, context);
                     if (!t) return std::unexpected<int>(t.error());

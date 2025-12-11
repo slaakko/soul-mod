@@ -410,14 +410,6 @@ public:
     {
         return static_cast<node_type*>(header->get_parent());
     }
-    void check()
-    {
-        node_type* r = root();
-        if (r)
-        {
-            r->check();
-        }
-    }
 private:
     void init()
     {

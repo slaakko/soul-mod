@@ -28,6 +28,7 @@ import otava.symbols.variable.symbol;
 import otava.symbols.type_compare;
 import otava.symbols.inline_functions;
 import otava.symbols.enums;
+import otava.opt;
 import util.unicode;
 
 namespace otava::symbols {
@@ -1511,14 +1512,12 @@ std::expected<std::unique_ptr<BoundFunctionCallNode>, int> ResolveOverload(Scope
             if (!irv) return std::unexpected<int>(irv.error());
             bestMatch->function = *irv;
         }
-/*      TODO:
         else if (bestMatch->function->IsInline() && context->ReleaseConfig() && otava::optimizer::HasOptimization(otava::optimizer::Optimizations::inlining))
         {
             std::expected<FunctionSymbol*, int> irv = InstantiateInlineFunction(bestMatch->function, sourcePos, context);
             if (!irv) return std::unexpected<int>(irv.error());
             bestMatch->function = *irv;
         }
-*/
     }
     std::expected<std::unique_ptr<BoundFunctionCallNode>, int> boundFunctionCall = CreateBoundFunctionCall(*bestMatch, args, sourcePos, context);
     return boundFunctionCall;

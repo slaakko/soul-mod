@@ -253,6 +253,12 @@ std::expected<std::u32string, int> ToUtf32(const std::u16string& utf16Str)
     return std::expected<std::u32string, int>(result);
 }
 
+std::expected<std::u32string, int> ToUtf32(const std::u32string& utf32Str)
+{
+    std::expected<std::u32string, int> s(utf32Str);
+    return s;
+}
+
 std::expected<std::u16string, int> ToUtf16(const std::u32string& utf32Str)
 {
     std::u16string result;
@@ -292,6 +298,12 @@ std::expected<std::u16string, int> ToUtf16(const std::u32string& utf32Str)
     }
     return std::expected<std::u16string, int>(result);
 
+}
+
+std::expected<std::u16string, int> ToUtf16(const std::u16string& utf16Str)
+{
+    std::expected<std::u16string, int> s(utf16Str);
+    return s;
 }
 
 std::expected<std::u16string, int> ToUtf16(const std::string& utf8Str)
@@ -396,6 +408,12 @@ std::expected<std::string, int> ToUtf8(const std::u16string& utf16Str)
     std::expected<std::u32string, int> rv = ToUtf32(utf16Str);
     if (!rv) return std::unexpected<int>(rv.error());
     return ToUtf8(*rv);
+}
+
+std::expected<std::string, int> ToUtf8(const std::string& utf8Str)
+{
+    std::expected<std::string, int> s(utf8Str);
+    return s;
 }
 
 Utf8ToUtf32Engine::Utf8ToUtf32Engine() : state(0), resultReady(false), result(U'\0')

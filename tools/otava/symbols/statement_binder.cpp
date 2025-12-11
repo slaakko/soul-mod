@@ -1661,11 +1661,11 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
     if (functionDefinitionSymbol->IsTemplateParameterInstantiation(context, visited)) return functionDefinitionSymbol;
 #ifdef DEBUG_FUNCTIONS
     std::cout << ">" << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
-    if (functionDefinitionSymbol->FullName() == U"std::destroy(util::StreamObserver**, long long int)")
+#endif
+    if (functionDefinitionSymbol->GroupName() == U"root")
     {
         int x = 0;
     }
-#endif
     functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
     GenerateEnterFunctionCode(functionDefinitionNode, functionDefinitionSymbol, context);

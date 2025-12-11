@@ -249,7 +249,8 @@ Scope* Scope::GroupScope()
 {
     if (IsTemplateDeclarationScope())
     {
-        return ParentScopes().front();
+        std::vector<Scope*> pscopes = ParentScopes();
+        return pscopes.front();
     }
     else
     {

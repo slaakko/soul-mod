@@ -2540,6 +2540,23 @@ std::expected<BoundStatementNode*, int> BindStatement(otava::ast::Node* statemen
 
 std::expected<FunctionDefinitionSymbol*, int> BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
+    auto fname = functionDefinitionSymbol->FullName();
+    if (!fname) return std::unexpected<int>(fname.error());
+    auto sfname = util::ToUtf8(*fname);
+    if (!sfname) return std::unexpected<int>(sfname.error());
+    TraceInfo* traceInfo = context->GetTraceInfo();
+    if (traceInfo)
+    {
+        int64_t sourceFileId = traceInfo->GetSourceFileId(context->GetModule()->FilePath());
+        if (sourceFileId != -1)
+        {
+            traceInfo->AddFunctionTraceInfo(sourceFileId, context->GetModule()->Id(), *sfname);
+        }
+        else
+        {
+            return std::unexpected<int>(util::AllocateError("source file id for source file '" + context->GetModule()->FilePath() + "' not set"));
+        }
+    }
     if (!functionDefinitionSymbol->IsSpecialization())
     {
         if (functionDefinitionSymbol->Declaration())
@@ -2556,10 +2573,6 @@ std::expected<FunctionDefinitionSymbol*, int> BindFunction(otava::ast::Node* fun
     std::set<const Symbol*> visited;
     if (functionDefinitionSymbol->IsTemplateParameterInstantiation(context, visited)) return std::expected<FunctionDefinitionSymbol*, int>(functionDefinitionSymbol);
 #ifdef DEBUG_FUNCTIONS
-    auto fname = functionDefinitionSymbol->FullName();
-    if (!fname) return std::unexpected<int>(fname.error());
-    auto sfname = util::ToUtf8(*fname);
-    if (!sfname) return std::unexpected<int>(sfname.error());
     std::cout << ">" << *sfname << "\n";
 #endif
     functionDefinitionSymbol->SetBound();

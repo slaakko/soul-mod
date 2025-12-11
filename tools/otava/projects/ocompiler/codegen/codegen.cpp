@@ -499,7 +499,6 @@ void CodeGenerator::Reset()
     sequenceSecond = nullptr;
     currentBlockId = -1;
     blockExits.clear();
-    emitter->SetRetValue(nullptr);
     boundFunction = nullptr;
     currentBlock = nullptr;
     line = 0;
@@ -1012,33 +1011,6 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         SetError(sfullname.error());
         return;
     }
-    otava::intermediate::Value* retValue = nullptr;
-    if (functionDefinition->ReturnType() && !functionDefinition->ReturnType()->IsVoidType() && !functionDefinition->ReturnsClass())
-    {
-        std::expected<otava::symbols::TypeSymbol*, int> d = functionDefinition->ReturnType()->DirectType(&context);
-        if (!d)
-        {
-            SetError(d.error());
-            return;
-        }
-        otava::symbols::TypeSymbol* t = *d;
-        d = t->FinalType(node.GetSourcePos(), &context);
-        if (!d)
-        {
-            SetError(d.error());
-            return;
-        }
-        t = *d;
-        std::expected<otava::intermediate::Type*, int> irt = t->IrType(*emitter, node.GetSourcePos(), &context);
-        if (!irt)
-        {
-            SetError(irt.error());
-            return;
-        }
-        otava::intermediate::Type* irType = *irt;
-        retValue = irType->DefaultValue();
-    }
-    emitter->SetRetValue(retValue);
     if ((functionDefinition->Qualifiers() & otava::symbols::FunctionQualifiers::isDeleted) != otava::symbols::FunctionQualifiers::none)
     {
         return;
@@ -1959,6 +1931,7 @@ void CodeGenerator::Visit(otava::symbols::BoundStringLiteralNode& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     GenJumpingBoolCode();
 }
@@ -1971,6 +1944,7 @@ void CodeGenerator::Visit(otava::symbols::BoundVariableNode& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     GenJumpingBoolCode();
 }
@@ -1983,6 +1957,7 @@ void CodeGenerator::Visit(otava::symbols::BoundParameterNode& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     GenJumpingBoolCode();
 }
@@ -1995,6 +1970,7 @@ void CodeGenerator::Visit(otava::symbols::BoundEnumConstant& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     GenJumpingBoolCode();
 }
@@ -2007,6 +1983,7 @@ void CodeGenerator::Visit(otava::symbols::BoundMemberExprNode& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     GenJumpingBoolCode();
 }
@@ -2019,6 +1996,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionCallNode& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     if (node.IsNoReturnFunctionCall())
     {
@@ -2026,6 +2004,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionCallNode& node)
         if (!rv)
         {
             SetError(rv.error());
+            return;
         }
     }
     GenJumpingBoolCode();
@@ -2039,6 +2018,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionPtrCallNode& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     GenJumpingBoolCode();
 }
@@ -2051,6 +2031,7 @@ void CodeGenerator::Visit(otava::symbols::BoundExpressionSequenceNode& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     GenJumpingBoolCode();
 }
@@ -2063,6 +2044,7 @@ void CodeGenerator::Visit(otava::symbols::BoundConversionNode& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     GenJumpingBoolCode();
 }
@@ -2075,6 +2057,7 @@ void CodeGenerator::Visit(otava::symbols::BoundAddressOfNode& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     GenJumpingBoolCode();
 }
@@ -2087,6 +2070,7 @@ void CodeGenerator::Visit(otava::symbols::BoundDereferenceNode& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     GenJumpingBoolCode();
 }
@@ -2099,6 +2083,7 @@ void CodeGenerator::Visit(otava::symbols::BoundPtrToRefNode& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     GenJumpingBoolCode();
 }
@@ -2111,6 +2096,7 @@ void CodeGenerator::Visit(otava::symbols::BoundConstructTemporaryNode& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     GenJumpingBoolCode();
 }
@@ -2123,6 +2109,7 @@ void CodeGenerator::Visit(otava::symbols::BoundConstructExpressionNode& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     GenJumpingBoolCode();
 }
@@ -2135,6 +2122,7 @@ void CodeGenerator::Visit(otava::symbols::BoundDefaultInitNode& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     GenJumpingBoolCode();
 }
@@ -2147,6 +2135,7 @@ void CodeGenerator::Visit(otava::symbols::BoundTemporaryNode& node)
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     GenJumpingBoolCode();
 }
@@ -2199,6 +2188,7 @@ void CodeGenerator::Visit(otava::symbols::BoundDisjunctionNode& boundDisjunction
         if (!rv)
         {
             SetError(rv.error());
+            return;
         }
     }
 }

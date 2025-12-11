@@ -1588,6 +1588,15 @@ std::expected<bool, int> SymbolTable::EndNamespace(int level)
 
 std::expected<bool, int> SymbolTable::BeginClass(const std::u32string& name, ClassKind classKind, TypeSymbol* specialization, otava::ast::Node* node, Context* context)
 {
+#ifdef DEBUG_CLASSES
+    auto sname = util::ToUtf8(name);
+    if (!sname) return std::unexpected<int>(sname.error());
+    std::cout << ">class " << *sname << "\n";
+    if (*sname == "SynchronizedQueue")
+    {
+        ort_debug_break();
+    }
+#endif
     std::expected<Symbol*, int> s = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, node->GetSourcePos(), 
         context, LookupFlags::dontResolveSingle);
     if (!s) return std::unexpected<int>(s.error());
@@ -1642,6 +1651,9 @@ std::expected<bool, int> SymbolTable::AddBaseClass(ClassTypeSymbol* baseClass, c
 
 std::expected<bool, int> SymbolTable::EndClass()
 {
+#ifdef DEBUG_CLASSES
+    std::cout << "<class " << "\n";
+#endif
     --classLevel;
     PopAccess();
     return EndScope();

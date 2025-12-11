@@ -11,7 +11,7 @@ import util;
 
 namespace otava::symbols {
 
-Emitter::Emitter() : context(new otava::intermediate::Context()), stack(new IrValueStack()), retValue(nullptr), line(0)
+Emitter::Emitter() : context(new otava::intermediate::Context()), stack(new IrValueStack()), line(0)
 {
 }
 

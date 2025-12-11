@@ -184,8 +184,6 @@ public:
     otava::intermediate::Value* GetVTabVariable(const std::u32string& className) const;
     void SetVTabVariable(const std::u32string& className, otava::intermediate::Value* vtabVariable);
     IrValueStack& Stack() { return *stack; }
-    inline otava::intermediate::Value* RetValue() const { return retValue; }
-    inline void SetRetValue(otava::intermediate::Value* retValue_) { retValue = retValue_; }
     otava::intermediate::Value* EmitClassPtrConversion(otava::intermediate::Value* classPtr, otava::intermediate::Value* delta, otava::intermediate::Type* destType,
         bool checkNull);
     inline otava::intermediate::MetadataStruct* CreateMetadataStruct() { return context->CreateMetadataStruct(); }
