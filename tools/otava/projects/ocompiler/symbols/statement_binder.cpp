@@ -881,18 +881,25 @@ void StatementBinder::Visit(otava::ast::ExpressionListNode& node)
 void StatementBinder::Visit(otava::ast::FunctionBodyNode& node)
 {
     node.Child()->Accept(*this);
+    if (!Valid()) return;
     context->GetBoundFunction()->SetBody(static_cast<BoundCompoundStatementNode*>(boundStatement));
 }
 
 void StatementBinder::Visit(otava::ast::CompoundStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
-    if (!block) return;
+    if (!block)
+    {
+        std::unexpected<int> result = Error("block expected", node.GetSourcePos(), context);
+        SetError(result.error());
+        return;
+    }
     BoundCompoundStatementNode* currentCompoundStatement = new BoundCompoundStatementNode(node.GetSourcePos());
     std::expected<bool, int> rv = context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     if (!rv)
     {
         SetError(rv.error());
+        return;
     }
     if (functionDefinitionSymbol->GetFunctionKind() == FunctionKind::constructor && !setVPtrStatementsGenerated)
     {
@@ -949,7 +956,12 @@ bool StatementBinder::HasThisInitializer() const
 void StatementBinder::Visit(otava::ast::IfStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
-    if (!block) return;
+    if (!block)
+    {
+        std::unexpected<int> result = Error("block expected", node.GetSourcePos(), context);
+        SetError(result.error());
+        return;
+    }
     std::expected<bool, int> rv = context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     if (!rv)
     {
@@ -1033,7 +1045,12 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
 void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
-    if (!block) return;
+    if (!block)
+    {
+        std::unexpected<int> result = Error("block expected", node.GetSourcePos(), context);
+        SetError(result.error());
+        return;
+    }
     std::expected<bool, int> rv = context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     if (!rv)
     {
@@ -1187,7 +1204,12 @@ void StatementBinder::Visit(otava::ast::DefaultStatementNode& node)
 void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
-    if (!block) return;
+    if (!block)
+    {
+        std::unexpected<int> result = Error("block expected", node.GetSourcePos(), context);
+        SetError(result.error());
+        return;
+    }
     std::expected<bool, int> rv = context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     if (!rv)
     {
@@ -1300,6 +1322,7 @@ RangeForDeclarationExtractor::RangeForDeclarationExtractor() : declSpecifierSequ
 void RangeForDeclarationExtractor::Visit(otava::ast::ForRangeDeclarationNode& node)
 {
     node.Left()->Accept(*this);
+    if (!Valid()) return;
     declarator = node.Right();
 }
 
@@ -1400,6 +1423,11 @@ void StatementBinder::Visit(otava::ast::RangeForStatementNode& node)
     otava::ast::CompoundStatementNode* forActionStmt = new otava::ast::CompoundStatementNode(sourcePos);
     RangeForDeclarationExtractor extractor;
     node.Declaration()->Accept(extractor);
+    if (!extractor)
+    {
+        SetError(extractor.Error());
+        return;
+    }
     otava::ast::DeclSpecifierSequenceNode* forActionDeclSpecifiers = extractor.GetDeclSpecifierSequence();
     otava::ast::Node* declarator = extractor.GetDeclarator();
     std::expected<otava::ast::Node*, int> d = declarator->Clone();
@@ -1456,6 +1484,7 @@ void StatementBinder::Visit(otava::ast::RangeForStatementNode& node)
     Instantiator instantiator(context, &instantiationScope);
     context->PushSetFlag(ContextFlags::saveDeclarations | ContextFlags::dontBind);
     rangeForCompound->Accept(instantiator);
+    if (!Valid()) return;
     if (!instantiator)
     {
         SetError(instantiator.Error());
@@ -1469,8 +1498,14 @@ void StatementBinder::Visit(otava::ast::RangeForStatementNode& node)
 
 void StatementBinder::Visit(otava::ast::ForStatementNode& node)
 {
+    context->CheckDebugBreak();
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
-    if (!block) return;
+    if (!block)
+    {
+        std::unexpected<int> result = Error("block expected", node.GetSourcePos(), context);
+        SetError(result.error());
+        return;
+    }
     std::expected<bool, int> rv = context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     if (!rv)
     {
@@ -1608,7 +1643,8 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
                 SetError(rrv.error());
                 return;
             }
-            classReturnArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(returnValueParam, node.GetSourcePos(), *rrv)));
+            TypeSymbol* rtp = *rrv;
+            classReturnArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(returnValueParam, node.GetSourcePos(), rtp)));
             std::expected<BoundExpressionNode*, int> brv = BindExpression(node.ReturnValue(), context);
             if (!brv)
             {
@@ -2114,6 +2150,7 @@ void FunctionStaticDeclarationExtractor::Visit(otava::ast::SimpleDeclarationNode
     declSpecifiers = new otava::ast::DeclSpecifierSequenceNode(node.GetSourcePos());
     initDeclarators = new otava::ast::InitDeclaratorListNode(node.GetSourcePos());
     node.DeclarationSpecifiers()->Accept(*this);
+    if (!Valid()) return;
     node.InitDeclaratorList()->Accept(*this);
 }
 
@@ -2371,6 +2408,7 @@ std::expected<bool, int> StatementBinder::BindStaticLocalVariable(
     std::unique_ptr<otava::ast::IdentifierNode> globalStaticVarId(new otava::ast::IdentifierNode(sourcePos, globalStaticVarName));
     FunctionStaticDeclarationExtractor extractor(sourcePos, globalStaticVarId.get(), isArrayVar);
     declarationNode->Accept(extractor);
+    if (!extractor) return std::unexpected<int>(extractor.Error());
     otava::ast::DeclSpecifierSequenceNode* globalStaticDeclSpecifiers = extractor.declSpecifiers;
     otava::ast::InitDeclaratorListNode* globalStaticInitDeclarators = extractor.initDeclarators;
     context->PushSetFlag(ContextFlags::noDynamicInit);
@@ -2527,6 +2565,7 @@ std::expected<bool, int> StatementBinder::BindStaticLocalVariable(
     }
     context->SetDeclaredInitializerType(nullptr);
     variable->SetGlobal(globalStaticVariableSymbol);
+    return std::expected<bool, int>(true);
 }
 
 std::expected<BoundStatementNode*, int> BindStatement(otava::ast::Node* statementNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
@@ -2575,7 +2614,7 @@ std::expected<FunctionDefinitionSymbol*, int> BindFunction(otava::ast::Node* fun
 #ifdef DEBUG_FUNCTIONS
     std::cout << ">" << *sfname << "\n";
 #endif
-    if (functionDefinitionSymbol->GroupName() == U"GetBinaryProperty")
+    if (*sfname == "::operator<<(basic_ostream<char>&, basic_ostream<char>& (*)(basic_ostream<char>&))")
     {
         ort_debug_break();
     }

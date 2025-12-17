@@ -77,35 +77,35 @@ ConsoleColor ToConsoleColor(Color color, Intensity intensity)
 {
     switch (intensity)
     {
-    case Intensity::dark:
-    {
-        switch (color)
+        case Intensity::dark:
         {
-        case Color::black: return ConsoleColor::black;
-        case Color::red: return ConsoleColor::darkRed;
-        case Color::green: return ConsoleColor::darkGreen;
-        case Color::yellow: return ConsoleColor::darkYellow;
-        case Color::blue: return ConsoleColor::darkBlue;
-        case Color::magenta: return ConsoleColor::magenta;
-        case Color::cyan: return ConsoleColor::darkCyan;
-        case Color::white: return ConsoleColor::gray;
+            switch (color)
+            {
+                case Color::black: return ConsoleColor::black;
+                case Color::red: return ConsoleColor::darkRed;
+                case Color::green: return ConsoleColor::darkGreen;
+                case Color::yellow: return ConsoleColor::darkYellow;
+                case Color::blue: return ConsoleColor::darkBlue;
+                case Color::magenta: return ConsoleColor::magenta;
+                case Color::cyan: return ConsoleColor::darkCyan;
+                case Color::white: return ConsoleColor::gray;
+            }
+            break;
         }
-        break;
-    }
-    case Intensity::bright:
-    {
-        switch (color)
+        case Intensity::bright:
         {
-        case Color::black: return ConsoleColor::darkGray;
-        case Color::red: return ConsoleColor::red;
-        case Color::green: return ConsoleColor::green;
-        case Color::yellow: return ConsoleColor::yellow;
-        case Color::blue: return ConsoleColor::blue;
-        case Color::magenta: return ConsoleColor::magenta;
-        case Color::cyan: return ConsoleColor::cyan;
-        case Color::white: return ConsoleColor::white;
+            switch (color)
+            {
+                case Color::black: return ConsoleColor::darkGray;
+                case Color::red: return ConsoleColor::red;
+                case Color::green: return ConsoleColor::green;
+                case Color::yellow: return ConsoleColor::yellow;
+                case Color::blue: return ConsoleColor::blue;
+                case Color::magenta: return ConsoleColor::magenta;
+                case Color::cyan: return ConsoleColor::cyan;
+                case Color::white: return ConsoleColor::white;
+            }
         }
-    }
     }
     return ConsoleColor::gray;
 }

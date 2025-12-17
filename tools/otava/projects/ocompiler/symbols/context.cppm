@@ -196,6 +196,7 @@ public:
     inline int ArgIndex() const { return argIndex; }
     void SetArgIndex(int argIndex_) { argIndex = argIndex_; }
     void SetDebugBreak();
+    void ResetDebugBreak();
     void CheckDebugBreak();
 private:
     Lexer* lexer;

@@ -388,10 +388,16 @@ void Context::SetDebugBreak()
     debugBreak = true;
 }
 
+void Context::ResetDebugBreak()
+{
+    debugBreak = false;
+}
+
 void Context::CheckDebugBreak()
 {
     if (debugBreak)
     {
+        debugBreak = false;
         ort_debug_break();
     }
 }

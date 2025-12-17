@@ -25,6 +25,7 @@ module;
 module ort;
 
 import class_info_index;
+import ort.memory;
 import util;
 
 bool initialized = false;
@@ -114,14 +115,29 @@ const char* ort_get_cwd(char* buf, int bufSize)
 void* current_exception = nullptr;
 std::uint64_t currentExceptionTypeIdHigh = 0;
 std::uint64_t currentExceptionTypeIdLow = 0;
+bool debugMemory = false;
+
+void ort_debug_memory()
+{
+    debugMemory = true;
+}
 
 void* ort_malloc(std::int64_t size)
 {
-    return std::malloc(size);
+    void* block = std::malloc(size);
+    if (debugMemory)
+    {
+        ort::memory::allocate(block, size);
+    }
+    return block;
 }
 
 void ort_free(void* ptr)
 {
+    if (debugMemory)
+    {
+        ort::memory::free(ptr);
+    }
     std::free(ptr);
 }
 

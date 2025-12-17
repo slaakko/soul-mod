@@ -64,6 +64,7 @@ void FunctionTemplateRepository::AddFunctionDefinition(const FunctionTemplateKey
 FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap,
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    std::cout << ">instantiate " << util::ToUtf8(functionTemplate->FullName()) << "\n";
     FunctionTemplateRepository* functionTemplateRepository = context->GetBoundCompileUnit()->GetFunctionTemplateRepository();
     std::vector<TypeSymbol*> templateArgumentTypes;
     TemplateDeclarationSymbol* templateDeclaration = functionTemplate->ParentTemplateDeclaration();
@@ -147,6 +148,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
             {
                 specialization->SetSpecialization();
                 FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(specialization);
+                std::cout << ">>instantiate " << util::ToUtf8(functionDefinition->FullName()) << "\n";
                 functionDefinition->SetFlag(FunctionSymbolFlags::fixedIrName);
                 if (!context->InstantiationIrName().empty())
                 {
@@ -169,6 +171,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
                 }
                 context->PopBoundFunction();
                 functionDefinition->GetScope()->ClearParentScopes();
+                std::cout << "<instantiate " << util::ToUtf8(functionTemplate->FullName()) << "\n";
             }
             else
             {

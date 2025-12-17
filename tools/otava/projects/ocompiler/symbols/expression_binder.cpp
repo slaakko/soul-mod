@@ -587,6 +587,11 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
         return;
     }
     std::u32string groupName = std::move(*grv);
+    auto gnm = util::ToUtf8(groupName);
+    if (*gnm == "operator<<")
+    {
+        int x = 0;
+    }
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
     args.push_back(std::unique_ptr<BoundExpressionNode>(left->Clone()));
     args.push_back(std::unique_ptr<BoundExpressionNode>(right->Clone()));

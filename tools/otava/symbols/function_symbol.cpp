@@ -211,9 +211,9 @@ TypeSymbol* ParameterSymbol::GetReferredType(Context* context) const
                 auto it = context->TemplateParameterMap()->find(templateParam);
                 if (it != context->TemplateParameterMap()->end())
                 {
-                    TypeSymbol* type = it->second;
-                    Symbol* symbol = type->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, context->GetSourcePos(), context,
-                        LookupFlags::none);
+                    TypeSymbol* tp = it->second;
+                    Symbol* symbol = tp->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope,
+                        context->GetSourcePos(), context, LookupFlags::none);
                     if (symbol && symbol->IsTypeSymbol())
                     {
                         referredType = static_cast<TypeSymbol*>(symbol);
@@ -241,9 +241,9 @@ TypeSymbol* ParameterSymbol::GetReferredType(Context* context) const
                     auto it = context->TemplateParameterMap()->find(templateParam);
                     if (it != context->TemplateParameterMap()->end())
                     {
-                        TypeSymbol* type = it->second;
-                        Symbol* symbol = type->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, context->GetSourcePos(), context,
-                            LookupFlags::none);
+                        TypeSymbol* tp = it->second;
+                        Symbol* symbol = tp->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope,
+                            context->GetSourcePos(), context, LookupFlags::none);
                         if (symbol && symbol->IsTypeSymbol())
                         {
                             referredType = static_cast<TypeSymbol*>(symbol);

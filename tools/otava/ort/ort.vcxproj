@@ -163,6 +163,8 @@
     <ClCompile Include="lexer_resource.cpp" />
     <ClCompile Include="lexer_resource.cppm" />
     <ClCompile Include="io..cppm" />
+    <ClCompile Include="memory.cpp" />
+    <ClCompile Include="memory.cppm" />
     <ClCompile Include="ort.cpp" />
     <ClCompile Include="ort.cppm" />
     <ClCompile Include="rand.cpp" />

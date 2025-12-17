@@ -44,7 +44,9 @@ void PrintHelp()
     std::cout << "--seed | -s" << std::endl;
     std::cout << "  Initialize uuid seed from hash code of the file path of each project." << std::endl;
     std::cout << "--symbol-xml | -y" << std::endl;
-    std::cout << "  Write symbols as XML" << std::endl;
+    std::cout << "  Write symbols as XML." << std::endl;
+    std::cout << "--debug-memory | -b" << std::endl;
+    std::cout << "  Debug memory allocations." << std::endl;
 }
 
 std::string Version()
@@ -70,6 +72,7 @@ int main(int argc, const char** argv)
     bool symbolXml = false;
     bool all = false;
     int optLevel = -1;
+    bool debugMemory = false;
     for (int i = 1; i < argc; ++i)
     {
         std::string arg = argv[i];
@@ -138,6 +141,10 @@ int main(int argc, const char** argv)
                 else if (arg == "--all")
                 {
                     all = true;
+                }
+                else if (arg == "--debug-memory")
+                {
+                    debugMemory = true;
                 }
                 else
                 {
@@ -225,6 +232,11 @@ int main(int argc, const char** argv)
                             symbolXml = true;
                             break;
                         }
+                        case 'b':
+                        {
+                            debugMemory = true;
+                            break;
+                        }
                         default:
                         {
                             std::cerr << "unknown option '-" << std::string(1, o) << "'" << std::endl;
@@ -262,6 +274,10 @@ int main(int argc, const char** argv)
             std::cerr << util::GetErrorMessage(rv.error(), true) << std::endl;
             return 1;
         }
+    }
+    if (debugMemory)
+    {
+        ort_debug_memory();
     }
     for (const auto& file : files)
     {

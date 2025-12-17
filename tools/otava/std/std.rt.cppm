@@ -11,6 +11,7 @@ export {
 
 extern "C" void* ort_malloc(size_t size);
 extern "C" void ort_free(void* ptr);
+extern "C" void ort_debug_memory();
 extern "C" void ort_io_write(int handle, const char* s);
 extern "C" void* ort_open_file(const char* path, const char* mode);
 extern "C" int ort_close_file(void* stream);

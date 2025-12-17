@@ -1290,11 +1290,9 @@ std::expected<std::unique_ptr<FunctionMatch>, int> SelectBestMatchingFunction(co
         }
         std::unique_ptr<FunctionMatch> functionMatch(new FunctionMatch(viableFunction, context));
         SetTemplateArgs(viableFunction, functionMatch->templateParameterMap, templateArgs);
-/*
-        auto sfname = util::ToUtf8(*fname);
-        if (!sfname) return std::unexpected<int>(sfname.error());
-        std::cout << *sfname << "\n";
-*/
+        // auto sfname = util::ToUtf8(*fname);
+        // if (!sfname) return std::unexpected<int>(sfname.error());
+        // std::cout << *sfname << "\n";
         std::expected<bool, int> crv = FindConversions(*functionMatch, args, sourcePos, context);
         if (!crv) return std::unexpected<int>(crv.error());
         if (*crv)
@@ -1419,9 +1417,9 @@ std::expected<std::unique_ptr<BoundFunctionCallNode>, int> ResolveOverload(Scope
     }
     context->PushSetFlag(ContextFlags::ignoreClassTemplateSpecializations);
     std::expected<FunctionSymbol*, int> orv = context->GetOperationRepository()->GetOperation(groupName, args, sourcePos, context);
+    context->PopFlags();
     if (!orv) return std::unexpected<int>(orv.error());
     FunctionSymbol* operation = *orv;
-    context->PopFlags();
     if (operation)
     {
         viableFunctions.push_back(operation);
@@ -1443,18 +1441,21 @@ std::expected<std::unique_ptr<BoundFunctionCallNode>, int> ResolveOverload(Scope
         {
             context->PushSetFlag(ContextFlags::skipNonstaticMemberFunctions);
             flagsPushed = true;
-        }
+        } 
         std::expected<bool, int> m = context->GetSymbolTable()->CollectViableFunctions(scopeLookups, groupName, templateArgs, 
             static_cast<int>(args.size()), viableFunctions, context);
-        if (!m) return std::unexpected<int>(m.error());
         if (flagsPushed)
         {
             context->PopFlags();
         }
+        if (!m) return std::unexpected<int>(m.error());
     }
     std::expected<std::unique_ptr<FunctionMatch>, int> brv = SelectBestMatchingFunction(viableFunctions, templateArgs, args, groupName, sourcePos, context);
-    if (!brv) return std::unexpected<int>(brv.error());
-    std::unique_ptr<FunctionMatch> bestMatch = std::move(*brv);
+    std::unique_ptr<FunctionMatch> bestMatch;
+    if (brv)
+    {
+        bestMatch = std::move(*brv);
+    }
     if (!bestMatch.get())
     {
         context->ResetFlag(ContextFlags::ignoreClassTemplateSpecializations);
@@ -1465,13 +1466,20 @@ std::expected<std::unique_ptr<BoundFunctionCallNode>, int> ResolveOverload(Scope
         {
             viableFunctions.clear();
             viableFunctions.push_back(operation);
-            brv = SelectBestMatchingFunction(viableFunctions, templateArgs, args, groupName, sourcePos, context);
-            if (!brv) return std::unexpected<int>(brv.error());
-            bestMatch = move(*brv);
+            std::expected<std::unique_ptr<FunctionMatch>, int> sbrv = SelectBestMatchingFunction(viableFunctions, templateArgs, args, groupName, sourcePos, context);
+            if (!sbrv) return std::unexpected<int>(sbrv.error());
+            bestMatch = move(*sbrv);
         }
         if (!bestMatch.get())
         {
-            return std::expected<std::unique_ptr<BoundFunctionCallNode>, int>(std::unique_ptr<BoundFunctionCallNode>());
+            if (!brv)
+            {
+                return std::unexpected<int>(brv.error());
+            }
+            else
+            {
+                return Error("overload resolution failed", sourcePos, context);
+            }
         }
     }
     if ((bestMatch->function->Qualifiers() & FunctionQualifiers::isDeleted) != FunctionQualifiers::none)

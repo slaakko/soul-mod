@@ -463,6 +463,10 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
         }
     }
     std::u32string groupName = OperatorGroupNameMap::Instance().GetGroupName(op, sourcePos, context);
+    if (groupName == U"operator<<")
+    {
+        int x = 0;
+    }
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
     args.push_back(std::unique_ptr<BoundExpressionNode>(left->Clone()));
     args.push_back(std::unique_ptr<BoundExpressionNode>(right->Clone()));

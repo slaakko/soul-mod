@@ -225,7 +225,10 @@ void ParameterSymbol::Accept(Visitor& visitor)
 
 std::expected<TypeSymbol*, int> ParameterSymbol::GetReferredType(Context* context) const
 {
-    std::expected<TypeSymbol*, int> rv = type->GetBaseType()->FinalType(soul::ast::SourcePos(), context);
+    std::expected<TypeSymbol*, int> rv = type->GetBaseType()->DirectType(context);
+    if (!rv) return rv;
+    TypeSymbol* dt = *rv;
+    rv = dt->FinalType(soul::ast::SourcePos(), context);
     if (!rv) return rv;
     TypeSymbol* referredType = *rv;
     if (context->GetFlag(ContextFlags::resolveNestedTypes) && referredType->IsNestedTypeSymbol())
@@ -238,8 +241,8 @@ std::expected<TypeSymbol*, int> ParameterSymbol::GetReferredType(Context* contex
                 auto it = context->TemplateParameterMap()->find(templateParam);
                 if (it != context->TemplateParameterMap()->end())
                 {
-                    TypeSymbol* type = it->second;
-                    std::expected<Symbol*, int> lrv = type->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, 
+                    TypeSymbol* tp = it->second;
+                    std::expected<Symbol*, int> lrv = tp->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope,
                         context->GetSourcePos(), context, LookupFlags::none);
                     if (!lrv) return std::unexpected<int>(lrv.error());
                     Symbol* symbol = *lrv;
@@ -272,8 +275,8 @@ std::expected<TypeSymbol*, int> ParameterSymbol::GetReferredType(Context* contex
                     auto it = context->TemplateParameterMap()->find(templateParam);
                     if (it != context->TemplateParameterMap()->end())
                     {
-                        TypeSymbol* type = it->second;
-                        std::expected<Symbol*, int> lrv = type->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, 
+                        TypeSymbol* tp = it->second;
+                        std::expected<Symbol*, int> lrv = tp->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope,
                             context->GetSourcePos(), context, LookupFlags::none);
                         if (!lrv) return std::unexpected<int>(lrv.error());
                         Symbol* symbol = *lrv;

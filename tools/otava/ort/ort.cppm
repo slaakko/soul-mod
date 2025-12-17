@@ -9,6 +9,7 @@ import std;
 
 export extern "C" void* ort_malloc(std::int64_t size);
 export extern "C" void ort_free(void* ptr);
+export extern "C" void ort_debug_memory();
 export extern "C" void* ort_open_file(const char* path, const char* mode);
 export extern "C" int ort_close_file(void* stream);
 export extern "C" int ort_fgetc(void* file);

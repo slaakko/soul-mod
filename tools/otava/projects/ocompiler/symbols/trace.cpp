@@ -287,6 +287,7 @@ std::expected<bool, int> WriteTraceBin(TraceBin& traceBin, const std::string& tr
 
 std::expected<bool, int> GenerateEnterFunctionCode(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* fn, Context* context)
 {
+    return std::expected<bool, int>(false);
     if (context->ReleaseConfig()) return std::expected<bool, int>(false);
     if (!context->GetTraceInfo()) return std::expected<bool, int>(false);
     Module* module = context->GetModule();

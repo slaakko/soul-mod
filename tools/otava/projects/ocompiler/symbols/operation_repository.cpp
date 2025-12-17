@@ -656,8 +656,11 @@ std::expected<FunctionSymbol*, int> PointerPlusOffsetOperation::Get(std::vector<
     TypeSymbol* rightPlainType = *pt;
     if (!rightPlainType->IsIntegralType())
     {
-        if (!context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            rightType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), sourcePos, context))
+        std::expected<FunctionSymbol*, int> rv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+            rightType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), sourcePos, context);
+        if (!rv) return rv;
+        FunctionSymbol* fn = *rv;
+        if (!fn)
         {
             return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
         }
@@ -752,8 +755,11 @@ std::expected<FunctionSymbol*, int> OffsetPlusPointerOperation::Get(std::vector<
     TypeSymbol* leftPlainType = *pt;
     if (!leftPlainType->IsIntegralType())
     {
-        if (!context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            leftType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), sourcePos, context))
+        std::expected<FunctionSymbol*, int> rv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+            leftType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), sourcePos, context);
+        if (!rv) return rv;
+        FunctionSymbol* fn = *rv;
+        if (!fn)
         {
             return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
         }
@@ -858,8 +864,11 @@ std::expected<FunctionSymbol*, int> PointerMinusOffsetOperation::Get(std::vector
     TypeSymbol* rightPlainType = *pt;
     if (!rightPlainType->IsIntegralType())
     {
-        if (!context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            rightType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), sourcePos, context))
+        std::expected<FunctionSymbol*, int> rv = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+            rightType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), sourcePos, context);
+        if (!rv) return rv;
+        FunctionSymbol* fn = *rv;
+        if (!fn)
         {
             return std::expected<FunctionSymbol*, int>(static_cast<FunctionSymbol*>(nullptr));
         }

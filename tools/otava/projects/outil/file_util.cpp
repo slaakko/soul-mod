@@ -21,7 +21,7 @@ std::expected<bool, int> CopyFile(const std::string& source, const std::string& 
     {
         if (verbose)
         {
-            std::cout << "source file '" + source + "' does not exist" << std::endl;
+            std::cout << "source file '" << source << "' does not exist" << "\n";
         }
         return std::expected<bool, int>(false);
     }

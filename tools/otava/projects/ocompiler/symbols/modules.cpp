@@ -21,7 +21,7 @@ import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 
 namespace otava::symbols {
-
+     
 std::expected<std::string, int>  MakeModuleDirPath(const std::string& root, const std::string& config, int optLevel)
 {
     if (config == "release")

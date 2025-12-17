@@ -806,8 +806,8 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
                 return false;
             }
         }
-        TypeSymbol* plainTargetType = context->GetSymbolTable()->MakeClassTemplateSpecialization(paramSpecializationType->ClassTemplate(), targetTemplateArguments,
-            sourcePos, context);
+        TypeSymbol* plainTargetType = context->GetSymbolTable()->MakeClassTemplateSpecialization(
+            paramSpecializationType->ClassTemplate(), targetTemplateArguments, sourcePos, context);
         TypeSymbol* compoundParamType = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations(), context);
         if (TypesEqual(argType, compoundParamType, context))
         {
@@ -913,7 +913,8 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
                                     }
                                     else
                                     {
-                                        if (FindQualificationConversion(conversionFun->ConversionParamType(), compoundParamType, arg, functionMatch, argumentMatch))
+                                        if (FindQualificationConversion(conversionFun->ConversionParamType(), compoundParamType, arg, 
+                                            functionMatch, argumentMatch))
                                         {
                                             functionMatch.argumentMatches.push_back(argumentMatch);
                                             return true;
@@ -1093,14 +1094,16 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
         {
             continue;
         }
-        if (viableFunction->IsFunctionDefinitionSymbol() && viableFunctionFullNameSet.find(viableFunction->FullName()) != viableFunctionFullNameSet.end())
+        if (viableFunction->IsFunctionDefinitionSymbol() && 
+            viableFunctionFullNameSet.find(viableFunction->FullName()) != viableFunctionFullNameSet.end())
         {
             continue;
         }
         viableFunctionSet.insert(viableFunction);
         if (viableFunction->IsFunctionDefinitionSymbol())
         {
-            viableFunctionFullNameSet.insert(viableFunction->FullName());
+            std::u32string fullName = viableFunction->FullName();
+            viableFunctionFullNameSet.insert(fullName);
         }
         std::unique_ptr<FunctionMatch> functionMatch(new FunctionMatch(viableFunction, context));
         SetTemplateArgs(viableFunction, functionMatch->templateParameterMap, templateArgs);
@@ -1188,40 +1191,6 @@ void AddArgumentScopes(std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups
     }
 }
 
-std::unique_ptr<BoundFunctionCallNode> ResolveIOManipFn(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
-    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, OverloadResolutionFlags flags)
-{
-    if ((groupName == U"operator<<" || groupName == U"operator>>") && args.size() == 2 && args[1]->GetType()->IsFunctionGroupTypeSymbol())
-    {
-        FunctionGroupTypeSymbol* functionGroupType = static_cast<FunctionGroupTypeSymbol*>(args[1]->GetType());
-        BoundExpressionNode* arg = args[0]->Clone();
-        std::vector<std::unique_ptr<BoundExpressionNode>> ioManipFnArgs;
-        ioManipFnArgs.push_back(std::unique_ptr<BoundExpressionNode>(arg));
-        std::vector<TypeSymbol*> templateArgs;
-        std::unique_ptr<BoundFunctionCallNode> ioManipFnCall = ResolveOverload(scope, functionGroupType->FunctionGroup()->Name(), templateArgs,
-            ioManipFnArgs, sourcePos, context, ex, flags);
-        if (ioManipFnCall)
-        {
-            FunctionTypeSymbol* functionType = ioManipFnCall->GetFunctionSymbol()->GetFunctionType(context);
-            Derivations derivations = Derivations::none;
-            derivations = otava::symbols::SetPointerCount(derivations, 1);
-            TypeSymbol* functionPtrType = context->GetSymbolTable()->MakeCompoundType(functionType, derivations, context);
-            std::unique_ptr<BoundExpressionNode> ioManipArg(new BoundAddressOfNode(ioManipFnCall.release(), sourcePos, functionPtrType));
-            std::vector<std::unique_ptr<BoundExpressionNode>> operatorPutOrGetArgs;
-            BoundExpressionNode* arg = args[0]->Clone();
-            operatorPutOrGetArgs.push_back(std::unique_ptr<BoundExpressionNode>(arg));
-            operatorPutOrGetArgs.push_back(std::unique_ptr<BoundExpressionNode>(ioManipArg.release()));
-            std::unique_ptr<BoundFunctionCallNode> operatorPutOrGetCall = ResolveOverload(
-                scope, groupName, templateArgs, operatorPutOrGetArgs, sourcePos, context, ex, flags);
-            if (operatorPutOrGetCall)
-            {
-                return operatorPutOrGetCall;
-            }
-        }
-    }
-    return std::unique_ptr<BoundFunctionCallNode>();
-}
-
 void MakeFinalDirectArgs(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     for (auto& arg : args)
@@ -1231,8 +1200,8 @@ void MakeFinalDirectArgs(std::vector<std::unique_ptr<BoundExpressionNode>>& args
 }
 
 std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs,
-    std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, FunctionMatch& functionMatch,
-    OverloadResolutionFlags flags)
+    std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, 
+    FunctionMatch& functionMatch, OverloadResolutionFlags flags)
 {
     MakeFinalDirectArgs(args, sourcePos, context);
     std::vector<FunctionSymbol*> viableFunctions;

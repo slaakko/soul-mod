@@ -67,6 +67,9 @@ void FunctionTemplateRepository::AddFunctionDefinition(const FunctionTemplateKey
 std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, 
     const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    auto fname = functionTemplate->FullName();
+    auto sfname = util::ToUtf8(*fname);
+    //std::cout << ">instantiate " << *sfname << "\n";
     FunctionTemplateRepository* functionTemplateRepository = context->GetBoundCompileUnit()->GetFunctionTemplateRepository();
     std::vector<TypeSymbol*> templateArgumentTypes;
     TemplateDeclarationSymbol* templateDeclaration = functionTemplate->ParentTemplateDeclaration();
@@ -185,6 +188,9 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
             {
                 functionDefinition->SetCompileUnitId(context->GetBoundCompileUnit()->Id());
             }
+            auto fn = functionDefinition->FullName();
+            auto sfn = util::ToUtf8(*fn);
+            //std::cout << ">>instantiate " << *sfname << "\n";
             std::expected<std::string, int> irv = functionDefinition->IrName(context);
             if (!irv) return std::unexpected<int>(irv.error());
             std::string irName = *irv;
@@ -215,6 +221,7 @@ std::expected<FunctionSymbol*, int> InstantiateFunctionTemplate(FunctionSymbol* 
             }
             context->PopBoundFunction();
             functionDefinition->GetScope()->ClearParentScopes();
+            //std::cout << "<instantiate " << *sfname << "\n";
         }
         else
         {

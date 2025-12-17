@@ -170,21 +170,21 @@ std::expected<bool, int> FileStream::Seek(std::int64_t pos, Origin origin)
     int seekOrigin = SEEK_SET;
     switch (origin)
     {
-    case Origin::seekCur:
-    {
-        seekOrigin = SEEK_CUR;
-        break;
-    }
-    case Origin::seekEnd:
-    {
-        seekOrigin = SEEK_END;
-        break;
-    }
-    case Origin::seekSet:
-    {
-        seekOrigin = SEEK_SET;
-        break;
-    }
+        case Origin::seekCur:
+        {
+            seekOrigin = SEEK_CUR;
+            break;
+        }
+        case Origin::seekEnd:
+        {
+            seekOrigin = SEEK_END;
+            break;
+        }
+        case Origin::seekSet:
+        {
+            seekOrigin = SEEK_SET;
+            break;
+        }
     }
     int result = std::fseek(file, static_cast<long>(pos), seekOrigin);
     if (result != 0)
@@ -195,21 +195,21 @@ std::expected<bool, int> FileStream::Seek(std::int64_t pos, Origin origin)
     }
     switch (origin)
     {
-    case Origin::seekCur:
-    {
-        SetPosition(Position() + pos);
-        break;
-    }
-    case Origin::seekEnd:
-    {
-        SetPosition(Size() + pos);
-        break;
-    }
-    case Origin::seekSet:
-    {
-        SetPosition(pos);
-        break;
-    }
+        case Origin::seekCur:
+        {
+            SetPosition(Position() + pos);
+            break;
+        }
+        case Origin::seekEnd:
+        {
+            SetPosition(Size() + pos);
+            break;
+        }
+        case Origin::seekSet:
+        {
+            SetPosition(pos);
+            break;
+        }
     }
     return std::expected<bool, int>(true);
 }
@@ -241,7 +241,7 @@ std::expected<std::string, int> ReadFile(const std::string& filePath, bool doNot
 {
     std::string s;
     FileStream fs(filePath, OpenMode::read | OpenMode::binary);
-    if (!fs.Valid()) return std::unexpected<int>(fs.Error());
+    if (!fs) return std::unexpected<int>(fs.Error());
     std::int64_t n = fs.Size();
     for (std::int64_t i = 0; i < n; ++i)
     {
