@@ -15,21 +15,21 @@ struct pair
     U second;
     inline pair() : first(), second() {}
     inline pair(const T& first_, const U& second_) : first(first_), second(second_) {}
-    inline pair(T&& first_, U&& second_) : first(std::move(first_)), second(std::move(second_)) {}
+    inline pair(T&& first_, U&& second_) noexcept : first(std::move(first_)), second(std::move(second_)) {}
     inline pair(const pair& that) : first(that.first), second(that.second) {}
-    inline pair(pair&& that) : first(std::move(that.first)), second(std::move(that.second)) {}
+    inline pair(pair&& that) noexcept : first(std::move(that.first)), second(std::move(that.second)) {}
     inline pair& operator=(const pair& p) { first = p.first; second = p.second; return *this; }
-    inline pair& operator=(pair&& p) { std::swap(first, p.first); std::swap(second, p.second); return *this; }
+    inline pair& operator=(pair&& p) noexcept { std::swap(first, p.first); std::swap(second, p.second); return *this; }
 };
 
 template<typename T, typename U>
-inline bool operator==(const pair<T, U>& x, const pair<T, U>& y)
+inline bool operator==(const pair<T, U>& x, const pair<T, U>& y) noexcept
 {
     return x.first == y.first && x.second == y.second;
 }
 
 template<typename T, typename U>
-inline bool operator<(const pair<T, U>& x, const pair<T, U>& y)
+inline bool operator<(const pair<T, U>& x, const pair<T, U>& y) noexcept
 {
     if (x.first < y.first) return true; 
     if (x.first > y.first) return false;
@@ -53,13 +53,13 @@ pair<T, U> make_pair(T&& x, U&& y)
 template<typename T, typename U>
 struct select_first
 {
-    inline const T& operator()(const pair<T, U>& p) const { return p.first; }
+    inline const T& operator()(const pair<T, U>& p) const noexcept { return p.first; }
 };
 
 template<typename T, typename U>
 struct select_second
 {
-    inline const U& operator()(const pair<T, U>& p) const { return p.second; }
+    inline const U& operator()(const pair<T, U>& p) const noexcept { return p.second; }
 };
 
 } // namespace std

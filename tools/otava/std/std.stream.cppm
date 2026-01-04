@@ -20,10 +20,10 @@ public:
     {
         app, ate, binary, in, out, trunc
     };
-    fmtflags flags() const;
-    void flags(fmtflags f);
-    void setf(fmtflags f);
-    void unsetf(fmtflags f);
+    fmtflags flags() const noexcept;
+    void flags(fmtflags f) noexcept;
+    void setf(fmtflags f) noexcept;
+    void unsetf(fmtflags f) noexcept;
 private:
     fmtflags fl;
 };

@@ -244,6 +244,7 @@ void GenerateEnterFunctionCode(otava::ast::Node* functionDefinitionNode, Functio
 {
     if (context->ReleaseConfig() && !(context->CurrentProject() && context->CurrentProject()->HasDefine("TRACE"))) return;
     if (!context->GetTraceInfo()) return;
+    if (fn->ParentFn()) return; // child functions do not have enter function code
     Module* module = context->GetModule();
     if (module->Name() == "std.trace" ||
         module->Name() == "std.trace.cpp" ||

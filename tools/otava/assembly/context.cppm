@@ -40,6 +40,7 @@ public:
     Value* MakeBinaryExpr(Value* left, Value* right, Operator op);
     inline int GetNextJumpTabLabelId() { return jumpTabLabelCounter++; }
 private:
+    bool childFn;
     Registers registers;
     File* file;
     std::unique_ptr<RegisterPool> registerPool;

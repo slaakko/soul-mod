@@ -32,6 +32,7 @@ import otava.symbols.function.templates;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.operation.repository;
 import otava.symbols.type.resolver;
+import otava.symbols.fundamental.type.symbol;
 import otava.intermediate;
 import otava.ast;
 import util.sha1;
@@ -446,6 +447,15 @@ bool FunctionSymbol::IsPure() const
     return false;
 }
 
+bool FunctionSymbol::IsNoExcept() const 
+{ 
+    if ((qualifiers & FunctionQualifiers::isNoexcept) != FunctionQualifiers::none) return true;
+    if (GetFunctionKind() == FunctionKind::destructor) return true;
+    if (GroupName() == U"@destructor") return true;
+    if (GetLinkage() == Linkage::c_linkage) return true;
+    return false;
+}
+
 void FunctionSymbol::SetVirtual()
 {
     SetDeclarationFlags(GetDeclarationFlags() | DeclarationFlags::virtualFlag);
@@ -464,6 +474,11 @@ bool FunctionSymbol::IsFinal() const
 void FunctionSymbol::SetOverride()
 {
     qualifiers = qualifiers | FunctionQualifiers::isOverride;
+}
+
+void FunctionSymbol::SetNoExcept()
+{
+    qualifiers = qualifiers | FunctionQualifiers::isNoexcept;
 }
 
 ClassTypeSymbol* FunctionSymbol::ParentClassType() const
@@ -725,7 +740,7 @@ void FunctionSymbol::Write(Writer& writer)
 {
     ContainerSymbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(kind));
-    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(qualifiers));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint16_t>(qualifiers));
     writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(linkage));
     writer.GetBinaryStreamWriter().Write(index);
     writer.GetBinaryStreamWriter().Write(static_cast<std::int32_t>(flags));
@@ -781,7 +796,7 @@ void FunctionSymbol::Read(Reader& reader)
 {
     ContainerSymbol::Read(reader);
     kind = static_cast<FunctionKind>(reader.GetBinaryStreamReader().ReadByte());
-    qualifiers = static_cast<FunctionQualifiers>(reader.GetBinaryStreamReader().ReadByte());
+    qualifiers = static_cast<FunctionQualifiers>(reader.GetBinaryStreamReader().ReadUShort());
     linkage = static_cast<Linkage>(reader.GetBinaryStreamReader().ReadByte());
     index = reader.GetBinaryStreamReader().ReadInt();
     flags = static_cast<FunctionSymbolFlags>(reader.GetBinaryStreamReader().ReadInt());
@@ -1265,7 +1280,9 @@ FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) 
     FunctionSymbol(SymbolKind::functionDefinitionSymbol, name_), 
     declaration(), 
     declarationId(),
-    defIndex(-1)
+    defIndex(-1),
+    parentFn(nullptr),
+    parentFnScope(nullptr)
 {
 }
 
@@ -1273,7 +1290,9 @@ FunctionDefinitionSymbol::FunctionDefinitionSymbol(SymbolKind kind_, const std::
     FunctionSymbol(kind_, name_),
     declaration(),
     declarationId(),
-    defIndex(-1)
+    defIndex(-1),
+    parentFn(nullptr),
+    parentFnScope(nullptr)
 {
 }
 
@@ -1427,6 +1446,27 @@ bool FunctionDefinitionSymbol::IsFinal() const
     }
 }
 
+bool FunctionDefinitionSymbol::IsNoExcept() const
+{
+    if (declaration)
+    {
+        return declaration->IsNoExcept();
+    }
+    else
+    {
+        return FunctionSymbol::IsNoExcept();
+    }
+}
+
+void FunctionDefinitionSymbol::SetNoExcept()
+{
+    if (declaration)
+    {
+        declaration->SetNoExcept();
+    }
+    FunctionSymbol::SetNoExcept();
+}
+
 std::int32_t FunctionDefinitionSymbol::VTabIndex() const
 {
     if (declaration)
@@ -1518,6 +1558,40 @@ soul::xml::Element* FunctionDefinitionSymbol::ToXml() const
     soul::xml::Element* element = FunctionSymbol::ToXml();
     element->SetAttribute("defIndex", std::to_string(defIndex));
     return element;
+}
+
+void FunctionDefinitionSymbol::SetResultVarName(const std::u32string& resultVarName_)
+{
+    resultVarName = resultVarName_;
+}
+
+TypeSymbol* FunctionDefinitionSymbol::NonChildFunctionResultType(Context* context) const
+{
+    if (ParentFn())
+    {
+        return ParentFn()->NonChildFunctionResultType(context);
+    }
+    else 
+    {
+        TypeSymbol* voidType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::voidType);
+        if (ReturnType() && !TypesEqual(ReturnType(), voidType, context))
+        {
+            return ReturnType();
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+}
+
+std::u32string FunctionDefinitionSymbol::ResultVarExprStr(TypeSymbol* resultType) const
+{
+    if (resultType->IsReferenceType())
+    {
+        return U"*" + resultVarName;
+    }
+    return resultVarName;
 }
 
 ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol_,
@@ -1627,6 +1701,19 @@ bool FunctionMatches(FunctionSymbol* left, FunctionSymbol* right, Context* conte
 void InitFunction()
 {
     OperatorFunctionMap::Instance().Init();
+}
+
+CompileUnitInitFn::CompileUnitInitFn(const std::u32string& name_) : FunctionSymbol(name_)
+{
+}
+
+void CompileUnitInitFn::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    otava::intermediate::FunctionType* initFunctionType = static_cast<otava::intermediate::FunctionType*>(emitter.MakeFunctionType(emitter.GetVoidType(),
+        std::vector<otava::intermediate::Type*>()));
+    otava::intermediate::Function* initFn = emitter.GetOrInsertFunction(util::ToUtf8(Name()), initFunctionType);
+    emitter.EmitCall(initFn, std::vector<otava::intermediate::Value*>());
 }
 
 } // namespace otava::symbols

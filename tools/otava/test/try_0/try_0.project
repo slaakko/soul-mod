@@ -1,0 +1,3 @@
+project try_0;
+target=program;
+source <main.cpp>;

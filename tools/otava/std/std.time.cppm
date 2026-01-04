@@ -19,7 +19,7 @@ struct tm
     int tm_isdst; // daylight savings time flag
 };
 
-inline time_t time(time_t* arg)
+inline time_t time(time_t* arg) 
 {
     return ort_time(arg);
 }

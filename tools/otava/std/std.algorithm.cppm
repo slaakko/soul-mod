@@ -9,21 +9,21 @@ import std.rt;
 export namespace std {
 
 template<typename T>
-constexpr const T& min(const T& left, const T& right)
+constexpr const T& min(const T& left, const T& right) noexcept
 {
     if (left <= right) return left;
     else return right;
 }
 
 template<typename T>
-constexpr const T& max(const T& left, const T& right)
+constexpr const T& max(const T& left, const T& right) noexcept
 {
     if (left >= right) return left;
     else return right;
 }
 
 template<typename T>
-constexpr void swap(T& left, T& right)
+constexpr void swap(T& left, T& right) noexcept
 {
     T temp(move(left));
     left = move(right);
@@ -33,7 +33,7 @@ constexpr void swap(T& left, T& right)
 namespace detail {
 
 template<typename I>
-void reverse_iter(I begin, I end, std::bidirectional_iterator_tag)
+void reverse_iter(I begin, I end, std::bidirectional_iterator_tag) noexcept
 {
     while (true)
     {
@@ -46,7 +46,7 @@ void reverse_iter(I begin, I end, std::bidirectional_iterator_tag)
 }
 
 template<typename I>
-void reverse_iter(I begin, I end, std::random_access_iterator_tag)
+void reverse_iter(I begin, I end, std::random_access_iterator_tag) noexcept
 {
     while (begin < end)
     {
@@ -59,13 +59,13 @@ void reverse_iter(I begin, I end, std::random_access_iterator_tag)
 } // namespace detail
 
 template<typename I> 
-constexpr void reverse(I begin, I end)
+constexpr void reverse(I begin, I end) noexcept
 {
     detail::reverse_iter(begin, end, typename std::iterator_traits<I>::iterator_category());
 }
 
 template<typename I>
-pair<I, I> reverse_until(I first, I middle, I last)
+pair<I, I> reverse_until(I first, I middle, I last) noexcept
 {
     while (first != middle && middle != last)
     {
@@ -77,7 +77,7 @@ pair<I, I> reverse_until(I first, I middle, I last)
 }
 
 template<typename I>
-I rotate(I first, I middle, I last)
+I rotate(I first, I middle, I last) noexcept
 {
     reverse(first, middle);
     reverse(middle, last);
@@ -111,7 +111,7 @@ O copy_backward(I begin, I end, O to)
 }
 
 template<typename I, typename T>
-I find(I begin, I end, const T& value)
+I find(I begin, I end, const T& value) noexcept
 {
     while (begin != end)
     {
@@ -125,7 +125,7 @@ I find(I begin, I end, const T& value)
 }
 
 template<typename I, typename P>
-I find_if(I begin, I end, P p)
+I find_if(I begin, I end, P p) noexcept
 {
     while (begin != end)
     {
@@ -139,7 +139,7 @@ I find_if(I begin, I end, P p)
 }
 
 template<typename I, typename P>
-I find_if_not(I begin, I end, P p)
+I find_if_not(I begin, I end, P p) noexcept
 {
     while (begin != end)
     {
@@ -246,7 +246,7 @@ class operand_rel_x
 {
 public:
     operand_rel_x(const T& x_, R r_) : x(x_), r(r_) {}
-    inline bool operator()(const T& a) const
+    inline bool operator()(const T& a) const noexcept
     {
         return r(a, x);
     }
@@ -260,7 +260,7 @@ class not_x_rel_operand
 {
 public:
     not_x_rel_operand(const T& x_, R r_) : x(x_), r(r_) {}
-    inline bool operator()(const T& a) const
+    inline bool operator()(const T& a) const noexcept
     {
         return !r(x, a);
     }
@@ -357,7 +357,7 @@ I unique(I begin, I end)
 }
 
 template<typename I, typename T>
-I lower_bound(I first, I last, const T& value)
+I lower_bound(I first, I last, const T& value) noexcept
 {
     typename std::iterator_traits<I>::difference_type len = distance(first, last);
     while (len > 0)
@@ -379,7 +379,7 @@ I lower_bound(I first, I last, const T& value)
 }
 
 template<typename I, typename T, typename R>
-I lower_bound(I first, I last, const T& value, R r)
+I lower_bound(I first, I last, const T& value, R r) noexcept
 {
     typename std::iterator_traits<I>::difference_type len = distance(first, last);
     while (len > 0)
@@ -401,7 +401,7 @@ I lower_bound(I first, I last, const T& value, R r)
 }
 
 template<typename I, typename T>
-I upper_bound(I first, I last, const T& value)
+I upper_bound(I first, I last, const T& value) noexcept
 {
     typename std::iterator_traits<I>::difference_type len = distance(first, last);
     while (len > 0)
@@ -423,7 +423,7 @@ I upper_bound(I first, I last, const T& value)
 }
 
 template<typename I, typename T, typename R>
-I upper_bound(I first, I last, const T& value, R r)
+I upper_bound(I first, I last, const T& value, R r) noexcept
 {
     typename std::iterator_traits<I>::difference_type len = distance(first, last);
     while (len > 0)
@@ -445,7 +445,7 @@ I upper_bound(I first, I last, const T& value, R r)
 }
 
 template<typename I, typename T>
-pair<I, I> equal_range(I first, I last, const T& value)
+pair<I, I> equal_range(I first, I last, const T& value) noexcept
 {
     typename std::iterator_traits<I>::difference_type len = distance(first, last);
     while (len > 0)
@@ -475,7 +475,7 @@ pair<I, I> equal_range(I first, I last, const T& value)
 }
 
 template<typename I, typename T, typename R>
-pair<I, I> equal_range(I first, I last, const T& value, R r)
+pair<I, I> equal_range(I first, I last, const T& value, R r) noexcept
 {
     typename std::iterator_traits<I>::difference_type len = distance(first, last);
     while (len > 0)
@@ -505,7 +505,7 @@ pair<I, I> equal_range(I first, I last, const T& value, R r)
 }
 
 template<typename I1, typename I2>
-bool equal(I1 first1, I1 last1, I2 first2)
+bool equal(I1 first1, I1 last1, I2 first2) noexcept
 {
     while (first1 != last1)
     {
@@ -520,7 +520,7 @@ bool equal(I1 first1, I1 last1, I2 first2)
 }
 
 template<typename I1, typename I2, typename R>
-bool equal(I1 first1, I1 last1, I2 first2, R r)
+bool equal(I1 first1, I1 last1, I2 first2, R r) noexcept
 {
     while (first1 != last1)
     {
@@ -535,7 +535,7 @@ bool equal(I1 first1, I1 last1, I2 first2, R r)
 }
 
 template<typename I1, typename I2>
-bool lexicographical_compare(I1 first1, I1 last1, I2 first2, I2 last2)
+bool lexicographical_compare(I1 first1, I1 last1, I2 first2, I2 last2) noexcept
 {
     while (first1 != last1 && first2 != last2)
     {
@@ -554,7 +554,7 @@ bool lexicographical_compare(I1 first1, I1 last1, I2 first2, I2 last2)
 }
 
 template<typename I1, typename I2, typename Compare>
-bool lexicographical_compare(I1 first1, I1 last1, I2 first2, I2 last2, Compare comp)
+bool lexicographical_compare(I1 first1, I1 last1, I2 first2, I2 last2, Compare comp) noexcept
 {
     while (first1 != last1 && first2 != last2)
     {

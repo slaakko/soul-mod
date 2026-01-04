@@ -88,6 +88,9 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
 
 BoundExpressionNode* MakeLvalueExpression(BoundExpressionNode* arg, const soul::ast::SourcePos& sourcePos, Context* context);
 
+std::unique_ptr<BoundFunctionCallNode> CreateBoundConversionFunctionCall(FunctionSymbol* conversionFunction, BoundExpressionNode* arg,
+    const soul::ast::SourcePos& sourcePos, Context* context);
+
 std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs,
     std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, FunctionMatch& functionMatch, 
     OverloadResolutionFlags flags);

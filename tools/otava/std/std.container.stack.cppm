@@ -16,19 +16,19 @@ public:
 protected:
     Container c;
 public: 
-    stack() : c()
+    stack() noexcept : c()
     {
     }
     explicit stack(const Container& c_) : c(c_)
     {
     }
-    explicit stack(Container&& that) : c(std::move(that.c))
+    explicit stack(Container&& that) noexcept : c(std::move(that.c))
     {
     }
-    inline bool empty() const { return c.empty(); }
-    inline size_type size() const { return c.size(); }
-    inline reference top() { return c.back(); }
-    inline const_reference top() const { return c.back(); }
+    inline bool empty() const noexcept { return c.empty(); }
+    inline size_type size() const noexcept { return c.size(); }
+    inline reference top() noexcept { return c.back(); }
+    inline const_reference top() const noexcept { return c.back(); }
     inline void push(const value_type& x) { c.push_back(x); }
     inline void push(value_type&& x) { c.push_back(std::move(x)); }
     inline void pop() { c.pop_back(); }

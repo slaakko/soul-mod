@@ -14,6 +14,8 @@ export namespace otava::parser::declaration {
 template<typename LexerT>
 struct DeclarationParser
 {
+    static std::unique_ptr<otava::ast::Node> Parse(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match DeclarationSpecifierSequence(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match DeclarationSeq(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match NamespaceDeclarationSeq(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match RBraceNext(LexerT& lexer);

@@ -14,6 +14,7 @@ export namespace otava::parser::expression {
 template<typename LexerT>
 struct ExpressionParser
 {
+    static std::unique_ptr<otava::ast::Node> Parse(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match Expression(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match ConstantExpression(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match AssignmentExpression(LexerT& lexer, otava::symbols::Context* context);
@@ -65,6 +66,7 @@ struct ExpressionParser
     static soul::parser::Match IdExpression(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match IdExpr(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match ExpressionList(LexerT& lexer, otava::symbols::Context* context, otava::ast::Node* container);
+    static soul::parser::Match ThrowExpression(LexerT& lexer, otava::symbols::Context* context);
 };
 
 } // namespace otava::parser::expression

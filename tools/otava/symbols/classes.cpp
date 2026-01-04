@@ -1384,6 +1384,7 @@ TrivialClassDtor::TrivialClassDtor() : FunctionSymbol(U"@destructor")
     SetFunctionKind(FunctionKind::destructor);
     SetAccess(Access::public_);
     SetFlag(FunctionSymbolFlags::trivialDestructor);
+    SetNoExcept();
 }
 
 void TrivialClassDtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -1402,11 +1403,21 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
         destructorFn = destructorGroup->GetSingleDefinition();
         if (destructorFn)
         {
+            if (destructorFn->IsFunctionSymbol())
+            {
+                FunctionSymbol* dtor = static_cast<FunctionSymbol*>(destructorFn);
+                dtor->SetNoExcept();
+            }
             return destructorFn;
         }
         destructorFn = destructorGroup->GetSingleSymbol();
         if (destructorFn && destructorFn != destructorGroup)
         {
+            if (destructorFn->IsFunctionSymbol())
+            {
+                FunctionSymbol* dtor = static_cast<FunctionSymbol*>(destructorFn);
+                dtor->SetNoExcept();
+            }
             return destructorFn;
         }
     }
@@ -1439,6 +1450,11 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
             destructorFn = sp->Destructor();
             if (destructorFn)
             {
+                if (destructorFn->IsFunctionSymbol())
+                {
+                    FunctionSymbol* dtor = static_cast<FunctionSymbol*>(destructorFn);
+                    dtor->SetNoExcept();
+                }
                 return destructorFn;
             }
         }
@@ -1461,6 +1477,7 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
     destructorSymbol->SetAccess(Access::public_);
     destructorSymbol->SetCompileUnitId(context->GetBoundCompileUnit()->Id());
     destructorSymbol->SetFixedIrName(destructorSymbol->IrName(context));
+    destructorSymbol->SetNoExcept();
     std::unique_ptr<FunctionDefinitionSymbol> destructorDefinitionSymbol(new FunctionDefinitionSymbol(U"@destructor"));
     destructorDefinitionSymbol->SetParent(classTypeSymbol);
     destructorDefinitionSymbol->SetFunctionKind(FunctionKind::destructor);
@@ -1468,6 +1485,7 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
     destructorDefinitionSymbol->SetDeclaration(destructorSymbol.get());
     destructorDefinitionSymbol->SetCompileUnitId(context->GetBoundCompileUnit()->Id());
     destructorDefinitionSymbol->SetFixedIrName(destructorSymbol->IrName(context));
+    destructorDefinitionSymbol->SetNoExcept();
     std::unique_ptr<BoundDtorTerminatorNode> terminator(new BoundDtorTerminatorNode(sourcePos));
     for (int i = nm - 1; i >= 0; --i)
     {

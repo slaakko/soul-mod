@@ -36,9 +36,9 @@ void Emitter::ResolveReferences()
     otava::intermediate::ResolveReferences(*context);
 }
 
-otava::intermediate::Function* Emitter::CreateFunction(const std::string& name, otava::intermediate::Type* type, bool inline_, bool once)
+otava::intermediate::Function* Emitter::CreateFunction(const std::string& name, otava::intermediate::Type* type, bool inline_, bool once, bool child)
 {
-    otava::intermediate::Function* function = context->AddFunctionDefinition(soul::ast::Span(), type, name, inline_, once, true, nullptr);
+    otava::intermediate::Function* function = context->AddFunctionDefinition(soul::ast::Span(), type, name, inline_, once, child, true, nullptr);
     context->SetCurrentFunction(function);
     return function;
 }

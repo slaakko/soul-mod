@@ -323,19 +323,20 @@ parser IntermediateParser
         ;
 
     FunctionHeader(otava::intermediate::Context* context, 
-        var otava::intermediate::TypeRef functionTypeRef, var soul::ast::Span span, var std::string functionId, var bool inline_, var bool linkOnce) : 
+        var otava::intermediate::TypeRef functionTypeRef, var soul::ast::Span span, var std::string functionId, var bool inline_, var bool linkOnce, var bool child) : 
             otava::intermediate::Function*
         ::= 
         (   
             (INLINE{ inline_ = true; })?
             (LINK_ONCE{ linkOnce = true; })?
+            (CHILD{ child = true; })?
             FUNCTION{ span = lexer.GetSpan(pos); } 
             TypeRef:typeRef{ functionTypeRef = typeRef; context->ResolveType(functionTypeRef); } 
             ID{ functionId = util::ToUtf8(lexer.GetToken(pos).ToString()); } 
             MetadataRef(context):mdRef?
         )
         {
-            return context->AddFunctionDefinition(span, functionTypeRef.GetType(), functionId, inline_, linkOnce, false, mdRef);
+            return context->AddFunctionDefinition(span, functionTypeRef.GetType(), functionId, inline_, linkOnce, child, false, mdRef);
         }
         ;
 
@@ -474,10 +475,12 @@ parser IntermediateParser
         |   BinaryInstruction(context, result):binaryInst{ return binaryInst; }
         |   ParamInstruction(context, result):paramInst{ return paramInst; }
         |   LocalInstruction(context, result):localInst{ return localInst; }
+        |   PLocalInstruction(context, result):plocalInst{ return plocalInst; }
         |   LoadInstruction(context, result):loadInst{ return loadInst; }
         |   ElemAddrInstruction(context, result):elemAddrInst{ return elemAddrInst; }
         |   PtrOffsetInstruction(context, result):ptrOffsetInst{ return ptrOffsetInst; }
         |   PtrDiffInstruction(context, result):ptrDiffInst{ return ptrDiffInst; }
+        |   GetRbpInstruction(context, result):getRbpInst{ return getRbpInst; }
         |   FunctionCallInstruction(context, result):functionCallInst{ return functionCallInst; }
         ;
 
@@ -617,6 +620,20 @@ parser IntermediateParser
             TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); return new otava::intermediate::LocalInstruction(span, result, tref.GetType()); }
         ;
 
+    PLocalInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::Span span, 
+        var otava::intermediate::TypeRef tref, var int level) : otava::intermediate::Instruction*
+        ::= 
+        (
+            PLOCAL{ span = lexer.GetSpan(pos); }
+            TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); }
+            COMMA
+            NUMBER{ level = lexer.GetToken(pos).ToInt(); } 
+        )
+        {
+            return new otava::intermediate::PLocalInstruction(span, result, tref.GetType(), level);
+        }
+        ;
+
     LoadInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : otava::intermediate::Instruction*
         ::= LOAD{ span = lexer.GetSpan(pos); } Operand(context):ptr{ return new otava::intermediate::LoadInstruction(span, result, ptr); }
         ;
@@ -642,6 +659,17 @@ parser IntermediateParser
         ::= PTRDIFF{ span = lexer.GetSpan(pos); } Operand(context):leftPtr COMMA Operand(context):rightPtr
         { 
             return new otava::intermediate::PtrDiffInstruction(span, result, leftPtr, rightPtr); 
+        }
+        ;
+
+    GetRbpInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : 
+        otava::intermediate::Instruction*
+        ::= 
+        (
+            GETRBP{ span = lexer.GetSpan(pos); } 
+        )
+        {
+            return new otava::intermediate::GetRbpInstruction(span, result); 
         }
         ;
 

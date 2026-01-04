@@ -7,12 +7,14 @@ import std;
 import soul.lexer;
 import soul.parser;
 import otava.symbols.context;
+import otava.ast;
 
 export namespace otava::parser::statement {
 
 template<typename LexerT>
 struct StatementParser
 {
+    static std::unique_ptr<otava::ast::Node> Parse(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match Statement(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match LabeledStatement(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match CompoundStatementUnguarded(LexerT& lexer, otava::symbols::Context* context);
@@ -38,6 +40,10 @@ struct StatementParser
     static soul::parser::Match GotoStatement(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match ExpressionStatement(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match DeclarationStatement(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TryStatement(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match HandlerSequence(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match Handler(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ExceptionDeclaration(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match InitStatement(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match Condition(LexerT& lexer, otava::symbols::Context* context);
 };

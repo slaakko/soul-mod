@@ -1,0 +1,3 @@
+project simple_declaration;
+target=program;
+source <main.cpp>;

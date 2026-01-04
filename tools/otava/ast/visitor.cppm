@@ -111,6 +111,7 @@ class TrailingQualifiersNode;
 class TrailingAttributesNode;
 class NoexceptSpecifierNode;
 class ThrowSpecifierNode;
+class ThrowExprNode;
 // Enum:
 class EnumSpecifierNode;
 class EnumHeadNode;
@@ -298,6 +299,7 @@ class LabeledStatementNode;
 class CaseStatementNode;
 class DefaultStatementNode;
 class CompoundStatementNode;
+class SequenceStatementNode;
 class IfStatementNode;
 class SwitchStatementNode;
 class WhileStatementNode;
@@ -472,6 +474,7 @@ public:
     virtual void Visit(TrailingAttributesNode& node) {}
     virtual void Visit(NoexceptSpecifierNode& node) {}
     virtual void Visit(ThrowSpecifierNode& node) {}
+    virtual void Visit(ThrowExprNode& node) {}
     // Enum:
     virtual void Visit(EnumSpecifierNode& node) {}
     virtual void Visit(EnumHeadNode& node) {}
@@ -659,6 +662,7 @@ public:
     virtual void Visit(CaseStatementNode& node) {}
     virtual void Visit(DefaultStatementNode& node) {}
     virtual void Visit(CompoundStatementNode& node) {}
+    virtual void Visit(SequenceStatementNode& node) {}
     virtual void Visit(IfStatementNode& node) {}
     virtual void Visit(SwitchStatementNode& node) {}
     virtual void Visit(WhileStatementNode& node) {}
@@ -1012,6 +1016,7 @@ public:
     void Visit(CaseStatementNode& node) override;
     void Visit(DefaultStatementNode& node) override;
     void Visit(CompoundStatementNode& node) override;
+    void Visit(SequenceStatementNode& node) override;
     void Visit(IfStatementNode& node) override;
     void Visit(SwitchStatementNode& node) override;
     void Visit(WhileStatementNode& node) override;

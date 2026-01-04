@@ -417,7 +417,8 @@ Registers::Registers()
     regGroups.push_back(std::unique_ptr<RegisterGroup>(xmm15));
 }
 
-RegisterPool::RegisterPool(Registers& registers_) : registers(registers_), localRegisterCount(0), localXMMRegisterCount(0), usedGlobalRegs(GlobalReg::none)
+RegisterPool::RegisterPool(Registers& registers_) : 
+    registers(registers_), localRegisterCount(0), localXMMRegisterCount(0), usedGlobalRegs(GlobalReg::none), isChildFnRegisterPool(false)
 {
     AddLocalRegisterGroup(registers.GetRegisterGroup(RegisterGroupKind::rsi));
     AddLocalRegisterGroup(registers.GetRegisterGroup(RegisterGroupKind::rdi));
@@ -453,6 +454,15 @@ RegisterPool::RegisterPool(Registers& registers_) : registers(registers_), local
     globalRegisterMap[RegisterGroupKind::xmm3] = registers.GetRegisterGroup(RegisterGroupKind::xmm3);
     globalRegisterMap[RegisterGroupKind::xmm4] = registers.GetRegisterGroup(RegisterGroupKind::xmm4);
     globalRegisterMap[RegisterGroupKind::xmm5] = registers.GetRegisterGroup(RegisterGroupKind::xmm5);
+}
+
+void RegisterPool::MakeChildFnRegisterPool()
+{
+    isChildFnRegisterPool = true;
+    RegisterGroup* rsiGroup = registers.GetRegisterGroup(RegisterGroupKind::rsi);
+    localRegisterPool.erase(rsiGroup);
+    usedLocalRegs.insert(rsiGroup);
+    localRegisterCount = localRegisterPool.size();
 }
 
 void RegisterPool::AddLocalRegisterGroup(RegisterGroup* regGroup)

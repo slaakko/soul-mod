@@ -1,0 +1,3 @@
+project cow_string;
+target=program;
+source <main.cpp>;

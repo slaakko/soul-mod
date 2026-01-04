@@ -4,4 +4,4 @@ import std.rt;
 
 export void* operator new(size_t size);
 export void* operator new(size_t size, void* placement);
-export void operator delete(void* object);
+export void operator delete(void* object) noexcept;

@@ -2,22 +2,23 @@ export module std.utilities.utility;
 
 import std.type_traits;
 import std.trace;
+import std.rt;
 
 export namespace std {
 
 template<typename T>
-constexpr remove_reference_t<T>&& move(T&& t)
+constexpr remove_reference_t<T>&& move(T&& t) noexcept
 {
     return static_cast<remove_reference_t<T>&&>(t);
 }
 
-constexpr ssize_t align(ssize_t n, ssize_t alignment)
+constexpr ssize_t align(ssize_t n, ssize_t alignment) noexcept
 {
     return (n + alignment - 1) & -alignment;
 }
 
 template<typename T>
-ssize_t slen(const T* s)
+ssize_t slen(const T* s) noexcept
 {
     ssize_t len = 0;
     if (s)
@@ -32,7 +33,7 @@ ssize_t slen(const T* s)
 }
 
 template<typename T>
-void scpy(T* buf, const T* from)
+void scpy(T* buf, const T* from) noexcept
 {
     if (from)
     {
@@ -45,7 +46,7 @@ void scpy(T* buf, const T* from)
 }
 
 template<typename T>
-ssize_t slencpy(T* buf, const T* from, ssize_t length)
+ssize_t slencpy(T* buf, const T* from, ssize_t length) noexcept
 {
     ssize_t resultLen = 0;
     if (from)
@@ -61,6 +62,6 @@ ssize_t slencpy(T* buf, const T* from, ssize_t length)
     return resultLen;
 }
 
-ssize_t grow_size(ssize_t size);
+ssize_t grow_size(ssize_t size) noexcept;
 
 } // namespace std

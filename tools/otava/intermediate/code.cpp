@@ -21,7 +21,7 @@ const char* opCodeStr[] =
     "store", "arg", "jmp", "branch", "call", "ret", "switch",
     "not", "neg", "signextend", "zeroextend", "fpextend", "truncate", "bitcast", "inttofloat", "floattoint", "inttoptr", "ptrtoint",
     "add", "sub", "mul", "div", "mod", "and", "or", "xor", "shl", "shr", "equal", "less",
-    "param", "local", "load", "elemaddr", "ptroffset", "ptrdiff", "call", "nop"
+    "param", "local", "plocal", "load", "elemaddr", "ptroffset", "ptrdiff", "call", "nop", "getrbp"
 };
 
 RegValue::RegValue(const soul::ast::Span& span_, Type* type_, std::int32_t reg_) : Value(span_, ValueKind::regValue, type_), reg(reg_), inst(nullptr)
@@ -138,17 +138,17 @@ bool Instruction::IsTerminator() const
 {
     switch (opCode)
     {
-    case OpCode::jmp:
-    case OpCode::branch:
-    case OpCode::ret:
-    case OpCode::switch_:
-    {
-        return true;
-    }
-    default:
-    {
-        return false;
-    }
+        case OpCode::jmp:
+        case OpCode::branch:
+        case OpCode::ret:
+        case OpCode::switch_:
+        {
+            return true;
+        }
+        default:
+        {
+            return false;
+        }
     }
 }
 
@@ -181,11 +181,13 @@ bool Instruction::IsValueInstruction() const
         case OpCode::less:
         case OpCode::param:
         case OpCode::local:
+        case OpCode::plocal:
         case OpCode::load:
         case OpCode::elemaddr:
         case OpCode::ptroffset:
         case OpCode::ptrdiff:
         case OpCode::function_call:
+        case OpCode::getrbp:
         {
             return true;
         }
@@ -251,44 +253,45 @@ bool Instruction::RequiresLocalRegister() const
 {
     switch (opCode)
     {
-    case OpCode::arg:
-    case OpCode::procedure_call:
-    case OpCode::not_:
-    case OpCode::neg:
-    case OpCode::signextend:
-    case OpCode::zeroextend:
-    case OpCode::fpextend:
-    case OpCode::truncate:
-    case OpCode::bitcast:
-    case OpCode::inttofloat:
-    case OpCode::floattoint:
-    case OpCode::inttoptr:
-    case OpCode::ptrtoint:
-    case OpCode::add:
-    case OpCode::sub:
-    case OpCode::mul:
-    case OpCode::div_:
-    case OpCode::mod:
-    case OpCode::and_:
-    case OpCode::or_:
-    case OpCode::xor_:
-    case OpCode::shl:
-    case OpCode::shr:
-    case OpCode::equal:
-    case OpCode::less:
-    case OpCode::param:
-    case OpCode::load:
-    case OpCode::elemaddr:
-    case OpCode::ptroffset:
-    case OpCode::ptrdiff:
-    case OpCode::function_call:
-    {
-        return true;
-    }
-    default:
-    {
-        return false;
-    }
+        case OpCode::arg:
+        case OpCode::procedure_call:
+        case OpCode::not_:
+        case OpCode::neg:
+        case OpCode::signextend:
+        case OpCode::zeroextend:
+        case OpCode::fpextend:
+        case OpCode::truncate:
+        case OpCode::bitcast:
+        case OpCode::inttofloat:
+        case OpCode::floattoint:
+        case OpCode::inttoptr:
+        case OpCode::ptrtoint:
+        case OpCode::add:
+        case OpCode::sub:
+        case OpCode::mul:
+        case OpCode::div_:
+        case OpCode::mod:
+        case OpCode::and_:
+        case OpCode::or_:
+        case OpCode::xor_:
+        case OpCode::shl:
+        case OpCode::shr:
+        case OpCode::equal:
+        case OpCode::less:
+        case OpCode::param:
+        case OpCode::load:
+        case OpCode::elemaddr:
+        case OpCode::ptroffset:
+        case OpCode::ptrdiff:
+        case OpCode::function_call:
+        case OpCode::getrbp:
+        {
+            return true;
+        }
+        default:
+        {
+            return false;
+        }
     }
 }
 
@@ -297,29 +300,29 @@ std::vector<BasicBlock*> Instruction::Successors() const
     std::vector<BasicBlock*> successors;
     switch (opCode)
     {
-    case OpCode::jmp:
-    {
-        const JmpInstruction* jmp = static_cast<const JmpInstruction*>(this);
-        AddPtrToSet(jmp->TargetBasicBlock(), successors);
-        break;
-    }
-    case OpCode::branch:
-    {
-        const BranchInstruction* branch = static_cast<const BranchInstruction*>(this);
-        AddPtrToSet(branch->TrueTargetBasicBlock(), successors);
-        AddPtrToSet(branch->FalseTargetBasicBlock(), successors);
-        break;
-    }
-    case OpCode::switch_:
-    {
-        const SwitchInstruction* switch_ = static_cast<const SwitchInstruction*>(this);
-        AddPtrToSet(switch_->DefaultTargetBlock(), successors);
-        for (const CaseTarget& caseTarget : switch_->CaseTargets())
+        case OpCode::jmp:
         {
-            AddPtrToSet(caseTarget.targetBlock, successors);
+            const JmpInstruction* jmp = static_cast<const JmpInstruction*>(this);
+            AddPtrToSet(jmp->TargetBasicBlock(), successors);
+            break;
         }
-        break;
-    }
+        case OpCode::branch:
+        {
+            const BranchInstruction* branch = static_cast<const BranchInstruction*>(this);
+            AddPtrToSet(branch->TrueTargetBasicBlock(), successors);
+            AddPtrToSet(branch->FalseTargetBasicBlock(), successors);
+            break;
+        }
+        case OpCode::switch_:
+        {
+            const SwitchInstruction* switch_ = static_cast<const SwitchInstruction*>(this);
+            AddPtrToSet(switch_->DefaultTargetBlock(), successors);
+            for (const CaseTarget& caseTarget : switch_->CaseTargets())
+            {
+                AddPtrToSet(caseTarget.targetBlock, successors);
+            }
+            break;
+        }
     }
     return successors;
 }
@@ -987,7 +990,8 @@ void NegInstruction::Write(util::CodeFormatter& formatter)
     WriteArg(formatter);
 }
 
-SignExtendInstruction::SignExtendInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : UnaryInstruction(span_, result_, operand_, OpCode::signextend)
+SignExtendInstruction::SignExtendInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : 
+    UnaryInstruction(span_, result_, operand_, OpCode::signextend)
 {
 }
 
@@ -1014,7 +1018,8 @@ void SignExtendInstruction::Write(util::CodeFormatter& formatter)
     WriteArg(formatter);
 }
 
-ZeroExtendInstruction::ZeroExtendInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : UnaryInstruction(span_, result_, operand_, OpCode::zeroextend)
+ZeroExtendInstruction::ZeroExtendInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : 
+    UnaryInstruction(span_, result_, operand_, OpCode::zeroextend)
 {
 }
 
@@ -1123,7 +1128,8 @@ void BitcastInstruction::Write(util::CodeFormatter& formatter)
     WriteArg(formatter);
 }
 
-IntToFloatInstruction::IntToFloatInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : UnaryInstruction(span_, result_, operand_, OpCode::inttofloat)
+IntToFloatInstruction::IntToFloatInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : 
+    UnaryInstruction(span_, result_, operand_, OpCode::inttofloat)
 {
 }
 
@@ -1150,7 +1156,8 @@ void IntToFloatInstruction::Write(util::CodeFormatter& formatter)
     WriteArg(formatter);
 }
 
-FloatToIntInstruction::FloatToIntInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : UnaryInstruction(span_, result_, operand_, OpCode::floattoint)
+FloatToIntInstruction::FloatToIntInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : 
+    UnaryInstruction(span_, result_, operand_, OpCode::floattoint)
 {
 }
 
@@ -1358,7 +1365,8 @@ void MulInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-DivInstruction::DivInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : BinaryInstruction(span_, result_, left_, right_, OpCode::div_)
+DivInstruction::DivInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : 
+    BinaryInstruction(span_, result_, left_, right_, OpCode::div_)
 {
 }
 
@@ -1412,7 +1420,8 @@ void ModInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-AndInstruction::AndInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : BinaryInstruction(span_, result_, left_, right_, OpCode::and_)
+AndInstruction::AndInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : 
+    BinaryInstruction(span_, result_, left_, right_, OpCode::and_)
 {
 }
 
@@ -1466,7 +1475,8 @@ void OrInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-XorInstruction::XorInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : BinaryInstruction(span_, result_, left_, right_, OpCode::xor_)
+XorInstruction::XorInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : 
+    BinaryInstruction(span_, result_, left_, right_, OpCode::xor_)
 {
 }
 
@@ -1547,7 +1557,8 @@ void ShrInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-EqualInstruction::EqualInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : BinaryInstruction(span_, result_, left_, right_, OpCode::equal)
+EqualInstruction::EqualInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : 
+    BinaryInstruction(span_, result_, left_, right_, OpCode::equal)
 {
 }
 
@@ -1574,7 +1585,8 @@ void EqualInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-LessInstruction::LessInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : BinaryInstruction(span_, result_, left_, right_, OpCode::less)
+LessInstruction::LessInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : 
+    BinaryInstruction(span_, result_, left_, right_, OpCode::less)
 {
 }
 
@@ -1627,7 +1639,8 @@ void ParamInstruction::Write(util::CodeFormatter& formatter)
     formatter.Write(" = param");
 }
 
-LocalInstruction::LocalInstruction(const soul::ast::Span& span_, RegValue* result_, Type* localType_) : ValueInstruction(span_, result_, OpCode::local), localType(localType_)
+LocalInstruction::LocalInstruction(const soul::ast::Span& span_, RegValue* result_, Type* localType_) : 
+    ValueInstruction(span_, result_, OpCode::local), localType(localType_)
 {
 }
 
@@ -1652,6 +1665,35 @@ void LocalInstruction::Write(util::CodeFormatter& formatter)
     WriteResult(formatter);
     formatter.Write(" = local ");
     formatter.Write(localType->Name());
+}
+
+PLocalInstruction::PLocalInstruction(const soul::ast::Span& span_, RegValue* result_, Type* localType_, int level_) : 
+    ValueInstruction(span_, result_, OpCode::plocal), localType(localType_), level(level_)
+{
+}
+
+void PLocalInstruction::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+Instruction* PLocalInstruction::Clone(CloneContext& cloneContext) const
+{
+    RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
+    PLocalInstruction* clone = new PLocalInstruction(Span(), result, localType, level);
+    clone->SetIndex(Index());
+    clone->SetRegValueIndex(RegValueIndex());
+    result->SetInst(clone);
+    clone->AddToUses();
+    return clone;
+}
+
+void PLocalInstruction::Write(util::CodeFormatter& formatter)
+{
+    WriteResult(formatter);
+    formatter.Write(" = plocal ");
+    formatter.Write(localType->Name());
+    formatter.Write(", " + std::to_string(level));
 }
 
 LoadInstruction::LoadInstruction(const soul::ast::Span& span_, RegValue* result_, Value* ptr_) : ValueInstruction(span_, result_, OpCode::load), ptr(ptr_)
@@ -2031,6 +2073,31 @@ Instruction* NoOperationInstruction::Clone(CloneContext& cloneContext) const
 void NoOperationInstruction::Write(util::CodeFormatter& formatter)
 {
     formatter.Write("nop");
+}
+
+GetRbpInstruction::GetRbpInstruction(const soul::ast::Span& span_, RegValue* result_) : ValueInstruction(span_, result_, OpCode::getrbp)
+{
+}
+
+void GetRbpInstruction::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+Instruction* GetRbpInstruction::Clone(CloneContext& cloneContext) const
+{
+    RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
+    GetRbpInstruction* clone = new GetRbpInstruction(Span(), result);
+    clone->SetIndex(Index());
+    clone->SetRegValueIndex(RegValueIndex());
+    clone->AddToUses();
+    return clone;
+}
+
+void GetRbpInstruction::Write(util::CodeFormatter& formatter)
+{
+    WriteResult(formatter);
+    formatter.Write(" = getrbp");
 }
 
 BasicBlock::BasicBlock(const soul::ast::Span& span_, std::int32_t id_) : span(span_), id(id_), instructions(this)
@@ -2716,6 +2783,7 @@ void Function::SetComment(const std::string& comment_)
 
 std::string Function::ResolveFullName() const
 {
+    std::string fullName;
     if (metadataRef)
     {
         MetadataStruct* metadataStruct = metadataRef->GetMetadataStruct();
@@ -2727,12 +2795,21 @@ std::string Function::ResolveFullName() const
                 if (metadataItem->IsMetadataString())
                 {
                     MetadataString* metadataString = static_cast<MetadataString*>(metadataItem);
-                    return metadataString->Value();
+                    fullName = metadataString->Value();
+                }
+            }
+            MetadataItem* parentNameItem = metadataStruct->GetItem("parentName");
+            if (parentNameItem)
+            {
+                if (parentNameItem->IsMetadataString())
+                {
+                    MetadataString* metadataString = static_cast<MetadataString*>(parentNameItem);
+                    fullName.append(", parentFn=").append(metadataString->Value());
                 }
             }
         }
     }
-    return std::string();
+    return fullName;
 }
 
 void Function::Write(util::CodeFormatter& formatter)
@@ -2757,6 +2834,10 @@ void Function::Write(util::CodeFormatter& formatter)
     if (IsLinkOnce())
     {
         formatter.Write("link_once ");
+    }
+    if (IsChildFn())
+    {
+        formatter.Write("child ");
     }
     Context* context = Parent()->GetContext();
     Type* ptrType = type->AddPointer(context);
@@ -2845,8 +2926,8 @@ Function* Code::GetFunction(const std::string& functionId) const
     }
 }
 
-Function* Code::AddFunctionDefinition(const soul::ast::Span& span, FunctionType* functionType, const std::string& functionId, bool inline_, bool linkOnce, bool createEntry,
-    MetadataRef* metadataRef)
+Function* Code::AddFunctionDefinition(const soul::ast::Span& span, FunctionType* functionType, const std::string& functionId, bool inline_, bool linkOnce, bool child, 
+    bool createEntry, MetadataRef* metadataRef)
 {
     Function* prev = GetFunction(functionId);
     if (prev)
@@ -2876,6 +2957,10 @@ Function* Code::AddFunctionDefinition(const soul::ast::Span& span, FunctionType*
     {
         function->SetLinkOnce();
     }
+    if (child)
+    {
+        function->SetAsChildFn();
+    }
     functions.AddChild(function);
     functionMap[function->Name()] = function;
     return function;
@@ -2888,7 +2973,8 @@ Function* Code::AddFunctionDeclaration(const soul::ast::Span& span, FunctionType
     {
         if (prev->GetType() != functionType)
         {
-            Error("error adding function declaration '" + functionId + "': type '" + functionType->Name() + "' conflicts with earlier declaration", span, context, prev->Span());
+            Error("error adding function declaration '" + functionId + "': type '" + functionType->Name() + "' conflicts with earlier declaration",
+                span, context, prev->Span());
             return nullptr;
         }
         return prev;

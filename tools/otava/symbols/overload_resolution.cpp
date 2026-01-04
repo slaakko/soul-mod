@@ -333,7 +333,8 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& fu
                 BoundExpressionNode* boundTemporary2 = new BoundVariableNode(temporary, sourcePos);
                 if (argumentMatch.postConversionFlags == OperationFlags::addr)
                 {
-                    boundTemporary2 = new BoundAddressOfNode(MakeLvalueExpression(boundTemporary2, sourcePos, context), sourcePos, boundTemporary2->GetType()->AddPointer(context));
+                    boundTemporary2 = new BoundAddressOfNode(MakeLvalueExpression(boundTemporary2, sourcePos, context), sourcePos, 
+                        boundTemporary2->GetType()->AddPointer(context));
                 }
                 else if (argumentMatch.postConversionFlags == OperationFlags::deref)
                 {
@@ -359,6 +360,22 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& fu
         boundFunctionCall->AddArgument(arg);
     }
     return boundFunctionCall;
+}
+
+std::unique_ptr<BoundFunctionCallNode> CreateBoundConversionFunctionCall(FunctionSymbol* conversionFunction, BoundExpressionNode* arg,
+    const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    Exception ex;
+    FunctionMatch functionMatch(conversionFunction, context);
+    ArgumentMatch argumentMatch;
+    functionMatch.argumentMatches.push_back(argumentMatch);
+    std::vector<std::unique_ptr<BoundExpressionNode>> args;
+    if (arg->GetType()->IsClassTypeSymbol())
+    {
+        arg = new BoundAddressOfNode(arg, sourcePos, arg->GetType()->AddPointer(context));
+    }
+    args.push_back(std::unique_ptr<BoundExpressionNode>(arg));
+    return CreateBoundFunctionCall(functionMatch, args, sourcePos, ex, context);
 }
 
 bool FindQualificationConversion(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, ArgumentMatch& argumentMatch)
@@ -1275,6 +1292,7 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
     bool instantiate = (flags & OverloadResolutionFlags::dontInstantiate) == OverloadResolutionFlags::none;
     if (instantiate)
     {
+        context->PushResetFlag(ContextFlags::makeChildFn);
         if (bestMatch->function->IsTemplate())
         {
             bestMatch->function = InstantiateFunctionTemplate(bestMatch->function, bestMatch->templateParameterMap, sourcePos, context);
@@ -1303,6 +1321,7 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
         {
             bestMatch->function = InstantiateInlineFunction(bestMatch->function, sourcePos, context);
         }
+        context->PopFlags();
     }
     std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = CreateBoundFunctionCall(*bestMatch, args, sourcePos, ex, context);
     return boundFunctionCall;

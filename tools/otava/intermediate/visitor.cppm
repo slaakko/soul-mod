@@ -49,12 +49,14 @@ class EqualInstruction;
 class LessInstruction;
 class ParamInstruction;
 class LocalInstruction;
+class PLocalInstruction;
 class LoadInstruction;
 class ElemAddrInstruction;
 class PtrOffsetInstruction;
 class PtrDiffInstruction;
 class FunctionCallInstruction;
 class NoOperationInstruction;
+class GetRbpInstruction;
 
 class BoolValue;
 class SByteValue;
@@ -121,12 +123,14 @@ public:
     virtual void Visit(LessInstruction& inst) {}
     virtual void Visit(ParamInstruction& inst) {}
     virtual void Visit(LocalInstruction& inst) {}
+    virtual void Visit(PLocalInstruction& inst) {}
     virtual void Visit(LoadInstruction& inst) {}
     virtual void Visit(ElemAddrInstruction& inst) {}
     virtual void Visit(PtrOffsetInstruction& inst) {}
     virtual void Visit(PtrDiffInstruction& inst) {}
     virtual void Visit(FunctionCallInstruction& inst) {}
     virtual void Visit(NoOperationInstruction& inst) {}
+    virtual void Visit(GetRbpInstruction& inst) {}
     virtual void Visit(BoolValue& value) {}
     virtual void Visit(SByteValue& value) {}
     virtual void Visit(ByteValue& value) {}

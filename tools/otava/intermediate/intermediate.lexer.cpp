@@ -18,6 +18,7 @@ soul::ast::common::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::EXTERN, "EXTERN", "'extern'"));
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::INLINE, "INLINE", "'inline'"));
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::LINK_ONCE, "LINK_ONCE", "'link_once'"));
+        tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::CHILD, "CHILD", "'child'"));
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::METADATA, "METADATA", "'metadata'"));
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::STORE, "STORE", "'store'"));
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::ARG, "ARG", "'arg'"));
@@ -52,10 +53,12 @@ soul::ast::common::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::LESS, "LESS", "'less'"));
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::PARAM, "PARAM", "'param'"));
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::LOCAL, "LOCAL", "'local'"));
+        tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::PLOCAL, "PLOCAL", "'plocal'"));
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::LOAD, "LOAD", "'load'"));
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::ELEMADDR, "ELEMADDR", "'elemaddr'"));
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::PTROFFSET, "PTROFFSET", "'ptroffset'"));
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::PTRDIFF, "PTRDIFF", "'ptrdiff'"));
+        tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::GETRBP, "GETRBP", "'getrbp'"));
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::TYPE, "TYPE", "'type'"));
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::OFFSET, "OFFSET", "'offset'"));
         tokens.AddToken(new soul::ast::common::Token(otava::intermediate::token::SIZE, "SIZE", "'size'"));
@@ -117,6 +120,7 @@ soul::lexer::KeywordMap<char>* GetKeywords<char>()
          { "extern", otava::intermediate::token::EXTERN },
          { "inline", otava::intermediate::token::INLINE },
          { "link_once", otava::intermediate::token::LINK_ONCE },
+         { "child", otava::intermediate::token::CHILD },
          { "metadata", otava::intermediate::token::METADATA },
          { "store", otava::intermediate::token::STORE },
          { "arg", otava::intermediate::token::ARG },
@@ -151,10 +155,12 @@ soul::lexer::KeywordMap<char>* GetKeywords<char>()
          { "less", otava::intermediate::token::LESS },
          { "param", otava::intermediate::token::PARAM },
          { "local", otava::intermediate::token::LOCAL },
+         { "plocal", otava::intermediate::token::PLOCAL },
          { "load", otava::intermediate::token::LOAD },
          { "elemaddr", otava::intermediate::token::ELEMADDR },
          { "ptroffset", otava::intermediate::token::PTROFFSET },
          { "ptrdiff", otava::intermediate::token::PTRDIFF },
+         { "getrbp", otava::intermediate::token::GETRBP },
          { "type", otava::intermediate::token::TYPE },
          { "offset", otava::intermediate::token::OFFSET },
          { "size", otava::intermediate::token::SIZE },
@@ -191,6 +197,7 @@ soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
          { u8"extern", otava::intermediate::token::EXTERN },
          { u8"inline", otava::intermediate::token::INLINE },
          { u8"link_once", otava::intermediate::token::LINK_ONCE },
+         { u8"child", otava::intermediate::token::CHILD },
          { u8"metadata", otava::intermediate::token::METADATA },
          { u8"store", otava::intermediate::token::STORE },
          { u8"arg", otava::intermediate::token::ARG },
@@ -225,10 +232,12 @@ soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
          { u8"less", otava::intermediate::token::LESS },
          { u8"param", otava::intermediate::token::PARAM },
          { u8"local", otava::intermediate::token::LOCAL },
+         { u8"plocal", otava::intermediate::token::PLOCAL },
          { u8"load", otava::intermediate::token::LOAD },
          { u8"elemaddr", otava::intermediate::token::ELEMADDR },
          { u8"ptroffset", otava::intermediate::token::PTROFFSET },
          { u8"ptrdiff", otava::intermediate::token::PTRDIFF },
+         { u8"getrbp", otava::intermediate::token::GETRBP },
          { u8"type", otava::intermediate::token::TYPE },
          { u8"offset", otava::intermediate::token::OFFSET },
          { u8"size", otava::intermediate::token::SIZE },
@@ -265,6 +274,7 @@ soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
          { u"extern", otava::intermediate::token::EXTERN },
          { u"inline", otava::intermediate::token::INLINE },
          { u"link_once", otava::intermediate::token::LINK_ONCE },
+         { u"child", otava::intermediate::token::CHILD },
          { u"metadata", otava::intermediate::token::METADATA },
          { u"store", otava::intermediate::token::STORE },
          { u"arg", otava::intermediate::token::ARG },
@@ -299,10 +309,12 @@ soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
          { u"less", otava::intermediate::token::LESS },
          { u"param", otava::intermediate::token::PARAM },
          { u"local", otava::intermediate::token::LOCAL },
+         { u"plocal", otava::intermediate::token::PLOCAL },
          { u"load", otava::intermediate::token::LOAD },
          { u"elemaddr", otava::intermediate::token::ELEMADDR },
          { u"ptroffset", otava::intermediate::token::PTROFFSET },
          { u"ptrdiff", otava::intermediate::token::PTRDIFF },
+         { u"getrbp", otava::intermediate::token::GETRBP },
          { u"type", otava::intermediate::token::TYPE },
          { u"offset", otava::intermediate::token::OFFSET },
          { u"size", otava::intermediate::token::SIZE },
@@ -339,6 +351,7 @@ soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
          { U"extern", otava::intermediate::token::EXTERN },
          { U"inline", otava::intermediate::token::INLINE },
          { U"link_once", otava::intermediate::token::LINK_ONCE },
+         { U"child", otava::intermediate::token::CHILD },
          { U"metadata", otava::intermediate::token::METADATA },
          { U"store", otava::intermediate::token::STORE },
          { U"arg", otava::intermediate::token::ARG },
@@ -373,10 +386,12 @@ soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
          { U"less", otava::intermediate::token::LESS },
          { U"param", otava::intermediate::token::PARAM },
          { U"local", otava::intermediate::token::LOCAL },
+         { U"plocal", otava::intermediate::token::PLOCAL },
          { U"load", otava::intermediate::token::LOAD },
          { U"elemaddr", otava::intermediate::token::ELEMADDR },
          { U"ptroffset", otava::intermediate::token::PTROFFSET },
          { U"ptrdiff", otava::intermediate::token::PTRDIFF },
+         { U"getrbp", otava::intermediate::token::GETRBP },
          { U"type", otava::intermediate::token::TYPE },
          { U"offset", otava::intermediate::token::OFFSET },
          { U"size", otava::intermediate::token::SIZE },

@@ -109,6 +109,7 @@ class RegisterPool
 {
 public:
     RegisterPool(Registers& registers_);
+    void MakeChildFnRegisterPool();
     void AddLocalRegisterGroup(RegisterGroup* regGroup);
     void AddLocalXMMRegisterGroup(RegisterGroup* regGroup);
     RegisterGroup* GetLocalRegisterGroup();
@@ -124,6 +125,7 @@ public:
     inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedNonvolatileXMMRegs() const { return usedNonvolatileXMMRegs; }
     void UseGlobalReg(Register* reg);
     void FreeGlobalReg(Register* reg);
+    inline bool IsChildFnRegisterPool() const { return isChildFnRegisterPool; }
 private:
     Registers& registers;
     int localRegisterCount;
@@ -136,6 +138,7 @@ private:
     std::set<RegisterGroup*, RegisterGroupLess> usedNonvolatileRegs;
     std::set<RegisterGroup*, RegisterGroupLess> usedLocalXMMRegs;
     std::set<RegisterGroup*, RegisterGroupLess> usedNonvolatileXMMRegs;
+    bool isChildFnRegisterPool;
 };
 
 } // namespace otava::assembly

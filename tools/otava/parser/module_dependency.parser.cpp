@@ -11,7 +11,6 @@ import otava.token;
 import otava.lexer;
 import otava.parser.modules;
 import otava.parser.punctuation;
-import otava.symbols;
 
 namespace otava::parser::module_dependency {
 

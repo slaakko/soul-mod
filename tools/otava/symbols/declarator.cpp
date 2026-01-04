@@ -151,6 +151,7 @@ public:
     void Visit(otava::ast::LvalueRefNode& node) override;
     void Visit(otava::ast::RvalueRefNode& node) override;
     void Visit(otava::ast::PtrNode& node) override;
+    void Visit(otava::ast::NoexceptSpecifierNode& node) override;
     void Visit(otava::ast::NewArrayOpNode& node) override;
     void Visit(otava::ast::NewOpNode& node) override;
     void Visit(otava::ast::DeleteArrayOpNode& node) override;
@@ -379,6 +380,28 @@ void DeclaratorProcessor::Visit(otava::ast::PtrNode& node)
     if (baseType)
     {
         baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations, context);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::NoexceptSpecifierNode& node)
+{
+    if (!trailingQualifiers) return;
+    bool isNoExcept = true;
+    if (node.ConstantExpr())
+    {
+        Value* value = otava::symbols::Evaluate(node.ConstantExpr(), context);
+        if (value->IsBoolValue())
+        {
+            BoolValue* result = static_cast<BoolValue*>(value);
+            if (!result->GetValue())
+            {
+                isNoExcept = false;
+            }
+        }
+    }
+    if (isNoExcept)
+    {
+        qualifiers = qualifiers | FunctionQualifiers::isNoexcept;
     }
 }
 

@@ -189,6 +189,7 @@ std::string SymbolKindToString(SymbolKind kind)
         case SymbolKind::aliasGroupTypeSymbol: return "aliasGroupType";
         case SymbolKind::friendSymbol: return "friend";
         case SymbolKind::namespaceTypeSymbol: return "namespaceType";
+        case SymbolKind::intrinsicGetRbp: return "intrinsicGetRbp";
     }
     return "<symbol>";
 }
@@ -428,6 +429,7 @@ bool Symbol::CanInstall() const
         case SymbolKind::forwardClassDeclarationSymbol:
         case SymbolKind::friendSymbol:
         case SymbolKind::variableSymbol:
+        case SymbolKind::intrinsicGetRbp:
         {
             return false; 
         }
@@ -533,6 +535,7 @@ bool Symbol::IsFunctionSymbol() const
         case SymbolKind::arrayTypeMoveAssignment:
         case SymbolKind::arrayTypeBegin:
         case SymbolKind::arrayTypeEnd:
+        case SymbolKind::intrinsicGetRbp:
         {
             return true;
         }

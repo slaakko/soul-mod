@@ -52,6 +52,7 @@ IdentityConversion::IdentityConversion(TypeSymbol* type_, Context* context) : Fu
     ParameterSymbol* arg = new ParameterSymbol(U"arg", type);
     AddParameter(arg, soul::ast::SourcePos(), context);
     SetReturnType(type, context);
+    SetNoExcept();
 }
 
 void IdentityConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -101,6 +102,7 @@ DerivedToBaseConversion::DerivedToBaseConversion(TypeSymbol* derivedTypePtr_, Ty
     ParameterSymbol* arg = new ParameterSymbol(U"arg", derivedTypePtr);
     AddParameter(arg, soul::ast::SourcePos(), context);
     SetReturnType(baseTypePtr, context);
+    SetNoExcept();
 }
 
 void DerivedToBaseConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -180,6 +182,7 @@ BaseToDerivedConversion::BaseToDerivedConversion(TypeSymbol* baseTypePtr_, TypeS
     ParameterSymbol* arg = new ParameterSymbol(U"arg", baseTypePtr);
     AddParameter(arg, soul::ast::SourcePos(), context);
     SetReturnType(derivedTypePtr, context);
+    SetNoExcept();
 }
 
 void BaseToDerivedConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -251,6 +254,7 @@ NullPtrToPtrConversion::NullPtrToPtrConversion(TypeSymbol* argType_, TypeSymbol*
     ParameterSymbol* arg = new ParameterSymbol(U"arg", argType);
     AddParameter(arg, soul::ast::SourcePos(), context);
     SetReturnType(pointerType, context);
+    SetNoExcept();
 }
 
 void NullPtrToPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -301,6 +305,7 @@ VoidPtrToPtrConversion::VoidPtrToPtrConversion(TypeSymbol* voidPtrType_, TypeSym
     ParameterSymbol* arg = new ParameterSymbol(U"arg", voidPtrType);
     AddParameter(arg, soul::ast::SourcePos(), context);
     SetReturnType(targetPointerType, context);
+    SetNoExcept();
 }
 
 void VoidPtrToPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -350,6 +355,7 @@ PtrToVoidPtrConversion::PtrToVoidPtrConversion(TypeSymbol* ptrType_, TypeSymbol*
     ParameterSymbol* arg = new ParameterSymbol(U"arg", ptrType);
     AddParameter(arg, soul::ast::SourcePos(), context);
     SetReturnType(voidPtrType, context);
+    SetNoExcept();
 }
 
 void PtrToVoidPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -400,6 +406,7 @@ PtrToPtrConversion::PtrToPtrConversion(TypeSymbol* sourcePtrType_, TypeSymbol* t
     ParameterSymbol* arg = new ParameterSymbol(U"arg", sourcePtrType);
     AddParameter(arg, soul::ast::SourcePos(), context);
     SetReturnType(targetPtrType, context);
+    SetNoExcept();
 }
 
 void PtrToPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -453,6 +460,7 @@ VoidPtrToUInt64Conversion::VoidPtrToUInt64Conversion(TypeSymbol* ptrType_, TypeS
     ParameterSymbol* arg = new ParameterSymbol(U"arg", ptrType);
     AddParameter(arg, soul::ast::SourcePos(), context);
     SetReturnType(uint64Type, context);
+    SetNoExcept();
 }
 
 void VoidPtrToUInt64Conversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -504,6 +512,7 @@ UInt64ToVoidPtrConversion::UInt64ToVoidPtrConversion(TypeSymbol* uint64Type_, Ty
     ParameterSymbol* arg = new ParameterSymbol(U"arg", uint64Type);
     AddParameter(arg, soul::ast::SourcePos(), nullptr);
     SetReturnType(ptrType, context);
+    SetNoExcept();
 }
 
 void UInt64ToVoidPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -554,6 +563,7 @@ PtrToBooleanConversion::PtrToBooleanConversion(TypeSymbol* ptrType_, TypeSymbol*
     ParameterSymbol* arg = new ParameterSymbol(U"arg", ptrType);
     AddParameter(arg, soul::ast::SourcePos(), nullptr);
     SetReturnType(boolType, context);
+    SetNoExcept();
 }
 
 void PtrToBooleanConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -610,6 +620,7 @@ ArrayToPtrConversion::ArrayToPtrConversion(ArrayTypeSymbol* arrayType_, Context*
     ParameterSymbol* arg = new ParameterSymbol(U"arg", arrayType->AddPointer(context));
     AddParameter(arg, soul::ast::SourcePos(), nullptr);
     SetReturnType(elementPtrType, context);
+    SetNoExcept();
 }
 
 void ArrayToPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -708,6 +719,7 @@ EnumTypeToUnderlyingTypeConversion::EnumTypeToUnderlyingTypeConversion(Enumerate
     ParameterSymbol* arg = new ParameterSymbol(U"arg", enumType);
     AddParameter(arg, soul::ast::SourcePos(), context);
     SetReturnType(underlyingType, context);
+    SetNoExcept();
 }
 
 void EnumTypeToUnderlyingTypeConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -768,6 +780,7 @@ UnderlyingTypeToEnumTypeConversion::UnderlyingTypeToEnumTypeConversion(Enumerate
     ParameterSymbol* arg = new ParameterSymbol(U"arg", underlyingType);
     AddParameter(arg, soul::ast::SourcePos(), context);
     SetReturnType(enumType, context);
+    SetNoExcept();
 }
 
 void UnderlyingTypeToEnumTypeConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -829,6 +842,7 @@ FunctionToFunctionPtrConversion::FunctionToFunctionPtrConversion(TypeSymbol* fun
     ParameterSymbol* arg = new ParameterSymbol(U"arg", functionType);
     AddParameter(arg, soul::ast::SourcePos(), context);
     SetReturnType(functionPtrType, context);
+    SetNoExcept();
 }
 
 void FunctionToFunctionPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -945,6 +959,7 @@ AdjustDeletePtrConversionFn::AdjustDeletePtrConversionFn(TypeSymbol* thisPtrBase
     ParameterSymbol* arg = new ParameterSymbol(U"arg", voidPtrType);
     AddParameter(arg, soul::ast::SourcePos(), context);
     SetReturnType(voidPtrType, context);
+    SetNoExcept();
 }
 
 void AdjustDeletePtrConversionFn::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,

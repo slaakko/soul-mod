@@ -26,7 +26,7 @@ public:
     
     static const size_type npos = -1;
     
-    inline basic_string() : chars(nullptr), len(0), res(0) 
+    inline basic_string() noexcept : chars(nullptr), len(0), res(0)
     {
     }
     basic_string(const basic_string& that) : chars(nullptr), len(that.len), res(0)
@@ -85,7 +85,7 @@ public:
             chars[n] = '\0';
         }
     }
-    inline basic_string(basic_string&& that) : chars(that.chars), len(that.len), res(that.res)
+    inline basic_string(basic_string&& that) noexcept : chars(that.chars), len(that.len), res(that.res)
     {
         that.chars = nullptr;
         that.len = 0;
@@ -106,7 +106,7 @@ public:
         }
         return *this;
     }
-    basic_string& operator=(basic_string&& that)
+    basic_string& operator=(basic_string&& that) noexcept
     {
         swap(chars, that.chars);
         swap(len, that.len);
@@ -129,15 +129,15 @@ public:
         chars[1] = '\0';
         return *this;
     }
-    inline iterator begin() 
+    inline iterator begin() noexcept
     { 
         return chars; 
     }
-    inline const_iterator begin() const 
+    inline const_iterator begin() const noexcept
     { 
         return chars; 
     }
-    iterator end()
+    iterator end() noexcept
     {
         if (chars)
         {
@@ -148,7 +148,7 @@ public:
             return nullptr;
         }
     }
-    const_iterator end() const
+    const_iterator end() const noexcept
     {
         if (chars)
         {
@@ -159,11 +159,11 @@ public:
             return nullptr;
         }
     }
-    inline const_iterator cbegin() const 
+    inline const_iterator cbegin() const noexcept
     { 
         return chars; 
     }
-    const_iterator cend() const
+    const_iterator cend() const noexcept
     {
         if (chars)
         {
@@ -174,15 +174,15 @@ public:
             return nullptr;
         }
     }
-    inline size_type size() const 
+    inline size_type size() const noexcept
     { 
         return len; 
     }
-    inline size_type length() const 
+    inline size_type length() const noexcept
     { 
         return len; 
     }
-    inline size_type capacity() const 
+    inline size_type capacity() const noexcept
     { 
         return res; 
     }
@@ -197,35 +197,35 @@ public:
             }
         }
     }
-    inline void clear() 
+    inline void clear() noexcept
     { 
         deallocate; 
     }
-    inline bool empty() const 
+    inline bool empty() const noexcept
     { 
         return len == 0; 
     }
-    inline const_reference operator[](size_type pos) const
+    inline const_reference operator[](size_type pos) const noexcept
     {
         return chars[pos];
     }
-    inline reference operator[](size_type pos)
+    inline reference operator[](size_type pos) noexcept
     {
         return chars[pos];
     }
-    inline const charT& front() const
+    inline const charT& front() const noexcept
     {
         return chars[0];
     }
-    inline charT& front()
+    inline charT& front() noexcept
     {
         return chars[0];
     }
-    inline const charT& back() const
+    inline const charT& back() const noexcept
     {
         return chars[len - 1];
     }
-    inline charT& back()
+    inline charT& back() noexcept
     {
         return chars[len - 1];
     }
@@ -497,13 +497,13 @@ public:
             return 0;
         }
     }
-    inline void swap(basic_string& that)
+    inline void swap(basic_string& that) noexcept
     {
         std::swap(chars, that.chars);
         std::swap(len, that.len);
         std::swap(res, that.res);
     }
-    const charT* c_str() const
+    const charT* c_str() const noexcept
     {
         if (chars)
         {
@@ -514,19 +514,19 @@ public:
             return static_cast<const charT*>(static_cast<void*>(&nul));
         }
     }
-    inline const charT* data() const 
+    inline const charT* data() const noexcept
     { 
         return chars; 
     }
-    inline charT* data() 
+    inline charT* data() noexcept
     { 
         return chars; 
     }
-    inline size_type find(const basic_string& str) const
+    inline size_type find(const basic_string& str) const noexcept
     {
         return find(str, 0);
     }
-    size_type find(const basic_string& str, size_type pos) const
+    size_type find(const basic_string& str, size_type pos) const noexcept
     {
         if (str.empty()) return pos;
         size_type p = find(str[0], pos);
@@ -549,15 +549,15 @@ public:
         }
         return npos;
     }
-    inline size_type find(const charT* s) const
+    inline size_type find(const charT* s) const noexcept
     {
         return find(s, 0);
     }
-    inline size_type find(const charT* s, size_type pos) const
+    inline size_type find(const charT* s, size_type pos) const noexcept
     {
         return find(s, slen(s), pos);
     }
-    size_type find(const charT* s, size_type n, size_type pos) const
+    size_type find(const charT* s, size_type n, size_type pos) const noexcept
     {
         if (n == 0) return pos;
         size_type p = find(s[0], pos);
@@ -580,11 +580,11 @@ public:
         }
         return npos;
     }
-    inline size_type find(charT c) const
+    inline size_type find(charT c) const noexcept
     {
         return find(c, 0);
     }
-    size_type find(charT c, size_type pos) const
+    size_type find(charT c, size_type pos) const noexcept
     {
         if (!chars) return npos;
         for (size_type i = pos; i < len; ++i)
@@ -596,11 +596,11 @@ public:
         }
         return npos;
     }
-    inline size_type rfind(const basic_string& str) const
+    inline size_type rfind(const basic_string& str) const noexcept
     {
         return rfind(str, npos);
     }
-    size_type rfind(const basic_string& str, size_type pos) const
+    size_type rfind(const basic_string& str, size_type pos) const noexcept
     {
         if (str.empty()) return pos;
         size_type p = rfind(str[0], pos);
@@ -623,11 +623,11 @@ public:
         }
         return npos;
     }
-    inline size_type rfind(const charT* s) const
+    inline size_type rfind(const charT* s) const noexcept
     {
         return rfind(s, slen(s));
     }
-    size_type rfind(const charT* s, size_type n, size_type pos = npos) const
+    size_type rfind(const charT* s, size_type n, size_type pos = npos) const noexcept
     {
         if (n == 0) return pos;
         size_type p = rfind(s[0], pos);
@@ -650,11 +650,11 @@ public:
         }
         return npos;
     }
-    inline size_type rfind(charT c) const
+    inline size_type rfind(charT c) const noexcept
     {
         return rfind(c, npos);
     }
-    size_type rfind(charT c, size_type pos) const
+    size_type rfind(charT c, size_type pos) const noexcept
     {
         if (!chars) return npos;
         if (pos == npos)
@@ -714,12 +714,12 @@ public:
     //int compare(size_type pos1, size_type n1, const charT* s) const;
     //int compare(size_type pos1, size_type n1, const charT* s, size_type n2) const;
     
-    inline bool starts_with(charT x) const
+    inline bool starts_with(charT x) const noexcept
     {
         if (empty()) return false;
         return chars[0] == x;
     }
-    bool starts_with(const charT* s) const
+    bool starts_with(const charT* s) const noexcept
     {
         size_type n = slen(s);
         if (len < n) return false;
@@ -729,16 +729,16 @@ public:
         }
         return true;
     }
-    inline bool starts_with(const basic_string<charT>& s) const
+    inline bool starts_with(const basic_string<charT>& s) const noexcept
     {
         return starts_with(s.c_str());
     }
-    inline bool ends_with(charT x) const
+    inline bool ends_with(charT x) const noexcept
     {
         if (empty()) return false;
         return chars[len - 1] == x;
     }
-    bool ends_with(const charT* s) const
+    bool ends_with(const charT* s) const noexcept
     {
         size_type n = len;
         size_type m = slen(s);
@@ -749,15 +749,15 @@ public:
         }
         return true;
     }
-    inline bool ends_with(const basic_string<charT>& s) const
+    inline bool ends_with(const basic_string<charT>& s) const noexcept
     {
         return ends_with(s.c_str());
     }
-    inline bool contains(charT x) const
+    inline bool contains(charT x) const noexcept
     {
         return find(x) != npos;
     }
-    inline bool contains(const charT* s) const
+    inline bool contains(const charT* s) const noexcept
     {
         return find(s) != npos;
     }
@@ -800,7 +800,7 @@ private:
         chars = new_chars;
         res = min_res;
     }
-    void deallocate()
+    void deallocate() noexcept
     {
         len = 0;
         if (res != 0)
@@ -840,7 +840,7 @@ basic_string<charT> operator+(const basic_string<charT>& lhs, const charT* rhs)
 }
 
 template<typename charT>
-bool operator==(const basic_string<charT>& lhs, const basic_string<charT>& rhs)
+bool operator==(const basic_string<charT>& lhs, const basic_string<charT>& rhs) noexcept
 {
     basic_string<charT>::size_type len = lhs.length();
     if (len != rhs.length()) return false;
@@ -855,7 +855,7 @@ bool operator==(const basic_string<charT>& lhs, const basic_string<charT>& rhs)
 }
 
 template<typename charT>
-bool operator==(const basic_string<charT>& lhs, const charT* rhs)
+bool operator==(const basic_string<charT>& lhs, const charT* rhs) noexcept
 {
     basic_string<charT>::size_type len = lhs.length();
     if (len != slen(rhs)) return false;
@@ -870,7 +870,7 @@ bool operator==(const basic_string<charT>& lhs, const charT* rhs)
 }
 
 template<typename charT>
-bool operator==(const charT* lhs, const basic_string<charT>& rhs)
+bool operator==(const charT* lhs, const basic_string<charT>& rhs) noexcept
 {
     basic_string<charT>::size_type len = slen(lhs);
     if (len != rhs.length()) return false;
@@ -885,7 +885,7 @@ bool operator==(const charT* lhs, const basic_string<charT>& rhs)
 }
 
 template<typename charT>
-bool operator<(const basic_string<charT>& lhs, const basic_string<charT>& rhs)
+bool operator<(const basic_string<charT>& lhs, const basic_string<charT>& rhs) noexcept
 {
     basic_string<charT>::size_type leftLen = lhs.length();
     basic_string<charT>::size_type rightLen = rhs.length();

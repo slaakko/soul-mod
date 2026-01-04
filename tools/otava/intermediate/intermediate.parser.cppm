@@ -76,10 +76,12 @@ struct IntermediateParser
     static soul::parser::Match BinaryInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
     static soul::parser::Match ParamInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
     static soul::parser::Match LocalInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
+    static soul::parser::Match PLocalInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
     static soul::parser::Match LoadInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
     static soul::parser::Match ElemAddrInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
     static soul::parser::Match PtrOffsetInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
     static soul::parser::Match PtrDiffInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
+    static soul::parser::Match GetRbpInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
     static soul::parser::Match FunctionCallInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
     static soul::parser::Match BlockValue(LexerT& lexer, otava::intermediate::Context* context);
     static soul::parser::Match NoOperationInstruction(LexerT& lexer, otava::intermediate::Context* context);

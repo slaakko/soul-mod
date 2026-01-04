@@ -206,12 +206,46 @@ void CompoundStatementNode::SetLexerPosPair(const soul::ast::lexer::pos::pair::L
     lexerPosPair = lexerPosPair_;
 }
 
+SequenceStatementNode::SequenceStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::sequenceStatementNode, sourcePos_)
+{
+}
+
+SequenceStatementNode::SequenceStatementNode(const soul::ast::SourcePos& sourcePos_, Node* firstStmt_, Node* secondStmt_) : 
+    CompoundNode(NodeKind::sequenceStatementNode, sourcePos_), firstStmt(firstStmt_), secondStmt(secondStmt_)
+{
+}
+
+Node* SequenceStatementNode::Clone() const
+{
+    return new SequenceStatementNode(GetSourcePos(), firstStmt->Clone(), secondStmt->Clone());
+}
+
+void SequenceStatementNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+void SequenceStatementNode::Write(Writer& writer)
+{
+    CompoundNode::Write(writer);
+    writer.Write(firstStmt.get());
+    writer.Write(secondStmt.get());
+}
+
+void SequenceStatementNode::Read(Reader& reader)
+{
+    CompoundNode::Read(reader);
+    firstStmt.reset(reader.ReadNode());
+    secondStmt.reset(reader.ReadNode());
+}
+
 IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::ifStatementNode, sourcePos_)
 {
 }
 
 IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* cond_, Node* thenStmt_, Node* elseStmt_, Node* attributes_,
-    const soul::ast::SourcePos& ifPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_, const soul::ast::SourcePos& constExprPos_, const soul::ast::SourcePos& elsePos_) :
+    const soul::ast::SourcePos& ifPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_, const soul::ast::SourcePos& constExprPos_, 
+    const soul::ast::SourcePos& elsePos_) :
     CompoundNode(NodeKind::ifStatementNode, sourcePos_), initStmt(initStmt_), cond(cond_), thenStmt(thenStmt_), elseStmt(elseStmt_), attributes(attributes_),
     ifPos(ifPos_), lpPos(lpPos_), rpPos(rpPos_), constExprPos(constExprPos_), elsePos(elsePos_)
 {
@@ -1063,7 +1097,12 @@ Node* ExpressionStatementNode::Clone() const
     {
         clonedAttributes = attributes->Clone();
     }
-    ExpressionStatementNode* clone = new ExpressionStatementNode(GetSourcePos(), clonedExpr, clonedAttributes, semicolon->Clone());
+    Node* clonedSemicolon = nullptr;
+    if (semicolon)
+    {
+        clonedSemicolon = semicolon->Clone();
+    }
+    ExpressionStatementNode* clone = new ExpressionStatementNode(GetSourcePos(), clonedExpr, clonedAttributes, clonedSemicolon);
     return clone;
 }
 

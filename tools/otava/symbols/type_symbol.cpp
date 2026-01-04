@@ -375,4 +375,13 @@ void GenericTypeSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+TypeSymbol* ConvertRefToPtrType(TypeSymbol* type, Context* context)
+{
+    if (type->IsReferenceType())
+    {
+        return type->PlainType(context)->AddPointer(context);
+    }
+    return type;
+}
+
 } // namespace otava::symbols

@@ -581,6 +581,7 @@ EnumTypeMoveCtor::EnumTypeMoveCtor(EnumeratedTypeSymbol* enumType_, Context* con
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType->AddRValueRef(context));
     AddParameter(thatParam, soul::ast::SourcePos(), context);
+    SetNoExcept();
 }
 
 void EnumTypeMoveCtor::Write(Writer& writer)
@@ -637,6 +638,7 @@ EnumTypeCopyAssignment::EnumTypeCopyAssignment(EnumeratedTypeSymbol* enumType_, 
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType);
     AddParameter(thatParam, soul::ast::SourcePos(), context);
+    SetNoExcept();
 }
 
 void EnumTypeCopyAssignment::Write(Writer& writer)
@@ -687,6 +689,7 @@ EnumTypeMoveAssignment::EnumTypeMoveAssignment(EnumeratedTypeSymbol* enumType_, 
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType->AddRValueRef(context));
     AddParameter(thatParam, soul::ast::SourcePos(), context);
+    SetNoExcept();
 }
 
 void EnumTypeMoveAssignment::Write(Writer& writer)
@@ -740,6 +743,7 @@ EnumTypeEqual::EnumTypeEqual(EnumeratedTypeSymbol* enumType_, Context* context) 
     AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
     TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType);
     SetReturnType(boolType, context);
+    SetNoExcept();
 }
 
 void EnumTypeEqual::Write(Writer& writer)
@@ -793,6 +797,7 @@ EnumTypeLess::EnumTypeLess(EnumeratedTypeSymbol* enumType_, Context* context) : 
     AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
     TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType);
     SetReturnType(boolType, context);
+    SetNoExcept();
 }
 
 void EnumTypeLess::Write(Writer& writer)

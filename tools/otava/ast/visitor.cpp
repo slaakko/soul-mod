@@ -2517,6 +2517,14 @@ void DefaultVisitor::Visit(CompoundStatementNode& node)
     EndVisit(node);
 }
 
+void DefaultVisitor::Visit(SequenceStatementNode& node)
+{
+    BeginVisit(node);
+    node.FirstStmt()->Accept(*this);
+    node.SecondStmt()->Accept(*this);
+    EndVisit(node);
+}
+
 void DefaultVisitor::Visit(IfStatementNode& node)
 {
     BeginVisit(node);

@@ -11,7 +11,7 @@ public:
     basic_istringstream() : basic_istream<CharT>(), s()
     {
     }
-    std::basic_string<CharT> str() const
+    std::basic_string<CharT> str() const 
     {
         return s;
     }

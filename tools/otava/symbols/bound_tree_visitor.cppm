@@ -34,7 +34,9 @@ class BoundValueExpressionNode;
 class BoundLiteralNode;
 class BoundStringLiteralNode;
 class BoundVariableNode;
+class BoundParentVariableNode;
 class BoundParameterNode;
+class BoundParentParameterNode;
 class BoundEnumConstant;
 class BoundFunctionGroupNode;
 class BoundClassGroupNode;
@@ -48,6 +50,7 @@ class BoundExpressionSequenceNode;
 class BoundExpressionListNode;
 class BoundConjunctionNode;
 class BoundDisjunctionNode;
+class BoundConditionalExprNode;
 class BoundConversionNode;
 class BoundAddressOfNode;
 class BoundDereferenceNode;
@@ -62,6 +65,7 @@ class BoundEmptyDestructorNode;
 class BoundFunctionValueNode;
 class BoundVariableAsVoidPtrNode;
 class BoundNamespaceExpression;
+class BoundOperatorFnNode;
 
 class BoundTreeVisitor
 {
@@ -92,7 +96,9 @@ public:
     virtual void Visit(BoundLiteralNode& node) {}
     virtual void Visit(BoundStringLiteralNode& node) {}
     virtual void Visit(BoundVariableNode& node) {}
+    virtual void Visit(BoundParentVariableNode& node) {}
     virtual void Visit(BoundParameterNode& node) {}
+    virtual void Visit(BoundParentParameterNode& node) {}
     virtual void Visit(BoundEnumConstant& node) {}
     virtual void Visit(BoundFunctionGroupNode& node) {}
     virtual void Visit(BoundClassGroupNode& node) {}
@@ -106,6 +112,7 @@ public:
     virtual void Visit(BoundExpressionListNode& node) {}
     virtual void Visit(BoundConjunctionNode& node) {}
     virtual void Visit(BoundDisjunctionNode& node) {}
+    virtual void Visit(BoundConditionalExprNode& node) {}
     virtual void Visit(BoundConversionNode& node) {}
     virtual void Visit(BoundAddressOfNode& node) {}
     virtual void Visit(BoundDereferenceNode& node) {}
@@ -120,6 +127,7 @@ public:
     virtual void Visit(BoundFunctionValueNode& node) {}
     virtual void Visit(BoundVariableAsVoidPtrNode& node) {}
     virtual void Visit(BoundNamespaceExpression& node) {}
+    virtual void Visit(BoundOperatorFnNode& node) {}
 };
 
 class DefaultBoundTreeVisitor : public BoundTreeVisitor

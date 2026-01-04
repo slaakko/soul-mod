@@ -193,6 +193,8 @@
     <ClCompile Include="declaration.cppm" />
     <ClCompile Include="declarator.cpp" />
     <ClCompile Include="declarator.cppm" />
+    <ClCompile Include="decl_specifier_seq_parser.cpp" />
+    <ClCompile Include="decl_specifier_seq_parser.cppm" />
     <ClCompile Include="derivations.cpp" />
     <ClCompile Include="derivations.cppm" />
     <ClCompile Include="emitter.cpp" />
@@ -205,8 +207,12 @@
     <ClCompile Include="evaluator.cppm" />
     <ClCompile Include="exception.cpp" />
     <ClCompile Include="exception.cppm" />
+    <ClCompile Include="exception_handling.cpp" />
+    <ClCompile Include="exception_handling.cppm" />
     <ClCompile Include="expression_binder.cpp" />
     <ClCompile Include="expression_binder.cppm" />
+    <ClCompile Include="expr_parser.cpp" />
+    <ClCompile Include="expr_parser.cppm" />
     <ClCompile Include="friends.cpp" />
     <ClCompile Include="friends.cppm" />
     <ClCompile Include="function_definition_symbol_set.cpp" />
@@ -241,6 +247,8 @@
     <ClCompile Include="instantiation_queue.cppm" />
     <ClCompile Include="instantiator.cpp" />
     <ClCompile Include="instantiator.cppm" />
+    <ClCompile Include="intrinsics.cpp" />
+    <ClCompile Include="intrinsics.cppm" />
     <ClCompile Include="lookup.cppm" />
     <ClCompile Include="modules.cpp" />
     <ClCompile Include="modules.cppm" />
@@ -261,6 +269,8 @@
     <ClCompile Include="specialization_compare.cppm" />
     <ClCompile Include="statement_binder.cpp" />
     <ClCompile Include="statement_binder.cppm" />
+    <ClCompile Include="stmt_parser.cpp" />
+    <ClCompile Include="stmt_parser.cppm" />
     <ClCompile Include="symbol.cpp" />
     <ClCompile Include="symbol.cppm" />
     <ClCompile Include="symbols.cppm" />

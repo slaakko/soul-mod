@@ -64,7 +64,7 @@ void LinearScanRegisterAllocator::AddLiveRange(const LiveRange& liveRange, Instr
     liveRanges.insert(liveRange);
     instructionRangeMap[inst] = liveRange;
     rangeInstructionMap[liveRange].push_back(inst);
-    if (inst->IsParamInstruction() || inst->IsLocalInstruction())
+    if (inst->IsParamInstruction() || inst->IsLocalInstruction() || inst->IsPLocalInstruction())
     {
         AllocateFrameLocation(inst, false);
     }
@@ -181,12 +181,12 @@ void LinearScanRegisterAllocator::AllocateFrameLocation(Instruction* inst, bool 
         std::int64_t size = util::Align(paramInst->GetType()->Size(), alignment);
         if (spill)
         {
-            frameLocations[paramInst] = frame.GetFrameLocation(size);
+            frameLocations[paramInst] = frame.AllocateFrameLocation(size);
             locations[paramInst] = locations[paramInst] | Locations::frame;
         }
         else
         {
-            frameLocations[paramInst] = frame.GetParamLocation(size, context->AssemblyContext());
+            frameLocations[paramInst] = frame.AllocateParamLocation(size, context->AssemblyContext());
             locations[paramInst] = locations[paramInst] | Locations::frame;
         }
     }
@@ -194,12 +194,22 @@ void LinearScanRegisterAllocator::AllocateFrameLocation(Instruction* inst, bool 
     {
         LocalInstruction* localInst = static_cast<LocalInstruction*>(inst);
         std::int64_t size = util::Align(localInst->LocalType()->Size(), 8);
-        frameLocations[localInst] = frame.GetFrameLocation(size);
+        frameLocations[localInst] = frame.AllocateFrameLocation(size);
         locations[localInst] = locations[localInst] | Locations::frame;
+    }
+    else if (inst->IsPLocalInstruction())
+    {
+        PLocalInstruction* plocalInst = static_cast<PLocalInstruction*>(inst);
+        Frame& pframe = GetPFrame(plocalInst->Level());
+        std::int64_t size = util::Align(plocalInst->LocalType()->Size(), 8);
+        FrameLocation pframeLoc = pframe.AllocateFrameLocation(size);
+        pframeLoc.level = plocalInst->Level();
+        frameLocations[plocalInst] = pframeLoc;
+        locations[plocalInst] = locations[plocalInst] | Locations::frame;
     }
     else
     {
-        frameLocations[inst] = frame.GetFrameLocation(8);
+        frameLocations[inst] = frame.AllocateFrameLocation(8);
         locations[inst] = locations[inst] | Locations::frame;
     }
 }
@@ -385,6 +395,16 @@ RegisterAllocationAction LinearScanRegisterAllocator::Run(Instruction* inst)
 const std::vector<SpillData>& LinearScanRegisterAllocator::GetSpillData() const
 {
     return spillDataVec;
+}
+
+Frame& LinearScanRegisterAllocator::GetPFrame(int level)
+{
+    while (pframes.size() <= level)
+    {
+        pframes.push_back(Frame());
+        pframes.back().SetPFrame();
+    }
+    return pframes[level];
 }
 
 std::unique_ptr<LinearScanRegisterAllocator> CreateLinearScanRegisterAllocator(Function& function, Context* context)

@@ -36,6 +36,7 @@ import otava.symbols.namespaces;
 import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
 import otava.symbols.fundamental.type.symbol;
+import otava.symbols.intrinsics;
 import otava.symbols.templates;
 import otava.symbols.type.symbol;
 import otava.symbols.variable.symbol;
@@ -211,6 +212,7 @@ void SymbolTable::Init()
         InitLevelIds();
         CreateFundamentalTypes();
         AddFundamentalTypeOperations();
+        AddIntrinsics();
         CreateCoreSymbols();
         module->GetEvaluationContext()->Init();
     }
@@ -2034,6 +2036,13 @@ void SymbolTable::AddFundamentalTypeOperations()
     Context context;
     context.SetSymbolTable(this);
     AddFundamentalTypeOperationsToSymbolTable(&context);
+}
+
+void SymbolTable::AddIntrinsics()
+{
+    Context context;
+    context.SetSymbolTable(this);
+    otava::symbols::MakeIntrinsics(&context);
 }
 
 void SymbolTable::MapFundamentalType(FundamentalTypeSymbol* fundamentalTypeSymbol)

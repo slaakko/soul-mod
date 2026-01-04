@@ -53,6 +53,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline const std::u32string& Rep() const { return rep; }
+    std::u32string Str() const override { return rep; }
 private:
     std::u32string rep;
 };

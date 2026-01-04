@@ -275,6 +275,7 @@ private:
     void AddFundamentalType(FundamentalTypeKind kind);
     void CreateCoreSymbols();
     void AddFundamentalTypeOperations();
+    void AddIntrinsics();
     void ImportSpecializations(const SymbolTable& that);
     void ImportArrayTypes(const SymbolTable& that);
     void ImportDependentTypes(const SymbolTable& that);

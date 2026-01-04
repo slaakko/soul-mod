@@ -148,7 +148,7 @@ public:
     {
         return code.GetOrInsertFunction(functionId, functionType);
     }
-    Function* AddFunctionDefinition(const soul::ast::Span& span, Type* type, const std::string& functionId, bool inline_, bool linkOnce, bool createEntry,
+    Function* AddFunctionDefinition(const soul::ast::Span& span, Type* type, const std::string& functionId, bool inline_, bool linkOnce, bool child, bool createEntry,
         otava::intermediate::MetadataRef* metadataRef);
     Function* AddFunctionDeclaration(const soul::ast::Span& span, Type* type, const std::string& functionId);
     inline MetadataStruct* AddMetadataStruct(const soul::ast::Span& span, std::int32_t id)
@@ -196,6 +196,7 @@ public:
     Instruction* CreateParam(Type* type);
     Instruction* CreateLocal(Type* type);
     Instruction* CreateLocalInEntryBlock(Type* type);
+    Instruction* CreatePLocal(Type* type, int level);
     Instruction* CreateLoad(Value* ptr);
     Instruction* CreateStore(Value* value, Value* ptr);
     Instruction* CreateArg(Value* arg);
@@ -208,6 +209,7 @@ public:
     Instruction* CreateBranch(Value* cond, BasicBlock* trueDest, BasicBlock* falseDest);
     SwitchInstruction* CreateSwitch(Value* cond, BasicBlock* defaultDest);
     Instruction* CreateNop();
+    Instruction* CreateGetRbp();
     inline soul::lexer::FileMap& GetFileMap() { return fileMap; }
     inline std::int32_t NextTypeId() { return types.NextTypeId(); }
     inline std::string GetNextStringValueId() { return data.GetNextStringValueId(); }

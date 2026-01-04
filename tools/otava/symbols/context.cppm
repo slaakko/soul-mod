@@ -12,6 +12,7 @@ import soul.ast.source.pos;
 import otava.ast.node;
 import otava.ast.function;
 import otava.intermediate.data;
+import otava.symbols.exception_handling;
 import otava.symbols.instantiation_queue;
 import otava.symbols.function_definition_symbol_set;
 import otava.symbols.templates;
@@ -65,7 +66,11 @@ enum class ContextFlags : std::int64_t
     leaveBoundFunction = static_cast<std::int64_t>(1) << 35,
     skipFirstPtrToBooleanConversion = static_cast<std::int64_t>(1) << 36,
     matchClassGroup = static_cast<std::int64_t>(1) << 37,
-    skipNonstaticMemberFunctions = static_cast<std::int64_t>(1) << 38
+    skipNonstaticMemberFunctions = static_cast<std::int64_t>(1) << 38,
+    skipInvokeChecking = static_cast<std::int64_t>(1) << 39,
+    dontProcess = static_cast<std::int64_t>(1) << 40,
+    makeChildFn = static_cast<std::int64_t>(1) << 41,
+    makeCompileUnitInitFn = static_cast<std::int64_t>(1) << 42
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -97,6 +102,7 @@ class TypeSymbol;
 class ClassTemplateSpecializationSymbol;
 class Emitter;
 class Project;
+class StatementBinder;
 
 int GetOptLevel(int level, bool release);
 
@@ -125,6 +131,7 @@ public:
     void SetFileName(const std::string& fileName_);
     void PushFlags();
     void PopFlags();
+    void ResetFlags();
     void PushSetFlag(ContextFlags flag);
     void PushResetFlag(ContextFlags flag);
     inline void SetFlag(ContextFlags flag) { flags = flags | flag; }
@@ -197,6 +204,21 @@ public:
     inline Module* GetRequesterModule() const { return requesterModule; }
     inline Project* CurrentProject() const { return currentProject; }
     inline void SetCurrentProject(Project* project) { currentProject = project; }
+    inline int NextTrySerial() { return trySerial++; }
+    inline int NextInvokeSerial() { return invokeSerial++; }
+    inline int NextCleanupSerial() { return cleanupSerial++; }
+    inline int NextResultSerial() { return resultSerial++; }
+    void PushCleanup();
+    void PopCleanup();
+    inline bool CleanupIsEmpty() const { return cleanup.IsEmpty(); }
+    inline CleanUp& GetCleanup() { return cleanup; }
+    void PushStatementBinder(StatementBinder* statementBinder_);
+    void PopStatementBinder();
+    inline StatementBinder* GetStatementBinder() const { return statementBinder; }
+    const std::u32string& ResultVarName() const { return resultVariableName; }
+    void PushResultVarName(const std::u32string& resultVarName_);
+    void PopResultVarName();
+    std::u32string NextResultVarName();
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -239,7 +261,17 @@ private:
     int functionsInlined;
     int argIndex;
     int boundFunctionSerial;
+    int trySerial;
+    int invokeSerial;
+    int cleanupSerial;
+    int resultSerial;
     Module* requesterModule;
+    CleanUp cleanup;
+    std::stack<CleanUp> cleanupStack;
+    StatementBinder* statementBinder;
+    std::stack<StatementBinder*> statementBinderStack;
+    std::u32string resultVariableName;
+    std::stack<std::u32string> resultVariableNameStack;
 };
 
 } // namespace otava::symbols

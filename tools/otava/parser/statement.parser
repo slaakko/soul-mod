@@ -6,9 +6,9 @@
 export module otava.parser.statement;
 
 [interface]import otava.symbols.context;
+[interface]import otava.ast;
 [implementation]import soul.ast.source.pos;
 [implementation]import soul.ast.lexer.pos.pair;
-[implementation]import otava.ast;
 [implementation]import otava.token;
 [implementation]import otava.lexer;
 [implementation]import otava.symbols;
@@ -47,6 +47,8 @@ parser StatementParser
     using PunctuationParser.Ellipsis;
     using TypeParser.TypeSpecifierSeq;
 
+    main;
+
     Statement(otava::symbols::Context* context) : otava::ast::Node*
         ::= LabeledStatement(context):labeledStatement{ return labeledStatement; }
         |   CompoundStatement(context):compoundStatement{ return compoundStatement; }
@@ -55,6 +57,7 @@ parser StatementParser
         |   JumpStatement(context):jumpStatement{ return jumpStatement; }
         |   ExpressionStatement(context):expressionStatement{ return expressionStatement; }
         |   DeclarationStatement(context):declarationStatement{ return declarationStatement; }
+        |   TryStatement(context):tryStatement{ return tryStatement; }
         ;
 
     LabeledStatement(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos labelPos, var std::int64_t labelP, 
@@ -484,6 +487,69 @@ parser StatementParser
             context->PopFlags();
         }
         ;
+
+    TryStatement(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos tryPos) : otava::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            TRY{ tryPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = tryPos; }
+            CompoundStatement(context):tryBlock
+            HandlerSequence(context):handlers
+        )
+        {
+            return new otava::ast::TryStatementNode(sourcePos, tryBlock, handlers, attributes, tryPos);
+        }
+        ;
+
+        HandlerSequence(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::HandlerSequenceNode> handlers) : 
+            otava::ast::Node*
+            ::= 
+            (
+                Handler(context):first
+                {
+                    sourcePos = lexer.GetSourcePos(pos);
+                    handlers.reset(new otava::ast::HandlerSequenceNode(sourcePos));
+                    handlers->AddNode(first);
+                }
+                (
+                    Handler(context):next
+                    {
+                        handlers->AddNode(next);
+                    }
+                    
+                )*
+            )
+            {
+                return handlers.release();
+            }
+            ;
+
+        Handler(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : otava::ast::Node*
+            ::= 
+            (
+                CATCH{ sourcePos = lexer.GetSourcePos(pos); } 
+                LPAREN{ lpPos = lexer.GetSourcePos(pos); }
+                ExceptionDeclaration(context):exception 
+                RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+                CompoundStatement(context):catchBlock
+            )
+            {
+                return new otava::ast::HandlerNode(sourcePos, exception, catchBlock, lpPos, rpPos);
+            }
+            ;
+
+        ExceptionDeclaration(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::Node> declarator) : otava::ast::Node*
+            ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+            (
+                TypeSpecifierSeq(context):typeSpecifiers{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+                (   Declarator(context):decl{ declarator.reset(decl); }
+                |   (AbstractDeclarator(context):abstractDeclarator{ declarator.reset(abstractDeclarator); })?
+                )
+            |   Ellipsis:ellipsis
+            )
+            {
+                return new otava::ast::ExceptionDeclarationNode(sourcePos, typeSpecifiers, declarator.release(), ellipsis, attributes);
+            }
+            ;
 
     InitStatement(otava::symbols::Context* context) : otava::ast::Node*
         ::= 

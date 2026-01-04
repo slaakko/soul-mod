@@ -15,16 +15,16 @@ public:
     using reference = value_type&;
     using const_reference = const value_type&;
 
-    list_node(const value_type& val_) : val(val_), nxt(nullptr), prv(nullptr) {}
-    list_node(value_type&& val_) : val(std::move(val_)), nxt(nullptr), prv(nullptr) {}
-    reference value() { return val; }
-    const_reference value() const { return val; }
-    pointer value_ptr() { return &val; }
-    const_pointer value_ptr() const { return &val; }
-    list_node<T>* get_next() { return nxt; }
-    void set_next(list_node<T>* nxt_) { nxt = nxt_; }
-    list_node<T>* get_prev() { return prv; }
-    void set_prev(list_node<T>* prv_) { prv = prv_; }
+    list_node(const value_type& val_) noexcept : val(val_), nxt(nullptr), prv(nullptr) {}
+    list_node(value_type&& val_) noexcept : val(std::move(val_)), nxt(nullptr), prv(nullptr) {}
+    reference value() noexcept { return val; }
+    const_reference value() const noexcept { return val; }
+    pointer value_ptr() noexcept { return &val; }
+    const_pointer value_ptr() const noexcept { return &val; }
+    list_node<T>* get_next() noexcept { return nxt; }
+    void set_next(list_node<T>* nxt_) noexcept { nxt = nxt_; }
+    list_node<T>* get_prev() noexcept { return prv; }
+    void set_prev(list_node<T>* prv_) noexcept { prv = prv_; }
 private:
     value_type val;
     list_node<T>* nxt;
@@ -43,29 +43,29 @@ public:
     using const_pointer = const value_type*;
     using iterator_category = bidirectional_iterator_tag;
 
-    list_iterator() : n(nullptr) {}
-    list_iterator(node_type* n_) : n(n_) {}
-    reference operator*() { return n->value(); }
-    const_reference operator*() const { return n->value(); }
-    pointer operator->() { return n->value_ptr(); }
-    const_pointer operator->() const { return n->value_ptr(); }
-    list_iterator& operator++() { n = n->get_next(); return *this; }
-    list_iterator operator++(int) { list_iterator p = *this; n = n->get_next(); return p; }
-    list_iterator& operator--() { n = n->get_prev(); return *this; }
-    list_iterator operator--(int) { list_iterator p = *this; n = n->get_prev(); return p; }
-    node_type* node() const { return n; }
+    list_iterator() noexcept : n(nullptr) {}
+    list_iterator(node_type* n_) noexcept : n(n_) {}
+    reference operator*() noexcept { return n->value(); }
+    const_reference operator*() const noexcept { return n->value(); }
+    pointer operator->() noexcept { return n->value_ptr(); }
+    const_pointer operator->() const noexcept { return n->value_ptr(); }
+    list_iterator& operator++() noexcept { n = n->get_next(); return *this; }
+    list_iterator operator++(int) noexcept { list_iterator p = *this; n = n->get_next(); return p; }
+    list_iterator& operator--() noexcept { n = n->get_prev(); return *this; }
+    list_iterator operator--(int) noexcept { list_iterator p = *this; n = n->get_prev(); return p; }
+    node_type* node() const noexcept { return n; }
 private:
     NodeT* n;
 };
 
 template<typename NodeT>
-bool operator==(const list_iterator<NodeT>& x, const list_iterator<NodeT>& y)
+bool operator==(const list_iterator<NodeT>& x, const list_iterator<NodeT>& y) noexcept
 {
     return x.node() == y.node();
 }
 
 template<typename NodeT>
-bool operator<(const list_iterator<NodeT>& x, const list_iterator<NodeT>& y)
+bool operator<(const list_iterator<NodeT>& x, const list_iterator<NodeT>& y) noexcept
 {
     return x.node() < y.node();
 }
@@ -84,11 +84,11 @@ public:
     using iterator = list_iterator<node_type>;
     using const_iterator = list_iterator<const node_type>;
 
-    list() : head(nullptr), tail(nullptr), sz(0) {}
+    list() noexcept : head(nullptr), tail(nullptr), sz(0) {}
     explicit list(size_type n);
     list(size_type n, const T& value);
     list(const list& x);
-    list(list&& x) : head(x.head), tail(x.tail), sz(x.sz)
+    list(list&& x) noexcept : head(x.head), tail(x.tail), sz(x.sz)
     {
         x.head = nullptr;
         x.tail = nullptr;
@@ -96,7 +96,7 @@ public:
     }
     ~list() { clear(); }
     list& operator=(const list& x);
-    list& operator=(list&& x)
+    list& operator=(list&& x) noexcept
     {
         std::swap(head, x.head);
         std::swap(tail, x.tail);
@@ -105,22 +105,22 @@ public:
     }
     void assign(size_type n, const T& value);
 
-    iterator begin() { return iterator(head); }
-    const_iterator begin() const { return const_iterator(head); }
-    iterator end() { return iterator(); }
-    const_iterator end() const { return const_iterator(); }
-    const_iterator cbegin() const { return const_iterator(head); }
-    const_iterator cend() const { return const_iterator(); }
+    iterator begin() noexcept { return iterator(head); }
+    const_iterator begin() const noexcept { return const_iterator(head); }
+    iterator end() noexcept { return iterator(); }
+    const_iterator end() const noexcept { return const_iterator(); }
+    const_iterator cbegin() const noexcept { return const_iterator(head); }
+    const_iterator cend() const noexcept { return const_iterator(); }
 
-    bool empty() const { return head == nullptr; }
-    size_type size() const { return sz; }
+    bool empty() const noexcept { return head == nullptr; }
+    size_type size() const noexcept { return sz; }
     void resize(size_type sz);
     void resize(size_type sz, const T& c);
 
-    reference front() { return head->value(); }
-    const_reference front() const { return head->value(); }
-    reference back() { return tail->value(); }
-    const_reference back() const { return tail->value(); }
+    reference front() noexcept { return head->value(); }
+    const_reference front() const noexcept { return head->value(); }
+    reference back() noexcept { return tail->value(); }
+    const_reference back() const noexcept { return tail->value(); }
 
     void push_front(const T& x)
     {
@@ -328,8 +328,8 @@ private:
 };
 
 template<class T>
-bool operator==(const list<T>& x, const list<T>& y);
+bool operator==(const list<T>& x, const list<T>& y) noexcept;
 template<class T>
-void swap(list<T>& x, list<T>& y);
+void swap(list<T>& x, list<T>& y) noexcept;
 
 } // namespace std

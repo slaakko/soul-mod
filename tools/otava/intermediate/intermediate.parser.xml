@@ -1,9 +1,9 @@
 <parserFile>
  <grammar name="IntermediateParser">
-  <rule first="{#, DATA, INLINE, TYPES, LINK_ONCE, METADATA, FUNCTION, EXTERN, ID, TYPEID, AT, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, RBRACE, EXCLAMATION, LBRACE}" name="IntermediateFile">
-   <sequence first="{#, DATA, INLINE, TYPES, LINK_ONCE, METADATA, FUNCTION, EXTERN, ID, TYPEID, AT, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, RBRACE, EXCLAMATION, LBRACE}">
-    <sequence first="{#, DATA, INLINE, TYPES, LINK_ONCE, FUNCTION, EXTERN, ID, TYPEID, AT, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, RBRACE, EXCLAMATION, LBRACE}">
-     <sequence first="{#, DATA, TYPES}">
+  <rule first="{#, ID, TYPES, DATA, FUNCTION, EXTERN, INLINE, LINK_ONCE, CHILD, METADATA, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, RBRACE, AT, EXCLAMATION, TYPEID}" name="IntermediateFile">
+   <sequence first="{#, ID, TYPES, DATA, FUNCTION, EXTERN, INLINE, LINK_ONCE, CHILD, METADATA, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, RBRACE, AT, EXCLAMATION, TYPEID}">
+    <sequence first="{#, ID, TYPES, DATA, FUNCTION, EXTERN, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, RBRACE, AT, EXCLAMATION, TYPEID}">
+     <sequence first="{#, TYPES, DATA}">
       <sequence first="{#, TYPES}">
        <action first="{#}">
         <empty first="{#}"/>
@@ -16,8 +16,8 @@
        <nonterminal first="{DATA}" ruleName="DataDefinitions"/>
       </optional>
      </sequence>
-     <optional first="{#, INLINE, LINK_ONCE, FUNCTION, EXTERN, ID, TYPEID, AT, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, RBRACE, EXCLAMATION, LBRACE}">
-      <nonterminal first="{#, INLINE, LINK_ONCE, FUNCTION, EXTERN, ID, TYPEID, AT, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, RBRACE, EXCLAMATION, LBRACE}" ruleName="FunctionDefinitions"/>
+     <optional first="{#, ID, FUNCTION, EXTERN, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, RBRACE, AT, EXCLAMATION, TYPEID}">
+      <nonterminal first="{#, ID, FUNCTION, EXTERN, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, RBRACE, AT, EXCLAMATION, TYPEID}" ruleName="FunctionDefinitions"/>
      </optional>
     </sequence>
     <optional first="{#, METADATA}">
@@ -52,9 +52,9 @@
      </sequence>
      <token first="{TYPE}" name="TYPE"/>
     </sequence>
-    <group first="{FUNCTION, LBRACKET, LBRACE}">
-     <choice first="{FUNCTION, LBRACKET, LBRACE}">
-      <choice first="{LBRACKET, LBRACE}">
+    <group first="{FUNCTION, LBRACE, LBRACKET}">
+     <choice first="{FUNCTION, LBRACE, LBRACKET}">
+      <choice first="{LBRACE, LBRACKET}">
        <nonterminal first="{LBRACE}" ruleName="StructureType"/>
        <nonterminal first="{LBRACKET}" ruleName="ArrayType"/>
       </choice>
@@ -70,18 +70,18 @@
     </action>
    </group>
   </rule>
-  <rule first="{BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" name="FundamentalTypeId">
-   <choice first="{BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-    <choice first="{BYTE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <choice first="{BYTE, SBYTE, INT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-      <choice first="{BYTE, SBYTE, INT, USHORT, UINT, SHORT, BOOL, VOID, LONG}">
-       <choice first="{BYTE, SBYTE, INT, USHORT, UINT, SHORT, BOOL, VOID}">
-        <choice first="{BYTE, SBYTE, INT, USHORT, SHORT, BOOL, VOID}">
-         <choice first="{BYTE, SBYTE, USHORT, SHORT, BOOL, VOID}">
-          <choice first="{BYTE, SBYTE, SHORT, BOOL, VOID}">
-           <choice first="{BYTE, SBYTE, BOOL, VOID}">
-            <choice first="{SBYTE, BOOL, VOID}">
-             <choice first="{BOOL, VOID}">
+  <rule first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE}" name="FundamentalTypeId">
+   <choice first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE}">
+    <choice first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT}">
+     <choice first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG}">
+      <choice first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG}">
+       <choice first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT}">
+        <choice first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT}">
+         <choice first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT}">
+          <choice first="{VOID, BOOL, SBYTE, BYTE, SHORT}">
+           <choice first="{VOID, BOOL, SBYTE, BYTE}">
+            <choice first="{VOID, BOOL, SBYTE}">
+             <choice first="{VOID, BOOL}">
               <action first="{VOID}">
                <token first="{VOID}" name="VOID"/>
               </action>
@@ -130,17 +130,17 @@
     </action>
    </choice>
   </rule>
-  <rule first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" name="TypeRef">
-   <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-    <group first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-      <group first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-       <choice first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
+  <rule first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" name="TypeRef">
+   <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+    <group first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+      <group first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+       <choice first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
         <action first="{TYPEID}">
          <nonterminal first="{TYPEID}" ruleName="TypeId"/>
         </action>
-        <action first="{BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-         <nonterminal first="{BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="FundamentalTypeId"/>
+        <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE}">
+         <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE}" ruleName="FundamentalTypeId"/>
         </action>
        </choice>
       </group>
@@ -162,18 +162,18 @@
       <action first="{LBRACE}">
        <token first="{LBRACE}" name="LBRACE"/>
       </action>
-      <optional first="{#, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-       <group first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-        <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-         <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-          <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+      <optional first="{#, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+       <group first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+        <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+         <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+          <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
          </action>
          <kleene first="{#, COMMA}">
           <group first="{COMMA}">
            <sequence first="{COMMA}">
             <token first="{COMMA}" name="COMMA"/>
-            <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-             <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+            <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+             <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
             </action>
            </sequence>
           </group>
@@ -209,7 +209,7 @@
        <token first="{ID}" name="ID"/>
       </action>
      </sequence>
-     <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+     <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
     </sequence>
     <action first="{RBRACKET}">
      <token first="{RBRACKET}" name="RBRACKET"/>
@@ -224,22 +224,22 @@
        <action first="{FUNCTION}">
         <token first="{FUNCTION}" name="FUNCTION"/>
        </action>
-       <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+       <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
       </sequence>
       <token first="{LPAREN}" name="LPAREN"/>
      </sequence>
-     <optional first="{#, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-      <group first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-       <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-        <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-         <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+     <optional first="{#, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+      <group first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+       <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+        <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+         <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
         </action>
         <kleene first="{#, COMMA}">
          <group first="{COMMA}">
           <sequence first="{COMMA}">
            <token first="{COMMA}" name="COMMA"/>
-           <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-            <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+           <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+            <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
            </action>
           </sequence>
          </group>
@@ -260,8 +260,8 @@
       <token first="{DATA}" name="DATA"/>
       <token first="{LBRACE}" name="LBRACE"/>
      </sequence>
-     <kleene first="{#, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-      <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="DataDefinition"/>
+     <kleene first="{#, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+      <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="DataDefinition"/>
      </kleene>
     </sequence>
     <action first="{RBRACE}">
@@ -269,50 +269,50 @@
     </action>
    </sequence>
   </rule>
-  <rule first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" name="DataDefinition">
-   <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-    <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-      <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+  <rule first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" name="DataDefinition">
+   <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+    <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+      <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
      </action>
      <action first="{ID}">
       <token first="{ID}" name="ID"/>
      </action>
     </sequence>
-    <group first="{ASSIGN, SEMICOLON}">
-     <choice first="{ASSIGN, SEMICOLON}">
+    <group first="{SEMICOLON, ASSIGN}">
+     <choice first="{SEMICOLON, ASSIGN}">
       <action first="{SEMICOLON}">
        <token first="{SEMICOLON}" name="SEMICOLON"/>
       </action>
       <sequence first="{ASSIGN}">
        <token first="{ASSIGN}" name="ASSIGN"/>
-       <action first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-        <nonterminal first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}" ruleName="Constant"/>
+       <action first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+        <nonterminal first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}" ruleName="Constant"/>
        </action>
       </sequence>
      </choice>
     </group>
    </sequence>
   </rule>
-  <rule first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}" name="Constant">
-   <choice first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-    <choice first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-     <choice first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-      <choice first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-       <choice first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-        <choice first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE}">
-         <choice first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG}">
-          <choice first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-           <choice first="{BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, LONG}">
-            <choice first="{BYTE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, LONG}">
-             <choice first="{BYTE, SBYTE, INT, USHORT, UINT, ULONG, SHORT, BOOL, LONG}">
-              <choice first="{BYTE, SBYTE, INT, USHORT, UINT, SHORT, BOOL, LONG}">
-               <choice first="{BYTE, SBYTE, INT, USHORT, UINT, SHORT, BOOL}">
-                <choice first="{BYTE, SBYTE, INT, USHORT, SHORT, BOOL}">
-                 <choice first="{BYTE, SBYTE, USHORT, SHORT, BOOL}">
-                  <choice first="{BYTE, SBYTE, SHORT, BOOL}">
-                   <choice first="{BYTE, SBYTE, BOOL}">
-                    <choice first="{SBYTE, BOOL}">
+  <rule first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}" name="Constant">
+   <choice first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+    <choice first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+     <choice first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+      <choice first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+       <choice first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+        <choice first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID}">
+         <choice first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACKET, TYPEID}">
+          <choice first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+           <choice first="{BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE}">
+            <choice first="{BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT}">
+             <choice first="{BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG}">
+              <choice first="{BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG}">
+               <choice first="{BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT}">
+                <choice first="{BOOL, SBYTE, BYTE, SHORT, USHORT, INT}">
+                 <choice first="{BOOL, SBYTE, BYTE, SHORT, USHORT}">
+                  <choice first="{BOOL, SBYTE, BYTE, SHORT}">
+                   <choice first="{BOOL, SBYTE, BYTE}">
+                    <choice first="{BOOL, SBYTE}">
                      <action first="{BOOL}">
                       <nonterminal first="{BOOL}" ruleName="BoolConstant"/>
                      </action>
@@ -356,8 +356,8 @@
              <nonterminal first="{DOUBLE}" ruleName="DoubleConstant"/>
             </action>
            </choice>
-           <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-            <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="AddressConstant"/>
+           <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+            <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="AddressConstant"/>
            </action>
           </choice>
           <action first="{LBRACKET}">
@@ -376,16 +376,16 @@
         <nonterminal first="{ID}" ruleName="StringArrayConstant"/>
        </action>
       </choice>
-      <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-       <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="ConversionConstant"/>
+      <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+       <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="ConversionConstant"/>
       </action>
      </choice>
-     <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-      <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="ClsIdConstant"/>
+     <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+      <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="ClsIdConstant"/>
      </action>
     </choice>
-    <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="SymbolConstant"/>
+    <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="SymbolConstant"/>
     </action>
    </choice>
   </rule>
@@ -484,10 +484,10 @@
     </action>
    </sequence>
   </rule>
-  <rule first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" name="AddressConstant">
-   <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-    <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+  <rule first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" name="AddressConstant">
+   <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+    <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
     </action>
     <group first="{ID, NULL_TOKEN}">
      <choice first="{ID, NULL_TOKEN}">
@@ -507,18 +507,18 @@
      <action first="{LBRACKET}">
       <token first="{LBRACKET}" name="LBRACKET"/>
      </action>
-     <optional first="{#, ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-      <group first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-       <sequence first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-        <action first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-         <nonterminal first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}" ruleName="Constant"/>
+     <optional first="{#, ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+      <group first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+       <sequence first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+        <action first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+         <nonterminal first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}" ruleName="Constant"/>
         </action>
         <kleene first="{#, COMMA}">
          <group first="{COMMA}">
           <sequence first="{COMMA}">
            <token first="{COMMA}" name="COMMA"/>
-           <action first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-            <nonterminal first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}" ruleName="Constant"/>
+           <action first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+            <nonterminal first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}" ruleName="Constant"/>
            </action>
           </sequence>
          </group>
@@ -538,18 +538,18 @@
      <action first="{LBRACE}">
       <token first="{LBRACE}" name="LBRACE"/>
      </action>
-     <optional first="{#, ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-      <group first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-       <sequence first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-        <action first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-         <nonterminal first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}" ruleName="Constant"/>
+     <optional first="{#, ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+      <group first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+       <sequence first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+        <action first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+         <nonterminal first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}" ruleName="Constant"/>
         </action>
         <kleene first="{#, COMMA}">
          <group first="{COMMA}">
           <sequence first="{COMMA}">
            <token first="{COMMA}" name="COMMA"/>
-           <action first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-            <nonterminal first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}" ruleName="Constant"/>
+           <action first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+            <nonterminal first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}" ruleName="Constant"/>
            </action>
           </sequence>
          </group>
@@ -577,18 +577,18 @@
       </action>
       <token first="{LBRACKET}" name="LBRACKET"/>
      </sequence>
-     <optional first="{#, ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-      <group first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-       <sequence first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-        <action first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-         <nonterminal first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}" ruleName="Constant"/>
+     <optional first="{#, ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+      <group first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+       <sequence first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+        <action first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+         <nonterminal first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}" ruleName="Constant"/>
         </action>
         <kleene first="{#, COMMA}">
          <group first="{COMMA}">
           <sequence first="{COMMA}">
            <token first="{COMMA}" name="COMMA"/>
-           <action first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}">
-            <nonterminal first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}" ruleName="Constant"/>
+           <action first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}">
+            <nonterminal first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}" ruleName="Constant"/>
            </action>
           </sequence>
          </group>
@@ -607,47 +607,47 @@
     <token first="{ID}" name="ID"/>
    </action>
   </rule>
-  <rule first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" name="ConversionConstant">
-   <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-    <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-      <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-       <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-        <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+  <rule first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" name="ConversionConstant">
+   <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+    <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+      <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+       <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+        <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
        </action>
        <token first="{CONV}" name="CONV"/>
       </sequence>
       <token first="{LPAREN}" name="LPAREN"/>
      </sequence>
-     <nonterminal first="{ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, LBRACKET, SHORT, BOOL, VOID, LONG, LBRACE, STRING}" ruleName="Constant"/>
+     <nonterminal first="{ID, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, LBRACKET, TYPEID, STRING}" ruleName="Constant"/>
     </sequence>
     <action first="{RPAREN}">
      <token first="{RPAREN}" name="RPAREN"/>
     </action>
    </sequence>
   </rule>
-  <rule first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" name="ClsIdConstant">
-   <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-    <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+  <rule first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" name="ClsIdConstant">
+   <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+    <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
     </action>
     <action first="{CLSID}">
      <token first="{CLSID}" name="CLSID"/>
     </action>
    </sequence>
   </rule>
-  <rule first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" name="SymbolConstant">
-   <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-    <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+  <rule first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" name="SymbolConstant">
+   <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+    <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
     </action>
     <action first="{AT}">
      <nonterminal first="{AT}" ruleName="SymbolValue"/>
     </action>
    </sequence>
   </rule>
-  <rule first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}" name="Value">
-   <choice first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}">
+  <rule first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}" name="Value">
+   <choice first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}">
     <choice first="{AT, DOLLAR}">
      <action first="{DOLLAR}">
       <nonterminal first="{DOLLAR}" ruleName="RegValue"/>
@@ -656,8 +656,8 @@
       <nonterminal first="{AT}" ruleName="SymbolValue"/>
      </action>
     </choice>
-    <action first="{ID, NULL_TOKEN, TRUE, FALSE, NUMBER}">
-     <nonterminal first="{ID, NULL_TOKEN, TRUE, FALSE, NUMBER}" ruleName="LiteralValue"/>
+    <action first="{ID, TRUE, FALSE, NULL_TOKEN, NUMBER}">
+     <nonterminal first="{ID, TRUE, FALSE, NULL_TOKEN, NUMBER}" ruleName="LiteralValue"/>
     </action>
    </choice>
   </rule>
@@ -691,10 +691,10 @@
     </action>
    </sequence>
   </rule>
-  <rule first="{ID, NULL_TOKEN, TRUE, FALSE, NUMBER}" name="LiteralValue">
-   <choice first="{ID, NULL_TOKEN, TRUE, FALSE, NUMBER}">
-    <choice first="{NULL_TOKEN, TRUE, FALSE, NUMBER}">
-     <choice first="{NULL_TOKEN, TRUE, FALSE}">
+  <rule first="{ID, TRUE, FALSE, NULL_TOKEN, NUMBER}" name="LiteralValue">
+   <choice first="{ID, TRUE, FALSE, NULL_TOKEN, NUMBER}">
+    <choice first="{TRUE, FALSE, NULL_TOKEN, NUMBER}">
+     <choice first="{TRUE, FALSE, NULL_TOKEN}">
       <choice first="{TRUE, FALSE}">
        <action first="{TRUE}">
         <token first="{TRUE}" name="TRUE"/>
@@ -716,12 +716,12 @@
     </action>
    </choice>
   </rule>
-  <rule first="{#, INLINE, LINK_ONCE, FUNCTION, EXTERN, ID, TYPEID, AT, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, RBRACE, EXCLAMATION, LBRACE}" name="FunctionDefinitions">
-   <kleene first="{#, INLINE, LINK_ONCE, FUNCTION, EXTERN, ID, TYPEID, AT, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, RBRACE, EXCLAMATION, LBRACE}">
-    <group first="{#, INLINE, LINK_ONCE, FUNCTION, EXTERN, ID, TYPEID, AT, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, RBRACE, EXCLAMATION, LBRACE}">
-     <choice first="{#, INLINE, LINK_ONCE, FUNCTION, EXTERN, ID, TYPEID, AT, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, RBRACE, EXCLAMATION, LBRACE}">
+  <rule first="{#, ID, FUNCTION, EXTERN, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, RBRACE, AT, EXCLAMATION, TYPEID}" name="FunctionDefinitions">
+   <kleene first="{#, ID, FUNCTION, EXTERN, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, RBRACE, AT, EXCLAMATION, TYPEID}">
+    <group first="{#, ID, FUNCTION, EXTERN, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, RBRACE, AT, EXCLAMATION, TYPEID}">
+     <choice first="{#, ID, FUNCTION, EXTERN, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, RBRACE, AT, EXCLAMATION, TYPEID}">
       <nonterminal first="{EXTERN}" ruleName="FunctionDeclaration"/>
-      <nonterminal first="{#, INLINE, LINK_ONCE, FUNCTION, ID, TYPEID, AT, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, RBRACE, EXCLAMATION, LBRACE}" ruleName="FunctionDefinition"/>
+      <nonterminal first="{#, ID, FUNCTION, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, RBRACE, AT, EXCLAMATION, TYPEID}" ruleName="FunctionDefinition"/>
      </choice>
     </group>
    </kleene>
@@ -737,8 +737,8 @@
         </action>
         <token first="{FUNCTION}" name="FUNCTION"/>
        </sequence>
-       <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-        <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+       <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+        <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
        </action>
       </sequence>
       <action first="{ID}">
@@ -748,12 +748,12 @@
     </group>
    </action>
   </rule>
-  <rule first="{#, INLINE, LINK_ONCE, FUNCTION, ID, TYPEID, AT, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, RBRACE, EXCLAMATION, LBRACE}" name="FunctionDefinition">
-   <sequence first="{#, INLINE, LINK_ONCE, FUNCTION, ID, TYPEID, AT, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, RBRACE, EXCLAMATION, LBRACE}">
-    <sequence first="{#, INLINE, LINK_ONCE, FUNCTION, ID, TYPEID, AT, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, EXCLAMATION, LBRACE}">
-     <sequence first="{#, INLINE, LINK_ONCE, FUNCTION, ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, EXCLAMATION, LBRACE}">
-      <action first="{#, INLINE, LINK_ONCE, FUNCTION, ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, EXCLAMATION}">
-       <nonterminal first="{#, INLINE, LINK_ONCE, FUNCTION, ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, EXCLAMATION}" ruleName="FunctionHeader"/>
+  <rule first="{#, ID, FUNCTION, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, RBRACE, AT, EXCLAMATION, TYPEID}" name="FunctionDefinition">
+   <sequence first="{#, ID, FUNCTION, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, RBRACE, AT, EXCLAMATION, TYPEID}">
+    <sequence first="{#, ID, FUNCTION, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, AT, EXCLAMATION, TYPEID}">
+     <sequence first="{#, ID, FUNCTION, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, LBRACE, EXCLAMATION, TYPEID}">
+      <action first="{#, ID, FUNCTION, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, EXCLAMATION, TYPEID}">
+       <nonterminal first="{#, ID, FUNCTION, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, EXCLAMATION, TYPEID}" ruleName="FunctionHeader"/>
       </action>
       <token first="{LBRACE}" name="LBRACE"/>
      </sequence>
@@ -764,25 +764,34 @@
     <token first="{RBRACE}" name="RBRACE"/>
    </sequence>
   </rule>
-  <rule first="{#, INLINE, LINK_ONCE, FUNCTION, ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, EXCLAMATION}" name="FunctionHeader">
-   <action first="{#, INLINE, LINK_ONCE, FUNCTION, ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, EXCLAMATION}">
-    <group first="{#, INLINE, LINK_ONCE, FUNCTION, ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, EXCLAMATION}">
-     <sequence first="{#, INLINE, LINK_ONCE, FUNCTION, ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG, EXCLAMATION}">
-      <sequence first="{#, INLINE, LINK_ONCE, FUNCTION, ID, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-       <sequence first="{#, INLINE, LINK_ONCE, FUNCTION, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-        <sequence first="{#, INLINE, LINK_ONCE, FUNCTION}">
-         <sequence first="{#, INLINE, LINK_ONCE}">
-          <optional first="{#, INLINE}">
-           <group first="{INLINE}">
-            <action first="{INLINE}">
-             <token first="{INLINE}" name="INLINE"/>
-            </action>
-           </group>
-          </optional>
-          <optional first="{#, LINK_ONCE}">
-           <group first="{LINK_ONCE}">
-            <action first="{LINK_ONCE}">
-             <token first="{LINK_ONCE}" name="LINK_ONCE"/>
+  <rule first="{#, ID, FUNCTION, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, EXCLAMATION, TYPEID}" name="FunctionHeader">
+   <action first="{#, ID, FUNCTION, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, EXCLAMATION, TYPEID}">
+    <group first="{#, ID, FUNCTION, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, EXCLAMATION, TYPEID}">
+     <sequence first="{#, ID, FUNCTION, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, EXCLAMATION, TYPEID}">
+      <sequence first="{#, ID, FUNCTION, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+       <sequence first="{#, FUNCTION, INLINE, LINK_ONCE, CHILD, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+        <sequence first="{#, FUNCTION, INLINE, LINK_ONCE, CHILD}">
+         <sequence first="{#, INLINE, LINK_ONCE, CHILD}">
+          <sequence first="{#, INLINE, LINK_ONCE}">
+           <optional first="{#, INLINE}">
+            <group first="{INLINE}">
+             <action first="{INLINE}">
+              <token first="{INLINE}" name="INLINE"/>
+             </action>
+            </group>
+           </optional>
+           <optional first="{#, LINK_ONCE}">
+            <group first="{LINK_ONCE}">
+             <action first="{LINK_ONCE}">
+              <token first="{LINK_ONCE}" name="LINK_ONCE"/>
+             </action>
+            </group>
+           </optional>
+          </sequence>
+          <optional first="{#, CHILD}">
+           <group first="{CHILD}">
+            <action first="{CHILD}">
+             <token first="{CHILD}" name="CHILD"/>
             </action>
            </group>
           </optional>
@@ -791,8 +800,8 @@
           <token first="{FUNCTION}" name="FUNCTION"/>
          </action>
         </sequence>
-        <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-         <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+        <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+         <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
         </action>
        </sequence>
        <action first="{ID}">
@@ -811,7 +820,7 @@
     <action first="{AT}">
      <nonterminal first="{AT}" ruleName="Label"/>
     </action>
-    <nonterminal first="{STORE, ARG, BRANCH, JMP, CALL, RET, SWITCH, NOP, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Instructions"/>
+    <nonterminal first="{STORE, ARG, JMP, BRANCH, CALL, RET, SWITCH, NOP, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Instructions"/>
    </sequence>
   </rule>
   <rule first="{AT}" name="Label">
@@ -822,32 +831,32 @@
     </action>
    </sequence>
   </rule>
-  <rule first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" name="Operand">
-   <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-    <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+  <rule first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" name="Operand">
+   <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+    <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
     </action>
-    <action first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}">
-     <nonterminal first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}" ruleName="Value"/>
+    <action first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}">
+     <nonterminal first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}" ruleName="Value"/>
     </action>
    </sequence>
   </rule>
-  <rule first="{STORE, ARG, BRANCH, JMP, CALL, RET, SWITCH, NOP, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" name="Instructions">
-   <positive first="{STORE, ARG, BRANCH, JMP, CALL, RET, SWITCH, NOP, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-    <group first="{STORE, ARG, BRANCH, JMP, CALL, RET, SWITCH, NOP, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <action first="{STORE, ARG, BRANCH, JMP, CALL, RET, SWITCH, NOP, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-      <nonterminal first="{STORE, ARG, BRANCH, JMP, CALL, RET, SWITCH, NOP, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Instruction"/>
+  <rule first="{STORE, ARG, JMP, BRANCH, CALL, RET, SWITCH, NOP, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" name="Instructions">
+   <positive first="{STORE, ARG, JMP, BRANCH, CALL, RET, SWITCH, NOP, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+    <group first="{STORE, ARG, JMP, BRANCH, CALL, RET, SWITCH, NOP, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <action first="{STORE, ARG, JMP, BRANCH, CALL, RET, SWITCH, NOP, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+      <nonterminal first="{STORE, ARG, JMP, BRANCH, CALL, RET, SWITCH, NOP, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Instruction"/>
      </action>
     </group>
    </positive>
   </rule>
-  <rule first="{STORE, ARG, BRANCH, JMP, CALL, RET, SWITCH, NOP, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" name="Instruction">
-   <choice first="{STORE, ARG, BRANCH, JMP, CALL, RET, SWITCH, NOP, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-    <choice first="{STORE, ARG, BRANCH, JMP, CALL, RET, SWITCH, TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <choice first="{STORE, ARG, BRANCH, JMP, CALL, RET, SWITCH}">
-      <choice first="{STORE, ARG, BRANCH, JMP, CALL, RET}">
-       <choice first="{STORE, ARG, BRANCH, JMP, CALL}">
-        <choice first="{STORE, ARG, BRANCH, JMP}">
+  <rule first="{STORE, ARG, JMP, BRANCH, CALL, RET, SWITCH, NOP, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" name="Instruction">
+   <choice first="{STORE, ARG, JMP, BRANCH, CALL, RET, SWITCH, NOP, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+    <choice first="{STORE, ARG, JMP, BRANCH, CALL, RET, SWITCH, VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <choice first="{STORE, ARG, JMP, BRANCH, CALL, RET, SWITCH}">
+      <choice first="{STORE, ARG, JMP, BRANCH, CALL, RET}">
+       <choice first="{STORE, ARG, JMP, BRANCH, CALL}">
+        <choice first="{STORE, ARG, JMP, BRANCH}">
          <choice first="{STORE, ARG, JMP}">
           <choice first="{STORE, ARG}">
            <action first="{STORE}">
@@ -877,8 +886,8 @@
        <nonterminal first="{SWITCH}" ruleName="SwitchInstruction"/>
       </action>
      </choice>
-     <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-      <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="ValueInstruction"/>
+     <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+      <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="ValueInstruction"/>
      </action>
     </choice>
     <action first="{NOP}">
@@ -895,20 +904,20 @@
         <action first="{STORE}">
          <token first="{STORE}" name="STORE"/>
         </action>
-        <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-         <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+        <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+         <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
         </action>
        </sequence>
-       <nonterminal first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}" ruleName="Value"/>
+       <nonterminal first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}" ruleName="Value"/>
       </sequence>
       <token first="{COMMA}" name="COMMA"/>
      </sequence>
-     <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-      <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+     <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+      <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
      </action>
     </sequence>
-    <action first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}">
-     <nonterminal first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}" ruleName="Value"/>
+    <action first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}">
+     <nonterminal first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}" ruleName="Value"/>
     </action>
    </sequence>
   </rule>
@@ -918,12 +927,12 @@
      <action first="{ARG}">
       <token first="{ARG}" name="ARG"/>
      </action>
-     <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-      <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+     <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+      <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
      </action>
     </sequence>
-    <action first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}">
-     <nonterminal first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}" ruleName="Value"/>
+    <action first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}">
+     <nonterminal first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}" ruleName="Value"/>
     </action>
    </sequence>
   </rule>
@@ -947,11 +956,11 @@
          <action first="{BRANCH}">
           <token first="{BRANCH}" name="BRANCH"/>
          </action>
-         <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-          <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+         <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+          <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
          </action>
         </sequence>
-        <nonterminal first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}" ruleName="Value"/>
+        <nonterminal first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}" ruleName="Value"/>
        </sequence>
        <token first="{COMMA}" name="COMMA"/>
       </sequence>
@@ -970,12 +979,12 @@
      <action first="{CALL}">
       <token first="{CALL}" name="CALL"/>
      </action>
-     <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-      <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+     <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+      <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
      </action>
     </sequence>
-    <action first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}">
-     <nonterminal first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}" ruleName="Value"/>
+    <action first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}">
+     <nonterminal first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}" ruleName="Value"/>
     </action>
    </sequence>
   </rule>
@@ -984,8 +993,8 @@
     <action first="{RET}">
      <token first="{RET}" name="RET"/>
     </action>
-    <group first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <choice first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
+    <group first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <choice first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
       <action first="{VOID}">
        <group first="{VOID}">
         <difference first="{VOID}">
@@ -999,12 +1008,12 @@
         </difference>
        </group>
       </action>
-      <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-       <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-        <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+      <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+       <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+        <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
        </action>
-       <action first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}">
-        <nonterminal first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}" ruleName="Value"/>
+       <action first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}">
+        <nonterminal first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}" ruleName="Value"/>
        </action>
       </sequence>
      </choice>
@@ -1024,11 +1033,11 @@
             <action first="{SWITCH}">
              <token first="{SWITCH}" name="SWITCH"/>
             </action>
-            <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-             <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+            <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+             <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
             </action>
            </sequence>
-           <nonterminal first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}" ruleName="Value"/>
+           <nonterminal first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}" ruleName="Value"/>
           </sequence>
           <action first="{AT}">
            <nonterminal first="{AT}" ruleName="Label"/>
@@ -1038,17 +1047,17 @@
         </sequence>
         <token first="{LBRACKET}" name="LBRACKET"/>
        </sequence>
-       <group first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-        <list first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-         <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-          <group first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-           <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-            <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-             <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-              <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-               <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+       <group first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+        <list first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+         <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+          <group first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+           <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+            <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+             <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+              <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+               <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
               </action>
-              <nonterminal first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}" ruleName="Value"/>
+              <nonterminal first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}" ruleName="Value"/>
              </sequence>
              <token first="{COMMA}" name="COMMA"/>
             </sequence>
@@ -1060,14 +1069,14 @@
           <kleene first="{#, COLON}">
            <sequence first="{COLON}">
             <token first="{COLON}" name="COLON"/>
-            <group first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-             <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-              <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-               <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-                <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-                 <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+            <group first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+             <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+              <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+               <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+                <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+                 <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
                 </action>
-                <nonterminal first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}" ruleName="Value"/>
+                <nonterminal first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}" ruleName="Value"/>
                </sequence>
                <token first="{COMMA}" name="COMMA"/>
               </sequence>
@@ -1087,12 +1096,12 @@
     </group>
    </action>
   </rule>
-  <rule first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" name="ValueInstruction">
-   <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-    <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <sequence first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-      <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-       <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+  <rule first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" name="ValueInstruction">
+   <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+    <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <sequence first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+      <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+       <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
       </action>
       <action first="{DOLLAR}">
        <nonterminal first="{DOLLAR}" ruleName="ResultRegValue"/>
@@ -1100,49 +1109,59 @@
      </sequence>
      <token first="{ASSIGN}" name="ASSIGN"/>
     </sequence>
-    <action first="{CALL, NOT, MOD, SHL, AND, PTROFFSET, MUL, ELEMADDR, PTRTOINT, SUB, LOAD, SIGNEXTEND, NEG, XOR, BITCAST, ZEROEXTEND, FPEXTEND, EQUAL, TRUNCATE, PARAM, PTRDIFF, INTTOFLOAT, FLOATTOINT, LOCAL, DIV, LESS, INTTOPTR, SHR, OR, ADD}">
-     <nonterminal first="{CALL, NOT, MOD, SHL, AND, PTROFFSET, MUL, ELEMADDR, PTRTOINT, SUB, LOAD, SIGNEXTEND, NEG, XOR, BITCAST, ZEROEXTEND, FPEXTEND, EQUAL, TRUNCATE, PARAM, PTRDIFF, INTTOFLOAT, FLOATTOINT, LOCAL, DIV, LESS, INTTOPTR, SHR, OR, ADD}" ruleName="Operation"/>
+    <action first="{CALL, NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT, ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS, PARAM, LOCAL, PLOCAL, LOAD, ELEMADDR, PTROFFSET, PTRDIFF, GETRBP}">
+     <nonterminal first="{CALL, NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT, ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS, PARAM, LOCAL, PLOCAL, LOAD, ELEMADDR, PTROFFSET, PTRDIFF, GETRBP}" ruleName="Operation"/>
     </action>
    </sequence>
   </rule>
-  <rule first="{CALL, NOT, MOD, SHL, AND, PTROFFSET, MUL, ELEMADDR, PTRTOINT, SUB, LOAD, SIGNEXTEND, NEG, XOR, BITCAST, ZEROEXTEND, FPEXTEND, EQUAL, TRUNCATE, PARAM, PTRDIFF, INTTOFLOAT, FLOATTOINT, LOCAL, DIV, LESS, INTTOPTR, SHR, OR, ADD}" name="Operation">
-   <choice first="{CALL, NOT, MOD, SHL, AND, PTROFFSET, MUL, ELEMADDR, PTRTOINT, SUB, LOAD, SIGNEXTEND, NEG, XOR, BITCAST, ZEROEXTEND, FPEXTEND, EQUAL, TRUNCATE, PARAM, PTRDIFF, INTTOFLOAT, FLOATTOINT, LOCAL, DIV, LESS, INTTOPTR, SHR, OR, ADD}">
-    <choice first="{NOT, MOD, SHL, AND, PTROFFSET, MUL, ELEMADDR, PTRTOINT, SUB, LOAD, SIGNEXTEND, NEG, XOR, BITCAST, ZEROEXTEND, FPEXTEND, EQUAL, TRUNCATE, PARAM, PTRDIFF, INTTOFLOAT, FLOATTOINT, LOCAL, DIV, LESS, INTTOPTR, SHR, OR, ADD}">
-     <choice first="{NOT, MOD, SHL, AND, PTROFFSET, MUL, ELEMADDR, PTRTOINT, SUB, LOAD, SIGNEXTEND, NEG, XOR, BITCAST, ZEROEXTEND, FPEXTEND, EQUAL, TRUNCATE, PARAM, INTTOFLOAT, FLOATTOINT, LOCAL, DIV, LESS, INTTOPTR, SHR, OR, ADD}">
-      <choice first="{NOT, MOD, SHL, AND, MUL, ELEMADDR, PTRTOINT, SUB, LOAD, SIGNEXTEND, NEG, XOR, BITCAST, ZEROEXTEND, FPEXTEND, EQUAL, TRUNCATE, PARAM, INTTOFLOAT, FLOATTOINT, LOCAL, DIV, LESS, INTTOPTR, SHR, OR, ADD}">
-       <choice first="{NOT, MOD, SHL, AND, MUL, PTRTOINT, SUB, LOAD, SIGNEXTEND, NEG, XOR, BITCAST, ZEROEXTEND, FPEXTEND, EQUAL, TRUNCATE, PARAM, INTTOFLOAT, FLOATTOINT, LOCAL, DIV, LESS, INTTOPTR, SHR, OR, ADD}">
-        <choice first="{NOT, MOD, SHL, AND, MUL, PTRTOINT, SUB, SIGNEXTEND, NEG, XOR, BITCAST, ZEROEXTEND, FPEXTEND, EQUAL, TRUNCATE, PARAM, INTTOFLOAT, FLOATTOINT, LOCAL, DIV, LESS, INTTOPTR, SHR, OR, ADD}">
-         <choice first="{NOT, MOD, SHL, AND, MUL, PTRTOINT, SUB, SIGNEXTEND, NEG, XOR, BITCAST, ZEROEXTEND, FPEXTEND, EQUAL, TRUNCATE, PARAM, INTTOFLOAT, FLOATTOINT, DIV, LESS, INTTOPTR, SHR, OR, ADD}">
-          <choice first="{NOT, MOD, SHL, AND, MUL, PTRTOINT, SUB, SIGNEXTEND, NEG, XOR, BITCAST, ZEROEXTEND, FPEXTEND, EQUAL, TRUNCATE, INTTOFLOAT, FLOATTOINT, DIV, LESS, INTTOPTR, SHR, OR, ADD}">
-           <action first="{NOT, PTRTOINT, SIGNEXTEND, NEG, BITCAST, ZEROEXTEND, FPEXTEND, TRUNCATE, INTTOFLOAT, FLOATTOINT, INTTOPTR}">
-            <nonterminal first="{NOT, PTRTOINT, SIGNEXTEND, NEG, BITCAST, ZEROEXTEND, FPEXTEND, TRUNCATE, INTTOFLOAT, FLOATTOINT, INTTOPTR}" ruleName="UnaryInstruction"/>
-           </action>
-           <action first="{MOD, SHL, AND, MUL, SUB, XOR, EQUAL, DIV, LESS, SHR, OR, ADD}">
-            <nonterminal first="{MOD, SHL, AND, MUL, SUB, XOR, EQUAL, DIV, LESS, SHR, OR, ADD}" ruleName="BinaryInstruction"/>
+  <rule first="{CALL, NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT, ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS, PARAM, LOCAL, PLOCAL, LOAD, ELEMADDR, PTROFFSET, PTRDIFF, GETRBP}" name="Operation">
+   <choice first="{CALL, NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT, ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS, PARAM, LOCAL, PLOCAL, LOAD, ELEMADDR, PTROFFSET, PTRDIFF, GETRBP}">
+    <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT, ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS, PARAM, LOCAL, PLOCAL, LOAD, ELEMADDR, PTROFFSET, PTRDIFF, GETRBP}">
+     <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT, ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS, PARAM, LOCAL, PLOCAL, LOAD, ELEMADDR, PTROFFSET, PTRDIFF}">
+      <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT, ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS, PARAM, LOCAL, PLOCAL, LOAD, ELEMADDR, PTROFFSET}">
+       <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT, ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS, PARAM, LOCAL, PLOCAL, LOAD, ELEMADDR}">
+        <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT, ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS, PARAM, LOCAL, PLOCAL, LOAD}">
+         <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT, ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS, PARAM, LOCAL, PLOCAL}">
+          <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT, ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS, PARAM, LOCAL}">
+           <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT, ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS, PARAM}">
+            <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT, ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS}">
+             <action first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT}">
+              <nonterminal first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT}" ruleName="UnaryInstruction"/>
+             </action>
+             <action first="{ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS}">
+              <nonterminal first="{ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS}" ruleName="BinaryInstruction"/>
+             </action>
+            </choice>
+            <action first="{PARAM}">
+             <nonterminal first="{PARAM}" ruleName="ParamInstruction"/>
+            </action>
+           </choice>
+           <action first="{LOCAL}">
+            <nonterminal first="{LOCAL}" ruleName="LocalInstruction"/>
            </action>
           </choice>
-          <action first="{PARAM}">
-           <nonterminal first="{PARAM}" ruleName="ParamInstruction"/>
+          <action first="{PLOCAL}">
+           <nonterminal first="{PLOCAL}" ruleName="PLocalInstruction"/>
           </action>
          </choice>
-         <action first="{LOCAL}">
-          <nonterminal first="{LOCAL}" ruleName="LocalInstruction"/>
+         <action first="{LOAD}">
+          <nonterminal first="{LOAD}" ruleName="LoadInstruction"/>
          </action>
         </choice>
-        <action first="{LOAD}">
-         <nonterminal first="{LOAD}" ruleName="LoadInstruction"/>
+        <action first="{ELEMADDR}">
+         <nonterminal first="{ELEMADDR}" ruleName="ElemAddrInstruction"/>
         </action>
        </choice>
-       <action first="{ELEMADDR}">
-        <nonterminal first="{ELEMADDR}" ruleName="ElemAddrInstruction"/>
+       <action first="{PTROFFSET}">
+        <nonterminal first="{PTROFFSET}" ruleName="PtrOffsetInstruction"/>
        </action>
       </choice>
-      <action first="{PTROFFSET}">
-       <nonterminal first="{PTROFFSET}" ruleName="PtrOffsetInstruction"/>
+      <action first="{PTRDIFF}">
+       <nonterminal first="{PTRDIFF}" ruleName="PtrDiffInstruction"/>
       </action>
      </choice>
-     <action first="{PTRDIFF}">
-      <nonterminal first="{PTRDIFF}" ruleName="PtrDiffInstruction"/>
+     <action first="{GETRBP}">
+      <nonterminal first="{GETRBP}" ruleName="GetRbpInstruction"/>
      </action>
     </choice>
     <action first="{CALL}">
@@ -1150,31 +1169,31 @@
     </action>
    </choice>
   </rule>
-  <rule first="{NOT, PTRTOINT, SIGNEXTEND, NEG, BITCAST, ZEROEXTEND, FPEXTEND, TRUNCATE, INTTOFLOAT, FLOATTOINT, INTTOPTR}" name="UnaryInstruction">
-   <choice first="{NOT, PTRTOINT, SIGNEXTEND, NEG, BITCAST, ZEROEXTEND, FPEXTEND, TRUNCATE, INTTOFLOAT, FLOATTOINT, INTTOPTR}">
-    <choice first="{NOT, SIGNEXTEND, NEG, BITCAST, ZEROEXTEND, FPEXTEND, TRUNCATE, INTTOFLOAT, FLOATTOINT, INTTOPTR}">
-     <choice first="{NOT, SIGNEXTEND, NEG, BITCAST, ZEROEXTEND, FPEXTEND, TRUNCATE, INTTOFLOAT, FLOATTOINT}">
-      <choice first="{NOT, SIGNEXTEND, NEG, BITCAST, ZEROEXTEND, FPEXTEND, TRUNCATE, INTTOFLOAT}">
-       <choice first="{NOT, SIGNEXTEND, NEG, BITCAST, ZEROEXTEND, FPEXTEND, TRUNCATE}">
-        <choice first="{NOT, SIGNEXTEND, NEG, ZEROEXTEND, FPEXTEND, TRUNCATE}">
-         <choice first="{NOT, SIGNEXTEND, NEG, ZEROEXTEND, FPEXTEND}">
-          <choice first="{NOT, SIGNEXTEND, NEG, ZEROEXTEND}">
-           <choice first="{NOT, SIGNEXTEND, NEG}">
+  <rule first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT}" name="UnaryInstruction">
+   <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR, PTRTOINT}">
+    <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT, INTTOPTR}">
+     <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT, FLOATTOINT}">
+      <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST, INTTOFLOAT}">
+       <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE, BITCAST}">
+        <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND, TRUNCATE}">
+         <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND, FPEXTEND}">
+          <choice first="{NOT, NEG, SIGNEXTEND, ZEROEXTEND}">
+           <choice first="{NOT, NEG, SIGNEXTEND}">
             <choice first="{NOT, NEG}">
              <sequence first="{NOT}">
               <action first="{NOT}">
                <token first="{NOT}" name="NOT"/>
               </action>
-              <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-               <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+              <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+               <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
               </action>
              </sequence>
              <sequence first="{NEG}">
               <action first="{NEG}">
                <token first="{NEG}" name="NEG"/>
               </action>
-              <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-               <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+              <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+               <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
               </action>
              </sequence>
             </choice>
@@ -1182,8 +1201,8 @@
              <action first="{SIGNEXTEND}">
               <token first="{SIGNEXTEND}" name="SIGNEXTEND"/>
              </action>
-             <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-              <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+             <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+              <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
              </action>
             </sequence>
            </choice>
@@ -1191,8 +1210,8 @@
             <action first="{ZEROEXTEND}">
              <token first="{ZEROEXTEND}" name="ZEROEXTEND"/>
             </action>
-            <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-             <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+            <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+             <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
             </action>
            </sequence>
           </choice>
@@ -1200,8 +1219,8 @@
            <action first="{FPEXTEND}">
             <token first="{FPEXTEND}" name="FPEXTEND"/>
            </action>
-           <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-            <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+           <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+            <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
            </action>
           </sequence>
          </choice>
@@ -1209,8 +1228,8 @@
           <action first="{TRUNCATE}">
            <token first="{TRUNCATE}" name="TRUNCATE"/>
           </action>
-          <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-           <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+          <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+           <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
           </action>
          </sequence>
         </choice>
@@ -1218,8 +1237,8 @@
          <action first="{BITCAST}">
           <token first="{BITCAST}" name="BITCAST"/>
          </action>
-         <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-          <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+         <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+          <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
          </action>
         </sequence>
        </choice>
@@ -1227,8 +1246,8 @@
         <action first="{INTTOFLOAT}">
          <token first="{INTTOFLOAT}" name="INTTOFLOAT"/>
         </action>
-        <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-         <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+        <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+         <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
         </action>
        </sequence>
       </choice>
@@ -1236,8 +1255,8 @@
        <action first="{FLOATTOINT}">
         <token first="{FLOATTOINT}" name="FLOATTOINT"/>
        </action>
-       <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-        <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+       <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+        <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
        </action>
       </sequence>
      </choice>
@@ -1245,8 +1264,8 @@
       <action first="{INTTOPTR}">
        <token first="{INTTOPTR}" name="INTTOPTR"/>
       </action>
-      <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-       <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+      <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+       <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
       </action>
      </sequence>
     </choice>
@@ -1254,24 +1273,24 @@
      <action first="{PTRTOINT}">
       <token first="{PTRTOINT}" name="PTRTOINT"/>
      </action>
-     <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-      <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+     <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+      <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
      </action>
     </sequence>
    </choice>
   </rule>
-  <rule first="{MOD, SHL, AND, MUL, SUB, XOR, EQUAL, DIV, LESS, SHR, OR, ADD}" name="BinaryInstruction">
-   <choice first="{MOD, SHL, AND, MUL, SUB, XOR, EQUAL, DIV, LESS, SHR, OR, ADD}">
-    <choice first="{MOD, SHL, AND, MUL, SUB, XOR, EQUAL, DIV, SHR, OR, ADD}">
-     <choice first="{MOD, SHL, AND, MUL, SUB, XOR, DIV, SHR, OR, ADD}">
-      <choice first="{MOD, SHL, AND, MUL, SUB, XOR, DIV, OR, ADD}">
-       <choice first="{MOD, AND, MUL, SUB, XOR, DIV, OR, ADD}">
-        <choice first="{MOD, AND, MUL, SUB, DIV, OR, ADD}">
-         <choice first="{MOD, AND, MUL, SUB, DIV, ADD}">
-          <choice first="{MOD, MUL, SUB, DIV, ADD}">
-           <choice first="{MUL, SUB, DIV, ADD}">
-            <choice first="{MUL, SUB, ADD}">
-             <choice first="{SUB, ADD}">
+  <rule first="{ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS}" name="BinaryInstruction">
+   <choice first="{ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL, LESS}">
+    <choice first="{ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR, EQUAL}">
+     <choice first="{ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL, SHR}">
+      <choice first="{ADD, SUB, MUL, DIV, MOD, AND, OR, XOR, SHL}">
+       <choice first="{ADD, SUB, MUL, DIV, MOD, AND, OR, XOR}">
+        <choice first="{ADD, SUB, MUL, DIV, MOD, AND, OR}">
+         <choice first="{ADD, SUB, MUL, DIV, MOD, AND}">
+          <choice first="{ADD, SUB, MUL, DIV, MOD}">
+           <choice first="{ADD, SUB, MUL, DIV}">
+            <choice first="{ADD, SUB, MUL}">
+             <choice first="{ADD, SUB}">
               <action first="{ADD}">
                <group first="{ADD}">
                 <sequence first="{ADD}">
@@ -1280,11 +1299,11 @@
                    <action first="{ADD}">
                     <token first="{ADD}" name="ADD"/>
                    </action>
-                   <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+                   <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
                   </sequence>
                   <token first="{COMMA}" name="COMMA"/>
                  </sequence>
-                 <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+                 <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
                 </sequence>
                </group>
               </action>
@@ -1296,11 +1315,11 @@
                    <action first="{SUB}">
                     <token first="{SUB}" name="SUB"/>
                    </action>
-                   <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+                   <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
                   </sequence>
                   <token first="{COMMA}" name="COMMA"/>
                  </sequence>
-                 <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+                 <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
                 </sequence>
                </group>
               </action>
@@ -1313,11 +1332,11 @@
                   <action first="{MUL}">
                    <token first="{MUL}" name="MUL"/>
                   </action>
-                  <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+                  <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
                  </sequence>
                  <token first="{COMMA}" name="COMMA"/>
                 </sequence>
-                <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+                <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
                </sequence>
               </group>
              </action>
@@ -1330,11 +1349,11 @@
                  <action first="{DIV}">
                   <token first="{DIV}" name="DIV"/>
                  </action>
-                 <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+                 <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
                 </sequence>
                 <token first="{COMMA}" name="COMMA"/>
                </sequence>
-               <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+               <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
               </sequence>
              </group>
             </action>
@@ -1347,11 +1366,11 @@
                 <action first="{MOD}">
                  <token first="{MOD}" name="MOD"/>
                 </action>
-                <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+                <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
                </sequence>
                <token first="{COMMA}" name="COMMA"/>
               </sequence>
-              <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+              <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
              </sequence>
             </group>
            </action>
@@ -1364,11 +1383,11 @@
                <action first="{AND}">
                 <token first="{AND}" name="AND"/>
                </action>
-               <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+               <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
               </sequence>
               <token first="{COMMA}" name="COMMA"/>
              </sequence>
-             <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+             <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
             </sequence>
            </group>
           </action>
@@ -1381,11 +1400,11 @@
               <action first="{OR}">
                <token first="{OR}" name="OR"/>
               </action>
-              <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+              <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
              </sequence>
              <token first="{COMMA}" name="COMMA"/>
             </sequence>
-            <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+            <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
            </sequence>
           </group>
          </action>
@@ -1398,11 +1417,11 @@
              <action first="{XOR}">
               <token first="{XOR}" name="XOR"/>
              </action>
-             <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+             <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
             </sequence>
             <token first="{COMMA}" name="COMMA"/>
            </sequence>
-           <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+           <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
           </sequence>
          </group>
         </action>
@@ -1415,11 +1434,11 @@
             <action first="{SHL}">
              <token first="{SHL}" name="SHL"/>
             </action>
-            <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+            <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
            </sequence>
            <token first="{COMMA}" name="COMMA"/>
           </sequence>
-          <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+          <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
          </sequence>
         </group>
        </action>
@@ -1432,11 +1451,11 @@
            <action first="{SHR}">
             <token first="{SHR}" name="SHR"/>
            </action>
-           <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+           <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
           </sequence>
           <token first="{COMMA}" name="COMMA"/>
          </sequence>
-         <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+         <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
         </sequence>
        </group>
       </action>
@@ -1449,11 +1468,11 @@
           <action first="{EQUAL}">
            <token first="{EQUAL}" name="EQUAL"/>
           </action>
-          <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+          <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
          </sequence>
          <token first="{COMMA}" name="COMMA"/>
         </sequence>
-        <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+        <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
        </sequence>
       </group>
      </action>
@@ -1466,11 +1485,11 @@
          <action first="{LESS}">
           <token first="{LESS}" name="LESS"/>
          </action>
-         <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+         <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
         </sequence>
         <token first="{COMMA}" name="COMMA"/>
        </sequence>
-       <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+       <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
       </sequence>
      </group>
     </action>
@@ -1486,18 +1505,40 @@
     <action first="{LOCAL}">
      <token first="{LOCAL}" name="LOCAL"/>
     </action>
-    <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+    <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
     </action>
    </sequence>
+  </rule>
+  <rule first="{PLOCAL}" name="PLocalInstruction">
+   <action first="{PLOCAL}">
+    <group first="{PLOCAL}">
+     <sequence first="{PLOCAL}">
+      <sequence first="{PLOCAL}">
+       <sequence first="{PLOCAL}">
+        <action first="{PLOCAL}">
+         <token first="{PLOCAL}" name="PLOCAL"/>
+        </action>
+        <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+         <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
+        </action>
+       </sequence>
+       <token first="{COMMA}" name="COMMA"/>
+      </sequence>
+      <action first="{NUMBER}">
+       <token first="{NUMBER}" name="NUMBER"/>
+      </action>
+     </sequence>
+    </group>
+   </action>
   </rule>
   <rule first="{LOAD}" name="LoadInstruction">
    <sequence first="{LOAD}">
     <action first="{LOAD}">
      <token first="{LOAD}" name="LOAD"/>
     </action>
-    <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+    <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
     </action>
    </sequence>
   </rule>
@@ -1508,12 +1549,12 @@
       <action first="{ELEMADDR}">
        <token first="{ELEMADDR}" name="ELEMADDR"/>
       </action>
-      <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+      <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
      </sequence>
      <token first="{COMMA}" name="COMMA"/>
     </sequence>
-    <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+    <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
     </action>
    </sequence>
   </rule>
@@ -1524,12 +1565,12 @@
       <action first="{PTROFFSET}">
        <token first="{PTROFFSET}" name="PTROFFSET"/>
       </action>
-      <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+      <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
      </sequence>
      <token first="{COMMA}" name="COMMA"/>
     </sequence>
-    <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+    <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
     </action>
    </sequence>
   </rule>
@@ -1540,14 +1581,23 @@
       <action first="{PTRDIFF}">
        <token first="{PTRDIFF}" name="PTRDIFF"/>
       </action>
-      <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+      <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
      </sequence>
      <token first="{COMMA}" name="COMMA"/>
     </sequence>
-    <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-     <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+    <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+     <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
     </action>
    </sequence>
+  </rule>
+  <rule first="{GETRBP}" name="GetRbpInstruction">
+   <action first="{GETRBP}">
+    <group first="{GETRBP}">
+     <action first="{GETRBP}">
+      <token first="{GETRBP}" name="GETRBP"/>
+     </action>
+    </group>
+   </action>
   </rule>
   <rule first="{CALL}" name="FunctionCallInstruction">
    <sequence first="{CALL}">
@@ -1555,12 +1605,12 @@
      <action first="{CALL}">
       <token first="{CALL}" name="CALL"/>
      </action>
-     <action first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}">
-      <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="TypeRef"/>
+     <action first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}">
+      <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="TypeRef"/>
      </action>
     </sequence>
-    <action first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}">
-     <nonterminal first="{ID, AT, NULL_TOKEN, TRUE, FALSE, DOLLAR, NUMBER}" ruleName="Value"/>
+    <action first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}">
+     <nonterminal first="{ID, TRUE, FALSE, NULL_TOKEN, AT, DOLLAR, NUMBER}" ruleName="Value"/>
     </action>
    </sequence>
   </rule>
@@ -1572,7 +1622,7 @@
        <sequence first="{LBRACKET}">
         <sequence first="{LBRACKET}">
          <token first="{LBRACKET}" name="LBRACKET"/>
-         <nonterminal first="{TYPEID, BYTE, DOUBLE, SBYTE, INT, FLOAT, USHORT, UINT, ULONG, SHORT, BOOL, VOID, LONG}" ruleName="Operand"/>
+         <nonterminal first="{VOID, BOOL, SBYTE, BYTE, SHORT, USHORT, INT, UINT, LONG, ULONG, FLOAT, DOUBLE, TYPEID}" ruleName="Operand"/>
         </sequence>
         <token first="{COMMA}" name="COMMA"/>
        </sequence>
@@ -1646,14 +1696,14 @@
      </action>
      <token first="{COLON}" name="COLON"/>
     </sequence>
-    <action first="{TRUE, FALSE, EXCLAMATION, NUMBER, STRING}">
-     <nonterminal first="{TRUE, FALSE, EXCLAMATION, NUMBER, STRING}" ruleName="MetadataItem"/>
+    <action first="{TRUE, FALSE, EXCLAMATION, STRING, NUMBER}">
+     <nonterminal first="{TRUE, FALSE, EXCLAMATION, STRING, NUMBER}" ruleName="MetadataItem"/>
     </action>
    </sequence>
   </rule>
-  <rule first="{TRUE, FALSE, EXCLAMATION, NUMBER, STRING}" name="MetadataItem">
-   <choice first="{TRUE, FALSE, EXCLAMATION, NUMBER, STRING}">
-    <choice first="{TRUE, FALSE, NUMBER, STRING}">
+  <rule first="{TRUE, FALSE, EXCLAMATION, STRING, NUMBER}" name="MetadataItem">
+   <choice first="{TRUE, FALSE, EXCLAMATION, STRING, NUMBER}">
+    <choice first="{TRUE, FALSE, STRING, NUMBER}">
      <choice first="{TRUE, FALSE, NUMBER}">
       <action first="{TRUE, FALSE}">
        <nonterminal first="{TRUE, FALSE}" ruleName="MetadataBool"/>

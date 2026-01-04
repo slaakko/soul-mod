@@ -35,6 +35,7 @@ import otava.symbols.templates;
 import otava.symbols.variable.symbol;
 import otava.symbols.fundamental.type.operation;
 import otava.symbols.friends;
+import otava.symbols.intrinsics;
 import otava.ast.error;
 
 namespace otava::symbols {
@@ -467,6 +468,10 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         case SymbolKind::friendSymbol:
         {
             return new FriendSymbol(name);
+        }
+        case SymbolKind::intrinsicGetRbp:
+        {
+            return new GetFramePtrIntrinsic();
         }
     }
     otava::ast::SetExceptionThrown();

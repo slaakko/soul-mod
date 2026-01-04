@@ -28,20 +28,20 @@ public:
     
     map() : tree() {}
     map(const map& x) : tree(x.tree) {}
-    map(map&& x) : tree(std::move(x.tree)) {}
+    map(map&& x) noexcept : tree(std::move(x.tree)) {}
     map& operator=(const map& x) { tree = x.tree; return *this; }
-    map& operator=(map&& x) { std::swap(tree, x.tree); return *this; }
+    map& operator=(map&& x) noexcept { std::swap(tree, x.tree); return *this; }
     
-    inline iterator begin() { return tree.begin(); }
-    inline const_iterator begin() const { return tree.cbegin(); }
-    inline iterator end() { return tree.end(); }
-    inline const_iterator end() const { return tree.cend(); }
-    inline const_iterator cbegin() const { return tree.cbegin(); }
-    inline const_iterator cend() const { return tree.cend(); }
+    inline iterator begin() noexcept { return tree.begin(); }
+    inline const_iterator begin() const noexcept { return tree.cbegin(); }
+    inline iterator end() noexcept { return tree.end(); }
+    inline const_iterator end() const noexcept { return tree.cend(); }
+    inline const_iterator cbegin() const noexcept { return tree.cbegin(); }
+    inline const_iterator cend() const noexcept { return tree.cend(); }
     
-    inline bool empty() const { return tree.empty(); }
-    inline size_type size() const { return tree.size(); }
-    inline const key_compare& key_comp() const { return tree.cmp(); }
+    inline bool empty() const noexcept { return tree.empty(); }
+    inline size_type size() const noexcept { return tree.size(); }
+    inline const key_compare& key_comp() const noexcept { return tree.cmp(); }
     
     mapped_type& operator[](const key_type& x)
     {
@@ -106,38 +106,38 @@ public:
         }
         return r;
     }
-    inline void clear() { tree.clear(); }
-    inline key_compare key_comp() const { return tree.cmp(); }
+    inline void clear() noexcept { tree.clear(); }
+    inline key_compare key_comp() const noexcept { return tree.cmp(); }
     
-    inline iterator find(const key_type& x) { return tree.find(x); }
-    inline const_iterator find(const key_type& x) const { return tree.find(x); }
-    inline size_type count(const key_type& x) const
+    inline iterator find(const key_type& x) noexcept { return tree.find(x); }
+    inline const_iterator find(const key_type& x) const noexcept { return tree.find(x); }
+    inline size_type count(const key_type& x) const noexcept
     {
         if (contains(x)) return 1;
         return 0;
     }
-    inline bool contains(const key_type& x) const
+    inline bool contains(const key_type& x) const noexcept
     {
         const_iterator i = find(x);
         if (i != cend()) return true;
         return false;
     }
-    inline iterator lower_bound(const key_type& x) { return tree.lower_bound(x); }
-    inline const_iterator lower_bound(const key_type& x) const { return tree.lower_bound(x); }
-    inline iterator upper_bound(const key_type& x) { return tree.upper_bound(x); }
-    inline const_iterator upper_bound(const key_type& x) const { return tree.upper_bound(x); }
+    inline iterator lower_bound(const key_type& x) noexcept { return tree.lower_bound(x); }
+    inline const_iterator lower_bound(const key_type& x) const noexcept { return tree.lower_bound(x); }
+    inline iterator upper_bound(const key_type& x) noexcept { return tree.upper_bound(x); }
+    inline const_iterator upper_bound(const key_type& x) const noexcept { return tree.upper_bound(x); }
 private:
     tree_type tree;
 };
 
 template<class Key, class T, class Compare>
-bool operator==(const map<Key, T, Compare>& x, const map<Key, T, Compare>& y)
+bool operator==(const map<Key, T, Compare>& x, const map<Key, T, Compare>& y) noexcept
 {
     return x.size() == y.size() && std::equal(x.begin(), x.end(), y.begin());
 }
 
 template<class Key, class T, class Compare>
-bool operator<(const map<Key, T, Compare>& x, const map<Key, T, Compare>& y)
+bool operator<(const map<Key, T, Compare>& x, const map<Key, T, Compare>& y) noexcept
 {
     return lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
 }

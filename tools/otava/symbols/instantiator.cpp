@@ -166,6 +166,12 @@ void Instantiator::Visit(otava::ast::CompoundStatementNode& node)
     EndBlock(context);
 }
 
+void Instantiator::Visit(otava::ast::SequenceStatementNode& node)
+{
+    node.FirstStmt()->Accept(*this);
+    node.SecondStmt()->Accept(*this);
+}
+
 void Instantiator::Visit(otava::ast::IfStatementNode& node)
 {
     BlockSymbol* block = BeginBlock(node.GetSourcePos(), context);

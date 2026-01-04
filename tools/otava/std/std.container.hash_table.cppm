@@ -16,17 +16,17 @@ public:
     using value_type = T;
     using pointer = bucket<value_type>*;
     bucket(const value_type& value_, pointer next_) : val(value_), nxt(next_) {}
-    inline const value_type& value() const { return val; }
-    inline value_type& value() { return val; }
-    inline value_type* value_ptr() const { return &val; }
-    inline pointer get_next() const { return nxt; }
-    inline void set_next(pointer next_) { nxt = next_; }
+    inline const value_type& value() const noexcept { return val; }
+    inline value_type& value() noexcept { return val; }
+    inline value_type* value_ptr() const noexcept { return &val; }
+    inline pointer get_next() const noexcept { return nxt; }
+    inline void set_next(pointer next_) noexcept { nxt = next_; }
 private:
     value_type val;
     pointer nxt;
 };
 
-int64_t next_hash_table_prime(int64_t n);
+int64_t next_hash_table_prime(int64_t n) noexcept;
 
 } // namespace std::detail
 
@@ -42,11 +42,11 @@ public:
     using self = hash_table_iterator<value_type, table_type>;
     using iterator_category = std::forward_iterator_tag;
 
-    inline hash_table_iterator() : tbl(nullptr), bkt(nullptr) {}
-    inline hash_table_iterator(table_type* table_, std::detail::bucket<value_type>* bucket_) : tbl(table_), bkt(bucket_) {}
-    inline value_type& operator*() { return bkt->value(); }
-    inline pointer operator->() { return bkt->value_ptr(); }
-    self& operator++()
+    inline hash_table_iterator() noexcept : tbl(nullptr), bkt(nullptr) {}
+    inline hash_table_iterator(table_type* table_, std::detail::bucket<value_type>* bucket_) noexcept : tbl(table_), bkt(bucket_) {}
+    inline value_type& operator*() noexcept { return bkt->value(); }
+    inline pointer operator->() noexcept { return bkt->value_ptr(); }
+    self& operator++() noexcept
     {
         std::detail::bucket<value_type>* old = bkt;
         bkt = bkt->get_next();
@@ -67,20 +67,20 @@ public:
         }
         return *this;
     }
-    self operator++(int)
+    self operator++(int) noexcept
     {
         self it = *this;
         ++*this;
         return it;
     }
-    inline std::detail::bucket<value_type>* get_bucket() const { return bkt; }
+    inline std::detail::bucket<value_type>* get_bucket() const noexcept { return bkt; }
 private:
     table_type* tbl;
     std::detail::bucket<value_type>* bkt;
 };
 
 template<typename T, typename Table>
-constexpr bool operator==(const hash_table_iterator<T, Table>& left, const hash_table_iterator<T, Table>& right)
+constexpr bool operator==(const hash_table_iterator<T, Table>& left, const hash_table_iterator<T, Table>& right) noexcept
 {
     return left.get_bucket() == right.get_bucket();
 }
@@ -106,14 +106,14 @@ public:
     {
         copy_from(that);
     }
-    hash_table(self&& that) : buckets(std::move(that.buckets)), count(that.count), loadf(that.loadf), max_loadf(that.max_loadf),
+    hash_table(self&& that) noexcept : buckets(std::move(that.buckets)), count(that.count), loadf(that.loadf), max_loadf(that.max_loadf),
         key_of_value(that.key_of_value), hash_function(that.hash_function), key_eq(that.key_eq)
     {
         that.count = 0;
     }
     ~hash_table() { clear(); }
     hash_table& operator=(const hash_table& that) { clear(); copy_from(that); return *this; }
-    hash_table& operator=(hash_table&& that)
+    hash_table& operator=(hash_table&& that) noexcept
     {
         std::swap(buckets, that.buckets);
         std::swap(count, that.count);
@@ -124,9 +124,9 @@ public:
         std::swap(key_eq, that.key_eq);
         return *this;
     }
-    inline size_type size() const { return count; }
-    inline bool empty() const { return count == 0; }
-    void clear()
+    inline size_type size() const noexcept { return count; }
+    inline bool empty() const noexcept { return count == 0; }
+    void clear() noexcept
     {
         std::vector<bucket_ptr>::size_type n = buckets.size();
         for (std::vector<bucket_ptr>::size_type i = 0; i < n; ++i)
@@ -142,16 +142,16 @@ public:
         }
         count = 0;
     }
-    inline iterator begin() { return iterator(this, first_bucket()); }
-    inline const_iterator begin() const { return const_iterator(this, first_bucket()); }
-    inline const_iterator cbegin() const { return const_iterator(this, first_bucket()); }
-    inline iterator end() { return iterator(this, static_cast<bucket_ptr>(nullptr)); }
-    inline const_iterator end() const { return const_iterator(this, static_cast<bucket_ptr>(nullptr)); }
-    inline const_iterator cend() const { return const_iterator(this, static_cast<bucket_ptr>(nullptr)); }
-    inline size_type bucket_count() const { return buckets.size(); }
-    inline size_type bucket_index(const value_type& value) { return do_hash(key_of(value)); }
-    inline bucket_ptr get_bucket(size_type index) const { return buckets[index]; }
-    size_type bucket_size(size_type n) const
+    inline iterator begin() noexcept { return iterator(this, first_bucket()); }
+    inline const_iterator begin() const noexcept { return const_iterator(this, first_bucket()); }
+    inline const_iterator cbegin() const noexcept { return const_iterator(this, first_bucket()); }
+    inline iterator end() noexcept { return iterator(this, static_cast<bucket_ptr>(nullptr)); }
+    inline const_iterator end() const noexcept { return const_iterator(this, static_cast<bucket_ptr>(nullptr)); }
+    inline const_iterator cend() const noexcept { return const_iterator(this, static_cast<bucket_ptr>(nullptr)); }
+    inline size_type bucket_count() const noexcept { return buckets.size(); }
+    inline size_type bucket_index(const value_type& value) noexcept { return do_hash(key_of(value)); }
+    inline bucket_ptr get_bucket(size_type index) const noexcept { return buckets[index]; }
+    size_type bucket_size(size_type n) const noexcept
     {
         size_type sz = 0;
         bucket_ptr bkt = buckets[n];
@@ -162,12 +162,12 @@ public:
         }
         return sz;
     }
-    inline size_type bucket(const key_type& k) { return do_hash(k); }
-    inline hash_fn get_hash_function() const { return hash_function; }
-    inline key_equal get_key_eq() const { return key_eq; }
+    inline size_type bucket(const key_type& k) noexcept { return do_hash(k); }
+    inline hash_fn get_hash_function() const noexcept { return hash_function; }
+    inline key_equal get_key_eq() const noexcept { return key_eq; }
     inline float load_factor() const noexcept { return loadf; }
     inline float max_load_factor() const noexcept { return max_loadf; }
-    inline void max_load_factor(float z) { max_loadf = z; }
+    inline void max_load_factor(float z) noexcept { max_loadf = z; }
     pair<iterator, bool> insert(const value_type& value)
     {
         if (buckets.empty())
@@ -312,7 +312,7 @@ public:
         }
         return 0;
     }
-    iterator find(const key_type& key)
+    iterator find(const key_type& key) noexcept
     {
         size_type index = do_hash(key);
         if (index >= 0)
@@ -329,7 +329,7 @@ public:
         }
         return end();
     }
-    const_iterator find(const key_type& key) const
+    const_iterator find(const key_type& key) const noexcept
     {
         size_type index = do_hash(key);
         if (index >= 0)
@@ -346,22 +346,22 @@ public:
         }
         return cend();
     }
-    inline bool contains(const key_type& key) const { return find(key) != cend(); }
+    inline bool contains(const key_type& key) const noexcept { return find(key) != cend(); }
 private:
-    inline const key_type& key_of(const value_type& value) const
+    inline const key_type& key_of(const value_type& value) const noexcept
     {
         return key_of_value(value);
     }
-    inline bool keys_equal(const key_type& key1, const key_type& key2) const
+    inline bool keys_equal(const key_type& key1, const key_type& key2) const noexcept
     {
         return key_eq(key1, key2);
     }
-    inline size_type do_hash(const key_type& key) const
+    inline size_type do_hash(const key_type& key) const noexcept
     {
         if (buckets.empty()) return size_type(-1);
         return hash_function(key) % size_type(buckets.size());
     }
-    bucket_ptr first_bucket()
+    bucket_ptr first_bucket() noexcept
     {
         bucket_ptr bkt = nullptr;
         std::vector<bucket_ptr>::size_type n = buckets.size();
@@ -389,7 +389,7 @@ private:
         loadf = that.loadf;
         max_loadf = that.max_loadf;
     }
-    void set_load_factor()
+    void set_load_factor() noexcept
     {
         size_type n = buckets.size();
         if (n == 0)

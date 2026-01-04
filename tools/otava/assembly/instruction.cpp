@@ -46,8 +46,16 @@ const char* opCodeStr[] =
     "movdqa", "movq", "movss", "addsd", "addss", "subsd", "subss", "mulsd", "mulss", "divsd", "divss", "ucomisd", "ucomiss", "comisd", "comiss",
     "xorpd", "xorps", "cvtsi2sd", "cvtsi2ss", "cvttss2si", "cvtss2sd", "cvtsd2ss", "cvttsd2si",
     // data definition support:
-    "DB", "DW", "DD", "DQ", "REAL4", "REAL8"
+    "DB", "DW", "DD", "DQ", "REAL4", "REAL8",
+    ".allocstack", ".pushreg", ".savereg", ".savexmm128", ".setframe", ".endprolog"
 };
+
+// .allocstack STACK_SIZE
+// .pushreg REG
+// .savereg REG, OFFSET
+// .savexmm128 XMMREG, OFFSET
+// .setframe REG, OFFSET
+// .endprolog
 
 std::string OpCodeStr(OpCode opCode)
 {

@@ -9,6 +9,11 @@ import std.type.fundamental;
 
 export {
 
+using TryFn = void(*)(void*);
+using HandlerFn = void(*)(void*);
+using InvokeFn = void(*)(void*);
+using CleanUpFn = void(*)(void*);
+
 extern "C" void* ort_malloc(size_t size);
 extern "C" void ort_free(void* ptr);
 extern "C" void ort_debug_memory();
@@ -120,7 +125,19 @@ extern "C" void ort_pop_function(void* traceEntry);
 extern "C" int ort_generate_stack_trace();
 extern "C" const char* ort_get_stack_trace(int traceId);
 extern "C" void ort_free_stack_trace(int traceId);
-
+extern "C" void ort_throw(void* ex, std::uint64_t ext1, std::uint64_t ext2);
+extern "C" void ort_rethrow();
+extern "C" void ort_try(TryFn tryFn, HandlerFn handlerFn, void* parentFrame);
+extern "C" void ort_invoke(InvokeFn invokeFn, CleanUpFn cleanupFn, void* parentFrame);
+extern "C" bool ort_begin_catch(std::uint64_t ext1, std::uint64_t ext2);
+extern "C" void ort_end_catch();
+extern "C" void ort_resume();
+extern "C" void* ort_get_exception();
+extern "C" void ort_print_exception_stack_trace();
+extern "C" void ort_set_bad_alloc(void* ex, std::uint64_t ext1_, std::uint64_t ext2_);
+extern "C" bool ort_is_bad_alloc(std::uint64_t ext1_, std::uint64_t ext2_);
+extern "C" bool ort_current_ex_is_bad_alloc();
+extern "C" void* ort_get_bad_alloc();
 using FILE = void;
 int stdin_ = 0;
 int stdout_ = 1;

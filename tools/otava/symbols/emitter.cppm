@@ -27,7 +27,7 @@ public:
     inline otava::intermediate::Context* GetIntermediateContext() { return context; }
     void ResolveReferences();
     void Emit();
-    otava::intermediate::Function* CreateFunction(const std::string& name, otava::intermediate::Type* type, bool inline_, bool once);
+    otava::intermediate::Function* CreateFunction(const std::string& name, otava::intermediate::Type* type, bool inline_, bool once, bool child);
     void SetRegNumbers();
     inline otava::intermediate::Function* GetOrInsertFunction(const std::string& name, otava::intermediate::FunctionType* functionType)
     {
@@ -151,6 +151,7 @@ public:
     inline otava::intermediate::Value* EmitParam(otava::intermediate::Type* type) { return context->CreateParam(type); }
     inline otava::intermediate::Value* EmitLocal(otava::intermediate::Type* type) { return context->CreateLocal(type); }
     inline otava::intermediate::Value* EmitLocalInEntryBlock(otava::intermediate::Type* type) { return context->CreateLocalInEntryBlock(type); }
+    inline otava::intermediate::Value* EmitPLocal(otava::intermediate::Type* type, int level) { return context->CreatePLocal(type, level); }
     inline otava::intermediate::Value* EmitLoad(otava::intermediate::Value* value) { return context->CreateLoad(value); }
     inline void EmitStore(otava::intermediate::Value* value, otava::intermediate::Value* ptr) { context->CreateStore(value, ptr); }
     inline otava::intermediate::Value* EmitArg(otava::intermediate::Value* value) { return context->CreateArg(value); }
@@ -175,6 +176,10 @@ public:
     inline otava::intermediate::SwitchInstruction* EmitSwitch(otava::intermediate::Value* cond, otava::intermediate::BasicBlock* defaultDest)
     {
         return context->CreateSwitch(cond, defaultDest);
+    }
+    inline otava::intermediate::Value* EmitGetRbp()
+    {
+        return context->CreateGetRbp();
     }
     inline void EmitNop() { context->CreateNop(); }
     otava::intermediate::Type* GetType(const util::uuid& id) const;

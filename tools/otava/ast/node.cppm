@@ -42,7 +42,8 @@ enum class NodeKind : std::uint16_t
     packDeclaratorIdNode, arrayDeclaratorNode, functionDeclaratorNode, prefixNode, trailingQualifiersNode, trailingAttributesNode, ptrDeclaratorNode,
     expressionListNode, assignmentInitializerNode,
     conditionalExprNode, questNode, colonNode, commaNode, binaryExprNode, unaryExprNode, yieldExprNode, throwExprNode,
-    assignNode, plusAssignNode, minusAssignNode, mulAssignNode, divAssignNode, modAssignNode, xorAssignNode, andAssignNode, orAssignNode, shiftLeftAssignNode, shiftRightAssignNode,
+    assignNode, plusAssignNode, minusAssignNode, mulAssignNode, divAssignNode, modAssignNode, xorAssignNode, andAssignNode, orAssignNode, 
+    shiftLeftAssignNode, shiftRightAssignNode,
     disjunctionNode, conjunctionNode, inclusiveOrNode, exclusiveOrNode, andNode, equalNode, notEqualNode, lessNode, greaterNode, lessOrEqualNode, greaterOrEqualNode,
     compareNode, shiftLeftNode, shiftRightNode, plusNode, minusNode, mulNode, divNode, modNode, dotStarNode, arrowStarNode,
     castExprNode, derefNode, addrOfNode, notNode, complementNode, prefixIncNode, prefixDecNode,
@@ -55,14 +56,15 @@ enum class NodeKind : std::uint16_t
     defaultRefCaptureNode, defaultCopyCaptureNode, byRefCaptureNode, simpleCaptureNode, initCaptureNode, currentObjectCopyCapture, currentObjectByRefCapture,
     integerLiteralNode, floatingLiteralNode, characterLiteralNode, stringLiteralNode, rawStringLiteralNode, booleanLiteralNode, nullPtrLiteralNode, 
     userDefinedLiteralNode, literalOperatorIdNode,
-    labeledStatementNode, caseStatmentNode, defaultStatementNode, compoundStatementNode, ifStatementNode, switchStatemeNode, whileStatementNode, doStatementNode,
-    rangeForStatementNode, forRangeDeclarationNode, structuredBindingNode, forStatementNode, breakStatementNode, continueStatementNode, returnStatementNode, coReturnStatementNode,
+    labeledStatementNode, caseStatmentNode, defaultStatementNode, compoundStatementNode, sequenceStatementNode, ifStatementNode, switchStatemeNode, 
+    whileStatementNode, doStatementNode, rangeForStatementNode, forRangeDeclarationNode, structuredBindingNode, forStatementNode, 
+    breakStatementNode, continueStatementNode, returnStatementNode, coReturnStatementNode,
     gotoStatementNode, tryStatementNode, handlerSequenceNode, handlerNode, exceptionDeclarationNode, expressionStatementNode, declarationStatementNode, initConditionNode, 
     semicolonNode,
     templateDeclarationNode, templateHeadNode, templateParameterListNode, typeParameterNode, templateIdNode, typenameNode, deductionGuideNode, explicitInstantiationNode, 
     explicitSpecializationNode,
-    declarationSequenceNode, simpleDeclarationNode, usingDeclarationNode, usingNode, usingDeclaratorListNode, usingEnumDeclarationNode, emptyDeclarationNode, namespaceNode, 
-    usingDirectiveNode,
+    declarationSequenceNode, simpleDeclarationNode, usingDeclarationNode, usingNode, usingDeclaratorListNode, usingEnumDeclarationNode, 
+    emptyDeclarationNode, namespaceNode, usingDirectiveNode,
     asmDeclarationNode, asmNode, namespaceAliasDefinitionNode, staticAssertDeclarationNode, staticAssertNode, aliasDeclarationNode, definingTypeIdNode, 
     definingTypeSpecifierSequenceNode,
     opaqueEnumDeclarationNode, noDeclSpecFunctionDeclarationNode, linkageSpecificationNode, namespaceDefinitionNode, namespaceBodyNode, attributeDeclarationNode,
@@ -82,8 +84,8 @@ enum class NodeKind : std::uint16_t
     conceptDefinitionNode, requiresExprNode, requirementBodyNode, simpleRequirementNode, typeRequirementNode, compoundRequirementNode, returnTypeRequirementNode, 
     nestedRequirementNode,
     typeConstraintNode, requiresClauseNode,
-    attributeSpecifierSequenceNode, attributeSpecifierNode, attributeUsingPrefixNode, attrbuteNode, attributeScopedTokenNode, attributeArgumentsNode, balancedTokenSequenceNode, 
-    tokenNode,
+    attributeSpecifierSequenceNode, attributeSpecifierNode, attributeUsingPrefixNode, attrbuteNode, attributeScopedTokenNode, 
+    attributeArgumentsNode, balancedTokenSequenceNode, tokenNode,
     lparenNode, rparenNode, lbracketNode, rbracketNode, lbraceNode, rbraceNode, alignmentSpecifierNode,
     pragmaNode, boundStatementNode,
     max
@@ -120,6 +122,8 @@ public:
     inline bool IsUnionNode() const { return kind == NodeKind::unionNode; }
     inline bool IsClassSpecifierNode() const { return kind == NodeKind::classSpecifierNode; }
     inline bool IsCompoundStatementNode() const { return kind == NodeKind::compoundStatementNode; }
+    inline bool IsSequenceStatemetnNode() const { return kind == NodeKind::sequenceStatementNode; }
+    inline bool IsReturnStatementNode() const { return kind == NodeKind::returnStatementNode; }
     inline bool IsCtorInitializerNode() const { return kind == NodeKind::constructorInitializerNode; }
     inline bool IsFunctionBodyNode() const { return kind == NodeKind::functionBodyNode; }
     inline bool IsConstructorNode() const { return kind == NodeKind::constructorNode; }
@@ -145,6 +149,10 @@ public:
     inline bool IsRBraceNode() const { return kind == NodeKind::rbraceNode; }
     inline bool IsFunctionDeclaratorNode() const { return kind == NodeKind::functionDeclaratorNode; }
     inline bool IsTypenameSpecifierNode() const { return kind == NodeKind::typenameSpecifierNode; }
+    inline bool IsConstNode() const { return kind == NodeKind::constNode; }
+    inline bool IsLvalueRefNode() const { return kind == NodeKind::lvalueRefNode; }
+    inline bool IsRvalueRefNode() const { return kind == NodeKind::rvalueRefNode; }
+    inline bool IsPtrNode() const { return kind == NodeKind::ptrNode; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;
@@ -170,6 +178,7 @@ public:
     NodeType Type() const override { return NodeType::unary; }
     int Count() const override { return 1; }
     inline Node* Child() const { return child.get(); }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> child;
 };
@@ -186,6 +195,7 @@ public:
     int Count() const override { return 2; }
     inline Node* Left() const { return left.get(); }
     inline Node* Right() const { return right.get(); }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> left;
     std::unique_ptr<Node> right;
@@ -204,6 +214,7 @@ public:
     void Clear() override;
     inline NodeList<Node>& Nodes() { return nodes; }
     inline const NodeList<Node>& Nodes() const { return nodes; }
+    std::u32string Str() const override;
 private:
     NodeList<Node> nodes;
 };
@@ -221,6 +232,7 @@ public:
     inline NodeList<Node>& Nodes() { return nodes; }
     inline const NodeList<Node>& Nodes() const { return nodes; }
     inline const std::vector<Node*>& Items() const { return items; }
+    std::u32string Str() const override;
 private:
     NodeList<Node> nodes;
     std::vector<Node*> items;

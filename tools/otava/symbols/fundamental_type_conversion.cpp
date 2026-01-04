@@ -261,6 +261,7 @@ FundamentalTypeBooleanConversion::FundamentalTypeBooleanConversion(TypeSymbol* t
     ParameterSymbol* param = new ParameterSymbol(U"param", argType);
     AddParameter(param, soul::ast::SourcePos(), context);
     SetReturnType(boolType, context);
+    SetNoExcept();
 }
 
 TypeSymbol* FundamentalTypeBooleanConversion::ConversionParamType() const 

@@ -111,7 +111,7 @@ void Function::Write(util::CodeFormatter& formatter)
         }
         formatter.WriteLine();
     }
-    formatter.WriteLine(name + " PROC");
+    formatter.WriteLine(name + " PROC FRAME");
     formatter.IncIndent();
     for (const auto& instruction : prologue)
     {

@@ -81,7 +81,9 @@ public:
 private:
     void ComputeLiveRanges(Function& function);
     void ExpireOldRanges(const LiveRange& range);
+    Frame& GetPFrame(int level);
     Frame frame;
+    std::vector<Frame> pframes;
     std::set<LiveRange, LiveRangeByStart> liveRanges;
     std::set<LiveRange, LiveRangeByEnd> activeInteger;
     std::set<LiveRange, LiveRangeByEnd> activeFP;

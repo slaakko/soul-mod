@@ -66,6 +66,7 @@ public:
     void Visit(NotInstruction& inst) override;
     void Visit(NegInstruction& inst) override;
     void Visit(NoOperationInstruction& inst) override;
+    void Visit(GetRbpInstruction& inst) override;
     void Visit(SwitchInstruction& inst) override;
     void Visit(BoolValue& value) override;
     void Visit(SByteValue& value) override;

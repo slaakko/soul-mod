@@ -135,11 +135,12 @@ std::string GenerateMainWrapper(otava::symbols::Context* context, int numParams)
 std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const std::string& mainFilePath, const std::string& mainFunctionIrName, int numParams, 
     const std::vector<std::string>& compileUnitInitFnNames, const std::string& config, int optLevel, Project* project)
 {
-    otava::symbols::Module* core = moduleMapper.GetModule("std.core", config, optLevel);
+    otava::symbols::Module* std = moduleMapper.GetModule("std", config, optLevel);
     otava::symbols::Module main("main");
+    main.Import(std, moduleMapper, config, optLevel);
     std::unique_ptr<otava::symbols::SymbolTable> symbolTable(new otava::symbols::SymbolTable());
     symbolTable->SetModule(&main);
-    symbolTable->Import(*core->GetSymbolTable(), moduleMapper.GetFunctionDefinitionSymbolSet());
+    symbolTable->Import(*std->GetSymbolTable(), moduleMapper.GetFunctionDefinitionSymbolSet());
     otava::symbols::Emitter emitter;
     otava::symbols::Context context;
     context.SetEmitter(&emitter);

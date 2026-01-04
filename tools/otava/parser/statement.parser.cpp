@@ -8,7 +8,6 @@ import soul.ast.common;
 import soul.ast.spg;
 import soul.ast.source.pos;
 import soul.ast.lexer.pos.pair;
-import otava.ast;
 import otava.token;
 import otava.lexer;
 import otava.symbols;
@@ -25,6 +24,45 @@ import otava.parser.type;
 import soul.ast.lexer.pos.pair;
 
 namespace otava::parser::statement {
+
+template<typename LexerT>
+std::unique_ptr<otava::ast::Node> StatementParser<LexerT>::Parse(LexerT& lexer, otava::symbols::Context* context)
+{
+    std::unique_ptr<otava::ast::Node> value;
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (lexer.Log())
+    {
+        lexer.Log()->WriteBeginRule("parse");
+        lexer.Log()->IncIndent();
+    }
+    #endif
+    ++lexer;
+    soul::parser::Match match = StatementParser<LexerT>::Statement(lexer, context);
+    value.reset(static_cast<otava::ast::Node*>(match.value));
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (lexer.Log())
+    {
+        lexer.Log()->DecIndent();
+        lexer.Log()->WriteEndRule("parse");
+    }
+    #endif
+    if (match.hit)
+    {
+        if (*lexer == soul::lexer::END_TOKEN)
+        {
+            return value;
+        }
+        else
+        {
+            lexer.ThrowFarthestError();
+        }
+    }
+    else
+    {
+        lexer.ThrowFarthestError();
+    }
+    return value;
+}
 
 template<typename LexerT>
 soul::parser::Match StatementParser<LexerT>::Statement(LexerT& lexer, otava::symbols::Context* context)
@@ -46,6 +84,7 @@ soul::parser::Match StatementParser<LexerT>::Statement(LexerT& lexer, otava::sym
     std::unique_ptr<otava::ast::Node> jumpStatement;
     std::unique_ptr<otava::ast::Node> expressionStatement;
     std::unique_ptr<otava::ast::Node> declarationStatement;
+    std::unique_ptr<otava::ast::Node> tryStatement;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -73,45 +112,78 @@ soul::parser::Match StatementParser<LexerT>::Statement(LexerT& lexer, otava::sym
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch6 = &match;
                             {
-                                std::int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::LabeledStatement(lexer, context);
-                                labeledStatement.reset(static_cast<otava::ast::Node*>(match.value));
-                                if (match.hit)
+                                std::int64_t save = lexer.GetPos();
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch7 = &match;
                                 {
+                                    std::int64_t pos = lexer.GetPos();
+                                    soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::LabeledStatement(lexer, context);
+                                    labeledStatement.reset(static_cast<otava::ast::Node*>(match.value));
+                                    if (match.hit)
                                     {
-                                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Statement");
-                                        #endif
-                                        return soul::parser::Match(true, labeledStatement.release());
+                                        {
+                                            #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                            if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Statement");
+                                            #endif
+                                            return soul::parser::Match(true, labeledStatement.release());
+                                        }
                                     }
+                                    *parentMatch7 = match;
                                 }
                                 *parentMatch6 = match;
+                                if (!match.hit)
+                                {
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch8 = &match;
+                                    lexer.SetPos(save);
+                                    {
+                                        soul::parser::Match match(false);
+                                        soul::parser::Match* parentMatch9 = &match;
+                                        {
+                                            std::int64_t pos = lexer.GetPos();
+                                            soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::CompoundStatement(lexer, context);
+                                            compoundStatement.reset(static_cast<otava::ast::Node*>(match.value));
+                                            if (match.hit)
+                                            {
+                                                {
+                                                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Statement");
+                                                    #endif
+                                                    return soul::parser::Match(true, compoundStatement.release());
+                                                }
+                                            }
+                                            *parentMatch9 = match;
+                                        }
+                                        *parentMatch8 = match;
+                                    }
+                                    *parentMatch6 = match;
+                                }
                             }
                             *parentMatch5 = match;
                             if (!match.hit)
                             {
                                 soul::parser::Match match(false);
-                                soul::parser::Match* parentMatch7 = &match;
+                                soul::parser::Match* parentMatch10 = &match;
                                 lexer.SetPos(save);
                                 {
                                     soul::parser::Match match(false);
-                                    soul::parser::Match* parentMatch8 = &match;
+                                    soul::parser::Match* parentMatch11 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::CompoundStatement(lexer, context);
-                                        compoundStatement.reset(static_cast<otava::ast::Node*>(match.value));
+                                        soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::SelectionStatement(lexer, context);
+                                        selectionStatement.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
                                         {
                                             {
                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Statement");
                                                 #endif
-                                                return soul::parser::Match(true, compoundStatement.release());
+                                                return soul::parser::Match(true, selectionStatement.release());
                                             }
                                         }
-                                        *parentMatch8 = match;
+                                        *parentMatch11 = match;
                                     }
-                                    *parentMatch7 = match;
+                                    *parentMatch10 = match;
                                 }
                                 *parentMatch5 = match;
                             }
@@ -120,27 +192,27 @@ soul::parser::Match StatementParser<LexerT>::Statement(LexerT& lexer, otava::sym
                         if (!match.hit)
                         {
                             soul::parser::Match match(false);
-                            soul::parser::Match* parentMatch9 = &match;
+                            soul::parser::Match* parentMatch12 = &match;
                             lexer.SetPos(save);
                             {
                                 soul::parser::Match match(false);
-                                soul::parser::Match* parentMatch10 = &match;
+                                soul::parser::Match* parentMatch13 = &match;
                                 {
                                     std::int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::SelectionStatement(lexer, context);
-                                    selectionStatement.reset(static_cast<otava::ast::Node*>(match.value));
+                                    soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::IterationStatement(lexer, context);
+                                    iterationStatement.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
                                     {
                                         {
                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Statement");
                                             #endif
-                                            return soul::parser::Match(true, selectionStatement.release());
+                                            return soul::parser::Match(true, iterationStatement.release());
                                         }
                                     }
-                                    *parentMatch10 = match;
+                                    *parentMatch13 = match;
                                 }
-                                *parentMatch9 = match;
+                                *parentMatch12 = match;
                             }
                             *parentMatch4 = match;
                         }
@@ -149,27 +221,27 @@ soul::parser::Match StatementParser<LexerT>::Statement(LexerT& lexer, otava::sym
                     if (!match.hit)
                     {
                         soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch11 = &match;
+                        soul::parser::Match* parentMatch14 = &match;
                         lexer.SetPos(save);
                         {
                             soul::parser::Match match(false);
-                            soul::parser::Match* parentMatch12 = &match;
+                            soul::parser::Match* parentMatch15 = &match;
                             {
                                 std::int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::IterationStatement(lexer, context);
-                                iterationStatement.reset(static_cast<otava::ast::Node*>(match.value));
+                                soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::JumpStatement(lexer, context);
+                                jumpStatement.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
                                     {
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Statement");
                                         #endif
-                                        return soul::parser::Match(true, iterationStatement.release());
+                                        return soul::parser::Match(true, jumpStatement.release());
                                     }
                                 }
-                                *parentMatch12 = match;
+                                *parentMatch15 = match;
                             }
-                            *parentMatch11 = match;
+                            *parentMatch14 = match;
                         }
                         *parentMatch3 = match;
                     }
@@ -178,27 +250,27 @@ soul::parser::Match StatementParser<LexerT>::Statement(LexerT& lexer, otava::sym
                 if (!match.hit)
                 {
                     soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch13 = &match;
+                    soul::parser::Match* parentMatch16 = &match;
                     lexer.SetPos(save);
                     {
                         soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch14 = &match;
+                        soul::parser::Match* parentMatch17 = &match;
                         {
                             std::int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::JumpStatement(lexer, context);
-                            jumpStatement.reset(static_cast<otava::ast::Node*>(match.value));
+                            soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::ExpressionStatement(lexer, context);
+                            expressionStatement.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
                                 {
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Statement");
                                     #endif
-                                    return soul::parser::Match(true, jumpStatement.release());
+                                    return soul::parser::Match(true, expressionStatement.release());
                                 }
                             }
-                            *parentMatch14 = match;
+                            *parentMatch17 = match;
                         }
-                        *parentMatch13 = match;
+                        *parentMatch16 = match;
                     }
                     *parentMatch2 = match;
                 }
@@ -207,27 +279,27 @@ soul::parser::Match StatementParser<LexerT>::Statement(LexerT& lexer, otava::sym
             if (!match.hit)
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch15 = &match;
+                soul::parser::Match* parentMatch18 = &match;
                 lexer.SetPos(save);
                 {
                     soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch16 = &match;
+                    soul::parser::Match* parentMatch19 = &match;
                     {
                         std::int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::ExpressionStatement(lexer, context);
-                        expressionStatement.reset(static_cast<otava::ast::Node*>(match.value));
+                        soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::DeclarationStatement(lexer, context);
+                        declarationStatement.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
                             {
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Statement");
                                 #endif
-                                return soul::parser::Match(true, expressionStatement.release());
+                                return soul::parser::Match(true, declarationStatement.release());
                             }
                         }
-                        *parentMatch16 = match;
+                        *parentMatch19 = match;
                     }
-                    *parentMatch15 = match;
+                    *parentMatch18 = match;
                 }
                 *parentMatch1 = match;
             }
@@ -236,27 +308,27 @@ soul::parser::Match StatementParser<LexerT>::Statement(LexerT& lexer, otava::sym
         if (!match.hit)
         {
             soul::parser::Match match(false);
-            soul::parser::Match* parentMatch17 = &match;
+            soul::parser::Match* parentMatch20 = &match;
             lexer.SetPos(save);
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch18 = &match;
+                soul::parser::Match* parentMatch21 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::DeclarationStatement(lexer, context);
-                    declarationStatement.reset(static_cast<otava::ast::Node*>(match.value));
+                    soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::TryStatement(lexer, context);
+                    tryStatement.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Statement");
                             #endif
-                            return soul::parser::Match(true, declarationStatement.release());
+                            return soul::parser::Match(true, tryStatement.release());
                         }
                     }
-                    *parentMatch18 = match;
+                    *parentMatch21 = match;
                 }
-                *parentMatch17 = match;
+                *parentMatch20 = match;
             }
             *parentMatch0 = match;
         }
@@ -4800,6 +4872,631 @@ soul::parser::Match StatementParser<LexerT>::DeclarationStatement(LexerT& lexer,
 }
 
 template<typename LexerT>
+soul::parser::Match StatementParser<LexerT>::TryStatement(LexerT& lexer, otava::symbols::Context* context)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    std::int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, "TryStatement");
+    }
+    #endif
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4569043890895585306);
+    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::SourcePos tryPos = soul::ast::SourcePos();
+    std::unique_ptr<otava::ast::Node> attributes;
+    std::unique_ptr<otava::ast::Node> tryBlock;
+    std::unique_ptr<otava::ast::Node> handlers;
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        soul::parser::Match match(true);
+        std::int64_t save = lexer.GetPos();
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    std::int64_t pos = lexer.GetPos();
+                    soul::parser::Match match = otava::parser::attribute::AttributeParser<LexerT>::AttributeSpecifierSeq(lexer, context);
+                    attributes.reset(static_cast<otava::ast::Node*>(match.value));
+                    if (match.hit)
+                    {
+                        sourcePos = lexer.GetSourcePos(pos);
+                    }
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
+            }
+            if (match.hit)
+            {
+                *parentMatch1 = match;
+            }
+            else
+            {
+                lexer.SetPos(save);
+            }
+        }
+        *parentMatch0 = match;
+    }
+    if (match.hit)
+    {
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch4 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch5 = &match;
+            {
+                std::int64_t pos = lexer.GetPos();
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch6 = &match;
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch7 = &match;
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch8 = &match;
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch9 = &match;
+                            {
+                                std::int64_t pos = lexer.GetPos();
+                                soul::parser::Match match(false);
+                                if (*lexer == otava::token::TRY)
+                                {
+                                    ++lexer;
+                                    match.hit = true;
+                                }
+                                if (match.hit)
+                                {
+                                    tryPos = lexer.GetSourcePos(pos);
+                                    if (!sourcePos.IsValid()) sourcePos = tryPos;
+                                }
+                                *parentMatch9 = match;
+                            }
+                            *parentMatch8 = match;
+                        }
+                        if (match.hit)
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch10 = &match;
+                            {
+                                soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::CompoundStatement(lexer, context);
+                                tryBlock.reset(static_cast<otava::ast::Node*>(match.value));
+                                *parentMatch10 = match;
+                            }
+                            *parentMatch8 = match;
+                        }
+                        *parentMatch7 = match;
+                    }
+                    if (match.hit)
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch11 = &match;
+                        {
+                            soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::HandlerSequence(lexer, context);
+                            handlers.reset(static_cast<otava::ast::Node*>(match.value));
+                            *parentMatch11 = match;
+                        }
+                        *parentMatch7 = match;
+                    }
+                    *parentMatch6 = match;
+                }
+                if (match.hit)
+                {
+                    {
+                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TryStatement");
+                        #endif
+                        return soul::parser::Match(true, new otava::ast::TryStatementNode(sourcePos, tryBlock.release(), handlers.release(), attributes.release(), tryPos));
+                    }
+                }
+                *parentMatch5 = match;
+            }
+            *parentMatch4 = match;
+        }
+        *parentMatch0 = match;
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TryStatement");
+        else soul::lexer::WriteFailureToLog(lexer, "TryStatement");
+    }
+    #endif
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template<typename LexerT>
+soul::parser::Match StatementParser<LexerT>::HandlerSequence(LexerT& lexer, otava::symbols::Context* context)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    std::int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, "HandlerSequence");
+    }
+    #endif
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4569043890895585307);
+    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    std::unique_ptr<otava::ast::HandlerSequenceNode> handlers = std::unique_ptr<otava::ast::HandlerSequenceNode>();
+    std::unique_ptr<otava::ast::Node> first;
+    std::unique_ptr<otava::ast::Node> next;
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        std::int64_t pos = lexer.GetPos();
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    std::int64_t pos = lexer.GetPos();
+                    soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::Handler(lexer, context);
+                    first.reset(static_cast<otava::ast::Node*>(match.value));
+                    if (match.hit)
+                    {
+                        sourcePos = lexer.GetSourcePos(pos);
+                        handlers.reset(new otava::ast::HandlerSequenceNode(sourcePos));
+                        handlers->AddNode(first.release());
+                    }
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
+            }
+            if (match.hit)
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch4 = &match;
+                {
+                    soul::parser::Match match(true);
+                    soul::parser::Match* parentMatch5 = &match;
+                    {
+                        while (true)
+                        {
+                            std::int64_t save = lexer.GetPos();
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch6 = &match;
+                                {
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch7 = &match;
+                                    {
+                                        std::int64_t pos = lexer.GetPos();
+                                        soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::Handler(lexer, context);
+                                        next.reset(static_cast<otava::ast::Node*>(match.value));
+                                        if (match.hit)
+                                        {
+                                            handlers->AddNode(next.release());
+                                        }
+                                        *parentMatch7 = match;
+                                    }
+                                    *parentMatch6 = match;
+                                }
+                                if (match.hit)
+                                {
+                                    *parentMatch5 = match;
+                                }
+                                else
+                                {
+                                    lexer.SetPos(save);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    *parentMatch4 = match;
+                }
+                *parentMatch2 = match;
+            }
+            *parentMatch1 = match;
+        }
+        if (match.hit)
+        {
+            {
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "HandlerSequence");
+                #endif
+                return soul::parser::Match(true, handlers.release());
+            }
+        }
+        *parentMatch0 = match;
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "HandlerSequence");
+        else soul::lexer::WriteFailureToLog(lexer, "HandlerSequence");
+    }
+    #endif
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template<typename LexerT>
+soul::parser::Match StatementParser<LexerT>::Handler(LexerT& lexer, otava::symbols::Context* context)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    std::int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, "Handler");
+    }
+    #endif
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4569043890895585308);
+    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::SourcePos lpPos = soul::ast::SourcePos();
+    soul::ast::SourcePos rpPos = soul::ast::SourcePos();
+    std::unique_ptr<otava::ast::Node> exception;
+    std::unique_ptr<otava::ast::Node> catchBlock;
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        std::int64_t pos = lexer.GetPos();
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch4 = &match;
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch5 = &match;
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch6 = &match;
+                            {
+                                std::int64_t pos = lexer.GetPos();
+                                soul::parser::Match match(false);
+                                if (*lexer == otava::token::CATCH)
+                                {
+                                    ++lexer;
+                                    match.hit = true;
+                                }
+                                if (match.hit)
+                                {
+                                    sourcePos = lexer.GetSourcePos(pos);
+                                }
+                                *parentMatch6 = match;
+                            }
+                            *parentMatch5 = match;
+                        }
+                        if (match.hit)
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch7 = &match;
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch8 = &match;
+                                {
+                                    std::int64_t pos = lexer.GetPos();
+                                    soul::parser::Match match(false);
+                                    if (*lexer == otava::token::LPAREN)
+                                    {
+                                        ++lexer;
+                                        match.hit = true;
+                                    }
+                                    if (match.hit)
+                                    {
+                                        lpPos = lexer.GetSourcePos(pos);
+                                    }
+                                    *parentMatch8 = match;
+                                }
+                                *parentMatch7 = match;
+                            }
+                            *parentMatch5 = match;
+                        }
+                        *parentMatch4 = match;
+                    }
+                    if (match.hit)
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch9 = &match;
+                        {
+                            soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::ExceptionDeclaration(lexer, context);
+                            exception.reset(static_cast<otava::ast::Node*>(match.value));
+                            *parentMatch9 = match;
+                        }
+                        *parentMatch4 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                if (match.hit)
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch10 = &match;
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch11 = &match;
+                        {
+                            std::int64_t pos = lexer.GetPos();
+                            soul::parser::Match match(false);
+                            if (*lexer == otava::token::RPAREN)
+                            {
+                                ++lexer;
+                                match.hit = true;
+                            }
+                            if (match.hit)
+                            {
+                                rpPos = lexer.GetSourcePos(pos);
+                            }
+                            *parentMatch11 = match;
+                        }
+                        *parentMatch10 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
+            }
+            if (match.hit)
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch12 = &match;
+                {
+                    soul::parser::Match match = otava::parser::statement::StatementParser<LexerT>::CompoundStatement(lexer, context);
+                    catchBlock.reset(static_cast<otava::ast::Node*>(match.value));
+                    *parentMatch12 = match;
+                }
+                *parentMatch2 = match;
+            }
+            *parentMatch1 = match;
+        }
+        if (match.hit)
+        {
+            {
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Handler");
+                #endif
+                return soul::parser::Match(true, new otava::ast::HandlerNode(sourcePos, exception.release(), catchBlock.release(), lpPos, rpPos));
+            }
+        }
+        *parentMatch0 = match;
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Handler");
+        else soul::lexer::WriteFailureToLog(lexer, "Handler");
+    }
+    #endif
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template<typename LexerT>
+soul::parser::Match StatementParser<LexerT>::ExceptionDeclaration(LexerT& lexer, otava::symbols::Context* context)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    std::int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, "ExceptionDeclaration");
+    }
+    #endif
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4569043890895585309);
+    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    std::unique_ptr<otava::ast::Node> declarator = std::unique_ptr<otava::ast::Node>();
+    std::unique_ptr<otava::ast::Node> attributes;
+    std::unique_ptr<otava::ast::Node> typeSpecifiers;
+    std::unique_ptr<otava::ast::Node> decl;
+    std::unique_ptr<otava::ast::Node> abstractDeclarator;
+    std::unique_ptr<otava::ast::Node> ellipsis;
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        soul::parser::Match match(true);
+        std::int64_t save = lexer.GetPos();
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    std::int64_t pos = lexer.GetPos();
+                    soul::parser::Match match = otava::parser::attribute::AttributeParser<LexerT>::AttributeSpecifierSeq(lexer, context);
+                    attributes.reset(static_cast<otava::ast::Node*>(match.value));
+                    if (match.hit)
+                    {
+                        sourcePos = lexer.GetSourcePos(pos);
+                    }
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
+            }
+            if (match.hit)
+            {
+                *parentMatch1 = match;
+            }
+            else
+            {
+                lexer.SetPos(save);
+            }
+        }
+        *parentMatch0 = match;
+    }
+    if (match.hit)
+    {
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch4 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch5 = &match;
+            {
+                std::int64_t pos = lexer.GetPos();
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch6 = &match;
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch7 = &match;
+                    {
+                        std::int64_t save = lexer.GetPos();
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch8 = &match;
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch9 = &match;
+                            {
+                                std::int64_t pos = lexer.GetPos();
+                                soul::parser::Match match = otava::parser::type::TypeParser<LexerT>::TypeSpecifierSeq(lexer, context);
+                                typeSpecifiers.reset(static_cast<otava::ast::Node*>(match.value));
+                                if (match.hit)
+                                {
+                                    if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                                }
+                                *parentMatch9 = match;
+                            }
+                            *parentMatch8 = match;
+                        }
+                        if (match.hit)
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch10 = &match;
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch11 = &match;
+                                {
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch12 = &match;
+                                    {
+                                        std::int64_t save = lexer.GetPos();
+                                        soul::parser::Match match(false);
+                                        soul::parser::Match* parentMatch13 = &match;
+                                        {
+                                            std::int64_t pos = lexer.GetPos();
+                                            soul::parser::Match match = otava::parser::declaration::DeclarationParser<LexerT>::Declarator(lexer, context);
+                                            decl.reset(static_cast<otava::ast::Node*>(match.value));
+                                            if (match.hit)
+                                            {
+                                                declarator.reset(decl.release());
+                                            }
+                                            *parentMatch13 = match;
+                                        }
+                                        *parentMatch12 = match;
+                                        if (!match.hit)
+                                        {
+                                            soul::parser::Match match(false);
+                                            soul::parser::Match* parentMatch14 = &match;
+                                            lexer.SetPos(save);
+                                            {
+                                                soul::parser::Match match(true);
+                                                std::int64_t save = lexer.GetPos();
+                                                soul::parser::Match* parentMatch15 = &match;
+                                                {
+                                                    soul::parser::Match match(false);
+                                                    soul::parser::Match* parentMatch16 = &match;
+                                                    {
+                                                        soul::parser::Match match(false);
+                                                        soul::parser::Match* parentMatch17 = &match;
+                                                        {
+                                                            std::int64_t pos = lexer.GetPos();
+                                                            soul::parser::Match match = otava::parser::declaration::DeclarationParser<LexerT>::AbstractDeclarator(lexer, context);
+                                                            abstractDeclarator.reset(static_cast<otava::ast::Node*>(match.value));
+                                                            if (match.hit)
+                                                            {
+                                                                declarator.reset(abstractDeclarator.release());
+                                                            }
+                                                            *parentMatch17 = match;
+                                                        }
+                                                        *parentMatch16 = match;
+                                                    }
+                                                    if (match.hit)
+                                                    {
+                                                        *parentMatch15 = match;
+                                                    }
+                                                    else
+                                                    {
+                                                        lexer.SetPos(save);
+                                                    }
+                                                }
+                                                *parentMatch14 = match;
+                                            }
+                                            *parentMatch12 = match;
+                                        }
+                                    }
+                                    *parentMatch11 = match;
+                                }
+                                *parentMatch10 = match;
+                            }
+                            *parentMatch8 = match;
+                        }
+                        *parentMatch7 = match;
+                        if (!match.hit)
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch18 = &match;
+                            lexer.SetPos(save);
+                            {
+                                soul::parser::Match match = otava::parser::punctuation::PunctuationParser<LexerT>::Ellipsis(lexer);
+                                ellipsis.reset(static_cast<otava::ast::Node*>(match.value));
+                                *parentMatch18 = match;
+                            }
+                            *parentMatch7 = match;
+                        }
+                    }
+                    *parentMatch6 = match;
+                }
+                if (match.hit)
+                {
+                    {
+                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExceptionDeclaration");
+                        #endif
+                        return soul::parser::Match(true, new otava::ast::ExceptionDeclarationNode(sourcePos, typeSpecifiers.release(), declarator.release(), ellipsis.release(), attributes.release()));
+                    }
+                }
+                *parentMatch5 = match;
+            }
+            *parentMatch4 = match;
+        }
+        *parentMatch0 = match;
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExceptionDeclaration");
+        else soul::lexer::WriteFailureToLog(lexer, "ExceptionDeclaration");
+    }
+    #endif
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template<typename LexerT>
 soul::parser::Match StatementParser<LexerT>::InitStatement(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -4811,7 +5508,7 @@ soul::parser::Match StatementParser<LexerT>::InitStatement(LexerT& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "InitStatement");
     }
     #endif
-    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4569043890895585306);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4569043890895585310);
     std::unique_ptr<otava::ast::Node> simpleDeclaration;
     std::unique_ptr<otava::ast::Node> expressionStatement;
     soul::parser::Match match(false);
@@ -4939,7 +5636,7 @@ soul::parser::Match StatementParser<LexerT>::Condition(LexerT& lexer, otava::sym
         soul::lexer::WriteBeginRuleToLog(lexer, "Condition");
     }
     #endif
-    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4569043890895585307);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4569043890895585311);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> declSpecifiers = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> attributes;

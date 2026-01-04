@@ -1,0 +1,3 @@
+project shared_ptr_int;
+target=program;
+source <main.cpp>;

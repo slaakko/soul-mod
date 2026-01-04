@@ -1249,11 +1249,12 @@ void SubscriptExprNode::Read(Reader& reader)
     rbPos = reader.ReadSourcePos();
 }
 
-InvokeExprNode::InvokeExprNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::invokeExprNode, sourcePos_)
+InvokeExprNode::InvokeExprNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::invokeExprNode, sourcePos_), compileUnitInitFn(false)
 {
 }
 
-InvokeExprNode::InvokeExprNode(const soul::ast::SourcePos& sourcePos_, Node* subject_) : ListNode(NodeKind::invokeExprNode, sourcePos_), subject(subject_)
+InvokeExprNode::InvokeExprNode(const soul::ast::SourcePos& sourcePos_, Node* subject_) : 
+    ListNode(NodeKind::invokeExprNode, sourcePos_), subject(subject_), compileUnitInitFn(false)
 {
 }
 
@@ -1291,6 +1292,27 @@ void InvokeExprNode::Read(Reader& reader)
     subject.reset(reader.ReadNode());
     lpPos = reader.ReadSourcePos();
     rpPos = reader.ReadSourcePos();
+}
+
+std::u32string InvokeExprNode::Str() const
+{
+    std::u32string str = subject->Str();
+    str.append(U"(");
+    bool first = true;
+    for (const auto& item : Items())
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            str.append(U", ");
+        }
+        str.append(item->Str());
+    }
+    str.append(U")");
+    return str;
 }
 
 PairNode::PairNode(const soul::ast::SourcePos& sourcePos_) : BinaryNode(NodeKind::pairNode, sourcePos_, nullptr, nullptr)
@@ -1785,6 +1807,26 @@ Node* DesignatorNode::Clone() const
 }
 
 void DesignatorNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+ThrowExprNode::ThrowExprNode(const soul::ast::SourcePos& sourcePos_, Node* expr_) : UnaryNode(NodeKind::throwExprNode, sourcePos_, expr_)
+{
+}
+
+Node* ThrowExprNode::Clone() const
+{
+    Node* clonedChild = nullptr;
+    if (Child())
+    {
+        clonedChild = Child()->Clone();
+    }
+    ThrowExprNode* clone = new ThrowExprNode(GetSourcePos(), clonedChild);
+    return clone;
+}
+
+void ThrowExprNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
 }

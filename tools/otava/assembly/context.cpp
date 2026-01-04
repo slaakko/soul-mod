@@ -23,7 +23,8 @@ void CheckSize(std::int64_t size, const std::string& message)
     }
 }
 
-Context::Context() : file(nullptr), registerPool(new RegisterPool(registers)), currentFunction(nullptr), floatingLiteralCounter(0), jumpTabLabelCounter(0)
+Context::Context() : 
+    file(nullptr), registerPool(new RegisterPool(registers)), currentFunction(nullptr), floatingLiteralCounter(0), jumpTabLabelCounter(0)
 {
 }
 

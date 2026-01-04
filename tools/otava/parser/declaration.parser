@@ -62,6 +62,12 @@ parser DeclarationParser
     using TypeParser.TypeId;
     using TypeParser.DefiningTypeId;
 
+    main;
+
+    DeclarationSpecifierSequence(otava::symbols::Context* context) : otava::ast::Node*
+        ::= DeclSpecifierSeq(context):declSpecifierSeq{ return declSpecifierSeq; }
+        ;
+
     DeclarationSeq(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> sequence) : otava::ast::Node*
         ::= 
         (

@@ -59,4 +59,3 @@ private:
 export extern "C" bool ort_is_same_or_has_base(std::uint64_t derived_high, std::uint64_t derived_low, std::uint64_t base_high, std::uint64_t base_low);
 
 export extern "C" std::int64_t ort_delta(std::uint64_t derived_high, std::uint64_t derived_low, std::uint64_t base_high, std::uint64_t base_low);
-

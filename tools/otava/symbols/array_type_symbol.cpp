@@ -278,6 +278,7 @@ ArrayTypeMoveCtor::ArrayTypeMoveCtor(ArrayTypeSymbol* arrayType_, Context* conte
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddRValueRef(context));
     AddParameter(thatParam, soul::ast::SourcePos(), context);
+    SetNoExcept();
 }
 
 void ArrayTypeMoveCtor::Write(Writer& writer)
@@ -422,6 +423,7 @@ ArrayTypeMoveAssignment::ArrayTypeMoveAssignment(ArrayTypeSymbol* arrayType_, Co
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddRValueRef(context));
     AddParameter(thatParam, soul::ast::SourcePos(), context);
     SetReturnType(arrayType->AddLValueRef(context), context);
+    SetNoExcept();
 }
 
 void ArrayTypeMoveAssignment::Write(Writer& writer)
@@ -493,6 +495,7 @@ ArrayTypeBegin::ArrayTypeBegin(ArrayTypeSymbol* arrayType_, Context* context) :
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     SetReturnType(arrayType->ElementType()->AddPointer(context), context);
+    SetNoExcept();
 }
 
 void ArrayTypeBegin::Write(Writer& writer)
@@ -542,6 +545,7 @@ ArrayTypeEnd::ArrayTypeEnd(ArrayTypeSymbol* arrayType_, Context* context) :
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     SetReturnType(arrayType->ElementType()->AddPointer(context), context);
+    SetNoExcept();
 }
 
 void ArrayTypeEnd::Write(Writer& writer)

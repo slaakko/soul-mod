@@ -60,8 +60,8 @@ const char* nodeKindStr[] =
     "privateModuleFragmentNode",
     "angleHeaderNameNode", "quoteHeaderNameNode",
     "identifierNode", "unnamedNode", "colonColonNode", "nestedNameSpecifierNode", "qualifiedIdNode", "identifierListNode", "qualifiedModuleIdNode",
-    "charNode", "char8Node", "char16Node", "char32Node", "wcharNode", "boolNode", "shortNode", "intNode", "longNode", "signedNode", "unsignedNode", "floatNode", "doubleNode", 
-    "voidNode",
+    "charNode", "char8Node", "char16Node", "char32Node", "wcharNode", "boolNode", "shortNode", "intNode", "longNode", "signedNode", "unsignedNode", 
+    "floatNode", "doubleNode", "voidNode",
     "constNode", "volatileNode", "lvalueRefNode", "rvalueRefNode", "ptrNode", "cvQualifierSequenceNode", "ptrOperatorNode", "noexceptSpecifierNode", "throwSpecifierNode", 
     "packDeclaratorIdNode", "arrayDeclaratorNode",
     "functionDeclaratorNode",
@@ -75,16 +75,18 @@ const char* nodeKindStr[] =
     "compareNode", "shiftLeftNode", "shiftRightNode", "plusNode", "minusNode", "mulNode", "divNode", "modNode", "dotStarNode", "arrowStarNode",
     "castExprNode", "derefNode", "addrOfNode", "notNode", "complementNode", "prefixIncNode", "prefixDecNode",
     "awaitExprNode", "sizeOfTypeExprNode", "sizeOfPackExpNode", "sizeOfUnaryExprNode", "alignOfExprNode", "noexceptExprNode",
-    "foldExprNode", "newDeclaratorNode", "arrayNewDeclaratorNode", "newInitializerNode", "EllipsisNode", "bracedInitListNode", "designatedInitializerNode", "designatorNode",
+    "foldExprNode", "newDeclaratorNode", "arrayNewDeclaratorNode", "newInitializerNode", "EllipsisNode", "bracedInitListNode", 
+    "designatedInitializerNode", "designatorNode",
     "newExprNode", "newPlacementNode", "parenNewTypeIdNode", "newTypeIdNode", "arrayDeletePtrNode", "deletePtrNode",
-    "subscriptExprNode", "invokeExprNode", "dotNode", "templateNode", "arrowNode", "pairNode", "memberExprNode", "postfixIncExprNode", "postfixDecExprNode", "typeIdExprNode",
+    "subscriptExprNode", "invokeExprNode", "dotNode", "templateNode", "arrowNode", "pairNode", "memberExprNode", "postfixIncExprNode", 
+    "postfixDecExprNode", "typeIdExprNode",
     "dynamicCastNode", "staticCastNode", "reinterpretCastNode", "constCastNode", "cppCastExprNode", "thisNode", "parenExprNode",
     "lambdaExpressionNode", "lambdaIntroducerNode", "lambdaCaptureNode", "lambdaDeclaratorNode", "lambdaSpecifiersNode", "lambdaTemplateParamsNode",
     "defaultRefCaptureNode", "defaultCopyCaptureNode", "byRefCaptureNode", "simpleCaptureNode", "initCaptureNode", "currentObjectCopyCapture", "currentObjectByRefCapture",
     "integerLiteralNode", "floatingLiteralNode", "characterLiteralNode", "stringLiteralNode", "rawStringLiteralNode", "booleanLiteralNode", "nullPtrLiteralNode", 
-    "userDefinedLiteralNode",
-    "literalOperatorIdNode",
-    "labeledStatementNode", "caseStatmentNode", "defaultStatementNode", "compoundStatementNode", "ifStatementNode", "switchStatemeNode", "whileStatementNode", "doStatementNode",
+    "userDefinedLiteralNode", "literalOperatorIdNode",
+    "labeledStatementNode", "caseStatmentNode", "defaultStatementNode", "compoundStatementNode", "sequenceStatementNode", "ifStatementNode", "switchStatemeNode", 
+    "whileStatementNode", "doStatementNode",
     "rangeForStatementNode", "forRangeDeclarationNode", "structuredBindingNode", "forStatementNode", "breakStatementNode", "continueStatementNode", "returnStatementNode", 
     "coReturnStatementNode",
     "gotoStatementNode", "tryStatementNode", "handlerSequenceNode", "handlerNode", "exceptionDeclarationNode", "expressionStatementNode", "declarationStatementNode", 
@@ -92,17 +94,14 @@ const char* nodeKindStr[] =
     "templateDeclarationNode", "templateHeadNode", "templateParameterListNode", "typeParameterNode", "templateIdNode", "typenameNode", "deductionGuideNode", 
     "explicitInstantiationNode",
     "explicitSpecializationNode",
-    "declarationSequenceNode", "simpleDeclarationNode", "usingDeclarationNode", "usingNode", "usingDeclaratorListNode", "usingEnumDeclarationNode", "emptyDeclarationNode", 
-    "namespaceNode",
-    "usingDirectiveNode",
+    "declarationSequenceNode", "simpleDeclarationNode", "usingDeclarationNode", "usingNode", "usingDeclaratorListNode", "usingEnumDeclarationNode", 
+    "emptyDeclarationNode",  "namespaceNode", "usingDirectiveNode",
     "asmDeclarationNode", "asmNode", "namespaceAliasDefinitionNode", "staticAssertDeclarationNode", "staticAssertNode", "aliasDeclarationNode", "definingTypeIdNode", 
     "definingTypeSpecifierSequenceNode",
     "opaqueEnumDeclarationNode", "functionDeclarationNode", "linkageSpecificationNode", "namespaceDefinitionNode", "namespaceBodyNode", "attributeDeclarationNode",
     "initDeclaratorListNode", "initDeclaratorNode", "trailingFunctionDeclaratorNode", "parenthesizedDeclaratorNode", "abstractDeclaratorNode", "declSpecifierSequenceNode",
-    "friendNode", "typedefNode", "constExprNode", "constEvalNode", "constInitNode", "inlineNode", "staticNode", "threadLocalNode", "externNode", "mutableNode", "virtualNode", 
-    "explicitNode",
-    "conditionalExplicitNode",
-    "qualifiedPtrNode",
+    "friendNode", "typedefNode", "constExprNode", "constEvalNode", "constInitNode", "inlineNode", "staticNode", "threadLocalNode", "externNode", 
+    "mutableNode", "virtualNode", "explicitNode", "conditionalExplicitNode", "qualifiedPtrNode",
     "typeSpecifierSequenceNode", "typenameSpecifierNode", "typeIdNode", "trailingReturnTypeNode", "elaboratedTypeSpecifierNode", "declTypeSpecifierNode", 
     "placeholderTypeSpecifierNode",
     "classSpecifierNode", "classHeadNode", "baseClauseNode", "baseSpecifierListNode", "baseSpecifierNode", "beginAccessGroupNode", "memberDeclarationNode", 
@@ -110,16 +109,15 @@ const char* nodeKindStr[] =
     "virtSpecifierSequenceNode",
     "constructorNode", "constructorInitializerNode", "memberInitializerListNode", "memberInitializerNode",
     "publicNode", "protectedNode", "privateNode", "classNode", "structNode", "unionNode", "overrideNode", "finalNode", "pureSpecifierNode",
-    "enumSpecifierNode", "enumHeadNode", "enumBaseNode", "enumClassNode", "enumStructNode", "enumNode", "enumeratorDefinitionNode", "enumeratorNode", "elaboratedEnumSpecifierNode",
+    "enumSpecifierNode", "enumHeadNode", "enumBaseNode", "enumClassNode", "enumStructNode", "enumNode", "enumeratorDefinitionNode", 
+    "enumeratorNode", "elaboratedEnumSpecifierNode",
     "functionDefinitionNode", "functionBodyNode", "defaultedOrDeletedFunctionNode", "defaultNode", "deleteNode",
     "operatorFnIdNode", "operatorNode", "newArrayOpNode", "newOpNode", "deleteArrayOpNode", "deleteOpNode", "coAwaitOpNode", "invokeOpNode", "subscriptOpNode",
-    "conversionFnIdNode", "conversionTypeIdNode", "conversionDeclaratorNode", "destructorIdNode", "parameterNode", "parameterListNode", "noexceptNode", "functionTryBlock",
-    "conceptDefinitionNode", "requiresExprNode", "requirementBodyNode", "simpleRequirementNode", "typeRequirementNode", "compoundRequirementNode", "returnTypeRequirementNode", 
-    "nestedRequirementNode",
-    "typeConstraintNode", "requiresClauseNode",
+    "conversionFnIdNode", "conversionTypeIdNode", "conversionDeclaratorNode", "destructorIdNode", "parameterNode", "parameterListNode", "noexceptNode", 
+    "functionTryBlock", "conceptDefinitionNode", "requiresExprNode", "requirementBodyNode", "simpleRequirementNode", "typeRequirementNode", 
+    "compoundRequirementNode", "returnTypeRequirementNode", "nestedRequirementNode", "typeConstraintNode", "requiresClauseNode",
     "attributeSpecifierSequenceNode", "attributeSpecifierNode", "attributeUsingPrefixNode", "attrbuteNode", "attributeScopedTokenNode", "attributeArgumentsNode", 
-    "balancedTokenSequenceNode",
-    "tokenNode",
+    "balancedTokenSequenceNode", "tokenNode",
     "lparenNode", "rparenNode", "lbracketNode", "rbracketNode", "lbraceNode", "rbraceNode", "alignmentSpecifierNode", "pragmaNode", "boundStatementNode"
 };
 
@@ -188,6 +186,11 @@ void UnaryNode::Read(Reader& reader)
     child.reset(reader.ReadNode());
 }
 
+std::u32string UnaryNode::Str() const
+{
+    return child->Str();
+}
+
 BinaryNode::BinaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* left_, Node* right_) : Node(kind_, sourcePos_), left(left_), right(right_)
 {
     if (left)
@@ -212,6 +215,13 @@ void BinaryNode::Read(Reader& reader)
     Node::Read(reader);
     left.reset(reader.ReadNode());
     right.reset(reader.ReadNode());
+}
+
+std::u32string BinaryNode::Str() const
+{
+    std::u32string str = left->Str();
+    str.append(right->Str());
+    return str;
 }
 
 SequenceNode::SequenceNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : Node(kind_, sourcePos_)
@@ -258,6 +268,16 @@ void SequenceNode::Read(Reader& reader)
     }
 }
 
+std::u32string SequenceNode::Str() const
+{
+    std::u32string str;
+    for (const auto& node : nodes)
+    {
+        str.append(node->Str());
+    }
+    return str;
+}
+
 ListNode::ListNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : Node(kind_, sourcePos_)
 {
 }
@@ -299,6 +319,16 @@ void ListNode::Read(Reader& reader)
         Node* node = reader.ReadNode();
         AddNode(node);
     }
+}
+
+std::u32string ListNode::Str() const
+{
+    std::u32string str;
+    for (const auto& node : nodes)
+    {
+        str.append(node->Str());
+    }
+    return str;
 }
 
 struct AbstractNodeFactory
@@ -628,6 +658,7 @@ NodeFactoryCollection::NodeFactoryCollection()
     Register(NodeKind::caseStatmentNode, new NodeFactory<CaseStatementNode>());
     Register(NodeKind::defaultStatementNode, new NodeFactory<DefaultStatementNode>());
     Register(NodeKind::compoundStatementNode, new NodeFactory<CompoundStatementNode>());
+    Register(NodeKind::sequenceStatementNode, new NodeFactory<SequenceStatementNode>());
     Register(NodeKind::ifStatementNode, new NodeFactory<IfStatementNode>());
     Register(NodeKind::switchStatemeNode, new NodeFactory<SwitchStatementNode>());
     Register(NodeKind::whileStatementNode, new NodeFactory<WhileStatementNode>());

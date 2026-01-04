@@ -45,7 +45,7 @@ struct iterator_traits<const T*>
 namespace detail {
 
 template<typename IterT>
-void advance_iter(IterT& it, typename std::iterator_traits<IterT>::difference_type n, std::input_iterator_tag)
+void advance_iter(IterT& it, typename std::iterator_traits<IterT>::difference_type n, std::input_iterator_tag) noexcept
 {
     while (n > 0)
     {
@@ -55,7 +55,7 @@ void advance_iter(IterT& it, typename std::iterator_traits<IterT>::difference_ty
 }
 
 template<typename IterT>
-void advance_iter(IterT& it, typename std::iterator_traits<IterT>::difference_type n, std::bidirectional_iterator_tag)
+void advance_iter(IterT& it, typename std::iterator_traits<IterT>::difference_type n, std::bidirectional_iterator_tag) noexcept
 {
     while (n > 0)
     {
@@ -70,7 +70,7 @@ void advance_iter(IterT& it, typename std::iterator_traits<IterT>::difference_ty
 }
 
 template<typename IterT>
-constexpr void advance_iter(IterT& it, typename std::iterator_traits<IterT>::difference_type n, std::random_access_iterator_tag)
+constexpr void advance_iter(IterT& it, typename std::iterator_traits<IterT>::difference_type n, std::random_access_iterator_tag) noexcept
 {
     it += n;
 }
@@ -78,7 +78,7 @@ constexpr void advance_iter(IterT& it, typename std::iterator_traits<IterT>::dif
 } // namespace detail
 
 template<typename IterT, typename Distance>
-constexpr void advance(IterT& it, Distance n)
+constexpr void advance(IterT& it, Distance n) noexcept
 {
     detail::advance_iter(it, typename std::iterator_traits<IterT>::difference_type(n), typename std::iterator_traits<IterT>::iterator_category());
 }
@@ -86,7 +86,7 @@ constexpr void advance(IterT& it, Distance n)
 namespace detail {
 
 template<typename IterT>
-typename std::iterator_traits<IterT>::difference_type distance_iter(IterT first, IterT last, std::input_iterator_tag)
+typename std::iterator_traits<IterT>::difference_type distance_iter(IterT first, IterT last, std::input_iterator_tag) noexcept
 {
     typename std::iterator_traits<IterT>::difference_type result = 0;
     while (first != last)
@@ -98,7 +98,7 @@ typename std::iterator_traits<IterT>::difference_type distance_iter(IterT first,
 }
 
 template<typename IterT>
-constexpr typename std::iterator_traits<IterT>::difference_type distance_iter(IterT first, IterT last, std::random_access_iterator_tag)
+constexpr typename std::iterator_traits<IterT>::difference_type distance_iter(IterT first, IterT last, std::random_access_iterator_tag) noexcept
 {
     return last - first;
 }
@@ -106,20 +106,20 @@ constexpr typename std::iterator_traits<IterT>::difference_type distance_iter(It
 } // namespace detail
 
 template<typename IterT>
-constexpr typename std::iterator_traits<IterT>::difference_type distance(IterT first, IterT last)
+constexpr typename std::iterator_traits<IterT>::difference_type distance(IterT first, IterT last) noexcept
 {
     return detail::distance_iter(first, last, typename std::iterator_traits<IterT>::iterator_category());
 }
 
 template<typename IterT>
-constexpr IterT next(IterT it, typename std::iterator_traits<IterT>::difference_type n = 1)
+constexpr IterT next(IterT it, typename std::iterator_traits<IterT>::difference_type n = 1) noexcept
 {
     std::advance(it, n);
     return it;
 }
 
 template<typename IterT>
-constexpr IterT prev(IterT it, typename std::iterator_traits<IterT>::difference_type n = 1)
+constexpr IterT prev(IterT it, typename std::iterator_traits<IterT>::difference_type n = 1) noexcept
 {
     std::advance(it, -n);
     return it;

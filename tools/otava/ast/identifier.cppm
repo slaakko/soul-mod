@@ -38,6 +38,7 @@ public:
     ColonColonNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"::"; }
 };
 
 class NestedNameSpecifierNode : public SequenceNode

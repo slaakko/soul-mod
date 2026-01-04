@@ -789,6 +789,7 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
 void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context)
 {
     if (context->GetFlag(ContextFlags::linkageDeclaration)) return;
+    if (context->GetFlag(ContextFlags::dontProcess)) return;
     DeclarationProcessor processor(context);
     node->Accept(processor);
     std::unique_ptr<DeclarationList> declarationList = processor.GetDeclarations();

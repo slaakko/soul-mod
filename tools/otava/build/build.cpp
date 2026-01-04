@@ -614,7 +614,8 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
             moduleMapper.AddModule(project->ReleaseModule(file));
         }
         std::string asmFileName = otava::codegen::GenerateCode(
-            context, config, optLevel, (flags& BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, std::vector<std::string>());
+            context, config, optLevel, (flags& BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, 
+            false, std::vector<std::string>());
         project->Index().import(module->GetSymbolTable()->ClassIndex());
         asmFileNames.push_back(asmFileName);
         otava::symbols::BoundFunctionNode* initFn = context.GetBoundCompileUnit()->GetCompileUnitInitializationFunction();

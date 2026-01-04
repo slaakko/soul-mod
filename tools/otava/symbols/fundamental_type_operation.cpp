@@ -478,6 +478,7 @@ FundamentalTypeDefaultCtor::FundamentalTypeDefaultCtor(TypeSymbol* type_, Contex
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
     AddParameter(thisParam, soul::ast::SourcePos(), context);
+    SetNoExcept();
 }
 
 void FundamentalTypeDefaultCtor::Write(Writer& writer)
@@ -536,6 +537,7 @@ FundamentalTypeCopyCtor::FundamentalTypeCopyCtor(TypeSymbol* type_, Context* con
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
     AddParameter(thatParam, soul::ast::SourcePos(), context);
+    SetNoExcept();
 }
 
 void FundamentalTypeCopyCtor::Write(Writer& writer)
@@ -591,6 +593,7 @@ FundamentalTypeMoveCtor::FundamentalTypeMoveCtor(TypeSymbol* type_, Context* con
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef(context));
     AddParameter(thatParam, soul::ast::SourcePos(), context);
+    SetNoExcept();
 }
 
 void FundamentalTypeMoveCtor::Write(Writer& writer)
@@ -649,6 +652,7 @@ FundamentalTypeCopyAssignment::FundamentalTypeCopyAssignment(TypeSymbol* type_, 
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
     AddParameter(thatParam, soul::ast::SourcePos(), context);
     SetReturnType(type->AddLValueRef(context), context);
+    SetNoExcept();
 }
 
 void FundamentalTypeCopyAssignment::Write(Writer& writer)
@@ -701,6 +705,7 @@ FundamentalTypeMoveAssignment::FundamentalTypeMoveAssignment(TypeSymbol* type_, 
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef(context));
     AddParameter(thatParam, soul::ast::SourcePos(), context);
     SetReturnType(type->AddLValueRef(context), context);
+    SetNoExcept();
 }
 
 void FundamentalTypeMoveAssignment::Write(Writer& writer)
@@ -752,6 +757,7 @@ TrivialDestructor::TrivialDestructor(TypeSymbol* type_, Context* context) : Func
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     SetFlag(FunctionSymbolFlags::trivialDestructor);
+    SetNoExcept();
 }
 
 void TrivialDestructor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,

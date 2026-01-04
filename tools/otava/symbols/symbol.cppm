@@ -125,6 +125,7 @@ enum class SymbolKind : std::uint8_t
     defaultBool, defaultSByte, defaultByte, defaultShort, defaultUShort, defaultInt, defaultUInt, defaultLong, defaultULong, defaultFloat, defaultDouble,
     defaultChar, defaultChar16, defaultChar32,
     functionGroupTypeSymbol, classGroupTypeSymbol, aliasGroupTypeSymbol, friendSymbol, namespaceTypeSymbol,
+    intrinsicGetRbp,
     max
 };
 

@@ -175,4 +175,6 @@ private:
     GenericTypeSymbol();
 };
 
+TypeSymbol* ConvertRefToPtrType(TypeSymbol* type, Context* context);
+
 } // namespace otava::symbols

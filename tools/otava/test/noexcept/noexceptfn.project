@@ -1,0 +1,3 @@
+project noexceptfn;
+target=program;
+source <main.cpp>;

@@ -31,6 +31,9 @@ void EmitPrologue(CodeGenerator& codeGenerator)
     otava::assembly::Instruction* pushRbp = new otava::assembly::Instruction(otava::assembly::OpCode::PUSH);
     pushRbp->AddOperand(assemblyContext->GetGlobalReg(8, otava::assembly::RegisterGroupKind::rbp));
     codeGenerator.Emit(pushRbp);
+    otava::assembly::Instruction* pushRegMacroRbp = new otava::assembly::Instruction(otava::assembly::OpCode::PUSHREG);
+    pushRegMacroRbp->AddOperand(assemblyContext->GetGlobalReg(8, otava::assembly::RegisterGroupKind::rbp));
+    codeGenerator.Emit(pushRegMacroRbp);
     ++numPushes;
 
     for (const auto& regGroup : assemblyContext->GetRegisterPool()->UsedLocalRegs())
@@ -38,6 +41,18 @@ void EmitPrologue(CodeGenerator& codeGenerator)
         otava::assembly::Instruction* pushReg = new otava::assembly::Instruction(otava::assembly::OpCode::PUSH);
         pushReg->AddOperand(regGroup->GetReg(8));
         codeGenerator.Emit(pushReg);
+        if (regGroup->IsVolatile())
+        {
+            otava::assembly::Instruction* allocStackMacro = new otava::assembly::Instruction(otava::assembly::OpCode::ALLOCSTACK);
+            allocStackMacro->AddOperand(assemblyContext->MakeIntegerLiteral(8, 8));
+            codeGenerator.Emit(allocStackMacro);
+        }
+        else
+        {
+            otava::assembly::Instruction* pushRegMacro = new otava::assembly::Instruction(otava::assembly::OpCode::PUSHREG);
+            pushRegMacro->AddOperand(regGroup->GetReg(8));
+            codeGenerator.Emit(pushRegMacro);
+        }
         ++numPushes;
     }
     for (const auto& regGroup : assemblyContext->GetRegisterPool()->UsedNonvolatileRegs())
@@ -45,6 +60,9 @@ void EmitPrologue(CodeGenerator& codeGenerator)
         otava::assembly::Instruction* pushReg = new otava::assembly::Instruction(otava::assembly::OpCode::PUSH);
         pushReg->AddOperand(regGroup->GetReg(8));
         codeGenerator.Emit(pushReg);
+        otava::assembly::Instruction* pushRegMacro = new otava::assembly::Instruction(otava::assembly::OpCode::PUSHREG);
+        pushRegMacro->AddOperand(regGroup->GetReg(8));
+        codeGenerator.Emit(pushRegMacro);
         ++numPushes;
     }
 
@@ -55,6 +73,9 @@ void EmitPrologue(CodeGenerator& codeGenerator)
         otava::assembly::Instruction* pushReg = new otava::assembly::Instruction(otava::assembly::OpCode::PUSH);
         pushReg->AddOperand(assemblyContext->GetGlobalReg(8, otava::assembly::RegisterGroupKind::rbx, false));
         codeGenerator.Emit(pushReg);
+        otava::assembly::Instruction* pushRegMacro = new otava::assembly::Instruction(otava::assembly::OpCode::PUSHREG);
+        pushRegMacro->AddOperand(assemblyContext->GetGlobalReg(8, otava::assembly::RegisterGroupKind::rbx, false));
+        codeGenerator.Emit(pushRegMacro);
         frame.SetRbxPushed();
     }
 
@@ -79,6 +100,9 @@ void EmitPrologue(CodeGenerator& codeGenerator)
     subRsp->AddOperand(assemblyContext->GetGlobalReg(8, otava::assembly::RegisterGroupKind::rsp));
     subRsp->AddOperand(assemblyContext->MakeIntegerLiteral(frame.Size(), 8));
     codeGenerator.Emit(subRsp);
+    otava::assembly::Instruction* allocStackMacro = new otava::assembly::Instruction(otava::assembly::OpCode::ALLOCSTACK);
+    allocStackMacro->AddOperand(assemblyContext->MakeIntegerLiteral(frame.Size(), 8));
+    codeGenerator.Emit(allocStackMacro);
 
     if (nxmmregs > 0)
     {
@@ -111,6 +135,13 @@ void EmitPrologue(CodeGenerator& codeGenerator)
         assemblyContext->MakeBinaryExpr(assemblyContext->GetGlobalReg(8, otava::assembly::RegisterGroupKind::rsp),
             assemblyContext->MakeIntegerLiteral(frame.CalleeParamAreaSize() + frame.XMMSaveRegSize(), 8), otava::assembly::Operator::add))));
     codeGenerator.Emit(leaRbp);
+    otava::assembly::Instruction* setFrameMacro = new otava::assembly::Instruction(otava::assembly::OpCode::SETFRAME);
+    setFrameMacro->AddOperand(assemblyContext->GetGlobalReg(8, otava::assembly::RegisterGroupKind::rbp));
+    setFrameMacro->AddOperand(assemblyContext->MakeIntegerLiteral(frame.CalleeParamAreaSize() + frame.XMMSaveRegSize(), 8));
+    codeGenerator.Emit(setFrameMacro);
+
+    otava::assembly::Instruction* endPrologueMacro = new otava::assembly::Instruction(otava::assembly::OpCode::ENDPROLOG);
+    codeGenerator.Emit(endPrologueMacro);
 }
 
 void EmitEpilogue(CodeGenerator& codeGenerator)
@@ -268,11 +299,33 @@ FrameLocation GetFrameLocation(Value* value, CodeGenerator& codeGenerator)
     return FrameLocation();
 }
 
+void EmitParentFrameAccess(otava::assembly::Register* plocalFrameReg, int level, CodeGenerator& codeGenerator)
+{
+    otava::assembly::Instruction* instruction = new otava::assembly::Instruction(otava::assembly::OpCode::MOV);
+    instruction->AddOperand(plocalFrameReg);
+    FrameLocation firstFrameLocation = codeGenerator.RegAllocator()->GetFrame().GetFrameLocation(0, codeGenerator.Span(), codeGenerator.Ctx());
+    EmitFrameLocationOperand(8, firstFrameLocation, instruction, codeGenerator);
+    codeGenerator.Emit(instruction);
+    while (level > 0)
+    {
+        otava::assembly::Instruction* instruction = new otava::assembly::Instruction(otava::assembly::OpCode::MOV);
+        instruction->AddOperand(plocalFrameReg);
+        FrameLocation nextFrameLocation = codeGenerator.RegAllocator()->GetFrame().GetParentFrameLocation(codeGenerator.Span(), codeGenerator.Ctx());
+        EmitFrameLocationOperand(8, nextFrameLocation, instruction, codeGenerator);
+        codeGenerator.Emit(instruction);
+        --level;
+    }
+}
+
 void EmitFrameLocationOperand(std::int64_t size, const FrameLocation& frameLocation, otava::assembly::Instruction* instruction, CodeGenerator& codeGenerator)
 {
     otava::assembly::Context* assemblyContext = codeGenerator.Ctx()->AssemblyContext();
-    otava::assembly::Register* reg = assemblyContext->GetGlobalReg(8, frameLocation.reg);
-    assemblyContext->GetRegisterPool()->UseGlobalReg(reg);
+    otava::assembly::RegisterGroup* regGroup = assemblyContext->GetRegisterPool()->GetRegisterGroup(frameLocation.reg, true);
+    otava::assembly::Register* reg = regGroup->GetReg(8);
+    if (frameLocation.IsParentFrameLocation()) 
+    {
+        EmitParentFrameAccess(reg, frameLocation.level, codeGenerator);
+    }
     otava::assembly::Value* frameLoc = assemblyContext->MakeIntegerLiteral(frameLocation.offset, 8);
     if (frameLocation.macro)
     {
@@ -316,6 +369,11 @@ void EmitIntegerPtrOperand(std::int64_t size, Value* value, otava::assembly::Ins
     if (inst)
     {
         if (inst->IsLocalInstruction())
+        {
+            FrameLocation frameLocation = GetFrameLocation(value, codeGenerator);
+            EmitFrameLocationOperand(size, frameLocation, instruction, codeGenerator);
+        }
+        else if (inst->IsPLocalInstruction())
         {
             FrameLocation frameLocation = GetFrameLocation(value, codeGenerator);
             EmitFrameLocationOperand(size, frameLocation, instruction, codeGenerator);
@@ -369,6 +427,11 @@ void EmitFloatingPointPtrOperand(std::int64_t size, Value* value, otava::assembl
     if (inst)
     {
         if (inst->IsLocalInstruction())
+        {
+            FrameLocation frameLocation = GetFrameLocation(value, codeGenerator);
+            EmitFrameLocationOperand(size, frameLocation, instruction, codeGenerator);
+        }
+        else if (inst->IsPLocalInstruction())
         {
             FrameLocation frameLocation = GetFrameLocation(value, codeGenerator);
             EmitFrameLocationOperand(size, frameLocation, instruction, codeGenerator);
@@ -433,6 +496,14 @@ otava::assembly::Register* MakeIntegerRegOperand(Value* value, otava::assembly::
         if (inst)
         {
             if (inst->IsLocalInstruction())
+            {
+                otava::assembly::Instruction* leaInst = new otava::assembly::Instruction(otava::assembly::OpCode::LEA);
+                leaInst->AddOperand(reg);
+                EmitIntegerPtrOperand(size, value, leaInst, codeGenerator);
+                codeGenerator.Emit(leaInst);
+                return reg;
+            }
+            else if (inst->IsPLocalInstruction())
             {
                 otava::assembly::Instruction* leaInst = new otava::assembly::Instruction(otava::assembly::OpCode::LEA);
                 leaInst->AddOperand(reg);
@@ -1680,6 +1751,24 @@ void EmitNop(NoOperationInstruction& inst, CodeGenerator& codeGenerator)
     codeGenerator.Emit(nopInst);
 }
 
+void EmitGetRbp(GetRbpInstruction& inst, CodeGenerator& codeGenerator)
+{
+    otava::assembly::Context* assemblyContext = codeGenerator.Ctx()->AssemblyContext();
+    otava::assembly::Instruction* movInst = new otava::assembly::Instruction(otava::assembly::OpCode::MOV);
+    otava::assembly::RegisterGroup* regGroup = codeGenerator.RegAllocator()->GetRegisterGroup(&inst);
+    if (regGroup)
+    {
+        otava::assembly::Register* resultReg = regGroup->GetReg(8);
+        movInst->AddOperand(resultReg);
+        movInst->AddOperand(assemblyContext->GetGlobalReg(8, otava::assembly::RegisterGroupKind::rbp));
+        codeGenerator.Emit(movInst);
+    }
+    else
+    {
+        codeGenerator.Error("error emitting getrbp instruction: reg group for inst not found");
+    }
+}
+
 void EmitSwitch(SwitchInstruction& inst, CodeGenerator& codeGenerator)
 {
     otava::assembly::Context* assemblyContext = codeGenerator.Ctx()->AssemblyContext();
@@ -2063,6 +2152,20 @@ void EmitIntegerArgOperand(Instruction* argInst, std::int64_t size, Value* arg, 
                 codeGenerator.Error("error emitting arg: reg group not valid");
             }
         }
+        else if (inst->IsPLocalInstruction())
+        {
+            otava::assembly::RegisterGroup* regGroup = codeGenerator.RegAllocator()->GetRegisterGroup(argInst);
+            if (regGroup)
+            {
+                otava::assembly::Instruction* leaInst = new otava::assembly::Instruction(otava::assembly::OpCode::LEA);
+                leaInst->AddOperand(regGroup->GetReg(8));
+                FrameLocation frameLocation = GetFrameLocation(arg, codeGenerator);
+                EmitFrameLocationOperand(1, frameLocation, leaInst, codeGenerator);
+                codeGenerator.Emit(leaInst);
+                instruction->AddOperand(regGroup->GetReg(8));
+                return;
+            }
+        }
     }
     otava::assembly::Context* assemblyContext = codeGenerator.Ctx()->AssemblyContext();
     otava::assembly::Register* reg = MakeIntegerRegOperand(arg, assemblyContext->GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax), codeGenerator);
@@ -2077,6 +2180,24 @@ void EmitFloatingPointArgOperand(Instruction* argInst, std::int64_t size, Value*
         RegValue* regValue = static_cast<RegValue*>(arg);
         Instruction* inst = regValue->Inst();
         if (inst->IsLocalInstruction())
+        {
+            otava::assembly::RegisterGroup* regGroup = codeGenerator.RegAllocator()->GetRegisterGroup(argInst);
+            if (regGroup)
+            {
+                otava::assembly::Instruction* leaInst = new otava::assembly::Instruction(otava::assembly::OpCode::LEA);
+                leaInst->AddOperand(regGroup->GetReg(8));
+                FrameLocation frameLocation = GetFrameLocation(arg, codeGenerator);
+                EmitFrameLocationOperand(1, frameLocation, leaInst, codeGenerator);
+                codeGenerator.Emit(leaInst);
+                instruction->AddOperand(regGroup->GetReg(8));
+                return;
+            }
+            else
+            {
+                codeGenerator.Error("error emitting arg: reg group not valid");
+            }
+        }
+        else if (inst->IsPLocalInstruction())
         {
             otava::assembly::RegisterGroup* regGroup = codeGenerator.RegAllocator()->GetRegisterGroup(argInst);
             if (regGroup)
@@ -2291,7 +2412,7 @@ void EmitArgs(const std::vector<ArgInstruction*>& args, CodeGenerator& codeGener
 {
     CallFrame callFrame;
     int n = args.size();
-    std::int64_t calleeParamAreaSize = n * 8;
+    std::int64_t calleeParamAreaSize = util::Align(n * 8, 16);
     Frame& frame = codeGenerator.RegAllocator()->GetFrame();
     frame.SetCalleeParamAreaSize(std::max(frame.CalleeParamAreaSize(), calleeParamAreaSize));
     for (int i = 0; i < n; ++i)
@@ -2740,6 +2861,10 @@ void CodeGenerator::Visit(Function& function)
         }
         currentFunction = &function;
         context->AssemblyContext()->ResetRegisterPool();
+        if (currentFunction->IsChildFn())
+        {
+            context->AssemblyContext()->GetRegisterPool()->MakeChildFnRegisterPool();
+        }
         assemblyFunction = file.GetCodeSection().CreateFunction(function.Name());
         if (!fullFunctionName.empty())
         {
@@ -3068,6 +3193,11 @@ void CodeGenerator::Visit(NegInstruction& inst)
 void CodeGenerator::Visit(NoOperationInstruction& inst)
 {
     EmitNop(inst, *this);
+}
+
+void CodeGenerator::Visit(GetRbpInstruction& inst)
+{
+    EmitGetRbp(inst, *this);
 }
 
 void CodeGenerator::Visit(SwitchInstruction& inst)

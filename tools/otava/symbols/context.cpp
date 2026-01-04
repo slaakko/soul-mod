@@ -17,6 +17,7 @@ import otava.symbols.function.templates;
 import otava.symbols.inline_functions;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.operation.repository;
+import util;
 
 namespace otava::symbols {
 
@@ -67,7 +68,12 @@ Context::Context() :
     functionsInlined(0),
     emitter(nullptr),
     argIndex(0),
-    boundFunctionSerial(0)
+    boundFunctionSerial(0),
+    trySerial(0),
+    invokeSerial(0),
+    cleanupSerial(0),
+    resultSerial(0),
+    statementBinder(nullptr)
 {
 }
 
@@ -109,15 +115,37 @@ EvaluationContext* Context::GetEvaluationContext()
 BoundExpressionNode* Context::GetThisPtr(const soul::ast::SourcePos& sourcePos)
 {
     FunctionDefinitionSymbol* function = boundFunction->GetFunctionDefinitionSymbol();
-    ParameterSymbol* thisParam = function->ThisParam(this);
-    if (thisParam)
+    if (function)
     {
-        return new BoundParameterNode(thisParam, sourcePos, thisParam->GetType());
+        FunctionDefinitionSymbol* parentFn = function->ParentFn();
+        if (parentFn)
+        {
+            int level = -1;
+            FunctionDefinitionSymbol* parent = parentFn;
+            while (parent)
+            {
+                parentFn = parent;
+                parent = parent->ParentFn();
+                ++level;
+            }
+            ParameterSymbol* parentThisParam = parentFn->ThisParam(this);
+            if (parentThisParam)
+            {
+                BoundParentParameterNode* parentThisPtr = new BoundParentParameterNode(parentThisParam, sourcePos, parentThisParam->GetType());
+                parentThisPtr->SetLevel(level);
+                return parentThisPtr;
+            }
+        }
+        else
+        {
+            ParameterSymbol* thisParam = function->ThisParam(this);
+            if (thisParam)
+            {
+                return new BoundParameterNode(thisParam, sourcePos, thisParam->GetType());
+            }
+        }
     }
-    else
-    {
-        return nullptr;
-    }
+    return nullptr;
 }
 
 void Context::SetFileName(const std::string& fileName_)
@@ -140,6 +168,11 @@ std::string Context::FileName() const
 void Context::PushFlags()
 {
     flagStack.push(flags);
+}
+
+void Context::ResetFlags()
+{
+    flags = ContextFlags();
 }
 
 void Context::PopFlags()
@@ -360,6 +393,48 @@ void Context::PopTemplateParameterMap()
 {
     templateParameterMap = templateParameterMapStack.top();
     templateParameterMapStack.pop();
+}
+
+void Context::PushCleanup()
+{
+    cleanupStack.push(std::move(cleanup));
+    cleanup = CleanUp();
+}
+
+void Context::PopCleanup()
+{
+    cleanup = std::move(cleanupStack.top());
+    cleanupStack.pop();
+}
+
+void Context::PushStatementBinder(StatementBinder* statementBinder_)
+{
+    statementBinderStack.push(statementBinder);
+    statementBinder = statementBinder_;
+}
+
+void Context::PopStatementBinder()
+{
+    statementBinder = statementBinderStack.top();
+    statementBinderStack.pop();
+}
+
+void Context::PushResultVarName(const std::u32string& resultVarName_)
+{
+    resultVariableNameStack.push(resultVariableName);
+    resultVariableName = resultVarName_;
+}
+
+void Context::PopResultVarName()
+{
+    resultVariableName = resultVariableNameStack.top();
+    resultVariableNameStack.pop();
+}
+
+std::u32string Context::NextResultVarName()
+{
+    std::u32string resultVariableName = U"__result" + util::ToUtf32(std::to_string(NextResultSerial()));
+    return resultVariableName;
 }
 
 } // namespace otava::symbols

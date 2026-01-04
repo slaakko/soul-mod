@@ -130,6 +130,8 @@ public:
     virtual bool IsOverride() const;
     virtual bool IsFinal() const;
     void SetOverride();
+    virtual bool IsNoExcept() const;
+    virtual void SetNoExcept();
     ClassTypeSymbol* ParentClassType() const override;
     virtual ParameterSymbol* ThisParam(Context* context) const;
     virtual bool IsMemberFunction() const;
@@ -217,6 +219,8 @@ public:
     bool IsPure() const override;
     bool IsOverride() const override;
     bool IsFinal() const override;
+    bool IsNoExcept() const override;
+    void SetNoExcept() override;
     std::int32_t VTabIndex() const override;
     bool IsStatic() const override;
     bool IsExplicit() const override;
@@ -227,11 +231,21 @@ public:
     inline const std::string& GetIrName() const { return irName; }
     bool IsMemberFunction() const override;
     soul::xml::Element* ToXml() const override;
+    inline FunctionDefinitionSymbol* ParentFn() const { return parentFn; }
+    inline void SetParentFn(FunctionDefinitionSymbol* parentFn_) { parentFn = parentFn_; }
+    inline Scope* ParentFnScope() const { return parentFnScope; }
+    inline void SetParentFnScope(Scope* parentFnScope_) { parentFnScope = parentFnScope_; }
+    std::u32string ResultVarExprStr(TypeSymbol* resultType) const;
+    void SetResultVarName(const std::u32string& resultVarName_);
+    TypeSymbol* NonChildFunctionResultType(Context* context) const;
 private:
     FunctionSymbol* declaration;
     util::uuid declarationId;
     std::int32_t defIndex;
     mutable std::string irName;
+    FunctionDefinitionSymbol* parentFn;
+    Scope* parentFnScope;
+    std::u32string resultVarName;
 };
 
 class ExplicitlyInstantiatedFunctionDefinitionSymbol : public FunctionDefinitionSymbol
@@ -260,5 +274,13 @@ struct FunctionLess
 bool FunctionMatches(FunctionSymbol* left, FunctionSymbol* right, Context* context);
 
 void InitFunction();
+
+class CompileUnitInitFn : public FunctionSymbol
+{
+public:
+    CompileUnitInitFn(const std::u32string& name_);
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+};
 
 } // namespace otava::symbols

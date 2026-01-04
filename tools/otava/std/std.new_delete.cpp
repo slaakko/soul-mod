@@ -1,10 +1,16 @@
 module std.new_delete_op;
 
 import std.trace;
+import std.exception;
 
 void* operator new(size_t size)
 {
-    return std::malloc(size);
+    void* ptr = std::malloc(size);
+    if (!ptr)
+    {
+        throw std::bad_alloc();
+    }
+    return ptr;
 }
 
 void* operator new(size_t size, void* placement)

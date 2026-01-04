@@ -66,7 +66,7 @@ public:
     using iterator = value_type*;
     using const_iterator = const value_type*;
 
-    inline vector() : elements(nullptr), sz(0), res(0) {}
+    inline vector() noexcept : elements(nullptr), sz(0), res(0) {}
     explicit vector(size_type n) : elements(nullptr), sz(n), res(0)
     {
         reserve(sz);
@@ -91,7 +91,7 @@ public:
             constructive_copy(elements, that.elements, sz);
         }
     }
-    vector(vector&& that) : elements(that.elements), sz(that.sz), res(that.res)
+    vector(vector&& that) noexcept : elements(that.elements), sz(that.sz), res(that.res)
     {
         that.elements = static_cast<T*>(nullptr);
         that.sz = 0;
@@ -109,7 +109,7 @@ public:
         constructive_copy(elements, that.elements, sz);
         return *this;
     }
-    vector& operator=(vector&& that)
+    vector& operator=(vector&& that) noexcept
     {
         std::swap(elements, that.elements);
         std::swap(sz, that.sz);
@@ -126,9 +126,9 @@ public:
         }
     }
     
-    inline iterator begin() { return elements; }
-    inline const_iterator begin() const { return elements; }
-    iterator end()
+    inline iterator begin() noexcept { return elements; }
+    inline const_iterator begin() const noexcept { return elements; }
+    iterator end() noexcept
     {
         if (elements)
         {
@@ -139,7 +139,7 @@ public:
             return nullptr;
         }
     }
-    const_iterator end() const
+    const_iterator end() const noexcept
     {
         if (elements)
         {
@@ -150,8 +150,8 @@ public:
             return nullptr;
         }
     }
-    inline const_iterator cbegin() const { return elements; }
-    const_iterator cend() const
+    inline const_iterator cbegin() const noexcept { return elements; }
+    const_iterator cend() const noexcept
     {
         if (elements)
         {
@@ -163,9 +163,9 @@ public:
         }
     }
 
-    inline bool empty() const { return sz == 0; }
-    inline size_type size() const { return sz; }
-    inline size_type capacity() const { return res; }
+    inline bool empty() const noexcept { return sz == 0; }
+    inline size_type size() const noexcept { return sz; }
+    inline size_type capacity() const noexcept { return res; }
     void resize(size_type new_sz)
     {
         if (new_sz != sz)
@@ -220,32 +220,32 @@ public:
         }
     }
    
-    inline reference operator[](size_type n)
+    inline reference operator[](size_type n) noexcept
     {
         return elements[n];
     }
-    inline const_reference operator[](size_type n) const
+    inline const_reference operator[](size_type n) const noexcept
     {
         return elements[n];
     }
-    inline reference front()
+    inline reference front() noexcept
     {
         return elements[0];
     }
-    inline const_reference front() const
+    inline const_reference front() const noexcept
     {
         return elements[0];
     }
-    inline reference back()
+    inline reference back() noexcept
     {
         return elements[sz - 1];
     }
-    inline const_reference back() const
+    inline const_reference back() const noexcept
     {
         return elements[sz - 1];
     }
-    inline pointer data() { return elements; }
-    inline const_pointer data() const { return elements; }
+    inline pointer data() noexcept { return elements; }
+    inline const_pointer data() const noexcept { return elements; }
 
     void push_back(const T& x)
     {
@@ -376,7 +376,7 @@ public:
             return end();
         }
     }
-    inline void clear()
+    inline void clear() noexcept
     {
         destroy();
     }
@@ -385,7 +385,7 @@ public:
         std::cout << "sz=" << sz << ", res=" << res << "\n";
     }
 private:
-    void destroy()
+    void destroy() noexcept
     {
         if (sz > 0)
         {
@@ -419,7 +419,7 @@ private:
 };
 
 template<typename T>
-bool operator==(const vector<T>& x, const vector<T>& y)
+bool operator==(const vector<T>& x, const vector<T>& y) noexcept
 {
     if (x.size() != y.size()) return false;
     typename vector<T>::size_type n = x.size();
@@ -431,7 +431,7 @@ bool operator==(const vector<T>& x, const vector<T>& y)
 }
 
 template<typename T>
-inline bool operator<(const vector<T>& x, const vector<T>& y)
+inline bool operator<(const vector<T>& x, const vector<T>& y) noexcept
 {
     return lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
 }

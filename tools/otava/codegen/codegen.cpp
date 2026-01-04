@@ -37,6 +37,11 @@ import otava.symbols.modules;
 import otava.symbols.overload.resolution;
 import otava.symbols.symbol.table;
 import otava.symbols.enums;
+import otava.symbols.expression.binder;
+import otava.symbols.expr.parser;
+import otava.symbols.stmt.parser;
+import otava.symbols.statement.binder;
+import otava.ast;
 import class_info_index;
 import otava.opt;
 import std;
@@ -322,6 +327,7 @@ public:
     void Visit(otava::symbols::BoundTemporaryNode& node) override;
     void Visit(otava::symbols::BoundConjunctionNode& boundConjunction) override;
     void Visit(otava::symbols::BoundDisjunctionNode& boundDisjunction) override;
+    void Visit(otava::symbols::BoundConditionalExprNode& boundConditionalExpr) override;
     void Visit(otava::symbols::BoundGlobalVariableDefinitionNode& node) override;
 private:
     void StatementPrefix();
@@ -638,18 +644,35 @@ void CodeGenerator::EmitReturn(const soul::ast::SourcePos& sourcePos)
 void CodeGenerator::GenerateGlobalInitializationFunction()
 {
     Reset();
-    emitter->CreateFunction("__global_init__", emitter->MakeFunctionType(emitter->GetVoidType(), std::vector<otava::intermediate::Type*>()), false, false);
-    otava::intermediate::BasicBlock* initBlock = emitter->CreateBasicBlock();
-    emitter->SetCurrentBasicBlock(initBlock);
-    otava::intermediate::FunctionType* initFunctionType = static_cast<otava::intermediate::FunctionType*>(emitter->MakeFunctionType(emitter->GetVoidType(),
-        std::vector<otava::intermediate::Type*>()));
+    std::u32string setBadAllocExStr;
+    std::uint64_t ext1 = 0;
+    std::uint64_t ext2 = 0;
+    otava::symbols::FunctionDefinitionSymbol* globalInit(new otava::symbols::FunctionDefinitionSymbol(U"__global_init__"));
+    globalInit->SetLinkage(otava::symbols::Linkage::c_linkage);
+    otava::ast::NestedNameSpecifierNode* nnsNode = new otava::ast::NestedNameSpecifierNode(soul::ast::SourcePos());
+    nnsNode->AddNode(new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"std"));
+    otava::ast::QualifiedIdNode badAllocNode(soul::ast::SourcePos(), nnsNode, new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"bad_alloc"));
+    otava::symbols::TypeSymbol* badAllocType = otava::symbols::ResolveType(&badAllocNode, otava::symbols::DeclarationFlags::none, &context);
+    util::UuidToInts(badAllocType->Id(), ext1, ext2);
+    setBadAllocExStr.append(U"ort_set_bad_alloc(new std::bad_alloc(), ").append(util::ToUtf32(std::to_string(ext1)).append(U"ull, ").
+        append(util::ToUtf32(std::to_string(ext2)).append(U"ull);")));
+    std::unique_ptr<otava::ast::Node> setBadAllocStmtNode = otava::symbols::ParseStatement(setBadAllocExStr, &context);
+    std::unique_ptr<otava::symbols::BoundFunctionNode> boundFunction(new otava::symbols::BoundFunctionNode(globalInit, soul::ast::SourcePos()));
+    context.PushBoundFunction(boundFunction.release());
+    std::unique_ptr<otava::symbols::BoundStatementNode> setBadAllocStmt(otava::symbols::BindStatement(setBadAllocStmtNode.get(), nullptr, &context));
+    std::unique_ptr<otava::symbols::BoundCompoundStatementNode> compoundStmt(new otava::symbols::BoundCompoundStatementNode(soul::ast::SourcePos()));
+    compoundStmt->AddStatement(setBadAllocStmt.release());
+    context.PushSetFlag(otava::symbols::ContextFlags::makeCompileUnitInitFn);
     int n = compileUnitInitFnNames.size();
     for (int i = 0; i < n; ++i)
     {
-        otava::intermediate::Function* initFn = emitter->GetOrInsertFunction(compileUnitInitFnNames[i], initFunctionType);
-        emitter->EmitCall(initFn, std::vector<otava::intermediate::Value*>());
+        std::unique_ptr<otava::ast::Node> callInitFunctionNode = otava::symbols::ParseStatement(util::ToUtf32(compileUnitInitFnNames[i]) + U"();", &context);
+        std::unique_ptr<otava::symbols::BoundStatementNode> initFnCall(otava::symbols::BindStatement(callInitFunctionNode.get(), globalInit, &context));
+        compoundStmt->AddStatement(initFnCall.release());
     }
-    emitter->EmitRetVoid();
+    context.PopFlags();
+    context.GetBoundFunction()->SetBody(compoundStmt.release());
+    context.GetBoundFunction()->Accept(*this);
 }
 
 void CodeGenerator::SetCurrentLineNumber(const soul::ast::SourcePos& sourcePos)
@@ -805,16 +828,83 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     otava::intermediate::Type* functionType = functionDefinition->IrType(*emitter, node.GetSourcePos(), &context);
     bool once = false;
     bool inline_ = context.ReleaseConfig() && functionDefinition->IsInline();
-    otava::intermediate::Function* function = emitter->CreateFunction(functionDefinitionName, functionType, inline_, once);
-    function->SetComment(util::ToUtf8(functionDefinition->FullName()));
+    bool child = functionDefinition->ParentFn() != nullptr;
+    otava::intermediate::Function* function = emitter->CreateFunction(functionDefinitionName, functionType, inline_, once, child);
+    if (child)
+    {
+        function->SetComment(util::ToUtf8(functionDefinition->FullName()) + ", parent=" + util::ToUtf8(functionDefinition->ParentFn()->FullName()));
+    }
+    else
+    {
+        function->SetComment(util::ToUtf8(functionDefinition->FullName()));
+    }
     otava::intermediate::MetadataStruct* mdStruct = emitter->CreateMetadataStruct();
     mdStruct->AddItem("nodeType", emitter->CreateMetadataLong(otava::intermediate::funcInfoNodeType));
     mdStruct->AddItem("fullName", emitter->CreateMetadataString(util::ToUtf8(functionDefinition->FullName())));
+    if (child)
+    {
+        mdStruct->AddItem("parentName", emitter->CreateMetadataString(util::ToUtf8(functionDefinition->ParentFn()->FullName())));
+    }
     function->SetMdId(mdStruct->Id());
     otava::intermediate::MetadataRef* mdRef = emitter->CreateMetadataRef(mdStruct->Id());
     function->SetMetadataRef(mdRef);
     entryBlock = emitter->CreateBasicBlock();
     emitter->SetCurrentBasicBlock(entryBlock);
+    if (functionDefinition->ParentFn())
+    {
+        otava::symbols::FunctionDefinitionSymbol* parentFn = functionDefinition->ParentFn();
+        int level = 0;
+        while (parentFn)
+        {
+            int np = parentFn->MemFunParameters(&context).size();
+            for (int i = 0; i < np; ++i)
+            {
+                otava::symbols::ParameterSymbol* parameter = parentFn->MemFunParameters(&context)[i];
+                otava::symbols::TypeSymbol* type = parameter->GetReferredType(&context);
+                if (type)
+                {
+                    otava::intermediate::Value* plocal = emitter->EmitPLocal(type->IrType(*emitter, node.GetSourcePos(), &context), level);
+                    emitter->SetIrObject(parameter, plocal);
+                }
+                else
+                {
+                    otava::symbols::ThrowException("parameter has no type", node.GetSourcePos(), &context);
+                }
+            }
+            if (parentFn->ReturnsClass())
+            {
+                otava::symbols::ParameterSymbol* parameter = parentFn->ReturnValueParam();
+                otava::symbols::TypeSymbol* type = parameter->GetReferredType(&context);
+                if (type)
+                {
+                    otava::intermediate::Value* plocal = emitter->EmitPLocal(
+                        parameter->GetReferredType(&context)->IrType(*emitter, node.GetSourcePos(), &context), level);
+                    emitter->SetIrObject(parameter, plocal);
+                }
+                else
+                {
+                    otava::symbols::ThrowException("parameter has no type", node.GetSourcePos(), &context);
+                }
+            }
+            int nlv = parentFn->LocalVariables().size();
+            for (int i = 0; i < nlv; ++i)
+            {
+                otava::symbols::VariableSymbol* localVariable = parentFn->LocalVariables()[i];
+                otava::symbols::TypeSymbol* type = localVariable->GetReferredType();
+                if (type)
+                {
+                    otava::intermediate::Value* plocal = emitter->EmitPLocal(type->IrType(*emitter, node.GetSourcePos(), &context), level);
+                    emitter->SetIrObject(localVariable, plocal);
+                }
+                else
+                {
+                    otava::symbols::ThrowException("variable has no type", node.GetSourcePos(), &context);
+                }
+            }
+            parentFn = parentFn->ParentFn();
+            ++level;
+        }
+    }
     int np = functionDefinition->MemFunParameters(&context).size();
     for (int i = 0; i < np; ++i)
     {
@@ -853,6 +943,10 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         {
             otava::intermediate::Value* local = emitter->EmitLocal(type->IrType(*emitter, node.GetSourcePos(), &context));
             emitter->SetIrObject(localVariable, local);
+        }
+        else
+        {
+            otava::symbols::ThrowException("variable has no type", node.GetSourcePos(), &context);
         }
     }
     for (int i = 0; i < np; ++i)
@@ -1557,6 +1651,12 @@ void CodeGenerator::Visit(otava::symbols::BoundDisjunctionNode& boundDisjunction
     {
         boundDisjunction.Load(*emitter, otava::symbols::OperationFlags::none, boundDisjunction.GetSourcePos(), &context);
     }
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundConditionalExprNode& boundConditionalExpr)
+{
+    SetCurrentLineNumber(boundConditionalExpr.GetSourcePos());
+    boundConditionalExpr.Load(*emitter, otava::symbols::OperationFlags::none, boundConditionalExpr.GetSourcePos(), &context);
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundGlobalVariableDefinitionNode& node)

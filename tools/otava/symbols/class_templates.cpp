@@ -451,9 +451,11 @@ void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, co
         FunctionDefinitionSymbol* destructorFn = destructorGroup->GetSingleDefinition();
         if (destructorFn)
         {
+            destructorFn->SetNoExcept();
             std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
             FunctionSymbol* instantiatedDestructor = InstantiateMemFnOfClassTemplate(destructorFn, specialization, 
                 templateParameterMap, sourcePos, context);
+            instantiatedDestructor->SetNoExcept();
             instantiatedDestructor->SetFlag(FunctionSymbolFlags::fixedIrName);
             std::string irName = instantiatedDestructor->IrName(context);
             specialization->SetDestructor(instantiatedDestructor);
@@ -735,6 +737,10 @@ void ClassTemplateRepository::AddFunctionDefinition(const MemFunKey& key, Functi
 FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemplateSpecializationSymbol* classTemplateSpecialization, 
     const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    if (memFn->GroupName() == U"dispose")
+    {
+        int x = 0;
+    }
     std::string specializationName = util::ToUtf8(memFn->Name());
     if (!classTemplateSpecialization)
     {
@@ -890,7 +896,9 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                     }
                     instantiator.SetFunctionNode(functionDefinitionNode);
                     context->SetClassTemplateSpecialization(functionDefinitionNode, classTemplateSpecialization);
+                    context->PushResetFlag(ContextFlags::skipFunctionDefinitions);
                     functionDefinitionNode->Accept(instantiator);
+                    context->PopFlags();
                     context->SetMemFunDefSymbolIndex(-1);
                     specialization = instantiator.GetSpecialization();
                     context->RemoveSpecialization(functionDefinitionNode);

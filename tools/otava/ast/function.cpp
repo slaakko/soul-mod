@@ -45,7 +45,8 @@ Node* FunctionDefinitionNode::Clone() const
     {
         clonedSpecifiers = specifiers->Clone();
     }
-    FunctionDefinitionNode* clone = new FunctionDefinitionNode(GetSourcePos(), clonedAttributes, clonedDeclSpecifiers, declarator->Clone(), clonedSpecifiers, functionBody->Clone());
+    FunctionDefinitionNode* clone = new FunctionDefinitionNode(GetSourcePos(), clonedAttributes, clonedDeclSpecifiers, declarator->Clone(), clonedSpecifiers, 
+        functionBody->Clone());
     return clone;
 }
 

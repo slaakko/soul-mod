@@ -12,9 +12,9 @@ import util;
 
 namespace otava::intermediate {
 
-Context::Context() : 
-    compileUnit(), inlineDepth(4), maxArithmeticOptimizationCount(8), flags(ContextFlags::none), functionsInlined(0), totalFunctions(0), currentBasicBlock(nullptr),
-    currentLineNumber(0), lexer(nullptr)
+Context::Context() :
+    compileUnit(), inlineDepth(4), maxArithmeticOptimizationCount(8), 
+    flags(ContextFlags::none), functionsInlined(0), totalFunctions(0), currentBasicBlock(nullptr), currentLineNumber(0), lexer(nullptr), fileId(-1), assemblyContext()
 {
     compileUnit.SetContext(this);
     types.SetContext(this);
@@ -130,7 +130,7 @@ Value* Context::GetNullValue(const soul::ast::Span& span, Type* type)
     return nullptr;
 }
 
-Function* Context::AddFunctionDefinition(const soul::ast::Span& span, Type* type, const std::string& functionId, bool inline_, bool linkOnce, bool createEntry,
+Function* Context::AddFunctionDefinition(const soul::ast::Span& span, Type* type, const std::string& functionId, bool inline_, bool linkOnce, bool child, bool createEntry,
     otava::intermediate::MetadataRef* metadataRef)
 {
     if (type->IsPointerType())
@@ -140,7 +140,7 @@ Function* Context::AddFunctionDefinition(const soul::ast::Span& span, Type* type
     if (type->IsFunctionType())
     {
         FunctionType* functionType = static_cast<FunctionType*>(type);
-        return code.AddFunctionDefinition(span, functionType, functionId, inline_, linkOnce, createEntry, metadataRef);
+        return code.AddFunctionDefinition(span, functionType, functionId, inline_, linkOnce, child, createEntry, metadataRef);
     }
     else
     {
@@ -453,6 +453,18 @@ Instruction* Context::CreateLocalInEntryBlock(Type* type)
     return inst;
 }
 
+Instruction* Context::CreatePLocal(Type* type, int level)
+{
+    Type* ptrType = MakePtrType(type);
+    Instruction* inst = new PLocalInstruction(soul::ast::Span(), MakeRegValue(ptrType), type, level);
+    AddLineInfo(inst);
+    if (currentBasicBlock)
+    {
+        currentBasicBlock->AddInstruction(inst);
+    }
+    return inst;
+}
+
 Instruction* Context::CreateLoad(Value* ptr)
 {
     Instruction* inst = new LoadInstruction(soul::ast::Span(), MakeRegValue(ptr->GetType()->RemovePointer(soul::ast::Span(), this)), ptr);
@@ -609,6 +621,18 @@ SwitchInstruction* Context::CreateSwitch(Value* cond, BasicBlock* defaultDest)
 Instruction* Context::CreateNop()
 {
     Instruction* inst = new NoOperationInstruction(soul::ast::Span());
+    AddLineInfo(inst);
+    if (currentBasicBlock)
+    {
+        currentBasicBlock->AddInstruction(inst);
+    }
+    return inst;
+}
+
+Instruction* Context::CreateGetRbp()
+{
+    Instruction* inst = new GetRbpInstruction(soul::ast::Span(), MakeRegValue(types.GetVoidType()->AddPointer(this)));
+    AddLineInfo(inst);
     if (currentBasicBlock)
     {
         currentBasicBlock->AddInstruction(inst);

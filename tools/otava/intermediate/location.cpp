@@ -6,6 +6,7 @@
 module otava.intermediate.location;
 
 import util;
+import otava.intermediate.error;
 
 namespace otava::intermediate {
 
@@ -14,11 +15,11 @@ void FrameLocation::Dump()
     std::cout << "index=" << index << ", offset=" << offset << ", size=" << size << "\n";
 }
 
-Frame::Frame() : calleeParamAreaSize(32), numUsedXMMRegs(0), rbxPushed(false)
+Frame::Frame() : calleeParamAreaSize(32), numUsedXMMRegs(0), rbxPushed(false), isPFrame(false)
 {
 }
 
-FrameLocation Frame::GetParamLocation(std::int64_t size, otava::assembly::Context* assemblyContext)
+FrameLocation Frame::AllocateParamLocation(std::int64_t size, otava::assembly::Context* assemblyContext)
 {
     if (paramLocations.empty())
     {
@@ -44,21 +45,57 @@ FrameLocation Frame::GetParamLocation(std::int64_t size, otava::assembly::Contex
     }
 }
 
-FrameLocation Frame::GetFrameLocation(std::int64_t size)
+FrameLocation Frame::AllocateFrameLocation(std::int64_t size)
 {
     if (frameLocations.empty())
     {
-        FrameLocation frameLocation(otava::assembly::RegisterGroupKind::rbp, 0, 8, size);
-        frameLocations.push_back(frameLocation);
-        return frameLocation;
+        if (isPFrame)
+        {
+            FrameLocation frameLocation(otava::assembly::RegisterGroupKind::rsi, 0, 8, size);
+            frameLocations.push_back(frameLocation);
+            return frameLocation;
+        }
+        else
+        {
+            FrameLocation frameLocation(otava::assembly::RegisterGroupKind::rbp, 0, 8, size);
+            frameLocations.push_back(frameLocation);
+            return frameLocation;
+        }
     }
     else
     {
         const FrameLocation& last = frameLocations.back();
-        FrameLocation frameLocation(otava::assembly::RegisterGroupKind::rbp, frameLocations.size(), last.offset + last.size, size);
-        frameLocations.push_back(frameLocation);
-        return frameLocation;
+        if (isPFrame)
+        {
+            FrameLocation frameLocation(otava::assembly::RegisterGroupKind::rsi, frameLocations.size(), last.offset + last.size, size);
+            frameLocations.push_back(frameLocation);
+            return frameLocation;
+        }
+        else
+        {
+            FrameLocation frameLocation(otava::assembly::RegisterGroupKind::rbp, frameLocations.size(), last.offset + last.size, size);
+            frameLocations.push_back(frameLocation);
+            return frameLocation;
+        }
     }
+}
+
+FrameLocation Frame::GetFrameLocation(int index, const soul::ast::Span& span, Context* context) const
+{
+    if (index >= 0 && index < frameLocations.size())
+    {
+        return frameLocations[index];
+    }
+    else
+    {
+        Error("invalid frame location access index " + std::to_string(index), span, context);
+    }
+}
+
+FrameLocation Frame::GetParentFrameLocation(const soul::ast::Span& span, Context* context) const
+{
+    FrameLocation parentFrameLocation(otava::assembly::RegisterGroupKind::rsi, 0, 8, 8);
+    return  parentFrameLocation;
 }
 
 std::int64_t Frame::Size() const

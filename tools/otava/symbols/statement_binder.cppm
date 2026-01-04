@@ -33,6 +33,7 @@ public:
     void Visit(otava::ast::ExpressionListNode& node) override;
     void Visit(otava::ast::FunctionBodyNode& node) override;
     void Visit(otava::ast::CompoundStatementNode& node) override;
+    void Visit(otava::ast::SequenceStatementNode& node) override;
     void Visit(otava::ast::IfStatementNode& node) override;
     void Visit(otava::ast::SwitchStatementNode& node) override;
     void Visit(otava::ast::CaseStatementNode& node) override;
@@ -46,6 +47,10 @@ public:
     void Visit(otava::ast::ReturnStatementNode& node) override;
     void Visit(otava::ast::ExpressionStatementNode& node) override;
     void Visit(otava::ast::DeclarationStatementNode& node) override;
+    void Visit(otava::ast::TryStatementNode& node) override;
+    void Visit(otava::ast::HandlerSequenceNode& node) override;
+    void Visit(otava::ast::HandlerNode& node) override;
+    void Visit(otava::ast::ExceptionDeclarationNode& node) override;
     void Visit(otava::ast::SimpleDeclarationNode& node) override;
     void Visit(otava::ast::AliasDeclarationNode& node) override;
     void Visit(otava::ast::BoundStatementNode& node) override;
@@ -89,6 +94,9 @@ private:
     std::unique_ptr<BoundExpressionStatementNode> constructFunctionStaticStatement;
     std::unique_ptr<BoundExpressionStatementNode> atExitStatement;
     VariableSymbol* globalStaticVariableSymbol;
+    otava::ast::Node* catchBlock;
+    otava::ast::Node* handlerBlock;
+    otava::ast::Node* lastElse;
 };
 
 FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);

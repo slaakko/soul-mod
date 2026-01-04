@@ -179,10 +179,14 @@
     <ClCompile Include="concept.parser.cppm" />
     <ClCompile Include="declaration.parser.cpp" />
     <ClCompile Include="declaration.parser.cppm" />
+    <ClCompile Include="decl_specifier_seq_parser.cpp" />
+    <ClCompile Include="decl_specifier_seq_parser.cppm" />
     <ClCompile Include="enum.parser.cpp" />
     <ClCompile Include="enum.parser.cppm" />
     <ClCompile Include="expression.parser.cpp" />
     <ClCompile Include="expression.parser.cppm" />
+    <ClCompile Include="expr_parser.cpp" />
+    <ClCompile Include="expr_parser.cppm" />
     <ClCompile Include="function.parser.cpp" />
     <ClCompile Include="function.parser.cppm" />
     <ClCompile Include="guard.parser.cpp" />
@@ -209,6 +213,8 @@
     <ClCompile Include="simple_type.parser.cppm" />
     <ClCompile Include="statement.parser.cpp" />
     <ClCompile Include="statement.parser.cppm" />
+    <ClCompile Include="stmt_parser.cpp" />
+    <ClCompile Include="stmt_parser.cppm" />
     <ClCompile Include="template.parser.cpp" />
     <ClCompile Include="template.parser.cppm" />
     <ClCompile Include="token_parser.cpp" />

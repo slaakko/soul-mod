@@ -1,0 +1,3 @@
+project runtime_error;
+target=program;
+source <main.cpp>;

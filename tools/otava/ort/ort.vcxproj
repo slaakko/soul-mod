@@ -155,6 +155,8 @@
   <ItemGroup>
     <ClCompile Include="class_info.cpp" />
     <ClCompile Include="class_info.cppm" />
+    <ClCompile Include="eh.cpp" />
+    <ClCompile Include="eh.cppm" />
     <ClCompile Include="filesystem.cpp" />
     <ClCompile Include="filesystem.cppm" />
     <ClCompile Include="init_done.cpp" />
@@ -162,7 +164,7 @@
     <ClCompile Include="io.cpp" />
     <ClCompile Include="lexer_resource.cpp" />
     <ClCompile Include="lexer_resource.cppm" />
-    <ClCompile Include="io..cppm" />
+    <ClCompile Include="io.cppm" />
     <ClCompile Include="memory.cpp" />
     <ClCompile Include="memory.cppm" />
     <ClCompile Include="ort.cpp" />

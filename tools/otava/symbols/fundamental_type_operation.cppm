@@ -136,6 +136,7 @@ public:
         ParameterSymbol* param = new ParameterSymbol(U"param", type_);
         AddParameter(param, soul::ast::SourcePos(), nullptr);
         SetReturnType(type_, context);
+        SetNoExcept();
     }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
@@ -163,6 +164,7 @@ public:
         ParameterSymbol* rightParam = new ParameterSymbol(U"right", type_);
         AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
         SetReturnType(type_, context);
+        SetNoExcept();
     }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
@@ -192,6 +194,7 @@ public:
         ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
         AddParameter(thatParam, soul::ast::SourcePos(), context);
         SetReturnType(type->AddLValueRef(context), context);
+        SetNoExcept();
     }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
@@ -226,6 +229,7 @@ public:
         ParameterSymbol* rightParam = new ParameterSymbol(U"right", type_);
         AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
         SetReturnType(boolType, context);
+        SetNoExcept();
     }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override

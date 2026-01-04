@@ -6,6 +6,7 @@
 export module otava.symbols;
 
 export import otava.symbols.alias.type.symbol;
+export import otava.symbols.argument.conversion.table;
 export import otava.symbols.block;
 export import otava.symbols.bound.tree;
 export import otava.symbols.compound.type.symbol;
@@ -21,9 +22,11 @@ export import otava.symbols.declarator;
 export import otava.symbols.enums;
 export import otava.symbols.enum_group.symbol;
 export import otava.symbols.exception;
+export import otava.symbols.expr.parser;
 export import otava.symbols.function_definition_symbol_set;
 export import otava.symbols.function.kind;
 export import otava.symbols.function.symbol;
+export import otava.symbols.function.templates;
 export import otava.symbols.function_return_path_checker;
 export import otava.symbols.fundamental.type.symbol;
 export import otava.symbols.modules;

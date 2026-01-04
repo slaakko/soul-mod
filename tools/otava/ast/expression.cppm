@@ -640,10 +640,14 @@ public:
     inline void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline bool IsCompileUnitInitFn() const { return compileUnitInitFn; }
+    inline void SetCompileUnitInitFn() { compileUnitInitFn = true; }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> subject;
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
+    bool compileUnitInitFn;
 };
 
 class PairNode : public BinaryNode
@@ -884,6 +888,14 @@ class DesignatorNode : public UnaryNode
 public:
     DesignatorNode(const soul::ast::SourcePos& sourcePos_);
     DesignatorNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_);
+    Node* Clone() const override;
+    void Accept(Visitor& visitor) override;
+};
+
+class ThrowExprNode : public UnaryNode
+{
+public:
+    ThrowExprNode(const soul::ast::SourcePos& sourcePos_, Node* expr__);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };

@@ -1053,6 +1053,22 @@ void PtrDeclaratorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+std::u32string PtrDeclaratorNode::Str() const
+{
+    std::u32string s;
+    int n = Count();
+    for (int i = 0; i < n; ++i)
+    {
+        Node* node = Nodes()[i];
+        s.append(node->Str());
+        if (node->IsConstNode() || node->IsLvalueRefNode() || node->IsRvalueRefNode() || node->IsPtrNode())
+        {
+            s.append(1, ' ');
+        }
+    }
+    return s;
+}
+
 PackDeclaratorIdNode::PackDeclaratorIdNode(const soul::ast::SourcePos& sourcePos_) : BinaryNode(NodeKind::packDeclaratorIdNode, sourcePos_, nullptr, nullptr)
 {
 }
@@ -1223,7 +1239,8 @@ NoexceptSpecifierNode::NoexceptSpecifierNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-NoexceptSpecifierNode::NoexceptSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* constantExpr_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+NoexceptSpecifierNode::NoexceptSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* constantExpr_, 
+    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
     CompoundNode(NodeKind::noexceptSpecifierNode, sourcePos_), constantExpr(constantExpr_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }

@@ -91,6 +91,7 @@ struct FundamentalTypeConversion : public FunctionSymbol
         ParameterSymbol* arg = new ParameterSymbol(U"arg", argType);
         AddParameter(arg, soul::ast::SourcePos(), nullptr);
         SetReturnType(paramType_, context);
+        SetNoExcept();
     }
     TypeSymbol* ConversionParamType() const override
     {

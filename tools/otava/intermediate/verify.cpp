@@ -54,12 +54,14 @@ public:
     void Visit(LessInstruction& inst) override;
     void Visit(ParamInstruction& inst) override;
     void Visit(LocalInstruction& inst) override;
+    void Visit(PLocalInstruction& inst) override;
     void Visit(LoadInstruction& inst) override;
     void Visit(ElemAddrInstruction& inst) override;
     void Visit(PtrOffsetInstruction& inst) override;
     void Visit(PtrDiffInstruction& inst) override;
     void Visit(FunctionCallInstruction& inst) override;
     void Visit(NoOperationInstruction& inst) override;
+    void Visit(GetRbpInstruction& inst) override;
 private:
     void CheckSameType(const std::string& typeDescription, Type* type, const std::string& expectedTypeDescription, Type* expected, const soul::ast::Span& span);
     void CheckType(const std::string& typeDescription, Type* type, Type* assertedType, const std::string& expectedTypeDescription, Type* expected, const soul::ast::Span& span);
@@ -707,7 +709,17 @@ void VerifierVisitor::Visit(ParamInstruction& inst)
 
 void VerifierVisitor::Visit(LocalInstruction& inst)
 {
-    CheckType("type of local", inst.LocalType(), inst.LocalType()->AddPointer(GetContext()), "instruction result type", inst.Result()->GetType(), inst.Span());
+    CheckType("type of local", inst.LocalType(), inst.LocalType()->AddPointer(
+        GetContext()), "instruction result type", inst.Result()->GetType(), inst.Span());
+    CheckValueInstruction(&inst);
+    inst.AddToUses();
+    inst.SetIndex(index++);
+}
+
+void VerifierVisitor::Visit(PLocalInstruction& inst)
+{
+    CheckType("type of plocal", inst.LocalType(), inst.LocalType()->AddPointer(
+        GetContext()), "instruction result type", inst.Result()->GetType(), inst.Span());
     CheckValueInstruction(&inst);
     inst.AddToUses();
     inst.SetIndex(index++);
@@ -716,7 +728,8 @@ void VerifierVisitor::Visit(LocalInstruction& inst)
 void VerifierVisitor::Visit(LoadInstruction& inst)
 {
     CheckPointerType(inst.Ptr()->GetType(), "operand type", inst.Span());
-    CheckType("result type", inst.Result()->GetType(), inst.Ptr()->GetType(), "pointer to result type", inst.Result()->GetType()->AddPointer(GetContext()), inst.Span());
+    CheckType("result type", inst.Result()->GetType(), 
+        inst.Ptr()->GetType(), "pointer to result type", inst.Result()->GetType()->AddPointer(GetContext()), inst.Span());
     CheckArithmeticPointerOrBooleanType(inst.Result()->GetType(), "result type", inst.Span());
     CheckValueInstruction(&inst);
     inst.AddToUses();
@@ -779,7 +792,8 @@ void VerifierVisitor::Visit(PtrDiffInstruction& inst)
     CheckIntegerType(inst.Result()->GetType(), "result type", inst.Span());
     CheckPointerType(inst.LeftPtr()->GetType(), "left pointer operand type", inst.Span());
     CheckPointerType(inst.RightPtr()->GetType(), "right pointer operand type", inst.Span());
-    CheckSameType("left pointer operand type", inst.LeftPtr()->GetType(), "right pointer operand type", inst.RightPtr()->GetType(), inst.Span());
+    CheckSameType("left pointer operand type", 
+        inst.LeftPtr()->GetType(), "right pointer operand type", inst.RightPtr()->GetType(), inst.Span());
     CheckValueInstruction(&inst);
     inst.AddToUses();
     inst.SetIndex(index++);
@@ -816,8 +830,8 @@ void VerifierVisitor::Visit(FunctionCallInstruction& inst)
     }
     else
     {
-        Error("type check error: callee in function call has invalid type: function type or function pointer type expected: note: type is " + inst.Callee()->GetType()->Name(),
-            inst.Span(), GetContext());
+        Error("type check error: callee in function call has invalid type: function type or function pointer type expected: note: type is " + 
+            inst.Callee()->GetType()->Name(), inst.Span(), GetContext());
     }
     CheckValueInstruction(&inst);
     inst.SetArgs(std::move(arguments));
@@ -828,6 +842,13 @@ void VerifierVisitor::Visit(FunctionCallInstruction& inst)
 
 void VerifierVisitor::Visit(NoOperationInstruction& inst)
 {
+    inst.AddToUses();
+    inst.SetIndex(index++);
+}
+
+void VerifierVisitor::Visit(GetRbpInstruction& inst)
+{
+    CheckValueInstruction(&inst);
     inst.AddToUses();
     inst.SetIndex(index++);
 }

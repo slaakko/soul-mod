@@ -41,8 +41,8 @@ enum class OpCode : int
     store, arg, jmp, branch, procedure_call, ret, switch_,
     not_, neg, signextend, zeroextend, truncate, fpextend, bitcast, inttofloat, floattoint, inttoptr, ptrtoint,
     add, sub, mul, div_, mod, and_, or_, xor_, shl, shr, equal, less,
-    param, local, load, elemaddr, ptroffset, ptrdiff, function_call,
-    nop
+    param, local, plocal, load, elemaddr, ptroffset, ptrdiff, function_call,
+    nop, getrbp
 };
 
 void AddUser(Instruction* user, Value* value);
@@ -69,6 +69,7 @@ public:
     inline bool IsSwitchInstruction() const { return opCode == OpCode::switch_; }
     inline bool IsParamInstruction() const { return opCode == OpCode::param; }
     inline bool IsLocalInstruction() const { return opCode == OpCode::local; }
+    inline bool IsPLocalInstruction() const { return opCode == OpCode::plocal; }
     inline bool IsLoadInstruction() const { return opCode == OpCode::load; }
     inline bool IsStoreInstruction() const { return opCode == OpCode::store; }
     inline bool IsElemAddrInstruction() const { return opCode == OpCode::elemaddr; }
@@ -526,6 +527,20 @@ private:
     Type* localType;
 };
 
+class PLocalInstruction : public ValueInstruction
+{
+public:
+    PLocalInstruction(const soul::ast::Span& span_, RegValue* result_, Type* localType_, int level_);
+    void Accept(Visitor& visitor) override;
+    Instruction* Clone(CloneContext& cloneContext) const override;
+    void Write(util::CodeFormatter& formatter) override;
+    inline Type* LocalType() const { return localType; }
+    inline int Level() const { return level; }
+private:
+    Type* localType;
+    int level;
+};
+
 class LoadInstruction : public ValueInstruction
 {
 public:
@@ -635,6 +650,15 @@ public:
     void Write(util::CodeFormatter& formatter) override;
 };
 
+class GetRbpInstruction : public ValueInstruction
+{
+public:
+    GetRbpInstruction(const soul::ast::Span& span_, RegValue* result_);
+    void Accept(Visitor& visitor) override;
+    Instruction* Clone(CloneContext& cloneContext) const override;
+    void Write(util::CodeFormatter& formatter) override;
+};
+
 const std::int32_t entryBlockId = -1;
 const std::int32_t exitBlockId = -2;
 
@@ -688,7 +712,7 @@ private:
 
 enum class FunctionFlags : int
 {
-    none = 0, defined = 1 << 0, inline_ = 1 << 1, linkOnce = 1 << 2
+    none = 0, defined = 1 << 0, inline_ = 1 << 1, linkOnce = 1 << 2, child = 1 << 3
 };
 
 inline FunctionFlags operator|(FunctionFlags left, FunctionFlags right)
@@ -725,6 +749,8 @@ public:
     inline void SetInline() { SetFlag(FunctionFlags::inline_); }
     inline bool IsLinkOnce() const { return GetFlag(FunctionFlags::linkOnce); }
     inline void SetLinkOnce() { SetFlag(FunctionFlags::linkOnce); }
+    inline bool IsChildFn() const { return GetFlag(FunctionFlags::child); }
+    void SetAsChildFn() { SetFlag(FunctionFlags::child); }
     inline int Arity() const { return type->Arity(); }
     void Accept(Visitor& visitor);
     Function* Clone() const;
@@ -808,8 +834,8 @@ public:
     void SetCurrentFunction(Function* function);
     Function* GetOrInsertFunction(const std::string& functionId, FunctionType* functionType);
     Function* GetFunction(const std::string& functionId) const;
-    Function* AddFunctionDefinition(const soul::ast::Span& span, FunctionType* functionType, const std::string& functionId, bool inline_, bool linkOnce, bool createEntry,
-        MetadataRef* metadataRef);
+    Function* AddFunctionDefinition(const soul::ast::Span& span, FunctionType* functionType, const std::string& functionId, bool inline_, bool linkOnce, bool chid, 
+        bool createEntry, MetadataRef* metadataRef);
     Function* AddFunctionDeclaration(const soul::ast::Span& span, FunctionType* functionType, const std::string& functionId);
     inline Function* FirstFunction() { return static_cast<Function*>(functions.FirstChild()); }
     inline Function* LastFunction() { return static_cast<Function*>(functions.LastChild()); }
