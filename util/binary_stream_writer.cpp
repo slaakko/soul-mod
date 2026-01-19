@@ -9,7 +9,7 @@ import util.unicode;
 
 namespace util {
 
-BinaryStreamWriter::BinaryStreamWriter(Stream& stream_) : stream(stream_)
+BinaryStreamWriter::BinaryStreamWriter(Stream& stream_) noexcept : stream(stream_)
 {
 }
 
@@ -229,9 +229,9 @@ void BinaryStreamWriter::Write(const uuid& id)
     }
 }
 
-void BinaryStreamWriter::WriteTime(time_t time)
+void BinaryStreamWriter::WriteTime(time_t x)
 {
-    Write(static_cast<std::int64_t>(time));
+    Write(static_cast<std::int64_t>(x));
 }
 
 } // namespace util

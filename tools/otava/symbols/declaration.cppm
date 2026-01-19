@@ -25,6 +25,9 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* function
 Declaration ProcessFunctionDeclaration(otava::ast::Node* node, Context* context);
 Declaration ProcessParameterDeclaration(otava::ast::Node* node, Context* context);
 Declaration ProcessExceptionDeclaration(otava::ast::Node* node, Context* context);
+Declaration ProcessInitCondition(otava::ast::InitConditionNode* initCondition, Context* context);
+VariableSymbol* ProcessSimpleDeclarator(SimpleDeclarator* simpleDeclarator, TypeSymbol* type, TypeSymbol* initialierType, 
+    Value* value, DeclarationFlags flags, Context* context);
 void ProcessMemberDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context);
 int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast::Node* declarator, otava::ast::Node* functionNode, otava::ast::Node* specifierNode, 
     bool& get, Context* context);

@@ -10,7 +10,7 @@ import util.rand;
 
 namespace util {
 
-uuid::uuid() : data()
+uuid::uuid() noexcept : data()
 {
     for (auto& byte : data)
     {
@@ -18,7 +18,7 @@ uuid::uuid() : data()
     }
 }
 
-uuid::uuid(const uuid& that)
+uuid::uuid(const uuid& that) noexcept
 {
     for (int i = 0; i < uuid::static_size(); ++i)
     {
@@ -26,7 +26,7 @@ uuid::uuid(const uuid& that)
     }
 }
 
-uuid::uuid(uuid&& that)
+uuid::uuid(uuid&& that) noexcept
 {
     for (int i = 0; i < uuid::static_size(); ++i)
     {
@@ -34,16 +34,7 @@ uuid::uuid(uuid&& that)
     }
 }
 
-uuid& uuid::operator=(const uuid& that)
-{
-    for (int i = 0; i < uuid::static_size(); ++i)
-    {
-        data[i] = that.data[i];
-    }
-    return *this;
-}
-
-uuid& uuid::operator=(uuid&& that)
+uuid& uuid::operator=(const uuid& that) noexcept
 {
     for (int i = 0; i < uuid::static_size(); ++i)
     {
@@ -52,7 +43,16 @@ uuid& uuid::operator=(uuid&& that)
     return *this;
 }
 
-uuid uuid::random()
+uuid& uuid::operator=(uuid&& that) noexcept
+{
+    for (int i = 0; i < uuid::static_size(); ++i)
+    {
+        data[i] = that.data[i];
+    }
+    return *this;
+}
+
+uuid uuid::random() noexcept
 {
     uuid rand_uuid;
     for (int i = 0; i < uuid::static_size(); ++i)
@@ -62,7 +62,7 @@ uuid uuid::random()
     return rand_uuid;
 }
 
-bool uuid::is_nil() const
+bool uuid::is_nil() const noexcept
 {
     for (const auto& x : data)
     {
@@ -71,7 +71,7 @@ bool uuid::is_nil() const
     return true;
 }
 
-bool operator==(const uuid& left, const uuid& right)
+bool operator==(const uuid& left, const uuid& right) noexcept
 {
     for (int i = 0; i < uuid::static_size(); ++i)
     {
@@ -80,7 +80,7 @@ bool operator==(const uuid& left, const uuid& right)
     return true;
 }
 
-bool operator<(const uuid& left, const uuid& right)
+bool operator<(const uuid& left, const uuid& right) noexcept
 {
     for (int i = 0; i < uuid::static_size(); ++i)
     {
@@ -90,7 +90,7 @@ bool operator<(const uuid& left, const uuid& right)
     return false;
 }
 
-void UuidToInts(const uuid& id, std::uint64_t& int1, std::uint64_t& int2)
+void UuidToInts(const uuid& id, std::uint64_t& int1, std::uint64_t& int2) noexcept
 {
     const std::uint8_t* i = &id.data[0];
     const std::uint64_t* i64 = reinterpret_cast<const std::uint64_t*>(i);
@@ -98,7 +98,7 @@ void UuidToInts(const uuid& id, std::uint64_t& int1, std::uint64_t& int2)
     int2 = *i64;
 }
 
-void IntsToUuid(std::uint64_t int1, std::uint64_t int2, uuid& id)
+void IntsToUuid(std::uint64_t int1, std::uint64_t int2, uuid& id) noexcept
 {
     std::uint8_t* i = &id.data[0];
     std::uint64_t* i64 = reinterpret_cast<std::uint64_t*>(i);
@@ -106,7 +106,7 @@ void IntsToUuid(std::uint64_t int1, std::uint64_t int2, uuid& id)
     *i64 = int2;
 }
 
-void RandomUuid(uuid& id)
+void RandomUuid(uuid& id) noexcept
 {
     id = uuid::random();
 }
@@ -160,12 +160,12 @@ uuid ToUuid(const std::u32string& str)
     return id;
 }
 
-void Rotate(uuid& id, int index)
+void Rotate(uuid& id, int index) noexcept
 {
     std::rotate(id.begin(), id.begin() + index, id.end());
 }
 
-void Xor(uuid& id, const uuid& that)
+void Xor(uuid& id, const uuid& that) noexcept
 {
     for (int i = 0; i < uuid::static_size(); ++i)
     {

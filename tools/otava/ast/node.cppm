@@ -124,6 +124,7 @@ public:
     inline bool IsCompoundStatementNode() const { return kind == NodeKind::compoundStatementNode; }
     inline bool IsSequenceStatemetnNode() const { return kind == NodeKind::sequenceStatementNode; }
     inline bool IsReturnStatementNode() const { return kind == NodeKind::returnStatementNode; }
+    inline bool IsInitConditionNode() const { return kind == NodeKind::initConditionNode; }
     inline bool IsCtorInitializerNode() const { return kind == NodeKind::constructorInitializerNode; }
     inline bool IsFunctionBodyNode() const { return kind == NodeKind::functionBodyNode; }
     inline bool IsConstructorNode() const { return kind == NodeKind::constructorNode; }

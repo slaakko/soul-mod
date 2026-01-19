@@ -1,9 +1,0 @@
-project oxml_stats;
-target=program;
-reference <../../outil/outil.project>;
-reference <../../osoul/oast/oast.project>;
-reference <../../osoul/olexer/olexer.project>;
-reference <../../osoul/oparser/oparser.project>;
-reference <../oxml_processor/oxml_processor.project>;
-reference <../oxml_parser/oxml_parser.project>;
-source <main.cpp>;

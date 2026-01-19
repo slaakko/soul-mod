@@ -39,6 +39,8 @@ public:
     virtual bool HasBaseClass(TypeSymbol* baseClass, int& distance, Context* context) const { return false; }
     virtual bool IsVoidType() const { return false; }
     virtual bool IsBoolType() const { return false; }
+    virtual bool IsIntType() const { return false; }
+    virtual bool IsUnsignedShortType() const { return false; }
     virtual bool IsDoubleType() const { return false; }
     virtual bool IsFloatType() const { return false; }
     virtual bool IsNullPtrType() const { return false; }
@@ -59,6 +61,9 @@ public:
     inline bool IsConstChar16PtrType() const { return IsConstType() && IsPointerType() && PointerCount() == 1 && GetBaseType()->IsChar16TypeSymbol(); }
     inline bool IsConstChar32PtrType() const { return IsConstType() && IsPointerType() && PointerCount() == 1 && GetBaseType()->IsChar32TypeSymbol(); }
     inline bool IsFunctionPtrType() { return IsPointerType() && PointerCount() == 1 && GetBaseType()->IsFunctionType(); }
+    virtual int Rank() const { return -1; }
+    virtual bool IsSignedIntegerType() const { return false; }
+    virtual bool IsUnsignedIntegerType() const { return false; }
     virtual int PointerCount() const { return 0; }
     virtual Derivations GetDerivations() const { return Derivations::none; }
     virtual TypeSymbol* RemoveDerivations(Derivations sourceDerivations, Context* context);

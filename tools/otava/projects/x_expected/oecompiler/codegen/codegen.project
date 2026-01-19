@@ -1,0 +1,18 @@
+project otava.codegen;
+target=library;
+define EXPECTED;
+reference <../../oeutil/oeutil.project>;
+reference <../../oesoul/oeast/oeast.project>;
+reference <../../oesoul/oelexer/oelexer.project>;
+reference <../../oesoul/oelex/oelex.project>;
+reference <../../oesoul/oeparser/oeparser.project>;
+reference <../../oexml/oedom/oedom.project>;
+reference <../assembly/assembly.project>;
+reference <../intermediate/intermediate.project>;
+reference <../optimizer/optimizer.project>;
+reference <../ast/ast.project>;
+reference <../lexer/lexer.project>;
+reference <../symbols/symbols.project>;
+reference <../parser/parser.project>;
+interface <codegen.cppm>;
+source <codegen.cpp>;

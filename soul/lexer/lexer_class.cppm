@@ -9,14 +9,14 @@ import std;
 import soul.ast.source.pos;
 import util.unicode;
 import soul.ast.slg;
+import soul.ast.lexer.pos.pair;
+import soul.ast.span;
 import soul.lexer.token.parser;
 import soul.lexer.base;
 import soul.lexer.concepts;
 import soul.lexer.error;
 import soul.lexer.parsing.log;
 import soul.lexer.token;
-import soul.ast.lexer.pos.pair;
-import soul.ast.span;
 
 export namespace soul::lexer {
 
@@ -25,17 +25,17 @@ enum class LexerFlags : std::int32_t
     none = 0, synchronize = 1 << 0, synchronized = 1 << 1, synchronizedAtLeastOnce = 1 << 2, cursorSeen = 1 << 3, recordedParse = 1 << 4, farthestError = 1 << 5
 };
 
-constexpr LexerFlags operator|(LexerFlags left, LexerFlags right)
+constexpr LexerFlags operator|(LexerFlags left, LexerFlags right) noexcept
 {
     return static_cast<LexerFlags>(static_cast<std::int32_t>(left) | static_cast<std::int32_t>(right));
 }
 
-constexpr LexerFlags operator&(LexerFlags left, LexerFlags right)
+constexpr LexerFlags operator&(LexerFlags left, LexerFlags right) noexcept
 {
     return static_cast<LexerFlags>(static_cast<std::int32_t>(left) & static_cast<std::int32_t>(right));
 }
 
-constexpr LexerFlags operator~(LexerFlags flag)
+constexpr LexerFlags operator~(LexerFlags flag) noexcept
 {
     return static_cast<LexerFlags>(~static_cast<std::int32_t>(flag));
 }
@@ -45,7 +45,7 @@ bool parsing_error_thrown = false;
 template<class Char, class LexerBaseT>
 struct LexerState
 {
-    LexerState(LexerBaseT* lexer) : token(lexer), line(0), lexeme(), pos(), tokens(), flags(), recordedPosPair(), farthestPos(), currentPos()
+    LexerState(LexerBaseT* lexer) noexcept : token(lexer), line(0), lexeme(), pos(), tokens(), flags(), recordedPosPair(), farthestPos(), currentPos()
     {
     }
     soul::lexer::Token<Char, LexerBaseT> token;
@@ -65,7 +65,7 @@ template<typename Stack>
     requires RuleStack<Stack>
 struct RuleGuard
 {
-    RuleGuard(Stack& stack_, std::int64_t ruleId) : stack(stack_)
+    RuleGuard(Stack& stack_, std::int64_t ruleId) noexcept : stack(stack_)
     {
         stack.PushRule(ruleId);
     }
@@ -77,7 +77,7 @@ struct RuleGuard
 };
 
 template<typename Char>
-const Char* LineStart(const Char* start, const Char* p)
+const Char* LineStart(const Char* start, const Char* p) noexcept
 {
     while (p != start && *p != '\n' && *p != '\r')
     {
@@ -91,7 +91,7 @@ const Char* LineStart(const Char* start, const Char* p)
 }
 
 template<typename Char>
-const Char* LineEnd(const Char* end, const Char* p)
+const Char* LineEnd(const Char* end, const Char* p) noexcept
 {
     while (p != end && *p != '\n' && *p != '\r')
     {
@@ -138,7 +138,7 @@ public:
     {
         ComputeLineStarts();
     }
-    inline std::int64_t operator*() const
+    inline std::int64_t operator*() const noexcept
     {
         return current->id;
     }
@@ -182,21 +182,21 @@ public:
             }
         }
     }
-    inline std::int64_t GetPos() const override
+    std::int64_t GetPos() const noexcept override
     {
         std::int32_t p = static_cast<std::int32_t>(current - tokens.begin());
         return (static_cast<std::int64_t>(line) << 32) | static_cast<std::int64_t>(p);
     }
-    inline void SetPos(std::int64_t pos)
+    void SetPos(std::int64_t pos) noexcept
     {
         current = tokens.begin() + static_cast<std::int32_t>(pos);
         line = static_cast<std::int32_t>(pos >> 32);
     }
-    inline soul::ast::Span GetSpan() const override
+    soul::ast::Span GetSpan() const override
     {
         return GetSpan(GetPos());
     }
-    inline soul::ast::Span GetSpan(std::int64_t pos) const override
+    soul::ast::Span GetSpan(std::int64_t pos) const override
     {
         const auto& token = GetToken(pos);
         return soul::ast::Span(static_cast<int>(token.match.begin - start), token.match.Length());
@@ -213,71 +213,71 @@ public:
             throw std::runtime_error("invalid token index");
         }
     }
-    inline const std::string& FileName() const override
+    const std::string& FileName() const noexcept override
     {
         return fileName;
     }
-    inline int File() const override
+    int File() const noexcept override
     {
         return file;
     }
-    inline void SetFile(int file_)
+    void SetFile(int file_) noexcept
     {
         file = file_;
     }
-    inline int Line() const override
+    int Line() const noexcept override
     {
         return line;
     }
-    inline void SetLine(std::int32_t line_) override
+    void SetLine(std::int32_t line_) noexcept override
     {
         line = line_;
     }
-    inline soul::lexer::ClassMap<Char>* GetClassMap() const override
+    soul::lexer::ClassMap<Char>* GetClassMap() const noexcept override
     {
         return classMap;
     }
-    inline void SetClassMap(soul::lexer::ClassMap<Char>* classMap_) override
+    void SetClassMap(soul::lexer::ClassMap<Char>* classMap_) noexcept override
     {
         classMap = classMap_;
     }
-    inline soul::ast::common::TokenCollection* GetTokenCollection() const override
+    soul::ast::common::TokenCollection* GetTokenCollection() const noexcept override
     {
         return tokenCollection;
     }
-    inline void SetTokenCollection(soul::ast::common::TokenCollection* tokenCollection_) override
+    void SetTokenCollection(soul::ast::common::TokenCollection* tokenCollection_) noexcept override
     {
         tokenCollection = tokenCollection_;
     }
-    inline KeywordMap<Char>* GetKeywordMap() const override
+    KeywordMap<Char>* GetKeywordMap() const noexcept override
     {
         return keywordMap;
     }
-    inline void SetKeywordMap(KeywordMap<Char>* keywordMap_) override
+    void SetKeywordMap(KeywordMap<Char>* keywordMap_) noexcept override
     {
         keywordMap = keywordMap_;
     }
-    inline std::map<std::int64_t, std::string>* GetRuleNameMapPtr() const override
+    std::map<std::int64_t, std::string>* GetRuleNameMapPtr() const noexcept override
     {
         return ruleNameMapPtr;
     }
-    inline void SetRuleNameMapPtr(std::map<std::int64_t, std::string>* ruleNameMapPtr_) override
+    void SetRuleNameMapPtr(std::map<std::int64_t, std::string>* ruleNameMapPtr_) noexcept override
     {
         ruleNameMapPtr = ruleNameMapPtr_;
     }
-    inline LexerFlags Flags() const { return flags; }
-    inline bool GetFlag(LexerFlags flag) const { return (flags & flag) != LexerFlags::none; }
-    inline void SetFlag(LexerFlags flag) { flags = flags | flag; }
-    inline void ResetFlag(LexerFlags flag) { flags = flags & ~flag; }
-    inline void PushRule(std::int64_t ruleId)
+    inline LexerFlags Flags() const noexcept { return flags; }
+    inline bool GetFlag(LexerFlags flag) const noexcept { return (flags & flag) != LexerFlags::none; }
+    inline void SetFlag(LexerFlags flag) noexcept { flags = flags | flag; }
+    inline void ResetFlag(LexerFlags flag) noexcept { flags = flags & ~flag; }
+    inline void PushRule(std::int64_t ruleId) 
     {
         ruleContext.push_back(ruleId);
     }
-    inline void PopRule()
+    inline void PopRule() 
     {
         ruleContext.pop_back();
     }
-    inline std::int64_t GetKeywordToken(const Lexeme<Char>& lexeme) const override
+    std::int64_t GetKeywordToken(const Lexeme<Char>& lexeme) const noexcept override
     {
         if (keywordMap)
         {
@@ -288,11 +288,11 @@ public:
             return soul::lexer::INVALID_TOKEN;
         }
     }
-    inline void Retract() override
+    void Retract() noexcept override
     {
         token.match.end = pos;
     }
-    inline soul::lexer::Token<Char, LexerBase<Char>>& CurrentToken() override
+    soul::lexer::Token<Char, LexerBase<Char>>& CurrentToken() noexcept override
     {
         return token;
     }
@@ -300,21 +300,21 @@ public:
     {
         tokens.erase(current + 1, tokens.end());
     }
-    inline const Lexeme<Char>& CurrentLexeme() const override
+    const Lexeme<Char>& CurrentLexeme() const noexcept override
     {
         return lexeme;
     }
-    inline Lexeme<Char>& CurrentLexeme() override
+    Lexeme<Char>& CurrentLexeme() noexcept override
     {
         return lexeme;
     }
     std::string GetTokenName(std::int64_t tokenID) const
     {
         soul::ast::common::TokenCollection* tokenCollection = GetTokenCollection();
-        auto token = tokenCollection->GetToken(tokenID);
-        if (token)
+        auto t = tokenCollection->GetToken(tokenID);
+        if (t)
         {
-            return token->Name();
+            return t->Name();
         }
         else
         {
@@ -324,21 +324,21 @@ public:
     std::string GetTokenInfo(std::int64_t tokenID) const
     {
         soul::ast::common::TokenCollection* tokenCollection = GetTokenCollection();
-        auto token = tokenCollection->GetToken(tokenID);
-        if (token)
+        auto t = tokenCollection->GetToken(tokenID);
+        if (t)
         {
-            return token->Info();
+            return t->Info();
         }
         else
         {
             return "<unknown token>";
         }
     }
-    inline int GetLine(std::int64_t pos) const
+    inline int GetLine(std::int64_t pos) const noexcept
     {
         return pos >> 32;
     }
-    soul::ast::SourcePos GetSourcePos(std::int64_t pos) const
+    soul::ast::SourcePos GetSourcePos(std::int64_t pos) const noexcept
     {
         const Char* s = start;
         int line = GetLine(pos);
@@ -416,11 +416,11 @@ public:
         parsing_error_thrown = true;
         throw ParsingException(GetError(farthestPos), fileName, sourcePos);
     }
-    inline void SetLog(ParsingLog* log_) override
+    void SetLog(ParsingLog* log_) noexcept override
     {
         log = log_;
     }
-    inline ParsingLog* Log() const
+    inline ParsingLog* Log() const noexcept
     {
         return log;
     }
@@ -442,39 +442,39 @@ public:
         }
         return lineStartIndeces;
     }
-    soul::lexer::Variables* GetVariables() const override
+    soul::lexer::Variables* GetVariables() const noexcept override
     {
         return const_cast<soul::lexer::Variables*>(static_cast<const soul::lexer::Variables*>(&vars));
     }
-    inline const Char* Start() const
+    inline const Char* Start() const noexcept
     {
         return start;
     }
-    inline const Char* Pos() const
+    inline const Char* Pos() const noexcept
     {
         return pos;
     }
-    inline void SetPos(const Char* pos_) override
+    void SetPos(const Char* pos_) noexcept override
     {
         pos = pos_;
     }
-    inline const Char* End() const override
+    const Char* End() const noexcept override
     {
         return end;
     }
-    inline const std::vector<soul::lexer::Token<Char, LexerBase<Char>>>& Tokens() const
+    inline const std::vector<soul::lexer::Token<Char, LexerBase<Char>>>& Tokens() const noexcept
     {
         return tokens;
     }
-    inline std::vector<soul::lexer::Token<Char, LexerBase<Char>>> ReleaseTokens()
+    inline std::vector<soul::lexer::Token<Char, LexerBase<Char>>> ReleaseTokens() noexcept
     {
         return std::move(tokens);
     }
-    inline void SetCurrentMatchEnd(const Char* end) override
+    void SetCurrentMatchEnd(const Char* end) noexcept override
     {
         current->match.end = end;
     }
-    inline void Increment() override
+    void Increment() noexcept override
     {
         ++*this;
     }
@@ -500,11 +500,11 @@ public:
         SetPos(recordedPosPair.start);
         SetFlag(LexerFlags::recordedParse);
     }
-    inline void EndRecordedParse() override
+    void EndRecordedParse() override
     {
         PopState();
     }
-    inline void SetPPHook(PPHook ppHook_)
+    inline void SetPPHook(PPHook ppHook_) noexcept
     {
         ppHook = ppHook_;
     }
@@ -554,24 +554,24 @@ public:
         farthestRuleContext = state.farthestRuleContext;
         SetPos(state.currentPos);
     }
-    inline void Skip(bool skip_)
+    inline void Skip(bool skip_) noexcept
     {
         skip = skip_;
         current = tokens.end();
     }
-    inline bool Skipping() const
+    inline bool Skipping() const noexcept
     {
         return skip;
     }
-    inline void SetCommentTokenId(std::int64_t commentTokenId_)
+    inline void SetCommentTokenId(std::int64_t commentTokenId_) noexcept
     {
         commentTokenId = commentTokenId_;
     }
-    inline void SetBlockCommentStates(const std::set<int>& blockCommentStates_)
+    inline void SetBlockCommentStates(const std::set<int>& blockCommentStates_) noexcept
     {
         blockCommentStates = blockCommentStates_;
     }
-    inline const std::set<int>& BlockCommentStates() const
+    inline const std::set<int>& BlockCommentStates() const noexcept
     {
         return blockCommentStates;
     }
@@ -711,7 +711,8 @@ private:
                     }
                     else
                     {
-                        throw std::runtime_error("soul::lexer::Lexer::NextToken(): error: invalid character '" + util::ToUtf8(std::u32string(1, c)) + "' in file '" + fileName + "' at line " + std::to_string(line));
+                        throw std::runtime_error("soul::lexer::Lexer::NextToken(): error: invalid character '" + 
+                            util::ToUtf8(std::u32string(1, c)) + "' in file '" + fileName + "' at line " + std::to_string(line));
                     }
                 }
                 else

@@ -31,6 +31,7 @@ public:
     inline ClassTypeSymbol* ClassTemplate() const { return classTemplate; }
     void SetClassTemplate(ClassTypeSymbol* classTemplate_);
     const std::u32string& SimpleName() const override { return ClassTemplate()->SimpleName(); }
+    std::u32string FullName() const override;
     std::string IrName(Context* context) const override;
     inline const std::vector<Symbol*>& TemplateArguments() const { return templateArguments; }
     void AddTemplateArgument(Symbol* templateArgument);

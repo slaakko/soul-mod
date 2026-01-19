@@ -56,7 +56,7 @@ std::string JsonValueTypeStr(JsonValueType type)
     return str;
 }
 
-JsonValue::JsonValue(JsonValueType type_) : type(type_)
+JsonValue::JsonValue(JsonValueType type_) noexcept : type(type_)
 {
 }
 
@@ -134,11 +134,11 @@ std::string JsonString::ToString() const
     return "\"" + ToUtf8(s) + "\"";
 }
 
-JsonNumber::JsonNumber() : JsonValue(JsonValueType::number), value(0.0)
+JsonNumber::JsonNumber() noexcept : JsonValue(JsonValueType::number), value(0.0)
 {
 }
 
-JsonNumber::JsonNumber(double value_) : JsonValue(JsonValueType::number), value(value_)
+JsonNumber::JsonNumber(double value_) noexcept : JsonValue(JsonValueType::number), value(value_)
 {
 }
 
@@ -159,11 +159,11 @@ std::string JsonNumber::ToString() const
     }
 }
 
-JsonBool::JsonBool() : JsonValue(JsonValueType::boolean), value(false)
+JsonBool::JsonBool() noexcept : JsonValue(JsonValueType::boolean), value(false)
 {
 }
 
-JsonBool::JsonBool(bool value_) : JsonValue(JsonValueType::boolean), value(value_)
+JsonBool::JsonBool(bool value_) noexcept : JsonValue(JsonValueType::boolean), value(value_)
 {
 }
 
@@ -177,7 +177,7 @@ std::string JsonBool::ToString() const
     return value ? "true" : "false";
 }
 
-JsonObject::JsonObject() : JsonValue(JsonValueType::object), fieldValues(), fieldMap()
+JsonObject::JsonObject() noexcept : JsonValue(JsonValueType::object), fieldValues(), fieldMap()
 {
 }
 
@@ -187,7 +187,7 @@ void JsonObject::AddField(const std::u32string& fieldName, std::unique_ptr<JsonV
     fieldValues.push_back(std::move(fieldValue));
 }
 
-JsonValue* JsonObject::GetField(const std::u32string& fieldName) const
+JsonValue* JsonObject::GetField(const std::u32string& fieldName) const noexcept
 {
     auto it = fieldMap.find(fieldName);
     if (it != fieldMap.cend())
@@ -200,7 +200,7 @@ JsonValue* JsonObject::GetField(const std::u32string& fieldName) const
     }
 }
 
-bool JsonObject::HasField(const std::u32string& fieldName) const
+bool JsonObject::HasField(const std::u32string& fieldName) const noexcept
 {
     return GetField(fieldName) != nullptr;
 }
@@ -390,7 +390,7 @@ void JsonObject::Write(CodeFormatter& formatter)
     formatter.WriteLine("}");
 }
 
-JsonArray::JsonArray() : JsonValue(JsonValueType::array)
+JsonArray::JsonArray() noexcept : JsonValue(JsonValueType::array)
 {
 }
 
@@ -473,7 +473,7 @@ void JsonArray::Write(CodeFormatter& formatter)
     formatter.WriteLine("]");
 }
 
-JsonNull::JsonNull() : JsonValue(JsonValueType::null)
+JsonNull::JsonNull() noexcept : JsonValue(JsonValueType::null)
 {
 }
 

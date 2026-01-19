@@ -14,15 +14,15 @@ class Container;
 class Component
 {
 public:
-    Component();
+    Component() noexcept;
     virtual ~Component();
-    inline Container* GetContainer() const { return container; }
-    inline void SetContainer(Container* container_) { container = container_; }
-    inline Component* NextSibling() const { return nextSibling; }
-    inline void SetNextSibling(Component* nextSibling_) { nextSibling = nextSibling_; }
-    inline Component* PrevSibling() const { return prevSibling; }
-    inline void SetPrevSibling(Component* prevSibling_) { prevSibling = prevSibling_; }
-    void LinkBefore(Component* component)
+    inline Container* GetContainer() const noexcept { return container; }
+    inline void SetContainer(Container* container_) noexcept { container = container_; }
+    inline Component* NextSibling() const noexcept { return nextSibling; }
+    inline void SetNextSibling(Component* nextSibling_) noexcept { nextSibling = nextSibling_; }
+    inline Component* PrevSibling() const noexcept { return prevSibling; }
+    inline void SetPrevSibling(Component* prevSibling_) noexcept { prevSibling = prevSibling_; }
+    void LinkBefore(Component* component) noexcept
     {
         if (prevSibling)
         {
@@ -32,7 +32,7 @@ public:
         component->nextSibling = this;
         prevSibling = component;
     }
-    void LinkAfter(Component* component)
+    void LinkAfter(Component* component) noexcept
     {
         if (nextSibling)
         {
@@ -42,7 +42,7 @@ public:
         component->nextSibling = nextSibling;
         nextSibling = component;
     }
-    void Unlink()
+    void Unlink() noexcept
     {
         if (prevSibling)
         {
@@ -62,16 +62,16 @@ private:
 class Container
 {
 public:
-    Container(Component* parent_);
+    Container(Component* parent_) noexcept;
     virtual ~Container();
-    inline bool IsEmpty() const { return firstChild == nullptr; }
-    inline Component* Parent() const { return parent; }
-    inline Component* FirstChild() const { return firstChild; }
-    inline Component* LastChild() const { return lastChild; }
-    void AddChild(Component* child);
-    std::unique_ptr<Component> RemoveChild(Component* child);
-    void InsertBefore(Component* child, Component* before);
-    void InsertAfter(Component* child, Component* after);
+    inline bool IsEmpty() const noexcept { return firstChild == nullptr; }
+    inline Component* Parent() const noexcept { return parent; }
+    inline Component* FirstChild() const noexcept { return firstChild; }
+    inline Component* LastChild() const noexcept { return lastChild; }
+    void AddChild(Component* child) noexcept;
+    std::unique_ptr<Component> RemoveChild(Component* child) noexcept;
+    void InsertBefore(Component* child, Component* before) noexcept;
+    void InsertAfter(Component* child, Component* after) noexcept;
 private:
     Component* parent;
     Component* firstChild;

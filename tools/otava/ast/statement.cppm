@@ -120,14 +120,13 @@ class IfStatementNode : public CompoundNode
 {
 public:
     IfStatementNode(const soul::ast::SourcePos& sourcePos_);
-    IfStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* cond_, Node* thenStmt_, Node* elseStmt_, Node* attributes_,
+    IfStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, Node* thenStmt_, Node* elseStmt_, Node* attributes_,
         const soul::ast::SourcePos& ifPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_, const soul::ast::SourcePos& constExprPos_, 
         const soul::ast::SourcePos& elsePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline Node* InitStatement() const { return initStmt.get(); }
     inline Node* Condition() const { return cond.get(); }
     inline Node* ThenStatement() const { return thenStmt.get(); }
     inline Node* ElseStatement() const { return elseStmt.get(); }
@@ -139,7 +138,6 @@ public:
     inline const soul::ast::SourcePos& ElsePos() const { return elsePos; }
     inline bool IsConstExprIf() const { return constExprPos.IsValid(); }
 private:
-    std::unique_ptr<Node> initStmt;
     std::unique_ptr<Node> cond;
     std::unique_ptr<Node> thenStmt;
     std::unique_ptr<Node> elseStmt;
@@ -155,12 +153,11 @@ class SwitchStatementNode : public CompoundNode
 {
 public:
     SwitchStatementNode(const soul::ast::SourcePos& sourcePos_);
-    SwitchStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* cond_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& switchPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
+    SwitchStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& switchPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline Node* InitStatement() const { return initStmt.get(); }
     inline Node* Condition() const { return cond.get(); }
     inline Node* Statement() const { return stmt.get(); }
     inline Node* Attributes() const { return attributes.get(); }
@@ -168,7 +165,6 @@ public:
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
-    std::unique_ptr<Node> initStmt;
     std::unique_ptr<Node> cond;
     std::unique_ptr<Node> stmt;
     std::unique_ptr<Node> attributes;

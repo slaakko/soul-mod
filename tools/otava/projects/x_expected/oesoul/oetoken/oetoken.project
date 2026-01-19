@@ -1,0 +1,7 @@
+project oetoken;
+target=library;
+define EXPECTED;
+interface <soul.cpp.op.token.cppm>;
+interface <soul.cpp.token.cppm>;
+interface <soul.punctuation.token.cppm>;
+interface <soul.tool.token.cppm>;

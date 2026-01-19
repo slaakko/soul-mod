@@ -9,7 +9,7 @@ import util;
 
 namespace soul::lexer {
 
-FileMap::FileMap() : nextFileId(0)
+FileMap::FileMap() noexcept : nextFileId(0)
 {
 }
 
@@ -27,7 +27,7 @@ void FileMap::MapFile(const std::string& filePath, std::int32_t fileId)
     filePathMap[fileId] = filePath;
 }
 
-const std::string& FileMap::GetFilePath(std::int32_t fileId)
+const std::string& FileMap::GetFilePath(std::int32_t fileId) noexcept
 {
     std::lock_guard<std::recursive_mutex> lock(mtx);
     auto it = filePathMap.find(fileId);

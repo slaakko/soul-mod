@@ -31,7 +31,7 @@ constexpr std::string ToString(const char* begin, const char* end)
 
 template<typename Char, typename Value>
     requires std::integral<Value>
-bool ParseSigned(const Char* begin, const Char* end, Value& value)
+bool ParseSigned(const Char* begin, const Char* end, Value& value) noexcept
 {
     value = 0;
     if (begin == end)
@@ -101,7 +101,7 @@ bool ParseSigned(const Char* begin, const Char* end, Value& value)
 
 template<typename Char, typename Value>
     requires std::integral<Value>
-bool ParseUnsigned(const Char* begin, const Char* end, Value& value)
+bool ParseUnsigned(const Char* begin, const Char* end, Value& value) noexcept
 {
     value = 0;
     if (begin == end)
@@ -158,7 +158,7 @@ bool ParseUnsigned(const Char* begin, const Char* end, Value& value)
 
 template<typename Char, typename Value>
     requires std::integral<Value>
-bool ParseHex(const Char* begin, const Char* end, Value& value)
+bool ParseHex(const Char* begin, const Char* end, Value& value) noexcept
 {
     value = 0;
     if (begin == end)
@@ -191,7 +191,7 @@ bool ParseHex(const Char* begin, const Char* end, Value& value)
 
 template<typename Char, typename Value>
     requires std::integral<Value>
-bool ParseOctal(const Char* begin, const Char* end, Value& value)
+bool ParseOctal(const Char* begin, const Char* end, Value& value) noexcept
 {
     value = 0;
     if (begin == end)
@@ -215,7 +215,7 @@ bool ParseOctal(const Char* begin, const Char* end, Value& value)
 
 template<typename Char, typename Value>
     requires std::floating_point<Value>
-bool ParseFloating(const Char* begin, const Char* end, Value& value)
+bool ParseFloating(const Char* begin, const Char* end, Value& value) noexcept
 {
     value = 0.0;
     if (begin == end)
@@ -442,7 +442,8 @@ std::uint64_t ParseULong(const Char* begin, const Char* end, LexerBaseT* lexer, 
     }
     else
     {
-        throw std::runtime_error("unsigned long long token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
+        throw std::runtime_error("unsigned long long token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + 
+            soul::lexer::ToString(begin, end) + ")");
     }
 }
 
@@ -456,7 +457,8 @@ std::uint64_t ParseHexULong(const Char* begin, const Char* end, LexerBaseT* lexe
     }
     else
     {
-        throw std::runtime_error("hexadecimal unsigned long long token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
+        throw std::runtime_error("hexadecimal unsigned long long token expected in '" + lexer->FileName() + "' line " + 
+            std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
     }
 }
 
@@ -470,7 +472,8 @@ std::uint64_t ParseOctalULong(const Char* begin, const Char* end, LexerBaseT* le
     }
     else
     {
-        throw std::runtime_error("octal unsigned long long token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
+        throw std::runtime_error("octal unsigned long long token expected in '" + lexer->FileName() + "' line " + 
+            std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
     }
 }
 

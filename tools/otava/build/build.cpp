@@ -260,7 +260,8 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         util::set_rand_seed(seed);
     }
     otava::symbols::ModuleMapper* prevModuleMapper = otava::symbols::GetModuleMapper();
-    otava::symbols::ModuleMapper moduleMapper;
+    bool expected = project->HasDefine("EXPECTED");
+    otava::symbols::ModuleMapper moduleMapper(expected);
     otava::symbols::SetModuleMapper(&moduleMapper);
     otava::symbols::InstantiationQueue instantiationQueue;
     std::string projectFilePath;
@@ -274,7 +275,8 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     }
     else
     {
-        projectFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(project->FilePath()), config), project->Name() + ".vcxproj"));
+        projectFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(
+            project->FilePath()), config), project->Name() + ".vcxproj"));
         outputFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(project->FilePath()), config), project->Name()));
     }
     if (project->GetTarget() == otava::build::Target::program)
@@ -307,13 +309,31 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         libraryDirs = util::GetFullPath(util::Path::Combine(util::SoulRoot(), "lib"));
         if (config == "release")
         {
-            libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools/otava/std"), config),
-                std::to_string(otava::symbols::GetOptLevel(optLevel, true)))));
+            if (project->HasDefine("EXPECTED"))
+            {
+                libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::Path::Combine(
+                    util::Path::Combine(util::SoulRoot(), "tools/otava/expected/std"), config),
+                    std::to_string(otava::symbols::GetOptLevel(optLevel, true)))));
+            }
+            else
+            {
+                libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::Path::Combine(
+                    util::Path::Combine(util::SoulRoot(), "tools/otava/std"), config),
+                    std::to_string(otava::symbols::GetOptLevel(optLevel, true)))));
+            }
             libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::SoulRoot(), "tools/otava/lib")));
         }
         else
         {
-            libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools/otava/std"), config)));
+            if (project->HasDefine("EXPECTED"))
+            {
+                libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::SoulRoot(), 
+                    "tools/otava/expected/std"), config)));
+            }
+            else
+            {
+                libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools/otava/std"), config)));
+            }
             libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::SoulRoot(), "tools/otava/lib")));
         }
     }
@@ -412,7 +432,8 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     {
         for (const auto& referenceFilePath : project->ReferenceFilePaths())
         {
-            std::string cuInitFileName = util::GetFullPath(util::Path::Combine(project->Root(), util::Path::Combine(util::Path::GetDirectoryName(referenceFilePath), "cu.init")));
+            std::string cuInitFileName = util::GetFullPath(util::Path::Combine(project->Root(), 
+                util::Path::Combine(util::Path::GetDirectoryName(referenceFilePath), "cu.init")));
             util::FileStream cuInitFile(cuInitFileName, util::OpenMode::read | util::OpenMode::binary);
             util::BinaryStreamReader reader(cuInitFile);
             int n = reader.ReadInt();
@@ -465,6 +486,10 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         {
             context.SetTraceInfo(&project->GetTraceInfo());
         }
+        if (context.CurrentProject() && context.CurrentProject()->HasDefine("EXPECTED"))
+        {
+            context.SetFlag(otava::symbols::ContextFlags::expected);
+        }
         context.SetOptLevel(optLevel);
         context.SetFileMap(&project->GetFileMap());
         context.SetInstantiationQueue(&instantiationQueue);
@@ -475,6 +500,10 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         if (!context.ReleaseConfig() || context.CurrentProject() && context.CurrentProject()->HasDefine("TRACE"))
         {
             project->GetTraceInfo().AddSourceFileInfo(module->Id(), filePath);
+        }
+        if (context.CurrentProject() && context.CurrentProject()->HasDefine("EXPECTED"))
+        {
+            context.SetFlag(otava::symbols::ContextFlags::expected);
         }
         module->SetImportIndex(importIndex++);
         module->GetNodeIdFactory()->SetModuleId(module->Id());
@@ -576,6 +605,10 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         {
             context.SetTraceInfo(&project->GetTraceInfo());
         }
+        if (context.CurrentProject() && context.CurrentProject()->HasDefine("EXPECTED"))
+        {
+            context.SetFlag(otava::symbols::ContextFlags::expected);
+        }
         context.SetOptLevel(optLevel);
         context.SetFileMap(&project->GetFileMap());
         context.SetInstantiationQueue(&instantiationQueue);
@@ -586,6 +619,10 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         if (!context.ReleaseConfig() || context.CurrentProject() && context.CurrentProject()->HasDefine("TRACE"))
         {
             project->GetTraceInfo().AddSourceFileInfo(module->Id(), filePath);
+        }
+        if (context.CurrentProject() && context.CurrentProject()->HasDefine("EXPECTED"))
+        {
+            context.SetFlag(otava::symbols::ContextFlags::expected);
         }
         module->SetKind(otava::symbols::ModuleKind::implementationModule);
         module->SetImportIndex(importIndex++);

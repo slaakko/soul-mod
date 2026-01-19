@@ -31,7 +31,7 @@ KeywordFile::KeywordFile(const std::string& filePath_) : File(soul::ast::common:
 {
 }
 
-void KeywordFile::SetKeywordCollection(KeywordCollection* keywordCollection_)
+void KeywordFile::SetKeywordCollection(KeywordCollection* keywordCollection_) noexcept
 {
     keywordCollection.reset(keywordCollection_);
     keywordCollection->SetFile(this);
@@ -46,7 +46,7 @@ Expression::Expression(const std::string& id_, const std::string& value_, int li
 {
 }
 
-const std::string& Expression::FileName() const
+const std::string& Expression::FileName() const noexcept
 {
     soul::ast::common::Collection* collection = GetCollection();
     soul::ast::common::File* file = collection->GetFile();
@@ -67,7 +67,7 @@ ExpressionFile::ExpressionFile(const std::string& filePath_) : File(soul::ast::c
 {
 }
 
-void ExpressionFile::SetExpressionCollection(ExpressionCollection* expressionCollection_)
+void ExpressionFile::SetExpressionCollection(ExpressionCollection* expressionCollection_) noexcept
 {
     expressionCollection.reset(expressionCollection_);
     expressionCollection->SetFile(this);
@@ -82,7 +82,7 @@ Variable::Variable(soul::ast::cpp::TypeIdNode* type_, const std::string& name_) 
 {
 }
 
-Action::Action(int id_, soul::ast::cpp::CompoundStatementNode* code_) : id(id_), code(code_)
+Action::Action(int id_, soul::ast::cpp::CompoundStatementNode* code_) noexcept : id(id_), code(code_)
 {
 }
 
@@ -92,7 +92,7 @@ void Actions::AddAction(Action* action)
     actionMap[action->Id()] = action;
 }
 
-Action* Actions::GetAction(int id) const
+Action* Actions::GetAction(int id) const noexcept
 {
     auto it = actionMap.find(id);
     if (it != actionMap.cend())
@@ -144,7 +144,7 @@ LexerFile::LexerFile(const std::string& filePath_) : File(soul::ast::common::Fil
 {
 }
 
-void LexerFile::SetExportModule(soul::ast::common::ExportModule* exportModule_)
+void LexerFile::SetExportModule(soul::ast::common::ExportModule* exportModule_) noexcept
 {
     exportModule.reset(exportModule_);
 }
@@ -242,7 +242,7 @@ void SlgFile::AddLexerFile(LexerFile* lexerFile)
     collections.push_back(lexerFile->GetLexer());
 }
 
-soul::ast::common::Collection* SlgFile::GetCollection(const std::string& name) const
+soul::ast::common::Collection* SlgFile::GetCollection(const std::string& name) const noexcept
 {
     auto it = collectionMap.find(name);
     if (it != collectionMap.cend())
@@ -289,7 +289,7 @@ void Expressions::AddExpression(Expression* expression)
     expressionMap[expression->Id()] = expression;
 }
 
-Expression* Expressions::GetExpression(const std::string& id) const
+Expression* Expressions::GetExpression(const std::string& id) const noexcept
 {
     auto it = expressionMap.find(id);
     if (it != expressionMap.cend())

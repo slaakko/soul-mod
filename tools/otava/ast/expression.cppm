@@ -20,6 +20,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* Op() const { return op.get(); }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> op;
 };
@@ -34,6 +35,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* Op() const { return op.get(); }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> op;
 };
@@ -50,6 +52,7 @@ public:
     inline void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    std::u32string Str() const override;
 private:
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
@@ -62,6 +65,7 @@ public:
     AssignmentInitNode(const soul::ast::SourcePos& sourcePos_, Node* initializer_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override;
 };
 
 class YieldExprNode : public UnaryNode
@@ -87,6 +91,7 @@ public:
     inline Node* ThenExpr() const { return thenExpr.get(); }
     inline Node* Colon() const { return colon.get(); }
     inline Node* ElseExpr() const { return elseExpr.get(); }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> condition;
     std::unique_ptr<Node> quest;
@@ -101,6 +106,7 @@ public:
     AssignNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"="; };
 };
 
 class PlusAssignNode : public Node
@@ -109,6 +115,7 @@ public:
     PlusAssignNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"+="; };
 };
 
 class MinusAssignNode : public Node
@@ -117,6 +124,7 @@ public:
     MinusAssignNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"-="; };
 };
 
 class MulAssignNode : public Node
@@ -125,6 +133,7 @@ public:
     MulAssignNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"*="; };
 };
 
 class DivAssignNode : public Node
@@ -133,6 +142,7 @@ public:
     DivAssignNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"/="; };
 };
 
 class ModAssignNode : public Node
@@ -141,6 +151,7 @@ public:
     ModAssignNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"%="; };
 };
 
 class XorAssignNode : public Node
@@ -149,6 +160,7 @@ public:
     XorAssignNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"^="; };
 };
 
 class AndAssignNode : public Node
@@ -157,6 +169,7 @@ public:
     AndAssignNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"&="; };
 };
 
 class OrAssignNode : public Node
@@ -165,6 +178,7 @@ public:
     OrAssignNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"|="; };
 };
 
 class ShiftLeftAssignNode : public Node
@@ -173,6 +187,7 @@ public:
     ShiftLeftAssignNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"<<="; };
 };
 
 class ShiftRightAssignNode : public Node
@@ -181,6 +196,7 @@ public:
     ShiftRightAssignNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U">>="; };
 };
 
 class DisjunctionNode : public Node
@@ -189,6 +205,7 @@ public:
     DisjunctionNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"||"; };
 };
 
 class ConjunctionNode : public Node
@@ -197,6 +214,7 @@ public:
     ConjunctionNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"&&"; };
 };
 
 class InclusiveOrNode : public Node
@@ -205,6 +223,7 @@ public:
     InclusiveOrNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"|"; };
 };
 
 class ExclusiveOrNode : public Node
@@ -213,6 +232,7 @@ public:
     ExclusiveOrNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"^"; };
 };
 
 class AndNode : public Node
@@ -221,6 +241,7 @@ public:
     AndNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"&"; };
 };
 
 class EqualNode : public Node
@@ -229,6 +250,7 @@ public:
     EqualNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"=="; };
 };
 
 class NotEqualNode : public Node
@@ -237,6 +259,7 @@ public:
     NotEqualNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"!=="; };
 };
 
 class LessNode : public Node
@@ -245,6 +268,7 @@ public:
     LessNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"<"; };
 };
 
 class GreaterNode : public Node
@@ -253,6 +277,7 @@ public:
     GreaterNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U">"; };
 };
 
 class LessOrEqualNode : public Node
@@ -261,6 +286,7 @@ public:
     LessOrEqualNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"<="; };
 };
 
 class GreaterOrEqualNode : public Node
@@ -269,6 +295,7 @@ public:
     GreaterOrEqualNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U">="; };
 };
 
 class CompareNode : public Node
@@ -277,6 +304,7 @@ public:
     CompareNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"<=>"; };
 };
 
 class ShiftLeftNode : public Node
@@ -285,6 +313,7 @@ public:
     ShiftLeftNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"<<"; };
 };
 
 class ShiftRightNode : public Node
@@ -293,6 +322,7 @@ public:
     ShiftRightNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U">>"; };
 };
 
 class PlusNode : public Node
@@ -301,6 +331,7 @@ public:
     PlusNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"+"; };
 };
 
 class MinusNode : public Node
@@ -309,6 +340,7 @@ public:
     MinusNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"-"; };
 };
 
 class MulNode : public Node
@@ -317,6 +349,7 @@ public:
     MulNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"*"; };
 };
 
 class DivNode : public Node
@@ -325,6 +358,7 @@ public:
     DivNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"/"; };
 };
 
 class ModNode : public Node
@@ -333,6 +367,7 @@ public:
     ModNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"%"; };
 };
 
 class DotStarNode : public Node
@@ -341,6 +376,7 @@ public:
     DotStarNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U".*"; };
 };
 
 class ArrowStarNode : public Node
@@ -349,6 +385,7 @@ public:
     ArrowStarNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"->"; };
 };
 
 class CastExprNode : public UnaryNode
@@ -363,6 +400,7 @@ public:
     void Read(Reader& reader) override;
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> typeId;
     soul::ast::SourcePos lpPos;
@@ -375,6 +413,7 @@ public:
     DerefNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"*"; }
 };
 
 class AddrOfNode : public Node
@@ -383,6 +422,7 @@ public:
     AddrOfNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"&"; }
 };
 
 class NotNode : public Node
@@ -391,6 +431,7 @@ public:
     NotNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"!"; }
 };
 
 class ComplementNode : public Node
@@ -399,6 +440,7 @@ public:
     ComplementNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"~"; }
 };
 
 class PrefixIncNode : public Node
@@ -407,6 +449,7 @@ public:
     PrefixIncNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"++"; }
 };
 
 class PrefixDecNode : public Node
@@ -415,6 +458,7 @@ public:
     PrefixDecNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"--"; }
 };
 
 class AwaitExprNode : public UnaryNode
@@ -620,6 +664,7 @@ public:
     inline Node* Index() const { return index.get(); }
     inline const soul::ast::SourcePos& LBracketPos() const { return lbPos; }
     inline const soul::ast::SourcePos& RBracketPos() const { return rbPos; }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> index;
     soul::ast::SourcePos lbPos;
@@ -665,6 +710,7 @@ public:
     DotNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"."; }
 };
 
 class ArrowNode : public Node
@@ -673,6 +719,7 @@ public:
     ArrowNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"->"; }
 };
 
 class MemberExprNode : public UnaryNode
@@ -686,6 +733,7 @@ public:
     void Read(Reader& reader) override;
     inline Node* Op() const { return op.get(); }
     inline Node* Id() const { return id.get(); }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> op;
     std::unique_ptr<Node> id;
@@ -701,6 +749,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline const soul::ast::SourcePos& OpPos() const { return opPos; }
+    std::u32string Str() const override;
 private:
     soul::ast::SourcePos opPos;
 };
@@ -715,6 +764,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline const soul::ast::SourcePos& OpPos() const { return opPos; }
+    std::u32string Str() const override;
 private:
     soul::ast::SourcePos opPos;
 };
@@ -730,6 +780,7 @@ public:
     void Read(Reader& reader) override;
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    std::u32string Str() const override;
 private:
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
@@ -741,6 +792,7 @@ public:
     DynamicCastNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"dynamic_cast"; }
 };
 
 class StaticCastNode : public Node
@@ -749,6 +801,7 @@ public:
     StaticCastNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"static_cast"; }
 };
 
 class ReinterpretCastNode : public Node
@@ -757,6 +810,7 @@ public:
     ReinterpretCastNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"reinterpret_cast"; }
 };
 
 class ConstCastNode : public Node
@@ -765,6 +819,7 @@ public:
     ConstCastNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"const_cast"; }
 };
 
 class CppCastExprNode : public UnaryNode
@@ -783,6 +838,7 @@ public:
     inline const soul::ast::SourcePos& RAnglePos() const { return raPos; }
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> typeId;
     std::unique_ptr<Node> op;
@@ -798,6 +854,7 @@ public:
     ThisNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"this"; }
 };
 
 class ParenthesizedExprNode : public UnaryNode
@@ -811,6 +868,7 @@ public:
     void Read(Reader& reader) override;
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    std::u32string Str() const override;
 private:
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
@@ -895,9 +953,11 @@ public:
 class ThrowExprNode : public UnaryNode
 {
 public:
+    ThrowExprNode(const soul::ast::SourcePos& sourcePos_);
     ThrowExprNode(const soul::ast::SourcePos& sourcePos_, Node* expr__);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override;
 };
 
 } // namespace otava::ast

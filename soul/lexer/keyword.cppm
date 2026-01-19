@@ -12,7 +12,7 @@ import soul.lexer.lexeme;
 export namespace soul::lexer {
 
 template<typename Char>
-constexpr const Char* StrEnd(const Char* s)
+constexpr const Char* StrEnd(const Char* s) noexcept
 {
     while (*s)
     {
@@ -24,8 +24,8 @@ constexpr const Char* StrEnd(const Char* s)
 template<typename Char>
 struct Keyword
 {
-    inline Keyword() : str(nullptr), tokenID(INVALID_TOKEN) {}
-    inline Keyword(const Char* str_, std::int64_t tokenID_) : str(str_), tokenID(tokenID_) { }
+    inline Keyword() noexcept : str(nullptr), tokenID(INVALID_TOKEN) {}
+    inline Keyword(const Char* str_, std::int64_t tokenID_) noexcept : str(str_), tokenID(tokenID_) { }
     const Char* str;
     std::int64_t tokenID;
 };
@@ -34,7 +34,7 @@ template<typename Char>
 class KeywordMap
 {
 public:
-    constexpr KeywordMap(const soul::lexer::Keyword<Char>* keywords_) : keywords(keywords_)
+    constexpr KeywordMap(const soul::lexer::Keyword<Char>* keywords_) noexcept : keywords(keywords_)
     {
         const soul::lexer::Keyword<Char>* kw = keywords;
         while (kw->str)
@@ -44,7 +44,7 @@ public:
             ++kw;
         }
     }
-    std::int64_t GetKeywordToken(const Lexeme<Char>& lexeme) const
+    std::int64_t GetKeywordToken(const Lexeme<Char>& lexeme) const noexcept
     {
         auto it = keywordMap.find(lexeme);
         if (it != keywordMap.cend())

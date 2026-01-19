@@ -25,6 +25,80 @@ constexpr const char* fundamentalTypeNames[] =
     "float", "double", "long double", "void", "auto", "nullptr_t"
 };
 
+int Rank(FundamentalTypeKind fundamentalTypeKind)
+{
+    switch (fundamentalTypeKind)
+    {
+        case FundamentalTypeKind::boolType: 
+        {
+            return 0;
+        }
+        case FundamentalTypeKind::charType:
+        case FundamentalTypeKind::signedCharType:
+        case FundamentalTypeKind::unsignedCharType:
+        case FundamentalTypeKind::char8Type:
+        {
+            return 1;
+        }
+        case FundamentalTypeKind::char16Type:
+        case FundamentalTypeKind::shortIntType:
+        case FundamentalTypeKind::unsignedShortIntType:
+        {
+            return 2;
+        }
+        case FundamentalTypeKind::char32Type:
+        case FundamentalTypeKind::wcharType:
+        case FundamentalTypeKind::intType:
+        case FundamentalTypeKind::unsignedIntType:
+        {
+            return 3;
+        }
+        case FundamentalTypeKind::longIntType:
+        case FundamentalTypeKind::unsignedLongIntType:
+        {
+            return 4;
+        }
+        case FundamentalTypeKind::longLongIntType:
+        case FundamentalTypeKind::unsignedLongLongIntType:
+        {
+            return 5;
+        }
+    }
+    return -1;
+}
+
+bool IsSignedIntegerType(FundamentalTypeKind fundamentalTypeKind)
+{
+    switch (fundamentalTypeKind)
+    {
+        case FundamentalTypeKind::signedCharType:
+        case FundamentalTypeKind::shortIntType:
+        case FundamentalTypeKind::intType:
+        case FundamentalTypeKind::longIntType:
+        case FundamentalTypeKind::longLongIntType:
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool IsUnsignedIntegerType(FundamentalTypeKind fundamentalTypeKind)
+{
+    switch (fundamentalTypeKind)
+    {
+        case FundamentalTypeKind::unsignedCharType:
+        case FundamentalTypeKind::unsignedShortIntType:
+        case FundamentalTypeKind::unsignedIntType:
+        case FundamentalTypeKind::unsignedLongIntType:
+        case FundamentalTypeKind::unsignedLongLongIntType:
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 class FundamentalTypeFlagMapper
 {
 public:

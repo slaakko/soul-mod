@@ -73,6 +73,7 @@ Context::Context() :
     invokeSerial(0),
     cleanupSerial(0),
     resultSerial(0),
+    labelSerial(0),
     statementBinder(nullptr)
 {
 }

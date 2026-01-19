@@ -15,10 +15,10 @@ export namespace soul::lexer {
 class FileMap
 {
 public:
-    FileMap();
+    FileMap() noexcept;
     std::int32_t MapFile(const std::string& filePath);
     void MapFile(const std::string& filePath, std::int32_t fileId);
-    const std::string& GetFilePath(std::int32_t fileId);
+    const std::string& GetFilePath(std::int32_t fileId) noexcept;
     void AddFileContent(std::int32_t fileId, std::u32string&& fileContent, std::vector<int>&& lineStartIndeces);
     bool HasFileContent(std::int32_t fileId);
     void ReadFile(std::int32_t fileId);

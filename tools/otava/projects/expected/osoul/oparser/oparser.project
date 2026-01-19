@@ -1,5 +1,0 @@
-project oparser;
-target=library;
-interface <match.cppm>;
-interface <parser.cppm>;
-interface <value.cppm>;

@@ -113,8 +113,9 @@ FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::S
             {
                 inlineFunctionFullName = util::ToUtf8(inlineFn->FullName());
             }
-            ThrowException("otava.symbols.inline_functions: error instantiating inline function '" + inlineFunctionFullName +
+            PrintWarning("failed to instantiating inline function '" + inlineFunctionFullName +
                 "': " + std::string(ex.what()), node->GetSourcePos(), context);
+            return fn;
         }
         context->GetSymbolTable()->EndScope();
         instantiationScope.PopParentScope();

@@ -1,0 +1,16 @@
+project oecommon;
+target=library;
+define EXPECTED;
+reference <../../oeutil/oeutil.project>;
+reference <../oetoken/oetoken.project>;
+reference <../oeast/oeast.project>;
+reference <../oeparser/oeparser.project>;
+reference <../oelexer/oelexer.project>;
+reference <../oelex/oelex.project>;
+interface <common.parser.cppm>;
+source <common.parser.cpp>;
+interface <token_file.parser.cppm>;
+source <token_file.parser.cpp>;
+interface <common_parser_rules.cppm>;
+source <common_parser_rules.cpp>;
+interface <token_parser.cppm>;

@@ -24,17 +24,17 @@ enum class JsonValueType : int
     any = object | array | string | number | boolean | null
 };
 
-constexpr JsonValueType operator|(JsonValueType left, JsonValueType right)
+constexpr JsonValueType operator|(JsonValueType left, JsonValueType right) noexcept
 {
     return JsonValueType(int(left) | int(right));
 }
 
-constexpr JsonValueType operator&(JsonValueType left, JsonValueType right)
+constexpr JsonValueType operator&(JsonValueType left, JsonValueType right) noexcept
 {
     return JsonValueType(int(left) & int(right));
 }
 
-constexpr JsonValueType operator~(JsonValueType type)
+constexpr JsonValueType operator~(JsonValueType type) noexcept
 {
     return JsonValueType(~int(type));
 }
@@ -44,19 +44,19 @@ std::string JsonValueTypeStr(JsonValueType type);
 class JsonValue
 {
 public:
-    JsonValue(JsonValueType type_);
+    JsonValue(JsonValueType type_) noexcept;
     JsonValue(const JsonValue&) = delete;
     JsonValue& operator=(const JsonValue&) = delete;
     virtual ~JsonValue();
     virtual JsonValue* Clone() const = 0;
-    inline JsonValueType Type() const { return type; }
-    inline bool IsObject() const { return type == JsonValueType::object; }
-    inline bool IsArray() const { return type == JsonValueType::array; }
-    inline bool IsStructuredValue() const { return IsObject() || IsArray(); }
-    inline bool IsString() const { return type == JsonValueType::string; }
-    inline bool IsNumber() const { return type == JsonValueType::number; }
-    inline bool IsBoolean() const { return type == JsonValueType::boolean; }
-    inline bool IsNull() const { return type == JsonValueType::null; }
+    inline JsonValueType Type() const noexcept { return type; }
+    inline bool IsObject() const noexcept { return type == JsonValueType::object; }
+    inline bool IsArray() const noexcept { return type == JsonValueType::array; }
+    inline bool IsStructuredValue() const noexcept { return IsObject() || IsArray(); }
+    inline bool IsString() const noexcept { return type == JsonValueType::string; }
+    inline bool IsNumber() const noexcept { return type == JsonValueType::number; }
+    inline bool IsBoolean() const noexcept { return type == JsonValueType::boolean; }
+    inline bool IsNull() const noexcept { return type == JsonValueType::null; }
     virtual std::string ToString() const = 0;
     virtual void Write(CodeFormatter& formatter);
 private:
@@ -70,7 +70,7 @@ public:
     JsonString(const std::u32string& value_);
     void Append(char32_t c);
     JsonValue* Clone() const override;
-    inline const std::u32string& Value() const { return value; }
+    inline const std::u32string& Value() const noexcept { return value; }
     void SetValue(const std::u32string& value_);
     std::u16string JsonCharStr(char32_t c) const;
     std::string ToString() const override;
@@ -81,10 +81,10 @@ private:
 class JsonNumber : public JsonValue
 {
 public:
-    JsonNumber();
-    JsonNumber(double value_);
+    JsonNumber() noexcept;
+    JsonNumber(double value_) noexcept;
     JsonValue* Clone() const override;
-    inline double Value() const { return value; }
+    inline double Value() const noexcept { return value; }
     std::string ToString() const override;
 private:
     double value;
@@ -93,10 +93,10 @@ private:
 class JsonBool : public JsonValue
 {
 public:
-    JsonBool();
-    JsonBool(bool value_);
+    JsonBool() noexcept;
+    JsonBool(bool value_) noexcept;
     JsonValue* Clone() const override;
-    inline bool Value() const { return value; }
+    inline bool Value() const noexcept { return value; }
     std::string ToString() const override;
 private:
     bool value;
@@ -107,11 +107,11 @@ class JsonArray;
 class JsonObject : public JsonValue
 {
 public:
-    JsonObject();
+    JsonObject() noexcept;
     void AddField(const std::u32string& fieldName, std::unique_ptr<JsonValue>&& fieldValue);
-    inline int FieldCount() const { return fieldValues.size(); }
-    JsonValue* GetField(const std::u32string& fieldName) const;
-    bool HasField(const std::u32string& fieldName) const;
+    inline int FieldCount() const noexcept { return static_cast<int>(fieldValues.size()); }
+    JsonValue* GetField(const std::u32string& fieldName) const noexcept;
+    bool HasField(const std::u32string& fieldName) const noexcept;
     JsonString* GetStringField(const std::u32string& fieldName) const;
     JsonNumber* GetNumberField(const std::u32string& fieldName) const;
     JsonBool* GetBooleanField(const std::u32string& fieldName) const;
@@ -128,9 +128,9 @@ private:
 class JsonArray : public JsonValue
 {
 public:
-    JsonArray();
+    JsonArray() noexcept;
     void AddItem(std::unique_ptr<JsonValue>&& item);
-    inline int Count() const { return items.size(); }
+    inline int Count() const noexcept { return static_cast<int>(items.size()); }
     JsonValue* GetItem(int index) const;
     JsonValue* operator[](int index) const;
     JsonValue* Clone() const override;
@@ -143,7 +143,7 @@ private:
 class JsonNull : public JsonValue
 {
 public:
-    JsonNull();
+    JsonNull() noexcept;
     JsonValue* Clone() const override;
     std::string ToString() const override;
 };

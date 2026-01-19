@@ -251,6 +251,52 @@ long ort_ftell(void* file)
     return std::ftell(static_cast<FILE*>(file));
 }
 
+std::uint64_t ort_file_size(const char* filePath)
+{
+    try
+    {
+        return std::filesystem::file_size(filePath);
+    }
+    catch (...)
+    {
+        return -1;
+    }
+}
+
+std::int64_t ort_last_write_time(const char* filePath)
+{
+    try
+    {
+        return static_cast<std::int64_t>(std::filesystem::last_write_time(filePath).time_since_epoch().count());
+    }
+    catch (...)
+    {
+        return -1;
+    }
+}
+
+void ort_set_last_write_time(const char* dest, const char* source)
+{
+    try
+    {
+        std::filesystem::last_write_time(dest, std::filesystem::last_write_time(source));
+    }
+    catch (...)
+    {
+    }
+}
+
+void ort_create_directories(const char* directoryPath)
+{
+    try
+    {
+        std::filesystem::create_directories(directoryPath);
+    }
+    catch (...)
+    {
+    }
+}
+
 int ort_platform_string_to_utf16_string(const char* platformString, char16_t* buf, int bufSize)
 {
     int result = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, platformString, -1, (LPWSTR)buf, bufSize);
@@ -695,4 +741,9 @@ int ort_run_process(const char* commandLine)
 void ort_debug_break()
 {
     __debugbreak();
+}
+
+bool ort_path_exists(const char* path)
+{
+    return std::filesystem::exists(path);
 }

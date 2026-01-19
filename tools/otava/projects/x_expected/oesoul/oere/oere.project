@@ -1,0 +1,14 @@
+project oere;
+target=library;
+define EXPECTED;
+reference <../../oeutil/oeutil.project>;
+reference <../oetoken/oetoken.project>;
+reference <../oeast/oeast.project>;
+reference <../oeparser/oeparser.project>;
+reference <../oelexer/oelexer.project>;
+reference <../oelex/oelex.project>;
+interface <re.parser.cppm>;
+source <re.parser.cpp>;
+interface <re_rules.cppm>;
+source <re_rules.cpp>;
+interface <token_parser.cppm>;

@@ -217,7 +217,7 @@ std::string Path::ChangeExtension(const std::string& path, const std::string& ex
     }
 }
 
-bool Path::HasExtension(const std::string& path)
+bool Path::HasExtension(const std::string& path) noexcept
 {
     std::string::size_type lastDotPos = path.rfind('.');
     if (lastDotPos != std::string::npos)
@@ -384,7 +384,7 @@ std::string Path::Combine(const std::string& path1, const std::string& path2)
     }
 }
 
-bool Path::IsAbsolute(const std::string& path)
+bool Path::IsAbsolute(const std::string& path) noexcept
 {
     if (path.empty())
     {
@@ -407,7 +407,7 @@ bool Path::IsAbsolute(const std::string& path)
     }
 }
 
-bool Path::IsRelative(const std::string& path)
+bool Path::IsRelative(const std::string& path) noexcept
 {
     return !IsAbsolute(path);
 }

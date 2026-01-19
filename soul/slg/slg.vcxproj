@@ -220,7 +220,6 @@
     <None Include="expression_file.parser" />
     <None Include="keyword_file.parser" />
     <None Include="lexer_file.parser" />
-    <None Include="slg.project" />
     <None Include="slg_file.parser" />
     <None Include="slg_parsers.spg" />
   </ItemGroup>

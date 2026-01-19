@@ -1,0 +1,11 @@
+project otava.lexer;
+target=library;
+define EXPECTED;
+reference <../../oeutil/oeutil.project>;
+reference <../../oesoul/oeast/oeast.project>;
+reference <../../oesoul/oelexer/oelexer.project>;
+interface <otava.lexer.cppm>;
+source <otava.lexer.cpp>;
+interface <otava.token.cppm>;
+interface <otava.token.line.lexer.cppm>;
+source <otava.token.line.lexer.cpp>;

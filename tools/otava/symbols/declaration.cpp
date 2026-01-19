@@ -292,6 +292,7 @@ public:
     void Visit(otava::ast::ClassSpecifierNode& node) override;
     void Visit(otava::ast::EnumSpecifierNode& node) override;
     void Visit(otava::ast::ElaboratedTypeSpecifierNode & override);
+    void Visit(otava::ast::InitConditionNode& node) override;
     TypeSymbol* ResolveBaseType(otava::ast::Node* node);
     void Visit(otava::ast::CharNode& node) override;
     void Visit(otava::ast::Char8Node& node) override;
@@ -506,6 +507,15 @@ void DeclarationProcessor::Visit(otava::ast::ElaboratedTypeSpecifierNode& node)
     type = ResolveType(node.Id(), DeclarationFlags::none, context, TypeResolverFlags::dontThrow);
 }
 
+void DeclarationProcessor::Visit(otava::ast::InitConditionNode& node)
+{
+    node.DeclSpecifiers()->Accept(*this);
+    TypeSymbol* baseType = ResolveBaseType(node.DeclSpecifiers());
+    FunctionQualifiers qualifiers = FunctionQualifiers::none;
+    Declaration declaration = ProcessDeclarator(baseType, node.Declarator(), nullptr, flags, qualifiers, context);
+    declarationList->declarations.push_back(std::move(declaration));
+}
+
 void DeclarationProcessor::Visit(otava::ast::CharNode& node)
 {
     CheckDuplicateSpecifier(flags, DeclarationFlags::charFlag, "char", node.GetSourcePos(), context);
@@ -701,9 +711,10 @@ void DeclarationProcessor::Visit(otava::ast::TypenameSpecifierNode& node)
     type = ResolveType(&node, flags, context);
 }
 
-VariableSymbol* ProcessSimpleDeclarator(SimpleDeclarator* simpleDeclarator, TypeSymbol* type, Value* value, DeclarationFlags flags, Context* context)
+VariableSymbol* ProcessSimpleDeclarator(SimpleDeclarator* simpleDeclarator, TypeSymbol* type, TypeSymbol* initializerType, 
+    Value* value, DeclarationFlags flags, Context* context)
 {
-    VariableSymbol* variable = context->GetSymbolTable()->AddVariable(simpleDeclarator->Name(), simpleDeclarator->Node(), type, nullptr, value, flags, context);
+    VariableSymbol* variable = context->GetSymbolTable()->AddVariable(simpleDeclarator->Name(), simpleDeclarator->Node(), type, initializerType, value, flags, context);
     return variable;
 }
 
@@ -801,9 +812,10 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* function
             case DeclaratorKind::simpleDeclarator:
             {
                 SimpleDeclarator* simpleDeclarator = static_cast<SimpleDeclarator*>(declarator);
+                TypeSymbol* initializerType = nullptr;
                 if (!simpleDeclarator->Name().empty())
                 {
-                    VariableSymbol* variable = ProcessSimpleDeclarator(simpleDeclarator, declaration.type, declaration.value, declaration.flags, context);
+                    VariableSymbol* variable = ProcessSimpleDeclarator(simpleDeclarator, declaration.type, initializerType, declaration.value, declaration.flags, context);
                     if (variable->IsGlobalVariable())
                     {
                         std::unique_ptr<BoundExpressionNode> variableInitializer(nullptr);
@@ -874,6 +886,22 @@ Declaration ProcessExceptionDeclaration(otava::ast::Node* node, Context* context
 {
     DeclarationProcessor processor(context);
     node->Accept(processor);
+    std::unique_ptr<DeclarationList> declarationList = processor.GetDeclarations();
+    if (declarationList->declarations.size() == 1)
+    {
+        return std::move(declarationList->declarations.front());
+    }
+    else
+    {
+        otava::ast::SetExceptionThrown();
+        throw std::runtime_error("otava.symbols.declaration: single declaration expected");
+    }
+}
+
+Declaration ProcessInitCondition(otava::ast::InitConditionNode* initCondition, Context* context)
+{
+    DeclarationProcessor processor(context);
+    initCondition->Accept(processor);
     std::unique_ptr<DeclarationList> declarationList = processor.GetDeclarations();
     if (declarationList->declarations.size() == 1)
     {

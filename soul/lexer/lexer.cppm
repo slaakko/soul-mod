@@ -11,6 +11,7 @@ export import soul.lexer.keyword;
 export import soul.lexer.base;
 export import soul.lexer.classmap;
 export import soul.lexer.concepts;
+export import soul.lexer.error;
 export import soul.lexer.variables;
 export import soul.lexer.error;
 export import soul.lexer.parsing.log;

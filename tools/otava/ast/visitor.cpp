@@ -2538,10 +2538,6 @@ void DefaultVisitor::Visit(IfStatementNode& node)
         VisitKeyword("constexpr", node.ConstExprSourcePos());
     }
     VisitOperator("(", node.LParenPos());
-    if (node.InitStatement())
-    {
-        node.InitStatement()->Accept(*this);
-    }
     node.Condition()->Accept(*this);
     VisitOperator(")", node.RParenPos());
     node.ThenStatement()->Accept(*this);
@@ -2562,10 +2558,6 @@ void DefaultVisitor::Visit(SwitchStatementNode& node)
     }
     VisitKeyword("switch", node.SwitchPos());
     VisitOperator("(", node.LParenPos());
-    if (node.InitStatement())
-    {
-        node.InitStatement()->Accept(*this);
-    }
     node.Condition()->Accept(*this);
     VisitOperator(")", node.RParenPos());
     node.Statement()->Accept(*this);
@@ -2752,7 +2744,10 @@ void DefaultVisitor::Visit(GotoStatementNode& node)
     }
     VisitKeyword("goto", node.GotoPos());
     node.Target()->Accept(*this);
-    node.Semimcolon()->Accept(*this);
+    if (node.Semimcolon())
+    {
+        node.Semimcolon()->Accept(*this);
+    }
     EndVisit(node);
 }
 

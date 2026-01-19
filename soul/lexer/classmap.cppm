@@ -14,8 +14,8 @@ template<typename Char>
 class ClassMap
 {
 public:
-    ClassMap(const std::int32_t* data_, std::int32_t upperBound_) : data(data_), upperBound(upperBound_) { }
-    inline std::int32_t GetClass(Char c) const
+    ClassMap(const std::int32_t* data_, std::int32_t upperBound_) noexcept : data(data_), upperBound(upperBound_) { }
+    inline std::int32_t GetClass(Char c) const noexcept
     {
         std::int32_t i = static_cast<std::int32_t>(c);
         if (i < upperBound)
@@ -40,7 +40,7 @@ ClassMap<Char>* MakeClassMap(const std::string& classMapName)
     util::MemoryStream memoryStream(resource.Data(), resource.Size());
     util::BinaryStreamReader rawReader(memoryStream);
     std::int32_t size = rawReader.ReadInt();
-    std::int32_t* data = new std::int32_t[size];
+    std::int32_t* data = static_cast<std::int32_t*>(operator new(sizeof(std::int32_t) * size));
     util::DeflateStream compressedStream(util::CompressionMode::decompress, memoryStream);
     util::BinaryStreamReader reader(compressedStream);
     for (std::int64_t i = 0; i < size; ++i)
@@ -59,7 +59,7 @@ ClassMap<Char>* MakeClassMap(const std::string& moduleFileName, const std::strin
     util::MemoryStream memoryStream(resource.Data(), resource.Size());
     util::BinaryStreamReader rawReader(memoryStream);
     std::int32_t size = rawReader.ReadInt();
-    std::int32_t* data = new std::int32_t[size];
+    std::int32_t* data = static_cast<std::int32_t*>(operator new(sizeof(std::int32_t) * size));
     util::DeflateStream compressedStream(util::CompressionMode::decompress, memoryStream);
     util::BinaryStreamReader reader(compressedStream);
     for (std::int64_t i = 0; i < size; ++i)

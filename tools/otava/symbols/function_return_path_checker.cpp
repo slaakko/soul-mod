@@ -20,6 +20,7 @@ public:
     CaseOrDefaultTerminationChecker();
     void Visit(otava::ast::CompoundStatementNode& node) override;
     void Visit(otava::ast::ReturnStatementNode& node) override;
+    void Visit(otava::ast::ThrowExprNode& node) override;
     void Visit(otava::ast::BreakStatementNode& node) override;
     void Visit(otava::ast::ContinueStatementNode& node) override;
     void Visit(otava::ast::IfStatementNode& node) override;
@@ -47,6 +48,11 @@ void CaseOrDefaultTerminationChecker::Visit(otava::ast::CompoundStatementNode& n
 }
 
 void CaseOrDefaultTerminationChecker::Visit(otava::ast::ReturnStatementNode& node)
+{
+    terminates = true;
+}
+
+void CaseOrDefaultTerminationChecker::Visit(otava::ast::ThrowExprNode& node)
 {
     terminates = true;
 }
@@ -98,6 +104,7 @@ public:
     void Visit(otava::ast::DoStatementNode& node) override;
     void Visit(otava::ast::ForStatementNode& node) override;
     void Visit(otava::ast::ReturnStatementNode& node) override;
+    void Visit(otava::ast::ThrowExprNode& node) override;
     inline bool Terminates() const { return terminates; }
 private:
     Context* context;
@@ -173,6 +180,11 @@ void FunctionTerminationChecker::Visit(otava::ast::ReturnStatementNode& node)
     terminates = true;
 }
 
+void FunctionTerminationChecker::Visit(otava::ast::ThrowExprNode& node)
+{
+    terminates = true;
+}
+
 bool TerminatesFunction(otava::ast::Node* statementNode, Context* context, bool inForEverLoop)
 {
     FunctionTerminationChecker checker(context, inForEverLoop);
@@ -206,7 +218,7 @@ void FunctionReturnPathChecker::Visit(otava::ast::CompoundStatementNode& node)
                 return;
             }
         }
-        ThrowException("not all control paths terminate in return statement", node.GetSourcePos(), context);
+        ThrowException("not all control paths terminate in return statement or throw expression", node.GetSourcePos(), context);
     }
 }
 

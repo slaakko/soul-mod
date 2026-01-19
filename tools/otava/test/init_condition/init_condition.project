@@ -1,0 +1,3 @@
+project init_condition;
+target=program;
+source <main.cpp>;

@@ -48,10 +48,10 @@ std::string OperatorStr(Operator op)
         case Operator::xorAssign: return "^=";
         case Operator::orAssign: return "|=";
     }
-    return "";
+    return std::string();
 }
 
-Node::Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : kind(kind_), sourcePos(sourcePos_), parent(nullptr)
+Node::Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : kind(kind_), sourcePos(sourcePos_), parent(nullptr)
 {
 }
 
@@ -59,7 +59,7 @@ Node::~Node()
 {
 }
 
-UnaryNode::UnaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* child_) : Node(kind_, sourcePos_), child(child_)
+UnaryNode::UnaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept : Node(kind_, sourcePos_), child(child_)
 {
     child->SetParent(this);
 }
@@ -72,7 +72,7 @@ void UnaryNode::Replace(Node* node, Node* replacement)
     }
 }
 
-BinaryNode::BinaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* left_, Node* right_) : Node(kind_, sourcePos_), left(left_), right(right_)
+BinaryNode::BinaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* left_, Node* right_) noexcept : Node(kind_, sourcePos_), left(left_), right(right_)
 {
     left->SetParent(this);
     right->SetParent(this);
@@ -166,7 +166,7 @@ void ExprListNode::Replace(Node* node, Node* replacement)
     }
 }
 
-ThisNode::ThisNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::thisNode, sourcePos_)
+ThisNode::ThisNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::thisNode, sourcePos_)
 {
 }
 
@@ -209,7 +209,8 @@ void IdExprNode::Write(CodeFormatter& formatter)
     formatter.Write(id);
 }
 
-IndexExprNode::IndexExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* index_) : UnaryNode(NodeKind::indexExprNode, sourcePos_, child_), index(index_)
+IndexExprNode::IndexExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* index_) noexcept : 
+    UnaryNode(NodeKind::indexExprNode, sourcePos_, child_), index(index_)
 {
     index->SetParent(this);
 }
@@ -237,7 +238,7 @@ std::string IndexExprNode::ToString() const
     return Child()->ToString() + "[" + index->ToString() + "]";
 }
 
-InvokeNode::InvokeNode(const soul::ast::SourcePos& sourcePos_, Node* child_) : UnaryNode(NodeKind::invokeNode, sourcePos_, child_)
+InvokeNode::InvokeNode(const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept : UnaryNode(NodeKind::invokeNode, sourcePos_, child_)
 {
 }
 
@@ -315,7 +316,8 @@ void InvokeNode::Replace(Node* node, Node* replacement)
     }
 }
 
-MemberAccessNode::MemberAccessNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* member_) : UnaryNode(NodeKind::memberAccessNode, sourcePos_, child_), member(member_)
+MemberAccessNode::MemberAccessNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* member_) noexcept :
+    UnaryNode(NodeKind::memberAccessNode, sourcePos_, child_), member(member_)
 {
     member->SetParent(this);
 }
@@ -342,7 +344,7 @@ std::string MemberAccessNode::ToString() const
     return Child()->ToString() + "." + member->ToString();
 }
 
-PtrMemberAccessNode::PtrMemberAccessNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* member_) : 
+PtrMemberAccessNode::PtrMemberAccessNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* member_) noexcept :
     UnaryNode(NodeKind::ptrMemberAccessNode, sourcePos_, child_), member(member_)
 {
     member->SetParent(this);
@@ -370,7 +372,7 @@ std::string PtrMemberAccessNode::ToString() const
     return Child()->ToString() + "->" + member->ToString();
 }
 
-PostIncrementNode::PostIncrementNode(const soul::ast::SourcePos& sourcePos_, Node* child_) : UnaryNode(NodeKind::postIncrementNode, sourcePos_, child_)
+PostIncrementNode::PostIncrementNode(const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept : UnaryNode(NodeKind::postIncrementNode, sourcePos_, child_)
 {
 }
 
@@ -395,7 +397,7 @@ std::string PostIncrementNode::ToString() const
     return Child()->ToString() + "++";
 }
 
-PostDecrementNode::PostDecrementNode(const soul::ast::SourcePos& sourcePos_, Node* child_) : UnaryNode(NodeKind::postDecrementNode, sourcePos_, child_)
+PostDecrementNode::PostDecrementNode(const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept : UnaryNode(NodeKind::postDecrementNode, sourcePos_, child_)
 {
 }
 
@@ -420,11 +422,11 @@ std::string PostDecrementNode::ToString() const
     return Child()->ToString() + "--";
 }
 
-CppCastNode::CppCastNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : Node(kind_, sourcePos_)
+CppCastNode::CppCastNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : Node(kind_, sourcePos_)
 {
 }
 
-StaticCastNode::StaticCastNode(const soul::ast::SourcePos& sourcePos_) : CppCastNode(NodeKind::staticCastNode, sourcePos_)
+StaticCastNode::StaticCastNode(const soul::ast::SourcePos& sourcePos_) noexcept : CppCastNode(NodeKind::staticCastNode, sourcePos_)
 {
 }
 
@@ -443,7 +445,7 @@ void StaticCastNode::Write(CodeFormatter& formatter)
     formatter.Write("static_cast");
 }
 
-DynamicCastNode::DynamicCastNode(const soul::ast::SourcePos& sourcePos_) : CppCastNode(NodeKind::dynamicCastNode, sourcePos_)
+DynamicCastNode::DynamicCastNode(const soul::ast::SourcePos& sourcePos_) noexcept : CppCastNode(NodeKind::dynamicCastNode, sourcePos_)
 {
 }
 
@@ -462,7 +464,7 @@ void DynamicCastNode::Write(CodeFormatter& formatter)
     formatter.Write("dynamic_cast");
 }
 
-ReinterpretCastNode::ReinterpretCastNode(const soul::ast::SourcePos& sourcePos_) : CppCastNode(NodeKind::reinterpretCastNode, sourcePos_)
+ReinterpretCastNode::ReinterpretCastNode(const soul::ast::SourcePos& sourcePos_) noexcept : CppCastNode(NodeKind::reinterpretCastNode, sourcePos_)
 {
 }
 
@@ -481,7 +483,7 @@ void ReinterpretCastNode::Write(CodeFormatter& formatter)
     formatter.Write("reinterpret_cast");
 }
 
-ConstCastNode::ConstCastNode(const soul::ast::SourcePos& sourcePos_) : CppCastNode(NodeKind::constCastNode, sourcePos_)
+ConstCastNode::ConstCastNode(const soul::ast::SourcePos& sourcePos_) noexcept : CppCastNode(NodeKind::constCastNode, sourcePos_)
 {
 }
 
@@ -500,7 +502,7 @@ void ConstCastNode::Write(CodeFormatter& formatter)
     formatter.Write("const_cast");
 }
 
-PostCastNode::PostCastNode(const soul::ast::SourcePos& sourcePos_, CppCastNode* cppCastNode_, Node* type_, Node* child_) : 
+PostCastNode::PostCastNode(const soul::ast::SourcePos& sourcePos_, CppCastNode* cppCastNode_, Node* type_, Node* child_) noexcept :
     UnaryNode(NodeKind::postCastNode, sourcePos_, child_), cppCastNode(cppCastNode_), type(type_)
 {
     cppCastNode->SetParent(this);
@@ -539,7 +541,7 @@ std::string PostCastNode::ToString() const
     return str;
 }
 
-TypeIdExprNode::TypeIdExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_) : UnaryNode(NodeKind::typeIdExprNode, sourcePos_, child_)
+TypeIdExprNode::TypeIdExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept : UnaryNode(NodeKind::typeIdExprNode, sourcePos_, child_)
 {
 }
 
@@ -565,7 +567,7 @@ std::string TypeIdExprNode::ToString() const
     return "typeid(" + Child()->ToString() + ")";
 }
 
-PreIncrementNode::PreIncrementNode(const soul::ast::SourcePos& sourcePos_, Node* child_) : UnaryNode(NodeKind::preIncrementNode, sourcePos_, child_)
+PreIncrementNode::PreIncrementNode(const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept : UnaryNode(NodeKind::preIncrementNode, sourcePos_, child_)
 {
 }
 
@@ -590,7 +592,7 @@ std::string PreIncrementNode::ToString() const
     return "++" + Child()->ToString();
 }
 
-PreDecrementNode::PreDecrementNode(const soul::ast::SourcePos& sourcePos_, Node* child_) : UnaryNode(NodeKind::preDecrementNode, sourcePos_, child_)
+PreDecrementNode::PreDecrementNode(const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept : UnaryNode(NodeKind::preDecrementNode, sourcePos_, child_)
 {
 }
 
@@ -615,7 +617,8 @@ std::string PreDecrementNode::ToString() const
     return "--" + Child()->ToString();
 }
 
-UnaryOpExprNode::UnaryOpExprNode(const soul::ast::SourcePos& sourcePos_, Operator op_, Node* child_) : UnaryNode(NodeKind::unaryOpExprNode, sourcePos_, child_), op(op_)
+UnaryOpExprNode::UnaryOpExprNode(const soul::ast::SourcePos& sourcePos_, Operator op_, Node* child_) noexcept : 
+    UnaryNode(NodeKind::unaryOpExprNode, sourcePos_, child_), op(op_)
 {
 }
 
@@ -640,7 +643,7 @@ std::string UnaryOpExprNode::ToString() const
     return OperatorStr(op) + Child()->ToString();
 }
 
-SizeOfNode::SizeOfNode(const soul::ast::SourcePos& sourcePos_, Node* child_, bool parens_) : UnaryNode(NodeKind::sizeOfNode, sourcePos_, child_), parens(parens_)
+SizeOfNode::SizeOfNode(const soul::ast::SourcePos& sourcePos_, Node* child_, bool parens_) noexcept : UnaryNode(NodeKind::sizeOfNode, sourcePos_, child_), parens(parens_)
 {
 }
 
@@ -691,7 +694,7 @@ std::string SizeOfNode::ToString() const
     return str;
 }
 
-CastNode::CastNode(const soul::ast::SourcePos& sourcePos_, Node* type_, Node* child_) : UnaryNode(NodeKind::castNode, sourcePos_, child_), type(type_)
+CastNode::CastNode(const soul::ast::SourcePos& sourcePos_, Node* type_, Node* child_) noexcept : UnaryNode(NodeKind::castNode, sourcePos_, child_), type(type_)
 {
     type->SetParent(this);
 }
@@ -719,7 +722,7 @@ std::string CastNode::ToString() const
     return "(" + type->ToString() + ")" + Child()->ToString();
 }
 
-BinaryOpExprNode::BinaryOpExprNode(const soul::ast::SourcePos& sourcePos_, Operator op_, Node* left_, Node* right_) : 
+BinaryOpExprNode::BinaryOpExprNode(const soul::ast::SourcePos& sourcePos_, Operator op_, Node* left_, Node* right_) noexcept :
     BinaryNode(NodeKind::binaryOpExprNode, sourcePos_, left_, right_), op(op_)
 {
 }
@@ -748,7 +751,7 @@ std::string BinaryOpExprNode::ToString() const
     return Left()->ToString() + " " + OperatorStr(op) + " " + Right()->ToString();
 }
 
-ConditionalNode::ConditionalNode(const soul::ast::SourcePos& sourcePos_, Node* condition_, Node* thenExpr_, Node* elseExpr_) : 
+ConditionalNode::ConditionalNode(const soul::ast::SourcePos& sourcePos_, Node* condition_, Node* thenExpr_, Node* elseExpr_) noexcept :
     Node(NodeKind::conditionalNode, sourcePos_), condition(condition_), thenExpr(thenExpr_), elseExpr(elseExpr_)
 {
     condition->SetParent(this);
@@ -780,7 +783,8 @@ std::string ConditionalNode::ToString() const
     return condition->ToString() + " ? " + thenExpr->ToString() + " : " + elseExpr->ToString();
 }
 
-NewNode::NewNode(const soul::ast::SourcePos& sourcePos_, bool global_) : Node(NodeKind::newNode, sourcePos_), global(global_), parens(false), addToPlacement(false), addToInitializer(false)
+NewNode::NewNode(const soul::ast::SourcePos& sourcePos_, bool global_) noexcept : 
+    Node(NodeKind::newNode, sourcePos_), global(global_), parens(false), addToPlacement(false), addToInitializer(false)
 {
 }
 
@@ -797,7 +801,7 @@ void NewNode::Add(Node* node)
     }
 }
 
-void NewNode::SetTypeId(Node* typeId_)
+void NewNode::SetTypeId(Node* typeId_) noexcept
 {
     typeId.reset(typeId_);
     typeId->SetParent(this);
@@ -942,7 +946,7 @@ std::string NewNode::ToString() const
     return str;
 }
 
-DeleteNode::DeleteNode(const soul::ast::SourcePos& sourcePos_, bool global_, bool isArray_, Node* child_) : 
+DeleteNode::DeleteNode(const soul::ast::SourcePos& sourcePos_, bool global_, bool isArray_, Node* child_) noexcept :
     UnaryNode(NodeKind::deleteNode, sourcePos_, child_),  global(global_), isArray(isArray_)
 {
 }
@@ -989,7 +993,7 @@ std::string DeleteNode::ToString() const
     return str;
 }
 
-ParenExprNode::ParenExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_) : UnaryNode(NodeKind::parenExprNode, sourcePos_, child_)
+ParenExprNode::ParenExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept : UnaryNode(NodeKind::parenExprNode, sourcePos_, child_)
 {
 }
 
@@ -1034,7 +1038,7 @@ void LiteralNode::Write(CodeFormatter& formatter)
     formatter.Write(rep);
 }
 
-StatementNode::StatementNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : Node(kind_, sourcePos_)
+StatementNode::StatementNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : Node(kind_, sourcePos_)
 {
 }
 
@@ -1061,7 +1065,7 @@ void LabeledStatementNode::Write(CodeFormatter& formatter)
     stmt->Write(formatter);
 }
 
-CaseStatementNode::CaseStatementNode(const soul::ast::SourcePos& sourcePos_, Node* caseExpr_, StatementNode* stmt_) : 
+CaseStatementNode::CaseStatementNode(const soul::ast::SourcePos& sourcePos_, Node* caseExpr_, StatementNode* stmt_) noexcept :
     StatementNode(NodeKind::caseStatementNode, sourcePos_), caseExpr(caseExpr_), stmt(stmt_)
 {
     caseExpr->SetParent(this);
@@ -1086,7 +1090,8 @@ void CaseStatementNode::Write(CodeFormatter& formatter)
     stmt->Write(formatter);
 }
 
-DefaultStatementNode::DefaultStatementNode(const soul::ast::SourcePos& sourcePos_, StatementNode* stmt_) : StatementNode(NodeKind::defaultStatementNode, sourcePos_), stmt(stmt_)
+DefaultStatementNode::DefaultStatementNode(const soul::ast::SourcePos& sourcePos_, StatementNode* stmt_) noexcept : 
+    StatementNode(NodeKind::defaultStatementNode, sourcePos_), stmt(stmt_)
 {
     stmt->SetParent(this);
 }
@@ -1107,7 +1112,7 @@ void DefaultStatementNode::Write(CodeFormatter& formatter)
     stmt->Write(formatter);
 }
 
-EmptyStatementNode::EmptyStatementNode(const soul::ast::SourcePos& sourcePos_) : StatementNode(NodeKind::emptyStatementNode, sourcePos_)
+EmptyStatementNode::EmptyStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : StatementNode(NodeKind::emptyStatementNode, sourcePos_)
 {
 }
 
@@ -1126,7 +1131,8 @@ void EmptyStatementNode::Write(CodeFormatter& formatter)
     formatter.WriteLine(";");
 }
 
-ExpressionStatementNode::ExpressionStatementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_) : StatementNode(NodeKind::expressionStatementNode, sourcePos_), expr(expr_)
+ExpressionStatementNode::ExpressionStatementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_) noexcept : 
+    StatementNode(NodeKind::expressionStatementNode, sourcePos_), expr(expr_)
 {
     expr->SetParent(this);
 }
@@ -1147,7 +1153,7 @@ void ExpressionStatementNode::Write(CodeFormatter& formatter)
     formatter.WriteLine(";");
 }
 
-CompoundStatementNode::CompoundStatementNode(const soul::ast::SourcePos& sourcePos_) : StatementNode(NodeKind::compoundStatementNode, sourcePos_)
+CompoundStatementNode::CompoundStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : StatementNode(NodeKind::compoundStatementNode, sourcePos_)
 {
 }
 
@@ -1167,7 +1173,7 @@ void CompoundStatementNode::Replace(Node* node, Node* replacement)
 {
     for (auto& stmt : statements)
     {
-        if (stmt.get() == node)
+        if (node == stmt.get())
         {
             stmt.reset(static_cast<StatementNode*>(replacement));
         }
@@ -1201,7 +1207,7 @@ void CompoundStatementNode::Write(CodeFormatter& formatter)
     formatter.WriteLine("}");
 }
 
-IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* thenStmt_, StatementNode* elseStmt_) : 
+IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* thenStmt_, StatementNode* elseStmt_) noexcept :
     StatementNode(NodeKind::ifStatementNode, sourcePos_), cond(cond_), thenStmt(thenStmt_), elseStmt(elseStmt_)
 {
     cond->SetParent(this);
@@ -1256,7 +1262,7 @@ void IfStatementNode::Write(CodeFormatter& formatter)
     }
 }
 
-SwitchStatementNode::SwitchStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* stmt_) : 
+SwitchStatementNode::SwitchStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* stmt_) noexcept :
     StatementNode(NodeKind::switchStatementNode, sourcePos_), cond(cond_), stmt(stmt_)
 {
     cond->SetParent(this);
@@ -1281,7 +1287,7 @@ void SwitchStatementNode::Write(CodeFormatter& formatter)
     stmt->Write(formatter);
 }
 
-WhileStatementNode::WhileStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* stmt_) : 
+WhileStatementNode::WhileStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* stmt_) noexcept :
     StatementNode(NodeKind::whileStatementNode, sourcePos_), cond(cond_), stmt(stmt_)
 {
     cond->SetParent(this);
@@ -1314,7 +1320,7 @@ void WhileStatementNode::Write(CodeFormatter& formatter)
     stmt->Write(formatter);
 }
 
-DoStatementNode::DoStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* stmt_) : 
+DoStatementNode::DoStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* stmt_) noexcept :
     StatementNode(NodeKind::doStatementNode, sourcePos_), cond(cond_), stmt(stmt_)
 {
     cond->SetParent(this);
@@ -1348,7 +1354,7 @@ void DoStatementNode::Write(CodeFormatter& formatter)
     formatter.WriteLine(");");
 }
 
-ForStatementNode::ForStatementNode(const soul::ast::SourcePos& sourcePos_, Node* init_, Node* cond_, Node* iter_, StatementNode* stmt_) : 
+ForStatementNode::ForStatementNode(const soul::ast::SourcePos& sourcePos_, Node* init_, Node* cond_, Node* iter_, StatementNode* stmt_) noexcept :
     StatementNode(NodeKind::forStatementNode, sourcePos_), init(init_), cond(cond_), iter(iter_), stmt(stmt_)
 {
     if (init)
@@ -1420,7 +1426,7 @@ void ForStatementNode::Write(CodeFormatter& formatter)
     stmt->Write(formatter);
 }
 
-BreakStatementNode::BreakStatementNode(const soul::ast::SourcePos& sourcePos_) : StatementNode(NodeKind::breakStatementNode, sourcePos_)
+BreakStatementNode::BreakStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : StatementNode(NodeKind::breakStatementNode, sourcePos_)
 {
 }
 
@@ -1439,7 +1445,7 @@ void BreakStatementNode::Write(CodeFormatter& formatter)
     formatter.WriteLine("break;");
 }
 
-ContinueStatementNode::ContinueStatementNode(const soul::ast::SourcePos& sourcePos_) : StatementNode(NodeKind::continueStatementNode, sourcePos_)
+ContinueStatementNode::ContinueStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : StatementNode(NodeKind::continueStatementNode, sourcePos_)
 {
 }
 
@@ -1458,7 +1464,8 @@ void ContinueStatementNode::Write(CodeFormatter& formatter)
     formatter.WriteLine("continue;");
 }
 
-GotoStatementNode::GotoStatementNode(const soul::ast::SourcePos& sourcePos_, const std::string& target_) : StatementNode(NodeKind::gotoStatementNode, sourcePos_), target(target_)
+GotoStatementNode::GotoStatementNode(const soul::ast::SourcePos& sourcePos_, const std::string& target_) noexcept : 
+    StatementNode(NodeKind::gotoStatementNode, sourcePos_), target(target_)
 {
 }
 
@@ -1479,7 +1486,8 @@ void GotoStatementNode::Write(CodeFormatter& formatter)
     formatter.WriteLine(";");
 }
 
-ReturnStatementNode::ReturnStatementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_) : StatementNode(NodeKind::returnStatementNode, sourcePos_), expr(expr_)
+ReturnStatementNode::ReturnStatementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_) noexcept : 
+    StatementNode(NodeKind::returnStatementNode, sourcePos_), expr(expr_)
 {
     if (expr)
     {
@@ -1487,7 +1495,7 @@ ReturnStatementNode::ReturnStatementNode(const soul::ast::SourcePos& sourcePos_,
     }
 }
 
-void ReturnStatementNode::SetExpr(Node* expr_)
+void ReturnStatementNode::SetExpr(Node* expr_) noexcept
 {
     expr.reset(expr_);
 }
@@ -1518,8 +1526,8 @@ void ReturnStatementNode::Write(CodeFormatter& formatter)
     formatter.WriteLine(";");
 }
 
-ConditionWithDeclaratorNode::ConditionWithDeclaratorNode(const soul::ast::SourcePos& sourcePos_, TypeIdNode* type_, const std::string& declarator_, Node* expression_) :
-    Node(NodeKind::conditionWithDeclaratorNode, sourcePos_), type(type_), declarator(declarator_), expression(expression_)
+ConditionWithDeclaratorNode::ConditionWithDeclaratorNode(const soul::ast::SourcePos& sourcePos_, TypeIdNode* type_, const std::string& declarator_, 
+    Node* expression_) noexcept : Node(NodeKind::conditionWithDeclaratorNode, sourcePos_), type(type_), declarator(declarator_), expression(expression_)
 {
     type->SetParent(this);
     expression->SetParent(this);
@@ -1542,7 +1550,7 @@ void ConditionWithDeclaratorNode::Write(CodeFormatter& formatter)
     expression->Write(formatter);
 }
 
-ForRangeDeclarationNode::ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_) : 
+ForRangeDeclarationNode::ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept :
     Node(NodeKind::forRangeDeclarationNode, sourcePos_), declaration(new SimpleDeclarationNode(sourcePos_)), declarator()
 {
     declaration->SetParent(this);
@@ -1572,8 +1580,8 @@ void ForRangeDeclarationNode::Write(CodeFormatter& formatter)
     formatter.Write(declarator);
 }
 
-RangeForStatementNode::RangeForStatementNode(const soul::ast::SourcePos& sourcePos_, ForRangeDeclarationNode* declaration_, Node* container_, StatementNode* stmt_) :
-    StatementNode(NodeKind::rangeForStatementNode, sourcePos_), declaration(declaration_), container(container_), stmt(stmt_)
+RangeForStatementNode::RangeForStatementNode(const soul::ast::SourcePos& sourcePos_, ForRangeDeclarationNode* declaration_, Node* container_, 
+    StatementNode* stmt_) noexcept : StatementNode(NodeKind::rangeForStatementNode, sourcePos_), declaration(declaration_), container(container_), stmt(stmt_)
 {
     declaration->SetParent(this);
     container->SetParent(this);
@@ -1582,7 +1590,8 @@ RangeForStatementNode::RangeForStatementNode(const soul::ast::SourcePos& sourceP
 
 Node* RangeForStatementNode::Clone() const
 {
-    return new RangeForStatementNode(GetSourcePos(), static_cast<ForRangeDeclarationNode*>(declaration->Clone()), container->Clone(), static_cast<StatementNode*>(stmt->Clone()));
+    return new RangeForStatementNode(GetSourcePos(), static_cast<ForRangeDeclarationNode*>(
+        declaration->Clone()), container->Clone(), static_cast<StatementNode*>(stmt->Clone()));
 }
 
 void RangeForStatementNode::Accept(Visitor& visitor)
@@ -1608,7 +1617,7 @@ void RangeForStatementNode::Write(CodeFormatter& formatter)
     stmt->Write(formatter);
 }
 
-DeclarationStatementNode::DeclarationStatementNode(const soul::ast::SourcePos& sourcePos_, Node* declaration_) : 
+DeclarationStatementNode::DeclarationStatementNode(const soul::ast::SourcePos& sourcePos_, Node* declaration_) noexcept :
     StatementNode(NodeKind::declarationStatementNode, sourcePos_), declaration(declaration_)
 {
     declaration->SetParent(this);
@@ -1630,7 +1639,8 @@ void DeclarationStatementNode::Write(CodeFormatter& formatter)
     formatter.WriteLine(";");
 }
 
-IfdefStatementNode::IfdefStatementNode(const soul::ast::SourcePos& sourcePos_, Node* symbol_) : StatementNode(NodeKind::ifdefStatementNode, sourcePos_), symbol(symbol_)
+IfdefStatementNode::IfdefStatementNode(const soul::ast::SourcePos& sourcePos_, Node* symbol_) noexcept :
+    StatementNode(NodeKind::ifdefStatementNode, sourcePos_), symbol(symbol_)
 {
     symbol->SetParent(this);
 }
@@ -1652,7 +1662,7 @@ void IfdefStatementNode::Write(CodeFormatter& formatter)
     formatter.WriteLine();
 }
 
-EndIfStatementNode::EndIfStatementNode(const soul::ast::SourcePos& sourcePos_) : StatementNode(NodeKind::endIfStatementNode, sourcePos_)
+EndIfStatementNode::EndIfStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : StatementNode(NodeKind::endIfStatementNode, sourcePos_)
 {
 }
 
@@ -1671,7 +1681,8 @@ void EndIfStatementNode::Write(CodeFormatter& formatter)
     formatter.WriteLine("#endif");
 }
 
-AssignInitNode::AssignInitNode(const soul::ast::SourcePos& sourcePos_, Node* assignmentExpr_) : Node(NodeKind::assignInitNode, sourcePos_), assignmentExpr(assignmentExpr_)
+AssignInitNode::AssignInitNode(const soul::ast::SourcePos& sourcePos_, Node* assignmentExpr_) noexcept : 
+    Node(NodeKind::assignInitNode, sourcePos_), assignmentExpr(assignmentExpr_)
 {
     if (assignmentExpr)
     {
@@ -1759,7 +1770,8 @@ void AssignInitNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-InitializerNode::InitializerNode(const soul::ast::SourcePos& sourcePos_, AssignInitNode* assignInit_) : Node(NodeKind::initializerNode, sourcePos_), assignInit(assignInit_)
+InitializerNode::InitializerNode(const soul::ast::SourcePos& sourcePos_, AssignInitNode* assignInit_) noexcept : 
+    Node(NodeKind::initializerNode, sourcePos_), assignInit(assignInit_)
 {
     if (assignInit)
     {
@@ -1892,7 +1904,7 @@ void InitDeclaratorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-InitDeclaratorListNode::InitDeclaratorListNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::initDeclaratorListNode, sourcePos_)
+InitDeclaratorListNode::InitDeclaratorListNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::initDeclaratorListNode, sourcePos_)
 {
 }
 
@@ -2093,7 +2105,7 @@ void TypeNameNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-TypeNode::TypeNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::typeNode, sourcePos_)
+TypeNode::TypeNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::typeNode, sourcePos_)
 {
 }
 
@@ -2167,7 +2179,7 @@ std::string StorageClassSpecifierNode::ToString() const
     return Name();
 }
 
-TypeIdNode::TypeIdNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::typeIdNode, sourcePos_)
+TypeIdNode::TypeIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::typeIdNode, sourcePos_)
 {
 }
 
@@ -2276,7 +2288,7 @@ bool TypeIdNode::IsPtrType() const
     }
 }
 
-SimpleDeclarationNode::SimpleDeclarationNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::simpleDeclarationNode, sourcePos_)
+SimpleDeclarationNode::SimpleDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::simpleDeclarationNode, sourcePos_)
 {
 }
 
@@ -2286,7 +2298,7 @@ void SimpleDeclarationNode::Add(DeclSpecifierNode* declSpecifier)
     declSpecifiers.push_back(std::unique_ptr<DeclSpecifierNode>(declSpecifier));
 }
 
-void SimpleDeclarationNode::SetInitDeclaratorList(InitDeclaratorListNode* initDeclaratorList_)
+void SimpleDeclarationNode::SetInitDeclaratorList(InitDeclaratorListNode* initDeclaratorList_) noexcept
 {
     initDeclaratorList.reset(initDeclaratorList_);
     initDeclaratorList->SetParent(this);

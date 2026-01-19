@@ -1,0 +1,14 @@
+project oelex;
+target=library;
+define EXPECTED;
+reference <../../oeutil/oeutil.project>;
+reference <../oeast/oeast.project>;
+reference <../oetoken/oetoken.project>;
+reference <../oelexer/oelexer.project>;
+interface <re.lexer.cppm>;
+source <re.lexer.cpp>;
+interface <slg.lexer.cppm>;
+source <slg.lexer.cpp>;
+interface <spg.lexer.cppm>;
+source <spg.lexer.cpp>;
+interface <lex.cppm>;

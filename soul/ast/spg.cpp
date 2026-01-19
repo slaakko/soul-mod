@@ -169,7 +169,7 @@ TokenSet::TokenSet()
 bool TokenSet::AddToken(const soul::ast::common::Token* token)
 {
     auto it = tokens.find(token);
-    if (it != tokens.cend())
+    if (it != tokens.end())
     {
         return false;
     }
@@ -183,7 +183,7 @@ bool TokenSet::AddToken(const soul::ast::common::Token* token)
 bool TokenSet::Merge(const TokenSet& that)
 {
     bool changed = false;
-    for (const auto& token : that.tokens)
+    for (const auto* token : that.tokens)
     {
         if (AddToken(token))
         {
@@ -193,14 +193,14 @@ bool TokenSet::Merge(const TokenSet& that)
     return changed;
 }
 
-bool TokenSet::Contains(const soul::ast::common::Token* token) const
+bool TokenSet::Contains(const soul::ast::common::Token* token) const noexcept
 {
-    return tokens.find(token) != tokens.cend();
+    return tokens.find(token) != tokens.end();
 }
 
-bool TokenSet::Intersects(const TokenSet& that) const
+bool TokenSet::Intersects(const TokenSet& that) const noexcept
 {
-    for (const auto& token : that.tokens)
+    for (const auto* token : that.tokens)
     {
         if (Contains(token))
         {
@@ -214,7 +214,7 @@ std::string TokenSet::ToString() const
 {
     std::string set("{");
     bool first = true;
-    for (const auto& token : tokens)
+    for (const auto* token : tokens)
     {
         if (first)
         {
@@ -238,13 +238,12 @@ Parser::~Parser()
 {
 }
 
-soul::ast::common::TokenMap* Parser::GetTokenMap() 
+soul::ast::common::TokenMap* Parser::GetTokenMap() noexcept
 {
     if (IsGrammarParser())
     {
         const GrammarParser* grammar = static_cast<const GrammarParser*>(this);
         ParserFile* parserFile = grammar->GetParserFile();
-
         return parserFile->GetTokenMap();
     }
     else if (parent)
@@ -257,14 +256,14 @@ soul::ast::common::TokenMap* Parser::GetTokenMap()
     }
 }
 
-UnaryParser::UnaryParser(const soul::ast::SourcePos& sourcePos_, ParserKind kind_, Parser* child_) : Parser(sourcePos_, kind_), child(child_)
+UnaryParser::UnaryParser(const soul::ast::SourcePos& sourcePos_, ParserKind kind_, Parser* child_) noexcept : Parser(sourcePos_, kind_), child(child_)
 {
     child->SetParent(this);
 }
 
 void UnaryParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    if (visited.find(this) == visited.end())
     {
         visited.insert(this);
         child->ComputeFirst(changed, visited);
@@ -275,13 +274,14 @@ void UnaryParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
     }
 }
 
-BinaryParser::BinaryParser(const soul::ast::SourcePos& sourcePos_, ParserKind kind_, Parser* left_, Parser* right_) : Parser(sourcePos_, kind_), left(left_), right(right_)
+BinaryParser::BinaryParser(const soul::ast::SourcePos& sourcePos_, ParserKind kind_, Parser* left_, Parser* right_) noexcept : 
+    Parser(sourcePos_, kind_), left(left_), right(right_)
 {
     left->SetParent(this);
     right->SetParent(this);
 }
 
-ChoiceParser::ChoiceParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_) :
+ChoiceParser::ChoiceParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_) noexcept :
     BinaryParser(sourcePos_, ParserKind::alternativeParser, left_, right_), optimize(false)
 {
 }
@@ -298,7 +298,7 @@ void ChoiceParser::Accept(Visitor& visitor)
 
 void ChoiceParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    if (visited.find(this) == visited.end())
     {
         visited.insert(this);
         Left()->ComputeFirst(changed, visited);
@@ -314,7 +314,7 @@ void ChoiceParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
     }
 }
 
-void ChoiceParser::SetOptimizationFlag(int& count)
+void ChoiceParser::SetOptimizationFlag(int& count) 
 {
     Parser* parent = Parent();
     while (parent)
@@ -347,7 +347,7 @@ void ChoiceParser::SetOptimizationFlag(int& count)
     }
 }
 
-CaseParser::CaseParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) : UnaryParser(sourcePos_, ParserKind::caseParser, child_)
+CaseParser::CaseParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) noexcept : UnaryParser(sourcePos_, ParserKind::caseParser, child_)
 {
 }
 
@@ -362,7 +362,7 @@ void CaseParser::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-SwitchParser::SwitchParser(const soul::ast::SourcePos& sourcePos_) : Parser(sourcePos_, ParserKind::switchParser)
+SwitchParser::SwitchParser(const soul::ast::SourcePos& sourcePos_) noexcept : Parser(sourcePos_, ParserKind::switchParser)
 {
 }
 
@@ -383,7 +383,7 @@ void SwitchParser::Accept(Visitor& visitor)
 
 void SwitchParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    if (visited.find(this) == visited.end())
     {
         visited.insert(this);
         for (const auto& caseParser : caseParsers)
@@ -403,7 +403,8 @@ void SwitchParser::AddCaseParser(CaseParser* caseParser)
     caseParsers.push_back(std::unique_ptr<CaseParser>(caseParser));
 }
 
-SequenceParser::SequenceParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_) : BinaryParser(sourcePos_, ParserKind::sequenceParser, left_, right_)
+SequenceParser::SequenceParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_) noexcept : 
+    BinaryParser(sourcePos_, ParserKind::sequenceParser, left_, right_)
 {
 }
 
@@ -419,7 +420,7 @@ void SequenceParser::Accept(Visitor& visitor)
 
 void SequenceParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    if (visited.find(this) == visited.end())
     {
         visited.insert(this);
         Left()->ComputeFirst(changed, visited);
@@ -446,7 +447,8 @@ void SequenceParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
     }
 }
 
-DifferenceParser::DifferenceParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_) : BinaryParser(sourcePos_, ParserKind::differenceParser, left_, right_)
+DifferenceParser::DifferenceParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_) noexcept : 
+    BinaryParser(sourcePos_, ParserKind::differenceParser, left_, right_)
 {
 }
 
@@ -462,7 +464,7 @@ void DifferenceParser::Accept(Visitor& visitor)
 
 void DifferenceParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    if (visited.find(this) == visited.end())
     {
         visited.insert(this);
         Left()->ComputeFirst(changed, visited);
@@ -473,7 +475,7 @@ void DifferenceParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
     }
 }
 
-ListParser::ListParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_) :
+ListParser::ListParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_) noexcept :
     UnaryParser(sourcePos_, ParserKind::listParser, 
         new SequenceParser(sourcePos_, left_, 
             new KleeneParser(sourcePos_, 
@@ -492,7 +494,7 @@ void ListParser::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-LookaheadParser::LookaheadParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) : UnaryParser(sourcePos_, ParserKind::lookaheadParser, child_)
+LookaheadParser::LookaheadParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) noexcept : UnaryParser(sourcePos_, ParserKind::lookaheadParser, child_)
 {
 }
 
@@ -506,7 +508,7 @@ void LookaheadParser::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-KleeneParser::KleeneParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) : UnaryParser(sourcePos_, ParserKind::kleeneParser, child_)
+KleeneParser::KleeneParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) noexcept : UnaryParser(sourcePos_, ParserKind::kleeneParser, child_)
 {
 }
 
@@ -522,7 +524,7 @@ void KleeneParser::Accept(Visitor& visitor)
 
 void KleeneParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    if (visited.find(this) == visited.end())
     {
         visited.insert(this);
         Child()->ComputeFirst(changed, visited);
@@ -546,7 +548,7 @@ void KleeneParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
     }
 }
 
-PositiveParser::PositiveParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) : UnaryParser(sourcePos_, ParserKind::positiveParser, child_)
+PositiveParser::PositiveParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) noexcept : UnaryParser(sourcePos_, ParserKind::positiveParser, child_)
 {
 }
 
@@ -560,7 +562,7 @@ void PositiveParser::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-OptionalParser::OptionalParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) : UnaryParser(sourcePos_, ParserKind::optionalParser, child_)
+OptionalParser::OptionalParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) noexcept : UnaryParser(sourcePos_, ParserKind::optionalParser, child_)
 {
 }
 
@@ -576,7 +578,7 @@ void OptionalParser::Accept(Visitor& visitor)
 
 void OptionalParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    if (visited.find(this) == visited.end())
     {
         visited.insert(this);
         Child()->ComputeFirst(changed, visited);
@@ -600,7 +602,7 @@ void OptionalParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
     }
 }
 
-ExpectationParser::ExpectationParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) : UnaryParser(sourcePos_, ParserKind::expectationParser, child_)
+ExpectationParser::ExpectationParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) noexcept : UnaryParser(sourcePos_, ParserKind::expectationParser, child_)
 {
 }
 
@@ -614,7 +616,8 @@ void ExpectationParser::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ActionParser::ActionParser(const soul::ast::SourcePos& sourcePos_, Parser* child_, soul::ast::cpp::CompoundStatementNode* successCode_, soul::ast::cpp::CompoundStatementNode* failureCode_) :
+ActionParser::ActionParser(const soul::ast::SourcePos& sourcePos_, Parser* child_, soul::ast::cpp::CompoundStatementNode* successCode_, 
+    soul::ast::cpp::CompoundStatementNode* failureCode_) noexcept :
     UnaryParser(sourcePos_, ParserKind::actionParser, child_), successCode(successCode_), failureCode(failureCode_)
 {
 }
@@ -635,7 +638,8 @@ void ActionParser::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-NonterminalParser::NonterminalParser(const soul::ast::SourcePos& sourcePos_, const std::string& ruleName_, const std::string& instanceName_, soul::ast::cpp::ExprListNode* args_) :
+NonterminalParser::NonterminalParser(const soul::ast::SourcePos& sourcePos_, const std::string& ruleName_, const std::string& instanceName_, 
+    soul::ast::cpp::ExprListNode* args_) :
     Parser(sourcePos_, ParserKind::nonterminalParser), ruleName(ruleName_), instanceName(instanceName_), arguments(args_), rule(nullptr), recursive(false)
 {
 }
@@ -657,7 +661,7 @@ void NonterminalParser::Accept(Visitor& visitor)
 
 void NonterminalParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    if (visited.find(this) == visited.end())
     {
         visited.insert(this);
         rule->ComputeFirst(changed, visited);
@@ -668,7 +672,7 @@ void NonterminalParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
     }
 }
 
-EmptyParser::EmptyParser(const soul::ast::SourcePos& sourcePos_) : Parser(sourcePos_, ParserKind::emptyParser)
+EmptyParser::EmptyParser(const soul::ast::SourcePos& sourcePos_) noexcept : Parser(sourcePos_, ParserKind::emptyParser)
 {
 }
 
@@ -684,7 +688,7 @@ void EmptyParser::Accept(Visitor& visitor)
 
 void EmptyParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    if (visited.find(this) == visited.end())
     {
         visited.insert(this);
         soul::ast::common::TokenMap* tokenMap = GetTokenMap();
@@ -702,7 +706,7 @@ void EmptyParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
     }
 }
 
-AnyParser::AnyParser(const soul::ast::SourcePos& sourcePos_) : Parser(sourcePos_, ParserKind::anyParser)
+AnyParser::AnyParser(const soul::ast::SourcePos& sourcePos_) noexcept : Parser(sourcePos_, ParserKind::anyParser)
 {
 }
 
@@ -718,7 +722,7 @@ void AnyParser::Accept(Visitor& visitor)
 
 void AnyParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    if (visited.find(this) == visited.end())
     {
         visited.insert(this);
         soul::ast::common::TokenMap* tokenMap = GetTokenMap();
@@ -753,7 +757,7 @@ void TokenParser::Accept(Visitor& visitor)
 
 void TokenParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    if (visited.find(this) == visited.end())
     {
         visited.insert(this);
         if (First().AddToken(token))
@@ -763,7 +767,7 @@ void TokenParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
     }
 }
 
-CharParser::CharParser(const soul::ast::SourcePos& sourcePos_, char32_t chr_) : Parser(sourcePos_, ParserKind::charParser), chr(chr_)
+CharParser::CharParser(const soul::ast::SourcePos& sourcePos_, char32_t chr_) noexcept : Parser(sourcePos_, ParserKind::charParser), chr(chr_)
 {
 }
 
@@ -806,7 +810,7 @@ void StringParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
     ThrowCannotBeOptimized();
 }
 
-CharSetParser::CharSetParser(const soul::ast::SourcePos& sourcePos_, CharSet* charSet_) : Parser(sourcePos_, ParserKind::charSetParser), charSet(charSet_)
+CharSetParser::CharSetParser(const soul::ast::SourcePos& sourcePos_, CharSet* charSet_) noexcept : Parser(sourcePos_, ParserKind::charSetParser), charSet(charSet_)
 {
 }
 
@@ -830,7 +834,7 @@ void CharSetParser::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-GroupParser::GroupParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) : UnaryParser(sourcePos_, ParserKind::groupParser, child_)
+GroupParser::GroupParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) noexcept : UnaryParser(sourcePos_, ParserKind::groupParser, child_)
 {
 }
 
@@ -866,13 +870,13 @@ void RuleParser::AddParamOrVariable(ParamVar* paramVar)
     }
 }
 
-void RuleParser::SetDefinition(Parser* definition_)
+void RuleParser::SetDefinition(Parser* definition_) noexcept
 {
     definition.reset(definition_);
     definition->SetParent(this);
 }
 
-void RuleParser::SetReturnType(soul::ast::cpp::TypeIdNode* returnType_)
+void RuleParser::SetReturnType(soul::ast::cpp::TypeIdNode* returnType_) noexcept
 {
     returnType.reset(returnType_);
 }
@@ -882,7 +886,7 @@ void RuleParser::AddNonterminal(NonterminalParser* nonterminal)
     nonterminals.push_back(nonterminal);
 }
 
-void RuleParser::SetGrammar(GrammarParser* grammar_)
+void RuleParser::SetGrammar(GrammarParser* grammar_) noexcept
 {
     grammar = grammar_;
 }
@@ -907,7 +911,7 @@ Parser* RuleParser::Clone() const
     {
         clone->SetReturnType(static_cast<soul::ast::cpp::TypeIdNode*>(returnType->Clone()));
     }
-    for (auto nonterminal : nonterminals)
+    for (const auto* nonterminal : nonterminals)
     {
         clone->AddNonterminal(static_cast<NonterminalParser*>(nonterminal->Clone()));
     }
@@ -925,7 +929,7 @@ void RuleParser::Accept(Visitor& visitor)
 
 void RuleParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    if (visited.find(this) == visited.end())
     {
         visited.insert(this);
         definition->ComputeFirst(changed, visited);
@@ -967,7 +971,7 @@ bool GrammarParser::AddRule(RuleParser* rule)
 bool GrammarParser::MapRule(RuleParser* rule)
 {
     auto it = ruleMap.find(rule->Name());
-    if (it != ruleMap.cend())
+    if (it != ruleMap.end())
     {
         return false;
     }
@@ -975,10 +979,10 @@ bool GrammarParser::MapRule(RuleParser* rule)
     return true;
 }
 
-RuleParser* GrammarParser::GetRule(const std::string& ruleName) const
+RuleParser* GrammarParser::GetRule(const std::string& ruleName) const noexcept
 {
     auto it = ruleMap.find(ruleName);
-    if (it != ruleMap.cend())
+    if (it != ruleMap.end())
     {
         return it->second;
     }
@@ -1000,7 +1004,7 @@ void GrammarParser::Accept(Visitor& visitor)
 
 void GrammarParser::ComputeFirst(bool& changed, std::set<Parser*>& visited)
 {
-    if (visited.find(this) == visited.cend())
+    if (visited.find(this) == visited.end())
     {
         visited.insert(this);
         for (const auto& rule : rules)
@@ -1081,7 +1085,7 @@ void SpgFile::AddTokenFile(soul::ast::common::TokenFile* tokenFile)
     tokenCollectionMap[tokenFile->GetTokenCollection()->Name()] = tokenFile->GetTokenCollection();
 }
 
-soul::ast::common::TokenCollection* SpgFile::GetTokenCollection(const std::string& tokenCollectionName) const
+soul::ast::common::TokenCollection* SpgFile::GetTokenCollection(const std::string& tokenCollectionName) const noexcept
 {
     auto it = tokenCollectionMap.find(tokenCollectionName);
     if (it != tokenCollectionMap.end())
@@ -1110,7 +1114,7 @@ void SpgFile::Accept(soul::ast::common::Visitor& visitor)
 bool SpgFile::AddParser(GrammarParser* parser)
 {
     auto it = parserMap.find(parser->Name());
-    if (it != parserMap.cend())
+    if (it != parserMap.end())
     {
         return false;
     }
@@ -1118,10 +1122,10 @@ bool SpgFile::AddParser(GrammarParser* parser)
     return true;
 }
 
-GrammarParser* SpgFile::GetParser(const std::string& name) const
+GrammarParser* SpgFile::GetParser(const std::string& name) const noexcept
 {
     auto it = parserMap.find(name);
-    if (it != parserMap.cend())
+    if (it != parserMap.end())
     {
         return it->second;
     }

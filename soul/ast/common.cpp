@@ -142,7 +142,7 @@ void TokenCollection::AddToken(Token* token)
     token->SetCollection(this);
 }
 
-Token* TokenCollection::GetToken(std::int64_t id) const
+Token* TokenCollection::GetToken(std::int64_t id) const noexcept
 {
     auto it = tokenMap.find(id);
     if (it != tokenMap.cend())
@@ -231,7 +231,7 @@ std::vector<Token*> TokenMap::GetTokens(const std::string& tokenName) const
     }
 }
 
-Token* TokenMap::GetToken(const std::string& tokenFullName) const
+Token* TokenMap::GetToken(const std::string& tokenFullName) const noexcept
 {
     auto it = tokenFullNameMap.find(tokenFullName);
     if (it != tokenFullNameMap.end())

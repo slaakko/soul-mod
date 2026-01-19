@@ -164,7 +164,6 @@
     <None Include="soul.cpp.token" />
     <None Include="soul.punctuation.token" />
     <None Include="soul.tool.token" />
-    <None Include="token.project" />
     <None Include="tokens.slg" />
   </ItemGroup>
   <ItemGroup>

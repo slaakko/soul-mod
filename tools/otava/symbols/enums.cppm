@@ -39,6 +39,7 @@ public:
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     inline bool IsBound() const { return bound; }
     inline void SetBound() { bound = true; }
+    int Rank() const override { return underlyingType ? underlyingType->Rank() : -1; }
 private:
     bool bound;
     EnumTypeKind kind;

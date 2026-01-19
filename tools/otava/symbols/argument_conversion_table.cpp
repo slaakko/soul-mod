@@ -231,6 +231,77 @@ FunctionSymbol* BaseToDerivedArgumentConversion::Get(TypeSymbol* paramType, Type
     return nullptr;
 }
 
+class DynamicPtrCast : public FunctionSymbol
+{
+public:
+    DynamicPtrCast(ClassTypeSymbol* baseClassType_, ClassTypeSymbol* derivedClassType_, Context* context);
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+private:
+    ClassTypeSymbol* baseClassType;
+    ClassTypeSymbol* derivedClassType;
+};
+
+DynamicPtrCast::DynamicPtrCast(ClassTypeSymbol* baseClassType_, ClassTypeSymbol* derivedClassType_, Context* context) :
+    FunctionSymbol(U"@conversion"), baseClassType(baseClassType_), derivedClassType(derivedClassType_)
+{
+    SetConversion();
+    SetAccess(Access::public_);
+    SetConversionKind(ConversionKind::explicitConversion);
+    ParameterSymbol* arg = new ParameterSymbol(U"arg", baseClassType->AddPointer(context));
+    AddParameter(arg, soul::ast::SourcePos(), context);
+    SetReturnType(derivedClassType->AddPointer(context), context);
+    SetNoExcept();
+}
+
+void DynamicPtrCast::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    otava::intermediate::Value* value = emitter.Stack().Pop();
+    std::uint64_t derived1;
+    std::uint64_t derived2;
+    util::UuidToInts(derivedClassType->GetBaseType()->Id(), derived1, derived2);
+    std::uint64_t base1;
+    std::uint64_t base2;
+    util::UuidToInts(baseClassType->GetBaseType()->Id(), base1, base2);
+    std::vector<otava::intermediate::Type*> paramTypes;
+    paramTypes.push_back(emitter.GetULongType());
+    paramTypes.push_back(emitter.GetULongType());
+    paramTypes.push_back(emitter.GetULongType());
+    paramTypes.push_back(emitter.GetULongType());
+    otava::intermediate::FunctionType* fnType = static_cast<otava::intermediate::FunctionType*>(emitter.MakeFunctionType(emitter.GetBoolType(), paramTypes));
+    otava::intermediate::Function* fn = emitter.GetOrInsertFunction("ort_is_same_or_has_base", fnType);
+    std::vector<otava::intermediate::Value*> arguments;
+    arguments.push_back(emitter.EmitULong(derived1));
+    arguments.push_back(emitter.EmitULong(derived2));
+    arguments.push_back(emitter.EmitULong(base1));
+    arguments.push_back(emitter.EmitULong(base2));
+    otava::intermediate::Value* test = emitter.EmitCall(fn, arguments);
+    otava::intermediate::BasicBlock* trueBlock = emitter.CreateBasicBlock();
+    otava::intermediate::BasicBlock* falseBlock = emitter.CreateBasicBlock();
+    otava::intermediate::BasicBlock* nextBlock = emitter.CreateBasicBlock();
+    emitter.EmitBranch(test, trueBlock, falseBlock);
+    emitter.SetCurrentBasicBlock(trueBlock);
+    auto [success, delta] = Delta(baseClassType, derivedClassType, emitter, context);
+    if (!success)
+    {
+        ThrowException("classes have no inheritance relationship", sourcePos, context);
+    }
+    otava::intermediate::Value* deltaValue = emitter.EmitLong(delta);
+    otava::intermediate::Type* derivedClassIrType = derivedClassType->IrType(emitter, sourcePos, context)->AddPointer(emitter.GetIntermediateContext());
+    otava::intermediate::Value* ptr = emitter.EmitClassPtrConversion(value, deltaValue, derivedClassIrType, false);
+    otava::intermediate::Value* result = emitter.EmitLocal(derivedClassIrType);
+    emitter.EmitStore(ptr, result);
+    emitter.EmitJump(nextBlock);
+    emitter.SetCurrentBasicBlock(falseBlock);
+    otava::intermediate::Value* null = emitter.EmitNull(derivedClassIrType);
+    emitter.EmitStore(null, result);
+    emitter.EmitJump(nextBlock);
+    emitter.SetCurrentBasicBlock(nextBlock);
+    otava::intermediate::Value* loadedResult = emitter.EmitLoad(result);
+    emitter.Stack().Push(loadedResult);
+}
+
 class NullPtrToPtrConversion : public FunctionSymbol
 {
 public:
@@ -1028,6 +1099,26 @@ FunctionSymbol* ArgumentConversionTable::GetAdjustDeletePtrConversionFn(TypeSymb
     return adjustDeletePtrConversion;
 }
 
+FunctionSymbol* ArgumentConversionTable::GetDynamicPtrCastFn(TypeSymbol* baseClassPtr, TypeSymbol* derivedClassPtr, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (baseClassPtr->PointerCount() != 1 || !baseClassPtr->GetBaseType()->IsClassTypeSymbol() ||
+        derivedClassPtr->PointerCount() != 1 || !derivedClassPtr->GetBaseType()->IsClassTypeSymbol())
+    {
+        ThrowException("invalid dynamic cast arguments: both arguments should have pointer to class type", sourcePos, context);
+    }
+    std::pair<TypeSymbol*, TypeSymbol*> p = std::make_pair(baseClassPtr, derivedClassPtr);
+    auto it = dynamicPtrCastFns.find(p);
+    if (it != dynamicPtrCastFns.end())
+    {
+        return it->second;
+    }
+    FunctionSymbol* dynamicPtrCast = new DynamicPtrCast(static_cast<ClassTypeSymbol*>(baseClassPtr->GetBaseType()),
+        static_cast<ClassTypeSymbol*>(derivedClassPtr->GetBaseType()), context);
+    conversionFunctions.push_back(std::unique_ptr<FunctionSymbol>(dynamicPtrCast));
+    dynamicPtrCastFns[p] = dynamicPtrCast;
+    return dynamicPtrCast;
+}
+
 void ArgumentConversionTable::AddArgumentConversion(ArgumentConversion* argumentConversion)
 {
     argumentConversions.push_back(std::unique_ptr<ArgumentConversion>(argumentConversion));
@@ -1047,6 +1138,23 @@ FunctionSymbol* ArgumentConversionTable::GetArgumentConversion(TypeSymbol* param
     FunctionSymbol* conversion = nullptr; 
     if (!TypesEqual(paramType, argType, context))
     {
+        int paramRank = paramType->Rank();
+        int argumentRank = argType->Rank();
+        if (paramRank != -1 && argumentRank != -1 && !context->GetFlag(ContextFlags::cast))
+        {
+            if (paramRank < argumentRank)
+            {
+                argumentMatch.distance += truncateConversionDistance + argumentRank - paramRank;
+            }
+            else if (argumentRank < paramRank)
+            {
+                argumentMatch.distance += paramRank - argumentRank;
+            }
+            if (argType->IsUnsignedIntegerType() && paramType->IsSignedIntegerType())
+            {
+                argumentMatch.distance += unsignedToSignedConversionDistance;
+            }
+        }
         conversion = context->GetSymbolTable()->GetConversionTable().GetConversion(paramType, argType, context);
         if (conversion)
         {

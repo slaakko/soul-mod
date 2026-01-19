@@ -41,6 +41,9 @@ constexpr OverloadResolutionFlags operator~(OverloadResolutionFlags flags)
     return OverloadResolutionFlags(~std::int32_t(flags));
 }
 
+const std::int32_t truncateConversionDistance = 10;
+const std::int32_t unsignedToSignedConversionDistance = 10;
+
 class FunctionSymbol;
 class ClassTemplateSpecializationSymbol;
 
@@ -50,6 +53,7 @@ struct ArgumentMatch
     FunctionSymbol* conversionFun;
     ConversionKind conversionKind;
     std::int32_t distance;
+    std::int32_t integerRank;
     std::int32_t fundamentalTypeDistance;
     OperationFlags preConversionFlags;
     OperationFlags postConversionFlags;

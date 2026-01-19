@@ -723,23 +723,23 @@ otava::assembly::Register* MakeFloatingPointRegOperand(Value* value, otava::asse
         otava::assembly::Context* assemblyContext = codeGenerator.Ctx()->AssemblyContext();
         switch (value->Kind())
         {
-        case ValueKind::floatValue:
-        {
-            FloatValue* v = static_cast<FloatValue*>(value);
-            inst->AddOperand(assemblyContext->MakeFloatLiteralSymbol(v->GetValue()));
-            break;
-        }
-        case ValueKind::doubleValue:
-        {
-            DoubleValue* v = static_cast<DoubleValue*>(value);
-            inst->AddOperand(assemblyContext->MakeDoubleLiteralSymbol(v->GetValue()));
-            break;
-        }
-        default:
-        {
-            codeGenerator.Error("error making reg operand: invalid value kind " + value->KindStr());
-            break;
-        }
+            case ValueKind::floatValue:
+            {
+                FloatValue* v = static_cast<FloatValue*>(value);
+                inst->AddOperand(assemblyContext->MakeFloatLiteralSymbol(v->GetValue()));
+                break;
+            }
+            case ValueKind::doubleValue:
+            {
+                DoubleValue* v = static_cast<DoubleValue*>(value);
+                inst->AddOperand(assemblyContext->MakeDoubleLiteralSymbol(v->GetValue()));
+                break;
+            }
+            default:
+            {
+                codeGenerator.Error("error making reg operand: invalid value kind " + value->KindStr());
+                break;
+            }
         }
         codeGenerator.Emit(inst);
     }

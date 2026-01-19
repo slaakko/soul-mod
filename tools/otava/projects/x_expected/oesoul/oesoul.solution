@@ -1,0 +1,13 @@
+solution oesoul;
+project <../oeutil/oeutil.project>;
+project <oetoken/oetoken.project>;
+project <oeparser/oeparser.project>;
+project <oeast/oeast.project>;
+project <oelexer/oelexer.project>;
+project <oelex/oelex.project>;
+project <oere/oere.project>;
+project <oecpp/oecpp.project>;
+project <oecommon/oecommon.project>;
+project <oeslg/oeslg.project>;
+project <../oexml/oedom/oedom.project>;
+project <oespg/oespg.project>;

@@ -29,8 +29,6 @@ private:
     FunctionDefinitionSymbol* cleanupFnSymbol;
 };
 
-void BeginChild(FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);
-void EndChild(Context* context);
 BoundStatementNode* GenerateInvoke(BoundStatementNode* stmt, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);
 BoundStatementNode* ConvertReturnStatement(otava::ast::ReturnStatementNode* returnStatement, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);
 

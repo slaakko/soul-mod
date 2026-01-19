@@ -9,7 +9,7 @@ import std;
 
 namespace util {
 
-StreamObserver::StreamObserver()
+StreamObserver::StreamObserver() noexcept
 {
 }
 
@@ -17,7 +17,7 @@ StreamObserver::~StreamObserver()
 {
 }
 
-Stream::Stream() : position(0)
+Stream::Stream() noexcept : position(0)
 {
 }
 
@@ -39,7 +39,7 @@ std::int64_t Stream::Tell()
     throw std::runtime_error("tell not supported");
 }
 
-void Stream::AddObserver(StreamObserver* observer)
+void Stream::AddObserver(StreamObserver* observer) noexcept
 {
     if (std::find(observers.begin(), observers.end(), observer) == observers.end())
     {
@@ -47,7 +47,7 @@ void Stream::AddObserver(StreamObserver* observer)
     }
 }
 
-void Stream::RemoveObserver(StreamObserver* observer)
+void Stream::RemoveObserver(StreamObserver* observer) noexcept
 {
     observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
 }
@@ -68,7 +68,7 @@ void Stream::CopyTo(Stream& destination, std::int64_t bufferSize)
     }
 }
 
-void Stream::SetPosition(std::int64_t position_)
+void Stream::SetPosition(std::int64_t position_) 
 {
     if (position != position_)
     {
@@ -80,7 +80,7 @@ void Stream::SetPosition(std::int64_t position_)
     }
 }
 
-Streams::Streams() : streams()
+Streams::Streams() noexcept : streams()
 {
 }
 
@@ -109,7 +109,7 @@ void Streams::Add(Stream* stream)
     streams.push_back(std::unique_ptr<Stream>(stream));
 }
 
-Stream* Streams::Get(int index) const
+Stream* Streams::Get(int index) const noexcept
 {
     return streams[index].get();
 }

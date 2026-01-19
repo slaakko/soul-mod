@@ -243,21 +243,16 @@ IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_) : Compo
 {
 }
 
-IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* cond_, Node* thenStmt_, Node* elseStmt_, Node* attributes_,
+IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, Node* thenStmt_, Node* elseStmt_, Node* attributes_,
     const soul::ast::SourcePos& ifPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_, const soul::ast::SourcePos& constExprPos_, 
     const soul::ast::SourcePos& elsePos_) :
-    CompoundNode(NodeKind::ifStatementNode, sourcePos_), initStmt(initStmt_), cond(cond_), thenStmt(thenStmt_), elseStmt(elseStmt_), attributes(attributes_),
+    CompoundNode(NodeKind::ifStatementNode, sourcePos_), cond(cond_), thenStmt(thenStmt_), elseStmt(elseStmt_), attributes(attributes_),
     ifPos(ifPos_), lpPos(lpPos_), rpPos(rpPos_), constExprPos(constExprPos_), elsePos(elsePos_)
 {
 }
 
 Node* IfStatementNode::Clone() const
 {
-    Node* clonedInitStmt = nullptr;
-    if (initStmt)
-    {
-        clonedInitStmt = initStmt->Clone();
-    }
     Node* clonedElseStmt = nullptr;
     if (elseStmt)
     {
@@ -268,7 +263,7 @@ Node* IfStatementNode::Clone() const
     {
         clonedAttributes = attributes->Clone();
     }
-    IfStatementNode* clone = new IfStatementNode(GetSourcePos(), clonedInitStmt, cond->Clone(), thenStmt->Clone(), clonedElseStmt, clonedAttributes,
+    IfStatementNode* clone = new IfStatementNode(GetSourcePos(), cond->Clone(), thenStmt->Clone(), clonedElseStmt, clonedAttributes,
         ifPos, lpPos, rpPos, constExprPos, elsePos);
     return clone;
 }
@@ -281,7 +276,6 @@ void IfStatementNode::Accept(Visitor& visitor)
 void IfStatementNode::Write(Writer& writer)
 {
     CompoundNode::Write(writer);
-    writer.Write(initStmt.get());
     writer.Write(cond.get());
     writer.Write(thenStmt.get());
     writer.Write(elseStmt.get());
@@ -296,7 +290,6 @@ void IfStatementNode::Write(Writer& writer)
 void IfStatementNode::Read(Reader& reader)
 {
     CompoundNode::Read(reader);
-    initStmt.reset(reader.ReadNode());
     cond.reset(reader.ReadNode());
     thenStmt.reset(reader.ReadNode());
     elseStmt.reset(reader.ReadNode());
@@ -312,25 +305,21 @@ SwitchStatementNode::SwitchStatementNode(const soul::ast::SourcePos& sourcePos_)
 {
 }
 
-SwitchStatementNode::SwitchStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* cond_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& switchPos_, 
+SwitchStatementNode::SwitchStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& switchPos_, 
     const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
-    CompoundNode(NodeKind::switchStatemeNode, sourcePos_), initStmt(initStmt_), cond(cond_), stmt(stmt_), attributes(attributes_), switchPos(switchPos_), lpPos(lpPos_), rpPos(rpPos_)
+    CompoundNode(NodeKind::switchStatemeNode, sourcePos_), cond(cond_), stmt(stmt_), attributes(attributes_), switchPos(switchPos_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }
 
 Node* SwitchStatementNode::Clone() const
 {
     Node* clonedInitStmt = nullptr;
-    if (initStmt)
-    {
-        clonedInitStmt = initStmt->Clone();
-    }
     Node* clonedAttributes = nullptr;
     if (attributes)
     {
         clonedAttributes = attributes->Clone();
     }
-    SwitchStatementNode* clone = new SwitchStatementNode(GetSourcePos(), clonedInitStmt, cond->Clone(), stmt->Clone(), clonedAttributes, switchPos, lpPos, rpPos);
+    SwitchStatementNode* clone = new SwitchStatementNode(GetSourcePos(), cond->Clone(), stmt->Clone(), clonedAttributes, switchPos, lpPos, rpPos);
     return clone;
 }
 
@@ -342,7 +331,6 @@ void SwitchStatementNode::Accept(Visitor& visitor)
 void SwitchStatementNode::Write(Writer& writer)
 {
     CompoundNode::Write(writer);
-    writer.Write(initStmt.get());
     writer.Write(cond.get());
     writer.Write(stmt.get());
     writer.Write(attributes.get());
@@ -354,7 +342,6 @@ void SwitchStatementNode::Write(Writer& writer)
 void SwitchStatementNode::Read(Reader& reader)
 {
     CompoundNode::Read(reader);
-    initStmt.reset(reader.ReadNode());
     cond.reset(reader.ReadNode());
     stmt.reset(reader.ReadNode());
     attributes.reset(reader.ReadNode());
@@ -891,7 +878,12 @@ Node* GotoStatementNode::Clone() const
     {
         clonedAttributes = attributes->Clone();
     }
-    GotoStatementNode* clone = new GotoStatementNode(GetSourcePos(), target->Clone(), clonedAttributes, semicolon->Clone(), gotoPos);
+    Node* clonedSemicolon = nullptr;
+    if (semicolon)
+    {
+        clonedSemicolon = semicolon->Clone();
+    }
+    GotoStatementNode* clone = new GotoStatementNode(GetSourcePos(), target->Clone(), clonedAttributes, clonedSemicolon, gotoPos);
     return clone;
 }
 

@@ -36,10 +36,12 @@ public:
     FunctionSymbol* GetArgumentConversion(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, const soul::ast::SourcePos& sourcePos, 
         ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, Context* context);
     FunctionSymbol* GetAdjustDeletePtrConversionFn(TypeSymbol* thisPtrBaseType, Context* context);
+    FunctionSymbol* GetDynamicPtrCastFn(TypeSymbol* baseClassPtr, TypeSymbol* derivedClassPtr, const soul::ast::SourcePos& sourcePos, Context* context);
 private:
     std::vector<std::unique_ptr<ArgumentConversion>> argumentConversions;
     std::vector<std::unique_ptr<FunctionSymbol>> conversionFunctions;
     std::map<TypeSymbol*, FunctionSymbol*> adjustDeletePtrConversionFns;
+    std::map<std::pair<TypeSymbol*, TypeSymbol*>, FunctionSymbol*> dynamicPtrCastFns;
 };
 
 } // namespace otava::symbols

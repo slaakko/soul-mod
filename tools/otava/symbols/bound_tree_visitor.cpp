@@ -42,10 +42,6 @@ void DefaultBoundTreeVisitor::Visit(BoundCompoundStatementNode& node)
 
 void DefaultBoundTreeVisitor::Visit(BoundIfStatementNode& node)
 {
-    if (node.InitStatement())
-    {
-        node.InitStatement()->Accept(*this);
-    }
     node.GetCondition()->Accept(*this);
     node.ThenStatement()->Accept(*this);
     if (node.ElseStatement())
@@ -56,10 +52,6 @@ void DefaultBoundTreeVisitor::Visit(BoundIfStatementNode& node)
 
 void DefaultBoundTreeVisitor::Visit(BoundSwitchStatementNode& node)
 {
-    if (node.InitStatement())
-    {
-        node.InitStatement()->Accept(*this);
-    }
     node.GetCondition()->Accept(*this);
     node.Statement()->Accept(*this);
 }

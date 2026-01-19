@@ -40,7 +40,7 @@ InitMonthDays::InitMonthDays()
 
 InitMonthDays initMonthDays;
 
-int GetMonthDays(Month month, int year)
+int GetMonthDays(Month month, int year) noexcept
 {
     if (month == Month::february && ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0))
     {
@@ -49,7 +49,7 @@ int GetMonthDays(Month month, int year)
     return monthDays[static_cast<std::int8_t>(month)];
 }
 
-Date Date::AddDays(int n)
+Date Date::AddDays(int n) noexcept
 {
     if (n > 0)
     {
@@ -99,7 +99,7 @@ Date Date::AddDays(int n)
     }
 }
 
-Date Date::AddMonths(int n)
+Date Date::AddMonths(int n) noexcept
 {
     if (n > 0)
     {
@@ -143,7 +143,7 @@ Date Date::AddMonths(int n)
     }
 }
 
-Date Date::AddYears(int n)
+Date Date::AddYears(int n) noexcept
 {
     int y = year + n;
     int d = day;
@@ -182,7 +182,7 @@ std::string Date::ToString(bool omitDashes) const
     return date;
 }
 
-Date GetCurrentDate()
+Date GetCurrentDate() noexcept
 {
     std::time_t currentTime;
     std::time(&currentTime);
@@ -191,12 +191,12 @@ Date GetCurrentDate()
     return Date(1900 + localTime->tm_year, static_cast<Month>(1 + localTime->tm_mon), static_cast<std::int8_t>(localTime->tm_mday));
 }
 
-bool operator==(const Date& left, const Date& right)
+bool operator==(const Date& left, const Date& right) noexcept
 {
     return left.Year() == right.Year() && left.GetMonth() == right.GetMonth() && left.Day() == right.Day();
 }
 
-bool operator<(const Date& left, const Date& right)
+bool operator<(const Date& left, const Date& right) noexcept
 {
     if (left.Year() < right.Year()) return true;
     if (left.Year() > right.Year()) return false;
@@ -329,15 +329,16 @@ DateTime GetCurrentDateTime()
     std::time(&currentTime);
     struct tm* localTime = nullptr;
     localTime = std::localtime(&currentTime);
-    return DateTime(Date(1900 + localTime->tm_year, static_cast<Month>(1 + localTime->tm_mon), static_cast<std::int8_t>(localTime->tm_mday)), localTime->tm_hour * 3600 + localTime->tm_min * 60 + localTime->tm_sec);
+    return DateTime(Date(1900 + localTime->tm_year, 
+        static_cast<Month>(1 + localTime->tm_mon), static_cast<std::int8_t>(localTime->tm_mday)), localTime->tm_hour * 3600 + localTime->tm_min * 60 + localTime->tm_sec);
 }
 
-bool operator==(const DateTime& left, const DateTime& right)
+bool operator==(const DateTime& left, const DateTime& right) noexcept
 {
     return left.GetDate() == right.GetDate() && left.Seconds() == right.Seconds();
 }
 
-bool operator<(const DateTime& left, const DateTime& right)
+bool operator<(const DateTime& left, const DateTime& right) noexcept
 {
     if (left.GetDate() < right.GetDate()) return true;
     if (left.GetDate() > right.GetDate()) return false;
@@ -393,39 +394,39 @@ DateTime ParseDateTime(const std::string& dateTimeStr)
     return DateTime(date, totalSecs);
 }
 
-std::int64_t CurrentMs()
+std::int64_t CurrentMs() noexcept
 {
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - std::chrono::steady_clock::time_point()).count();
 }
 
-std::int64_t GetCurrentTime()
+std::int64_t GetCurrentTime() noexcept
 {
     std::time_t currentTime;
     std::time(&currentTime);
     return currentTime;
 }
 
-std::int64_t Hours(std::int64_t nanosecs)
+std::int64_t Hours(std::int64_t nanosecs) noexcept
 {
     return nanosecs / (3600ll * std::int64_t(1000000000ll));
 }
 
-std::int64_t Minutes(std::int64_t nanosecs)
+std::int64_t Minutes(std::int64_t nanosecs) noexcept
 {
     return nanosecs / (60ll * std::int64_t(1000000000ll));
 }
 
-std::int64_t Seconds(std::int64_t nanosecs)
+std::int64_t Seconds(std::int64_t nanosecs) noexcept
 {
     return nanosecs / std::int64_t(1000000000ll);
 }
 
-std::int64_t Milliseconds(std::int64_t nanosecs)
+std::int64_t Milliseconds(std::int64_t nanosecs) noexcept
 {
     return nanosecs / std::int64_t(1000000ll);
 }
 
-std::int64_t Microseconds(std::int64_t nanosecs)
+std::int64_t Microseconds(std::int64_t nanosecs) noexcept
 {
     return nanosecs / std::int64_t(1000ll);
 }
@@ -457,7 +458,7 @@ std::string DurationStr(const std::chrono::nanoseconds& duration)
     return s;
 }
 
-std::time_t Time()
+std::time_t Time() noexcept
 {
     std::time_t time = std::time(nullptr);
     return time;
@@ -467,9 +468,9 @@ std::time_t MkTime(const DateTime& dt)
 {
     std::time_t time = std::time(nullptr);
     std::tm* ltm = std::localtime(&time);
-    std::tm tm{};
+    std::tm tm;
     tm.tm_year = dt.GetDate().Year() - 1900;
-    tm.tm_mon = static_cast<int>(dt.GetDate().GetMonth()) - static_cast<int>(Month::january);
+    tm.tm_mon = static_cast<std::int8_t>(dt.GetDate().GetMonth()) - static_cast<std::int8_t>(Month::january);
     tm.tm_mday = dt.GetDate().Day();
     tm.tm_hour = dt.Hours() % 24;
     tm.tm_min = dt.Minutes() % 60;
@@ -490,7 +491,8 @@ std::string TimeToString(std::time_t time)
 DateTime ToDateTime(time_t time)
 {
     struct tm* localTime = std::localtime(&time);
-    return DateTime(Date(1900 + localTime->tm_year, static_cast<Month>(1 + localTime->tm_mon), static_cast<std::int8_t>(localTime->tm_mday)), localTime->tm_hour * 3600 + localTime->tm_min * 60 + localTime->tm_sec);
+    return DateTime(Date(1900 + localTime->tm_year, 
+        static_cast<Month>(1 + localTime->tm_mon), static_cast<std::int8_t>(localTime->tm_mday)), localTime->tm_hour * 3600 + localTime->tm_min * 60 + localTime->tm_sec);
 }
 
 } // namespace util

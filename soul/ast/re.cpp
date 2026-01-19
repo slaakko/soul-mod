@@ -10,7 +10,7 @@ import util;
 
 namespace soul::ast::re {
 
-Symbol::Symbol(SymbolKind kind_) : kind(kind_), contained(false), dontSetContained(false)
+Symbol::Symbol(SymbolKind kind_) noexcept : kind(kind_), contained(false), dontSetContained(false)
 {
 }
 
@@ -28,7 +28,7 @@ CharSymbol::CharSymbol(char32_t chr_) : Symbol(SymbolKind::charSymbol), chr(chr_
     SetName("(" + util::ToUtf8(std::u32string(1, chr)) + ")");
 }
 
-bool CharSymbol::Match(char32_t c)
+bool CharSymbol::Match(char32_t c) noexcept
 {
     return chr == c;
 }
@@ -55,7 +55,7 @@ Any::Any() : Symbol(SymbolKind::anySymbol)
     SetName("(*)");
 }
 
-bool Any::Match(char32_t c)
+bool Any::Match(char32_t c) noexcept
 {
     return true;
 }
@@ -70,7 +70,7 @@ void Any::Print(CodeFormatter& formatter)
     formatter.Write(".");
 }
 
-Range::Range() : Symbol(SymbolKind::rangeSymbol), start(), end()
+Range::Range() noexcept : Symbol(SymbolKind::rangeSymbol), start(), end()
 {
 }
 
@@ -79,7 +79,7 @@ Range::Range(char32_t start_, char32_t end_) : Symbol(SymbolKind::rangeSymbol), 
     SetName("(" + util::ToUtf8(std::u32string(1, start)) + "-" + util::ToUtf8(std::u32string(1, end)) + ")");
 }
 
-bool Range::Match(char32_t c)
+bool Range::Match(char32_t c) noexcept
 {
     return c >= start && c <= end;
 }
@@ -96,7 +96,7 @@ void Range::Print(CodeFormatter& formatter)
     formatter.Write(util::ToUtf8(util::CharStr(end)));
 }
 
-bool Intersect(const Range& left, const Range& right)
+bool Intersect(const Range& left, const Range& right) noexcept
 {
     if (left.IsEmpty() || right.IsEmpty()) return false;
     if (left.Start() <= right.Start())
@@ -109,7 +109,7 @@ bool Intersect(const Range& left, const Range& right)
     }
 }
 
-Range operator&(const Range& left, const Range& right)
+Range operator&(const Range& left, const Range& right) noexcept
 {
     if (Intersect(left, right))
     {
@@ -340,7 +340,7 @@ Class* Class::Clone()
     return cls;
 }
 
-bool Class::Match(char32_t c)
+bool Class::Match(char32_t c) noexcept
 {
     bool match = false;
     for (Symbol* symbol : symbols)
@@ -415,7 +415,7 @@ void Class::Print(CodeFormatter& formatter)
     }
 }
 
-bool operator==(const Class& left, const Class& right)
+bool operator==(const Class& left, const Class& right) noexcept
 {
     if (left.Symbols().size() != right.Symbols().size()) return false;
     int n = left.Symbols().size();
@@ -442,7 +442,7 @@ bool operator==(const Class& left, const Class& right)
 
 struct RangeEndLess
 {
-    bool operator()(const Range& left, const Range& right) const
+    bool operator()(const Range& left, const Range& right) const noexcept
     {
         if (left.End() < right.End()) return true;
         if (left.End() > right.End()) return false;
@@ -450,7 +450,7 @@ struct RangeEndLess
     }
 };
 
-bool Intersect(const Class& left, const Class& right)
+bool Intersect(const Class& left, const Class& right) noexcept
 {
     for (Symbol* leftSymbol : left.Symbols())
     {
@@ -612,7 +612,7 @@ Class* MakeDifference(const Class& left, const Class& right, LexerContext& lexer
     return d;
 }
 
-NfaEdge::NfaEdge(Symbol* symbol_, NfaState* next_) : symbol(symbol_), next(next_)
+NfaEdge::NfaEdge(Symbol* symbol_, NfaState* next_) noexcept : symbol(symbol_), next(next_)
 {
 }
 
@@ -622,7 +622,7 @@ void NfaEdge::Print(CodeFormatter& formatter)
     formatter.WriteLine("-> " + std::to_string(next->Id()));
 }
 
-NfaState::NfaState(int id_, int ruleIndex_) : id(id_), ruleIndex(ruleIndex_), accept(false)
+NfaState::NfaState(int id_, int ruleIndex_) noexcept : id(id_), ruleIndex(ruleIndex_), accept(false)
 {
 }
 
@@ -688,11 +688,11 @@ void NfaState::Print(CodeFormatter& formatter)
     formatter.DecIndent();
 }
 
-Nfa::Nfa() : start(nullptr), end(nullptr)
+Nfa::Nfa() noexcept : start(nullptr), end(nullptr)
 {
 }
 
-Nfa::Nfa(NfaState* start_, NfaState* end_) : start(start_), end(end_)
+Nfa::Nfa(NfaState* start_, NfaState* end_) noexcept : start(start_), end(end_)
 {
 }
 
@@ -707,7 +707,7 @@ void Nfa::Print(CodeFormatter& formatter)
     formatter.WriteLine("}");
 }
 
-Nfa MakeNfa(LexerContext& lexerContext, Symbol* symbol)
+Nfa MakeNfa(LexerContext& lexerContext, Symbol* symbol) 
 {
     NfaState* start = lexerContext.MakeNfaState();
     NfaState* end = lexerContext.MakeNfaState();
@@ -800,7 +800,7 @@ void DfaState::AddNext(DfaState* n)
     next.push_back(n);
 }
 
-DfaState* DfaState::Next(int i) const
+DfaState* DfaState::Next(int i) const noexcept
 {
     if (i >= 0 && i < next.size())
     {

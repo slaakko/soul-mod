@@ -54,9 +54,11 @@ public:
     void Visit(otava::ast::SimpleDeclarationNode& node) override;
     void Visit(otava::ast::AliasDeclarationNode& node) override;
     void Visit(otava::ast::BoundStatementNode& node) override;
+    void Visit(otava::ast::GotoStatementNode& node) override;
+    void Visit(otava::ast::LabeledStatementNode& node) override;
     inline FunctionDefinitionSymbol* GetFunctionDefinitionSymbol() const { return functionDefinitionSymbol; }
-private:
     void SetStatement(BoundStatementNode* statement);
+private:
     bool HasThisInitializer() const;
     void CompleteMemberInitializers(const soul::ast::SourcePos& sourcePos);
     void AddDefaultMemberInitializer(VariableSymbol* memberVar, const soul::ast::SourcePos& sourcePos);

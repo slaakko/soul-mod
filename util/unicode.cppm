@@ -43,8 +43,8 @@ class Utf8ToUtf32Engine
 public:
     Utf8ToUtf32Engine();
     void Put(std::uint8_t x);
-    inline bool ResultReady() const { return resultReady; }
-    inline char32_t Result() const { return result; }
+    inline bool ResultReady() const noexcept { return resultReady; }
+    inline char32_t Result() const noexcept { return result; }
 private:
     int state;
     bool resultReady;
@@ -128,9 +128,9 @@ class BinaryProperty
 {
 public:
     BinaryProperty(BinaryPropertyId id_, const std::string& shortName_, const std::string& longName_);
-    BinaryPropertyId Id() const { return id; }
-    const std::string& ShortName() const { return shortName; }
-    const std::string& LongName() const { return longName; }
+    inline BinaryPropertyId Id() const noexcept{ return id; }
+    inline const std::string& ShortName() const noexcept { return shortName; }
+    inline const std::string& LongName() const noexcept { return longName; }
 private:
     BinaryPropertyId id;
     std::string shortName;
@@ -142,10 +142,10 @@ class BinaryPropertyTable
 public:
     static BinaryPropertyTable& Instance();
     const BinaryProperty& GetBinaryProperty(BinaryPropertyId binaryPropertyId) const;
-    bool IsBinaryProperty(const std::string& shortName) const;
+    bool IsBinaryProperty(const std::string& shortName) const noexcept;
     const BinaryProperty& GetBinaryPropertyByShortName(const std::string& shortName) const;
     const BinaryProperty& GetBinaryPropertyByLongName(const std::string& longName) const;
-    const std::vector<BinaryProperty>& BinaryProperties() const { return binaryProperties; }
+    inline const std::vector<BinaryProperty>& BinaryProperties() const noexcept { return binaryProperties; }
 private:
     BinaryPropertyTable();
     std::map<BinaryPropertyId, const BinaryProperty*> binaryPropertyIdMap;
@@ -207,11 +207,11 @@ class Block
 {
 public:
     Block(BlockId id_, const std::string& shortName_, const std::string& longName_, char32_t start, char32_t end_);
-    BlockId Id() const { return id; }
-    const std::string& ShortName() const { return shortName; }
-    const std::string& LongName() const { return longName; }
-    char32_t Start() const { return start; }
-    char32_t End() const { return end; }
+    inline BlockId Id() const noexcept { return id; }
+    inline const std::string& ShortName() const noexcept { return shortName; }
+    inline const std::string& LongName() const noexcept { return longName; }
+    inline char32_t Start() const noexcept { return start; }
+    inline char32_t End() const noexcept { return end; }
 private:
     BlockId id;
     std::string shortName;
@@ -227,7 +227,7 @@ public:
     const Block& GetBlock(BlockId blockId) const;
     const Block& GetBlockByShortName(const std::string& shortName) const;
     const Block& GetBlockByLongName(const std::string& longName) const;
-    const std::vector<Block>& Blocks() const { return blocks; }
+    const std::vector<Block>& Blocks() const noexcept { return blocks; }
 private:
     BlockTable();
     std::map<BlockId, const Block*> blockIdMap;
@@ -287,9 +287,9 @@ class GeneralCategory
 {
 public:
     GeneralCategory(GeneralCategoryId id_, const std::string& shortName_, const std::string& longName_);
-    GeneralCategoryId Id() const { return id; }
-    const std::string& ShortName() const { return shortName; }
-    const std::string& LongName() const { return longName; }
+    inline GeneralCategoryId Id() const noexcept { return id; }
+    inline const std::string& ShortName() const noexcept { return shortName; }
+    inline const std::string& LongName() const noexcept { return longName; }
 private:
     GeneralCategoryId id;
     std::string shortName;
@@ -348,8 +348,8 @@ class Age
 {
 public:
     Age(AgeId id_, const std::string& version_);
-    AgeId Id() const { return id; }
-    const std::string& Version() const { return version; }
+    inline AgeId Id() const noexcept { return id; }
+    inline const std::string& Version() const noexcept { return version; }
 private:
     AgeId id;
     std::string version;
@@ -414,9 +414,9 @@ class Script
 {
 public:
     Script(ScriptId id_, const std::string& shortName_, const std::string& longName_);
-    ScriptId Id() const { return id; }
-    const std::string& ShortName() const { return shortName; }
-    const std::string& LongName() const { return longName; }
+    inline ScriptId Id() const noexcept { return id; }
+    inline const std::string& ShortName() const noexcept { return shortName; }
+    inline const std::string& LongName() const noexcept { return longName; }
 private:
     ScriptId id;
     std::string shortName;
@@ -458,12 +458,12 @@ class CharacterInfo
 {
 public:
     CharacterInfo();
-    bool GetBinaryProperty(BinaryPropertyId binaryPropertyId) const
+    bool GetBinaryProperty(BinaryPropertyId binaryPropertyId) const noexcept
     {
         std::uint64_t mask = static_cast<std::uint64_t>(1) << static_cast<std::uint64_t>(static_cast<std::uint8_t>(binaryPropertyId));
         return (binaryProperties & mask) != 0;
     }
-    void SetBinaryPropery(BinaryPropertyId binaryPropertyId, bool value)
+    void SetBinaryPropery(BinaryPropertyId binaryPropertyId, bool value) noexcept
     {
         std::uint64_t bit = static_cast<std::uint64_t>(1) << static_cast<std::uint64_t>(static_cast<std::uint8_t>(binaryPropertyId));
         if (value)
@@ -475,71 +475,71 @@ public:
             binaryProperties = binaryProperties & ~bit;
         }
     }
-    GeneralCategoryId GetGeneralCategory() const
+    inline GeneralCategoryId GetGeneralCategory() const noexcept
     {
         return generalCategory;
     }
-    bool HasGeneralCategory(GeneralCategoryId generalCategory_) const
+    inline bool HasGeneralCategory(GeneralCategoryId generalCategory_) const noexcept
     {
         return (generalCategory & generalCategory_) != GeneralCategoryId::none;
     }
-    void SetGeneralCategory(GeneralCategoryId generalCategory_)
+    inline void SetGeneralCategory(GeneralCategoryId generalCategory_) noexcept
     {
         generalCategory = generalCategory_;
     }
-    char32_t Upper() const
+    inline char32_t Upper() const noexcept
     {
         return upper;
     }
-    void SetUpper(char32_t upper_)
+    inline void SetUpper(char32_t upper_) noexcept
     {
         upper = upper_;
     }
-    char32_t Lower() const
+    inline char32_t Lower() const noexcept
     {
         return lower;
     }
-    void SetLower(char32_t lower_)
+    void inline SetLower(char32_t lower_) noexcept
     {
         lower = lower_;
     }
-    char32_t Title() const
+    inline char32_t Title() const noexcept
     {
         return title;
     }
-    void SetTitle(char32_t title_)
+    inline void SetTitle(char32_t title_) noexcept
     {
         title = title_;
     }
-    char32_t Folding() const
+    inline char32_t Folding() const noexcept
     {
         return folding;
     }
-    void SetFolding(char32_t folding_)
+    inline void SetFolding(char32_t folding_) noexcept
     {
         folding = folding_;
     }
-    BlockId GetBlock() const
+    inline BlockId GetBlock() const noexcept
     {
         return block;
     }
-    void SetBlock(BlockId block_)
+    inline void SetBlock(BlockId block_) noexcept
     {
         block = block_;
     }
-    AgeId GetAge() const
+    inline AgeId GetAge() const noexcept
     {
         return age;
     }
-    void SetAge(AgeId age_)
+    inline void SetAge(AgeId age_) noexcept
     {
         age = age_;
     }
-    ScriptId GetScript() const
+    inline ScriptId GetScript() const noexcept
     {
         return script;
     }
-    void SetScript(ScriptId script_)
+    inline void SetScript(ScriptId script_) noexcept
     {
         script = script_;
     }
@@ -572,9 +572,9 @@ class NumericType
 {
 public:
     NumericType(NumericTypeId id_, const std::string& shortName_, const std::string& longName_);
-    NumericTypeId Id() const { return id; }
-    const std::string& ShortName() const { return shortName; }
-    const std::string& LongName() const { return longName; }
+    inline NumericTypeId Id() const noexcept { return id; }
+    inline const std::string& ShortName() const noexcept { return shortName; }
+    inline const std::string& LongName() const noexcept { return longName; }
 private:
     NumericTypeId id;
     std::string shortName;
@@ -622,9 +622,9 @@ class BidiClass
 {
 public:
     BidiClass(BidiClassId id_, const std::string& shortName_, const std::string& longName_);
-    BidiClassId Id() const { return id; }
-    const std::string& ShortName() const { return shortName; }
-    const std::string& LongName() const { return longName; }
+    inline BidiClassId Id() const noexcept { return id; }
+    inline const std::string& ShortName() const noexcept { return shortName; }
+    inline const std::string& LongName() const noexcept { return longName; }
 private:
     BidiClassId id;
     std::string shortName;
@@ -638,7 +638,7 @@ public:
     const BidiClass& GetBidiClass(BidiClassId id) const;
     const BidiClass& GetBidiClassByShortName(const std::string& shortName) const;
     const BidiClass& GetBidiClassByLongName(const std::string& longName) const;
-    const std::vector<BidiClass>& BidiClasses() const { return bidiClasses; }
+    const std::vector<BidiClass>& BidiClasses() const noexcept { return bidiClasses; }
 private:
     BidiClassTable();
     std::vector<BidiClass> bidiClasses;
@@ -672,9 +672,9 @@ class BidiPairedBracketType
 {
 public:
     BidiPairedBracketType(BidiPairedBracketTypeId id_, const std::string& shortName_, const std::string& longName_);
-    BidiPairedBracketTypeId Id() const { return id; }
-    const std::string& ShortName() const { return shortName; }
-    const std::string& LongName() const { return longName; }
+    inline BidiPairedBracketTypeId Id() const noexcept { return id; }
+    inline const std::string& ShortName() const noexcept { return shortName; }
+    inline const std::string& LongName() const noexcept { return longName; }
 private:
     BidiPairedBracketTypeId id;
     std::string shortName;
@@ -722,8 +722,8 @@ class AliasType
 {
 public:
     AliasType(AliasTypeId id_, const std::string& name_);
-    AliasTypeId Id() const { return id; }
-    const std::string& Name() const { return name; }
+    inline AliasTypeId Id() const noexcept { return id; }
+    inline const std::string& Name() const noexcept { return name; }
 private:
     AliasTypeId id;
     std::string name;
@@ -758,8 +758,8 @@ class Alias
 public:
     Alias();
     Alias(AliasTypeId typeId_, const std::string& name_);
-    AliasTypeId TypeId() const { return typeId; }
-    const std::string& Name() const { return name; }
+    inline AliasTypeId TypeId() const noexcept { return typeId; }
+    inline const std::string& Name() const noexcept { return name; }
     void Write(BinaryStreamWriter& writer);
     void Read(BinaryStreamReader& reader);
 private:
@@ -771,73 +771,73 @@ class ExtendedCharacterInfo
 {
 public:
     ExtendedCharacterInfo();
-    const std::string& CharacterName() const
+    inline const std::string& CharacterName() const noexcept
     {
         return characterName;
     }
     void SetCharacterName(const std::string& characterName_);
-    const std::string& Unicode1Name() const
+    inline const std::string& Unicode1Name() const noexcept
     {
         return unicode1Name;
     }
     void SetUnicode1Name(const std::string& unicode1Name_);
-    std::uint8_t GetCanonicalCombiningClass() const
+    inline std::uint8_t GetCanonicalCombiningClass() const noexcept
     {
         return canonicalCombiningClass;
     }
-    void SetCanonicalCombiningClass(std::uint8_t canonicalCombiningClass_)
+    inline void SetCanonicalCombiningClass(std::uint8_t canonicalCombiningClass_) noexcept
     {
         canonicalCombiningClass = canonicalCombiningClass_;
     }
-    const std::u32string& FullUpper() const
+    inline const std::u32string& FullUpper() const noexcept
     {
         return fullUpper;
     }
-    std::u32string& FullUpper()
+    inline std::u32string& FullUpper() noexcept
     {
         return fullUpper;
     }
-    const std::u32string& FullLower() const
+    inline const std::u32string& FullLower() const noexcept
     {
         return fullLower;
     }
-    std::u32string& FullLower()
+    inline std::u32string& FullLower() noexcept
     {
         return fullLower;
     }
-    const std::u32string& FullTitle() const
+    inline const std::u32string& FullTitle() const noexcept
     {
         return fullTitle;
     }
-    std::u32string& FullTitle()
+    inline std::u32string& FullTitle() noexcept
     {
         return fullTitle;
     }
-    const std::u32string& FullFolding() const
+    inline const std::u32string& FullFolding() const noexcept
     {
         return fullFolding;
     }
-    std::u32string& FullFolding()
+    inline std::u32string& FullFolding() noexcept
     {
         return fullFolding;
     }
-    BidiClassId GetBidiClass() const
+    inline BidiClassId GetBidiClass() const noexcept
     {
         return bidiClass;
     }
-    void SetBidiClass(BidiClassId bidiClass_)
+    inline void SetBidiClass(BidiClassId bidiClass_) noexcept
     {
         bidiClass = bidiClass_;
     }
-    NumericTypeId GetNumericType() const
+    inline NumericTypeId GetNumericType() const noexcept
     {
         return numericType;
     }
-    void SetNumericType(NumericTypeId numericType_)
+    inline void SetNumericType(NumericTypeId numericType_) noexcept
     {
         numericType = numericType_;
     }
-    const std::string& GetNumericValue() const
+    inline const std::string& GetNumericValue() const noexcept
     {
         return numericValue;
     }
@@ -845,35 +845,35 @@ public:
     {
         numericValue = numericValue_;
     }
-    const std::vector<Alias>& Aliases() const
+    inline const std::vector<Alias>& Aliases() const noexcept
     {
         return aliases;
     }
-    std::vector<Alias>& Aliases()
+    inline std::vector<Alias>& Aliases() noexcept
     {
         return aliases;
     }
-    char32_t GetBidiMirroringGlyph() const
+    inline char32_t GetBidiMirroringGlyph() const noexcept
     {
         return bidiMirroringGlyph;
     }
-    void SetBidiMirroringGlyph(char32_t bidiMirroringGlyph_)
+    inline void SetBidiMirroringGlyph(char32_t bidiMirroringGlyph_) noexcept
     {
         bidiMirroringGlyph = bidiMirroringGlyph_;
     }
-    BidiPairedBracketTypeId GetBidiPairedBracketType() const
+    inline BidiPairedBracketTypeId GetBidiPairedBracketType() const noexcept
     {
         return bidiPairedBracketType;
     }
-    void SetBidiPairedBracketType(BidiPairedBracketTypeId bidiPairedBracketType_)
+    inline void SetBidiPairedBracketType(BidiPairedBracketTypeId bidiPairedBracketType_) noexcept
     {
         bidiPairedBracketType = bidiPairedBracketType_;
     }
-    char32_t GetBidiPairedBracket() const
+    inline char32_t GetBidiPairedBracket() const noexcept
     {
         return bidiPairedBracket;
     }
-    void SetBidiPairedBracket(char32_t bidiPairedBracket_)
+    inline void SetBidiPairedBracket(char32_t bidiPairedBracket_) noexcept
     {
         bidiPairedBracket = bidiPairedBracket_;
     }
@@ -996,32 +996,32 @@ inline ExtendedCharacterInfo& CreateExtendedCharacterInfo(char32_t codePoint) { 
 inline GeneralCategoryId GetGeneralCategory(char32_t c) { return GetCharacterInfo(c).GetGeneralCategory(); }
 inline bool HasGeneralCategory(char32_t c, GeneralCategoryId generalCategory) { return GetCharacterInfo(c).HasGeneralCategory(generalCategory); }
 
-inline bool IsUpperLetter(char32_t c)
+inline bool IsUpperLetter(char32_t c) 
 {
     return GetGeneralCategory(c) == GeneralCategoryId::Lu;
 }
 
-inline bool IsLowerLetter(char32_t c)
+inline bool IsLowerLetter(char32_t c) 
 {
     return GetGeneralCategory(c) == GeneralCategoryId::Ll;
 }
 
-inline bool IsTitleLetter(char32_t c)
+inline bool IsTitleLetter(char32_t c) 
 {
     return GetGeneralCategory(c) == GeneralCategoryId::Lt;
 }
 
-inline bool IsModifierLetter(char32_t c)
+inline bool IsModifierLetter(char32_t c) 
 {
     return GetGeneralCategory(c) == GeneralCategoryId::Lm;
 }
 
-inline bool IsOtherLetter(char32_t c)
+inline bool IsOtherLetter(char32_t c) 
 {
     return GetGeneralCategory(c) == GeneralCategoryId::Lo;
 }
 
-inline bool IsCasedLetter(char32_t c)
+inline bool IsCasedLetter(char32_t c) 
 {
     return HasGeneralCategory(c, GeneralCategoryId::LC);
 }

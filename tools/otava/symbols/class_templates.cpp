@@ -54,6 +54,28 @@ void ClassTemplateSpecializationSymbol::SetClassTemplate(ClassTypeSymbol* classT
     classTemplate = classTemplate_;
 }
 
+std::u32string ClassTemplateSpecializationSymbol::FullName() const
+{
+    std::u32string specializationName;
+    specializationName.append(classTemplate->FullName());
+    specializationName.append(1, '<');
+    bool first = true;
+    for (Symbol* templateArg : templateArguments)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            specializationName.append(U", ");
+        }
+        specializationName.append(templateArg->FullName());
+    }
+    specializationName.append(1, '>');
+    return specializationName;
+}
+
 void ClassTemplateSpecializationSymbol::AddTemplateArgument(Symbol* templateArgument)
 {
     templateArguments.push_back(templateArgument);
@@ -195,6 +217,7 @@ void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable, Contex
         }
         std::cout << "ClassTemplateSpecializationSymbol::Resolve(): warning: class template not resolved" << note << "\n";
     }
+    SetParent(classTemplate->GetScope()->GetNamespaceScope()->GetSymbol());
 }
 
 void ClassTemplateSpecializationSymbol::Accept(Visitor& visitor)
@@ -737,10 +760,6 @@ void ClassTemplateRepository::AddFunctionDefinition(const MemFunKey& key, Functi
 FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemplateSpecializationSymbol* classTemplateSpecialization, 
     const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    if (memFn->GroupName() == U"dispose")
-    {
-        int x = 0;
-    }
     std::string specializationName = util::ToUtf8(memFn->Name());
     if (!classTemplateSpecialization)
     {
@@ -764,7 +783,8 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
     }
     else
     {
-        classTemplateSpecialization = InstantiateClassTemplate(classTemplateSpecialization->ClassTemplate(), classTemplateSpecialization->TemplateArguments(), sourcePos, context);
+        classTemplateSpecialization = InstantiateClassTemplate(classTemplateSpecialization->ClassTemplate(), 
+            classTemplateSpecialization->TemplateArguments(), sourcePos, context);
     }
     classTemplateSpecialization = static_cast<ClassTemplateSpecializationSymbol*>(classTemplateSpecialization->FinalType(sourcePos, context));
     context->GetBoundCompileUnit()->AddBoundNodeForClass(classTemplateSpecialization, sourcePos, context);

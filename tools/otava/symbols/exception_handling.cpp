@@ -73,18 +73,6 @@ BoundStatementNode* CleanUp::CloneStatement(int index) const
     return destructionStatements[index]->Clone();
 }
 
-void BeginChild(FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
-{
-    std::u32string resultVariableName = context->NextResultVarName();
-    functionDefinitionSymbol->SetResultVarName(resultVariableName);
-    context->PushResultVarName(resultVariableName);
-}
-
-void EndChild(Context* context)
-{
-    context->PopResultVarName();
-}
-
 FunctionDefinitionSymbol* MakeInvokeFn(BoundStatementNode* stmt, FunctionDefinitionSymbol* parentFn, Context* context)
 {
     Scope* parenFnScope = context->GetSymbolTable()->CurrentScope();
@@ -111,7 +99,7 @@ FunctionDefinitionSymbol* MakeInvokeFn(BoundStatementNode* stmt, FunctionDefinit
     otava::ast::FunctionDefinitionNode invokeFnNode(stmt->GetSourcePos(), nullptr, invokeDeclSpecifiers, invokeDeclarator, nullptr,
         new otava::ast::FunctionBodyNode(stmt->GetSourcePos(), invokeBlock));
     InstantiationScope invokeInstantiationScope(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->Parent()->GetScope());
-    invokeInstantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", stmt->GetSourcePos(), context));
+    //invokeInstantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", stmt->GetSourcePos(), context));
     invokeInstantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
     context->GetSymbolTable()->BeginScope(&invokeInstantiationScope);
     Instantiator invokeInstantiator(context, &invokeInstantiationScope);
@@ -175,7 +163,7 @@ FunctionDefinitionSymbol* MakeCleanupFn(const soul::ast::SourcePos& sourcePos, F
     otava::ast::FunctionDefinitionNode cleanupFnNode(sourcePos, nullptr, cleanupDeclSpecifiers, cleanupDeclarator, nullptr,
         new otava::ast::FunctionBodyNode(sourcePos, cleanupBlock));
     InstantiationScope cleanupInstantiationScope(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->Parent()->GetScope());
-    cleanupInstantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
+    //cleanupInstantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
     cleanupInstantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
     context->GetSymbolTable()->BeginScope(&cleanupInstantiationScope);
     Instantiator cleanupInstantiator(context, &cleanupInstantiationScope);
@@ -227,10 +215,26 @@ BoundStatementNode* GenerateInvoke(BoundStatementNode* stmt, FunctionDefinitionS
         {
             varDeclarationStatementText.append(U";");
         }
-        std::unique_ptr<otava::ast::Node> varDeclarationStmtNode = ParseStatement(varDeclarationStatementText, context);
-        context->PushSetFlag(ContextFlags::skipInvokeChecking);
-        boundVarDeclarationStatement.reset(BindStatement(varDeclarationStmtNode.get(), functionDefinitionSymbol, context));
-        context->PopFlags();
+        try
+        {
+            std::unique_ptr<otava::ast::Node> varDeclarationStmtNode = ParseStatement(varDeclarationStatementText, context);
+            context->PushSetFlag(ContextFlags::skipInvokeChecking);
+            boundVarDeclarationStatement.reset(BindStatement(varDeclarationStmtNode.get(), functionDefinitionSymbol, context));
+            context->PopFlags();
+        }
+        catch (const std::exception& ex)
+        {
+            owner.release();
+            if (nonReferenceType->IsClassTypeSymbol())
+            {
+                ThrowException("error generating exception handling invoke, possible reason: class '" + util::ToUtf8(resultType->FullName()) +
+                    "' not default constructible: " + ex.what());
+            }
+            else
+            {
+                throw;
+            }
+        }
     }
     FunctionDefinitionSymbol* invokeFnSymbol = MakeInvokeFn(stmt, functionDefinitionSymbol, context);
     FunctionDefinitionSymbol* cleanupFnSymbol = MakeCleanupFn(stmt->GetSourcePos(), functionDefinitionSymbol, context);
@@ -243,7 +247,7 @@ BoundStatementNode* GenerateInvoke(BoundStatementNode* stmt, FunctionDefinitionS
     context->PushSetFlag(ContextFlags::skipInvokeChecking);
     BoundStatementNode* boundInvokeStatement = BindStatement(invokeStmtNode.get(), functionDefinitionSymbol, context);
     context->PopFlags();
-    if (stmt->IsReturnStatementNode())
+    if (stmt->IsReturnOrSequenceReturnStatementNode())
     {
         std::u32string returnStatementText;
         returnStatementText.append(U"return ").append(invokeFnSymbol->ResultVarExprStr(resultType)).append(U";");

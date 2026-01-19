@@ -1,0 +1,6 @@
+project oeparser;
+target=library;
+define EXPECTED;
+interface <match.cppm>;
+interface <parser.cppm>;
+interface <value.cppm>;

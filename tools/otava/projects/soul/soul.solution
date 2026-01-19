@@ -1,0 +1,13 @@
+solution soul;
+project <../util/util.project>;
+project <token/token.project>;
+project <parser/parser.project>;
+project <ast/ast.project>;
+project <lexer/lexer.project>;
+project <lex/lex.project>;
+project <re/re.project>;
+project <cpp/cpp.project>;
+project <common/common.project>;
+project <oslg/oslg.project>;
+// project <../oxml/odom/odom.project>;
+// project <spg/spg.project>;

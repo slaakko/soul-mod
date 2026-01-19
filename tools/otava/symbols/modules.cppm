@@ -116,7 +116,7 @@ private:
 class ModuleMapper
 {
 public:
-    ModuleMapper();
+    ModuleMapper(bool expected);
     void AddModule(Module* module);
     std::string GetModuleFilePath(const std::string& moduleName, const std::string& config, int optLevel) const;
     std::string GetProjectFilePath(const std::string& moduleName) const;

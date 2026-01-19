@@ -164,14 +164,6 @@
     <ClCompile Include="parser.cppm" />
     <ClCompile Include="value.cppm" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\util\util.vcxproj">
-      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="parser.project" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

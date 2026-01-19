@@ -537,6 +537,18 @@ BoundFunctionNode::BoundFunctionNode(FunctionDefinitionSymbol* functionDefinitio
 {
 }
 
+BoundFunctionNode::~BoundFunctionNode()
+{
+    if (ExceptionThrown())
+    {
+        body.release();
+    }
+    else
+    {
+        body.reset();
+    }
+}
+
 void BoundFunctionNode::Accept(BoundTreeVisitor& visitor)
 {
     visitor.Visit(*this);
@@ -657,10 +669,6 @@ void BoundIfStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundIfStatementNode::Clone() const
 {
     BoundIfStatementNode* clone = new BoundIfStatementNode(GetSourcePos());
-    if (initStatement)
-    {
-        clone->SetInitStatement(initStatement->Clone());
-    }
     if (condition)
     {
         clone->SetCondition(condition->Clone());
@@ -676,16 +684,10 @@ BoundStatementNode* BoundIfStatementNode::Clone() const
 
 bool BoundIfStatementNode::MayThrow() const
 {
-    if (initStatement && initStatement->MayThrow()) return true;
     if (condition->MayThrow()) return true;
     if (thenStatement->MayThrow()) return true;
     if (elseStatement && elseStatement->MayThrow()) return true;
     return false;
-}
-
-void BoundIfStatementNode::SetInitStatement(BoundStatementNode* initStatement_)
-{
-    initStatement.reset(initStatement_);
 }
 
 void BoundIfStatementNode::SetCondition(BoundExpressionNode* condition_)
@@ -715,10 +717,6 @@ void BoundSwitchStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundSwitchStatementNode::Clone() const
 {
     BoundSwitchStatementNode* clone = new BoundSwitchStatementNode(GetSourcePos());
-    if (initStatement)
-    {
-        clone->SetInitStatement(initStatement->Clone());
-    }
     clone->SetCondition(condition->Clone());
     clone->SetStatement(statement->Clone());
     clone->SetSource(Source());
@@ -727,15 +725,9 @@ BoundStatementNode* BoundSwitchStatementNode::Clone() const
 
 bool BoundSwitchStatementNode::MayThrow() const
 {
-    if (initStatement && initStatement->MayThrow()) return true;
     if (condition->MayThrow()) return true;
     if (statement->MayThrow()) return true;
     return false;
-}
-
-void BoundSwitchStatementNode::SetInitStatement(BoundStatementNode* initStatement_)
-{
-    initStatement.reset(initStatement_);
 }
 
 void BoundSwitchStatementNode::SetCondition(BoundExpressionNode* condition_)
@@ -1037,7 +1029,34 @@ void BoundReturnStatementNode::SetExpr(BoundExpressionNode* expr_, const soul::a
     expr->ModifyTypes(sourcePos, context);
 }
 
-BoundGotoStatementNode::BoundGotoStatementNode(const soul::ast::SourcePos& sourcePos_) : BoundStatementNode(BoundNodeKind::boundGotoStatementNode, sourcePos_)
+BoundLabeledStatementNode::BoundLabeledStatementNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& label_, BoundStatementNode* stmt_) :
+    BoundStatementNode(BoundNodeKind::boundLabeledStatementNode, sourcePos_), label(label_), stmt(stmt_), bb(nullptr)
+{
+}
+
+void BoundLabeledStatementNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+BoundStatementNode* BoundLabeledStatementNode::Clone() const
+{
+    BoundLabeledStatementNode* clone = new BoundLabeledStatementNode(GetSourcePos(), label, stmt->Clone());
+    clone->SetSource(Source());
+    return clone;
+}
+
+otava::intermediate::BasicBlock* BoundLabeledStatementNode::GetBB(Emitter& emitter)
+{
+    if (!bb)
+    {
+        bb = emitter.CreateBasicBlock();
+    }
+    return bb;
+}
+
+BoundGotoStatementNode::BoundGotoStatementNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& target_) :
+    BoundStatementNode(BoundNodeKind::boundGotoStatementNode, sourcePos_), target(target_), labeledStatement(nullptr)
 {
 }
 
@@ -1048,9 +1067,14 @@ void BoundGotoStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundGotoStatementNode::Clone() const
 {
-    BoundGotoStatementNode* clone = new BoundGotoStatementNode(GetSourcePos());
+    BoundGotoStatementNode* clone = new BoundGotoStatementNode(GetSourcePos(), target);
     clone->SetSource(Source());
     return clone;
+}
+
+otava::intermediate::BasicBlock* BoundGotoStatementNode::GetBB(Emitter& emitter)
+{
+    return labeledStatement->GetBB(emitter);
 }
 
 BoundConstructionStatementNode::BoundConstructionStatementNode(const soul::ast::SourcePos& sourcePos_, BoundFunctionCallNode* constructorCall_) :
@@ -1106,7 +1130,7 @@ BoundStatementNode* BoundExpressionStatementNode::Clone() const
 
 bool BoundExpressionStatementNode::MayThrow() const
 {
-    if (expr->MayThrow()) return true;
+    if (expr && expr->MayThrow()) return true;
     return false;
 }
 
@@ -1142,6 +1166,21 @@ BoundStatementNode* BoundSetVPtrStatementNode::Clone() const
     BoundSetVPtrStatementNode* clone = new BoundSetVPtrStatementNode(thisPtr->Clone(), forClass, vptrHolderClass, GetSourcePos());
     clone->SetSource(Source());
     return clone;
+}
+
+BoundAliasDeclarationStatementNode::BoundAliasDeclarationStatementNode(const soul::ast::SourcePos& sourcePos_) : 
+    BoundStatementNode(BoundNodeKind::boundAliasDeclarationStatementNode, sourcePos_)
+{
+}
+
+void BoundAliasDeclarationStatementNode::Accept(BoundTreeVisitor& visitor) 
+{
+    visitor.Visit(*this);
+}
+
+BoundStatementNode* BoundAliasDeclarationStatementNode::Clone() const
+{
+    return new BoundAliasDeclarationStatementNode(GetSourcePos());
 }
 
 BoundLiteralNode::BoundLiteralNode(Value* value_, const soul::ast::SourcePos& sourcePos_) : 
@@ -1522,6 +1561,10 @@ void BoundParentVariableNode::Load(Emitter& emitter, OperationFlags flags, const
             emitter.Stack().Push(emitter.EmitLoad(elementPtr));
         }
     }
+    else if (variable->IsGlobalVariable())
+    {
+        ThrowException("bound parent variable cannot be global", sourcePos, context);
+    }
 }
 
 void BoundParentVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -1587,16 +1630,40 @@ void BoundParentVariableNode::Store(Emitter& emitter, OperationFlags flags, cons
             emitter.EmitStore(value, elementPtr);
         }
     }
+    else if (variable->IsGlobalVariable())
+    {
+        ThrowException("bound parent variable cannot be global", sourcePos, context);
+    }
+}
+
+bool BoundParentVariableNode::IsBoundParentLocalVariable() const
+{
+    return variable->IsLocalVariable();
+}
+
+bool BoundParentVariableNode::IsBoundParentMemberVariable() const
+{
+    return variable->IsMemberVariable();
 }
 
 BoundExpressionNode* BoundParentVariableNode::Clone() const
 {
-    return new BoundParentVariableNode(variable, GetSourcePos());
+    BoundParentVariableNode* clone = new BoundParentVariableNode(variable, GetSourcePos());
+    if (thisPtr)
+    {
+        clone->SetThisPtr(thisPtr->Clone());
+    }
+    clone->SetFlags(Flags());
+    return clone;
 }
 
 void BoundParentVariableNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
 {
     BoundExpressionNode::ModifyTypes(sourcePos, context);
+    if (thisPtr)
+    {
+        thisPtr->ModifyTypes(sourcePos, context);
+    }
 }
 
 BoundParameterNode::BoundParameterNode(ParameterSymbol* parameter_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type) : 
@@ -1738,7 +1805,9 @@ void BoundParentParameterNode::Store(Emitter& emitter, OperationFlags flags, con
 
 BoundExpressionNode* BoundParentParameterNode::Clone() const
 {
-    return new BoundParentParameterNode(parameter, GetSourcePos(), GetType());
+    BoundParentParameterNode* clone = new BoundParentParameterNode(parameter, GetSourcePos(), GetType());
+    clone->SetFlags(Flags());
+    return clone;
 }
 
 BoundEnumConstant::BoundEnumConstant(EnumConstantSymbol* enumConstant_, const soul::ast::SourcePos& sourcePos_) :
@@ -2014,7 +2083,7 @@ bool BoundFunctionCallNode::IsLvalueExpression() const
     TypeSymbol* returnType = functionSymbol->ReturnType();
     if (returnType && !returnType->IsVoidType())
     {
-        return !returnType->IsConstType() && returnType->IsLValueRefType();
+        return returnType->IsLValueRefType();
     }
     return false;
 }

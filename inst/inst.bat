@@ -15,8 +15,8 @@ soul_inst -v ..\soul\xml\xpath\*.classmap.compressed ..\rc
 soul_inst -v ..\soul\xml\xpath\*.classmap.rc ..\rc
 soul_inst -v ..\soul\xml\serialization\*.classmap.compressed ..\rc
 soul_inst -v ..\soul\xml\serialization\*.classmap.rc ..\rc
-soul_inst -v ..\tools\otava\projects\expected\osoul\oslg\release\2\oslg.exe ..\bin
-soul_inst -v ..\tools\otava\projects\expected\osoul\ospg\release\2\ospg.exe ..\bin
-soul_inst -v ..\tools\otava\projects\expected\oxml\oxml_stats\release\2\oxml_stats.exe ..\bin
-soul_inst -v ..\tools\otava\projects\expected\oxml\oxpath_test\release\2\oxpath_test.exe ..\bin
-soul_inst -v ..\tools\otava\projects\expected\ocompiler\ooc\release\1\ooc.exe ..\bin
+soul_inst -v ..\tools\otava\projects\x_expected\oesoul\oeslg\release\2\oeslg.exe ..\bin
+soul_inst -v ..\tools\otava\projects\x_expected\oesoul\oespg\release\2\oespg.exe ..\bin
+soul_inst -v ..\tools\otava\projects\x_expected\oexml\oexml_stats\release\2\oexml_stats.exe ..\bin
+soul_inst -v ..\tools\otava\projects\x_expected\oexml\oexpath_test\release\2\oexpath_test.exe ..\bin
+soul_inst -v ..\tools\otava\projects\x_expected\oecompiler\oec\release\2\oec.exe ..\bin

@@ -152,7 +152,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="cpp.project" />
     <None Include="identifier.parser" />
     <None Include="cpp_parsers.spg" />
     <None Include="declaration.parser" />

@@ -224,28 +224,28 @@ std::string CharStr(char c)
 {
     switch (c)
     {
-    case '\'': return "\\'";
-    case '\"': return "\\\"";
-    case '\\': return "\\\\";
-    case '\a': return "\\a";
-    case '\b': return "\\b";
-    case '\f': return "\\f";
-    case '\n': return "\\n";
-    case '\r': return "\\r";
-    case '\t': return "\\t";
-    case '\v': return "\\v";
-    case '\0': return "\\0";
-    default:
-    {
-        if (c >= 32 && c <= 126)
+        case '\'': return "\\'";
+        case '\"': return "\\\"";
+        case '\\': return "\\\\";
+        case '\a': return "\\a";
+        case '\b': return "\\b";
+        case '\f': return "\\f";
+        case '\n': return "\\n";
+        case '\r': return "\\r";
+        case '\t': return "\\t";
+        case '\v': return "\\v";
+        case '\0': return "\\0";
+        default:
         {
-            return std::string(1, c);
+            if (c >= 32 && c <= 126)
+            {
+                return std::string(1, c);
+            }
+            else
+            {
+                return ToUtf8(CharHexEscape(c));
+            }
         }
-        else
-        {
-            return ToUtf8(CharHexEscape(c));
-        }
-    }
     }
 }
 
@@ -253,28 +253,28 @@ std::u32string CharStr(char32_t c)
 {
     switch (c)
     {
-    case U'\'': return U"\\'";
-    case U'\"': return U"\\\"";
-    case U'\\': return U"\\\\";
-    case U'\a': return U"\\a";
-    case U'\b': return U"\\b";
-    case U'\f': return U"\\f";
-    case U'\n': return U"\\n";
-    case U'\r': return U"\\r";
-    case U'\t': return U"\\t";
-    case U'\v': return U"\\v";
-    case U'\0': return U"\\0";
-    default:
-    {
-        if (c >= 32 && c <= 126)
+        case U'\'': return U"\\'";
+        case U'\"': return U"\\\"";
+        case U'\\': return U"\\\\";
+        case U'\a': return U"\\a";
+        case U'\b': return U"\\b";
+        case U'\f': return U"\\f";
+        case U'\n': return U"\\n";
+        case U'\r': return U"\\r";
+        case U'\t': return U"\\t";
+        case U'\v': return U"\\v";
+        case U'\0': return U"\\0";
+        default:
         {
-            return std::u32string(1, c);
+            if (c >= 32 && c <= 126)
+            {
+                return std::u32string(1, c);
+            }
+            else
+            {
+                return CharHexEscape(c);
+            }
         }
-        else
-        {
-            return CharHexEscape(c);
-        }
-    }
     }
 }
 
@@ -327,7 +327,7 @@ std::string QuotedPath(const std::string& path)
     return path;
 }
 
-bool LastComponentsEqual(const std::string& s0, const std::string& s1, char componentSeparator)
+bool LastComponentsEqual(const std::string& s0, const std::string& s1, char componentSeparator) noexcept
 {
     std::vector<std::string> c0 = Split(s0, componentSeparator);
     std::vector<std::string> c1 = Split(s1, componentSeparator);
@@ -341,7 +341,7 @@ bool LastComponentsEqual(const std::string& s0, const std::string& s1, char comp
     return true;
 }
 
-bool StartsWith(const std::string& s, const std::string& prefix)
+bool StartsWith(const std::string& s, const std::string& prefix) 
 {
     int n = int(prefix.length());
     return int(s.length()) >= n && s.substr(0, n) == prefix;
@@ -530,7 +530,7 @@ std::string ToOctalString(std::int32_t value, int numDigits)
     return str;
 }
 
-int Log10(int n)
+int Log10(int n) noexcept
 {
     int log10 = 1;
     int m = n / 10;

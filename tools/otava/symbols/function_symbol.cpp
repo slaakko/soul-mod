@@ -411,6 +411,7 @@ bool FunctionSymbol::IsTemplateParameterInstantiation(Context* context, std::set
     if (visited.find(this) == visited.end())
     {
         visited.insert(this);
+        if (IsStatic()) return false;
         for (ParameterSymbol* parameter : MemFunParameters(context))
         {
             if (parameter->IsTemplateParameterInstantiation(context, visited)) return true;
@@ -421,7 +422,7 @@ bool FunctionSymbol::IsTemplateParameterInstantiation(Context* context, std::set
         }
         for (VariableSymbol* localVariable : localVariables)
         {
-            if (localVariable->IsTemplateParameterInstantiation(context, visited)) return true;
+            if (localVariable && localVariable->IsTemplateParameterInstantiation(context, visited)) return true;
         }
     }
     return false;
@@ -1282,7 +1283,8 @@ FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) 
     declarationId(),
     defIndex(-1),
     parentFn(nullptr),
-    parentFnScope(nullptr)
+    parentFnScope(nullptr), 
+    containsGotosOrLabels(false)
 {
 }
 
@@ -1292,7 +1294,8 @@ FunctionDefinitionSymbol::FunctionDefinitionSymbol(SymbolKind kind_, const std::
     declarationId(),
     defIndex(-1),
     parentFn(nullptr),
-    parentFnScope(nullptr)
+    parentFnScope(nullptr),
+    containsGotosOrLabels(false)
 {
 }
 
@@ -1363,6 +1366,12 @@ otava::intermediate::Type* FunctionDefinitionSymbol::IrType(Emitter& emitter, co
     {
         return FunctionSymbol::IrType(emitter, sourcePos, context);
     }
+}
+
+bool FunctionDefinitionSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
+{
+    if (declaration && !declaration->IsTemplateParameterInstantiation(context, visited)) return false;
+    return FunctionSymbol::IsTemplateParameterInstantiation(context, visited);
 }
 
 void FunctionDefinitionSymbol::SetReturnType(TypeSymbol* returnType_, Context* context)
@@ -1603,6 +1612,7 @@ ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDe
     SetDeclarationFlags(functionDefinitionSymbol->GetDeclarationFlags());
     SetVTabIndex(functionDefinitionSymbol->VTabIndex());
     SetDefIndex(functionDefinitionSymbol->DefIndex());
+    SetFunctionQualifiers(functionDefinitionSymbol->Qualifiers());
     for (ParameterSymbol* parameter : functionDefinitionSymbol->Parameters())
     {
         AddParameter(parameter->Copy(), sourcePos, context);

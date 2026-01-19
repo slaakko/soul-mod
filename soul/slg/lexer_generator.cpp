@@ -597,7 +597,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     sourceFormatter.IncIndent();
     sourceFormatter.WriteLine("tokens.SetInitialized();");
     soul::ast::slg::Tokens* tokens = lexerContext.GetTokens();
-    for (const auto& token : tokens->GetTokens())
+    for (const auto* token : tokens->GetTokens())
     {
         sourceFormatter.WriteLine("tokens.AddToken(new soul::ast::common::Token(" + token->FullCppId() + ", \"" + token->Name() + "\", \"" + token->Info() + "\"));");
     }
@@ -622,7 +622,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.WriteLine("switch (state)");
     interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    for (const auto& state : lexerContext.GetDfa().States())
+    for (const auto* state : lexerContext.GetDfa().States())
     {
         interfaceFormatter.WriteLine("case " + std::to_string(state->Id()) + ":");
         interfaceFormatter.WriteLine("{");
@@ -726,9 +726,9 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
             new soul::ast::cpp::ExpressionStatementNode(sourcePos, 
                 new soul::ast::cpp::InvokeNode(sourcePos, 
                     new soul::ast::cpp::IdExprNode(sourcePos, "lexer.Retract"))));
-        if (rule->Action() != -1)
+        if (rule->GetAction() != -1)
         {
-            soul::ast::slg::Action* action = lexer->GetActions().GetAction(rule->Action());
+            soul::ast::slg::Action* action = lexer->GetActions().GetAction(rule->GetAction());
             if (action != nullptr)
             {
                 soul::ast::cpp::CodeEvaluationVisitor visitor;
@@ -751,7 +751,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
             }
             else
             {
-                throw std::runtime_error("action " + std::to_string(rule->Action()) + " not found");
+                throw std::runtime_error("action " + std::to_string(rule->GetAction()) + " not found");
             }
         }
         rule->Code()->Add(new soul::ast::cpp::BreakStatementNode(sourcePos));
@@ -853,7 +853,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     bool first = true;
     auto keywords = lexerContext.GetKeywords();
     bool hasKw = false;
-    for (const auto& keyword : keywords->GetKeywords())
+    for (const auto* keyword : keywords->GetKeywords())
     {
         if (first)
         {
@@ -888,7 +888,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     bool first8 = true;
     bool hasKw8 = false;
     auto keywords8 = lexerContext.GetKeywords();
-    for (const auto& keyword : keywords8->GetKeywords())
+    for (const auto* keyword : keywords8->GetKeywords())
     {
         if (first8)
         {
@@ -923,7 +923,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     bool first16 = true;
     bool hasKw16 = false;
     auto keywords16 = lexerContext.GetKeywords();
-    for (const auto& keyword : keywords16->GetKeywords())
+    for (const auto* keyword : keywords16->GetKeywords())
     {
         if (first16)
         {
@@ -958,7 +958,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     bool first32 = true;
     bool hasKw32 = false;
     auto keywords32 = lexerContext.GetKeywords();
-    for (const auto& keyword : keywords32->GetKeywords())
+    for (const auto* keyword : keywords32->GetKeywords())
     {
         if (first32)
         {

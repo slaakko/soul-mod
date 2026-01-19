@@ -40,6 +40,7 @@ ArgumentMatch::ArgumentMatch() :
     conversionFun(nullptr),
     conversionKind(ConversionKind::implicitConversion),
     distance(0),
+    integerRank(-1),
     fundamentalTypeDistance(0),
     preConversionFlags(OperationFlags::none),
     postConversionFlags(OperationFlags::none)
@@ -74,6 +75,11 @@ bool BetterArgumentMatch::operator()(const ArgumentMatch& left, const ArgumentMa
     if (left.conversionKind == ConversionKind::explicitConversion && right.conversionKind == ConversionKind::implicitConversion) return false; 
     if (left.distance < right.distance) return true; 
     if (left.distance > right.distance) return false; 
+    if (left.integerRank != -1 && right.integerRank != -1)
+    {
+        if (left.integerRank < right.integerRank) return true;
+        if (left.integerRank > right.integerRank) return false;
+    }
     if (left.fundamentalTypeDistance < right.fundamentalTypeDistance) return true;
     if (left.fundamentalTypeDistance > right.fundamentalTypeDistance) return false;
     return false;
@@ -224,6 +230,35 @@ bool BetterFunctionMatch::operator()(const FunctionMatch& left, const FunctionMa
     {
         return false;
     }
+    if (left.function->Arity() > 0 && right.function->Arity() > 0)
+    {
+        TypeSymbol* leftType = left.function->Parameters()[0]->GetType();
+        TypeSymbol* rightType = right.function->Parameters()[0]->GetType();
+        if (leftType->IsUnsignedIntegerType() && rightType->IsSignedIntegerType())
+        {
+            return true;
+        }
+        else if (leftType->IsSignedIntegerType() && rightType->IsUnsignedIntegerType())
+        {
+            return false;
+        }
+        else if (leftType->IsChar32TypeSymbol() && rightType->IsIntType())
+        {
+            return true;
+        }
+        else if (leftType->IsIntType() && rightType->IsChar32TypeSymbol())
+        {
+            return false;
+        }
+        else if (leftType->IsChar16TypeSymbol() && rightType->IsUnsignedShortType())
+        {
+            return true;
+        }
+        else if (leftType->IsUnsignedShortType() && rightType->IsChar16TypeSymbol())
+        {
+            return false;
+        }
+    }
     return false;
 }
 
@@ -296,8 +331,8 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& fu
             FunctionSymbol* conversionFun = argumentMatch.conversionFun;
             if (conversionFun->GetConversionKind() == ConversionKind::explicitConversion && !context->GetFlag(ContextFlags::suppress_warning))
             {
-                ex = Exception("warning: ", "conversion from '" + util::ToUtf8(conversionFun->ConversionArgType()->FullName()) + "' to '" +
-                    util::ToUtf8(conversionFun->ConversionParamType()->FullName()) + "' without a cast", sourcePos, context);
+                ex = Exception("warning: ", "implicit conversion from '" + util::ToUtf8(conversionFun->ConversionArgType()->FullName()) + "' to '" +
+                    util::ToUtf8(conversionFun->ConversionParamType()->FullName()) + "'", sourcePos, context);
                 ex.SetWarning();
             }
             if (conversionFun->GetFunctionKind() == FunctionKind::conversionMemFn && argType->PlainType(context)->IsClassTypeSymbol())
@@ -1008,6 +1043,7 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
         {
             bool qualificationConversionMatch = false;
             ArgumentMatch argumentMatch;
+            argumentMatch.integerRank = paramType->PlainType(context)->Rank();
             if (TypesEqual(argType->PlainType(context), paramType->PlainType(context), context))
             {
                 qualificationConversionMatch = FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch);
@@ -1288,6 +1324,7 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
         return std::unique_ptr<BoundFunctionCallNode>();
     }
     context->ResetFlag(ContextFlags::noPtrOps);
+    context->ResetFlag(ContextFlags::skipFirstPtrToBooleanConversion);
     functionMatch = *bestMatch;
     bool instantiate = (flags & OverloadResolutionFlags::dontInstantiate) == OverloadResolutionFlags::none;
     if (instantiate)

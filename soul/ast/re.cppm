@@ -27,17 +27,17 @@ enum class SymbolKind
 class Symbol
 {
 public:
-    Symbol(SymbolKind kind_);
+    Symbol(SymbolKind kind_) noexcept;
     virtual ~Symbol();
-    inline SymbolKind Kind() const { return kind; }
-    virtual bool Match(char32_t c) = 0;
+    inline SymbolKind Kind() const noexcept { return kind; }
+    virtual bool Match(char32_t c) noexcept = 0;
     virtual void Accept(Visitor& visitor) = 0;
     virtual void Print(CodeFormatter& formatter) = 0;
     void SetName(const std::string& name_);
-    inline const std::string& Name() const { return name; }
-    inline bool Contained() const { return contained; }
-    inline void SetContained() { if (!dontSetContained) contained = true; }
-    inline void DontSetContained() { dontSetContained = true; }
+    inline const std::string& Name() const noexcept { return name; }
+    inline bool Contained() const noexcept { return contained; }
+    inline void SetContained() noexcept { if (!dontSetContained) contained = true; }
+    inline void DontSetContained() noexcept { dontSetContained = true; }
 private:
     SymbolKind kind;
     std::string name;
@@ -49,10 +49,10 @@ class CharSymbol : public Symbol
 {
 public:
     CharSymbol(char32_t chr_);
-    bool Match(char32_t c) override;
+    bool Match(char32_t c) noexcept override;
     void Accept(Visitor& visitor) override;
     void Print(CodeFormatter& formatter) override;
-    inline char32_t Chr() const { return chr; }
+    inline char32_t Chr() const noexcept { return chr; }
 private:
     char32_t chr;
 };
@@ -61,7 +61,7 @@ class Any : public Symbol
 {
 public:
     Any();
-    bool Match(char32_t c) override;
+    bool Match(char32_t c) noexcept override;
     void Accept(Visitor& visitor) override;
     void Print(CodeFormatter& formatter) override;
 };
@@ -69,34 +69,34 @@ public:
 class Range : public Symbol
 {
 public:
-    Range();
+    Range() noexcept;
     Range(char32_t start_, char32_t end_);
-    bool Match(char32_t c) override;
+    bool Match(char32_t c) noexcept override;
     void Accept(Visitor& visitor) override;
     void Print(CodeFormatter& formatter) override;
-    inline bool IsEmpty() const { return start > end; }
-    inline char32_t Start() const { return start; }
-    inline char32_t End() const { return end; }
+    inline bool IsEmpty() const noexcept { return start > end; }
+    inline char32_t Start() const noexcept { return start; }
+    inline char32_t End() const noexcept { return end; }
 private:
     char32_t start;
     char32_t end;
 };
 
-inline bool operator==(const Range& left, const Range& right)
+inline bool operator==(const Range& left, const Range& right) noexcept
 {
     return left.Start() == right.Start() && left.End() == right.End();
 }
 
-inline bool operator<(const Range& left, const Range& right)
+inline bool operator<(const Range& left, const Range& right) noexcept
 {
     if (left.Start() < right.Start()) return true;
     if (left.Start() > right.Start()) return false;
     return left.End() < right.End();
 }
 
-bool Intersect(const Range& left, const Range& right);
+bool Intersect(const Range& left, const Range& right) noexcept;
 
-Range operator&(const Range& left, const Range& right);
+Range operator&(const Range& left, const Range& right) noexcept;
 
 std::vector<Range> operator-(const Range& left, const Range& right);
 
@@ -106,24 +106,24 @@ class Class : public Symbol
 {
 public:
     Class(int index_);
-    bool Match(char32_t c) override;
+    bool Match(char32_t c) noexcept override;
     void Accept(Visitor& visitor) override;
     void Print(CodeFormatter& formatter) override;
-    inline bool Inverse() const { return inverse; }
-    inline void SetInverse() { inverse = true; }
-    inline const std::vector<Symbol*>& Symbols() const { return symbols; }
+    inline bool Inverse() const noexcept { return inverse; }
+    inline void SetInverse() noexcept { inverse = true; }
+    inline const std::vector<Symbol*>& Symbols() const noexcept { return symbols; }
     void AddSymbol(Symbol* symbol);
     void AddChar(char32_t c);
-    inline int Index() const { return index; }
+    inline int Index() const noexcept { return index; }
     void SetIndex(int index_);
-    inline const std::vector<char32_t>& Chars() const { return chars; }
+    inline const std::vector<char32_t>& Chars() const noexcept { return chars; }
     Class* MakeCanonical(LexerContext& lexerContext);
     void MakeMinimal(LexerContext& lexerContext);
     void MakeInverse(LexerContext& lexerContext);
     Class* Clone();
-    inline bool IsEmpty() const { return symbols.empty(); }
-    inline const std::list<Range>& Ranges() const { return ranges; }
-    inline std::list<Range>& Ranges() { return ranges; }
+    inline bool IsEmpty() const noexcept { return symbols.empty(); }
+    inline const std::list<Range>& Ranges() const noexcept { return ranges; }
+    inline std::list<Range>& Ranges() noexcept { return ranges; }
 private:
     int index;
     bool inverse;
@@ -132,9 +132,9 @@ private:
     std::list<Range> ranges;
 };
 
-bool operator==(const Class& left, const Class& right);
+bool operator==(const Class& left, const Class& right) noexcept;
 
-bool Intersect(const Class& left, const Class& right);
+bool Intersect(const Class& left, const Class& right) noexcept;
 
 Class* MakeIntertersection(const Class& left, const Class& right, LexerContext& lexerContext);
 
@@ -145,9 +145,9 @@ class NfaState;
 class NfaEdge
 {
 public:
-    NfaEdge(Symbol* symbol_, NfaState* next_);
-    inline Symbol* GetSymbol() const { return symbol; }
-    inline NfaState* Next() const { return next; }
+    NfaEdge(Symbol* symbol_, NfaState* next_) noexcept;
+    inline Symbol* GetSymbol() const noexcept { return symbol; }
+    inline NfaState* Next() const noexcept { return next; }
     void Print(CodeFormatter& formatter);
 private:
     Symbol* symbol;
@@ -157,13 +157,13 @@ private:
 class NfaState
 {
 public:
-    NfaState(int id_, int ruleIndex_);
-    inline int Id() const { return id; }
-    inline int RuleIndex() const { return ruleIndex; }
-    inline void SetRuleIndex(int ruleIndex_) { ruleIndex = ruleIndex_; }
-    inline bool Accept() const { return accept; }
-    inline void SetAccept(bool accept_) { accept = accept_; }
-    inline const std::vector<NfaEdge>& Edges() const { return edges; }
+    NfaState(int id_, int ruleIndex_) noexcept;
+    inline int Id() const noexcept { return id; }
+    inline int RuleIndex() const noexcept { return ruleIndex; }
+    inline void SetRuleIndex(int ruleIndex_) noexcept { ruleIndex = ruleIndex_; }
+    inline bool Accept() const noexcept { return accept; }
+    inline void SetAccept(bool accept_) noexcept { accept = accept_; }
+    inline const std::vector<NfaEdge>& Edges() const noexcept { return edges; }
     void SetEdges(const std::vector<NfaEdge>& edges_);
     void AddEdge(const NfaEdge& edge);
     void AddPrev(NfaState* prev_);
@@ -180,12 +180,12 @@ private:
 class Nfa
 {
 public:
-    Nfa();
-    Nfa(NfaState* start_, NfaState* end_);
-    inline NfaState* Start() const { return start; }
-    inline void SetStart(NfaState* start_) { start = start_; }
-    inline NfaState* End() const { return end; }
-    inline void SetEnd(NfaState* end_) { end = end_; }
+    Nfa() noexcept;
+    Nfa(NfaState* start_, NfaState* end_) noexcept;
+    inline NfaState* Start() const noexcept { return start; }
+    inline void SetStart(NfaState* start_) noexcept { start = start_; }
+    inline NfaState* End() const noexcept { return end; }
+    inline void SetEnd(NfaState* end_) noexcept { end = end_; }
     void Print(CodeFormatter& formatter);
 private:
     NfaState* start;
@@ -203,16 +203,16 @@ class DfaState
 {
 public:
     DfaState(int id_, const std::vector<int>& nfaStateIds_);
-    inline int Id() const { return id; }
-    inline bool IsMarked() const { return marked; }
-    inline void Mark() { marked = true; }
-    inline bool Accept() const { return accept; }
-    inline void SetAccept(bool accept_) { accept = accept_; }
-    inline int RuleIndex() const { return ruleIndex; }
-    inline void SetRuleIndex(int index) { ruleIndex = index; }
-    inline const std::vector<int>& NfaStateIds() const { return nfaStateIds; }
+    inline int Id() const noexcept { return id; }
+    inline bool IsMarked() const noexcept { return marked; }
+    inline void Mark() noexcept { marked = true; }
+    inline bool Accept() const noexcept { return accept; }
+    inline void SetAccept(bool accept_) noexcept { accept = accept_; }
+    inline int RuleIndex() const noexcept { return ruleIndex; }
+    inline void SetRuleIndex(int index) noexcept { ruleIndex = index; }
+    inline const std::vector<int>& NfaStateIds() const noexcept { return nfaStateIds; }
     void AddNext(DfaState* next);
-    DfaState* Next(int i) const;
+    DfaState* Next(int i) const noexcept;
     void Print(LexerContext& context, CodeFormatter& formatter);
 private:
     int id;
@@ -227,7 +227,7 @@ class Dfa
 {
 public:
     void AddState(DfaState* state);
-    inline const std::vector<DfaState*>& States() const { return states; }
+    inline const std::vector<DfaState*>& States() const noexcept { return states; }
     void Finalize(LexerContext& lexerContext);
     void Print(LexerContext& lexerContext, CodeFormatter& formatter);
 private:
@@ -251,52 +251,52 @@ class LexerContext
 public:
     LexerContext();
     ~LexerContext();
-    inline const std::string& FileName() const { return fileName; }
+    inline const std::string& FileName() const noexcept { return fileName; }
     void SetFileName(const std::string& fileName_);
     void SetBase(const std::string& dir_);
-    inline const std::string& Base() const { return dir; }
+    inline const std::string& Base() const noexcept { return dir; }
     NfaState* MakeNfaState();
     NfaState* GetNfaState(int id) const;
-    inline const std::vector<NfaState*>& NfaStates() const { return nfaStates; }
+    inline const std::vector<NfaState*>& NfaStates() const noexcept { return nfaStates; }
     DfaState* MakeDfaState(const std::vector<int>& nfaStates);
     Symbol* MakeChar(char32_t c);
-    inline Symbol* MakeAny() { return &any; }
-    inline Symbol* MakeEpsilon() { return &epsilon; }
+    inline Symbol* MakeAny() noexcept { return &any; }
+    inline Symbol* MakeEpsilon() noexcept { return &epsilon; }
     Symbol* MakeRange(char32_t start, char32_t end);
-    inline Class* MakeAsciiIdStart() { return asciiIdStart; }
-    inline Class* MakeAsciiIdCont() { return asciiIdCont; }
-    inline Class* MakeUnicodeIdStart() { return unicodeIdStart; }
-    inline Class* MakeUnicodeIdCont() { return unicodeIdCont; }
+    inline Class* MakeAsciiIdStart() noexcept { return asciiIdStart; }
+    inline Class* MakeAsciiIdCont() noexcept { return asciiIdCont; }
+    inline Class* MakeUnicodeIdStart() noexcept { return unicodeIdStart; }
+    inline Class* MakeUnicodeIdCont() noexcept { return unicodeIdCont; }
     void AddToSymbols(Symbol* symbol);
-    inline const std::vector<soul::ast::re::Symbol*>& Symbols() const { return symbols; }
+    inline const std::vector<soul::ast::re::Symbol*>& Symbols() const noexcept { return symbols; }
     Class* MakeClass();
     void AddCanonicalClass(Class* cls);
-    inline const std::vector<Class*>& CanonicalClasses() const { return canonicalClasses; }
+    inline const std::vector<Class*>& CanonicalClasses() const noexcept { return canonicalClasses; }
     void AddToPartition(Class* cls);
-    inline const std::vector<Class*>& Partition() const { return partition; }
-    inline void SetCurrentExpression(soul::ast::slg::Expression* currentExpression_) { currentExpression = currentExpression_; }
-    inline void SetExprParser(ExprParser* exprParser_) { exprParser = exprParser_; }
-    inline ExprParser* GetExprParser() const { return exprParser; }
+    inline const std::vector<Class*>& Partition() const noexcept { return partition; }
+    inline void SetCurrentExpression(soul::ast::slg::Expression* currentExpression_) noexcept { currentExpression = currentExpression_; }
+    inline void SetExprParser(ExprParser* exprParser_) noexcept { exprParser = exprParser_; }
+    inline ExprParser* GetExprParser() const noexcept { return exprParser; }
     Nfa MakeExpr(const std::string& id);
-    inline soul::ast::slg::Tokens* GetTokens() const { return tokens; }
-    inline void SetTokens(soul::ast::slg::Tokens* tokens_) { tokens = tokens_; }
-    inline soul::ast::slg::Keywords* GetKeywords() const { return keywords; }
-    inline void SetKeywords(soul::ast::slg::Keywords* keywords_) { keywords = keywords_; }
-    inline soul::ast::slg::Expressions* GetExpressions() const { return expressions; }
-    inline void SetExpressions(soul::ast::slg::Expressions* expressions_) { expressions = expressions_; }
-    inline soul::ast::slg::Lexer* GetLexer() const { return lexer; }
-    inline void SetLexer(soul::ast::slg::Lexer* lexer_) { lexer = lexer_; }
+    inline soul::ast::slg::Tokens* GetTokens() const noexcept { return tokens; }
+    inline void SetTokens(soul::ast::slg::Tokens* tokens_) noexcept { tokens = tokens_; }
+    inline soul::ast::slg::Keywords* GetKeywords() const noexcept { return keywords; }
+    inline void SetKeywords(soul::ast::slg::Keywords* keywords_) noexcept { keywords = keywords_; }
+    inline soul::ast::slg::Expressions* GetExpressions() const noexcept { return expressions; }
+    inline void SetExpressions(soul::ast::slg::Expressions* expressions_) noexcept { expressions = expressions_; }
+    inline soul::ast::slg::Lexer* GetLexer() const noexcept { return lexer; }
+    inline void SetLexer(soul::ast::slg::Lexer* lexer_) noexcept { lexer = lexer_; }
     int AddNfa(Nfa* nfa);
     Nfa* GetNfa(int index) const;
-    inline int MasterNfaIndex() const { return masterNfaIndex; }
-    inline void SetMasterNfaIndex(int masterNfaIndex_) { masterNfaIndex = masterNfaIndex_; }
+    inline int MasterNfaIndex() const noexcept { return masterNfaIndex; }
+    inline void SetMasterNfaIndex(int masterNfaIndex_) noexcept { masterNfaIndex = masterNfaIndex_; }
     void SetDfa(Dfa&& dfa_);
-    inline const Dfa& GetDfa() const { return dfa; }
-    inline Dfa& GetDfa() { return dfa; }
-    inline bool Verbose() const { return verbose; }
-    inline void SetVerbose() { verbose = true; }
-    inline bool Debug() const { return debug; }
-    inline void SetDebug() { debug = true; }
+    inline const Dfa& GetDfa() const noexcept { return dfa; }
+    inline Dfa& GetDfa() noexcept { return dfa; }
+    inline bool Verbose() const noexcept { return verbose; }
+    inline void SetVerbose() noexcept { verbose = true; }
+    inline bool Debug() const noexcept { return debug; }
+    inline void SetDebug() noexcept { debug = true; }
 private:
     std::string fileName;
     int nextNfaStateId;

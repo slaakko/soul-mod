@@ -5,6 +5,7 @@
 
 module otava.codegen;
 
+import otava.codegen.goto_target_map_builder;
 import otava.symbols.emitter;
 import otava.symbols.function.kind;
 import otava.symbols.function.symbol;
@@ -329,6 +330,8 @@ public:
     void Visit(otava::symbols::BoundDisjunctionNode& boundDisjunction) override;
     void Visit(otava::symbols::BoundConditionalExprNode& boundConditionalExpr) override;
     void Visit(otava::symbols::BoundGlobalVariableDefinitionNode& node) override;
+    void Visit(otava::symbols::BoundGotoStatementNode& node) override;
+    void Visit(otava::symbols::BoundLabeledStatementNode& node) override;
 private:
     void StatementPrefix();
     void GenJumpingBoolCode();
@@ -564,7 +567,7 @@ void CodeGenerator::ExitBlocks(int sourceBlockId, int targetBlockId, const soul:
     {
         currentBlockLastStatement = currentBlock->Statements().back().get();
     }
-    if (lastStatement && currentBlockLastStatement && lastStatement == currentBlockLastStatement && currentBlockLastStatement->IsReturnStatementNode())
+    if (lastStatement && currentBlockLastStatement && lastStatement == currentBlockLastStatement && currentBlockLastStatement->IsReturnOrSequenceReturnStatementNode())
     {
         createBasicBlock = true; 
     }
@@ -819,6 +822,10 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     {
         return;
     }
+    if (functionDefinition->ContainsGotosOrLabels())
+    {
+        BuildGotoTargetMap(node.Body(), &context);
+    }
     if (functionDefinition->Name() == U"main")
     {
         mainIrName = functionDefinition->IrName(&context);
@@ -868,7 +875,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
                 }
                 else
                 {
-                    otava::symbols::ThrowException("parameter has no type", node.GetSourcePos(), &context);
+                    otava::symbols::PrintWarning("type of parameter '" + util::ToUtf8(parameter->Name()) + "' not set", node.GetSourcePos(), &context);
                 }
             }
             if (parentFn->ReturnsClass())
@@ -883,7 +890,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
                 }
                 else
                 {
-                    otava::symbols::ThrowException("parameter has no type", node.GetSourcePos(), &context);
+                    otava::symbols::PrintWarning("type of parameter '" + util::ToUtf8(parameter->Name()) + "' not set", node.GetSourcePos(), &context);
                 }
             }
             int nlv = parentFn->LocalVariables().size();
@@ -898,7 +905,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
                 }
                 else
                 {
-                    otava::symbols::ThrowException("variable has no type", node.GetSourcePos(), &context);
+                    otava::symbols::PrintWarning("type of local variable '" + util::ToUtf8(localVariable->Name()) + "' not set", node.GetSourcePos(), &context);
                 }
             }
             parentFn = parentFn->ParentFn();
@@ -917,7 +924,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         }
         else
         {
-            otava::symbols::ThrowException("parameter has no type", node.GetSourcePos(), &context);
+            otava::symbols::PrintWarning("type of parameter '" + util::ToUtf8(parameter->Name()) + "' not set", node.GetSourcePos(), &context);
         }
     }
     if (functionDefinition->ReturnsClass())
@@ -931,7 +938,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         }
         else
         {
-            otava::symbols::ThrowException("parameter has no type", node.GetSourcePos(), &context);
+            otava::symbols::PrintWarning("type of parameter '" + util::ToUtf8(parameter->Name()) + "' not set", node.GetSourcePos(), &context);
         }
     }
     int nlv = functionDefinition->LocalVariables().size();
@@ -946,7 +953,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         }
         else
         {
-            otava::symbols::ThrowException("variable has no type", node.GetSourcePos(), &context);
+            otava::symbols::PrintWarning("type of local variable '" + util::ToUtf8(localVariable->Name()) + "' not set", node.GetSourcePos(), &context);
         }
     }
     for (int i = 0; i < np; ++i)
@@ -1011,7 +1018,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     {
         lastStatement = node.Body()->Statements().back().get();
     }
-    if (!lastStatement || !lastStatement->IsReturnStatementNode() || lastStatement->IsReturnStatementNode() && destructorCallGenerated)
+    if (!lastStatement || !lastStatement->IsReturnOrSequenceReturnStatementNode() || lastStatement->IsReturnOrSequenceReturnStatementNode() && destructorCallGenerated)
     {
         if (functionDefinition->ReturnType() && !functionDefinition->ReturnType()->IsVoidType() && !functionDefinition->ReturnsClass())
         {
@@ -1069,10 +1076,6 @@ void CodeGenerator::Visit(otava::symbols::BoundIfStatementNode& node)
     {
         falseBlock = nextBlock;
     }
-    if (node.InitStatement())
-    {
-        node.InitStatement()->Accept(*this);
-    }
     bool prevGenJumpingBoolCode = genJumpingBoolCode;
     genJumpingBoolCode = true;
     node.GetCondition()->Accept(*this);
@@ -1107,10 +1110,6 @@ void CodeGenerator::Visit(otava::symbols::BoundSwitchStatementNode& node)
     SetCurrentLineNumber(node.GetSourcePos());
     bool prevEmitLineNumbers = emitLineNumbers;
     emitLineNumbers = false;
-    if (node.InitStatement())
-    {
-        node.InitStatement()->Accept(*this);
-    }
     node.GetCondition()->Accept(*this);
     otava::intermediate::BasicBlock* prevDefaultBlock = defaultBlock;
     otava::intermediate::BasicBlock* prevBreakBlock = breakBlock;
@@ -1679,6 +1678,21 @@ void CodeGenerator::Visit(otava::symbols::BoundGlobalVariableDefinitionNode& nod
     }
     otava::intermediate::Value* irVariable = emitter->EmitGlobalVariable(irType, variable->IrName(&context), initializer);
     emitter->SetIrObject(variable, irVariable);
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundGotoStatementNode& node)
+{
+    otava::intermediate::BasicBlock* bb = node.GetBB(*emitter);
+    emitter->EmitJump(bb);
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundLabeledStatementNode& node)
+{
+    otava::intermediate::BasicBlock* bb = node.GetBB(*emitter);
+    emitter->EmitJump(bb);
+    emitter->SetCurrentBasicBlock(bb);
+    basicBlockOpen = true;
+    node.Stmt()->Accept(*this);
 }
 
 std::string GenerateCode(otava::symbols::Context& context, const std::string& config, int optLevel, bool verbose, std::string& mainIrName, 

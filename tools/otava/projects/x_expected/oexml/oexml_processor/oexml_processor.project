@@ -1,0 +1,15 @@
+project oexml_processor;
+target=library;
+define EXPECTED;
+reference <../../oeutil/oeutil.project>;
+reference <../../oesoul/oeast/oeast.project>;
+reference <../../oesoul/oelexer/oelexer.project>;
+interface <attribute.cppm>;
+source <attribute.cpp>;
+interface <content_handler.cppm>;
+source <content_handler.cpp>;
+interface <entity.cppm>;
+source <entity.cpp>;
+interface <processor.cppm>;
+source <processor.cpp>;
+interface <xml_processor.cppm>;

@@ -9,17 +9,17 @@ import util.text.util;
 
 namespace util {
 
-inline std::uint32_t LeftRotate(std::uint32_t  x, std::uint32_t  n)
+inline std::uint32_t LeftRotate(std::uint32_t  x, std::uint32_t  n) noexcept
 {
     return (x << n) ^ (x >> (32 - n));
 }
 
-Sha1::Sha1()
+Sha1::Sha1() noexcept
 {
     Reset();
 }
 
-void Sha1::Reset()
+void Sha1::Reset() noexcept
 {
     digest[0] = 0x67452301u;
     digest[1] = 0xEFCDAB89u;
@@ -30,7 +30,7 @@ void Sha1::Reset()
     bitCount = 0u;
 }
 
-void Sha1::Process(void* begin, void* end)
+void Sha1::Process(void* begin, void* end) noexcept
 {
     std::uint8_t* b = static_cast<std::uint8_t*>(begin);
     std::uint8_t* e = static_cast<std::uint8_t*>(end);
@@ -41,7 +41,7 @@ void Sha1::Process(void* begin, void* end)
     }
 }
 
-std::string Sha1::GetDigest()
+std::string Sha1::GetDigest() 
 {
     ProcessByte(0x80u);
     if (byteIndex > 56u)
@@ -78,7 +78,7 @@ std::string Sha1::GetDigest()
     return s;
 }
 
-void Sha1::ProcessBlock()
+void Sha1::ProcessBlock() noexcept
 {
     std::uint32_t w[80];
     for (int i = 0; i < 16; ++i)

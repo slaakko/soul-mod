@@ -1,0 +1,12 @@
+solution oexml;
+project <../oeutil/oeutil.project>;
+project <../oesoul/oeast/oeast.project>;
+project <../oesoul/oelexer/oelexer.project>;
+project <../oesoul/oeparser/oeparser.project>;
+project <oedom/oedom.project>;
+project <oexml_processor/oexml_processor.project>;
+project <oexml_parser/oexml_parser.project>;
+project <oexml_stats/oexml_stats.project>;
+project <oedom_parser/oedom_parser.project>;
+project <oexpath/oexpath.project>;
+project <oexpath_test/oexpath_test.project>;

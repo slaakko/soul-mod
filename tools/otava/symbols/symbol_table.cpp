@@ -1026,7 +1026,8 @@ Symbol* SymbolTable::Lookup(const std::u32string& name, SymbolGroupKind symbolGr
     return symbol;
 }
 
-Symbol* SymbolTable::LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags)
+Symbol* SymbolTable::LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos,
+    Context* context, LookupFlags flags)
 {
     if (topScopeIndex == -1) return nullptr;
     for (int i = scopeStack.size() - 1; i >= topScopeIndex; --i)
@@ -1109,8 +1110,8 @@ void SymbolTable::ResolveForwardDeclarations()
     }
 }
 
-void SymbolTable::CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs,
-    int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context)
+void SymbolTable::CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName, 
+    const std::vector<TypeSymbol*>& templateArgs, int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context)
 {
     std::vector<Symbol*> symbols;
     std::set<const Scope*> visited;
@@ -1634,8 +1635,8 @@ void SymbolTable::RemoveTemplateDeclaration()
     }
 }
 
-void SymbolTable::AddTemplateParameter(const std::u32string& name, otava::ast::Node* node, Symbol* constraint, int index, ParameterSymbol* parameter, otava::ast::Node* defaultTemplateArgNode,
-    Context* context)
+void SymbolTable::AddTemplateParameter(const std::u32string& name, otava::ast::Node* node, Symbol* constraint, int index, 
+    ParameterSymbol* parameter, otava::ast::Node* defaultTemplateArgNode, Context* context)
 {
     TemplateParameterSymbol* templateParameterSymbol = new TemplateParameterSymbol(constraint, name, GetTemplateParameterId(index), index, defaultTemplateArgNode);
     if (parameter)
@@ -1949,6 +1950,7 @@ ClassTemplateSpecializationSymbol* SymbolTable::MakeClassTemplateSpecialization(
     ClassTemplateSpecializationSymbol* sp = symbol.release();
     AddClassTemplateSpecialization(sp);
     MapClassTemplateSpecialization(sp);
+    sp->SetParent(classTemplate->GetScope()->GetNamespaceScope()->GetSymbol());
     return sp;
 }
 

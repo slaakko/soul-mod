@@ -10,8 +10,8 @@ namespace util {
 class Rng
 {
 public:
-    Rng(std::uint64_t seed_);
-    std::uint8_t Get() { return dist(mt); }
+    Rng(std::uint64_t seed_) noexcept;
+    inline std::uint8_t Get() noexcept { return dist(mt); }
 private:
     std::random_device rd;
     std::uint64_t seed;
@@ -19,7 +19,7 @@ private:
     std::uniform_int_distribution<> dist;
 };
 
-std::uint64_t GetSeed(std::uint64_t seed, std::random_device& rd)
+std::uint64_t GetSeed(std::uint64_t seed, std::random_device& rd) noexcept
 {
     if (seed == -1)
     {
@@ -31,16 +31,16 @@ std::uint64_t GetSeed(std::uint64_t seed, std::random_device& rd)
     }
 }
 
-Rng::Rng(std::uint64_t seed_) : rd(), seed(GetSeed(seed_, rd)), mt(seed), dist(0, 255)
+Rng::Rng(std::uint64_t seed_) noexcept : rd(), seed(GetSeed(seed_, rd)), mt(seed), dist(0, 255)
 {
 }
 
 class Rng32
 {
 public:
-    Rng32(std::uint64_t seed_);
-    std::uint32_t Get() { return dist(mt); }
-    std::uint64_t Seed() const { return seed; }
+    Rng32(std::uint64_t seed_) noexcept;
+    inline std::uint32_t Get() noexcept  { return dist(mt); }
+    inline std::uint64_t Seed() const { return seed; }
 private:
     std::random_device rd;
     std::uint64_t seed;
@@ -48,16 +48,16 @@ private:
     std::uniform_int_distribution<std::uint32_t> dist;
 };
 
-Rng32::Rng32(std::uint64_t seed_) : rd(), seed(GetSeed(seed_, rd)), mt(seed), dist(0, std::numeric_limits<std::uint32_t>::max())
+Rng32::Rng32(std::uint64_t seed_) noexcept : rd(), seed(GetSeed(seed_, rd)), mt(seed), dist(0, std::numeric_limits<std::uint32_t>::max())
 {
 }
 
 class Rng64
 {
 public:
-    Rng64(std::uint64_t seed_);
-    std::uint64_t Get() { return dist(mt); }
-    std::uint64_t Seed() const { return seed; }
+    Rng64(std::uint64_t seed_) noexcept;
+    std::uint64_t Get() noexcept { return dist(mt); }
+    std::uint64_t Seed() const noexcept { return seed; }
 private:
     std::random_device rd;
     std::uint64_t seed;
@@ -65,7 +65,7 @@ private:
     std::uniform_int_distribution<std::uint64_t> dist;
 };
 
-Rng64::Rng64(std::uint64_t seed_) : rd(), seed(GetSeed(seed_, rd)), mt(seed), dist(0, std::numeric_limits<std::uint64_t>::max())
+Rng64::Rng64(std::uint64_t seed_) noexcept : rd(), seed(GetSeed(seed_, rd)), mt(seed), dist(0, std::numeric_limits<std::uint64_t>::max())
 {
 }
 
@@ -74,12 +74,12 @@ thread_local Rng* rng = nullptr;
 thread_local Rng32* rng32 = nullptr;
 thread_local Rng64* rng64 = nullptr;
 
-void set_rand_seed(std::uint64_t seed)
+void set_rand_seed(std::uint64_t seed) noexcept
 {
     init_seed = seed;
 }
 
-void reset_rng()
+void reset_rng() noexcept
 {
     if (rng)
     {
@@ -98,7 +98,7 @@ void reset_rng()
     }
 }
 
-std::uint8_t get_random_byte()
+std::uint8_t get_random_byte() noexcept
 {
     if (!rng)
     {
@@ -107,7 +107,7 @@ std::uint8_t get_random_byte()
     return rng->Get();
 }
 
-std::uint32_t Random()
+std::uint32_t Random() noexcept
 {
     if (!rng32)
     {
@@ -116,7 +116,7 @@ std::uint32_t Random()
     return rng32->Get();
 }
 
-std::uint64_t Random64()
+std::uint64_t Random64() noexcept
 {
     if (!rng64)
     {

@@ -61,10 +61,9 @@ void FunctionTemplateRepository::AddFunctionDefinition(const FunctionTemplateKey
     functionDefinitionNodes.push_back(std::unique_ptr<otava::ast::Node>(functionDefinitionNode));
 }
 
-FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap,
-    const soul::ast::SourcePos& sourcePos, Context* context)
+FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, 
+    const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    //std::cout << ">instantiate " << util::ToUtf8(functionTemplate->FullName()) << "\n";
     FunctionTemplateRepository* functionTemplateRepository = context->GetBoundCompileUnit()->GetFunctionTemplateRepository();
     std::vector<TypeSymbol*> templateArgumentTypes;
     TemplateDeclarationSymbol* templateDeclaration = functionTemplate->ParentTemplateDeclaration();
@@ -121,7 +120,8 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
                 }
                 else
                 {
-                    ThrowException("otava.symbols.function_templates: template parameter " + std::to_string(i) + " has no default type argument", node->GetSourcePos(), context);
+                    ThrowException("otava.symbols.function_templates: template parameter " +
+                        std::to_string(i) + " has no default type argument", node->GetSourcePos(), context);
                 }
             }
             else
@@ -148,7 +148,6 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
             {
                 specialization->SetSpecialization();
                 FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(specialization);
-                //std::cout << ">>instantiate " << util::ToUtf8(functionDefinition->FullName()) << "\n";
                 functionDefinition->SetFlag(FunctionSymbolFlags::fixedIrName);
                 if (!context->InstantiationIrName().empty())
                 {
@@ -160,6 +159,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
                     functionDefinition->SetCompileUnitId(context->GetBoundCompileUnit()->Id());
                 }
                 std::string irName = functionDefinition->IrName(context);
+                functionDefinition->SetParent(functionTemplate->GetScope()->GetNamespaceScope()->GetSymbol());
                 functionTemplateRepository->AddFunctionDefinition(key, functionDefinition, node);
                 context->PushBoundFunction(new BoundFunctionNode(functionDefinition, sourcePos));
                 functionDefinition = BindFunction(functionDefinitionNode, functionDefinition, context);
@@ -171,7 +171,6 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
                 }
                 context->PopBoundFunction();
                 functionDefinition->GetScope()->ClearParentScopes();
-                //std::cout << "<instantiate " << util::ToUtf8(functionTemplate->FullName()) << "\n";
             }
             else
             {
@@ -230,7 +229,8 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
                 }
                 else
                 {
-                    ThrowException("otava.symbols.function_templates: template parameter " + std::to_string(i) + " has no default type argument", node->GetSourcePos(), context);
+                    ThrowException("otava.symbols.function_templates: template parameter " + 
+                        std::to_string(i) + " has no default type argument", node->GetSourcePos(), context);
                 }
             }
             else
@@ -252,6 +252,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
             instantiator.SetFunctionNode(node);
             node->Accept(instantiator);
             specialization = instantiator.GetSpecialization();
+            specialization->SetParent(functionTemplate->GetScope()->GetNamespaceScope()->GetSymbol());
             context->RemoveSpecialization(node);
             if (specialization)
             {

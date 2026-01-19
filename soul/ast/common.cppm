@@ -15,7 +15,7 @@ class ExportModule
 {
 public:
     ExportModule(const std::string& moduleName_);
-    inline const std::string& ModuleName() const { return moduleName; }
+    inline const std::string& ModuleName() const noexcept { return moduleName; }
     std::string NamespaceName() const;
 private:
     std::string moduleName;
@@ -30,8 +30,8 @@ class Import
 {
 public:
     Import(const std::string& moduleName_, ImportPrefix prefix_);
-    inline const std::string& ModuleName() const { return moduleName; }
-    inline ImportPrefix Prefix() const { return prefix; }
+    inline const std::string& ModuleName() const noexcept { return moduleName; }
+    inline ImportPrefix Prefix() const noexcept { return prefix; }
 private:
     std::string moduleName;
     ImportPrefix prefix;
@@ -49,10 +49,10 @@ class File
 public:
     File(FileKind kind_, const std::string& filePath_);
     virtual ~File();
-    inline FileKind Kind() const { return kind; }
-    inline const std::string& FilePath() const { return filePath; }
-    inline bool IsExternal() const { return external; }
-    inline void SetExternal() { external = true; }
+    inline FileKind Kind() const noexcept { return kind; }
+    inline const std::string& FilePath() const noexcept { return filePath; }
+    inline bool IsExternal() const noexcept { return external; }
+    inline void SetExternal() noexcept { external = true; }
     virtual void Accept(Visitor& visitor);
 private:
     FileKind kind;
@@ -70,10 +70,10 @@ class Collection
 public:
     Collection(CollectionKind kind_, const std::string& name_);
     virtual ~Collection();
-    inline CollectionKind Kind() const { return kind; }
-    inline const std::string& Name() const { return name; }
-    inline void SetFile(File* file_) { file = file_; }
-    inline File* GetFile() const { return file; }
+    inline CollectionKind Kind() const noexcept { return kind; }
+    inline const std::string& Name() const noexcept { return name; }
+    inline void SetFile(File* file_) noexcept { file = file_; }
+    inline File* GetFile() const noexcept { return file; }
 private:
     CollectionKind kind;
     std::string name;
@@ -85,14 +85,14 @@ class Token
 public:
     Token(std::int64_t id_, const std::string& name_, const std::string& info_);
     Token(const std::string& name_, const std::string& info_);
-    inline void SetCollection(Collection* collection_) { collection = collection_; }
-    inline Collection* GetCollection() const { return collection; }
-    inline std::int64_t Id() const { return id; }
-    inline void SetId(std::int64_t id_) { id = id_; }
-    inline const std::string& Name() const { return name; }
-    inline const std::string& Info() const { return info; }
-    inline bool IsAny() const { return id == -1; }
-    inline bool IsEpsilon() const { return id == -2;  }
+    inline void SetCollection(Collection* collection_) noexcept { collection = collection_; }
+    inline Collection* GetCollection() const noexcept { return collection; }
+    inline std::int64_t Id() const noexcept { return id; }
+    inline void SetId(std::int64_t id_) noexcept { id = id_; }
+    inline const std::string& Name() const noexcept { return name; }
+    inline const std::string& Info() const noexcept { return info; }
+    inline bool IsAny() const noexcept { return id == -1; }
+    inline bool IsEpsilon() const noexcept { return id == -2;  }
     std::string FullName() const;
     std::string FullCppId() const;
     Token* Clone() const;
@@ -107,12 +107,12 @@ class TokenCollection : public Collection
 {
 public:
     TokenCollection(const std::string& name_);
-    inline bool Initialized() const { return initialized; }
-    inline void SetInitialized() { initialized = true; }
+    inline bool Initialized() const noexcept { return initialized; }
+    inline void SetInitialized() noexcept { initialized = true; }
     void AddToken(Token* token);
     inline const std::vector<std::unique_ptr<Token>>& Tokens() const { return tokens; }
-    inline std::int32_t Id() const { return id; }
-    Token* GetToken(std::int64_t id) const;
+    inline std::int32_t Id() const noexcept { return id; }
+    Token* GetToken(std::int64_t id) const noexcept;
     TokenCollection* Clone() const;
 private:
     bool initialized;
@@ -126,7 +126,7 @@ class TokenFile : public File
 public:
     TokenFile(const std::string& filePath_);
     void SetTokenCollection(TokenCollection* tokenCollection_);
-    inline TokenCollection* GetTokenCollection() const { return tokenCollection.get(); }
+    inline TokenCollection* GetTokenCollection() const noexcept { return tokenCollection.get(); }
     void Accept(Visitor& visitor) override;
     TokenFile* Clone() const;
 private:
@@ -140,9 +140,9 @@ public:
     void AddUsingToken(Token* usingToken);
     void AddToken(Token* token);
     std::vector<Token*> GetTokens(const std::string& tokenName) const;
-    Token* GetToken(const std::string& tokenFullName) const;
-    const Token* Any() const { return &any; }
-    const Token* Epsilon() const { return &epsilon; }
+    Token* GetToken(const std::string& tokenFullName) const noexcept;
+    const Token* Any() const noexcept { return &any; }
+    const Token* Epsilon() const noexcept { return &epsilon; }
 private:
     std::map<std::string, Token*> usingTokenMap;
     std::map<std::string, std::vector<Token*>> tokenMap;

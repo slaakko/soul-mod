@@ -19,17 +19,17 @@ enum class OpenMode : int
     binary = 1 << 3
 };
 
-inline constexpr OpenMode operator|(OpenMode left, OpenMode right)
+inline constexpr OpenMode operator|(OpenMode left, OpenMode right) noexcept
 {
     return OpenMode(int(left) | int(right));
 }
 
-inline constexpr OpenMode operator&(OpenMode left, OpenMode right)
+inline constexpr OpenMode operator&(OpenMode left, OpenMode right) noexcept
 {
     return OpenMode(int(left) & int(right));
 }
 
-inline constexpr OpenMode operator~(OpenMode mode)
+inline constexpr OpenMode operator~(OpenMode mode) noexcept
 {
     return OpenMode(~int(mode));
 }
@@ -40,7 +40,7 @@ public:
     explicit FileStream(int handle);
     FileStream(const std::string& filePath_, OpenMode openMode);
     ~FileStream() override;
-    inline const std::string& FilePath() const { return filePath; }
+    inline const std::string& FilePath() const noexcept { return filePath; }
     int ReadByte() override;
     std::int64_t Read(std::uint8_t* buf, std::int64_t count) override;
     void Write(std::uint8_t x) override;

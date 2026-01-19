@@ -27,9 +27,11 @@ class BoundBreakStatementNode;
 class BoundContinueStatementNode;
 class BoundReturnStatementNode;
 class BoundGotoStatementNode;
+class BoundLabeledStatementNode;
 class BoundConstructionStatementNode;
 class BoundExpressionStatementNode;
 class BoundSetVPtrStatementNode;
+class BoundAliasDeclarationStatementNode;
 class BoundValueExpressionNode;
 class BoundLiteralNode;
 class BoundStringLiteralNode;
@@ -89,9 +91,11 @@ public:
     virtual void Visit(BoundContinueStatementNode& node) {}
     virtual void Visit(BoundReturnStatementNode& node) {}
     virtual void Visit(BoundGotoStatementNode& node) {}
+    virtual void Visit(BoundLabeledStatementNode& node) {}
     virtual void Visit(BoundConstructionStatementNode& node) {}
     virtual void Visit(BoundExpressionStatementNode& node) {}
     virtual void Visit(BoundSetVPtrStatementNode& node) {}
+    virtual void Visit(BoundAliasDeclarationStatementNode& node) {}
     virtual void Visit(BoundValueExpressionNode& node) {}
     virtual void Visit(BoundLiteralNode& node) {}
     virtual void Visit(BoundStringLiteralNode& node) {}

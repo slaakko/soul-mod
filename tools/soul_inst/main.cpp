@@ -180,7 +180,7 @@ int main(int argc, const char** argv)
         {
             if (verbose)
             {
-                std::cout << "single path given" << "\n";
+                std::cout << "has only single valid path" << "\n";
             }
             return 0;
         }

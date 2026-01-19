@@ -199,7 +199,7 @@ const BinaryProperty& BinaryPropertyTable::GetBinaryProperty(BinaryPropertyId bi
     }
 }
 
-bool BinaryPropertyTable::IsBinaryProperty(const std::string& shortName) const
+bool BinaryPropertyTable::IsBinaryProperty(const std::string& shortName) const noexcept
 {
     return shortNameMap.find(MakeCanonicalPropertyName(shortName)) != shortNameMap.end();
 }

@@ -43,6 +43,13 @@ void BinaryExprNode::Read(Reader& reader)
     op.reset(reader.ReadNode());
 }
 
+std::u32string BinaryExprNode::Str() const
+{
+    std::u32string str = Left()->Str();
+    str.append(1, ' ').append(op->Str()).append(1, ' ').append(Right()->Str());
+    return str;
+}
+
 UnaryExprNode::UnaryExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::unaryExprNode, sourcePos_, nullptr)
 {
 }
@@ -72,6 +79,13 @@ void UnaryExprNode::Read(Reader& reader)
 {
     UnaryNode::Read(reader);
     op.reset(reader.ReadNode());
+}
+
+std::u32string UnaryExprNode::Str() const
+{
+    std::u32string str = op->Str();
+    str.append(Child()->Str());
+    return str;
 }
 
 ExpressionListNode::ExpressionListNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::expressionListNode, sourcePos_)
@@ -107,12 +121,27 @@ void ExpressionListNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
+std::u32string ExpressionListNode::Str() const
+{
+    std::u32string str = U"(";
+    str.append(ListNode::Str()).append(U")");
+    return str;
+}
+
 AssignmentInitNode::AssignmentInitNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::assignmentInitializerNode, sourcePos_, nullptr)
 {
 }
 
-AssignmentInitNode::AssignmentInitNode(const soul::ast::SourcePos& sourcePos_, Node* initializer_) : UnaryNode(NodeKind::assignmentInitializerNode, sourcePos_, initializer_)
+AssignmentInitNode::AssignmentInitNode(const soul::ast::SourcePos& sourcePos_, Node* initializer_) : 
+    UnaryNode(NodeKind::assignmentInitializerNode, sourcePos_, initializer_)
 {
+}
+
+std::u32string AssignmentInitNode::Str() const
+{
+    std::u32string str = U" = ";
+    str.append(Child()->Str());
+    return str;
 }
 
 Node* AssignmentInitNode::Clone() const
@@ -183,6 +212,14 @@ void ConditionalExprNode::Read(Reader& reader)
     thenExpr.reset(reader.ReadNode());
     colon.reset(reader.ReadNode());
     elseExpr.reset(reader.ReadNode());
+}
+
+std::u32string ConditionalExprNode::Str() const
+{
+    std::u32string str = condition->Str();
+    str.append(1, ' ').append(quest->Str()).append(1, ' ').append(thenExpr->Str()).
+        append(1, ' ').append(colon->Str()).append(1, ' ').append(elseExpr->Str());
+    return str;
 }
 
 AssignNode::AssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::assignNode, sourcePos_)
@@ -699,6 +736,13 @@ void CastExprNode::Read(Reader& reader)
     typeId.reset(reader.ReadNode());
     lpPos = reader.ReadSourcePos();
     rpPos = reader.ReadSourcePos();
+}
+
+std::u32string CastExprNode::Str() const
+{
+    std::u32string str = U"(";
+    str.append(typeId->Str()).append(U")").append(Child()->Str());
+    return str;
 }
 
 DerefNode::DerefNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::derefNode, sourcePos_)
@@ -1249,6 +1293,13 @@ void SubscriptExprNode::Read(Reader& reader)
     rbPos = reader.ReadSourcePos();
 }
 
+std::u32string SubscriptExprNode::Str() const
+{
+    std::u32string str = Child()->Str();
+    str.append(1, '[').append(index->Str()).append(1, ']');
+    return str;
+}
+
 InvokeExprNode::InvokeExprNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::invokeExprNode, sourcePos_), compileUnitInitFn(false)
 {
 }
@@ -1368,7 +1419,8 @@ MemberExprNode::MemberExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNo
 {
 }
 
-MemberExprNode::MemberExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* op_, Node* id_) : UnaryNode(NodeKind::memberExprNode, sourcePos_, child_), op(op_), id(id_)
+MemberExprNode::MemberExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* op_, Node* id_) : 
+    UnaryNode(NodeKind::memberExprNode, sourcePos_, child_), op(op_), id(id_)
 {
 }
 
@@ -1395,6 +1447,13 @@ void MemberExprNode::Read(Reader& reader)
     UnaryNode::Read(reader);
     op.reset(reader.ReadNode());
     id.reset(reader.ReadNode());
+}
+
+std::u32string MemberExprNode::Str() const
+{
+    std::u32string str = Child()->Str();
+    str.append(op->Str()).append(Id()->Str());
+    return str;
 }
 
 PostfixIncExprNode::PostfixIncExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::postfixIncExprNode, sourcePos_, nullptr)
@@ -1429,6 +1488,13 @@ void PostfixIncExprNode::Read(Reader& reader)
     opPos = reader.ReadSourcePos();
 }
 
+std::u32string PostfixIncExprNode::Str() const
+{
+    std::u32string str = Child()->Str();
+    str.append(U"++");
+    return str;
+}
+
 PostfixDecExprNode::PostfixDecExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::postfixDecExprNode, sourcePos_, nullptr)
 {
 }
@@ -1459,6 +1525,13 @@ void PostfixDecExprNode::Read(Reader& reader)
 {
     UnaryNode::Read(reader);
     opPos = reader.ReadSourcePos();
+}
+
+std::u32string PostfixDecExprNode::Str() const
+{
+    std::u32string str = Child()->Str();
+    str.append(U"--");
+    return str;
 }
 
 TypeIdExprNode::TypeIdExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::typeIdExprNode, sourcePos_, nullptr)
@@ -1493,6 +1566,13 @@ void TypeIdExprNode::Read(Reader& reader)
     UnaryNode::Read(reader);
     lpPos = reader.ReadSourcePos();
     rpPos = reader.ReadSourcePos();
+}
+
+std::u32string TypeIdExprNode::Str() const
+{
+    std::u32string str = U"typeid";
+    str.append(1, '(').append(Child()->Str()).append(1, ')');
+    return str;
 }
 
 DynamicCastNode::DynamicCastNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::dynamicCastNode, sourcePos_)
@@ -1598,6 +1678,13 @@ void CppCastExprNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
+std::u32string CppCastExprNode::Str() const
+{
+    std::u32string str = op->Str();
+    str.append(1, '<').append(typeId->Str()).append(1, '>').append(Child()->Str());
+    return str;
+}
+
 ThisNode::ThisNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::thisNode, sourcePos_)
 {
 }
@@ -1645,6 +1732,13 @@ void ParenthesizedExprNode::Read(Reader& reader)
     UnaryNode::Read(reader);
     lpPos = reader.ReadSourcePos();
     rpPos = reader.ReadSourcePos();
+}
+
+std::u32string ParenthesizedExprNode::Str() const
+{
+    std::u32string str(1, '(');
+    str.append(Child()->Str()).append(1, ')');
+    return str;
 }
 
 FoldExprNode::FoldExprNode(const soul::ast::SourcePos& sourcePos_) : SequenceNode(NodeKind::foldExprNode, sourcePos_)
@@ -1811,6 +1905,10 @@ void DesignatorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+ThrowExprNode::ThrowExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::throwExprNode, sourcePos_, nullptr)
+{
+}
+
 ThrowExprNode::ThrowExprNode(const soul::ast::SourcePos& sourcePos_, Node* expr_) : UnaryNode(NodeKind::throwExprNode, sourcePos_, expr_)
 {
 }
@@ -1829,6 +1927,13 @@ Node* ThrowExprNode::Clone() const
 void ThrowExprNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+std::u32string ThrowExprNode::Str() const
+{
+    std::u32string str = U"throw ";
+    str.append(Child()->Str());
+    return str;
 }
 
 } // namespace otava::ast

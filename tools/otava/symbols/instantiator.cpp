@@ -176,10 +176,6 @@ void Instantiator::Visit(otava::ast::IfStatementNode& node)
 {
     BlockSymbol* block = BeginBlock(node.GetSourcePos(), context);
     context->GetSymbolTable()->MapNode(&node, block);
-    if (node.InitStatement())
-    {
-        node.InitStatement()->Accept(*this);
-    }
     node.ThenStatement()->Accept(*this);
     if (node.ElseStatement())
     {
@@ -192,10 +188,6 @@ void Instantiator::Visit(otava::ast::SwitchStatementNode& node)
 {
     BlockSymbol* block = BeginBlock(node.GetSourcePos(), context);
     context->GetSymbolTable()->MapNode(&node, block);
-    if (node.InitStatement())
-    {
-        node.InitStatement()->Accept(*this);
-    }
     node.Statement()->Accept(*this);
     EndBlock(context);
 }

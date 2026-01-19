@@ -1,0 +1,14 @@
+project oexpath_test;
+target=program;
+define EXPECTED;
+reference <../../oeutil/oeutil.project>;
+reference <../../oesoul/oeast/oeast.project>;
+reference <../../oesoul/oelexer/oelexer.project>;
+reference <../../oesoul/oeparser/oeparser.project>;
+reference <../oexml_processor/oexml_processor.project>;
+reference <../oexml_parser/oexml_parser.project>;
+reference <../oedom/oedom.project>;
+reference <../oedom_parser/oedom_parser.project>;
+reference <../oexpath/oexpath.project>;
+source <main.cpp>;
+resource <../oexpath/soul.xml.xpath.lexer.classmap.rc>;

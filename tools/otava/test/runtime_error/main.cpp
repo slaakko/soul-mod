@@ -1,15 +1,23 @@
 import std;
 
-void foo()
+void foo(const std::string& msg)
 {
-    throw std::runtime_error("runtime error: foo");
+    throw std::runtime_error(msg);
 }
 
 int main()
 {
+    std::string msg = "runtime error: foo";
     try
     {
-        foo();
+        try
+        {
+            foo(msg);
+        }
+        catch (...)
+        {
+            throw;
+        }
     }
     catch (const std::exception& ex)
     {

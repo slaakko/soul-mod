@@ -178,6 +178,7 @@
     <None Include="token_file.parser" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="common.cppm" />
     <ClCompile Include="common.parser.cpp" />
     <ClCompile Include="common.parser.cppm" />
     <ClCompile Include="common_parser_rules.cpp" />

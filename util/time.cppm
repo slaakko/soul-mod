@@ -14,32 +14,32 @@ enum class Month : std::int8_t
     january = 1, february, march, april, may, june, july, august, september, october, november, december
 };
 
-int GetMonthDays(Month month, int year);
+int GetMonthDays(Month month, int year) noexcept;
 
 class Date
 {
 public:
-    inline Date() : year(0), month(Month::january), day(1)
+    inline Date() noexcept : year(0), month(Month::january), day(1)
     {
     }
-    inline Date(short year_, Month month_, std::int8_t day_) : year(year_), month(month_), day(day_)
+    inline Date(short year_, Month month_, std::int8_t day_) noexcept : year(year_), month(month_), day(day_)
     {
     }
-    inline std::int16_t Year() const
+    inline std::int16_t Year() const noexcept
     {
         return year;
     }
-    inline Month GetMonth() const
+    inline Month GetMonth() const noexcept
     {
         return month;
     }
-    inline std::int8_t Day() const
+    inline std::int8_t Day() const noexcept
     {
         return day;
     }
-    Date AddDays(int n);
-    Date AddMonths(int n);
-    Date AddYears(int n);
+    Date AddDays(int n) noexcept;
+    Date AddMonths(int n) noexcept;
+    Date AddYears(int n) noexcept;
     std::string ToString() const;
     std::string ToString(bool omitDashes) const;
 private:
@@ -48,28 +48,28 @@ private:
     std::int8_t day;
 };
 
-Date GetCurrentDate();
+Date GetCurrentDate() noexcept;
 
-bool operator==(const Date& left, const Date& right);
+bool operator==(const Date& left, const Date& right) noexcept;
 
-inline bool operator!=(const Date& left, const Date& right)
+inline bool operator!=(const Date& left, const Date& right) noexcept
 {
     return !(left == right);
 }
 
-bool operator<(const Date& left, const Date& right);
+bool operator<(const Date& left, const Date& right) noexcept;
 
-inline bool operator>(const Date& left, const Date& right)
+inline bool operator>(const Date& left, const Date& right) noexcept
 {
     return right < left;
 }
 
-inline bool operator<=(const Date& left, const Date& right)
+inline bool operator<=(const Date& left, const Date& right) noexcept
 {
     return !(right > left);
 }
 
-inline bool operator>=(const Date& left, const Date& right)
+inline bool operator>=(const Date& left, const Date& right) noexcept
 {
     return !(left < right);
 }
@@ -79,28 +79,28 @@ Date ParseDate(const std::string& dateStr);
 class DateTime
 {
 public:
-    inline DateTime() : date(), secs(0)
+    inline DateTime() noexcept : date(), secs(0)
     {
     }
-    inline DateTime(const Date& date_) : date(date_), secs(0)
+    inline DateTime(const Date& date_) noexcept : date(date_), secs(0)
     {
     }
-    inline DateTime(const Date& date_, std::int32_t secs_) : date(date_), secs(secs_)
+    inline DateTime(const Date& date_, std::int32_t secs_) noexcept : date(date_), secs(secs_)
     {
     }
-    inline Date GetDate() const
+    inline Date GetDate() const noexcept
     {
         return date;
     }
-    inline std::int32_t Hours() const
+    inline std::int32_t Hours() const noexcept
     {
         return secs / 3600;
     }
-    inline std::int32_t Minutes() const
+    inline std::int32_t Minutes() const noexcept
     {
         return secs / 60;
     }
-    inline std::int32_t Seconds() const
+    inline std::int32_t Seconds() const noexcept
     {
         return secs;
     }
@@ -113,26 +113,26 @@ private:
 
 DateTime GetCurrentDateTime();
 
-bool operator==(const DateTime& left, const DateTime& right);
+bool operator==(const DateTime& left, const DateTime& right) noexcept;
 
-inline bool operator!=(const DateTime& left, const DateTime& right)
+inline bool operator!=(const DateTime& left, const DateTime& right) noexcept
 {
     return !(left == right);
 }
 
-bool operator<(const DateTime& left, const DateTime& right);
+bool operator<(const DateTime& left, const DateTime& right) noexcept;
 
-inline bool operator>(const DateTime& left, const DateTime& right)
+inline bool operator>(const DateTime& left, const DateTime& right) noexcept
 {
     return right < left;
 }
 
-inline bool operator<=(const DateTime& left, const DateTime& right)
+inline bool operator<=(const DateTime& left, const DateTime& right) noexcept
 {
     return !(right > left);
 }
 
-inline bool operator>=(const DateTime& left, const DateTime& right)
+inline bool operator>=(const DateTime& left, const DateTime& right) noexcept
 {
     return !(left < right);
 }
@@ -143,13 +143,13 @@ const int secsInDay = 24 * 3600;
 
 std::string FormatTimeMs(std::int32_t milliseconds);
 
-std::int64_t CurrentMs();
+std::int64_t CurrentMs() noexcept;
 
-std::int64_t GetCurrentTime();
+std::int64_t GetCurrentTime() noexcept;
 
 std::string DurationStr(const std::chrono::nanoseconds& duration);
 
-std::time_t Time();
+std::time_t Time() noexcept;
 
 std::time_t MkTime(const DateTime& dt);
 

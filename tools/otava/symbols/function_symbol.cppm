@@ -74,6 +74,8 @@ public:
     inline void SetConversion() { SetFlag(FunctionSymbolFlags::conversion); }
     inline bool IsConversionMemFn() const { return GetFunctionKind() == FunctionKind::conversionMemFn; }
     inline void SetConversionMemFn() { SetFunctionKind(FunctionKind::conversionMemFn); }
+    inline bool ContainsStatics() const { return GetFlag(FunctionSymbolFlags::containsStatics); }
+    inline void SetContainsStatics() { SetFlag(FunctionSymbolFlags::containsStatics); }
     inline bool Skip() const { return GetFlag(FunctionSymbolFlags::skip); }
     inline void SetSkip() { SetFlag(FunctionSymbolFlags::skip); }
     virtual bool IsArrayElementAccess() const { return false; }
@@ -206,6 +208,7 @@ public:
     void SetDeclaration(FunctionSymbol* declaration_) { declaration = declaration_; }
     FunctionSymbol* Declaration() const { return declaration; }
     std::string IrName(Context* context) const override;
+    bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const override;
     void SetReturnType(TypeSymbol* returnType_, Context* context) override;
     void Write(Writer& writer) override;
@@ -238,6 +241,8 @@ public:
     std::u32string ResultVarExprStr(TypeSymbol* resultType) const;
     void SetResultVarName(const std::u32string& resultVarName_);
     TypeSymbol* NonChildFunctionResultType(Context* context) const;
+    inline bool ContainsGotosOrLabels() const { return containsGotosOrLabels; }
+    inline void SetContainsGotosOrLabels() { containsGotosOrLabels = true; }
 private:
     FunctionSymbol* declaration;
     util::uuid declarationId;
@@ -246,6 +251,7 @@ private:
     FunctionDefinitionSymbol* parentFn;
     Scope* parentFnScope;
     std::u32string resultVarName;
+    bool containsGotosOrLabels;
 };
 
 class ExplicitlyInstantiatedFunctionDefinitionSymbol : public FunctionDefinitionSymbol

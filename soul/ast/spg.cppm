@@ -29,10 +29,10 @@ class ParamVar
 public:
     ParamVar(const soul::ast::SourcePos& sourcePos_, ParamVarKind kind_, soul::ast::cpp::TypeIdNode* type_, const std::string& name_);
     virtual ~ParamVar();
-    inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
-    inline ParamVarKind Kind() const { return kind; }
-    inline soul::ast::cpp::TypeIdNode* Type() const { return type.get(); }
-    inline const std::string& Name() const { return name; }
+    inline const soul::ast::SourcePos& GetSourcePos() const noexcept { return sourcePos; }
+    inline ParamVarKind Kind() const noexcept { return kind; }
+    inline soul::ast::cpp::TypeIdNode* Type() const noexcept { return type.get(); }
+    inline const std::string& Name() const noexcept { return name; }
     virtual ParamVar* Clone() const = 0;
 private:
     soul::ast::SourcePos sourcePos;
@@ -60,9 +60,9 @@ class CharSet
 public:
     CharSet();
     CharSet* Clone() const;
-    inline bool Inverse() const { return inverse; }
-    inline void SetInverse() { inverse = true; }
-    inline const std::vector<Range>& Ranges() const { return ranges; }
+    inline bool Inverse() const noexcept { return inverse; }
+    inline void SetInverse() noexcept { inverse = true; }
+    inline const std::vector<Range>& Ranges() const noexcept { return ranges; }
     void AddRange(const Range& range);
 private:
     bool inverse;
@@ -71,7 +71,7 @@ private:
 
 struct TokenIdLess
 {
-    inline bool operator()(const soul::ast::common::Token* left, const soul::ast::common::Token* right) const
+    inline bool operator()(const soul::ast::common::Token* left, const soul::ast::common::Token* right) const noexcept
     {
         return left->Id() < right->Id();
     }
@@ -83,10 +83,10 @@ public:
     TokenSet();
     bool AddToken(const soul::ast::common::Token* token);
     bool Merge(const TokenSet& that);
-    bool Contains(const soul::ast::common::Token* token) const;
-    bool Intersects(const TokenSet& that) const;
+    bool Contains(const soul::ast::common::Token* token) const noexcept;
+    bool Intersects(const TokenSet& that) const noexcept;
     std::string ToString() const;
-    inline const std::set<const soul::ast::common::Token*, TokenIdLess>& Tokens() const { return tokens; }
+    inline const std::set<const soul::ast::common::Token*, TokenIdLess>& Tokens() const noexcept { return tokens; }
 private:
     std::set<const soul::ast::common::Token*, TokenIdLess> tokens;
 };
@@ -107,25 +107,25 @@ class Parser
 {
 public:
     Parser(const soul::ast::SourcePos& sourcePos_, ParserKind kind_);
-    inline Parser* Parent() const { return parent; }
-    inline void SetParent(Parser* parent_) { parent = parent_; }
-    inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
+    inline Parser* Parent() const noexcept { return parent; }
+    inline void SetParent(Parser* parent_) noexcept { parent = parent_; }
+    inline const soul::ast::SourcePos& GetSourcePos() const noexcept { return sourcePos; }
     virtual ~Parser();
     virtual Parser* Clone() const = 0;
     virtual void Accept(Visitor& visitor) = 0;
     virtual std::string Name() const = 0;
     virtual void ComputeFirst(bool& changed, std::set<Parser*>& visited) = 0;
-    inline ParserKind Kind() const { return kind; }
-    inline bool IsActionParser() const { return kind == ParserKind::actionParser; }
-    inline bool IsNonterminalParser() const { return kind == ParserKind::nonterminalParser; }
-    inline bool IsTokenParser() const { return kind == ParserKind::tokenParser; }
-    inline bool IsListParser() const { return kind == ParserKind::listParser; }
-    inline bool IsSwitchParser() const { return kind == ParserKind::switchParser; }
-    inline bool IsDifferenceParser() const { return kind == ParserKind::differenceParser; }
-    inline bool IsGrammarParser() const { return kind == ParserKind::grammarParser; }
-    inline const TokenSet& First() const { return first; }
-    inline TokenSet& First() { return first; }
-    soul::ast::common::TokenMap* GetTokenMap();
+    inline ParserKind Kind() const noexcept { return kind; }
+    inline bool IsActionParser() const noexcept { return kind == ParserKind::actionParser; }
+    inline bool IsNonterminalParser() const noexcept { return kind == ParserKind::nonterminalParser; }
+    inline bool IsTokenParser() const noexcept { return kind == ParserKind::tokenParser; }
+    inline bool IsListParser() const noexcept { return kind == ParserKind::listParser; }
+    inline bool IsSwitchParser() const noexcept { return kind == ParserKind::switchParser; }
+    inline bool IsDifferenceParser() const noexcept { return kind == ParserKind::differenceParser; }
+    inline bool IsGrammarParser() const noexcept { return kind == ParserKind::grammarParser; }
+    inline const TokenSet& First() const noexcept { return first; }
+    inline TokenSet& First() noexcept { return first; }
+    soul::ast::common::TokenMap* GetTokenMap() noexcept;
 private:
     Parser* parent;
     soul::ast::SourcePos sourcePos;
@@ -136,8 +136,8 @@ private:
 class UnaryParser : public Parser
 {
 public:
-    UnaryParser(const soul::ast::SourcePos& sourcePos_, ParserKind kind_, Parser* child_);
-    Parser* Child() const { return child.get(); }
+    UnaryParser(const soul::ast::SourcePos& sourcePos_, ParserKind kind_, Parser* child_) noexcept;
+    Parser* Child() const noexcept { return child.get(); }
     void ComputeFirst(bool& changed, std::set<Parser*>& visited) override;
 private:
     std::unique_ptr<Parser> child;
@@ -146,9 +146,9 @@ private:
 class BinaryParser : public Parser
 {
 public:
-    BinaryParser(const soul::ast::SourcePos& sourcePos_, ParserKind kind_, Parser* left_, Parser* right_);
-    inline Parser* Left() const { return left.get(); }
-    inline Parser* Right() const { return right.get(); }
+    BinaryParser(const soul::ast::SourcePos& sourcePos_, ParserKind kind_, Parser* left_, Parser* right_) noexcept;
+    inline Parser* Left() const noexcept { return left.get(); }
+    inline Parser* Right() const noexcept { return right.get(); }
 private:
     std::unique_ptr<Parser> left;
     std::unique_ptr<Parser> right;
@@ -157,13 +157,13 @@ private:
 class ChoiceParser : public BinaryParser
 {
 public:
-    ChoiceParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_);
+    ChoiceParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_) noexcept;
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "choice"; }
     void ComputeFirst(bool& changed, std::set<Parser*>& visited) override;
     void SetOptimizationFlag(int& count);
-    inline bool Optimize() const { return optimize; }
+    inline bool Optimize() const noexcept { return optimize; }
 private:
     bool optimize;
 };
@@ -171,7 +171,7 @@ private:
 class CaseParser : public UnaryParser
 {
 public:
-    CaseParser(const soul::ast::SourcePos& sourcePos_, Parser* child_);
+    CaseParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) noexcept;
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "case"; }
@@ -180,12 +180,12 @@ public:
 class SwitchParser : public Parser
 {
 public:
-    SwitchParser(const soul::ast::SourcePos& sourcePos_);
+    SwitchParser(const soul::ast::SourcePos& sourcePos_) noexcept;
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "switch"; }
     void ComputeFirst(bool& changed, std::set<Parser*>& visited) override;
-    inline const std::vector<std::unique_ptr<CaseParser>>& CaseParsers() const { return caseParsers; }
+    inline const std::vector<std::unique_ptr<CaseParser>>& CaseParsers() const noexcept { return caseParsers; }
     void AddCaseParser(CaseParser* caseParser);
 private:
     std::vector<std::unique_ptr<CaseParser>> caseParsers;
@@ -194,7 +194,7 @@ private:
 class SequenceParser : public BinaryParser
 {
 public:
-    SequenceParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_);
+    SequenceParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_) noexcept;
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "sequence"; }
@@ -204,7 +204,7 @@ public:
 class DifferenceParser : public BinaryParser
 {
 public:
-    DifferenceParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_);
+    DifferenceParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_) noexcept;
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "difference"; }
@@ -214,10 +214,10 @@ public:
 class ListParser : public UnaryParser
 {
 public:
-    ListParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_);
+    ListParser(const soul::ast::SourcePos& sourcePos_, Parser* left_, Parser* right_) noexcept;
     Parser* Clone() const override;
-    inline Parser* Left() const { return left; }
-    inline Parser* Right() const { return right; }
+    inline Parser* Left() const noexcept { return left; }
+    inline Parser* Right() const noexcept { return right; }
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "list"; }
 private:
@@ -228,7 +228,7 @@ private:
 class LookaheadParser : public UnaryParser
 {
 public:
-    LookaheadParser(const soul::ast::SourcePos& sourcePos_, Parser* child_);
+    LookaheadParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) noexcept;
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "lookahead"; }
@@ -237,7 +237,7 @@ public:
 class KleeneParser : public UnaryParser
 {
 public:
-    KleeneParser(const soul::ast::SourcePos& sourcePos_, Parser* child_);
+    KleeneParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) noexcept;
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "kleene"; }
@@ -247,7 +247,7 @@ public:
 class PositiveParser : public UnaryParser
 {
 public:
-    PositiveParser(const soul::ast::SourcePos& sourcePos_, Parser* child_);
+    PositiveParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) noexcept;
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "positive"; }
@@ -256,7 +256,7 @@ public:
 class OptionalParser : public UnaryParser
 {
 public:
-    OptionalParser(const soul::ast::SourcePos& sourcePos_, Parser* child_);
+    OptionalParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) noexcept;
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "optional"; }
@@ -266,7 +266,7 @@ public:
 class ExpectationParser : public UnaryParser
 {
 public:
-    ExpectationParser(const soul::ast::SourcePos& sourcePos_, Parser* child_);
+    ExpectationParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) noexcept;
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "expectation"; }
@@ -275,9 +275,10 @@ public:
 class ActionParser : public UnaryParser
 {
 public:
-    ActionParser(const soul::ast::SourcePos& sourcePos_, Parser* child_, soul::ast::cpp::CompoundStatementNode* successCode_, soul::ast::cpp::CompoundStatementNode* failureCode_);
-    inline soul::ast::cpp::CompoundStatementNode* SuccessCode() const { return successCode.get(); }
-    inline soul::ast::cpp::CompoundStatementNode* FailureCode() const { return failureCode.get(); }
+    ActionParser(const soul::ast::SourcePos& sourcePos_, Parser* child_, soul::ast::cpp::CompoundStatementNode* successCode_, 
+        soul::ast::cpp::CompoundStatementNode* failureCode_) noexcept;
+    inline soul::ast::cpp::CompoundStatementNode* SuccessCode() const noexcept { return successCode.get(); }
+    inline soul::ast::cpp::CompoundStatementNode* FailureCode() const noexcept { return failureCode.get(); }
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "action"; }
@@ -292,11 +293,11 @@ class NonterminalParser : public Parser
 {
 public:
     NonterminalParser(const soul::ast::SourcePos& sourcePos_, const std::string& ruleName_, const std::string& instanceName_, soul::ast::cpp::ExprListNode* args_);
-    inline const std::string& RuleName() const { return ruleName; }
-    inline const std::string& InstanceName() const { return instanceName; }
-    inline const std::unique_ptr<soul::ast::cpp::ExprListNode>& Arguments() const { return arguments; }
-    inline void SetRule(RuleParser* rule_) { rule = rule_; }
-    inline RuleParser* Rule() const { return rule; }
+    inline const std::string& RuleName() const noexcept { return ruleName; }
+    inline const std::string& InstanceName() const noexcept { return instanceName; }
+    inline const std::unique_ptr<soul::ast::cpp::ExprListNode>& Arguments() const noexcept { return arguments; }
+    inline void SetRule(RuleParser* rule_) noexcept { rule = rule_; }
+    inline RuleParser* Rule() const noexcept { return rule; }
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "nonterminal"; }
@@ -312,7 +313,7 @@ private:
 class EmptyParser : public Parser
 {
 public:
-    EmptyParser(const soul::ast::SourcePos& sourcePos_);
+    EmptyParser(const soul::ast::SourcePos& sourcePos_) noexcept;
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "empty"; }
@@ -322,7 +323,7 @@ public:
 class AnyParser : public Parser
 {
 public:
-    AnyParser(const soul::ast::SourcePos& sourcePos_);
+    AnyParser(const soul::ast::SourcePos& sourcePos_) noexcept;
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "any"; }
@@ -333,12 +334,12 @@ class TokenParser : public Parser
 {
 public:
     TokenParser(const soul::ast::SourcePos& sourcePos_, const std::string& tokenName_);
-    const std::string& TokenName() const { return tokenName; }
+    const std::string& TokenName() const noexcept { return tokenName; }
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "token"; }
-    inline soul::ast::common::Token* GetToken() const { return token; }
-    inline void SetToken(soul::ast::common::Token* token_) { token = token_; }
+    inline soul::ast::common::Token* GetToken() const noexcept { return token; }
+    inline void SetToken(soul::ast::common::Token* token_) noexcept { token = token_; }
     void ComputeFirst(bool& changed, std::set<Parser*>& visited) override;
 private:
     std::string tokenName;
@@ -348,8 +349,8 @@ private:
 class CharParser : public Parser
 {
 public:
-    CharParser(const soul::ast::SourcePos& sourcePos_, char32_t chr_);
-    inline char32_t Chr() const { return chr; }
+    CharParser(const soul::ast::SourcePos& sourcePos_, char32_t chr_) noexcept;
+    inline char32_t Chr() const noexcept { return chr; }
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "char"; }
@@ -362,8 +363,8 @@ class StringParser : public Parser
 {
 public:
     StringParser(const soul::ast::SourcePos& sourcePos_, const std::u32string& str_);
-    inline const std::u32string& Str() const { return str; }
-    inline const std::string& ArrayName() const { return arrayName; }
+    inline const std::u32string& Str() const noexcept { return str; }
+    inline const std::string& ArrayName() const noexcept { return arrayName; }
     void SetArrayName(const std::string& arrayName_);
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -377,9 +378,9 @@ private:
 class CharSetParser : public Parser
 {
 public:
-    CharSetParser(const soul::ast::SourcePos& sourcePos_, CharSet* charSet_);
-    inline CharSet* GetCharSet() const { return charSet.get(); }
-    inline const std::string& ArrayName() const { return arrayName; }
+    CharSetParser(const soul::ast::SourcePos& sourcePos_, CharSet* charSet_) noexcept;
+    inline CharSet* GetCharSet() const noexcept { return charSet.get(); }
+    inline const std::string& ArrayName() const noexcept { return arrayName; }
     void SetArrayName(const std::string& arrayName_);
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -393,7 +394,7 @@ private:
 class GroupParser : public UnaryParser
 {
 public:
-    GroupParser(const soul::ast::SourcePos& sourcePos_, Parser* child_);
+    GroupParser(const soul::ast::SourcePos& sourcePos_, Parser* child_) noexcept;
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "group"; }
@@ -405,26 +406,26 @@ class RuleParser : public Parser
 {
 public:
     RuleParser(const soul::ast::SourcePos& sourcePos_, const std::string& name_);
-    inline std::string Name() const override { return name; }
-    inline void SetIndex(std::int32_t index_) { index = index_; }
-    inline std::int32_t Index() const { return index; }
-    inline void SetId(std::int64_t id_) { id = id_; }
-    inline std::int64_t Id() const { return id; }
+    std::string Name() const override { return name; }
+    inline void SetIndex(std::int32_t index_) noexcept { index = index_; }
+    inline std::int32_t Index() const noexcept { return index; }
+    inline void SetId(std::int64_t id_) noexcept { id = id_; }
+    inline std::int64_t Id() const noexcept { return id; }
     void SetInfo(const std::string& info_);
-    inline const std::string& Info() const { return info; }
+    inline const std::string& Info() const noexcept { return info; }
     void AddParamOrVariable(ParamVar* paramVar);
-    inline const std::vector<std::unique_ptr<Parameter>>& Params() const { return params; }
-    inline const std::vector<std::unique_ptr<Variable>>& Vars() const { return vars; }
-    void SetDefinition(Parser* definition_);
-    inline Parser* Definition() const { return definition.get(); }
-    void SetReturnType(soul::ast::cpp::TypeIdNode* returnType_);
-    inline soul::ast::cpp::TypeIdNode* ReturnType() const { return returnType.get(); }
+    inline const std::vector<std::unique_ptr<Parameter>>& Params() const noexcept { return params; }
+    inline const std::vector<std::unique_ptr<Variable>>& Vars() const noexcept { return vars; }
+    void SetDefinition(Parser* definition_) noexcept;
+    inline Parser* Definition() const noexcept { return definition.get(); }
+    void SetReturnType(soul::ast::cpp::TypeIdNode* returnType_) noexcept;
+    inline soul::ast::cpp::TypeIdNode* ReturnType() const noexcept { return returnType.get(); }
     void AddNonterminal(NonterminalParser* nonterminal);
-    inline const std::vector<NonterminalParser*>& Nonterminals() const { return nonterminals; }
-    void SetGrammar(GrammarParser* grammar_);
-    inline GrammarParser* Grammar() const { return grammar; }
-    inline bool HasReturn() const { return hasReturn; }
-    inline void SetHasReturn() { hasReturn = true; }
+    inline const std::vector<NonterminalParser*>& Nonterminals() const noexcept { return nonterminals; }
+    void SetGrammar(GrammarParser* grammar_) noexcept;
+    inline GrammarParser* Grammar() const noexcept { return grammar; }
+    inline bool HasReturn() const noexcept { return hasReturn; }
+    inline void SetHasReturn() noexcept { hasReturn = true; }
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     void ComputeFirst(bool& changed, std::set<Parser*>& visited) override;
@@ -457,20 +458,20 @@ class GrammarParser : public Parser
 public:
     GrammarParser(const soul::ast::SourcePos& sourcePos_, const std::string& name_);
     std::string Name() const override { return name; }
-    inline bool Main() const { return main; }
-    inline void SetMain() { main = true; }
-    inline std::int32_t Id() const { return id; }
-    inline void SetId(std::int32_t id_) { id = id_; }
-    inline ParserFile* GetParserFile() const { return parserFile; }
-    inline void SetParserFile(ParserFile* parserFile_) { parserFile = parserFile_; }
+    inline bool Main() const noexcept { return main; }
+    inline void SetMain() noexcept { main = true; }
+    inline std::int32_t Id() const noexcept { return id; }
+    inline void SetId(std::int32_t id_) noexcept { id = id_; }
+    inline ParserFile* GetParserFile() const noexcept { return parserFile; }
+    inline void SetParserFile(ParserFile* parserFile_) noexcept { parserFile = parserFile_; }
     void AddLexer(soul::ast::cpp::TypeIdNode* lexerTypeId);
-    inline const std::vector<std::unique_ptr<soul::ast::cpp::TypeIdNode>>& Lexers() const { return lexers; }
+    inline const std::vector<std::unique_ptr<soul::ast::cpp::TypeIdNode>>& Lexers() const noexcept { return lexers; }
     void AddUsing(const soul::ast::SourcePos& sourcePos, const std::string& fullName);
-    inline const std::vector<Using>& Usings() const { return usings; }
+    inline const std::vector<Using>& Usings() const noexcept { return usings; }
     bool AddRule(RuleParser* rule);
     bool MapRule(RuleParser* rule);
-    RuleParser* GetRule(const std::string& ruleName) const;
-    inline const std::vector<std::unique_ptr<RuleParser>>& Rules() const { return rules; }
+    RuleParser* GetRule(const std::string& ruleName) const noexcept;
+    inline const std::vector<std::unique_ptr<RuleParser>>& Rules() const noexcept { return rules; }
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     void ComputeFirst(bool& changed, std::set<Parser*>& visited) override;
@@ -490,9 +491,9 @@ class SpgFileDeclaration
 public:
     SpgFileDeclaration(const soul::ast::SourcePos& sourcePos_, soul::ast::common::FileKind fileKind_, const std::string& filePath_);
     virtual ~SpgFileDeclaration();
-    inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
-    inline soul::ast::common::FileKind GetFileKind() const { return fileKind; }
-    inline const std::string& FilePath() const { return filePath; }
+    inline const soul::ast::SourcePos& GetSourcePos() const noexcept { return sourcePos; }
+    inline soul::ast::common::FileKind GetFileKind() const noexcept { return fileKind; }
+    inline const std::string& FilePath() const noexcept { return filePath; }
 private:
     soul::ast::SourcePos sourcePos;
     soul::ast::common::FileKind fileKind;
@@ -503,7 +504,7 @@ class ParserFileDeclaration : public SpgFileDeclaration
 {
 public:
     ParserFileDeclaration(const soul::ast::SourcePos& sourcePos_, const std::string& filePath_, bool external_);
-    inline bool External() const { return external; }
+    inline bool External() const noexcept { return external; }
 private:
     bool external;
 };
@@ -512,7 +513,7 @@ class TokenFileDeclaration : public SpgFileDeclaration
 {
 public:
     TokenFileDeclaration(const soul::ast::SourcePos& sourcePos_, const std::string& filePath_, bool external_);
-    inline bool External() const { return external; }
+    inline bool External() const noexcept { return external; }
 private:
     bool external;
 };
@@ -522,15 +523,15 @@ class ParserFile : public soul::ast::common::File
 public:
     ParserFile(const std::string& filePath_);
     void SetExportModule(soul::ast::common::ExportModule* exportModule_);
-    inline soul::ast::common::ExportModule* ExportModule() const { return exportModule.get(); }
+    inline soul::ast::common::ExportModule* ExportModule() const noexcept { return exportModule.get(); }
     void AddImport(soul::ast::common::Import* imprt);
-    inline const std::vector<std::unique_ptr<soul::ast::common::Import>>& Imports() const { return imports; }
+    inline const std::vector<std::unique_ptr<soul::ast::common::Import>>& Imports() const noexcept { return imports; }
     void AddParser(soul::ast::spg::GrammarParser* parser);
-    inline const std::vector<std::unique_ptr<soul::ast::spg::GrammarParser>>& Parsers() const { return parsers; }
-    inline bool IsExternal() const { return external; }
-    inline void SetExternal() { external = true; }
+    inline const std::vector<std::unique_ptr<soul::ast::spg::GrammarParser>>& Parsers() const noexcept { return parsers; }
+    inline bool IsExternal() const noexcept { return external; }
+    inline void SetExternal() noexcept { external = true; }
     void Accept(soul::ast::common::Visitor& visitor) override;
-    inline soul::ast::common::TokenMap* GetTokenMap() { return &tokenMap; }
+    inline soul::ast::common::TokenMap* GetTokenMap() noexcept { return &tokenMap; }
 private:
     std::unique_ptr<soul::ast::common::ExportModule> exportModule;
     std::vector<std::unique_ptr<soul::ast::common::Import>> imports;
@@ -543,18 +544,18 @@ class SpgFile : public soul::ast::common::File
 {
 public:
     SpgFile(const std::string& filePath_, const std::string& projectName_);
-    const std::string& ProjectName() const { return projectName; }
+    const std::string& ProjectName() const noexcept { return projectName; }
     void AddDeclaration(SpgFileDeclaration* declaration);
-    inline const std::vector<std::unique_ptr<SpgFileDeclaration>>& Declarations() const { return declarations; }
+    inline const std::vector<std::unique_ptr<SpgFileDeclaration>>& Declarations() const noexcept { return declarations; }
     void AddParserFile(ParserFile* parserFile);
-    inline const std::vector<std::unique_ptr<ParserFile>>& ParserFiles() const { return parserFiles; }
+    inline const std::vector<std::unique_ptr<ParserFile>>& ParserFiles() const noexcept { return parserFiles; }
     void AddTokenFile(soul::ast::common::TokenFile* tokenFile);
-    inline const std::vector<std::unique_ptr<soul::ast::common::TokenFile>>& TokenFiles() const { return tokenFiles; }
+    inline const std::vector<std::unique_ptr<soul::ast::common::TokenFile>>& TokenFiles() const noexcept { return tokenFiles; }
     bool AddParser(GrammarParser* parser);
-    GrammarParser* GetParser(const std::string& name) const;
+    GrammarParser* GetParser(const std::string& name) const noexcept;
     void AddRule(RuleParser* rule);
-    inline const std::vector<RuleParser*>& Rules() const { return rules; }
-    soul::ast::common::TokenCollection* GetTokenCollection(const std::string& tokenCollectionName) const;
+    inline const std::vector<RuleParser*>& Rules() const noexcept { return rules; }
+    soul::ast::common::TokenCollection* GetTokenCollection(const std::string& tokenCollectionName) const noexcept;
     void Accept(soul::ast::common::Visitor& visitor) override;
 private:
     std::string projectName;

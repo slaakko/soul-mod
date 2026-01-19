@@ -149,6 +149,8 @@
   <ItemGroup>
     <ClCompile Include="codegen.cpp" />
     <ClCompile Include="codegen.cppm" />
+    <ClCompile Include="goto_target_map_builder.cpp" />
+    <ClCompile Include="goto_target_map_builder.cppm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\soul\ast\ast.vcxproj">

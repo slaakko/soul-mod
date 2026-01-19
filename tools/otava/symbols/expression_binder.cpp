@@ -13,6 +13,7 @@ import otava.symbols.class_group.symbol;
 import otava.symbols.classes;
 import otava.symbols.context;
 import otava.symbols.declaration;
+import otava.symbols.declarator;
 import otava.symbols.enums;
 import otava.symbols.enum_group.symbol;
 import otava.symbols.expr.parser;
@@ -436,6 +437,7 @@ public:
     void Visit(otava::ast::ThrowExprNode& node) override;
     void Visit(otava::ast::ConditionalExprNode& node) override;
     void Visit(otava::ast::OperatorFunctionIdNode& node) override;
+    void Visit(otava::ast::InitConditionNode& node) override;
 private:
     void BindBinaryOp(otava::ast::NodeKind op, const soul::ast::SourcePos& sourcePos, BoundExpressionNode* left, BoundExpressionNode* right);
     void BindUnaryOp(otava::ast::NodeKind op, const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand);
@@ -445,6 +447,7 @@ private:
     void BindAddrOf(const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand);
     void BindPrefixInc(const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand, otava::ast::Node* child);
     void BindPrefixDec(const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand, otava::ast::Node* child);
+    void BindDynamicCast(otava::ast::CppCastExprNode& node);
     Context* context;
     BoundExpressionNode* boundExpression;
     Scope* scope;
@@ -548,10 +551,6 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
         }
     }
     std::u32string groupName = OperatorGroupNameMap::Instance().GetGroupName(op, sourcePos, context);
-    if (groupName == U"operator<<")
-    {
-        int x = 0;
-    }
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
     args.push_back(std::unique_ptr<BoundExpressionNode>(left->Clone()));
     args.push_back(std::unique_ptr<BoundExpressionNode>(right->Clone()));
@@ -566,62 +565,56 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
     std::vector<std::unique_ptr<BoundExpressionNode>> args2;
     args2.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(left, sourcePos, type)));
     args2.push_back(std::unique_ptr<BoundExpressionNode>(right));
-    context->PushSetFlag(ContextFlags::noPtrOps);
+    context->PushSetFlag(ContextFlags::noPtrOps | ContextFlags::skipFirstPtrToBooleanConversion);
     std::unique_ptr<BoundFunctionCallNode> functionCall2 = ResolveOverload(scope, groupName, templateArgs, args2, sourcePos, context, ex2, match2);
     context->PopFlags();
-    if (!functionCall1 && !functionCall2)
+    if (functionCall1 && !functionCall2)
     {
-        Exception ex(std::string(ex1.what()) + "\n" + std::string(ex2.what()));
-        ThrowException(ex);
-    }
-    else if (functionCall1 && !functionCall2)
-    {
-        functionCall.reset(functionCall1.release());
         if (ex1.Warning())
         {
             PrintWarning(ex1);
         }
+        functionCall.reset(functionCall1.release());
     }
     else if (functionCall2 && !functionCall1)
     {
-        functionCall.reset(functionCall2.release());
         if (ex2.Warning())
         {
             PrintWarning(ex2);
         }
+        functionCall.reset(functionCall2.release());
     }
-    else
+    else if (functionCall1 && functionCall2)
     {
-        if (!match1.function || !match2.function)
+        if (BetterFunctionMatch()(match1, match2))
         {
-            if (match1.function)
+            if (ex1.Warning())
             {
-                functionCall.reset(functionCall1.release());
+                PrintWarning(ex1);
             }
-            else if (match2.function)
+            functionCall.reset(functionCall1.release());
+        }
+        else if (BetterFunctionMatch()(match2, match1))
+        {
+            if (ex2.Warning())
             {
-                functionCall.reset(functionCall2.release());
+                PrintWarning(ex2);
             }
-            else
-            {
-                functionCall.reset(functionCall1.release());
-            }
+            functionCall.reset(functionCall2.release());
         }
         else
         {
-            if (BetterFunctionMatch()(match1, match2))
+            if (ex1.Warning())
             {
-                functionCall.reset(functionCall1.release());
+                PrintWarning(ex1);
             }
-            else if (BetterFunctionMatch()(match2, match1))
-            {
-                functionCall.reset(functionCall2.release());
-            }
-            else
-            {
-                functionCall.reset(functionCall1.release());
-            }
+            functionCall.reset(functionCall1.release());
         }
+    }
+    else
+    {
+        Exception ex(std::string(ex1.what()) + "\n" + std::string(ex2.what()));
+        ThrowException(ex);
     }
     FunctionSymbol* functionSymbol = functionCall->GetFunctionSymbol();
     if (functionSymbol->IsVirtual())
@@ -838,8 +831,23 @@ void ExpressionBinder::BindPrefixDec(const soul::ast::SourcePos& sourcePos, Boun
     }
 }
 
+void ExpressionBinder::BindDynamicCast(otava::ast::CppCastExprNode& node)
+{
+    TypeSymbol* resultType = ResolveType(node.TypeId(), DeclarationFlags::none, context);
+    resultType = resultType->DirectType(context)->FinalType(node.GetSourcePos(), context);
+    node.Child()->Accept(*this);
+    TypeSymbol* argumentType = boundExpression->GetType()->DirectType(context)->FinalType(node.GetSourcePos(), context);
+    FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetDynamicPtrCastFn(argumentType, resultType, node.GetSourcePos(), context);
+    boundExpression = new BoundConversionNode(boundExpression, conversion, node.GetSourcePos());
+}
+
 void ExpressionBinder::Visit(otava::ast::CppCastExprNode& node)
 {
+    if (node.Op()->Kind() == otava::ast::NodeKind::dynamicCastNode)
+    {
+        BindDynamicCast(node);
+        return;
+    }
     TypeSymbol* resultType = ResolveType(node.TypeId(), DeclarationFlags::none, context);
     resultType = resultType->DirectType(context)->FinalType(node.GetSourcePos(), context);
     node.Child()->Accept(*this);
@@ -855,9 +863,11 @@ void ExpressionBinder::Visit(otava::ast::CppCastExprNode& node)
     }
     ArgumentMatch argumentMatch;
     FunctionMatch functionMatch;
+    context->PushSetFlag(ContextFlags::cast);
     FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
         resultType, boundExpression->GetType()->DirectType(context)->FinalType(node.GetSourcePos(), context), boundExpression, node.GetSourcePos(), 
         argumentMatch, functionMatch, context);
+    context->PopFlags();
     if (reinterpretCast)
     {
         context->PopFlags();
@@ -1087,6 +1097,12 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
             symbol = type->GetScope()->Lookup(node.Str(), groups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
         }
     }
+    Symbol* nsSymbol = nullptr;
+    if (symbol && symbol->IsNamespaceSymbol())
+    {
+        nsSymbol = symbol;
+        symbol = nullptr;
+    }
     if (!symbol)
     {
         StatementBinder* statementBinder = context->GetStatementBinder();
@@ -1100,7 +1116,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                     Scope* parentFnScope = fnDefSymbol->ParentFnScope();
                     if (parentFnScope)
                     {
-                        symbol = parentFnScope->Lookup(node.Str(), SymbolGroupKind::variableSymbolGroup, ScopeLookup::thisAndParentScope, node.GetSourcePos(),
+                        symbol = parentFnScope->Lookup(node.Str(), SymbolGroupKind::variableSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, node.GetSourcePos(),
                             context, LookupFlags::dontResolveSingle);
                         if (symbol)
                         {
@@ -1134,7 +1150,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                     Scope* parentFnScope = fnDefSymbol->ParentFnScope();
                     if (parentFnScope)
                     {
-                        symbol = parentFnScope->Lookup(node.Str(), SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisAndParentScope, node.GetSourcePos(),
+                        symbol = parentFnScope->Lookup(node.Str(), SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, node.GetSourcePos(),
                             context, LookupFlags::dontResolveSingle);
                         if (symbol)
                         {
@@ -1154,6 +1170,10 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                 }
             }
         }
+    }
+    if (!symbol && nsSymbol)
+    {
+        symbol = nsSymbol;
     }
     if (symbol)
     {
@@ -1350,7 +1370,8 @@ void ExpressionBinder::Visit(otava::ast::DestructorIdNode& node)
         }
         scope = s->GetScope();
     }
-    Symbol* symbol = scope->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+    Symbol* symbol = scope->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, node.GetSourcePos(), 
+        context, LookupFlags::dontResolveSingle);
     if (symbol && symbol->IsFunctionGroupSymbol())
     {
         FunctionGroupSymbol* functionGroupSymbol = static_cast<FunctionGroupSymbol*>(symbol);
@@ -1438,6 +1459,10 @@ void ExpressionBinder::Visit(otava::ast::TemplateIdNode& node)
 void ExpressionBinder::Visit(otava::ast::MemberExprNode& node)
 {
     std::unique_ptr<BoundExpressionNode> subject(BindExpression(node.Child(), context));
+    if (!subject)
+    {
+        ThrowException("member expression subject not resolved", node.GetSourcePos(), context);
+    }
     BindMemberExpr(&node, subject.release());
 }
 
@@ -1536,6 +1561,36 @@ void ExpressionBinder::BindMemberExpr(otava::ast::MemberExprNode* node, BoundExp
             boundExpression = new BoundMemberExprNode(subject, member.release(), node->Op()->Kind(), node->GetSourcePos(), nullptr);
         }
     }
+    else if (subject->IsBoundParentParameterNode() && member->IsBoundParentMemberVariable())
+    {
+        BoundParentParameterNode* param = static_cast<BoundParentParameterNode*>(subject);
+        if (param->GetType()->GetBaseType()->IsClassTypeSymbol())
+        {
+            BoundExpressionNode* thisPtr = nullptr;
+            if (node->Op()->Kind() == otava::ast::NodeKind::arrowNode)
+            {
+                thisPtr = param->Clone();
+            }
+            else
+            {
+                if (param->GetType()->IsReferenceType())
+                {
+                    thisPtr = new BoundRefToPtrNode(param, node->GetSourcePos(), param->GetType()->RemoveReference(context)->AddPointer(context));
+                }
+                else
+                {
+                    thisPtr = new BoundAddressOfNode(param, node->GetSourcePos(), param->GetType()->AddPointer(context));
+                }
+            }
+            BoundParentVariableNode* memberVar = static_cast<BoundParentVariableNode*>(member.release());
+            memberVar->SetThisPtr(thisPtr);
+            boundExpression = memberVar;
+        }
+        else
+        {
+            boundExpression = new BoundMemberExprNode(subject, member.release(), node->Op()->Kind(), node->GetSourcePos(), nullptr);
+        }
+    }
     else if (subject->IsBoundParentParameterNode() && member->IsBoundMemberVariable())
     {
         BoundParentParameterNode* param = static_cast<BoundParentParameterNode*>(subject);
@@ -1566,10 +1621,10 @@ void ExpressionBinder::BindMemberExpr(otava::ast::MemberExprNode* node, BoundExp
             boundExpression = new BoundMemberExprNode(subject, member.release(), node->Op()->Kind(), node->GetSourcePos(), nullptr);
         }
     }
-    else if (subject->IsBoundParentVariableNode() && member->IsBoundMemberVariable())
+    else if (subject->IsBoundParentLocalVariable() && member->IsBoundParentMemberVariable())
     {
         BoundParentVariableNode* parentVar = static_cast<BoundParentVariableNode*>(subject);
-        BoundVariableNode* memberVar = static_cast<BoundVariableNode*>(member.release());
+        BoundParentVariableNode* memberVar = static_cast<BoundParentVariableNode*>(member.release());
         if (node->Op()->Kind() == otava::ast::NodeKind::arrowNode)
         {
             memberVar->SetThisPtr(parentVar->Clone());
@@ -1589,9 +1644,84 @@ void ExpressionBinder::BindMemberExpr(otava::ast::MemberExprNode* node, BoundExp
         }
         boundExpression = memberVar;
     }
+    else if (subject->IsBoundParentLocalVariable() && member->IsBoundMemberVariable())
+    {
+        BoundParentVariableNode* localVar = static_cast<BoundParentVariableNode*>(subject);
+        BoundVariableNode* memberVar = static_cast<BoundVariableNode*>(member.release());
+        if (node->Op()->Kind() == otava::ast::NodeKind::arrowNode)
+        {
+            memberVar->SetThisPtr(localVar->Clone());
+        }
+        else
+        {
+            BoundExpressionNode* thisPtr = nullptr;
+            if (localVar->GetType()->IsReferenceType())
+            {
+                thisPtr = new BoundRefToPtrNode(localVar, node->GetSourcePos(), localVar->GetType()->RemoveReference(context)->AddPointer(context));
+            }
+            else
+            {
+                thisPtr = new BoundAddressOfNode(localVar, node->GetSourcePos(), localVar->GetType()->AddPointer(context));
+            }
+            memberVar->SetThisPtr(thisPtr);
+        }
+        boundExpression = memberVar;
+    }
+    else if (subject->IsBoundParentMemberVariable() && member->IsBoundParentMemberVariable())
+    {
+        BoundParentVariableNode* subjectVar = static_cast<BoundParentVariableNode*>(subject);
+        BoundParentVariableNode* memberVar = static_cast<BoundParentVariableNode*>(member.release());
+        if (node->Op()->Kind() == otava::ast::NodeKind::arrowNode)
+        {
+            memberVar->SetThisPtr(subjectVar->Clone());
+        }
+        else
+        {
+            BoundExpressionNode* thisPtr = nullptr;
+            if (subjectVar->GetType()->IsReferenceType())
+            {
+                thisPtr = new BoundRefToPtrNode(subjectVar, node->GetSourcePos(), subjectVar->GetType()->RemoveReference(context)->AddPointer(context));
+            }
+            else
+            {
+                thisPtr = new BoundAddressOfNode(subjectVar, node->GetSourcePos(), subjectVar->GetType()->AddPointer(context));
+            }
+            memberVar->SetThisPtr(thisPtr);
+        }
+        boundExpression = memberVar;
+    }
+    else if (subject->IsBoundParentMemberVariable() && member->IsBoundMemberVariable())
+    {
+        BoundParentVariableNode* subjectVar = static_cast<BoundParentVariableNode*>(subject);
+        BoundVariableNode* memberVar = static_cast<BoundVariableNode*>(member.release());
+        if (node->Op()->Kind() == otava::ast::NodeKind::arrowNode)
+        {
+            memberVar->SetThisPtr(subjectVar->Clone());
+        }
+        else
+        {
+            BoundExpressionNode* thisPtr = nullptr;
+            if (subjectVar->GetType()->IsReferenceType())
+            {
+                thisPtr = new BoundRefToPtrNode(subjectVar, node->GetSourcePos(), subjectVar->GetType()->RemoveReference(context)->AddPointer(context));
+            }
+            else
+            {
+                thisPtr = new BoundAddressOfNode(subjectVar, node->GetSourcePos(), subjectVar->GetType()->AddPointer(context));
+            }
+            memberVar->SetThisPtr(thisPtr);
+        }
+        boundExpression = memberVar;
+    }
     else if (subject->IsBoundFunctionCallNode() && member->IsBoundMemberVariable())
     {
         BoundVariableNode* memberVar = static_cast<BoundVariableNode*>(member.release());
+        memberVar->SetThisPtr(subject->Clone());
+        boundExpression = memberVar;
+    }
+    else if (subject->IsBoundFunctionCallNode() && member->IsBoundParentMemberVariable())
+    {
+        BoundParentVariableNode* memberVar = static_cast<BoundParentVariableNode*>(member.release());
         memberVar->SetThisPtr(subject->Clone());
         boundExpression = memberVar;
     }
@@ -1639,6 +1769,10 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
             {
                 otava::ast::Node* item = node.Items()[i];
                 std::unique_ptr<BoundExpressionNode> arg(BindExpression(item, context));
+                if (arg->GetType()->RemoveConst(context)->IsClassTypeSymbol())
+                {
+                    arg.reset(new BoundAddressOfNode(arg.release(), node.GetSourcePos(), arg->GetType()->AddPointer(context)));
+                }
                 call->AddArgument(arg.release());
             }
             boundExpression = call.release();
@@ -2202,6 +2336,55 @@ void ExpressionBinder::Visit(otava::ast::OperatorFunctionIdNode& node)
     boundExpression = new BoundOperatorFnNode(node.Right()->Kind(), node.GetSourcePos());
 }
 
+void ExpressionBinder::Visit(otava::ast::InitConditionNode& node)
+{
+    Declaration declaration = ProcessInitCondition(&node, context);
+    Declarator* declarator = declaration.declarator.get();
+    if (declarator->Kind() == DeclaratorKind::simpleDeclarator)
+    {
+        SimpleDeclarator* simpleDeclarator = static_cast<SimpleDeclarator*>(declarator);
+        if (!simpleDeclarator->Name().empty())
+        {
+            TypeSymbol* initializerType = nullptr;
+            if (declaration.initializer)
+            {
+                BoundExpressionNode* initializer = BindExpression(declaration.initializer, context);
+                initializerType = initializer->GetType();
+            }
+            VariableSymbol* variable = ProcessSimpleDeclarator(simpleDeclarator, declaration.type, initializerType, declaration.value, declaration.flags, context);
+            declaration.variable = variable;
+        }
+        else
+        {
+            ThrowException("declarator has no name", node.GetSourcePos(), context);
+        }
+    }
+    else
+    {
+        ThrowException("simple declarator expected", node.GetSourcePos(), context);
+    }
+    VariableSymbol* variable = declaration.variable;
+    otava::symbols::BoundExpressionNode* initializer = BindExpression(node.Initializer(), context);
+    TypeSymbol* initializerType = initializer->GetType()->DirectType(context)->FinalType(node.GetSourcePos(), context);
+    if (variable->GetDeclaredType()->GetBaseType()->IsAutoTypeSymbol() && variable->GetDeclaredType()->GetDerivations() != Derivations::none)
+    {
+        initializerType = context->GetSymbolTable()->MakeCompoundType(initializerType->GetBaseType(),
+            variable->GetDeclaredType()->GetDerivations(), context);
+    }
+    variable->SetInitializerType(initializerType);
+    BoundVariableNode* boundVariable = new BoundVariableNode(variable, node.GetSourcePos());
+    std::vector<std::unique_ptr<BoundExpressionNode>> arguments;
+    arguments.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariable, node.GetSourcePos(),
+        boundVariable->GetType()->AddPointer(context))));
+    arguments.push_back(std::unique_ptr<BoundExpressionNode>(initializer));
+    std::vector<TypeSymbol*> templateArgs;
+    std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(),
+        U"@constructor", templateArgs, arguments, node.GetSourcePos(), context);
+    context->GetBoundFunction()->GetFunctionDefinitionSymbol()->AddLocalVariable(variable);
+    BoundExpressionSequenceNode* expressionSequence = new BoundExpressionSequenceNode(node.GetSourcePos(), constructorCall.release(), boundVariable->Clone());
+    boundExpression = expressionSequence;
+}
+
 void ExpressionBinder::Visit(otava::ast::PostfixIncExprNode& node)
 {
     bool prevInhibitCompile = inhibitCompile;
@@ -2345,7 +2528,10 @@ BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, bo
             expr = new BoundConversionNode(expr, conversionFunction, node->GetSourcePos());
         }
     }
-    expr->SetSource(node);
+    if (expr)
+    {
+        expr->SetSource(node);
+    }
     return expr;
 }
 

@@ -486,6 +486,7 @@ NodeFactoryCollection::NodeFactoryCollection()
     Register(NodeKind::expressionListNode, new NodeFactory<ExpressionListNode>());
     Register(NodeKind::assignmentInitializerNode, new NodeFactory<AssignmentInitNode>());
     Register(NodeKind::yieldExprNode, new NodeFactory<YieldExprNode>());
+    Register(NodeKind::throwExprNode, new NodeFactory<ThrowExprNode>());
     Register(NodeKind::conditionalExprNode, new NodeFactory<ConditionalExprNode>());
     Register(NodeKind::colonNode, new NodeFactory<ColonNode>());
     Register(NodeKind::commaNode, new NodeFactory<CommaNode>());

@@ -172,7 +172,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="re.project" />
     <None Include="re.parser" />
     <None Include="re.spg" />
   </ItemGroup>

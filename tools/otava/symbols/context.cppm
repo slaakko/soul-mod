@@ -70,7 +70,9 @@ enum class ContextFlags : std::int64_t
     skipInvokeChecking = static_cast<std::int64_t>(1) << 39,
     dontProcess = static_cast<std::int64_t>(1) << 40,
     makeChildFn = static_cast<std::int64_t>(1) << 41,
-    makeCompileUnitInitFn = static_cast<std::int64_t>(1) << 42
+    makeCompileUnitInitFn = static_cast<std::int64_t>(1) << 42,
+    cast = static_cast<std::int64_t>(1) << 43,
+    expected = static_cast<std::int64_t>(1) << 44
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -208,6 +210,7 @@ public:
     inline int NextInvokeSerial() { return invokeSerial++; }
     inline int NextCleanupSerial() { return cleanupSerial++; }
     inline int NextResultSerial() { return resultSerial++; }
+    inline int NextLabelSerial() { return labelSerial++; }
     void PushCleanup();
     void PopCleanup();
     inline bool CleanupIsEmpty() const { return cleanup.IsEmpty(); }
@@ -265,6 +268,7 @@ private:
     int invokeSerial;
     int cleanupSerial;
     int resultSerial;
+    int labelSerial;
     Module* requesterModule;
     CleanUp cleanup;
     std::stack<CleanUp> cleanupStack;

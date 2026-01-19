@@ -377,9 +377,13 @@ void GenericTypeSymbol::Accept(Visitor& visitor)
 
 TypeSymbol* ConvertRefToPtrType(TypeSymbol* type, Context* context)
 {
-    if (type->IsReferenceType())
+    if (type->IsLValueRefType())
     {
-        return type->PlainType(context)->AddPointer(context);
+        return type->RemoveLValueRef(context)->AddPointer(context);
+    }
+    else if (type->IsRValueRefType())
+    {
+        return type->RemoveRValueRef(context)->AddPointer(context);
     }
     return type;
 }

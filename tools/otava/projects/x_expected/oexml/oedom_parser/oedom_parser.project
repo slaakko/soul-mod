@@ -1,0 +1,15 @@
+project oedom_parser;
+target=library;
+define EXPECTED;
+reference <../../oeutil/oeutil.project>;
+reference <../../oesoul/oeast/oeast.project>;
+reference <../../oesoul/oelexer/oelexer.project>;
+reference <../../oesoul/oeparser/oeparser.project>;
+reference <../oedom/oedom.project>;
+reference <../oexml_processor/oexml_processor.project>;
+reference <../oexml_parser/oexml_parser.project>;
+interface <document_handler.cppm>;
+source <document_handler.cpp>;
+interface <dom_document_parser.cppm>;
+source <dom_document_parser.cpp>;
+interface <dom_parser.cppm>;

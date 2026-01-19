@@ -12,36 +12,37 @@ export namespace util {
 class CodeFormatter
 {
 public:
-    CodeFormatter(std::ostream& stream_) : stream(stream_), indent(0), indentSize(4), atBeginningOfLine(true), line(1), start(false), preserveSpace(false), contentCount(0), logging(false) {}
-    inline int Indent() const { return indent; }
-    inline int IndentSize() const { return indentSize; }
-    inline void SetIndentSize(int indentSize_) { indentSize = indentSize_; }
-    inline int CurrentIndent() const { return indentSize * indent; }
+    CodeFormatter(std::ostream& stream_) noexcept : 
+        stream(stream_), indent(0), indentSize(4), atBeginningOfLine(true), line(1), start(false), preserveSpace(false), contentCount(0), logging(false) {}
+    inline int Indent() const noexcept { return indent; }
+    inline int IndentSize() const noexcept { return indentSize; }
+    inline void SetIndentSize(int indentSize_) noexcept { indentSize = indentSize_; }
+    inline int CurrentIndent() const noexcept { return indentSize * indent; }
     void Write(const std::string& text);
     void WriteLine(const std::string& text);
     void NewLine();
     void WriteLine() { NewLine(); }
     void Flush();
-    inline void IncIndent()
+    inline void IncIndent() noexcept
     {
         ++indent;
     }
-    inline void DecIndent()
+    inline void DecIndent() noexcept
     {
         --indent;
     }
-    inline int Line() const { return line; }
-    inline void SetLine(int line_) { line = line_; }
-    inline bool Start() const { return start; }
-    inline void SetStart() { start = true; }
-    inline void ResetStart() { start = false; }
+    inline int Line() const noexcept { return line; }
+    inline void SetLine(int line_) noexcept { line = line_; }
+    inline bool Start() const noexcept { return start; }
+    inline void SetStart() noexcept { start = true; }
+    inline void ResetStart() noexcept { start = false; }
     inline void SetStartText(const std::string& startText_) { startText = startText_; }
-    inline const std::string& StartText() const { return startText; }
-    inline bool PreserveSpace() const { return preserveSpace; }
-    inline void SetPreserveSpace(bool preserveSpace_) { preserveSpace = preserveSpace_; }
-    inline void SetLogging() { logging = true; }
-    inline void BeginContent() { ++contentCount; }
-    inline void EndContent() { --contentCount; }
+    inline const std::string& StartText() const noexcept { return startText; }
+    inline bool PreserveSpace() const noexcept { return preserveSpace; }
+    inline void SetPreserveSpace(bool preserveSpace_) noexcept { preserveSpace = preserveSpace_; }
+    inline void SetLogging() noexcept { logging = true; }
+    inline void BeginContent() noexcept { ++contentCount; }
+    inline void EndContent() noexcept { --contentCount; }
 private:
     std::ostream& stream;
     int indent;

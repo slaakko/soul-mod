@@ -38,11 +38,8 @@ FileStream::FileStream(int handle) : filePath(), file(nullptr), needToClose(fals
             filePath = "STDERR";
             break;
         }
-        default:
-        {
-            throw std::runtime_error("invalid handle value");
-        }
     }
+    throw std::runtime_error("invalid handle value");
 }
 
 FileStream::FileStream(const std::string& filePath_, OpenMode openMode) : filePath(filePath_), file()
@@ -261,21 +258,21 @@ void FileStream::Seek(std::int64_t pos, Origin origin)
     }
     switch (origin)
     {
-    case Origin::seekCur:
-    {
-        SetPosition(Position() + pos);
-        break;
-    }
-    case Origin::seekEnd:
-    {
-        SetPosition(Size() + pos);
-        break;
-    }
-    case Origin::seekSet:
-    {
-        SetPosition(pos);
-        break;
-    }
+        case Origin::seekCur:
+        {
+            SetPosition(Position() + pos);
+            break;
+        }
+        case Origin::seekEnd:
+        {
+            SetPosition(Size() + pos);
+            break;
+        }
+        case Origin::seekSet:
+        {
+            SetPosition(pos);
+            break;
+        }
     }
 }
 
@@ -338,7 +335,7 @@ std::string ReadFile(const std::string& filePath, bool doNotSkipBOM)
         {
             if (c != -1)
             {
-                s.append(1, c);
+                s.append(1, static_cast<char>(c));
             }
             else
             {

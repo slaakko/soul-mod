@@ -443,9 +443,17 @@ void Module::ToXml(const std::string& xmlFilePath) const
     symbolTable.ToXml(xmlFilePath);
 }
 
-ModuleMapper::ModuleMapper() 
+ModuleMapper::ModuleMapper(bool expected) 
 {
-    roots.push_back(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools"), "otava"), "std")));
+    if (expected)
+    {
+        roots.push_back(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(util::Path::Combine(
+            util::SoulRoot(), "tools"), "otava"), "expected"), "std")));
+    }
+    else
+    {
+        roots.push_back(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools"), "otava"), "std")));
+    }
 }
 
 void ModuleMapper::AddRoot(const std::string& root)

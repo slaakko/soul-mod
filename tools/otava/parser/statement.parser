@@ -239,7 +239,6 @@ parser StatementParser
             IF{ ifPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = ifPos; otava::symbols::BeginBlock(sourcePos, context); } 
             (CONSTEXPR{ constExprPos = lexer.GetSourcePos(pos); })? 
             LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
-            InitStatement(context):initStmt? 
             Condition(context):cond 
             RPAREN{ rpPos = lexer.GetSourcePos(pos); } 
             Statement(context):thenStmt 
@@ -249,7 +248,7 @@ parser StatementParser
         )
         {
             otava::ast::IfStatementNode* node = new otava::ast::IfStatementNode(
-                sourcePos, initStmt, cond, thenStmt, elseStmt, attributes, ifPos, lpPos, rpPos, constExprPos, elsePos);
+                sourcePos, cond, thenStmt, elseStmt, attributes, ifPos, lpPos, rpPos, constExprPos, elsePos);
             otava::symbols::MapNode(node, context);
             otava::symbols::EndBlock(context); 
             return node;
@@ -262,13 +261,12 @@ parser StatementParser
         (
             SWITCH{ switchPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = switchPos; otava::symbols::BeginBlock(sourcePos, context); } 
             LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
-            InitStatement(context):initStmt? 
             Condition(context):cond 
             RPAREN{ rpPos = lexer.GetSourcePos(pos); } 
             Statement(context):stmt
         )
         {
-            otava::ast::SwitchStatementNode* node = new otava::ast::SwitchStatementNode(sourcePos, initStmt, cond, stmt, attributes, switchPos, lpPos, rpPos);
+            otava::ast::SwitchStatementNode* node = new otava::ast::SwitchStatementNode(sourcePos, cond, stmt, attributes, switchPos, lpPos, rpPos);
             otava::symbols::MapNode(node, context);
             otava::symbols::EndBlock(context); 
             return node;

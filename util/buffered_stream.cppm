@@ -23,7 +23,7 @@ public:
     void Flush() override;
     void Seek(std::int64_t pos, Origin origin) override;
     std::int64_t Tell() override;
-    inline Stream& BaseStream() { return baseStream; }
+    inline Stream& BaseStream() noexcept { return baseStream; }
 private:
     void FillBuf();
     Stream& baseStream;
