@@ -10,7 +10,7 @@ import otava.symbols.symbol;
 import otava.symbols.container.symbol;
 import otava.symbols.function.kind;
 import otava.symbols.bound.tree;
-import otava.ast.node;
+import otava.ast;
 import otava.intermediate.types;
 
 export namespace otava::symbols {
@@ -18,6 +18,7 @@ export namespace otava::symbols {
 class TypeSymbol;
 class FunctionTypeSymbol;
 class Value;
+class BlockSymbol;
 
 class ParameterSymbol : public Symbol
 {
@@ -76,6 +77,10 @@ public:
     inline void SetConversionMemFn() { SetFunctionKind(FunctionKind::conversionMemFn); }
     inline bool ContainsStatics() const { return GetFlag(FunctionSymbolFlags::containsStatics); }
     inline void SetContainsStatics() { SetFlag(FunctionSymbolFlags::containsStatics); }
+    inline bool ContainsNodeWithNoSource() const { return GetFlag(FunctionSymbolFlags::containsNodeWithNoSource); }
+    inline void SetContainsNodeWithNoSource() { SetFlag(FunctionSymbolFlags::containsNodeWithNoSource); }
+    inline bool SkipInvokeChecking() const { return GetFlag(FunctionSymbolFlags::skipInvokeChecking); }
+    inline void SetSkipInvokeChecking() { SetFlag(FunctionSymbolFlags::skipInvokeChecking); }
     inline bool Skip() const { return GetFlag(FunctionSymbolFlags::skip); }
     inline void SetSkip() { SetFlag(FunctionSymbolFlags::skip); }
     virtual bool IsArrayElementAccess() const { return false; }
@@ -134,6 +139,7 @@ public:
     void SetOverride();
     virtual bool IsNoExcept() const;
     virtual void SetNoExcept();
+    bool ContainsLocalVariableWithDestructor() const { return GetFlag(FunctionSymbolFlags::containsLocalVariableWithDestructor); }
     ClassTypeSymbol* ParentClassType() const override;
     virtual ParameterSymbol* ThisParam(Context* context) const;
     virtual bool IsMemberFunction() const;
@@ -243,6 +249,9 @@ public:
     TypeSymbol* NonChildFunctionResultType(Context* context) const;
     inline bool ContainsGotosOrLabels() const { return containsGotosOrLabels; }
     inline void SetContainsGotosOrLabels() { containsGotosOrLabels = true; }
+    void MapBlock(int blockId, Symbol* block);
+    Symbol* GetBlock(int blockId) const;
+    inline void SetFnDefNode(otava::ast::FunctionDefinitionNode* fnDefNode_) { fnDefNode.reset(fnDefNode_); }
 private:
     FunctionSymbol* declaration;
     util::uuid declarationId;
@@ -252,6 +261,8 @@ private:
     Scope* parentFnScope;
     std::u32string resultVarName;
     bool containsGotosOrLabels;
+    std::map<int, Symbol*> blockMap;
+    std::unique_ptr<otava::ast::FunctionDefinitionNode> fnDefNode;
 };
 
 class ExplicitlyInstantiatedFunctionDefinitionSymbol : public FunctionDefinitionSymbol

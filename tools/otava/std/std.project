@@ -13,6 +13,7 @@ interface <std.basic_string.cppm>;
 source <std.basic_string.cpp>;
 interface <std.cow_string.cppm>;
 source <std.cow_string.cpp>;
+interface <std.eh.cppm>;
 interface <std.rt.cppm>;
 source <std.rt.cpp>;
 interface <std.chrono.cppm>;

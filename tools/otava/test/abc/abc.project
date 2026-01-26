@@ -1,0 +1,3 @@
+project abc;
+target=program;
+source <main.cpp>;

@@ -609,7 +609,7 @@ BoundCompoundStatementNode* BoundStatementNode::Block()
 }
 
 BoundCompoundStatementNode::BoundCompoundStatementNode(const soul::ast::SourcePos& sourcePos_) : 
-    BoundStatementNode(BoundNodeKind::boundCompoundStatementNode, sourcePos_)
+    BoundStatementNode(BoundNodeKind::boundCompoundStatementNode, sourcePos_), blockId(-1)
 {
 }
 
@@ -626,7 +626,10 @@ BoundStatementNode* BoundCompoundStatementNode::Clone() const
     {
         clone->AddStatement(statements[i]->Clone());
     }
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -657,7 +660,16 @@ bool BoundCompoundStatementNode::EndsWithTerminator() const
     return false;
 }
 
-BoundIfStatementNode::BoundIfStatementNode(const soul::ast::SourcePos& sourcePos_) : BoundStatementNode(BoundNodeKind::boundIfStatementNode, sourcePos_)
+bool BoundCompoundStatementNode::ContainsLocalVariableWithDestructor() const
+{
+    for (const auto& stmt : statements)
+    {
+        if (stmt->ContainsLocalVariableWithDestructor()) return true;
+    }
+    return false;
+}
+
+BoundIfStatementNode::BoundIfStatementNode(const soul::ast::SourcePos& sourcePos_) : BoundStatementNode(BoundNodeKind::boundIfStatementNode, sourcePos_), blockId(-1)
 {
 }
 
@@ -678,7 +690,10 @@ BoundStatementNode* BoundIfStatementNode::Clone() const
     { 
         clone->SetElseStatement(elseStatement->Clone());
     }
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -705,7 +720,15 @@ void BoundIfStatementNode::SetElseStatement(BoundStatementNode* elseStatement_)
     elseStatement.reset(elseStatement_);
 }
 
-BoundSwitchStatementNode::BoundSwitchStatementNode(const soul::ast::SourcePos& sourcePos_) : BoundStatementNode(BoundNodeKind::boundSwitchStatementNode, sourcePos_)
+bool BoundIfStatementNode::ContainsLocalVariableWithDestructor() const
+{
+    if (thenStatement->ContainsLocalVariableWithDestructor()) return true;
+    if (elseStatement && elseStatement->ContainsLocalVariableWithDestructor()) return true;
+    return false;
+}
+
+BoundSwitchStatementNode::BoundSwitchStatementNode(const soul::ast::SourcePos& sourcePos_) : 
+    BoundStatementNode(BoundNodeKind::boundSwitchStatementNode, sourcePos_), blockId(-1)
 {
 }
 
@@ -719,7 +742,10 @@ BoundStatementNode* BoundSwitchStatementNode::Clone() const
     BoundSwitchStatementNode* clone = new BoundSwitchStatementNode(GetSourcePos());
     clone->SetCondition(condition->Clone());
     clone->SetStatement(statement->Clone());
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -740,6 +766,12 @@ void BoundSwitchStatementNode::SetStatement(BoundStatementNode* statement_)
     statement.reset(statement_);
 }
 
+bool BoundSwitchStatementNode::ContainsLocalVariableWithDestructor() const
+{
+    if (statement->ContainsLocalVariableWithDestructor()) return true;
+    return false;
+}
+
 BoundCaseStatementNode::BoundCaseStatementNode(const soul::ast::SourcePos& sourcePos_) : BoundStatementNode(BoundNodeKind::boundCaseStatementNode, sourcePos_)
 {
 }
@@ -757,7 +789,10 @@ BoundStatementNode* BoundCaseStatementNode::Clone() const
         clone->AddCaseExpr(caseExpr->Clone());
     }
     clone->SetStatement(stmt->Clone());
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -781,6 +816,11 @@ void BoundCaseStatementNode::SetStatement(BoundStatementNode* stmt_)
     stmt.reset(stmt_);
 }
 
+bool BoundCaseStatementNode::ContainsLocalVariableWithDestructor() const
+{
+    return stmt->ContainsLocalVariableWithDestructor();
+}
+
 BoundDefaultStatementNode::BoundDefaultStatementNode(const soul::ast::SourcePos& sourcePos_) : BoundStatementNode(BoundNodeKind::boundDefaultStatementNode, sourcePos_)
 {
 }
@@ -794,7 +834,10 @@ BoundStatementNode* BoundDefaultStatementNode::Clone() const
 {
     BoundDefaultStatementNode* clone = new BoundDefaultStatementNode(GetSourcePos());
     clone->SetStatement(stmt->Clone());
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -808,7 +851,13 @@ void BoundDefaultStatementNode::SetStatement(BoundStatementNode* stmt_)
     stmt.reset(stmt_);
 }
 
-BoundWhileStatementNode::BoundWhileStatementNode(const soul::ast::SourcePos& sourcePos_) : BoundStatementNode(BoundNodeKind::boundWhileStatementNode, sourcePos_)
+bool BoundDefaultStatementNode::ContainsLocalVariableWithDestructor() const
+{
+    return stmt->ContainsLocalVariableWithDestructor();
+}
+
+BoundWhileStatementNode::BoundWhileStatementNode(const soul::ast::SourcePos& sourcePos_) : 
+    BoundStatementNode(BoundNodeKind::boundWhileStatementNode, sourcePos_), blockId(-1)
 {
 }
 
@@ -822,7 +871,10 @@ BoundStatementNode* BoundWhileStatementNode::Clone() const
     BoundWhileStatementNode* clone = new BoundWhileStatementNode(GetSourcePos());
     clone->SetCondition(condition->Clone());
     clone->SetStatement(statement->Clone());
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -843,6 +895,11 @@ void BoundWhileStatementNode::SetStatement(BoundStatementNode* statement_)
     statement.reset(statement_);
 }
 
+bool BoundWhileStatementNode::ContainsLocalVariableWithDestructor() const
+{
+    return statement->ContainsLocalVariableWithDestructor();
+}
+
 BoundDoStatementNode::BoundDoStatementNode(const soul::ast::SourcePos& sourcePos_) : BoundStatementNode(BoundNodeKind::boundDoStatementNode, sourcePos_)
 {
 }
@@ -857,7 +914,10 @@ BoundStatementNode* BoundDoStatementNode::Clone() const
     BoundDoStatementNode* clone = new BoundDoStatementNode(GetSourcePos());
     clone->SetExpr(expr->Clone());
     clone->SetStatement(statement->Clone());
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -878,7 +938,13 @@ void BoundDoStatementNode::SetStatement(BoundStatementNode* statement_)
     statement.reset(statement_);
 }
 
-BoundForStatementNode::BoundForStatementNode(const soul::ast::SourcePos& sourcePos_) : BoundStatementNode(BoundNodeKind::boundForStatementNode, sourcePos_)
+bool BoundDoStatementNode::ContainsLocalVariableWithDestructor() const
+{
+    return statement->ContainsLocalVariableWithDestructor();
+}
+
+BoundForStatementNode::BoundForStatementNode(const soul::ast::SourcePos& sourcePos_) : 
+    BoundStatementNode(BoundNodeKind::boundForStatementNode, sourcePos_), blockId(-1)
 {
 }
 
@@ -903,7 +969,10 @@ BoundStatementNode* BoundForStatementNode::Clone() const
         clone->SetLoopExpr(loopExpr->Clone());
     }
     clone->SetStatement(statement->Clone());
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -936,6 +1005,13 @@ void BoundForStatementNode::SetStatement(BoundStatementNode* statement_)
     statement.reset(statement_);
 }
 
+bool BoundForStatementNode::ContainsLocalVariableWithDestructor() const
+{
+    if (initStatement && initStatement->ContainsLocalVariableWithDestructor()) return true;
+    if (statement->ContainsLocalVariableWithDestructor()) return true;
+    return false;
+}
+
 BoundSequenceStatementNode::BoundSequenceStatementNode(const soul::ast::SourcePos& sourcePos_, BoundStatementNode* first_, BoundStatementNode* second_) :
     BoundStatementNode(BoundNodeKind::boundSequenceStatementNode, sourcePos_), first(first_), second(second_)
 {
@@ -949,7 +1025,10 @@ void BoundSequenceStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundSequenceStatementNode::Clone() const
 {
     BoundSequenceStatementNode* clone = new BoundSequenceStatementNode(GetSourcePos(), first->Clone(), second->Clone());
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -957,6 +1036,13 @@ bool BoundSequenceStatementNode::MayThrow() const
 {
     if (first && first->MayThrow()) return true;
     if (second && second->MayThrow()) return true;
+    return false;
+}
+
+bool BoundSequenceStatementNode::ContainsLocalVariableWithDestructor() const
+{
+    if (first->ContainsLocalVariableWithDestructor()) return true;
+    if (second->ContainsLocalVariableWithDestructor()) return true;
     return false;
 }
 
@@ -972,7 +1058,10 @@ void BoundBreakStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundBreakStatementNode::Clone() const
 {
     BoundBreakStatementNode* clone = new BoundBreakStatementNode(GetSourcePos());
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -988,7 +1077,10 @@ void BoundContinueStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundContinueStatementNode::Clone() const
 {
     BoundContinueStatementNode* clone = new BoundContinueStatementNode(GetSourcePos());
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -1008,7 +1100,10 @@ BoundStatementNode* BoundReturnStatementNode::Clone() const
     {
         clone->SetExpr(expr->Clone());
     }
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -1042,7 +1137,10 @@ void BoundLabeledStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundLabeledStatementNode::Clone() const
 {
     BoundLabeledStatementNode* clone = new BoundLabeledStatementNode(GetSourcePos(), label, stmt->Clone());
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -1053,6 +1151,11 @@ otava::intermediate::BasicBlock* BoundLabeledStatementNode::GetBB(Emitter& emitt
         bb = emitter.CreateBasicBlock();
     }
     return bb;
+}
+
+bool BoundLabeledStatementNode::ContainsLocalVariableWithDestructor() const
+{
+    return stmt->ContainsLocalVariableWithDestructor();
 }
 
 BoundGotoStatementNode::BoundGotoStatementNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& target_) :
@@ -1068,7 +1171,10 @@ void BoundGotoStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundGotoStatementNode::Clone() const
 {
     BoundGotoStatementNode* clone = new BoundGotoStatementNode(GetSourcePos(), target);
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -1095,7 +1201,10 @@ BoundStatementNode* BoundConstructionStatementNode::Clone() const
         clone->SetDestructorCall(static_cast<BoundFunctionCallNode*>(destructorCall->Clone()));
     }
     clone->SetVariable(variable);
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -1108,6 +1217,18 @@ bool BoundConstructionStatementNode::MayThrow() const
 void BoundConstructionStatementNode::SetDestructorCall(BoundFunctionCallNode* destructorCall_)
 {
     destructorCall.reset(destructorCall_);
+}
+
+bool BoundConstructionStatementNode::ContainsLocalVariableWithDestructor() const
+{
+    if (destructorCall) return true;
+    return false;
+}
+
+bool BoundConstructionStatementNode::ConstructsLocalVariableWithDestructor() const
+{
+    if (destructorCall) return true;
+    return false;
 }
 
 BoundExpressionStatementNode::BoundExpressionStatementNode(const soul::ast::SourcePos& sourcePos_) : 
@@ -1124,7 +1245,10 @@ BoundStatementNode* BoundExpressionStatementNode::Clone() const
 {
     BoundExpressionStatementNode* clone = new BoundExpressionStatementNode(GetSourcePos());
     clone->SetExpr(expr->Clone());
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 
@@ -1164,7 +1288,10 @@ void BoundSetVPtrStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundSetVPtrStatementNode::Clone() const
 {
     BoundSetVPtrStatementNode* clone = new BoundSetVPtrStatementNode(thisPtr->Clone(), forClass, vptrHolderClass, GetSourcePos());
-    clone->SetSource(Source());
+    if (Source())
+    {
+        clone->SetSource(Source()->Clone());
+    }
     return clone;
 }
 

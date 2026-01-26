@@ -30,3 +30,5 @@ source <slg_file.parser.cpp>;
 interface <token_generator.cppm>;
 source <token_generator.cpp>;
 source <main.cpp>;
+resource <../lex/soul.lex.re.classmap.rc>;
+resource <../lex/soul.lex.slg.classmap.rc>;

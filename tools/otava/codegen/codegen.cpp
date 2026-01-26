@@ -663,6 +663,7 @@ void CodeGenerator::GenerateGlobalInitializationFunction()
     std::unique_ptr<otava::symbols::BoundFunctionNode> boundFunction(new otava::symbols::BoundFunctionNode(globalInit, soul::ast::SourcePos()));
     context.PushBoundFunction(boundFunction.release());
     std::unique_ptr<otava::symbols::BoundStatementNode> setBadAllocStmt(otava::symbols::BindStatement(setBadAllocStmtNode.get(), nullptr, &context));
+    setBadAllocStmt->SetSource(setBadAllocStmtNode.release());
     std::unique_ptr<otava::symbols::BoundCompoundStatementNode> compoundStmt(new otava::symbols::BoundCompoundStatementNode(soul::ast::SourcePos()));
     compoundStmt->AddStatement(setBadAllocStmt.release());
     context.PushSetFlag(otava::symbols::ContextFlags::makeCompileUnitInitFn);
@@ -671,6 +672,7 @@ void CodeGenerator::GenerateGlobalInitializationFunction()
     {
         std::unique_ptr<otava::ast::Node> callInitFunctionNode = otava::symbols::ParseStatement(util::ToUtf32(compileUnitInitFnNames[i]) + U"();", &context);
         std::unique_ptr<otava::symbols::BoundStatementNode> initFnCall(otava::symbols::BindStatement(callInitFunctionNode.get(), globalInit, &context));
+        initFnCall->SetSource(callInitFunctionNode.release());
         compoundStmt->AddStatement(initFnCall.release());
     }
     context.PopFlags();
@@ -832,6 +834,10 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         mainFunctionParams = functionDefinition->Arity();
     }
     std::string functionDefinitionName = functionDefinition->IrName(&context);
+    if (functionDefinitionName == "fn_invoke_2_compile_unit_D968A6AB65476A511EF6CA9D3F4C16215B7168E8_1527501DB2EDDADD855E83B3DF2FBFDA86C4EB64")
+    {
+        int x = 0;
+    }
     otava::intermediate::Type* functionType = functionDefinition->IrType(*emitter, node.GetSourcePos(), &context);
     bool once = false;
     bool inline_ = context.ReleaseConfig() && functionDefinition->IsInline();
@@ -1424,12 +1430,9 @@ void CodeGenerator::Visit(otava::symbols::BoundConstructionStatementNode& node)
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
     node.ConstructorCall()->Accept(*this);
-    if (currentBlockId > 0)
+    if (node.DestructorCall())
     {
-        if (node.DestructorCall())
-        {
-            blockExits[currentBlockId - 1]->AddDestructorCall(node.ReleaseDestructorCall());
-        }
+        blockExits[currentBlockId]->AddDestructorCall(node.ReleaseDestructorCall());
     }
 }
 

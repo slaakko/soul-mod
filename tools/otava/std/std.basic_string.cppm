@@ -6,6 +6,7 @@ import std.type_traits;
 import std.rt;
 import std.algorithm;
 import std.new_delete_op;
+import std.eh;
 
 export namespace std {
 

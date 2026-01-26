@@ -21,13 +21,16 @@ public:
     std::string SymbolDocKindStr() const override { return "block"; }
     void Accept(Visitor& visitor) override;
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    inline int BlockId() const { return blockId; }
+    inline void SetBlockId(int blockId_) { blockId = blockId_; }
 private:
     std::vector<VariableSymbol*> localVariables;
+    int blockId;
 };
 
 class Context;
 
-BlockSymbol* BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context);
+BlockSymbol* BeginBlock(const soul::ast::SourcePos& sourcePos, int blockId, Context* context);
 void EndBlock(Context* context);
 void RemoveBlock(Context* context);
 void MapNode(otava::ast::Node* node, Context* context);

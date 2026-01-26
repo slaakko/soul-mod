@@ -1603,6 +1603,21 @@ std::u32string FunctionDefinitionSymbol::ResultVarExprStr(TypeSymbol* resultType
     return resultVarName;
 }
 
+void FunctionDefinitionSymbol::MapBlock(int blockId, Symbol* block)
+{
+    blockMap[blockId] = block;
+}
+
+Symbol* FunctionDefinitionSymbol::GetBlock(int blockId) const
+{
+    auto it = blockMap.find(blockId);
+    if (it != blockMap.end())
+    {
+        return it->second;
+    }
+    return nullptr;
+}
+
 ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol_,
     const soul::ast::SourcePos& sourcePos, Context* context) : 
     FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, functionDefinitionSymbol_->Name()),

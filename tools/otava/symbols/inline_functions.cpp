@@ -69,7 +69,7 @@ FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::S
     {
         otava::ast::FunctionDefinitionNode* functionDefinitionNode = static_cast<otava::ast::FunctionDefinitionNode*>(node);
         InstantiationScope instantiationScope(fn->Parent()->GetScope());
-        instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
+        //instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
         instantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
         context->GetSymbolTable()->BeginScope(&instantiationScope);
         Instantiator instantiator(context, &instantiationScope);
@@ -118,7 +118,7 @@ FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::S
             return fn;
         }
         context->GetSymbolTable()->EndScope();
-        instantiationScope.PopParentScope();
+        //instantiationScope.PopParentScope();
         instantiationScope.PopParentScope();
         context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
         return inlineFn;

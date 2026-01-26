@@ -2,6 +2,7 @@ module std.atexit;
 
 import std.new_delete_op;
 import std.trace;
+import std.eh;
 
 namespace std {
 

@@ -97,7 +97,7 @@ private:
     std::unique_ptr<BoundExpressionStatementNode> atExitStatement;
     VariableSymbol* globalStaticVariableSymbol;
     otava::ast::Node* catchBlock;
-    otava::ast::Node* handlerBlock;
+    otava::ast::CompoundStatementNode* handlerBlock;
     otava::ast::Node* lastElse;
 };
 

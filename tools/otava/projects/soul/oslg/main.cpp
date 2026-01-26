@@ -47,14 +47,12 @@ int main(int argc, const char** argv)
             std::string arg = argv[i];
             if (arg.starts_with("--"))
             {
-/*
                 if (arg == "--help")
                 {
                     PrintHelp();
                     return 1;
                 }
-*/
-                /*else*/ if (arg == "--verbose")
+                else if (arg == "--verbose")
                 {
                     verbose = true;
                 }
@@ -76,12 +74,11 @@ int main(int argc, const char** argv)
                 {
                     switch (o)
                     {
-                        /*case 'h':
+                        case 'h':
                         {
                             PrintHelp();
                             return 1;
                         }
-                        */
                         case 'v':
                         {
                             verbose = true;

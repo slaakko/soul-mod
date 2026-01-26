@@ -5,6 +5,7 @@
 
 module otava.symbols.container.symbol;
 
+import otava.symbols.block;
 import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.fundamental.type.symbol;
@@ -113,6 +114,10 @@ void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
     {
         ErrorTypeSymbol* errorSymbol = static_cast<ErrorTypeSymbol*>(symbol);
         context->GetSymbolTable()->SetErrorTypeSymbol(errorSymbol);
+    }
+    else if (symbol->IsBlockSymbol())
+    {
+        blocks.push_back(static_cast<BlockSymbol*>(symbol));
     }
 }
 

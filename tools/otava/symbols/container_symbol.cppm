@@ -11,6 +11,8 @@ import otava.symbols.scope;
 
 export namespace otava::symbols {
 
+class BlockSymbol;
+
 class ContainerSymbol : public Symbol
 {
 public:
@@ -24,9 +26,11 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     soul::xml::Element* ToXml() const override;
+    inline const std::vector<BlockSymbol*>& Blocks() const { return blocks; }
 private:
     std::vector<std::unique_ptr<Symbol>> symbols;
     ContainerScope scope;
+    std::vector<BlockSymbol*> blocks;
 };
 
 } // namespace otava::symbols

@@ -16,16 +16,16 @@ InvalidPathException::InvalidPathException(const std::string& message_) : std::r
 
 std::string GetCurrentWorkingDirectory()
 {
-char buf[4096];
-const char* wd = ort_get_cwd(&buf, 4096);
-if (wd != nullptr)
-{
-    return Path::MakeCanonical(wd);
-}
-else
-{
-    throw std::runtime_error("could not get current working directory");
-}
+    char buf[4096];
+    const char* wd = ort_get_cwd(&buf, 4096);
+    if (wd != nullptr)
+    {
+        return Path::MakeCanonical(wd);
+    }
+    else
+    {
+        throw std::runtime_error("could not get current working directory");
+    }
 }
 
 bool FileExists(const std::string& filePath)

@@ -74,7 +74,11 @@ Context::Context() :
     cleanupSerial(0),
     resultSerial(0),
     labelSerial(0),
-    statementBinder(nullptr)
+    ehReturnFromSerial(0),
+    childControlResultSerial(0),
+    statementBinder(nullptr),
+    nextBlockId(0),
+    currentBlockId(-1)
 {
 }
 
@@ -396,28 +400,28 @@ void Context::PopTemplateParameterMap()
     templateParameterMapStack.pop();
 }
 
-void Context::PushCleanup()
-{
-    cleanupStack.push(std::move(cleanup));
-    cleanup = CleanUp();
-}
-
-void Context::PopCleanup()
-{
-    cleanup = std::move(cleanupStack.top());
-    cleanupStack.pop();
-}
-
 void Context::PushStatementBinder(StatementBinder* statementBinder_)
 {
-    statementBinderStack.push(statementBinder);
+    statementBinders.push_back(statementBinder);
     statementBinder = statementBinder_;
 }
 
 void Context::PopStatementBinder()
 {
-    statementBinder = statementBinderStack.top();
-    statementBinderStack.pop();
+    statementBinder = statementBinders.back();
+    statementBinders.pop_back();
+}
+
+StatementBinder* Context::GetParentStatementBinder() const
+{
+    if (!statementBinders.empty())
+    {
+        return statementBinders.back();
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 void Context::PushResultVarName(const std::u32string& resultVarName_)
@@ -432,10 +436,46 @@ void Context::PopResultVarName()
     resultVariableNameStack.pop();
 }
 
+void Context::PushChildControlResultVarName(const std::u32string& childControlResultVarName)
+{
+    childControlResultVariableNameStack.push(childControlResultVariableName);
+    childControlResultVariableName = childControlResultVarName;
+}
+
+void Context::PopChildControlResultVarName()
+{
+    childControlResultVariableName = childControlResultVariableNameStack.top();
+    childControlResultVariableNameStack.pop();
+}
+
 std::u32string Context::NextResultVarName()
 {
     std::u32string resultVariableName = U"__result" + util::ToUtf32(std::to_string(NextResultSerial()));
     return resultVariableName;
+}
+
+std::u32string Context::NextEhReturnFromVarName()
+{
+    std::u32string ehReturnFromVarName = U"__eh_return_from" + util::ToUtf32(std::to_string(NextEhReturnFromSerial()));
+    return ehReturnFromVarName;
+}
+
+std::u32string Context::NextChildControlResultVarName()
+{
+    std::u32string childControlResultVarName = U"__child_control_result" + util::ToUtf32(std::to_string(NextChildControlResultSerial()));
+    return childControlResultVarName;
+}
+
+void Context::PushBlockId(int blockId)
+{
+    blockIdStack.push(currentBlockId);
+    currentBlockId = blockId;
+}
+
+void Context::PopBlockId()
+{
+    currentBlockId = blockIdStack.top();
+    blockIdStack.pop();
 }
 
 } // namespace otava::symbols

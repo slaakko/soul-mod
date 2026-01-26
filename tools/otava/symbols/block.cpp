@@ -14,7 +14,7 @@ import otava.symbols.function.symbol;
 
 namespace otava::symbols {
 
-BlockSymbol::BlockSymbol() : ContainerSymbol(SymbolKind::blockSymbol, std::u32string())
+BlockSymbol::BlockSymbol() : ContainerSymbol(SymbolKind::blockSymbol, std::u32string()), blockId(-1)
 {
     GetScope()->SetKind(ScopeKind::blockScope);
 }
@@ -54,9 +54,11 @@ void BlockSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePo
     }
 }
 
-BlockSymbol* BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context)
+BlockSymbol* BeginBlock(const soul::ast::SourcePos& sourcePos, int blockId, Context* context)
 {
-    return context->GetSymbolTable()->BeginBlock(sourcePos, context);
+    BlockSymbol* block = context->GetSymbolTable()->BeginBlock(sourcePos, context);
+    block->SetBlockId(blockId);
+    return block;
 }
 
 void EndBlock(Context* context)

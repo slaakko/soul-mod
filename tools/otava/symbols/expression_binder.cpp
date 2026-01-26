@@ -7,6 +7,7 @@ module otava.symbols.expression.binder;
 
 import otava.symbols.alias.group.symbol;
 import otava.symbols.alias.type.symbol;
+import otava.symbols.block;
 import otava.symbols.bound.tree;
 import otava.symbols.bound.tree.visitor;
 import otava.symbols.class_group.symbol;
@@ -1136,36 +1137,46 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                 }
             }
         }
-    }
-    if (!symbol)
-    {
-        StatementBinder* statementBinder = context->GetStatementBinder();
-        if (statementBinder)
+        if (!symbol)
         {
-            FunctionDefinitionSymbol* fnDefSymbol = statementBinder->GetFunctionDefinitionSymbol();
-            if (fnDefSymbol)
+            level = 0;
+            StatementBinder* parentStatementBinder = context->GetParentStatementBinder();
+            if (parentStatementBinder)
             {
-                while (fnDefSymbol)
+                FunctionDefinitionSymbol* fnDefSymbol = parentStatementBinder->GetFunctionDefinitionSymbol();
+                if (fnDefSymbol)
                 {
-                    Scope* parentFnScope = fnDefSymbol->ParentFnScope();
-                    if (parentFnScope)
+                    while (fnDefSymbol)
                     {
-                        symbol = parentFnScope->Lookup(node.Str(), SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, node.GetSourcePos(),
-                            context, LookupFlags::dontResolveSingle);
-                        if (symbol)
+                        int currentBlockId = context->CurrentBlockId();
+                        Symbol* block = fnDefSymbol->GetBlock(currentBlockId);
+                        if (block)
                         {
-                            foundFromParentFn = true;
-                            break;
+                            Scope* blockScope = block->GetScope();
+                            if (blockScope)
+                            {
+                                symbol = blockScope->Lookup(node.Str(), SymbolGroupKind::variableSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, node.GetSourcePos(),
+                                    context, LookupFlags::dontResolveSingle);
+                                if (symbol)
+                                {
+                                    foundFromParentFn = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    fnDefSymbol = fnDefSymbol->ParentFn();
+                                    ++level;
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
                         else
                         {
-                            fnDefSymbol = fnDefSymbol->ParentFn();
-                            ++level;
+                            break;
                         }
-                    }
-                    else
-                    {
-                        break;
                     }
                 }
             }
@@ -2530,7 +2541,7 @@ BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, bo
     }
     if (expr)
     {
-        expr->SetSource(node);
+        expr->SetSource(node->Clone());
     }
     return expr;
 }

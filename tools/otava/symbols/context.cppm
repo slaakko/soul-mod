@@ -211,17 +211,25 @@ public:
     inline int NextCleanupSerial() { return cleanupSerial++; }
     inline int NextResultSerial() { return resultSerial++; }
     inline int NextLabelSerial() { return labelSerial++; }
-    void PushCleanup();
-    void PopCleanup();
-    inline bool CleanupIsEmpty() const { return cleanup.IsEmpty(); }
-    inline CleanUp& GetCleanup() { return cleanup; }
+    inline int NextEhReturnFromSerial() { return ehReturnFromSerial++; }
+    inline int NextChildControlResultSerial() { return childControlResultSerial++; }
     void PushStatementBinder(StatementBinder* statementBinder_);
     void PopStatementBinder();
     inline StatementBinder* GetStatementBinder() const { return statementBinder; }
+    StatementBinder* GetParentStatementBinder() const;
     const std::u32string& ResultVarName() const { return resultVariableName; }
     void PushResultVarName(const std::u32string& resultVarName_);
     void PopResultVarName();
+    const std::u32string& ChildControlResultVarName() const { return childControlResultVariableName; }
+    void PushChildControlResultVarName(const std::u32string& childControlResultVarName);
+    void PopChildControlResultVarName();
     std::u32string NextResultVarName();
+    std::u32string NextEhReturnFromVarName();
+    std::u32string NextChildControlResultVarName();
+    inline int NextBlockId() { return nextBlockId++; }
+    inline int CurrentBlockId() const { return currentBlockId; }
+    void PushBlockId(int blockId);
+    void PopBlockId();
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -269,13 +277,18 @@ private:
     int cleanupSerial;
     int resultSerial;
     int labelSerial;
+    int ehReturnFromSerial;
+    int childControlResultSerial;
     Module* requesterModule;
-    CleanUp cleanup;
-    std::stack<CleanUp> cleanupStack;
+    std::vector<StatementBinder*> statementBinders;
     StatementBinder* statementBinder;
-    std::stack<StatementBinder*> statementBinderStack;
     std::u32string resultVariableName;
     std::stack<std::u32string> resultVariableNameStack;
+    std::u32string childControlResultVariableName;
+    std::stack<std::u32string> childControlResultVariableNameStack;
+    int nextBlockId;
+    std::stack<int> blockIdStack;
+    int currentBlockId;
 };
 
 } // namespace otava::symbols

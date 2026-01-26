@@ -14,5 +14,6 @@ int main()
     }
     catch (int& x)
     {
+        std::cout << x << "\n";
     }
 }

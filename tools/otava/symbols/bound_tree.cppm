@@ -9,6 +9,7 @@ import std;
 import soul.ast.source.pos;
 import otava.ast;
 import otava.symbols.emitter;
+import otava.symbols.symbol;
 import otava.intermediate;
 import otava.symbols.class_templates;
 import otava.symbols.inline_functions;
@@ -135,13 +136,13 @@ public:
     inline bool IsBoundLiteralNode() const { return kind == BoundNodeKind::boundLiteralNode; }
     inline int Index() const { return index; }
     inline void SetIndex(int index_) { index = index_; }
-    inline otava::ast::Node* Source() const { return source; }
-    inline void SetSource(otava::ast::Node* source_) { source = source_; }
+    inline otava::ast::Node* Source() const { return source.get(); }
+    inline void SetSource(otava::ast::Node* source_) { source.reset(source_); }
 private:
     BoundNodeKind kind;
     int index;
     soul::ast::SourcePos sourcePos;
-    otava::ast::Node* source;
+    std::unique_ptr<otava::ast::Node> source;
 };
 
 enum class BoundExpressionFlags
@@ -327,6 +328,8 @@ public:
     virtual bool EndsWithTerminator() const { return IsTerminator(); }
     virtual bool IsTerminator() const { return false; }
     virtual int IndexOf(BoundStatementNode* stmt) { return -1; }
+    virtual bool ContainsLocalVariableWithDestructor() const { return false; }
+    virtual bool ConstructsLocalVariableWithDestructor() const { return false; }
     inline BoundStatementNode* Parent() const { return parent; }
     inline void SetParent(BoundStatementNode* parent_) { parent = parent_; }
     inline bool Generated() const { return generated; }
@@ -352,8 +355,12 @@ public:
     void AddStatement(BoundStatementNode* statement);
     const std::vector<std::unique_ptr<BoundStatementNode>>& Statements() const { return statements; }
     bool EndsWithTerminator() const override;
+    bool ContainsLocalVariableWithDestructor() const override;
+    inline int BlockId() const { return blockId; }
+    inline void SetBlockId(int blockId_) { blockId = blockId_; }
 private:
     std::vector<std::unique_ptr<BoundStatementNode>> statements;
+    int blockId;
 };
 
 class BoundIfStatementNode : public BoundStatementNode
@@ -370,10 +377,14 @@ public:
     void SetThenStatement(BoundStatementNode* thenStatement_);
     inline BoundStatementNode* ElseStatement() const { return elseStatement.get(); }
     void SetElseStatement(BoundStatementNode* elseStatement_);
+    bool ContainsLocalVariableWithDestructor() const override;
+    inline int BlockId() const { return blockId; }
+    inline void SetBlockId(int blockId_) { blockId = blockId_; }
 private:
     std::unique_ptr<BoundExpressionNode> condition;
     std::unique_ptr<BoundStatementNode> thenStatement;
     std::unique_ptr<BoundStatementNode> elseStatement;
+    int blockId;
 };
 
 class BoundSwitchStatementNode : public BoundStatementNode
@@ -388,9 +399,13 @@ public:
     inline BoundExpressionNode* GetCondition() const { return condition.get(); }
     void SetStatement(BoundStatementNode* statement);
     inline BoundStatementNode* Statement() const { return statement.get(); }
+    bool ContainsLocalVariableWithDestructor() const override;
+    inline int BlockId() const { return blockId; }
+    inline void SetBlockId(int blockId_) { blockId = blockId_; }
 private:
     std::unique_ptr<BoundExpressionNode> condition;
     std::unique_ptr<BoundStatementNode> statement;
+    int blockId;
 };
 
 class BoundCaseStatementNode : public BoundStatementNode
@@ -406,6 +421,7 @@ public:
     void AddCaseExpr(BoundExpressionNode* caseExpr);
     inline BoundStatementNode* Statement() const { return stmt.get(); }
     void SetStatement(BoundStatementNode* stmt_);
+    bool ContainsLocalVariableWithDestructor() const override;
 private:
     std::vector<std::unique_ptr<BoundExpressionNode>> caseExprs;
     std::unique_ptr<BoundStatementNode> stmt;
@@ -421,6 +437,7 @@ public:
     bool MayThrow() const override;
     inline BoundStatementNode* Statement() const { return stmt.get(); }
     void SetStatement(BoundStatementNode* stmt_);
+    bool ContainsLocalVariableWithDestructor() const override;
 private:
     std::unique_ptr<BoundStatementNode> stmt;
 };
@@ -437,9 +454,13 @@ public:
     inline BoundExpressionNode* GetCondition() const { return condition.get(); }
     void SetStatement(BoundStatementNode* statement);
     inline BoundStatementNode* Statement() const { return statement.get(); }
+    bool ContainsLocalVariableWithDestructor() const override;
+    inline int BlockId() const { return blockId; }
+    inline void SetBlockId(int blockId_) { blockId = blockId_; }
 private:
     std::unique_ptr<BoundExpressionNode> condition;
     std::unique_ptr<BoundStatementNode> statement;
+    int blockId;
 };
 
 class BoundDoStatementNode : public BoundStatementNode
@@ -454,6 +475,7 @@ public:
     inline BoundExpressionNode* GetExpr() const { return expr.get(); }
     void SetStatement(BoundStatementNode* statement);
     inline BoundStatementNode* Statement() const { return statement.get(); }
+    bool ContainsLocalVariableWithDestructor() const override;
 private:
     std::unique_ptr<BoundExpressionNode> expr;
     std::unique_ptr<BoundStatementNode> statement;
@@ -475,11 +497,15 @@ public:
     inline BoundExpressionNode* GetLoopExpr() const { return loopExpr.get(); }
     void SetStatement(BoundStatementNode* statement);
     inline BoundStatementNode* Statement() const { return statement.get(); }
+    bool ContainsLocalVariableWithDestructor() const override;
+    inline int BlockId() const { return blockId; }
+    inline void SetBlockId(int blockId_) { blockId = blockId_; }
 private:
     std::unique_ptr<BoundStatementNode> initStatement;
     std::unique_ptr<BoundExpressionNode> condition;
     std::unique_ptr<BoundExpressionNode> loopExpr;
     std::unique_ptr<BoundStatementNode> statement;
+    int blockId;
 };
 
 class BoundSequenceStatementNode : public BoundStatementNode
@@ -491,9 +517,12 @@ public:
     BoundStatementNode* Clone() const override;
     bool MayThrow() const override;
     inline BoundStatementNode* First() const { return first.get(); }
+    inline void SetFirst(BoundStatementNode* first_) { first.reset(first_); }
     inline BoundStatementNode* Second() const { return second.get(); }
+    inline void SetSecond(BoundStatementNode* second_) { second.reset(second_); }
     bool IsTerminator() const override { return second->IsTerminator(); }
     bool IsReturnOrSequenceReturnStatementNode() const override { return second->IsReturnStatementNode(); }
+    bool ContainsLocalVariableWithDestructor() const override;
 private:
     std::unique_ptr<BoundStatementNode> first;
     std::unique_ptr<BoundStatementNode> second;
@@ -546,6 +575,7 @@ public:
     const std::u32string& Label() const { return label; }
     BoundStatementNode* Stmt() const { return stmt.get(); }
     otava::intermediate::BasicBlock* GetBB(Emitter& emitter);
+    bool ContainsLocalVariableWithDestructor() const override;
 private:
     std::u32string label;
     std::unique_ptr<BoundStatementNode> stmt;
@@ -582,6 +612,8 @@ public:
     inline BoundFunctionCallNode* ReleaseDestructorCall() { return destructorCall.release(); }
     inline VariableSymbol* Variable() const { return variable; }
     inline void SetVariable(VariableSymbol* variable_) { variable = variable_; }
+    bool ContainsLocalVariableWithDestructor() const override;
+    bool ConstructsLocalVariableWithDestructor() const override;
 private:
     std::unique_ptr<BoundFunctionCallNode> constructorCall;
     std::unique_ptr<BoundFunctionCallNode> destructorCall;

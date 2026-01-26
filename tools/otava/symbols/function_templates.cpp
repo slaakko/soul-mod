@@ -102,7 +102,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
                 context);
         }
         InstantiationScope instantiationScope(functionTemplate->Parent()->GetScope());
-        instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
+        //instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
         instantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
         std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
         for (int i = 0; i < arity; ++i)
@@ -189,7 +189,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
         }
         context->GetSymbolTable()->EndScope();
         instantiationScope.PopParentScope();
-        instantiationScope.PopParentScope();
+        //instantiationScope.PopParentScope();
         context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
         for (const auto& boundTemplateParameter : boundTemplateParameters)
         {

@@ -92,12 +92,15 @@ public:
     int Level() const;
     inline void* FunctionScope() const { return functionScope; }
     inline void SetFunctionScope(void* functionScope_) { functionScope = functionScope_; }
+    inline int BlockId() const { return blockId; }
+    inline void SetBlockId(int blockId_) { blockId = blockId_; }
 private:
     std::unique_ptr<Node> attributes;
     soul::ast::SourcePos lbPos;
     soul::ast::SourcePos rbPos;
     soul::ast::lexer::pos::pair::LexerPosPair lexerPosPair;
     void* functionScope;
+    int blockId;
 };
 
 class SequenceStatementNode : public CompoundNode
@@ -137,6 +140,8 @@ public:
     inline const soul::ast::SourcePos& ConstExprSourcePos() const { return constExprPos; }
     inline const soul::ast::SourcePos& ElsePos() const { return elsePos; }
     inline bool IsConstExprIf() const { return constExprPos.IsValid(); }
+    inline int BlockId() const { return blockId; }
+    inline void SetBlockId(int blockId_) { blockId = blockId_; }
 private:
     std::unique_ptr<Node> cond;
     std::unique_ptr<Node> thenStmt;
@@ -147,6 +152,7 @@ private:
     soul::ast::SourcePos rpPos;
     soul::ast::SourcePos constExprPos;
     soul::ast::SourcePos elsePos;
+    int blockId;
 };
 
 class SwitchStatementNode : public CompoundNode
@@ -164,6 +170,8 @@ public:
     inline const soul::ast::SourcePos& SwitchPos() const { return switchPos; }
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline int BlockId() const { return blockId; }
+    inline void SetBlockId(int blockId_) { blockId = blockId_; }
 private:
     std::unique_ptr<Node> cond;
     std::unique_ptr<Node> stmt;
@@ -171,6 +179,7 @@ private:
     soul::ast::SourcePos switchPos;
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
+    int blockId;
 };
 
 class WhileStatementNode : public CompoundNode
@@ -189,6 +198,8 @@ public:
     inline const soul::ast::SourcePos& WhilePos() const { return whilePos; }
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline int BlockId() const { return blockId; }
+    inline void SetBlockId(int blockId_) { blockId = blockId_; }
 private:
     std::unique_ptr<Node> cond;
     std::unique_ptr<Node> stmt;
@@ -196,6 +207,7 @@ private:
     soul::ast::SourcePos whilePos;
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
+    int blockId;
 };
 
 class DoStatementNode : public CompoundNode
@@ -246,6 +258,8 @@ public:
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
     inline const soul::ast::SourcePos& ColonPos() const { return colonPos; }
+    inline int BlockId() const { return blockId; }
+    inline void SetBlockId(int blockId_) { blockId = blockId_; }
 private:
     std::unique_ptr<Node> initStmt;
     std::unique_ptr<Node> declaration;
@@ -256,6 +270,7 @@ private:
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
     soul::ast::SourcePos colonPos;
+    int blockId;
 };
 
 class ForRangeDeclarationNode : public BinaryNode
@@ -320,6 +335,8 @@ public:
     inline const soul::ast::SourcePos& ForPos() const { return forPos; }
     inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline int BlockId() const { return blockId; }
+    inline void SetBlockId(int blockId_) { blockId = blockId_; }
 private:
     std::unique_ptr<Node> initStmt;
     std::unique_ptr<Node> cond;
@@ -330,6 +347,7 @@ private:
     soul::ast::SourcePos forPos;
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
+    int blockId;
 };
 
 class BreakStatementNode : public CompoundNode

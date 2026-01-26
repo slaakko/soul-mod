@@ -42,6 +42,7 @@ public:
     void Visit(otava::ast::ExpressionStatementNode& node) override;
     void Visit(otava::ast::ReturnStatementNode& node) override;
     void Visit(otava::ast::ExceptionDeclarationNode& node) override;
+    inline int ScopeCount() const { return scopeCount; }
 private:
     Context* context;
     bool innerClass;
@@ -50,6 +51,7 @@ private:
     std::vector<ClassTypeSymbol*> baseClasses;
     otava::ast::Node* functionNode;
     FunctionSymbol* specialization;
+    int scopeCount;
 };
 
 } // namespace otava::symbols

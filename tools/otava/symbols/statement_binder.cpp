@@ -17,6 +17,7 @@ import otava.ast.templates;
 import otava.ast.literal;
 import otava.ast.simple.type;
 import otava.symbols.argument.conversion.table;
+import otava.symbols.block;
 import otava.symbols.bound.tree;
 import otava.symbols.classes;
 import otava.symbols.class_group.symbol;
@@ -49,6 +50,7 @@ import otava.symbols.inline_functions;
 import otava.symbols.operation.repository;
 import otava.symbols.type.resolver;
 import otava.symbols.project;
+import otava.symbols.exception_handling;
 import util.sha1;
 import util.unicode;
 
@@ -658,7 +660,17 @@ void StatementBinder::Visit(otava::ast::CompoundStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
     if (!block) return;
+    if (node.BlockId() != -1)
+    {
+        functionDefinitionSymbol->MapBlock(node.BlockId(), block);
+    }
+    else
+    {
+        std::cout << "no block: " << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
+    }
+    context->PushBlockId(node.BlockId());
     BoundCompoundStatementNode* currentCompoundStatement = new BoundCompoundStatementNode(node.GetSourcePos());
+    currentCompoundStatement->SetBlockId(node.BlockId());
     context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     if (functionDefinitionSymbol->GetFunctionKind() == FunctionKind::constructor && !setVPtrStatementsGenerated)
     {
@@ -690,7 +702,8 @@ void StatementBinder::Visit(otava::ast::CompoundStatementNode& node)
         }
     }
     context->GetSymbolTable()->EndScopeGeneric(context);
-    currentCompoundStatement->SetSource(&node);
+    currentCompoundStatement->SetSource(node.Clone());
+    context->PopBlockId();
     SetStatement(currentCompoundStatement);
 }
 
@@ -712,7 +725,7 @@ void StatementBinder::Visit(otava::ast::SequenceStatementNode& node)
     BoundStatementNode* boundFirstStatement = BindStatement(node.FirstStmt(), functionDefinitionSymbol, context);
     BoundStatementNode* boundSecondStatement = BindStatement(node.SecondStmt(), functionDefinitionSymbol, context);
     BoundSequenceStatementNode* boundSequenceStatement = new BoundSequenceStatementNode(node.GetSourcePos(), boundFirstStatement, boundSecondStatement);
-    boundSequenceStatement->SetSource(&node);
+    boundSequenceStatement->SetSource(node.Clone());
     SetStatement(boundSequenceStatement);
 }
 
@@ -720,8 +733,18 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
     if (!block) return;
+    if (node.BlockId() != -1)
+    {
+        functionDefinitionSymbol->MapBlock(node.BlockId(), block);
+    }
+    else
+    {
+        std::cout << "no block: " << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
+    }
+    context->PushBlockId(node.BlockId());
     context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     BoundIfStatementNode* boundIfStatement = new BoundIfStatementNode(node.GetSourcePos());
+    boundIfStatement->SetBlockId(node.BlockId());
     context->PushResetFlag(ContextFlags::returnRef);
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
     if (!condition)
@@ -751,17 +774,28 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
             boundIfStatement->SetElseStatement(boundElseStatement);
         }
     }
-    boundIfStatement->SetSource(&node);
+    boundIfStatement->SetSource(node.Clone());
     SetStatement(boundIfStatement);
     context->GetSymbolTable()->EndScopeGeneric(context);
+    context->PopBlockId();
 }
 
 void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
     if (!block) return;
+    if (node.BlockId() != -1)
+    {
+        functionDefinitionSymbol->MapBlock(node.BlockId(), block);
+    }
+    else
+    {
+        std::cout << "no block: " << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
+    }
+    context->PushBlockId(node.BlockId());
     context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     BoundSwitchStatementNode* boundSwitchStatement = new BoundSwitchStatementNode(node.GetSourcePos());
+    boundSwitchStatement->SetBlockId(node.BlockId());
     context->PushResetFlag(ContextFlags::returnRef);
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
     if (!condition)
@@ -779,9 +813,10 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
     {
         boundSwitchStatement->SetStatement(boundStmt);
     }
-    boundSwitchStatement->SetSource(&node);
+    boundSwitchStatement->SetSource(node.Clone());
     SetStatement(boundSwitchStatement);
     context->GetSymbolTable()->EndScopeGeneric(context);
+    context->PopBlockId();
 }
 
 void StatementBinder::Visit(otava::ast::CaseStatementNode& node)
@@ -818,7 +853,7 @@ void StatementBinder::Visit(otava::ast::CaseStatementNode& node)
         {
             BoundCaseStatementNode* caseStmt = static_cast<BoundCaseStatementNode*>(boundStmt);
             caseStmt->InsertCaseExprToFront(caseExpr);
-            boundStmt->SetSource(&node);
+            boundStmt->SetSource(node.Clone());
             SetStatement(boundStmt);
         }
         else
@@ -826,7 +861,7 @@ void StatementBinder::Visit(otava::ast::CaseStatementNode& node)
             BoundCaseStatementNode* boundCaseStatement = new BoundCaseStatementNode(node.GetSourcePos());
             boundCaseStatement->AddCaseExpr(caseExpr);
             boundCaseStatement->SetStatement(boundStmt);
-            boundCaseStatement->SetSource(&node);
+            boundCaseStatement->SetSource(node.Clone());
             SetStatement(boundCaseStatement);
         }
     }
@@ -846,7 +881,7 @@ void StatementBinder::Visit(otava::ast::DefaultStatementNode& node)
     {
         boundDefaultStatement->SetStatement(boundStmt);
     }
-    boundDefaultStatement->SetSource(&node);
+    boundDefaultStatement->SetSource(node.Clone());
     SetStatement(boundDefaultStatement);
 }
 
@@ -856,8 +891,18 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
     if (!block) return;
     if (!node.Condition()->IsInitConditionNode())
     {
+        if (node.BlockId() != -1)
+        {
+            functionDefinitionSymbol->MapBlock(node.BlockId(), block);
+        }
+        else
+        {
+            std::cout << "no block: " << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
+        }
+        context->PushBlockId(node.BlockId());
         context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
         BoundWhileStatementNode* boundWhileStatement = new BoundWhileStatementNode(node.GetSourcePos());
+        boundWhileStatement->SetBlockId(node.BlockId());
         context->PushResetFlag(ContextFlags::returnRef);
         BoundExpressionNode* condition = BindExpression(node.Condition(), context);
         if (!condition)
@@ -879,9 +924,10 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
         {
             boundWhileStatement->SetStatement(boundStmt);
         }
-        boundWhileStatement->SetSource(&node);
+        boundWhileStatement->SetSource(node.Clone());
         SetStatement(boundWhileStatement);
         context->GetSymbolTable()->EndScopeGeneric(context);
+        context->PopBlockId();
     }
     else
     {
@@ -933,7 +979,7 @@ void StatementBinder::Visit(otava::ast::DoStatementNode& node)
     {
         boundDoStatement->SetStatement(boundStmt);
     }
-    boundDoStatement->SetSource(&node);
+    boundDoStatement->SetSource(node.Clone());
     SetStatement(boundDoStatement);
 }
 
@@ -970,7 +1016,9 @@ void StatementBinder::Visit(otava::ast::RangeForStatementNode& node)
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
     soul::ast::SourcePos sourcePos = node.GetSourcePos();
+    context->PushBlockId(node.BlockId());
     std::unique_ptr<otava::ast::CompoundStatementNode> rangeForCompound(new otava::ast::CompoundStatementNode(sourcePos));
+    rangeForCompound->SetBlockId(node.BlockId());
     if (node.InitStatement())
     {
         rangeForCompound->AddNode(node.InitStatement()->Clone());
@@ -1007,6 +1055,7 @@ void StatementBinder::Visit(otava::ast::RangeForStatementNode& node)
     otava::ast::UnaryExprNode* forLoopExpr = new otava::ast::UnaryExprNode(
         sourcePos, new otava::ast::PrefixIncNode(sourcePos), new otava::ast::IdentifierNode(sourcePos, U"@it"));
     otava::ast::CompoundStatementNode* forActionStmt = new otava::ast::CompoundStatementNode(sourcePos);
+    forActionStmt->SetBlockId(context->NextBlockId());
     RangeForDeclarationExtractor extractor;
     node.Declaration()->Accept(extractor);
     otava::ast::DeclSpecifierSequenceNode* forActionDeclSpecifiers = extractor.GetDeclSpecifierSequence();
@@ -1033,16 +1082,27 @@ void StatementBinder::Visit(otava::ast::RangeForStatementNode& node)
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
     if (boundStatement)
     {
-        boundStatement->SetSource(&node);
+        boundStatement->SetSource(node.Clone());
     }
+    context->PopBlockId();
 }
 
 void StatementBinder::Visit(otava::ast::ForStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
     if (!block) return;
+    if (node.BlockId() != -1)
+    {
+        functionDefinitionSymbol->MapBlock(node.BlockId(), block);
+    }
+    else
+    {
+        std::cout << "no block: " << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
+    }
+    context->PushBlockId(node.BlockId());
     context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     BoundForStatementNode* boundForStatement = new BoundForStatementNode(node.GetSourcePos());
+    boundForStatement->SetBlockId(node.BlockId());
     if (node.InitStatement())
     {
         BoundStatementNode* boundInitStatement = BindStatement(node.InitStatement(), functionDefinitionSymbol, context);
@@ -1084,22 +1144,23 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
     {
         boundForStatement->SetStatement(boundStmt);
     }
-    boundForStatement->SetSource(&node);
+    boundForStatement->SetSource(node.Clone());
     SetStatement(boundForStatement);
     context->GetSymbolTable()->EndScopeGeneric(context);
+    context->PopBlockId();
 }
 
 void StatementBinder::Visit(otava::ast::BreakStatementNode& node)
 {
     BoundBreakStatementNode* boundBreakStatement = new BoundBreakStatementNode(node.GetSourcePos());
-    boundBreakStatement->SetSource(&node);
+    boundBreakStatement->SetSource(node.Clone());
     SetStatement(boundBreakStatement);
 }
 
 void StatementBinder::Visit(otava::ast::ContinueStatementNode& node)
 {
     BoundContinueStatementNode* boundContinueStatement = new BoundContinueStatementNode(node.GetSourcePos());
-    boundContinueStatement->SetSource(&node);
+    boundContinueStatement->SetSource(node.Clone());
     SetStatement(boundContinueStatement);
 }
 
@@ -1223,7 +1284,7 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
         {
             ThrowException("must return a value", node.GetSourcePos(), context);
         }
-        boundReturnStatement->SetSource(&node);
+        boundReturnStatement->SetSource(node.Clone());
         SetStatement(boundReturnStatement);
     }
 }
@@ -1261,7 +1322,7 @@ void StatementBinder::Visit(otava::ast::ExpressionStatementNode& node)
         }
         boundExpressionStatement->SetExpr(expr, node.GetSourcePos(), context);
     }
-    boundExpressionStatement->SetSource(&node);
+    boundExpressionStatement->SetSource(node.Clone());
     SetStatement(boundExpressionStatement);
 }
 
@@ -1270,7 +1331,7 @@ void StatementBinder::Visit(otava::ast::DeclarationStatementNode& node)
     node.Declaration()->Accept(*this);
     if (boundStatement)
     {
-        boundStatement->SetSource(&node);
+        boundStatement->SetSource(node.Clone());
     }
 }
 
@@ -1278,9 +1339,15 @@ void StatementBinder::Visit(otava::ast::TryStatementNode& node)
 {
     std::u32string tryResultVar = context->NextResultVarName();
     std::u32string handlerResultVar = context->NextResultVarName();
+    std::u32string ehReturnFromVar = context->NextEhReturnFromVarName();
+    std::u32string childControlResultVar = context->NextChildControlResultVarName();
+    TypeSymbol* resultType = functionDefinitionSymbol->NonChildFunctionResultType(context);
+    std::unique_ptr<otava::ast::Node> tryVarDeclarationStmtNode;
+    std::unique_ptr<otava::ast::Node> handlerVarDeclarationStmtNode;
     std::unique_ptr<BoundStatementNode> boundTryVarDeclarationStatement;
     std::unique_ptr<BoundStatementNode> boundHandlerVarDeclarationStatement;
-    TypeSymbol* resultType = functionDefinitionSymbol->NonChildFunctionResultType(context);
+    std::unique_ptr<BoundStatementNode> boundChildControlResultStatement;
+    std::unique_ptr<BoundStatementNode> boundEhReturnFromStatement;
     if (resultType)
     {
         TypeSymbol* nonReferenceType = ConvertRefToPtrType(resultType, context);
@@ -1294,7 +1361,7 @@ void StatementBinder::Visit(otava::ast::TryStatementNode& node)
         {
             tryVarDeclarationStatementText.append(U";");
         }
-        std::unique_ptr<otava::ast::Node> tryVarDeclarationStmtNode = ParseStatement(tryVarDeclarationStatementText, context);
+        tryVarDeclarationStmtNode = ParseStatement(tryVarDeclarationStatementText, context);
         boundTryVarDeclarationStatement.reset(BindStatement(tryVarDeclarationStmtNode.get(), functionDefinitionSymbol, context));
         std::u32string handlerVarDeclarationStatementText;
         handlerVarDeclarationStatementText.append(nonReferenceType->FullName()).append(1, ' ').append(handlerResultVar);
@@ -1306,10 +1373,19 @@ void StatementBinder::Visit(otava::ast::TryStatementNode& node)
         {
             handlerVarDeclarationStatementText.append(U";");
         }
-        std::unique_ptr<otava::ast::Node> handlerVarDeclarationStmtNode = ParseStatement(handlerVarDeclarationStatementText, context);
+        handlerVarDeclarationStmtNode = ParseStatement(handlerVarDeclarationStatementText, context);
         boundHandlerVarDeclarationStatement.reset(BindStatement(handlerVarDeclarationStmtNode.get(), functionDefinitionSymbol, context));
     }
-    context->PushCleanup();
+    std::u32string childControlResultStatementText;
+    childControlResultStatementText.append(U"std::child_control_result ").append(childControlResultVar).append(U" = std::child_control_result::none;");
+    std::unique_ptr<otava::ast::Node> setChildControlResultStmtNode = ParseStatement(childControlResultStatementText, context);
+    boundChildControlResultStatement.reset(BindStatement(setChildControlResultStmtNode.get(), functionDefinitionSymbol, context));
+    boundChildControlResultStatement->SetSource(setChildControlResultStmtNode.release());
+    std::u32string ehReturnFromTryBlockStatementText;
+    ehReturnFromTryBlockStatementText.append(U"std::eh_return_from ").append(ehReturnFromVar).append(U" = std::eh_return_from::try_block;");
+    std::unique_ptr<otava::ast::Node> ehReturnFromTryBlockStmtNode = ParseStatement(ehReturnFromTryBlockStatementText, context);
+    boundEhReturnFromStatement.reset(BindStatement(ehReturnFromTryBlockStmtNode.get(), functionDefinitionSymbol, context));
+    boundEhReturnFromStatement->SetSource(ehReturnFromTryBlockStmtNode.release());
     FunctionDefinitionSymbol* parentFn = context->GetBoundFunction()->GetFunctionDefinitionSymbol();
     Scope* parentFnScope = context->GetSymbolTable()->CurrentScope();
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
@@ -1331,38 +1407,48 @@ void StatementBinder::Visit(otava::ast::TryStatementNode& node)
     otava::ast::FunctionDeclaratorNode* tryDeclarator = new otava::ast::FunctionDeclaratorNode(node.GetSourcePos(), 
         new otava::ast::IdentifierNode(node.GetSourcePos(), U"try_" + 
             util::ToUtf32(std::to_string(trySerial)) + U"_" + util::ToUtf32(context->GetBoundCompileUnit()->Id())), tryParameters);
-    otava::ast::FunctionDefinitionNode tryFn(node.GetSourcePos(), nullptr, tryDeclSpecifiers, tryDeclarator, nullptr, 
-        new otava::ast::FunctionBodyNode(node.GetSourcePos(), tryBlock));
+    std::unique_ptr<otava::ast::FunctionDefinitionNode> tryFn(new otava::ast::FunctionDefinitionNode(
+        node.GetSourcePos(), nullptr, tryDeclSpecifiers, tryDeclarator, nullptr, new otava::ast::FunctionBodyNode(node.GetSourcePos(), tryBlock)));
     InstantiationScope tryInstantiationScope(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->Parent()->GetScope());
-    tryInstantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", node.GetSourcePos(), context));
+    //tryInstantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", node.GetSourcePos(), context));
     tryInstantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
     context->GetSymbolTable()->BeginScope(&tryInstantiationScope);
     Instantiator tryInstantiator(context, &tryInstantiationScope);
-    tryInstantiator.SetFunctionNode(&tryFn);
+    tryInstantiator.SetFunctionNode(tryFn.get());
     context->PushSetFlag(ContextFlags::instantiateInlineFunction | ContextFlags::saveDeclarations | ContextFlags::dontBind);
-    tryFn.Accept(tryInstantiator);
-    context->PopFlags();
+    tryFn->Accept(tryInstantiator);
+    int tryfnScopeCount = tryInstantiator.ScopeCount();
     FunctionDefinitionSymbol* tryFnSymbol = static_cast<FunctionDefinitionSymbol*>(tryInstantiator.GetSpecialization());
     tryFnSymbol->SetParentFn(parentFn);
     tryFnSymbol->SetParentFnScope(parentFnScope);
     context->PushBoundFunction(new BoundFunctionNode(tryFnSymbol, node.GetSourcePos()));
     context->PushSetFlag(ContextFlags::makeChildFn);
     context->PushResultVarName(tryResultVar);
+    context->PushChildControlResultVarName(childControlResultVar);
     tryFnSymbol->SetResultVarName(tryResultVar);
-    tryFnSymbol = BindFunction(&tryFn, tryFnSymbol, context);
+    tryFnSymbol = BindFunction(tryFn.get(), tryFnSymbol, context);
+    otava::symbols::EndFunctionDefinition(tryFn.get(), tryfnScopeCount, context);
+    context->PopChildControlResultVarName();
     context->PopResultVarName();
     context->PopFlags();
-    if (tryFnSymbol->IsBound())
-    {
-        context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
-    }
-    context->PopBoundFunction();
+    context->PopFlags();
+    //if (tryFnSymbol->IsBound())
+    //{
+        //context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
+    //}
+    //context->PopBoundFunction();
     context->GetSymbolTable()->EndScope();
     tryInstantiationScope.PopParentScope();
     tryInstantiationScope.PopParentScope();
-    otava::ast::Node* prevHandlerBlock = handlerBlock;
+    tryFnSymbol->SetFnDefNode(tryFn.release());
+    otava::ast::CompoundStatementNode* prevHandlerBlock = handlerBlock;
     handlerBlock = new otava::ast::CompoundStatementNode(node.GetSourcePos());
+    handlerBlock->SetBlockId(context->NextBlockId());
     node.Handlers()->Accept(*this);
+    std::u32string ehReturnFromHandlerStmtText;
+    ehReturnFromHandlerStmtText.append(ehReturnFromVar).append(U" = std::eh_return_from::handler_block;");
+    std::unique_ptr<otava::ast::Node> ehReturnFromHandlerStmt = ParseStatement(ehReturnFromHandlerStmtText, context);
+    handlerBlock->AddNode(ehReturnFromHandlerStmt.release());
     otava::ast::DeclSpecifierSequenceNode* handlerDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(node.GetSourcePos());
     handlerDeclSpecifiers->AddNode(new otava::ast::VoidNode(node.GetSourcePos()));
     otava::ast::ParameterListNode* handlerParameters = new otava::ast::ParameterListNode(node.GetSourcePos());
@@ -1378,82 +1464,90 @@ void StatementBinder::Visit(otava::ast::TryStatementNode& node)
     otava::ast::FunctionDeclaratorNode* handlerDeclarator = new otava::ast::FunctionDeclaratorNode(node.GetSourcePos(),
         new otava::ast::IdentifierNode(node.GetSourcePos(), U"handler_" + 
             util::ToUtf32(std::to_string(trySerial)) + U"_" + util::ToUtf32(context->GetBoundCompileUnit()->Id())), handlerParameters);
-    otava::ast::FunctionDefinitionNode handlerFn(node.GetSourcePos(), nullptr, handlerDeclSpecifiers, handlerDeclarator, nullptr,
-        new otava::ast::FunctionBodyNode(node.GetSourcePos(), handlerBlock));
+    std::unique_ptr<otava::ast::FunctionDefinitionNode> handlerFn(new otava::ast::FunctionDefinitionNode(node.GetSourcePos(), nullptr, 
+        handlerDeclSpecifiers, handlerDeclarator, nullptr, new otava::ast::FunctionBodyNode(node.GetSourcePos(), handlerBlock)));
     InstantiationScope handlerInstantiationScope(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->Parent()->GetScope());
-    handlerInstantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", node.GetSourcePos(), context));
+    //handlerInstantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", node.GetSourcePos(), context));
     handlerInstantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
     context->GetSymbolTable()->BeginScope(&handlerInstantiationScope);
     Instantiator handlerInstantiator(context, &handlerInstantiationScope);
-    handlerInstantiator.SetFunctionNode(&handlerFn);
+    handlerInstantiator.SetFunctionNode(handlerFn.get());
     context->PushSetFlag(ContextFlags::instantiateInlineFunction | ContextFlags::saveDeclarations | ContextFlags::dontBind);
-    handlerFn.Accept(handlerInstantiator);
-    context->PopFlags();
+    handlerFn->Accept(handlerInstantiator);
+    int handlerFnScopeCount = handlerInstantiator.ScopeCount();
     FunctionDefinitionSymbol* handlerFnSymbol = static_cast<FunctionDefinitionSymbol*>(handlerInstantiator.GetSpecialization());
     handlerFnSymbol->SetParentFn(parentFn);
     handlerFnSymbol->SetParentFnScope(parentFnScope);
     context->PushBoundFunction(new BoundFunctionNode(handlerFnSymbol, node.GetSourcePos()));
     context->PushSetFlag(ContextFlags::makeChildFn);
     context->PushResultVarName(handlerResultVar);
+    context->PushChildControlResultVarName(childControlResultVar);
     handlerFnSymbol->SetResultVarName(handlerResultVar);
-    handlerFnSymbol = BindFunction(&handlerFn, handlerFnSymbol, context);
+    handlerFnSymbol = BindFunction(handlerFn.get(), handlerFnSymbol, context);
+    otava::symbols::EndFunctionDefinition(handlerFn.get(), handlerFnScopeCount, context);
+    context->PopChildControlResultVarName();
     context->PopResultVarName();
     context->PopFlags();
-    if (handlerFnSymbol->IsBound())
-    {
-        context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
-    }
-    context->PopBoundFunction();
+    context->PopFlags();
+    //if (handlerFnSymbol->IsBound())
+    //{
+        //context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
+    //}
+    //context->PopBoundFunction();
     context->GetSymbolTable()->EndScope();
     handlerInstantiationScope.PopParentScope();
     handlerInstantiationScope.PopParentScope();
+    handlerFnSymbol->SetFnDefNode(handlerFn.release());
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+    std::unique_ptr<otava::ast::CompoundStatementNode> invokeOrtTryBlock(new otava::ast::CompoundStatementNode(node.GetSourcePos()));
+    int blockId = -1;
+    if (!functionDefinitionSymbol->Blocks().empty())
+    {
+        blockId = functionDefinitionSymbol->Blocks().front()->BlockId();
+    }
+    invokeOrtTryBlock->SetBlockId(blockId);
+    if (resultType && tryVarDeclarationStmtNode && handlerVarDeclarationStmtNode)
+    {
+        invokeOrtTryBlock->AddNode(tryVarDeclarationStmtNode.release());
+        invokeOrtTryBlock->AddNode(handlerVarDeclarationStmtNode.release());
+    }
+    invokeOrtTryBlock->AddNode(new otava::ast::BoundStatementNode(boundChildControlResultStatement.release(), node.GetSourcePos()));
+    invokeOrtTryBlock->AddNode(new otava::ast::BoundStatementNode(boundEhReturnFromStatement.release(), node.GetSourcePos()));
     otava::ast::InvokeExprNode* invokeOrtTry = new otava::ast::InvokeExprNode(node.GetSourcePos(), new otava::ast::IdentifierNode(node.GetSourcePos(), U"ort_try"));
     invokeOrtTry->AddNode(new otava::ast::IdentifierNode(node.GetSourcePos(), tryFnSymbol->Name()));
     invokeOrtTry->AddNode(new otava::ast::IdentifierNode(node.GetSourcePos(), handlerFnSymbol->Name()));
-    otava::ast::InvokeExprNode* getFramePtrIntrics = new otava::ast::InvokeExprNode(
-        node.GetSourcePos(), new otava::ast::IdentifierNode(node.GetSourcePos(), U"__intrinsic_get_frame_ptr"));
+    otava::ast::InvokeExprNode* getFramePtrIntrics = new otava::ast::InvokeExprNode(node.GetSourcePos(), new otava::ast::IdentifierNode(node.GetSourcePos(), U"__intrinsic_get_frame_ptr"));
     invokeOrtTry->AddNode(getFramePtrIntrics);
-    otava::ast::ExpressionStatementNode ortTryStmt(node.GetSourcePos(), invokeOrtTry, nullptr, nullptr);
-    BoundStatementNode* stmt = BindStatement(&ortTryStmt, functionDefinitionSymbol, context);
-    stmt->SetSource(&node);
+    std::unique_ptr<otava::ast::ExpressionStatementNode> ortTryStmt(new otava::ast::ExpressionStatementNode(node.GetSourcePos(), invokeOrtTry, nullptr, nullptr));
+    invokeOrtTryBlock->AddNode(ortTryStmt.release());
     if (tryFnSymbol->GetFlag(FunctionSymbolFlags::containsReturnStatement))
     {
-        stmt = new BoundSequenceStatementNode(node.GetSourcePos(), boundTryVarDeclarationStatement.release(), stmt);
-        if (resultType)
-        {
-            std::u32string returnStatementText;
-            returnStatementText.append(U"return ").append(tryFnSymbol->ResultVarExprStr(resultType)).append(U";");
-            std::unique_ptr<otava::ast::Node> returnStmtNode = ParseStatement(returnStatementText, context);
-            BoundStatementNode* boundReturnStatement = BindStatement(returnStmtNode.get(), functionDefinitionSymbol, context);
-            stmt = new BoundSequenceStatementNode(node.GetSourcePos(), stmt, boundReturnStatement);
-        }
-        else
-        {
-            BoundStatementNode* boundReturnStatement = new BoundReturnStatementNode(node.GetSourcePos());
-            stmt = new BoundSequenceStatementNode(node.GetSourcePos(), stmt, boundReturnStatement);
-        }
+        std::u32string tryBlockReturnStmtText;
+        tryBlockReturnStmtText.append(U"if (").append(ehReturnFromVar).append(U" == std::eh_return_from::try_block && ").
+            append(childControlResultVar).append(U" == std::child_control_result::ret) return ").append(tryFnSymbol->ResultVarExprStr(resultType)).append(U";");
+        std::unique_ptr<otava::ast::Node> tryBlockReturnFromStmt = ParseStatement(tryBlockReturnStmtText, context);
+        invokeOrtTryBlock->AddNode(tryBlockReturnFromStmt.release());
     }
     if (handlerFnSymbol->GetFlag(FunctionSymbolFlags::containsReturnStatement))
     {
-        stmt = new BoundSequenceStatementNode(node.GetSourcePos(), boundHandlerVarDeclarationStatement.release(), stmt);
-        if (resultType)
-        {
-            std::u32string returnStatementText;
-            returnStatementText.append(U"return ").append(handlerFnSymbol->ResultVarExprStr(resultType)).append(U";");
-            std::unique_ptr<otava::ast::Node> returnStmtNode = ParseStatement(returnStatementText, context);
-            BoundStatementNode* boundReturnStatement = BindStatement(returnStmtNode.get(), functionDefinitionSymbol, context);
-            stmt = new BoundSequenceStatementNode(node.GetSourcePos(), stmt, boundReturnStatement);
-        }
-        else
-        {
-            BoundStatementNode* boundReturnStatement = new BoundReturnStatementNode(node.GetSourcePos());
-            stmt = new BoundSequenceStatementNode(node.GetSourcePos(), stmt, boundReturnStatement);
-        }
+        std::u32string handlerBlockReturnStmtText;
+        handlerBlockReturnStmtText.append(U"if (").append(ehReturnFromVar).append(U" == std::eh_return_from::handler_block && ").
+            append(childControlResultVar).append(U" == std::child_control_result::ret) return ").append(handlerFnSymbol->ResultVarExprStr(resultType)).append(U";");
+        std::unique_ptr<otava::ast::Node> handlerBlockReturnStmt = ParseStatement(handlerBlockReturnStmtText, context);
+        invokeOrtTryBlock->AddNode(handlerBlockReturnStmt.release());
     }
+    InstantiationScope ortTryBlockInstantiationScope(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->Parent()->GetScope());
+    ortTryBlockInstantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope());
+    context->GetSymbolTable()->BeginScope(&ortTryBlockInstantiationScope);
+    Instantiator ortTryBlockInstantiator(context, &ortTryBlockInstantiationScope);
+    context->PushSetFlag(ContextFlags::saveDeclarations | ContextFlags::dontBind);
+    invokeOrtTryBlock->Accept(ortTryBlockInstantiator);
+    context->PopFlags();
+    BoundStatementNode* stmt = BindStatement(invokeOrtTryBlock.get(), functionDefinitionSymbol, context);
+    stmt->SetSource(node.Clone());
     SetStatement(stmt);
+    context->GetSymbolTable()->EndScope();
     handlerBlock = prevHandlerBlock;
-    context->PopCleanup();
 }
 
 void StatementBinder::Visit(otava::ast::HandlerSequenceNode& node)
@@ -1554,9 +1648,9 @@ void StatementBinder::Visit(otava::ast::AliasDeclarationNode& node)
 
 void StatementBinder::Visit(otava::ast::SimpleDeclarationNode& node)
 {
-    BoundCompoundStatementNode* boundCompoundStatement = new BoundCompoundStatementNode(node.GetSourcePos());
+    BoundStatementNode* boundStatement = nullptr;
     std::unique_ptr<DeclarationList> declarationList = context->ReleaseDeclarationList(&node);
-    if (declarationList)
+    if (declarationList )
     {
         bool setStatement = true;
         for (auto& declaration : declarationList->declarations)
@@ -1631,9 +1725,7 @@ void StatementBinder::Visit(otava::ast::SimpleDeclarationNode& node)
                     if (destructorCall)
                     {
                         boundConstructionStatement->SetDestructorCall(destructorCall);
-                        BoundExpressionStatementNode* destructionStatement = new BoundExpressionStatementNode(node.GetSourcePos());
-                        destructionStatement->SetExpr(destructorCall->Clone());
-                        context->GetCleanup().Add(destructionStatement, context);
+                        functionDefinitionSymbol->SetFlag(FunctionSymbolFlags::containsLocalVariableWithDestructor);
                     }
                 }
                 else
@@ -1641,13 +1733,34 @@ void StatementBinder::Visit(otava::ast::SimpleDeclarationNode& node)
                     boundConstructionStatement = new BoundConstructionStatementNode(node.GetSourcePos(), constructorCall.release());
                     boundConstructionStatement->SetVariable(variable);
                 }
-                boundCompoundStatement->AddStatement(boundConstructionStatement);
                 functionDefinitionSymbol->AddLocalVariable(variable);
+                if (!boundStatement)
+                {
+                    boundStatement = boundConstructionStatement;
+                }
+                else
+                {
+                    if (boundStatement->IsBoundConstructionStatementNode())
+                    {
+                        BoundCompoundStatementNode* compoundStatement = new BoundCompoundStatementNode(node.GetSourcePos());
+                        compoundStatement->AddStatement(boundStatement);
+                        boundStatement = compoundStatement;
+                    }
+                    else if (boundStatement->IsBoundCompoundStatementNode())
+                    {
+                        BoundCompoundStatementNode* compoundStatement = static_cast<BoundCompoundStatementNode*>(boundStatement);
+                        compoundStatement->AddStatement(boundConstructionStatement);
+                    }
+                    else
+                    {
+                        ThrowException("bound construction statement or bound compound statement expected", node.GetSourcePos(), context);
+                    }
+                }
             }
         }
         if (setStatement)
         {
-            SetStatement(boundCompoundStatement);
+            SetStatement(boundStatement);
         }
     }
 }
@@ -1663,13 +1776,13 @@ void StatementBinder::SetStatement(BoundStatementNode* statement)
         if (boundStatement->Postfix())
         {
             BoundSequenceStatementNode* sequenceStatement = new BoundSequenceStatementNode(statement->GetSourcePos(), statement, boundStatement);
-            sequenceStatement->SetSource(statement->Source());
+            sequenceStatement->SetSource(statement->Source()->Clone());
             statement = sequenceStatement;
         }
         else
         {
             BoundSequenceStatementNode* sequenceStatement = new BoundSequenceStatementNode(statement->GetSourcePos(), boundStatement, statement);
-            sequenceStatement->SetSource(statement->Source());
+            sequenceStatement->SetSource(statement->Source()->Clone());
             statement = sequenceStatement;
         }
         if (postfix)
@@ -1890,6 +2003,7 @@ void StatementBinder::BindStaticLocalVariable(VariableSymbol* variable, otava::a
     if (!isArrayVar)
     {
         compound1.reset(new otava::ast::CompoundStatementNode(sourcePos));
+        compound1->SetBlockId(context->NextBlockId());
         otava::ast::TemplateIdNode* lockGuardType = new otava::ast::TemplateIdNode(sourcePos, MakeTypeNameNodes(sourcePos, U"std::lock_guard"));
         lockGuardType->AddNode(MakeTypeNameNodes(sourcePos, U"std::recursive_mutex"));
         otava::ast::DeclSpecifierSequenceNode* lockGuardDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
@@ -1906,6 +2020,7 @@ void StatementBinder::BindStaticLocalVariable(VariableSymbol* variable, otava::a
         compound1->AddNode(lockGuardDeclarationStmt);
         inititalizedCond.reset(new otava::ast::UnaryExprNode(sourcePos, new otava::ast::NotNode(sourcePos), initializedVarName->Clone()));
         compound2.reset(new otava::ast::CompoundStatementNode(sourcePos));
+        compound2->SetBlockId(context->NextBlockId());
     }
     globalStaticVariableSymbol = nullptr;
     Symbol* symbol = context->GetSymbolTable()->Lookup(globalStaticVarName, SymbolGroupKind::variableSymbolGroup, sourcePos, context);
@@ -1988,6 +2103,7 @@ void StatementBinder::BindStaticLocalVariable(VariableSymbol* variable, otava::a
     variable->SetGlobal(globalStaticVariableSymbol);
 }
 
+/*
 BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
     StatementBinder binder(context, functionDefinitionSymbol);
@@ -2005,31 +2121,30 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
             fnDefContainsStatics = functionDefinitionSymbol->ContainsStatics();
         }
         if (!context->GetFlag(ContextFlags::skipInvokeChecking) && !context->GetFlag(ContextFlags::expected) &&
-            functionDefinitionSymbol && !fnDefIsNoExcept && !context->CleanupIsEmpty() && boundStatement->MayThrow() &&
+            functionDefinitionSymbol && !fnDefIsNoExcept && !context->GetCleanup().IsEmpty() && boundStatement->MayThrow() &&
             boundStatement->Source() && !fnDefContainsGotosOrLabels && !fnDefContainsStatics)
         {
-            boundStatement = GenerateInvoke(boundStatement, functionDefinitionSymbol, context);
+            boundStatement = GenerateInvoke(functionDefinitionSymbol, context);
         }
     }
     return boundStatement;
 }
+*/
 
-struct CleanupGuard
+BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
-    CleanupGuard(Context* context_) : context(context_)
+    StatementBinder binder(context, functionDefinitionSymbol);
+    statementNode->Accept(binder);
+    BoundStatementNode* boundStatement = binder.GetBoundStatement();
+    if (!boundStatement->Source())
     {
-        context->PushCleanup();
+        functionDefinitionSymbol->SetContainsNodeWithNoSource();
     }
-    ~CleanupGuard()
-    {
-        context->PopCleanup();
-    }
-    Context* context;
-};
+    return boundStatement;
+}
 
 FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
-    CleanupGuard cleanupGuard(context);
     TraceInfo* traceInfo = context->GetTraceInfo();
     if (traceInfo)
     {
@@ -2061,16 +2176,15 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
 #ifdef DEBUG_FUNCTIONS
     std::cout << ">" << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
 #endif
-    functionDefinitionSymbol->SetBound();
-    if (functionDefinitionSymbol->Name() == U"invoke_1_compile_unit_EEED3C4F81C9CF0DDBBFE4FEF7A4DAADA176AE03")
+    if (functionDefinitionSymbol->IrName(context) == "fn_try_0_compile_unit_D65284C9CDC628A9B1D36320FC2BA40D03C00832_562B5C9B6130E1E57E5DBBEEA358301B8463118A")
     {
         int x = 0;
     }
+    functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
     context->PushStatementBinder(&binder);
     GenerateEnterFunctionCode(functionDefinitionNode, functionDefinitionSymbol, context);
     functionDefinitionNode->Accept(binder);
-    context->PopStatementBinder();
     functionDefinitionSymbol = binder.GetFunctionDefinitionSymbol();
     bool hasNoReturnAttribute = false;
     if (functionDefinitionNode->IsFunctionDefinitionNode())
@@ -2085,9 +2199,21 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
     {
         CheckFunctionReturnPaths(functionDefinitionNode, context);
     }
+    bool skipInvokeChecking = functionDefinitionSymbol->SkipInvokeChecking();
+    bool containsStatics = functionDefinitionSymbol->ContainsStatics();
+    bool containsNodeWithNoSource = functionDefinitionSymbol->ContainsNodeWithNoSource();
+    if (!functionDefinitionSymbol->IsNoExcept() && !skipInvokeChecking && functionDefinitionSymbol->ContainsLocalVariableWithDestructor() &&
+        !containsStatics && !containsNodeWithNoSource)
+    {
+        context->GetSymbolTable()->BeginScopeGeneric(functionDefinitionSymbol->GetScope(), context);
+        std::unique_ptr<BoundCompoundStatementNode> newBody = MakeInvokesAndCleanups(functionDefinitionSymbol, context->GetBoundFunction()->Body(), context);
+        context->GetBoundFunction()->SetBody(newBody.release());
+        context->GetSymbolTable()->EndScopeGeneric(context);
+    }
 #ifdef DEBUG_FUNCTIONS
     std::cout << "<" << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
 #endif
+    context->PopStatementBinder();
     return functionDefinitionSymbol;
 }
 

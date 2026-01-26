@@ -805,7 +805,8 @@ soul::parser::Match StatementParser<LexerT>::CompoundStatementUnguarded(LexerT& 
                                     if (!sourcePos.IsValid()) sourcePos = lbPos;
                                     compoundStatementNode.reset(new otava::ast::CompoundStatementNode(sourcePos));
                                     compoundStatementNode->SetAttributes(attributes.release());
-                                    otava::symbols::BeginBlock(sourcePos, context);
+                                    compoundStatementNode->SetBlockId(context->NextBlockId());
+                                    otava::symbols::BeginBlock(sourcePos, compoundStatementNode->BlockId(), context);
                                 }
                                 *parentMatch9 = match;
                             }
@@ -1087,6 +1088,7 @@ soul::parser::Match StatementParser<LexerT>::CompoundStatementGuarded(LexerT& le
                             compoundStatementNode->SetLexerPosPair(lexerPosPair);
                             compoundStatementNode->SetAttributes(attributes.release());
                             compoundStatementNode->SetFunctionScope(context->GetSymbolTable()->CurrentScope());
+                            compoundStatementNode->SetBlockId(context->NextBlockId());
                         }
                         else
                         {
@@ -1121,6 +1123,7 @@ soul::parser::Match StatementParser<LexerT>::CompoundStatementGuarded(LexerT& le
                                     compoundStatementNode.reset(new otava::ast::CompoundStatementNode(sourcePos));
                                     compoundStatementNode->SetLexerPosPair(lexerPosPair);
                                     compoundStatementNode->SetFunctionScope(context->GetSymbolTable()->CurrentScope());
+                                    compoundStatementNode->SetBlockId(context->NextBlockId());
                                 }
                                 else
                                 {
@@ -1241,7 +1244,7 @@ soul::parser::Match StatementParser<LexerT>::CompoundStatementSaved(LexerT& lexe
                                 {
                                     soul::ast::SourcePos sourcePos = lexer.GetSourcePos(pos);
                                     compoundStatementNode->SetLBracePos(sourcePos);
-                                    otava::symbols::BeginBlock(sourcePos, context);
+                                    otava::symbols::BeginBlock(sourcePos, compoundStatementNode->BlockId(), context);
                                 }
                                 *parentMatch7 = match;
                             }
@@ -1636,6 +1639,7 @@ soul::parser::Match StatementParser<LexerT>::IfStatement(LexerT& lexer, otava::s
     soul::ast::SourcePos elsePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
+    int blockId = int();
     std::unique_ptr<otava::ast::Node> attributes;
     std::unique_ptr<otava::ast::Node> cond;
     std::unique_ptr<otava::ast::Node> thenStmt;
@@ -1719,7 +1723,8 @@ soul::parser::Match StatementParser<LexerT>::IfStatement(LexerT& lexer, otava::s
                                                 {
                                                     ifPos = lexer.GetSourcePos(pos);
                                                     if (!sourcePos.IsValid()) sourcePos = ifPos;
-                                                    otava::symbols::BeginBlock(sourcePos, context);
+                                                    blockId = context->NextBlockId();
+                                                    otava::symbols::BeginBlock(sourcePos, blockId, context);
                                                 }
                                                 *parentMatch13 = match;
                                             }
@@ -1914,6 +1919,7 @@ soul::parser::Match StatementParser<LexerT>::IfStatement(LexerT& lexer, otava::s
                 if (match.hit)
                 {
                     otava::ast::IfStatementNode *node = new otava::ast::IfStatementNode(sourcePos, cond.release(), thenStmt.release(), elseStmt.release(), attributes.release(), ifPos, lpPos, rpPos, constExprPos, elsePos);
+                    node->SetBlockId(blockId);
                     otava::symbols::MapNode(node, context);
                     otava::symbols::EndBlock(context);
                     {
@@ -1960,6 +1966,7 @@ soul::parser::Match StatementParser<LexerT>::SwitchStatement(LexerT& lexer, otav
     soul::ast::SourcePos switchPos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
+    int blockId = int();
     std::unique_ptr<otava::ast::Node> attributes;
     std::unique_ptr<otava::ast::Node> cond;
     std::unique_ptr<otava::ast::Node> stmt;
@@ -2036,7 +2043,8 @@ soul::parser::Match StatementParser<LexerT>::SwitchStatement(LexerT& lexer, otav
                                         {
                                             switchPos = lexer.GetSourcePos(pos);
                                             if (!sourcePos.IsValid()) sourcePos = switchPos;
-                                            otava::symbols::BeginBlock(sourcePos, context);
+                                            blockId = context->NextBlockId();
+                                            otava::symbols::BeginBlock(sourcePos, blockId, context);
                                         }
                                         *parentMatch11 = match;
                                     }
@@ -2125,6 +2133,7 @@ soul::parser::Match StatementParser<LexerT>::SwitchStatement(LexerT& lexer, otav
                 if (match.hit)
                 {
                     otava::ast::SwitchStatementNode *node = new otava::ast::SwitchStatementNode(sourcePos, cond.release(), stmt.release(), attributes.release(), switchPos, lpPos, rpPos);
+                    node->SetBlockId(blockId);
                     otava::symbols::MapNode(node, context);
                     otava::symbols::EndBlock(context);
                     {
@@ -2318,6 +2327,7 @@ soul::parser::Match StatementParser<LexerT>::WhileStatement(LexerT& lexer, otava
     soul::ast::SourcePos whilePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
+    int blockId = int();
     std::unique_ptr<otava::ast::Node> attributes;
     std::unique_ptr<otava::ast::Node> cond;
     std::unique_ptr<otava::ast::Node> stmt;
@@ -2394,7 +2404,8 @@ soul::parser::Match StatementParser<LexerT>::WhileStatement(LexerT& lexer, otava
                                         {
                                             whilePos = lexer.GetSourcePos(pos);
                                             if (!sourcePos.IsValid()) sourcePos = whilePos;
-                                            otava::symbols::BeginBlock(sourcePos, context);
+                                            blockId = context->NextBlockId();
+                                            otava::symbols::BeginBlock(sourcePos, blockId, context);
                                         }
                                         *parentMatch11 = match;
                                     }
@@ -2483,6 +2494,7 @@ soul::parser::Match StatementParser<LexerT>::WhileStatement(LexerT& lexer, otava
                 if (match.hit)
                 {
                     otava::ast::WhileStatementNode *node = new otava::ast::WhileStatementNode(sourcePos, cond.release(), stmt.release(), attributes.release(), whilePos, lpPos, rpPos);
+                    node->SetBlockId(blockId);
                     otava::symbols::MapNode(node, context);
                     otava::symbols::EndBlock(context);
                     {
@@ -2785,6 +2797,7 @@ soul::parser::Match StatementParser<LexerT>::RangeForStatement(LexerT& lexer, ot
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
     soul::ast::SourcePos colonPos = soul::ast::SourcePos();
+    int blockId = int();
     bool blockOpen = bool();
     std::unique_ptr<otava::ast::Node> attributes;
     std::unique_ptr<otava::ast::Node> initStmt;
@@ -2873,7 +2886,8 @@ soul::parser::Match StatementParser<LexerT>::RangeForStatement(LexerT& lexer, ot
                                                     {
                                                         forPos = lexer.GetSourcePos(pos);
                                                         if (!sourcePos.IsValid()) sourcePos = forPos;
-                                                        otava::symbols::BeginBlock(sourcePos, context);
+                                                        blockId = context->NextBlockId();
+                                                        otava::symbols::BeginBlock(sourcePos, blockId, context);
                                                         blockOpen = true;
                                                     }
                                                     *parentMatch14 = match;
@@ -3029,6 +3043,7 @@ soul::parser::Match StatementParser<LexerT>::RangeForStatement(LexerT& lexer, ot
                 if (match.hit)
                 {
                     otava::ast::RangeForStatementNode *node = new otava::ast::RangeForStatementNode(sourcePos, initStmt.release(), declaration.release(), initializer.release(), stmt.release(), attributes.release(), forPos, lpPos, rpPos, colonPos);
+                    node->SetBlockId(blockId);
                     otava::symbols::MapNode(node, context);
                     otava::symbols::EndBlock(context);
                     {
@@ -3394,6 +3409,7 @@ soul::parser::Match StatementParser<LexerT>::ForStatement(LexerT& lexer, otava::
     soul::ast::SourcePos forPos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
+    int blockId = int();
     std::unique_ptr<otava::ast::Node> attributes;
     std::unique_ptr<otava::ast::Node> initStmt;
     std::unique_ptr<otava::ast::Node> cond;
@@ -3482,7 +3498,8 @@ soul::parser::Match StatementParser<LexerT>::ForStatement(LexerT& lexer, otava::
                                                     {
                                                         forPos = lexer.GetSourcePos(pos);
                                                         if (!sourcePos.IsValid()) sourcePos = forPos;
-                                                        otava::symbols::BeginBlock(sourcePos, context);
+                                                        blockId = context->NextBlockId();
+                                                        otava::symbols::BeginBlock(sourcePos, blockId, context);
                                                     }
                                                     *parentMatch14 = match;
                                                 }
@@ -3636,6 +3653,7 @@ soul::parser::Match StatementParser<LexerT>::ForStatement(LexerT& lexer, otava::
                 if (match.hit)
                 {
                     otava::ast::ForStatementNode *node = new otava::ast::ForStatementNode(sourcePos, initStmt.release(), cond.release(), loopExpr.release(), stmt.release(), attributes.release(), semicolon.release(), forPos, lpPos, rpPos);
+                    node->SetBlockId(blockId);
                     otava::symbols::MapNode(node, context);
                     otava::symbols::EndBlock(context);
                     {

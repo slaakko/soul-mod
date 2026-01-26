@@ -1,5 +1,7 @@
 module std.exception;
 
+import std.eh;
+
 namespace std {
 
 exception::exception() 

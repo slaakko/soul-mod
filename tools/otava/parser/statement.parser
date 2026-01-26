@@ -98,7 +98,8 @@ parser StatementParser
                 lbPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = lbPos;
                 compoundStatementNode.reset(new otava::ast::CompoundStatementNode(sourcePos)); 
                 compoundStatementNode->SetAttributes(attributes); 
-                otava::symbols::BeginBlock(sourcePos, context); 
+                compoundStatementNode->SetBlockId(context->NextBlockId());
+                otava::symbols::BeginBlock(sourcePos, compoundStatementNode->BlockId(), context); 
             }
             (   Statement(context):stmt
                 { 
@@ -145,6 +146,7 @@ parser StatementParser
                     compoundStatementNode->SetLexerPosPair(lexerPosPair);
                     compoundStatementNode->SetAttributes(attributes);
                     compoundStatementNode->SetFunctionScope(context->GetSymbolTable()->CurrentScope());
+                    compoundStatementNode->SetBlockId(context->NextBlockId());
                 }
                 else
                 {
@@ -160,6 +162,7 @@ parser StatementParser
                     compoundStatementNode.reset(new otava::ast::CompoundStatementNode(sourcePos));  
                     compoundStatementNode->SetLexerPosPair(lexerPosPair);
                     compoundStatementNode->SetFunctionScope(context->GetSymbolTable()->CurrentScope());
+                    compoundStatementNode->SetBlockId(context->NextBlockId());
                 }
                 else
                 {
@@ -190,7 +193,7 @@ parser StatementParser
             { 
                 soul::ast::SourcePos sourcePos = lexer.GetSourcePos(pos); 
                 compoundStatementNode->SetLBracePos(sourcePos); 
-                otava::symbols::BeginBlock(sourcePos, context); 
+                otava::symbols::BeginBlock(sourcePos, compoundStatementNode->BlockId(), context); 
             }
             (
                 Statement(context):stmt
@@ -233,10 +236,16 @@ parser StatementParser
         ;
 
     IfStatement(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos ifPos, var soul::ast::SourcePos constExprPos, 
-        var soul::ast::SourcePos elsePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : otava::ast::Node*
+        var soul::ast::SourcePos elsePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos, var int blockId) : otava::ast::Node*
         ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
         (
-            IF{ ifPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = ifPos; otava::symbols::BeginBlock(sourcePos, context); } 
+            IF
+            { 
+                ifPos = lexer.GetSourcePos(pos); 
+                if (!sourcePos.IsValid()) sourcePos = ifPos; 
+                blockId = context->NextBlockId(); 
+                otava::symbols::BeginBlock(sourcePos, blockId, context); 
+            } 
             (CONSTEXPR{ constExprPos = lexer.GetSourcePos(pos); })? 
             LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
             Condition(context):cond 
@@ -249,6 +258,7 @@ parser StatementParser
         {
             otava::ast::IfStatementNode* node = new otava::ast::IfStatementNode(
                 sourcePos, cond, thenStmt, elseStmt, attributes, ifPos, lpPos, rpPos, constExprPos, elsePos);
+            node->SetBlockId(blockId);
             otava::symbols::MapNode(node, context);
             otava::symbols::EndBlock(context); 
             return node;
@@ -256,10 +266,16 @@ parser StatementParser
         ;
 
     SwitchStatement(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos switchPos, var soul::ast::SourcePos lpPos, 
-        var soul::ast::SourcePos rpPos) : otava::ast::Node*
+        var soul::ast::SourcePos rpPos, var int blockId) : otava::ast::Node*
         ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
         (
-            SWITCH{ switchPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = switchPos; otava::symbols::BeginBlock(sourcePos, context); } 
+            SWITCH
+            { 
+                switchPos = lexer.GetSourcePos(pos); 
+                if (!sourcePos.IsValid()) sourcePos = switchPos; 
+                blockId = context->NextBlockId();
+                otava::symbols::BeginBlock(sourcePos, blockId, context); 
+            } 
             LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
             Condition(context):cond 
             RPAREN{ rpPos = lexer.GetSourcePos(pos); } 
@@ -267,6 +283,7 @@ parser StatementParser
         )
         {
             otava::ast::SwitchStatementNode* node = new otava::ast::SwitchStatementNode(sourcePos, cond, stmt, attributes, switchPos, lpPos, rpPos);
+            node->SetBlockId(blockId);
             otava::symbols::MapNode(node, context);
             otava::symbols::EndBlock(context); 
             return node;
@@ -281,10 +298,16 @@ parser StatementParser
         ;
 
     WhileStatement(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos whilePos, var soul::ast::SourcePos lpPos, 
-        var soul::ast::SourcePos rpPos) : otava::ast::Node*
+        var soul::ast::SourcePos rpPos, var int blockId) : otava::ast::Node*
         ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
         (
-            WHILE{ whilePos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = whilePos; otava::symbols::BeginBlock(sourcePos, context);  } 
+            WHILE
+            { 
+                whilePos = lexer.GetSourcePos(pos); 
+                if (!sourcePos.IsValid()) sourcePos = whilePos; 
+                blockId = context->NextBlockId();
+                otava::symbols::BeginBlock(sourcePos, blockId, context);  
+            } 
             LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
             Condition(context):cond 
             RPAREN{ rpPos = lexer.GetSourcePos(pos); } 
@@ -292,6 +315,7 @@ parser StatementParser
         )
         {
             otava::ast::WhileStatementNode* node = new otava::ast::WhileStatementNode(sourcePos, cond, stmt, attributes, whilePos, lpPos, rpPos);
+            node->SetBlockId(blockId);
             otava::symbols::MapNode(node, context);
             otava::symbols::EndBlock(context); 
             return node;
@@ -316,10 +340,17 @@ parser StatementParser
         ;
 
     RangeForStatement(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos forPos, var soul::ast::SourcePos lpPos, 
-        var soul::ast::SourcePos rpPos, var soul::ast::SourcePos colonPos, var bool blockOpen) : otava::ast::Node*
+        var soul::ast::SourcePos rpPos, var soul::ast::SourcePos colonPos, var int blockId, var bool blockOpen) : otava::ast::Node*
         ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
         (
-            FOR{ forPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = forPos; otava::symbols::BeginBlock(sourcePos, context); blockOpen = true; }
+            FOR
+            { 
+                forPos = lexer.GetSourcePos(pos); 
+                if (!sourcePos.IsValid()) sourcePos = forPos; 
+                blockId = context->NextBlockId();
+                otava::symbols::BeginBlock(sourcePos, blockId, context); 
+                blockOpen = true; 
+            }
             LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
             InitStatement(context):initStmt? 
             ForRangeDeclaration(context):declaration 
@@ -331,6 +362,7 @@ parser StatementParser
         {
             otava::ast::RangeForStatementNode* node = new otava::ast::RangeForStatementNode(
                 sourcePos, initStmt, declaration, initializer, stmt, attributes, forPos, lpPos, rpPos, colonPos);
+            node->SetBlockId(blockId);
             otava::symbols::MapNode(node, context);
             otava::symbols::EndBlock(context); 
             return node;
@@ -371,10 +403,16 @@ parser StatementParser
         ;
 
     ForStatement(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos forPos, var soul::ast::SourcePos lpPos, 
-        var soul::ast::SourcePos rpPos) : otava::ast::Node*
+        var soul::ast::SourcePos rpPos, var int blockId) : otava::ast::Node*
         ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
         (
-            FOR{ forPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = forPos; otava::symbols::BeginBlock(sourcePos, context); }
+            FOR
+            { 
+                forPos = lexer.GetSourcePos(pos); 
+                if (!sourcePos.IsValid()) sourcePos = forPos; 
+                blockId = context->NextBlockId();
+                otava::symbols::BeginBlock(sourcePos, blockId, context); 
+            }
             LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
             InitStatement(context):initStmt
             Condition(context):cond? 
@@ -385,6 +423,7 @@ parser StatementParser
         )
         {
             otava::ast::ForStatementNode* node = new otava::ast::ForStatementNode(sourcePos, initStmt, cond, loopExpr, stmt, attributes, semicolon, forPos, lpPos, rpPos);
+            node->SetBlockId(blockId);
             otava::symbols::MapNode(node, context);
             otava::symbols::EndBlock(context); 
             return node;

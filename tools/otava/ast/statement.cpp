@@ -145,7 +145,7 @@ void DefaultStatementNode::Read(Reader& reader)
 }
 
 CompoundStatementNode::CompoundStatementNode(const soul::ast::SourcePos& sourcePos_) : 
-    SequenceNode(NodeKind::compoundStatementNode, sourcePos_), functionScope(nullptr)
+    SequenceNode(NodeKind::compoundStatementNode, sourcePos_), functionScope(nullptr), blockId(-1)
 {
 }
 
@@ -177,6 +177,7 @@ Node* CompoundStatementNode::Clone() const
     }
     clone->SetLBracePos(lbPos);
     clone->SetRBracePos(rbPos);
+    clone->SetBlockId(blockId);
     return clone;
 }
 
@@ -191,6 +192,7 @@ void CompoundStatementNode::Write(Writer& writer)
     writer.Write(attributes.get());
     writer.Write(lbPos);
     writer.Write(rbPos);
+    writer.GetBinaryStreamWriter().Write(blockId);
 }
 
 void CompoundStatementNode::Read(Reader& reader)
@@ -199,6 +201,7 @@ void CompoundStatementNode::Read(Reader& reader)
     attributes.reset(reader.ReadNode());
     lbPos = reader.ReadSourcePos();
     rbPos = reader.ReadSourcePos();
+    blockId = reader.GetBinaryStreamReader().ReadInt();
 }
 
 void CompoundStatementNode::SetLexerPosPair(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair_)
@@ -239,7 +242,7 @@ void SequenceStatementNode::Read(Reader& reader)
     secondStmt.reset(reader.ReadNode());
 }
 
-IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::ifStatementNode, sourcePos_)
+IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::ifStatementNode, sourcePos_), blockId(-1)
 {
 }
 
@@ -247,7 +250,7 @@ IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_, Node* c
     const soul::ast::SourcePos& ifPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_, const soul::ast::SourcePos& constExprPos_, 
     const soul::ast::SourcePos& elsePos_) :
     CompoundNode(NodeKind::ifStatementNode, sourcePos_), cond(cond_), thenStmt(thenStmt_), elseStmt(elseStmt_), attributes(attributes_),
-    ifPos(ifPos_), lpPos(lpPos_), rpPos(rpPos_), constExprPos(constExprPos_), elsePos(elsePos_)
+    ifPos(ifPos_), lpPos(lpPos_), rpPos(rpPos_), constExprPos(constExprPos_), elsePos(elsePos_), blockId(-1)
 {
 }
 
@@ -265,6 +268,7 @@ Node* IfStatementNode::Clone() const
     }
     IfStatementNode* clone = new IfStatementNode(GetSourcePos(), cond->Clone(), thenStmt->Clone(), clonedElseStmt, clonedAttributes,
         ifPos, lpPos, rpPos, constExprPos, elsePos);
+    clone->SetBlockId(blockId);
     return clone;
 }
 
@@ -285,6 +289,7 @@ void IfStatementNode::Write(Writer& writer)
     writer.Write(rpPos);
     writer.Write(constExprPos);
     writer.Write(elsePos);
+    writer.GetBinaryStreamWriter().Write(blockId);
 }
 
 void IfStatementNode::Read(Reader& reader)
@@ -299,15 +304,17 @@ void IfStatementNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
     constExprPos = reader.ReadSourcePos();
     elsePos = reader.ReadSourcePos();
+    blockId = reader.GetBinaryStreamReader().ReadInt();
 }
 
-SwitchStatementNode::SwitchStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::switchStatemeNode, sourcePos_)
+SwitchStatementNode::SwitchStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::switchStatemeNode, sourcePos_), blockId(-1)
 {
 }
 
 SwitchStatementNode::SwitchStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& switchPos_, 
     const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
-    CompoundNode(NodeKind::switchStatemeNode, sourcePos_), cond(cond_), stmt(stmt_), attributes(attributes_), switchPos(switchPos_), lpPos(lpPos_), rpPos(rpPos_)
+    CompoundNode(NodeKind::switchStatemeNode, sourcePos_), cond(cond_), stmt(stmt_), attributes(attributes_), switchPos(switchPos_), lpPos(lpPos_), rpPos(rpPos_), 
+    blockId(-1)
 {
 }
 
@@ -320,6 +327,7 @@ Node* SwitchStatementNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     SwitchStatementNode* clone = new SwitchStatementNode(GetSourcePos(), cond->Clone(), stmt->Clone(), clonedAttributes, switchPos, lpPos, rpPos);
+    clone->SetBlockId(blockId);
     return clone;
 }
 
@@ -337,6 +345,7 @@ void SwitchStatementNode::Write(Writer& writer)
     writer.Write(switchPos);
     writer.Write(lpPos);
     writer.Write(rpPos);
+    writer.GetBinaryStreamWriter().Write(blockId);
 }
 
 void SwitchStatementNode::Read(Reader& reader)
@@ -348,15 +357,17 @@ void SwitchStatementNode::Read(Reader& reader)
     switchPos = reader.ReadSourcePos();
     lpPos = reader.ReadSourcePos();
     rpPos = reader.ReadSourcePos();
+    blockId = reader.GetBinaryStreamReader().ReadInt();
 }
 
-WhileStatementNode::WhileStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::whileStatementNode, sourcePos_)
+WhileStatementNode::WhileStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::whileStatementNode, sourcePos_), blockId(-1)
 {
 }
 
 WhileStatementNode::WhileStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& whilePos_, 
     const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
-    CompoundNode(NodeKind::whileStatementNode, sourcePos_), cond(cond_), stmt(stmt_), attributes(attributes_), whilePos(whilePos_), lpPos(lpPos_), rpPos(rpPos_)
+    CompoundNode(NodeKind::whileStatementNode, sourcePos_), cond(cond_), stmt(stmt_), attributes(attributes_), whilePos(whilePos_), lpPos(lpPos_), rpPos(rpPos_),
+    blockId(-1)
 {
 }
 
@@ -368,6 +379,7 @@ Node* WhileStatementNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     WhileStatementNode* clone = new WhileStatementNode(GetSourcePos(), cond->Clone(), stmt->Clone(), clonedAttributes, whilePos, lpPos, rpPos);
+    clone->SetBlockId(blockId);
     return clone;
 }
 
@@ -385,6 +397,7 @@ void WhileStatementNode::Write(Writer& writer)
     writer.Write(whilePos);
     writer.Write(lpPos);
     writer.Write(rpPos);
+    writer.GetBinaryStreamWriter().Write(blockId);
 }
 
 void WhileStatementNode::Read(Reader& reader)
@@ -396,6 +409,7 @@ void WhileStatementNode::Read(Reader& reader)
     whilePos = reader.ReadSourcePos();
     lpPos = reader.ReadSourcePos();
     rpPos = reader.ReadSourcePos();
+    blockId = reader.GetBinaryStreamReader().ReadInt();
 }
 
 DoStatementNode::DoStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::doStatementNode, sourcePos_)
@@ -451,14 +465,15 @@ void DoStatementNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
-RangeForStatementNode::RangeForStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::rangeForStatementNode, sourcePos_)
+RangeForStatementNode::RangeForStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::rangeForStatementNode, sourcePos_), blockId(-1)
 {
 }
 
-RangeForStatementNode::RangeForStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* declaration_, Node* initializer_, Node* stmt_, Node* attributes_,
-    const soul::ast::SourcePos& forPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_, const soul::ast::SourcePos& colonPos_) :
-    CompoundNode(NodeKind::rangeForStatementNode, sourcePos_), initStmt(initStmt_), declaration(declaration_), initializer(initializer_), stmt(stmt_), attributes(attributes_),
-    forPos(forPos_), lpPos(lpPos_), rpPos(rpPos_), colonPos(colonPos_)
+RangeForStatementNode::RangeForStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* declaration_, Node* initializer_, Node* stmt_, 
+    Node* attributes_, const soul::ast::SourcePos& forPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_, 
+    const soul::ast::SourcePos& colonPos_) :
+    CompoundNode(NodeKind::rangeForStatementNode, sourcePos_), initStmt(initStmt_), declaration(declaration_), initializer(initializer_), stmt(stmt_), 
+    attributes(attributes_), forPos(forPos_), lpPos(lpPos_), rpPos(rpPos_), colonPos(colonPos_), blockId(-1)
 {
 }
 
@@ -476,6 +491,7 @@ Node* RangeForStatementNode::Clone() const
     }
     RangeForStatementNode* clone = new RangeForStatementNode(GetSourcePos(), clonedInitStmt, declaration->Clone(), initializer->Clone(), stmt->Clone(), clonedAttributes,
         forPos, lpPos, rpPos, colonPos);
+    clone->SetBlockId(blockId);
     return clone;
 }
 
@@ -496,6 +512,7 @@ void RangeForStatementNode::Write(Writer& writer)
     writer.Write(lpPos);
     writer.Write(rpPos);
     writer.Write(colonPos);
+    writer.GetBinaryStreamWriter().Write(blockId);
 }
 
 void RangeForStatementNode::Read(Reader& reader)
@@ -510,6 +527,7 @@ void RangeForStatementNode::Read(Reader& reader)
     lpPos = reader.ReadSourcePos();
     rpPos = reader.ReadSourcePos();
     colonPos = reader.ReadSourcePos();
+    blockId = reader.GetBinaryStreamReader().ReadInt();
 }
 
 ForRangeDeclarationNode::ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_) : BinaryNode(NodeKind::forRangeDeclarationNode, sourcePos_, nullptr, nullptr)
@@ -618,14 +636,14 @@ void StructuredBindingNode::Read(Reader& reader)
     rbPos = reader.ReadSourcePos();
 }
 
-ForStatementNode::ForStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::forStatementNode, sourcePos_)
+ForStatementNode::ForStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::forStatementNode, sourcePos_), blockId(-1)
 {
 }
 
 ForStatementNode::ForStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* cond_, Node* loopExpr_, Node* stmt_, Node* attributes_, Node* semicolon_,
     const soul::ast::SourcePos& forPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
-    CompoundNode(NodeKind::forStatementNode, sourcePos_), initStmt(initStmt_), cond(cond_), loopExpr(loopExpr_), stmt(stmt_), attributes(attributes_), semicolon(semicolon_),
-    forPos(forPos_), lpPos(lpPos_), rpPos(rpPos_)
+    CompoundNode(NodeKind::forStatementNode, sourcePos_), initStmt(initStmt_), cond(cond_), loopExpr(loopExpr_), stmt(stmt_), attributes(attributes_), 
+    semicolon(semicolon_), forPos(forPos_), lpPos(lpPos_), rpPos(rpPos_), blockId(-1)
 {
 }
 
@@ -648,6 +666,7 @@ Node* ForStatementNode::Clone() const
     }
     ForStatementNode* clone = new ForStatementNode(GetSourcePos(), initStmt->Clone(), clonedCond, clonedLoopExpr, stmt->Clone(), clonedAttributes, semicolon->Clone(),
         forPos, lpPos, rpPos);
+    clone->SetBlockId(blockId);
     return clone;
 }
 
@@ -668,6 +687,7 @@ void ForStatementNode::Write(Writer& writer)
     writer.Write(forPos);
     writer.Write(lpPos);
     writer.Write(rpPos);
+    writer.GetBinaryStreamWriter().Write(blockId);
 }
 
 void ForStatementNode::Read(Reader& reader)
@@ -682,6 +702,7 @@ void ForStatementNode::Read(Reader& reader)
     forPos = reader.ReadSourcePos();
     lpPos = reader.ReadSourcePos();
     rpPos = reader.ReadSourcePos();
+    blockId = reader.GetBinaryStreamReader().ReadInt();
 }
 
 BreakStatementNode::BreakStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::breakStatementNode, sourcePos_)
@@ -787,7 +808,12 @@ Node* ReturnStatementNode::Clone() const
     {
         clonedAttributes = attributes->Clone();
     }
-    ReturnStatementNode* clone = new ReturnStatementNode(GetSourcePos(), clonedReturnValue, clonedAttributes, semicolon->Clone(), returnPos);
+    Node* clonedSemicolon = nullptr;
+    if (semicolon)
+    {
+        clonedSemicolon = semicolon->Clone();
+    }
+    ReturnStatementNode* clone = new ReturnStatementNode(GetSourcePos(), clonedReturnValue, clonedAttributes, clonedSemicolon, returnPos);
     return clone;
 }
 
