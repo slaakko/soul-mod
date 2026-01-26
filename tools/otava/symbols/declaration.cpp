@@ -797,6 +797,50 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
     }
 }
 
+VariableSymbol* ResolveParentVariable(SimpleDeclarator* simpleDeclarator, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    int blockId = context->ParentBlockId();
+    int level = 0;
+    FunctionDefinitionSymbol* fnDefSymbol = context->ParentFn();
+    if (fnDefSymbol)
+    {
+        while (fnDefSymbol)
+        {
+            Symbol* block = fnDefSymbol->GetBlock(blockId);
+            if (block)
+            {
+                Scope* blockScope = block->GetScope();
+                if (blockScope)
+                {
+                    Symbol* symbol = blockScope->Lookup(simpleDeclarator->Name(),
+                        SymbolGroupKind::variableSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, sourcePos, context, LookupFlags::none);
+                    if (symbol && symbol->IsVariableSymbol())
+                    {
+                        VariableSymbol* variableSymbol = static_cast<VariableSymbol*>(symbol);
+                        variableSymbol->SetFoundFromParent();
+                        variableSymbol->SetLevel(level);
+                        return variableSymbol;
+                    }
+                    else
+                    {
+                        fnDefSymbol = fnDefSymbol->ParentFn();
+                        ++level;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+    ThrowException("parent function variable '" + util::ToUtf8(simpleDeclarator->Name()) + "' not resolved", sourcePos, context);
+}
+
 void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context)
 {
     if (context->GetFlag(ContextFlags::linkageDeclaration)) return;
@@ -815,19 +859,27 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* function
                 TypeSymbol* initializerType = nullptr;
                 if (!simpleDeclarator->Name().empty())
                 {
-                    VariableSymbol* variable = ProcessSimpleDeclarator(simpleDeclarator, declaration.type, initializerType, declaration.value, declaration.flags, context);
-                    if (variable->IsGlobalVariable())
+                    VariableSymbol* variable = nullptr;
+                    if (context->GetFlag(ContextFlags::invoke))
                     {
-                        std::unique_ptr<BoundExpressionNode> variableInitializer(nullptr);
-                        if (declaration.initializer)
+                        variable = ResolveParentVariable(simpleDeclarator, node->GetSourcePos(), context);
+                    }
+                    else
+                    {
+                        variable = ProcessSimpleDeclarator(simpleDeclarator, declaration.type, initializerType, declaration.value, declaration.flags, context);
+                        if (variable->IsGlobalVariable())
                         {
-                            variableInitializer.reset(BindExpression(declaration.initializer, context));
-                        }
-                        if (!variable->IsExtern())
-                        {
-                            context->GetBoundCompileUnit()->AddBoundNode(
-                                std::unique_ptr<BoundNode>(new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos())), context);
-                            GenerateDynamicInitialization(variable, variableInitializer.get(), node->GetSourcePos(), context);
+                            std::unique_ptr<BoundExpressionNode> variableInitializer(nullptr);
+                            if (declaration.initializer)
+                            {
+                                variableInitializer.reset(BindExpression(declaration.initializer, context));
+                            }
+                            if (!variable->IsExtern())
+                            {
+                                context->GetBoundCompileUnit()->AddBoundNode(
+                                    std::unique_ptr<BoundNode>(new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos())), context);
+                                GenerateDynamicInitialization(variable, variableInitializer.get(), node->GetSourcePos(), context);
+                            }
                         }
                     }
                     declaration.variable = variable;

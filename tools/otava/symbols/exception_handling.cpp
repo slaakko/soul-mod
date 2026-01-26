@@ -205,7 +205,8 @@ FunctionDefinitionSymbol* MakeInvokeFn(Invoke& invoke, Scope* parentFnScope, Fun
     context->GetSymbolTable()->BeginScope(&invokeInstantiationScope);
     Instantiator invokeInstantiator(context, &invokeInstantiationScope);
     invokeInstantiator.SetFunctionNode(invokeFnNode.get());
-    context->PushSetFlag(ContextFlags::instantiateInlineFunction | ContextFlags::saveDeclarations | ContextFlags::dontBind);
+    context->PushParentFn(parentFn);
+    context->PushSetFlag(ContextFlags::instantiateInlineFunction | ContextFlags::saveDeclarations | ContextFlags::dontBind | ContextFlags::invoke);
     invokeFnNode->Accept(invokeInstantiator);
     int invokeFnScopeCount = invokeInstantiator.ScopeCount();
     FunctionDefinitionSymbol* invokeFnSymbol = static_cast<FunctionDefinitionSymbol*>(invokeInstantiator.GetSpecialization());
@@ -219,12 +220,8 @@ FunctionDefinitionSymbol* MakeInvokeFn(Invoke& invoke, Scope* parentFnScope, Fun
     otava::symbols::EndFunctionDefinition(invokeFnNode.get(), invokeFnScopeCount, context);
     context->PopFlags();
     context->PopFlags();
-    //if (invokeFnSymbol->IsBound())
-    //{
-        //context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
-    //}
-    //context->PopBoundFunction();
     context->GetSymbolTable()->EndScope();
+    context->PopParentFn();
     invokeInstantiationScope.PopParentScope();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
     invoke.Clear();
@@ -280,114 +277,12 @@ FunctionDefinitionSymbol* MakeCleanupFn(Cleanup& cleanup, Scope* parentFnScope, 
     otava::symbols::EndFunctionDefinition(cleanupFnNode.get(), cleanupFnScopeCount, context);
     context->PopFlags();
     context->PopFlags();
-//    if (cleanupFnSymbol->IsBound())
-//    {
-//        context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
-//    }
-//    context->PopBoundFunction();
     context->GetSymbolTable()->EndScope();
     cleanupInstantiationScope.PopParentScope();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
     cleanupFnSymbol->SetFnDefNode(cleanupFnNode.release());
     return cleanupFnSymbol;
 }
-
-/*
-BoundStatementNode* GenerateInvoke(Invoke& invoke, Cleanup& cleanup, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
-{
-    soul::ast::SourcePos sourcePos = invoke.GetSourcePos();
-    context->PushFlags();
-    context->ResetFlags();
-    std::unique_ptr<BoundStatementNode> boundChildControlResultStatement;
-    std::unique_ptr<BoundStatementNode> boundVarDeclarationStatement;
-    TypeSymbol* resultType = functionDefinitionSymbol->NonChildFunctionResultType(context);
-    std::u32string childControlResultVarName = context->NextChildControlResultVarName();
-    std::u32string resultVarName = context->NextResultVarName();
-    context->PushResultVarName(resultVarName);
-    context->PushChildControlResultVarName(childControlResultVarName);
-    if (resultType)
-    {
-        std::u32string varDeclarationStatementText;
-        TypeSymbol* nonReferenceType = ConvertRefToPtrType(resultType, context);
-        varDeclarationStatementText.append(nonReferenceType->FullName()).append(1, ' ').append(resultVarName);
-        if (nonReferenceType->IsPointerType())
-        {
-            varDeclarationStatementText.append(U" = nullptr;");
-        }
-        else
-        {
-            varDeclarationStatementText.append(U";");
-        }
-        try
-        {
-            std::unique_ptr<otava::ast::Node> varDeclarationStmtNode = ParseStatement(varDeclarationStatementText, context);
-            context->PushSetFlag(ContextFlags::skipInvokeChecking);
-            boundVarDeclarationStatement.reset(BindStatement(varDeclarationStmtNode.get(), functionDefinitionSymbol, context));
-            context->PopFlags();
-        }
-        catch (const std::exception& ex)
-        {
-            if (nonReferenceType->IsClassTypeSymbol())
-            {
-                ThrowException("error generating exception handling invoke, possible reason: class '" + util::ToUtf8(resultType->FullName()) +
-                    "' not default constructible: " + ex.what());
-            }
-            else
-            {
-                throw;
-            }
-        }
-    }
-    std::u32string childControlResultStatementText;
-    childControlResultStatementText.append(U"std::child_control_result ").append(childControlResultVarName).append(U" = std::child_control_result::none;");
-    std::unique_ptr<otava::ast::Node> setChildControlResultStmtNode = ParseStatement(childControlResultStatementText, context);
-    context->PushSetFlag(ContextFlags::skipInvokeChecking);
-    boundChildControlResultStatement.reset(BindStatement(setChildControlResultStmtNode.get(), functionDefinitionSymbol, context));
-    context->PopFlags();
-    FunctionDefinitionSymbol* invokeFnSymbol = MakeInvokeFn(invoke, functionDefinitionSymbol, context);
-    FunctionDefinitionSymbol* cleanupFnSymbol = MakeCleanupFn(cleanup, functionDefinitionSymbol, context);
-    std::u32string invokeStmtText;
-    invokeStmtText.append(U"ort_invoke(").append(invokeFnSymbol->Name()).append(U", ").append(cleanupFnSymbol->Name()).append(U", ").
-        append(U"__intrinsic_get_frame_ptr()").append(U");");
-    std::unique_ptr<otava::ast::Node> invokeStmtNode = ParseStatement(invokeStmtText, context);
-    bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
-    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
-    context->PushSetFlag(ContextFlags::skipInvokeChecking);
-    BoundStatementNode* boundInvokeStatement = BindStatement(invokeStmtNode.get(), functionDefinitionSymbol, context);
-    context->PopFlags();
-    if (invokeFnSymbol->GetFlag(FunctionSymbolFlags::containsReturnStatement))
-    {
-        std::u32string returnStatementText;
-        returnStatementText.append(U"if (").append(childControlResultVarName).append(U" == std::child_control_result::ret) return ").append(
-            invokeFnSymbol->ResultVarExprStr(resultType)).append(U";");
-        std::unique_ptr<otava::ast::Node> returnStmtNode = ParseStatement(returnStatementText, context);
-        context->PushSetFlag(ContextFlags::skipInvokeChecking);
-        BoundStatementNode* boundReturnStmt = BindStatement(returnStmtNode.get(), functionDefinitionSymbol, context);
-        context->PopFlags();
-        boundInvokeStatement = new BoundSequenceStatementNode(sourcePos, boundInvokeStatement, boundReturnStmt);
-    }
-    else if (functionDefinitionSymbol->ParentFn())
-    {
-        otava::ast::BinaryExprNode* binaryExpr = new otava::ast::BinaryExprNode(sourcePos,
-            new otava::ast::AssignNode(sourcePos),
-            new otava::ast::IdentifierNode(sourcePos, context->ResultVarName()),
-                new otava::ast::IdentifierNode(sourcePos, invokeFnSymbol->ResultVarExprStr(resultType)));
-        otava::ast::ExpressionStatementNode exprStmt(sourcePos, binaryExpr, nullptr, nullptr);
-        BoundStatementNode* boundExpressionStatement = BindStatement(&exprStmt, functionDefinitionSymbol, context);
-        boundInvokeStatement = new BoundSequenceStatementNode(sourcePos, boundInvokeStatement, boundExpressionStatement);
-    }
-    if (boundVarDeclarationStatement && boundChildControlResultStatement && invokeFnSymbol->GetFlag(FunctionSymbolFlags::containsReturnStatement))
-    {
-        boundInvokeStatement = new BoundSequenceStatementNode(sourcePos, boundVarDeclarationStatement.release(), boundInvokeStatement);
-        boundInvokeStatement = new BoundSequenceStatementNode(sourcePos, boundChildControlResultStatement.release(), boundInvokeStatement);
-    }
-    context->PopResultVarName();
-    context->PopChildControlResultVarName();
-    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
-    context->PopFlags();
-    return boundInvokeStatement;
-}
-*/
 
 otava::ast::Node* MakeClonedRetValExprNode(otava::ast::Node* node, bool makeAddrOfNode)
 {
@@ -584,34 +479,25 @@ void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup()
 
 void InvokeAndCleanupGenerator::Emit(BoundStatementNode* stmt)
 {
-    if (collect)
+    if (stmt->MayThrow() && !cleanup.IsEmpty())
     {
-        boundStatement.reset(stmt);
+        invoke.Add(stmt);
+        if (stmt->ConstructsLocalVariableWithDestructor())
+        {
+            GenerateInvokeAndCleanup();
+        }
     }
     else
     {
-        if (stmt->MayThrow() && !cleanup.IsEmpty())
-        {
-            invoke.Add(stmt);
-        }
-        else
-        {
-            if (cleanup.Changed() && !stmt->ConstructsLocalVariableWithDestructor())
-            {
-                GenerateInvokeAndCleanup();
-            }
-            currentCompound->AddStatement(stmt);
-        }
+        GenerateInvokeAndCleanup();
+        currentCompound->AddStatement(stmt);
     }
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundCompoundStatementNode& node)
 {
-    if (context->GetBoundFunction()->GetFunctionDefinitionSymbol()->GroupName() == U"main")
-    {
-        int x = 0;
-    }
     int blockId = node.BlockId();
+    context->PushParentBlockId(blockId);
     Scope* scope = nullptr;
     if (blockId != -1)
     {
@@ -644,7 +530,14 @@ void InvokeAndCleanupGenerator::Visit(BoundCompoundStatementNode& node)
     cleanup.PopCleanupBlock();
     if (!prevCompound)
     {
-        functionBody.reset(currentCompound);
+        if (collect)
+        {
+            boundStatement.reset(currentCompound);
+        }
+        else
+        {
+            functionBody.reset(currentCompound);
+        }
     }
     else
     {
@@ -655,11 +548,13 @@ void InvokeAndCleanupGenerator::Visit(BoundCompoundStatementNode& node)
     {
         context->GetSymbolTable()->EndScopeGeneric(context);
     }
+    context->PopParentBlockId();
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundIfStatementNode& node)
 {
     int blockId = node.BlockId();
+    context->PushParentBlockId(blockId);
     Scope* scope = nullptr;
     if (blockId != -1)
     {
@@ -686,47 +581,216 @@ void InvokeAndCleanupGenerator::Visit(BoundIfStatementNode& node)
     {
         bool prevCollect = collect;
         collect = true;
+        BoundCompoundStatementNode* prevCompound = currentCompound;
+        currentCompound = nullptr;
         node.ThenStatement()->Accept(*this);
         clone->SetThenStatement(boundStatement.release());
         collect = prevCollect;
+        currentCompound = prevCompound;
     }
     if (node.ElseStatement() && node.ElseStatement()->ContainsLocalVariableWithDestructor())
     {
         bool prevCollect = collect;
         collect = true;
+        BoundCompoundStatementNode* prevCompound = currentCompound;
+        currentCompound = nullptr;
         node.ElseStatement()->Accept(*this);
         clone->SetElseStatement(boundStatement.release());
         collect = prevCollect;
+        currentCompound = prevCompound;
     }
     Emit(clone.release());
     if (scope)
     {
         context->GetSymbolTable()->EndScopeGeneric(context);
     }
+    context->PopParentBlockId();
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundSwitchStatementNode& node)
 {
+    int blockId = node.BlockId();
+    context->PushParentBlockId(blockId);
+    Scope* scope = nullptr;
+    if (blockId != -1)
+    {
+        Symbol* block = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->GetBlock(blockId);
+        if (block)
+        {
+            scope = block->GetScope();
+            if (scope)
+            {
+                context->GetSymbolTable()->BeginScopeGeneric(scope, context);
+            }
+            else
+            {
+                int x = 0;
+            }
+        }
+        else
+        {
+            int x = 0;
+        }
+    }
+    std::unique_ptr<BoundSwitchStatementNode> clone(static_cast<BoundSwitchStatementNode*>(node.Clone()));
+    if (node.Statement()->ContainsLocalVariableWithDestructor())
+    {
+        bool prevCollect = collect;
+        collect = true;
+        BoundCompoundStatementNode* prevCompound = currentCompound;
+        currentCompound = nullptr;
+        node.Statement()->Accept(*this);
+        clone->SetStatement(boundStatement.release());
+        collect = prevCollect;
+        currentCompound = prevCompound;
+    }
+    Emit(clone.release());
+    if (scope)
+    {
+        context->GetSymbolTable()->EndScopeGeneric(context);
+    }
+    context->PopParentBlockId();
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundCaseStatementNode& node)
 {
+    std::unique_ptr<BoundCaseStatementNode> clone(static_cast<BoundCaseStatementNode*>(node.Clone()));
+    if (node.Statement()->ContainsLocalVariableWithDestructor())
+    {
+        bool prevCollect = collect;
+        collect = true;
+        BoundCompoundStatementNode* prevCompound = currentCompound;
+        currentCompound = nullptr;
+        node.Statement()->Accept(*this);
+        clone->SetStatement(boundStatement.release());
+        collect = prevCollect;
+        currentCompound = prevCompound;
+    }
+    Emit(clone.release());
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundDefaultStatementNode& node)
 {
+    std::unique_ptr<BoundDefaultStatementNode> clone(static_cast<BoundDefaultStatementNode*>(node.Clone()));
+    if (node.Statement()->ContainsLocalVariableWithDestructor())
+    {
+        bool prevCollect = collect;
+        collect = true;
+        BoundCompoundStatementNode* prevCompound = currentCompound;
+        currentCompound = nullptr;
+        node.Statement()->Accept(*this);
+        clone->SetStatement(boundStatement.release());
+        collect = prevCollect;
+        currentCompound = prevCompound;
+    }
+    Emit(clone.release());
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundWhileStatementNode& node)
 {
+    int blockId = node.BlockId();
+    context->PushParentBlockId(blockId);
+    Scope* scope = nullptr;
+    if (blockId != -1)
+    {
+        Symbol* block = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->GetBlock(blockId);
+        if (block)
+        {
+            scope = block->GetScope();
+            if (scope)
+            {
+                context->GetSymbolTable()->BeginScopeGeneric(scope, context);
+            }
+            else
+            {
+                int x = 0;
+            }
+        }
+        else
+        {
+            int x = 0;
+        }
+    }
+    std::unique_ptr<BoundWhileStatementNode> clone(static_cast<BoundWhileStatementNode*>(node.Clone()));
+    if (node.Statement()->ContainsLocalVariableWithDestructor())
+    {
+        bool prevCollect = collect;
+        collect = true;
+        BoundCompoundStatementNode* prevCompound = currentCompound;
+        currentCompound = nullptr;
+        node.Statement()->Accept(*this);
+        clone->SetStatement(boundStatement.release());
+        collect = prevCollect;
+        currentCompound = prevCompound;
+    }
+    Emit(clone.release());
+    if (scope)
+    {
+        context->GetSymbolTable()->EndScopeGeneric(context);
+    }
+    context->PopParentBlockId();
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundDoStatementNode& node)
 {
+    std::unique_ptr<BoundDoStatementNode> clone(static_cast<BoundDoStatementNode*>(node.Clone()));
+    if (node.Statement()->ContainsLocalVariableWithDestructor())
+    {
+        bool prevCollect = collect;
+        collect = true;
+        BoundCompoundStatementNode* prevCompound = currentCompound;
+        currentCompound = nullptr;
+        node.Statement()->Accept(*this);
+        clone->SetStatement(boundStatement.release());
+        collect = prevCollect;
+        currentCompound = prevCompound;
+    }
+    Emit(clone.release());
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundForStatementNode& node)
 {
+    int blockId = node.BlockId();
+    context->PushParentBlockId(blockId);
+    Scope* scope = nullptr;
+    if (blockId != -1)
+    {
+        Symbol* block = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->GetBlock(blockId);
+        if (block)
+        {
+            scope = block->GetScope();
+            if (scope)
+            {
+                context->GetSymbolTable()->BeginScopeGeneric(scope, context);
+            }
+            else
+            {
+                int x = 0;
+            }
+        }
+        else
+        {
+            int x = 0;
+        }
+    }
+    std::unique_ptr<BoundForStatementNode> clone(static_cast<BoundForStatementNode*>(node.Clone()));
+    if (node.Statement()->ContainsLocalVariableWithDestructor())
+    {
+        bool prevCollect = collect;
+        collect = true;
+        BoundCompoundStatementNode* prevCompound = currentCompound;
+        currentCompound = nullptr;
+        node.Statement()->Accept(*this);
+        clone->SetStatement(boundStatement.release());
+        collect = prevCollect;
+        currentCompound = prevCompound;
+    }
+    Emit(clone.release());
+    if (scope)
+    {
+        context->GetSymbolTable()->EndScopeGeneric(context);
+    }
+    context->PopParentBlockId();
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundSequenceStatementNode& node)
@@ -753,10 +817,12 @@ void InvokeAndCleanupGenerator::Visit(BoundSequenceStatementNode& node)
 
 void InvokeAndCleanupGenerator::Visit(BoundBreakStatementNode& node)
 {
+    Emit(node.Clone());
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundContinueStatementNode& node)
 {
+    Emit(node.Clone());
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundReturnStatementNode& node)
@@ -766,10 +832,24 @@ void InvokeAndCleanupGenerator::Visit(BoundReturnStatementNode& node)
 
 void InvokeAndCleanupGenerator::Visit(BoundGotoStatementNode& node)
 {
+    Emit(node.Clone());
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundLabeledStatementNode& node)
 {
+    std::unique_ptr<BoundLabeledStatementNode> clone(static_cast<BoundLabeledStatementNode*>(node.Clone()));
+    if (node.Statement()->ContainsLocalVariableWithDestructor())
+    {
+        bool prevCollect = collect;
+        collect = true;
+        BoundCompoundStatementNode* prevCompound = currentCompound;
+        currentCompound = nullptr;
+        node.Statement()->Accept(*this);
+        clone->SetStatement(boundStatement.release());
+        collect = prevCollect;
+        currentCompound = prevCompound;
+    }
+    Emit(clone.release());
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundSetVPtrStatementNode& node)
@@ -784,12 +864,11 @@ void InvokeAndCleanupGenerator::Visit(BoundAliasDeclarationStatementNode& node)
 
 void InvokeAndCleanupGenerator::Visit(BoundConstructionStatementNode& node)
 {
+    Emit(node.Clone());
     if (node.DestructorCall())
     {
-        GenerateInvokeAndCleanup();
         cleanup.CurrentCleanupBlock()->Add(node.DestructorCall(), context);
     }
-    Emit(node.Clone());
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundExpressionStatementNode& node)

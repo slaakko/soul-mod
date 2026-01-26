@@ -78,7 +78,9 @@ Context::Context() :
     childControlResultSerial(0),
     statementBinder(nullptr),
     nextBlockId(0),
-    currentBlockId(-1)
+    currentBlockId(-1),
+    parentFn(nullptr),
+    parentBlockId(-1)
 {
 }
 
@@ -476,6 +478,30 @@ void Context::PopBlockId()
 {
     currentBlockId = blockIdStack.top();
     blockIdStack.pop();
+}
+
+void Context::PushParentFn(FunctionDefinitionSymbol* parentFn_)
+{
+    parentFnStack.push(parentFn);
+    parentFn = parentFn_;
+}
+
+void Context::PopParentFn()
+{
+    parentFn = parentFnStack.top();
+    parentFnStack.pop();
+}
+
+void Context::PushParentBlockId(int blockId)
+{
+    parentBlockIdStack.push(parentBlockId);
+    parentBlockId = blockId;
+}
+
+void Context::PopParentBlockId()
+{
+    parentBlockId = parentBlockIdStack.top();
+    parentBlockIdStack.pop();
 }
 
 } // namespace otava::symbols

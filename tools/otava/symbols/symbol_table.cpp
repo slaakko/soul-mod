@@ -1337,10 +1337,6 @@ void SymbolTable::UnmapType(TypeSymbol* type)
 VariableSymbol* SymbolTable::AddVariable(const std::u32string& name, otava::ast::Node* node, TypeSymbol* declaredType, TypeSymbol* initializerType, 
     Value* value, DeclarationFlags flags, Context* context)
 {
-    if (name == U"str")
-    {
-        int x = 0;
-    }
     VariableGroupSymbol* variableGroup = currentScope->GroupScope()->GetOrInsertVariableGroup(name, node->GetSourcePos(), context);
     VariableSymbol* variableSymbol = new VariableSymbol(name);
     variableSymbol->SetAccess(CurrentAccess());

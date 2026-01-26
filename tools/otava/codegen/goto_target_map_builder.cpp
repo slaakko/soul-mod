@@ -47,7 +47,7 @@ void GotoTargetMapBuilder::Visit(otava::symbols::BoundLabeledStatementNode& node
             labeledStatementMap[node.Label()] = &node;
         }
     }
-    node.Stmt()->Accept(*this);
+    node.Statement()->Accept(*this);
 }
 
 void GotoTargetMapBuilder::Visit(otava::symbols::BoundGotoStatementNode& node)

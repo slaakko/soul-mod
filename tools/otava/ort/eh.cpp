@@ -33,7 +33,7 @@ void ort_throw(void* ex, std::uint64_t ext1_, std::uint64_t ext2_)
         ext2 = ext2_;
         if (ext1 != bad_alloc_ext1 || ext2 != bad_alloc_ext2)
         {
-            stackTrace = ort_generate_stack_trace();
+            //stackTrace = ort_generate_stack_trace();
         }
         std::longjmp(jbufs[currentContext - 1], 1);
     }

@@ -573,7 +573,8 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     BoundStatementNode* Clone() const override;
     const std::u32string& Label() const { return label; }
-    BoundStatementNode* Stmt() const { return stmt.get(); }
+    inline void SetStatement(BoundStatementNode* stmt_) { stmt.reset(stmt_); }
+    BoundStatementNode* Statement() const { return stmt.get(); }
     otava::intermediate::BasicBlock* GetBB(Emitter& emitter);
     bool ContainsLocalVariableWithDestructor() const override;
 private:

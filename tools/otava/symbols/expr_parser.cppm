@@ -11,10 +11,12 @@ import otava.symbols.modules;
 
 export namespace otava::symbols {
 
-using ExprParser = std::unique_ptr<otava::ast::Node>(*)(const std::u32string&, otava::symbols::Module* module);
+class Context;
+
+using ExprParser = std::unique_ptr<otava::ast::Node>(*)(const std::u32string&, Context* context);
 
 void SetExprParser(ExprParser exprParser_);
 
-std::unique_ptr<otava::ast::Node> ParseExpression(const std::u32string& expr, otava::symbols::Module* module);
+std::unique_ptr<otava::ast::Node> ParseExpression(const std::u32string& expr, Context* context);
 
 } // namespace otava::symbols

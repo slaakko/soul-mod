@@ -70,9 +70,10 @@ enum class ContextFlags : std::int64_t
     skipInvokeChecking = static_cast<std::int64_t>(1) << 39,
     dontProcess = static_cast<std::int64_t>(1) << 40,
     makeChildFn = static_cast<std::int64_t>(1) << 41,
-    makeCompileUnitInitFn = static_cast<std::int64_t>(1) << 42,
-    cast = static_cast<std::int64_t>(1) << 43,
-    expected = static_cast<std::int64_t>(1) << 44
+    invoke = static_cast<std::int64_t>(1) << 42,
+    makeCompileUnitInitFn = static_cast<std::int64_t>(1) << 43,
+    cast = static_cast<std::int64_t>(1) << 44,
+    expected = static_cast<std::int64_t>(1) << 45
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -230,6 +231,12 @@ public:
     inline int CurrentBlockId() const { return currentBlockId; }
     void PushBlockId(int blockId);
     void PopBlockId();
+    FunctionDefinitionSymbol* ParentFn() const { return parentFn; }
+    void PushParentFn(FunctionDefinitionSymbol* parentFn_);
+    void PopParentFn();
+    inline int ParentBlockId() const { return parentBlockId; }
+    void PushParentBlockId(int blockId);
+    void PopParentBlockId();
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -289,6 +296,10 @@ private:
     int nextBlockId;
     std::stack<int> blockIdStack;
     int currentBlockId;
+    FunctionDefinitionSymbol* parentFn;
+    std::stack<FunctionDefinitionSymbol*> parentFnStack;
+    std::stack<int> parentBlockIdStack;
+    int parentBlockId;
 };
 
 } // namespace otava::symbols

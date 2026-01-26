@@ -2292,11 +2292,10 @@ void ExpressionBinder::Visit(otava::ast::ThrowExprNode& node)
         throwExprStr.append(U"ort_throw((ort_is_bad_alloc(").append(util::ToUtf32(std::to_string(ext1)).append(U"ull, ").
             append(util::ToUtf32(std::to_string(ext2)).append(U"ull) ? ort_get_bad_alloc() : ")));
         std::u32string exprStr = node.Child()->Str();
-        if (expr->IsBoundLiteralNode())
+        if (expr->IsBoundLiteralNode() || expr->IsBoundVariableNode() || expr->IsBoundParentVariableNode())
         {
             std::u32string typeName = expr->GetType()->FullName();
             throwExprStr.append(U"new ").append(typeName).append(U"(").append(exprStr).append(U")");
-
         }
         else if (node.Child()->IsInvokeExprNode())
         {
@@ -2304,14 +2303,14 @@ void ExpressionBinder::Visit(otava::ast::ThrowExprNode& node)
         }
         throwExprStr.append(U"), ").append(util::ToUtf32(std::to_string(ext1)).append(U"ull, ").
             append(util::ToUtf32(std::to_string(ext2)).append(U"ull)")));
-        std::unique_ptr<otava::ast::Node> invokeThrowExprNode = ParseExpression(throwExprStr, context->GetModule());
+        std::unique_ptr<otava::ast::Node> invokeThrowExprNode = ParseExpression(throwExprStr, context);
         boundExpression = BindExpression(invokeThrowExprNode.get(), context);
     }
     else
     {
         std::u32string throwExprStr;
         throwExprStr.append(U"ort_rethrow()");
-        std::unique_ptr<otava::ast::Node> invokeThrowExprNode = ParseExpression(throwExprStr, context->GetModule());
+        std::unique_ptr<otava::ast::Node> invokeThrowExprNode = ParseExpression(throwExprStr, context);
         boundExpression = BindExpression(invokeThrowExprNode.get(), context);
     }
 }

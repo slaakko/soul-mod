@@ -1695,7 +1695,7 @@ void CodeGenerator::Visit(otava::symbols::BoundLabeledStatementNode& node)
     emitter->EmitJump(bb);
     emitter->SetCurrentBasicBlock(bb);
     basicBlockOpen = true;
-    node.Stmt()->Accept(*this);
+    node.Statement()->Accept(*this);
 }
 
 std::string GenerateCode(otava::symbols::Context& context, const std::string& config, int optLevel, bool verbose, std::string& mainIrName, 

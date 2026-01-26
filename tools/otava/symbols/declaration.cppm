@@ -21,6 +21,7 @@ class Reader;
 
 std::string DeclarationFlagStr(DeclarationFlags flags);
 
+VariableSymbol* ResolveParentVariable(const std::u32string& variableName, const soul::ast::SourcePos& sourcePos, int& level, Context* context);
 void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context);
 Declaration ProcessFunctionDeclaration(otava::ast::Node* node, Context* context);
 Declaration ProcessParameterDeclaration(otava::ast::Node* node, Context* context);

@@ -53,6 +53,7 @@ struct Declaration
     Value* value;
     otava::ast::Node* initializer;
     VariableSymbol* variable;
+    std::u32string name;
 };
 
 struct DeclarationList

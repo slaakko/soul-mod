@@ -37,7 +37,9 @@ VariableSymbol::VariableSymbol(const std::u32string& name_) :
     valueId(util::nil_uuid()),
     layoutIndex(-1),
     index(-1),
-    global(nullptr)
+    global(nullptr),
+    level(0),
+    foundFromParent(false)
 {
 }
 

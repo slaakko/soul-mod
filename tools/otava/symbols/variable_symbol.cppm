@@ -45,6 +45,10 @@ public:
     inline void SetIndex(std::int32_t index_) { index = index_; }
     inline VariableSymbol* Final() { if (global) return global; else return this; }
     inline void SetGlobal(VariableSymbol* global_) { global = global_; }
+    inline void SetLevel(int level_) { level = level_; }
+    inline int Level() const { return level; }
+    inline bool FoundFromParent() const { return foundFromParent; }
+    inline void SetFoundFromParent() { foundFromParent = true; }
 private:
     TypeSymbol* declaredType;
     util::uuid declaredTypeId;
@@ -55,6 +59,8 @@ private:
     std::int32_t layoutIndex;
     std::int32_t index;
     VariableSymbol* global;
+    int level;
+    bool foundFromParent;
 };
 
 struct VariableLess
