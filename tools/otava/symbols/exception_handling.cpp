@@ -65,10 +65,15 @@ void CleanupBlock::Add(BoundFunctionCallNode* destructorCall, Context* context)
     cleanup->SetChanged();
 }
 
-void CleanupBlock::Make(otava::ast::CompoundStatementNode* compoundStatement)
+void CleanupBlock::Make(otava::ast::CompoundStatementNode* compoundStatement, bool skipLast)
 {
     int n = destructorCalls.size();
-    for (int i = n - 1; i >= 0; --i)
+    int end = n - 1;
+    if (skipLast)
+    {
+        --end;
+    }
+    for (int i = end; i >= 0; --i)
     {
         BoundExpressionStatementNode* exprStmt = new BoundExpressionStatementNode(destructorCalls[i]->GetSourcePos());
         exprStmt->SetExpr(destructorCalls[i]->Clone());
@@ -93,11 +98,31 @@ Cleanup::Cleanup() : changed(false)
 
 bool Cleanup::IsEmpty() const
 {
-    for (const auto& cleanupBlock : cleanupBlocks)
+    int n = cleanupBlocks.size();
+    for (int i = 0; i < n; ++i)
     {
+        CleanupBlock* cleanupBlock = cleanupBlocks[i].get();
         if (!cleanupBlock->IsEmpty()) return false;
     }
     return true;
+}
+
+bool Cleanup::ContainsOne() const
+{
+    int n = cleanupBlocks.size();
+    for (int i = 0; i < n; ++i)
+    { 
+        CleanupBlock* cleanupBlock = cleanupBlocks[i].get();
+        if (i < n - 1)
+        {
+            if (!cleanupBlock->IsEmpty()) return false;
+        }
+        else
+        {
+            if (cleanupBlock->ContainsOne()) return true;
+        }
+    }
+    return false;
 }
 
 void Cleanup::PushCleanupBlock()
@@ -110,13 +135,18 @@ void Cleanup::PopCleanupBlock()
     cleanupBlocks.pop_back();
 }
 
-void Cleanup::Make(otava::ast::CompoundStatementNode* compoundStatement)
+void Cleanup::Make(otava::ast::CompoundStatementNode* compoundStatement, bool skipLast)
 {
     int n = cleanupBlocks.size();
     for (int i = n - 1; i >= 0; --i)
     {
         CleanupBlock* cleanupBlock = cleanupBlocks[i].get();;
-        cleanupBlock->Make(compoundStatement);
+        bool skip = false;
+        if (i == n - 1)
+        {
+            skip = skipLast;
+        }
+        cleanupBlock->Make(compoundStatement, skip);
     }
 }
 
@@ -229,7 +259,7 @@ FunctionDefinitionSymbol* MakeInvokeFn(Invoke& invoke, Scope* parentFnScope, Fun
     return invokeFnSymbol;
 }
 
-FunctionDefinitionSymbol* MakeCleanupFn(Cleanup& cleanup, Scope* parentFnScope, FunctionDefinitionSymbol* parentFn, Context* context)
+FunctionDefinitionSymbol* MakeCleanupFn(Cleanup& cleanup, bool skipLast, Scope* parentFnScope, FunctionDefinitionSymbol* parentFn, Context* context)
 {
     soul::ast::SourcePos sourcePos = cleanup.GetSourcePos();
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
@@ -239,7 +269,7 @@ FunctionDefinitionSymbol* MakeCleanupFn(Cleanup& cleanup, Scope* parentFnScope, 
     {
         cleanupBlock->SetBlockId(parentFn->Blocks().front()->BlockId());
     }
-    cleanup.Make(cleanupBlock);
+    cleanup.Make(cleanupBlock, skipLast);
     otava::ast::DeclSpecifierSequenceNode* cleanupDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
     cleanupDeclSpecifiers->AddNode(new otava::ast::VoidNode(sourcePos));
     otava::ast::ParameterListNode* cleanupParameters = new otava::ast::ParameterListNode(sourcePos);
@@ -281,6 +311,7 @@ FunctionDefinitionSymbol* MakeCleanupFn(Cleanup& cleanup, Scope* parentFnScope, 
     cleanupInstantiationScope.PopParentScope();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
     cleanupFnSymbol->SetFnDefNode(cleanupFnNode.release());
+    cleanup.ResetChanged();
     return cleanupFnSymbol;
 }
 
@@ -353,7 +384,7 @@ public:
     void Visit(BoundSetVPtrStatementNode& node) override;
     void Visit(BoundAliasDeclarationStatementNode& node) override;
 private:
-    void GenerateInvokeAndCleanup();
+    void GenerateInvokeAndCleanup(bool skipLast);
     void Emit(BoundStatementNode* stmt);
     Context* context;
     FunctionDefinitionSymbol* functionDefinitionSymbol;
@@ -370,8 +401,9 @@ InvokeAndCleanupGenerator::InvokeAndCleanupGenerator(Context* context_, Function
 {
 }
 
-void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup()
+void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup(bool skipLast)
 {
+    if (skipLast && cleanup.ContainsOne()) return;
     if (cleanup.IsEmpty()) return;
     if (invoke.IsEmpty()) return;
     soul::ast::SourcePos sourcePos = invoke.GetSourcePos();
@@ -424,7 +456,7 @@ void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup()
     boundChildControlResultStatement.reset(BindStatement(setChildControlResultStmtNode.get(), functionDefinitionSymbol, context));
     boundChildControlResultStatement->SetSource(setChildControlResultStmtNode.release());
     FunctionDefinitionSymbol* invokeFnSymbol = MakeInvokeFn(invoke, context->GetSymbolTable()->CurrentScope(), functionDefinitionSymbol, context);
-    FunctionDefinitionSymbol* cleanupFnSymbol = MakeCleanupFn(cleanup, context->GetSymbolTable()->CurrentScope(), functionDefinitionSymbol, context);
+    FunctionDefinitionSymbol* cleanupFnSymbol = MakeCleanupFn(cleanup, skipLast, context->GetSymbolTable()->CurrentScope(), functionDefinitionSymbol, context);
     std::u32string invokeStmtText;
     invokeStmtText.append(U"ort_invoke(").append(invokeFnSymbol->Name()).append(U", ").append(cleanupFnSymbol->Name()).append(U", ").
         append(U"__intrinsic_get_frame_ptr()").append(U");");
@@ -474,22 +506,25 @@ void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup()
     std::unique_ptr<BoundStatementNode> boundInvokeBlock(BindStatement(invokeBlock.get(), functionDefinitionSymbol, context));
     context->GetSymbolTable()->EndScope();
     currentCompound->AddStatement(boundInvokeBlock.release());
-    cleanup.ResetChanged();
 }
 
 void InvokeAndCleanupGenerator::Emit(BoundStatementNode* stmt)
 {
     if (stmt->MayThrow() && !cleanup.IsEmpty())
     {
+        if (cleanup.Changed())
+        {
+            GenerateInvokeAndCleanup(true);
+        }
         invoke.Add(stmt);
         if (stmt->ConstructsLocalVariableWithDestructor())
         {
-            GenerateInvokeAndCleanup();
+            GenerateInvokeAndCleanup(false);
         }
     }
     else
     {
-        GenerateInvokeAndCleanup();
+        GenerateInvokeAndCleanup(false);
         currentCompound->AddStatement(stmt);
     }
 }
@@ -526,7 +561,7 @@ void InvokeAndCleanupGenerator::Visit(BoundCompoundStatementNode& node)
     {
         stmt->Accept(*this);
     }
-    GenerateInvokeAndCleanup();
+    GenerateInvokeAndCleanup(false);
     cleanup.PopCleanupBlock();
     if (!prevCompound)
     {

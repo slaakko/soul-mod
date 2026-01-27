@@ -33,8 +33,9 @@ class CleanupBlock
 public:
     CleanupBlock(Cleanup* cleanup_);
     inline bool IsEmpty() const { return destructorCalls.empty(); }
+    inline bool ContainsOne() const { return destructorCalls.size() == 1; }
     void Add(BoundFunctionCallNode* destructorCall, Context* context);
-    void Make(otava::ast::CompoundStatementNode* compoundStatement);
+    void Make(otava::ast::CompoundStatementNode* compoundStatement, bool skipLast);
     soul::ast::SourcePos GetSourcePos() const;
 private:
     Cleanup* cleanup;
@@ -46,13 +47,14 @@ class Cleanup
 public:
     Cleanup();
     bool IsEmpty() const;
-    bool Changed() const { return changed; }
-    void SetChanged() { changed = true; }
-    void ResetChanged() { changed = false; }
+    bool ContainsOne() const;
     void PushCleanupBlock();
     void PopCleanupBlock();
     CleanupBlock* CurrentCleanupBlock() const { return cleanupBlocks.back().get(); }
-    void Make(otava::ast::CompoundStatementNode* compoundStatement);
+    inline bool Changed() const { return changed; }
+    inline void SetChanged() { changed = true; }
+    inline void ResetChanged() { changed = false; }
+    void Make(otava::ast::CompoundStatementNode* compoundStatement, bool skipLast);
     soul::ast::SourcePos GetSourcePos() const;
 private:
     std::vector<std::unique_ptr<CleanupBlock>> cleanupBlocks;

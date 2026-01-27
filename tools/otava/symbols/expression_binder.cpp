@@ -1042,6 +1042,10 @@ void ExpressionBinder::Visit(otava::ast::DoubleNode& node)
 
 void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
 {
+    if (node.Str() == U"ensure_owning")
+    {
+        int x = 0;
+    }
     bool foundFromParentFn = false;
     int level = 0;
     SymbolGroupKind groups = symbolGroups;
@@ -1156,6 +1160,85 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                             if (blockScope)
                             {
                                 symbol = blockScope->Lookup(node.Str(), SymbolGroupKind::variableSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, node.GetSourcePos(),
+                                    context, LookupFlags::dontResolveSingle);
+                                if (symbol)
+                                {
+                                    foundFromParentFn = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    fnDefSymbol = fnDefSymbol->ParentFn();
+                                    ++level;
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (!symbol)
+    {
+        level = 0;
+        StatementBinder* statementBinder = context->GetStatementBinder();
+        if (statementBinder)
+        {
+            FunctionDefinitionSymbol* fnDefSymbol = statementBinder->GetFunctionDefinitionSymbol();
+            if (fnDefSymbol)
+            {
+                while (fnDefSymbol)
+                {
+                    Scope* parentFnScope = fnDefSymbol->ParentFnScope();
+                    if (parentFnScope)
+                    {
+                        symbol = parentFnScope->Lookup(node.Str(), SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, node.GetSourcePos(),
+                            context, LookupFlags::dontResolveSingle);
+                        if (symbol)
+                        {
+                            foundFromParentFn = true;
+                            break;
+                        }
+                        else
+                        {
+                            fnDefSymbol = fnDefSymbol->ParentFn();
+                            ++level;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        if (!symbol)
+        {
+            level = 0;
+            StatementBinder* parentStatementBinder = context->GetParentStatementBinder();
+            if (parentStatementBinder)
+            {
+                FunctionDefinitionSymbol* fnDefSymbol = parentStatementBinder->GetFunctionDefinitionSymbol();
+                if (fnDefSymbol)
+                {
+                    while (fnDefSymbol)
+                    {
+                        int currentBlockId = context->CurrentBlockId();
+                        Symbol* block = fnDefSymbol->GetBlock(currentBlockId);
+                        if (block)
+                        {
+                            Scope* blockScope = block->GetScope();
+                            if (blockScope)
+                            {
+                                symbol = blockScope->Lookup(node.Str(), SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, node.GetSourcePos(),
                                     context, LookupFlags::dontResolveSingle);
                                 if (symbol)
                                 {

@@ -664,7 +664,12 @@ Node* ForStatementNode::Clone() const
     {
         clonedAttributes = attributes->Clone();
     }
-    ForStatementNode* clone = new ForStatementNode(GetSourcePos(), initStmt->Clone(), clonedCond, clonedLoopExpr, stmt->Clone(), clonedAttributes, semicolon->Clone(),
+    Node* clonedSemicolon = nullptr;
+    if (semicolon)
+    {
+        clonedSemicolon = semicolon->Clone();
+    }
+    ForStatementNode* clone = new ForStatementNode(GetSourcePos(), initStmt->Clone(), clonedCond, clonedLoopExpr, stmt->Clone(), clonedAttributes, clonedSemicolon,
         forPos, lpPos, rpPos);
     clone->SetBlockId(blockId);
     return clone;
