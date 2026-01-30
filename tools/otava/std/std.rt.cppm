@@ -158,134 +158,134 @@ int EOF = -1;
 
 export namespace std {
 
-inline void* malloc(size_t size)
+inline void* malloc(size_t size) noexcept
 {
     return ort_malloc(size);
 }
 
-inline void free(void* ptr)
+inline void free(void* ptr) noexcept
 {
     ort_free(ptr);
 }
 
-inline void* fopen(const char* path, const char* mode)
+inline void* fopen(const char* path, const char* mode) noexcept
 {
     return ort_open_file(path, mode);
 }
 
-inline int fclose(void* file)
+inline int fclose(void* file) noexcept
 {
     return ort_close_file(file);
 }
 
-inline int fgetc(void* file)
+inline int fgetc(void* file) noexcept
 {
     return ort_fgetc(file);
 }
 
-inline int fputc(int ch, void* file)
+inline int fputc(int ch, void* file) noexcept
 {
     return ort_fputc(ch, file);
 }
 
-inline int fputs(const char* str, void* file)
+inline int fputs(const char* str, void* file) noexcept
 {
     return ort_fputs(str, file);
 }
 
-inline bool isspace(int c)
+inline bool isspace(int c) noexcept
 {
     return ort_isspace(c);
 }
 
-inline bool isalpha(int c)
+inline bool isalpha(int c) noexcept
 {
     return ort_isalpha(c);
 }
 
-inline bool isdigit(int c)
+inline bool isdigit(int c) noexcept
 {
     return ort_isdigit(c);
 }
 
-inline bool isalnum(int c)
+inline bool isalnum(int c) noexcept
 {
     return ort_isalnum(c);
 }
 
-inline int tolower(int c)
+inline int tolower(int c) noexcept
 {
     return ort_tolower(c);
 }
 
-inline int toupper(int c)
+inline int toupper(int c) noexcept
 {
     return ort_toupper(c);
 }
 
-inline std::int64_t fread(void* buf, std::int64_t size, std::int64_t count, void* file)
+inline std::int64_t fread(void* buf, std::int64_t size, std::int64_t count, void* file) noexcept
 {
     return ort_fread(buf, size, count, file);
 }
 
-inline std::int64_t fwrite(void* buffer, std::int64_t size, std::int64_t count, void* file)
+inline std::int64_t fwrite(void* buffer, std::int64_t size, std::int64_t count, void* file) noexcept
 {
     return ort_fwrite(buffer, size, count, file);
 }
 
-inline int feof(void* file)
+inline int feof(void* file) noexcept
 {
     return ort_feof(file);
 }
 
-inline int ferror(void* file)
+inline int ferror(void* file) noexcept
 {
     return ort_ferror(file);
 }
 
-inline int fflush(void* file)
+inline int fflush(void* file) noexcept
 {
     return ort_fflush(file);
 }
 
-inline int fseek(void* file, long offset, int origin)
+inline int fseek(void* file, long offset, int origin) noexcept
 {
     return ort_fseek(file, offset, origin);
 }
 
-inline long ftell(void* file)
+inline long ftell(void* file) noexcept
 {
     return ort_ftell(file);
 }
 
-inline const char* getenv(const char* env)
+inline const char* getenv(const char* env) noexcept
 {
     return ort_get_env(env);
 }
 
-inline double pow(double x, int exponent)
+inline double pow(double x, int exponent) noexcept
 {
     return ort_pow(x, exponent);
 }
 
-inline float remainder(float x, float y)
+inline float remainder(float x, float y) noexcept
 {
     return ort_remainder(x, y);
 }
 
-inline double remainder(double x, double y)
+inline double remainder(double x, double y) noexcept
 {
     return ort_remainderd(x, y);
 }
 
-inline void exit(int exitCode)
+inline void exit(int exitCode) noexcept
 {
     ort_exit(exitCode);
 }
 
 struct rt_init
 {
-    rt_init();
+    rt_init() noexcept;
 };
 
 } // namespace std

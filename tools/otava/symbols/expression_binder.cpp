@@ -474,6 +474,10 @@ ExpressionBinder::ExpressionBinder(Context* context_, SymbolGroupKind symbolGrou
 
 void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::SourcePos& sourcePos, BoundExpressionNode* left, BoundExpressionNode* right)
 {
+    if (!left->GetType())
+    {
+        ThrowException("left type is null", left->GetSourcePos(), context);
+    }
     bool isClassType = left->GetType()->IsClassTypeSymbol();
     if (!isClassType)
     {
@@ -1042,11 +1046,9 @@ void ExpressionBinder::Visit(otava::ast::DoubleNode& node)
 
 void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
 {
-    if (node.Str() == U"ensure_owning")
-    {
-        int x = 0;
-    }
+    bool invokeOrTryCatch = context->GetFlag(ContextFlags::invoke | ContextFlags::tryCatch);
     bool foundFromParentFn = false;
+    bool lookupOnlyFromMemberScope = context->GetFlag(ContextFlags::lookupOnlyFromMemberScope);
     int level = 0;
     SymbolGroupKind groups = symbolGroups;
     if ((groups & SymbolGroupKind::functionSymbolGroup) != SymbolGroupKind::none)
@@ -1054,7 +1056,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
         groups = groups & ~SymbolGroupKind::functionSymbolGroup;
     }
     Symbol* symbol = nullptr;
-    if (qualifiedScope)
+    if (qualifiedScope || lookupOnlyFromMemberScope)
     {
         symbol = scope->Lookup(node.Str(), groups, ScopeLookup::thisAndBaseScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
     }
@@ -1108,68 +1110,96 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
         nsSymbol = symbol;
         symbol = nullptr;
     }
-    if (!symbol)
+    Symbol* variableGroupSymbol = nullptr;
+    if (invokeOrTryCatch)
     {
-        StatementBinder* statementBinder = context->GetStatementBinder();
-        if (statementBinder)
+        if (symbol && symbol->IsVariableGroupSymbol() && !lookupOnlyFromMemberScope)
         {
-            FunctionDefinitionSymbol* fnDefSymbol = statementBinder->GetFunctionDefinitionSymbol();
-            if (fnDefSymbol)
+            VariableGroupSymbol* variableGroup = static_cast<VariableGroupSymbol*>(symbol);
+            Symbol* sym = variableGroup->GetSingleSymbol();
+            if (sym && sym->IsVariableSymbol())
             {
-                while (fnDefSymbol)
+                VariableSymbol* variable = static_cast<VariableSymbol*>(sym)->Final();
+                Scope* scope = variable->Parent()->GetScope();
+                if (scope && scope->IsContainerScope())
                 {
-                    Scope* parentFnScope = fnDefSymbol->ParentFnScope();
-                    if (parentFnScope)
+                    ContainerScope* containerScope = static_cast<ContainerScope*>(scope);
+                    ContainerSymbol* containerSymbol = containerScope->GetContainerSymbol();
+                    if (containerSymbol && containerSymbol->IsClassTypeSymbol())
                     {
-                        symbol = parentFnScope->Lookup(node.Str(), SymbolGroupKind::variableSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, node.GetSourcePos(),
-                            context, LookupFlags::dontResolveSingle);
-                        if (symbol)
-                        {
-                            foundFromParentFn = true;
-                            break;
-                        }
-                        else
-                        {
-                            fnDefSymbol = fnDefSymbol->ParentFn();
-                            ++level;
-                        }
-                    }
-                    else
-                    {
-                        break;
+                        variableGroupSymbol = symbol;
+                        symbol = nullptr;
                     }
                 }
             }
         }
-        if (!symbol)
+        if (!symbol && !lookupOnlyFromMemberScope)
         {
-            level = 0;
-            StatementBinder* parentStatementBinder = context->GetParentStatementBinder();
-            if (parentStatementBinder)
+            StatementBinder* statementBinder = context->GetStatementBinder();
+            if (statementBinder)
             {
-                FunctionDefinitionSymbol* fnDefSymbol = parentStatementBinder->GetFunctionDefinitionSymbol();
+                FunctionDefinitionSymbol* fnDefSymbol = statementBinder->GetFunctionDefinitionSymbol();
                 if (fnDefSymbol)
                 {
                     while (fnDefSymbol)
                     {
-                        int currentBlockId = context->CurrentBlockId();
-                        Symbol* block = fnDefSymbol->GetBlock(currentBlockId);
-                        if (block)
+                        Scope* parentFnScope = fnDefSymbol->ParentFnScope();
+                        if (parentFnScope)
                         {
-                            Scope* blockScope = block->GetScope();
-                            if (blockScope)
+                            symbol = parentFnScope->Lookup(node.Str(), SymbolGroupKind::variableSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, node.GetSourcePos(),
+                                context, LookupFlags::dontResolveSingle);
+                            if (symbol)
                             {
-                                symbol = blockScope->Lookup(node.Str(), SymbolGroupKind::variableSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, node.GetSourcePos(),
-                                    context, LookupFlags::dontResolveSingle);
-                                if (symbol)
+                                foundFromParentFn = true;
+                                break;
+                            }
+                            else
+                            {
+                                fnDefSymbol = fnDefSymbol->ParentFn();
+                                ++level;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!symbol)
+            {
+                level = 0;
+                StatementBinder* parentStatementBinder = context->GetParentStatementBinder();
+                if (parentStatementBinder)
+                {
+                    FunctionDefinitionSymbol* fnDefSymbol = parentStatementBinder->GetFunctionDefinitionSymbol();
+                    if (fnDefSymbol)
+                    {
+                        while (fnDefSymbol)
+                        {
+                            int currentBlockId = context->CurrentBlockId();
+                            Symbol* block = fnDefSymbol->GetBlock(currentBlockId);
+                            if (block)
+                            {
+                                Scope* blockScope = block->GetScope();
+                                if (blockScope)
                                 {
-                                    foundFromParentFn = true;
-                                    break;
+                                    symbol = blockScope->Lookup(node.Str(), SymbolGroupKind::variableSymbolGroup, 
+                                        ScopeLookup::thisAndBaseAndParentScope, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+                                    if (symbol)
+                                    {
+                                        foundFromParentFn = true;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        fnDefSymbol = fnDefSymbol->ParentFn();
+                                        ++level;
+                                    }
                                 }
                                 else
                                 {
-                                    fnDefSymbol = fnDefSymbol->ParentFn();
-                                    ++level;
+                                    break;
                                 }
                             }
                             else
@@ -1177,88 +1207,84 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                                 break;
                             }
                         }
-                        else
-                        {
-                            break;
-                        }
                     }
                 }
             }
         }
-    }
-    if (!symbol)
-    {
-        level = 0;
-        StatementBinder* statementBinder = context->GetStatementBinder();
-        if (statementBinder)
-        {
-            FunctionDefinitionSymbol* fnDefSymbol = statementBinder->GetFunctionDefinitionSymbol();
-            if (fnDefSymbol)
-            {
-                while (fnDefSymbol)
-                {
-                    Scope* parentFnScope = fnDefSymbol->ParentFnScope();
-                    if (parentFnScope)
-                    {
-                        symbol = parentFnScope->Lookup(node.Str(), SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, node.GetSourcePos(),
-                            context, LookupFlags::dontResolveSingle);
-                        if (symbol)
-                        {
-                            foundFromParentFn = true;
-                            break;
-                        }
-                        else
-                        {
-                            fnDefSymbol = fnDefSymbol->ParentFn();
-                            ++level;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-        }
-        if (!symbol)
+        if (!symbol && !lookupOnlyFromMemberScope)
         {
             level = 0;
-            StatementBinder* parentStatementBinder = context->GetParentStatementBinder();
-            if (parentStatementBinder)
+            StatementBinder* statementBinder = context->GetStatementBinder();
+            if (statementBinder)
             {
-                FunctionDefinitionSymbol* fnDefSymbol = parentStatementBinder->GetFunctionDefinitionSymbol();
+                FunctionDefinitionSymbol* fnDefSymbol = statementBinder->GetFunctionDefinitionSymbol();
                 if (fnDefSymbol)
                 {
                     while (fnDefSymbol)
                     {
-                        int currentBlockId = context->CurrentBlockId();
-                        Symbol* block = fnDefSymbol->GetBlock(currentBlockId);
-                        if (block)
+                        Scope* parentFnScope = fnDefSymbol->ParentFnScope();
+                        if (parentFnScope)
                         {
-                            Scope* blockScope = block->GetScope();
-                            if (blockScope)
+                            symbol = parentFnScope->Lookup(node.Str(), SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, node.GetSourcePos(),
+                                context, LookupFlags::dontResolveSingle);
+                            if (symbol)
                             {
-                                symbol = blockScope->Lookup(node.Str(), SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, node.GetSourcePos(),
-                                    context, LookupFlags::dontResolveSingle);
-                                if (symbol)
+                                foundFromParentFn = true;
+                                break;
+                            }
+                            else
+                            {
+                                fnDefSymbol = fnDefSymbol->ParentFn();
+                                ++level;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!symbol)
+            {
+                level = 0;
+                StatementBinder* parentStatementBinder = context->GetParentStatementBinder();
+                if (parentStatementBinder)
+                {
+                    FunctionDefinitionSymbol* fnDefSymbol = parentStatementBinder->GetFunctionDefinitionSymbol();
+                    if (fnDefSymbol)
+                    {
+                        while (fnDefSymbol)
+                        {
+                            int currentBlockId = context->CurrentBlockId();
+                            Symbol* block = fnDefSymbol->GetBlock(currentBlockId);
+                            if (block)
+                            {
+                                Scope* blockScope = block->GetScope();
+                                if (blockScope)
                                 {
-                                    foundFromParentFn = true;
-                                    break;
+                                    symbol = blockScope->Lookup(node.Str(), SymbolGroupKind::functionSymbolGroup, 
+                                        ScopeLookup::thisAndBaseAndParentScope, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+                                    if (symbol)
+                                    {
+                                        foundFromParentFn = true;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        fnDefSymbol = fnDefSymbol->ParentFn();
+                                        ++level;
+                                    }
                                 }
                                 else
                                 {
-                                    fnDefSymbol = fnDefSymbol->ParentFn();
-                                    ++level;
+                                    break;
                                 }
                             }
                             else
                             {
                                 break;
                             }
-                        }
-                        else
-                        {
-                            break;
                         }
                     }
                 }
@@ -1268,6 +1294,10 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
     if (!symbol && nsSymbol)
     {
         symbol = nsSymbol;
+    }
+    if (!symbol && variableGroupSymbol)
+    {
+        symbol = variableGroupSymbol;
     }
     if (symbol)
     {
@@ -1481,8 +1511,9 @@ void ExpressionBinder::Visit(otava::ast::DestructorIdNode& node)
 
 void ExpressionBinder::Visit(otava::ast::ThisNode& node)
 {
+    bool invokeOrTryCatch = context->GetFlag(ContextFlags::invoke | ContextFlags::tryCatch);
     FunctionDefinitionSymbol* parentFn = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ParentFn();
-    if (!parentFn)
+    if (!parentFn || !invokeOrTryCatch)
     {
         ParameterSymbol* thisParam = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ThisParam(context);
         if (thisParam)
@@ -1568,11 +1599,21 @@ void ExpressionBinder::BindMemberExpr(otava::ast::MemberExprNode* node, BoundExp
         return;
     }
     Scope* memberScope = subject->GetMemberScope(node->Op(), node->GetSourcePos(), context);
+    bool memberScopeSet = false;
     if (memberScope)
     {
         scope = memberScope;
+        memberScopeSet = true;
+    }
+    if (memberScopeSet)
+    {
+        context->PushSetFlag(ContextFlags::lookupOnlyFromMemberScope);
     }
     node->Id()->Accept(*this);
+    if (memberScopeSet)
+    {
+        context->PopFlags();
+    }
     if (emptyDestructor)
     {
         boundExpression = new BoundEmptyDestructorNode(node->GetSourcePos());

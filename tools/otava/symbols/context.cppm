@@ -70,10 +70,12 @@ enum class ContextFlags : std::int64_t
     skipInvokeChecking = static_cast<std::int64_t>(1) << 39,
     dontProcess = static_cast<std::int64_t>(1) << 40,
     makeChildFn = static_cast<std::int64_t>(1) << 41,
-    invoke = static_cast<std::int64_t>(1) << 42,
-    makeCompileUnitInitFn = static_cast<std::int64_t>(1) << 43,
-    cast = static_cast<std::int64_t>(1) << 44,
-    expected = static_cast<std::int64_t>(1) << 45
+    invoke= static_cast<std::int64_t>(1) << 42,
+    tryCatch = static_cast<std::int64_t>(1) << 43,
+    makeCompileUnitInitFn = static_cast<std::int64_t>(1) << 44,
+    cast = static_cast<std::int64_t>(1) << 45,
+    expected = static_cast<std::int64_t>(1) << 46,
+    lookupOnlyFromMemberScope = static_cast<std::int64_t>(1) << 47
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -214,6 +216,7 @@ public:
     inline int NextLabelSerial() { return labelSerial++; }
     inline int NextEhReturnFromSerial() { return ehReturnFromSerial++; }
     inline int NextChildControlResultSerial() { return childControlResultSerial++; }
+    inline int NextConditionVariableSerial() { return conditionVariableSerial++; }
     void PushStatementBinder(StatementBinder* statementBinder_);
     void PopStatementBinder();
     inline StatementBinder* GetStatementBinder() const { return statementBinder; }
@@ -227,6 +230,7 @@ public:
     std::u32string NextResultVarName();
     std::u32string NextEhReturnFromVarName();
     std::u32string NextChildControlResultVarName();
+    std::u32string NextConditionVariableName();
     inline int NextBlockId() { return nextBlockId++; }
     inline int CurrentBlockId() const { return currentBlockId; }
     void PushBlockId(int blockId);
@@ -286,6 +290,7 @@ private:
     int labelSerial;
     int ehReturnFromSerial;
     int childControlResultSerial;
+    int conditionVariableSerial;
     Module* requesterModule;
     std::vector<StatementBinder*> statementBinders;
     StatementBinder* statementBinder;

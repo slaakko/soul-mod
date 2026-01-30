@@ -154,7 +154,8 @@ PointerCopyCtorOperation::PointerCopyCtorOperation() : Operation(U"@constructor"
 {
 }
 
-FunctionSymbol* PointerCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+FunctionSymbol* PointerCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, 
+    otava::symbols::Context* context)
 {
     BoundExpressionNode* arg = args[0].get();
     TypeSymbol* type = arg->GetType();

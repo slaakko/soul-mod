@@ -9,7 +9,7 @@ import std.trace;
 
 namespace std {
 
-rt_init::rt_init()
+rt_init::rt_init() noexcept
 {
     stdin = static_cast<void*>(&stdin_);
     stdout = static_cast<void*>(&stdout_);

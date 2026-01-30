@@ -15,7 +15,6 @@ FileMap::FileMap() noexcept : nextFileId(0)
 
 std::int32_t FileMap::MapFile(const std::string& filePath)
 {
-    std::lock_guard<std::recursive_mutex> lock(mtx);
     std::int32_t fileId = nextFileId++;
     MapFile(filePath, fileId);
     return fileId;
@@ -23,13 +22,11 @@ std::int32_t FileMap::MapFile(const std::string& filePath)
 
 void FileMap::MapFile(const std::string& filePath, std::int32_t fileId)
 {
-    std::lock_guard<std::recursive_mutex> lock(mtx);
     filePathMap[fileId] = filePath;
 }
 
 const std::string& FileMap::GetFilePath(std::int32_t fileId) noexcept
 {
-    std::lock_guard<std::recursive_mutex> lock(mtx);
     auto it = filePathMap.find(fileId);
     if (it != filePathMap.end())
     {
@@ -44,19 +41,16 @@ const std::string& FileMap::GetFilePath(std::int32_t fileId) noexcept
 
 void FileMap::AddFileContent(std::int32_t fileId, std::u32string&& fileContent, std::vector<int>&& lineStartIndeces)
 {
-    std::lock_guard<std::recursive_mutex> lock(mtx);
     fileContentsMap[fileId] = std::make_pair(std::move(fileContent), std::move(lineStartIndeces));
 }
 
-bool FileMap::HasFileContent(std::int32_t fileId)
+bool FileMap::HasFileContent(std::int32_t fileId) noexcept
 {
-    std::lock_guard<std::recursive_mutex> lock(mtx);
     return fileContentsMap.find(fileId) != fileContentsMap.end();
 }
 
 const std::pair<std::u32string, std::vector<int>>& FileMap::GetFileContent(std::int32_t fileId)
 {
-    std::lock_guard<std::recursive_mutex> lock(mtx);
     auto it = fileContentsMap.find(fileId);
     if (it != fileContentsMap.end())
     {

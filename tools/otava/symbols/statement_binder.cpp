@@ -733,10 +733,6 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
     {
         functionDefinitionSymbol->MapBlock(node.BlockId(), block);
     }
-    else
-    {
-        std::cout << "no block: " << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
-    }
     context->PushBlockId(node.BlockId());
     context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     BoundIfStatementNode* boundIfStatement = new BoundIfStatementNode(node.GetSourcePos());
@@ -783,10 +779,6 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
     if (node.BlockId() != -1)
     {
         functionDefinitionSymbol->MapBlock(node.BlockId(), block);
-    }
-    else
-    {
-        std::cout << "no block: " << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
     }
     context->PushBlockId(node.BlockId());
     context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
@@ -890,10 +882,6 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
         if (node.BlockId() != -1)
         {
             functionDefinitionSymbol->MapBlock(node.BlockId(), block);
-        }
-        else
-        {
-            std::cout << "no block: " << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
         }
         context->PushBlockId(node.BlockId());
         context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
@@ -1090,10 +1078,6 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
     if (node.BlockId() != -1)
     {
         functionDefinitionSymbol->MapBlock(node.BlockId(), block);
-    }
-    else
-    {
-        std::cout << "no block: " << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
     }
     context->PushBlockId(node.BlockId());
     context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
@@ -1411,7 +1395,7 @@ void StatementBinder::Visit(otava::ast::TryStatementNode& node)
     context->GetSymbolTable()->BeginScope(&tryInstantiationScope);
     Instantiator tryInstantiator(context, &tryInstantiationScope);
     tryInstantiator.SetFunctionNode(tryFn.get());
-    context->PushSetFlag(ContextFlags::instantiateInlineFunction | ContextFlags::saveDeclarations | ContextFlags::dontBind);
+    context->PushSetFlag(ContextFlags::instantiateInlineFunction | ContextFlags::saveDeclarations | ContextFlags::dontBind | ContextFlags::tryCatch);
     tryFn->Accept(tryInstantiator);
     int tryfnScopeCount = tryInstantiator.ScopeCount();
     FunctionDefinitionSymbol* tryFnSymbol = static_cast<FunctionDefinitionSymbol*>(tryInstantiator.GetSpecialization());
@@ -1463,7 +1447,7 @@ void StatementBinder::Visit(otava::ast::TryStatementNode& node)
     context->GetSymbolTable()->BeginScope(&handlerInstantiationScope);
     Instantiator handlerInstantiator(context, &handlerInstantiationScope);
     handlerInstantiator.SetFunctionNode(handlerFn.get());
-    context->PushSetFlag(ContextFlags::instantiateInlineFunction | ContextFlags::saveDeclarations | ContextFlags::dontBind);
+    context->PushSetFlag(ContextFlags::instantiateInlineFunction | ContextFlags::saveDeclarations | ContextFlags::dontBind | ContextFlags::tryCatch);
     handlerFn->Accept(handlerInstantiator);
     int handlerFnScopeCount = handlerInstantiator.ScopeCount();
     FunctionDefinitionSymbol* handlerFnSymbol = static_cast<FunctionDefinitionSymbol*>(handlerInstantiator.GetSpecialization());
@@ -2147,10 +2131,6 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
 #ifdef DEBUG_FUNCTIONS
     std::cout << ">" << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
 #endif
-    if (functionDefinitionSymbol->IrName(context) == "fn_invoke_0_compile_unit_F745A17899A8325614A81298119ACD63BC389E6B_18637BD8022B7A6B6BE0015CFC33894C4010B5DC")
-    {
-        int x = 0;
-    }
     functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
     context->PushStatementBinder(&binder);

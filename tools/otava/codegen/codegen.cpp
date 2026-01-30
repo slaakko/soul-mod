@@ -828,15 +828,11 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     {
         BuildGotoTargetMap(node.Body(), &context);
     }
-    if (functionDefinition->Name() == U"main")
-    {
-        mainIrName = functionDefinition->IrName(&context);
-        mainFunctionParams = functionDefinition->Arity();
-    }
     std::string functionDefinitionName = functionDefinition->IrName(&context);
-    if (functionDefinitionName == "fn_invoke_2_compile_unit_D968A6AB65476A511EF6CA9D3F4C16215B7168E8_1527501DB2EDDADD855E83B3DF2FBFDA86C4EB64")
+    if (functionDefinition->GroupName() == U"main")
     {
-        int x = 0;
+        mainIrName = functionDefinitionName;
+        mainFunctionParams = functionDefinition->Arity();
     }
     otava::intermediate::Type* functionType = functionDefinition->IrType(*emitter, node.GetSourcePos(), &context);
     bool once = false;

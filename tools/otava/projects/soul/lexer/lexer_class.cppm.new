@@ -116,9 +116,9 @@ public:
         current(tokens.end()),
         token(this),
         separatorChar('\0'),
-        start(start_),
-        end(end_),
-        pos(start),
+        cstart(start_),
+        cend(end_),
+        cpos(cstart),
         fileName(fileName_),
         countLines(true),
         classMap(nullptr),
@@ -141,9 +141,9 @@ public:
         current(tokens.end()),
         token(this),
         separatorChar('\0'),
-        start(nullptr),
-        end(nullptr),
-        pos(nullptr),
+        cstart(nullptr),
+        cend(nullptr),
+        cpos(nullptr),
         fileName(),
         countLines(true),
         classMap(nullptr),
@@ -172,7 +172,7 @@ public:
             {
                 current = tokens.end() - 1; // set current to last token whose id is END_TOKEN
                 auto& token = tokens.back();
-                pos = token.match.end;
+                cpos = token.match.end;
             }
             else
             {
@@ -219,7 +219,7 @@ public:
     soul::ast::Span GetSpan(std::int64_t pos) const override
     {
         const auto& token = GetToken(pos);
-        return soul::ast::Span(static_cast<int>(token.match.begin - start), token.match.Length());
+        return soul::ast::Span(static_cast<int>(token.match.begin - cstart), token.match.Length());
     }
     const TokenType& GetToken(std::int64_t pos) const override
     {
@@ -310,7 +310,7 @@ public:
     }
     void Retract() noexcept override
     {
-        token.match.end = pos;
+        token.match.end = cpos;
     }
     soul::lexer::Token<Char, LexerBase<Char>>& CurrentToken() noexcept override
     {
@@ -360,7 +360,7 @@ public:
     }
     soul::ast::SourcePos GetSourcePos(std::int64_t pos) const noexcept
     {
-        const Char* s = start;
+        const Char* s = cstart;
         int line = GetLine(pos);
         if (line < lineStarts.size())
         {
@@ -374,8 +374,8 @@ public:
     {
         auto token = GetToken(pos);
         std::basic_string<Char> lines;
-        const Char* lineStart = LineStart(start, token.match.begin);
-        const Char* lineEnd = LineEnd(end, token.match.end);
+        const Char* lineStart = LineStart(cstart, token.match.begin);
+        const Char* lineEnd = LineEnd(cend, token.match.end);
         if (token.match.begin > lineStart)
         {
             lines.append(std::basic_string<Char>(lineStart, token.match.begin));
@@ -446,7 +446,7 @@ public:
     }
     std::string RestOfLine(int maxLineLength) const
     {
-        std::string restOfLine(util::ToUtf8(current->match.ToString()) + ToString(current->match.end, pos) + ToString(pos, LineEnd(end, pos)));
+        std::string restOfLine(util::ToUtf8(current->match.ToString()) + ToString(current->match.end, cpos) + ToString(cpos, LineEnd(cend, cpos)));
         if (maxLineLength != 0)
         {
             restOfLine = restOfLine.substr(0, maxLineLength);
@@ -458,7 +458,7 @@ public:
         std::vector<int> lineStartIndeces;
         for (int i = 0; i < lineStarts.size(); ++i)
         {
-            lineStartIndeces.push_back(static_cast<int>(lineStarts[i] - start));
+            lineStartIndeces.push_back(static_cast<int>(lineStarts[i] - cstart));
         }
         return lineStartIndeces;
     }
@@ -468,19 +468,19 @@ public:
     }
     inline const Char* Start() const noexcept
     {
-        return start;
+        return cstart;
     }
     inline const Char* Pos() const noexcept
     {
-        return pos;
+        return cpos;
     }
     void SetPos(const Char* pos_) noexcept override
     {
-        pos = pos_;
+        cpos = pos_;
     }
     const Char* End() const noexcept override
     {
-        return end;
+        return cend;
     }
     inline const std::vector<soul::lexer::Token<Char, LexerBase<Char>>>& Tokens() const noexcept
     {
@@ -501,8 +501,8 @@ public:
     void MoveToEnd() override
     {
         TokenType endToken(END_TOKEN, this);
-        endToken.match.begin = end;
-        endToken.match.end = end;
+        endToken.match.begin = cend;
+        endToken.match.end = cend;
         tokens.push_back(endToken);
         current = tokens.end() - 1;
     }
@@ -512,8 +512,8 @@ public:
         if (tokens.empty() || tokens.back().id != END_TOKEN)
         {
             TokenType endToken(END_TOKEN, this);
-            endToken.match.begin = end;
-            endToken.match.end = end;
+            endToken.match.begin = cend;
+            endToken.match.end = cend;
             tokens.push_back(endToken);
         }
         recordedPosPair = lexerPosPair;
@@ -550,7 +550,7 @@ public:
         lexerState.token = token;
         lexerState.line = line;
         lexerState.lexeme = lexeme;
-        lexerState.pos = pos;
+        lexerState.pos = cpos;
         lexerState.tokens = tokens;
         lexerState.flags = flags;
         lexerState.recordedPosPair = recordedPosPair;
@@ -565,7 +565,7 @@ public:
         token = lexerState.token;
         line = lexerState.line;
         lexeme = lexerState.lexeme;
-        pos = lexerState.pos;
+        cpos = lexerState.pos;
         tokens = lexerState.tokens;
         flags = lexerState.flags;
         recordedPosPair = lexerState.recordedPosPair;
@@ -598,11 +598,11 @@ public:
     TokenLineType TokenizeLine(const std::basic_string<Char>& line, int lineNumber, int startState)
     {
         TokenLineType tokenLine;
-        pos = line.c_str();
-        end = line.c_str() + line.length();
+        cpos = line.c_str();
+        cend = line.c_str() + line.length();
         tokenLine.startState = startState;
-        lexeme.begin = pos;
-        lexeme.end = end;
+        lexeme.begin = cpos;
+        lexeme.end = cend;
         token.match = lexeme;
         token.id = soul::lexer::INVALID_TOKEN;
         token.line = lineNumber;
@@ -610,16 +610,16 @@ public:
         int prevState = 0;
         int prevPrevState = 0;
         bool cont = false;
-        while (pos != end)
+        while (cpos != cend)
         {
-            Char c = *pos;
+            Char c = *cpos;
             if (state == 0)
             {
-                lexeme.begin = pos;
+                lexeme.begin = cpos;
                 token.id = soul::lexer::INVALID_TOKEN;
                 token.line = lineNumber;
             }
-            lexeme.end = pos + 1;
+            lexeme.end = cpos + 1;
             prevPrevState = prevState;
             prevState = state;
             state = Machine::NextState(state, c, *static_cast<LexerBase<Char>*>(this));
@@ -630,21 +630,21 @@ public:
                     break;
                 }
                 state = 0;
-                pos = token.match.end;
+                cpos = token.match.end;
                 tokenLine.tokens.push_back(token);
-                if (pos + 1 < end && *pos == '\"' && *(pos + 1) == '\\' && prevPrevState == 13 && prevState == 71)
+                if (cpos + 1 < cend && *cpos == '\"' && *(cpos + 1) == '\\' && prevPrevState == 13 && prevState == 71)
                 {
                     TokenType tok(nullptr);
-                    tok.match.begin = pos;
-                    tok.match.end = pos + 2;
+                    tok.match.begin = cpos;
+                    tok.match.end = cpos + 2;
                     tokenLine.tokens.push_back(tok);
-                    pos += 2;
+                    cpos += 2;
                 }
                 lexeme.begin = lexeme.end;
             }
             else
             {
-                ++pos;
+                ++cpos;
             }
         }
         if (state != 0 && state != -1)
@@ -657,10 +657,10 @@ public:
         }
         if (state != 0 && state != -1)
         {
-            if (blockCommentStates.find(state) != blockCommentStates.end())
+            if (blockCommentStates.find(state) != blockCommentStates.cend())
             {
                 token.id = commentTokenId;
-                token.match.end = end;
+                token.match.end = cend;
                 tokenLine.tokens.push_back(token);
                 tokenLine.endState = state;
                 return tokenLine;
@@ -685,9 +685,9 @@ private:
         while (true)
         {
             Char c = separatorChar;
-            if (pos != end)
+            if (cpos != cend)
             {
-                c = *pos;
+                c = *cpos;
             }
             else if (c == '\0')
             {
@@ -695,37 +695,37 @@ private:
             }
             if (state == 0)
             {
-                lexeme.begin = pos;
+                lexeme.begin = cpos;
                 token.id = soul::lexer::INVALID_TOKEN;
                 token.line = line;
             }
-            if (pos == end)
+            if (cpos == cend)
             {
-                lexeme.end = end;
+                lexeme.end = cend;
             }
             else
             {
-                lexeme.end = pos + 1;
+                lexeme.end = cpos + 1;
             }
             state = Machine::NextState(state, c, *static_cast<LexerBase<Char>*>(this));
             if (state == -1)
             {
                 if (token.id == soul::lexer::CONTINUE_TOKEN)
                 {
-                    if (pos == end)
+                    if (cpos == cend)
                     {
                         break;
                     }
                     else
                     {
-                        pos = token.match.end;
+                        cpos = token.match.end;
                     }
                     state = 0;
                     continue;
                 }
                 else if (token.id == soul::lexer::INVALID_TOKEN)
                 {
-                    if (pos == end)
+                    if (cpos == cend)
                     {
                         break;
                     }
@@ -741,12 +741,12 @@ private:
                     {
                         tokens.push_back(token);
                         current = tokens.end() - 1;
-                        pos = token.match.end;
+                        cpos = token.match.end;
                         return;
                     }
                     else
                     {
-                        pos = token.match.end;
+                        cpos = token.match.end;
                         return;
                     }
                 }
@@ -755,7 +755,7 @@ private:
             {
                 ++line;
             }
-            ++pos;
+            ++cpos;
         }
         token.id = soul::lexer::INVALID_TOKEN;
         state = Machine::NextState(state, '\0', *this);
@@ -767,8 +767,8 @@ private:
             p = GetPos();
         }
         TokenType endToken(soul::lexer::END_TOKEN, this);
-        endToken.match.begin = end;
-        endToken.match.end = end;
+        endToken.match.begin = cend;
+        endToken.match.end = cend;
         tokens.push_back(endToken);
         if (p == -1)
         {
@@ -779,10 +779,10 @@ private:
     }
     void ComputeLineStarts()
     {
-        lineStarts.push_back(pos);
-        const Char* p = pos;
+        lineStarts.push_back(cpos);
+        const Char* p = cpos;
         bool startOfLine = true;
-        while (p != end)
+        while (p != cend)
         {
             if (startOfLine)
             {
@@ -791,7 +791,7 @@ private:
             startOfLine = *p == '\n';
             ++p;
         }
-        lineStarts.push_back(end);
+        lineStarts.push_back(cend);
     }
     LexerFlags flags;
     soul::ast::lexer::pos::pair::LexerPosPair recordedPosPair;
@@ -802,9 +802,9 @@ private:
     Lexeme<Char> lexeme;
     std::int32_t file;
     std::int32_t line;
-    const Char* start;
-    const Char* end;
-    const Char* pos;
+    const Char* cstart;
+    const Char* cend;
+    const Char* cpos;
     std::string fileName;
     bool countLines;
     soul::lexer::ClassMap<Char>* classMap;

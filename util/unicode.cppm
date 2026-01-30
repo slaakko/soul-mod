@@ -273,12 +273,12 @@ enum class GeneralCategoryId : std::int32_t
     B = L | N | P | S | Zs
 };
 
-inline GeneralCategoryId operator&(GeneralCategoryId left, GeneralCategoryId right)
+inline GeneralCategoryId operator&(GeneralCategoryId left, GeneralCategoryId right) noexcept
 {
     return GeneralCategoryId(std::int32_t(left) & std::int32_t(right));
 }
 
-inline GeneralCategoryId operator|(GeneralCategoryId left, GeneralCategoryId right)
+inline GeneralCategoryId operator|(GeneralCategoryId left, GeneralCategoryId right) noexcept
 {
     return GeneralCategoryId(std::int32_t(left) | std::int32_t(right));
 }

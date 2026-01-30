@@ -76,6 +76,7 @@ Context::Context() :
     labelSerial(0),
     ehReturnFromSerial(0),
     childControlResultSerial(0),
+    conditionVariableSerial(0),
     statementBinder(nullptr),
     nextBlockId(0),
     currentBlockId(-1),
@@ -124,32 +125,33 @@ BoundExpressionNode* Context::GetThisPtr(const soul::ast::SourcePos& sourcePos)
     FunctionDefinitionSymbol* function = boundFunction->GetFunctionDefinitionSymbol();
     if (function)
     {
-        FunctionDefinitionSymbol* parentFn = function->ParentFn();
-        if (parentFn)
+        bool invokeOrTryCatch = GetFlag(ContextFlags::invoke | ContextFlags::tryCatch);
+        if (invokeOrTryCatch)
         {
-            int level = -1;
-            FunctionDefinitionSymbol* parent = parentFn;
-            while (parent)
+            FunctionDefinitionSymbol* parentFn = function->ParentFn();
+            if (parentFn)
             {
-                parentFn = parent;
-                parent = parent->ParentFn();
-                ++level;
-            }
-            ParameterSymbol* parentThisParam = parentFn->ThisParam(this);
-            if (parentThisParam)
-            {
-                BoundParentParameterNode* parentThisPtr = new BoundParentParameterNode(parentThisParam, sourcePos, parentThisParam->GetType());
-                parentThisPtr->SetLevel(level);
-                return parentThisPtr;
+                int level = -1;
+                FunctionDefinitionSymbol* parent = parentFn;
+                while (parent)
+                {
+                    parentFn = parent;
+                    parent = parent->ParentFn();
+                    ++level;
+                }
+                ParameterSymbol* parentThisParam = parentFn->ThisParam(this);
+                if (parentThisParam)
+                {
+                    BoundParentParameterNode* parentThisPtr = new BoundParentParameterNode(parentThisParam, sourcePos, parentThisParam->GetType());
+                    parentThisPtr->SetLevel(level);
+                    return parentThisPtr;
+                }
             }
         }
-        else
+        ParameterSymbol* thisParam = function->ThisParam(this);
+        if (thisParam)
         {
-            ParameterSymbol* thisParam = function->ThisParam(this);
-            if (thisParam)
-            {
-                return new BoundParameterNode(thisParam, sourcePos, thisParam->GetType());
-            }
+            return new BoundParameterNode(thisParam, sourcePos, thisParam->GetType());
         }
     }
     return nullptr;
@@ -466,6 +468,12 @@ std::u32string Context::NextChildControlResultVarName()
 {
     std::u32string childControlResultVarName = U"__child_control_result" + util::ToUtf32(std::to_string(NextChildControlResultSerial()));
     return childControlResultVarName;
+}
+
+std::u32string Context::NextConditionVariableName()
+{
+    std::u32string conditionVariableName = U"__condition" + util::ToUtf32(std::to_string(NextConditionVariableSerial()));
+    return conditionVariableName;
 }
 
 void Context::PushBlockId(int blockId)

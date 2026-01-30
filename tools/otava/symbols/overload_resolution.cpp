@@ -1329,7 +1329,7 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
     bool instantiate = (flags & OverloadResolutionFlags::dontInstantiate) == OverloadResolutionFlags::none;
     if (instantiate)
     {
-        context->PushResetFlag(ContextFlags::makeChildFn);
+        context->PushResetFlag(ContextFlags::makeChildFn | ContextFlags::invoke | ContextFlags::tryCatch);
         if (bestMatch->function->IsTemplate())
         {
             bestMatch->function = InstantiateFunctionTemplate(bestMatch->function, bestMatch->templateParameterMap, sourcePos, context);

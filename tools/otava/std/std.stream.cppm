@@ -290,7 +290,7 @@ public:
             file = std::fopen(filename, "a");
         }
     }
-    inline explicit operator bool() const { return file != nullptr; }
+    inline explicit operator bool() const noexcept { return file != nullptr; }
 private:
     void* file;
 };

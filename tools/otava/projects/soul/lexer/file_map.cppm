@@ -20,7 +20,7 @@ public:
     void MapFile(const std::string& filePath, std::int32_t fileId);
     const std::string& GetFilePath(std::int32_t fileId) noexcept;
     void AddFileContent(std::int32_t fileId, std::u32string&& fileContent, std::vector<int>&& lineStartIndeces);
-    bool HasFileContent(std::int32_t fileId);
+    bool HasFileContent(std::int32_t fileId) noexcept;
     void ReadFile(std::int32_t fileId);
     const std::pair<std::u32string, std::vector<int>>& GetFileContent(std::int32_t file);
     std::u32string GetFileLine(std::int32_t fileId, int line);

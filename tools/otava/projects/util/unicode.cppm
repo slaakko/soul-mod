@@ -154,7 +154,7 @@ private:
     std::vector<BinaryProperty> binaryProperties;
 };
 
-inline const BinaryProperty& GetBinaryProperty(BinaryPropertyId id)
+inline const BinaryProperty& GetBinaryProperty(BinaryPropertyId id) 
 {
     return BinaryPropertyTable::Instance().GetBinaryProperty(id);
 }
@@ -273,12 +273,12 @@ enum class GeneralCategoryId : std::int32_t
     B = L | N | P | S | Zs
 };
 
-inline GeneralCategoryId operator&(GeneralCategoryId left, GeneralCategoryId right)
+inline GeneralCategoryId operator&(GeneralCategoryId left, GeneralCategoryId right) noexcept
 {
     return GeneralCategoryId(std::int32_t(left) & std::int32_t(right));
 }
 
-inline GeneralCategoryId operator|(GeneralCategoryId left, GeneralCategoryId right)
+inline GeneralCategoryId operator|(GeneralCategoryId left, GeneralCategoryId right) noexcept
 {
     return GeneralCategoryId(std::int32_t(left) | std::int32_t(right));
 }
@@ -558,8 +558,8 @@ private:
 };
 
 constexpr int numInfosInPage = 128;
-constexpr size_t characterInfoSize = sizeof(std::uint64_t) + sizeof(BlockId) + sizeof(GeneralCategoryId) + sizeof(AgeId) + sizeof(std::uint32_t) + sizeof(std::uint32_t) + sizeof(std::uint32_t) +
-    sizeof(std::uint32_t) + sizeof(ScriptId);
+constexpr size_t characterInfoSize = sizeof(std::uint64_t) + sizeof(BlockId) + sizeof(GeneralCategoryId) + sizeof(AgeId) + sizeof(std::uint32_t) + 
+    sizeof(std::uint32_t) + sizeof(std::uint32_t) + sizeof(std::uint32_t) + sizeof(ScriptId);
 constexpr size_t characterInfoPageSize = numInfosInPage * characterInfoSize;
 
 enum class NumericTypeId : std::uint8_t

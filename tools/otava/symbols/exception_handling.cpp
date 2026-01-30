@@ -23,6 +23,8 @@ import otava.symbols.declaration;
 import otava.symbols.decl_specifier_seq.parser;
 import otava.symbols.exception;
 import otava.symbols.bound.tree.visitor;
+import otava.symbols.fundamental.type.symbol;
+import otava.symbols.overload.resolution;
 import otava.ast;
 import util;
 
@@ -329,6 +331,8 @@ otava::ast::Node* MakeClonedRetValExprNode(otava::ast::Node* node, bool makeAddr
 
 BoundStatementNode* ConvertReturnStatement(otava::ast::ReturnStatementNode* returnStatement, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
+    bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
+    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
     functionDefinitionSymbol->SetFlag(FunctionSymbolFlags::containsReturnStatement);
     if (returnStatement->ReturnValue())
     {
@@ -350,12 +354,14 @@ BoundStatementNode* ConvertReturnStatement(otava::ast::ReturnStatementNode* retu
         boundReturnStatement->SetSource(returnStatement->Clone());
         BoundSequenceStatementNode* boundSequenceStatement = new BoundSequenceStatementNode(returnStatement->GetSourcePos(), new BoundSequenceStatementNode(
             returnStatement->GetSourcePos(), boundExpressionStatement, boundSetChildControlResultStatement), boundReturnStatement);
+        context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
         return boundSequenceStatement;
     }
     else
     {
         BoundReturnStatementNode* boundReturnStatement = new BoundReturnStatementNode(returnStatement->GetSourcePos());
         boundReturnStatement->SetSource(returnStatement->Clone());
+        context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
         return boundReturnStatement;
     }
 }
@@ -385,6 +391,7 @@ public:
     void Visit(BoundAliasDeclarationStatementNode& node) override;
 private:
     void GenerateInvokeAndCleanup(bool skipLast);
+    BoundVariableNode* ConvertCondition(BoundExpressionNode* condition, const soul::ast::SourcePos& sourcePos);
     void Emit(BoundStatementNode* stmt);
     Context* context;
     FunctionDefinitionSymbol* functionDefinitionSymbol;
@@ -406,6 +413,8 @@ void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup(bool skipLast)
     if (skipLast && cleanup.ContainsOne()) return;
     if (cleanup.IsEmpty()) return;
     if (invoke.IsEmpty()) return;
+    bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
+    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
     soul::ast::SourcePos sourcePos = invoke.GetSourcePos();
     InstantiationScope invokeInstantiationScope(context->GetSymbolTable()->CurrentScope());
     context->GetSymbolTable()->BeginScope(&invokeInstantiationScope);
@@ -469,8 +478,6 @@ void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup(bool skipLast)
         invokeBlock->AddNode(new otava::ast::BoundStatementNode(boundVarDeclarationStatement.release(), sourcePos));
     }
     invokeBlock->AddNode(invokeStmtNode.release());
-    bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
-    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
     if (invokeFnSymbol->GetFlag(FunctionSymbolFlags::containsReturnStatement))
     {
         std::u32string returnStatementText;
@@ -497,7 +504,6 @@ void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup(bool skipLast)
     }
     context->PopResultVarName();
     context->PopChildControlResultVarName();
-    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
     context->PopFlags();
     Instantiator invokeInstantiator(context, &invokeInstantiationScope);
     context->PushSetFlag(ContextFlags::saveDeclarations | ContextFlags::dontBind);
@@ -506,6 +512,30 @@ void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup(bool skipLast)
     std::unique_ptr<BoundStatementNode> boundInvokeBlock(BindStatement(invokeBlock.get(), functionDefinitionSymbol, context));
     context->GetSymbolTable()->EndScope();
     currentCompound->AddStatement(boundInvokeBlock.release());
+    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+}
+
+BoundVariableNode* InvokeAndCleanupGenerator::ConvertCondition(BoundExpressionNode* condition, const soul::ast::SourcePos& sourcePos)
+{
+    bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
+    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
+    std::vector<TypeSymbol*> templateArgs;
+    TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::boolType);
+    VariableSymbol* localVariable = context->GetSymbolTable()->AddVariable(context->NextConditionVariableName(), nullptr, boolType, boolType,
+        nullptr, DeclarationFlags::none, context);
+    std::vector<std::unique_ptr<BoundExpressionNode>> arguments;
+    BoundVariableNode* boundVariable = new BoundVariableNode(localVariable, sourcePos);
+    arguments.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariable, sourcePos, boundVariable->GetType()->AddPointer(context))));
+    arguments.push_back(std::unique_ptr<BoundExpressionNode>(condition->Clone()));
+    std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(),
+        U"@constructor", templateArgs, arguments, sourcePos, context);
+    BoundConstructionStatementNode* boundConstructionStatement = new BoundConstructionStatementNode(sourcePos, constructorCall.release());
+    boundConstructionStatement->SetSource(new otava::ast::BoundStatementNode(boundConstructionStatement->Clone(), sourcePos));
+    boundConstructionStatement->SetVariable(localVariable);
+    functionDefinitionSymbol->AddLocalVariable(localVariable);
+    Emit(boundConstructionStatement);
+    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+    return new BoundVariableNode(localVariable, sourcePos);
 }
 
 void InvokeAndCleanupGenerator::Emit(BoundStatementNode* stmt)
@@ -612,22 +642,35 @@ void InvokeAndCleanupGenerator::Visit(BoundIfStatementNode& node)
         }
     }
     std::unique_ptr<BoundIfStatementNode> clone(static_cast<BoundIfStatementNode*>(node.Clone()));
-    if (node.ThenStatement()->ContainsLocalVariableWithDestructor())
+    if (clone->GetCondition()->MayThrow())
+    {
+        BoundVariableNode* boundLocalVariable = ConvertCondition(clone->GetCondition(), node.GetSourcePos());
+        clone->SetCondition(boundLocalVariable);
+    }
+    if (clone->ThenStatement()->ContainsLocalVariableWithDestructor())
     {
         bool prevCollect = collect;
         collect = true;
         BoundCompoundStatementNode* prevCompound = currentCompound;
+        if (!prevCompound)
+        {
+            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
+        }
         currentCompound = nullptr;
         node.ThenStatement()->Accept(*this);
         clone->SetThenStatement(boundStatement.release());
         collect = prevCollect;
         currentCompound = prevCompound;
     }
-    if (node.ElseStatement() && node.ElseStatement()->ContainsLocalVariableWithDestructor())
+    if (clone->ElseStatement() && clone->ElseStatement()->ContainsLocalVariableWithDestructor())
     {
         bool prevCollect = collect;
         collect = true;
         BoundCompoundStatementNode* prevCompound = currentCompound;
+        if (!prevCompound)
+        {
+            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
+        }
         currentCompound = nullptr;
         node.ElseStatement()->Accept(*this);
         clone->SetElseStatement(boundStatement.release());
@@ -668,11 +711,20 @@ void InvokeAndCleanupGenerator::Visit(BoundSwitchStatementNode& node)
         }
     }
     std::unique_ptr<BoundSwitchStatementNode> clone(static_cast<BoundSwitchStatementNode*>(node.Clone()));
-    if (node.Statement()->ContainsLocalVariableWithDestructor())
+    if (clone->GetCondition()->MayThrow())
+    {
+        BoundVariableNode* boundLocalVariable = ConvertCondition(clone->GetCondition(), node.GetSourcePos());
+        clone->SetCondition(boundLocalVariable);
+    }
+    if (clone->Statement()->ContainsLocalVariableWithDestructor())
     {
         bool prevCollect = collect;
         collect = true;
         BoundCompoundStatementNode* prevCompound = currentCompound;
+        if (!prevCompound)
+        {
+            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
+        }
         currentCompound = nullptr;
         node.Statement()->Accept(*this);
         clone->SetStatement(boundStatement.release());
@@ -690,11 +742,15 @@ void InvokeAndCleanupGenerator::Visit(BoundSwitchStatementNode& node)
 void InvokeAndCleanupGenerator::Visit(BoundCaseStatementNode& node)
 {
     std::unique_ptr<BoundCaseStatementNode> clone(static_cast<BoundCaseStatementNode*>(node.Clone()));
-    if (node.Statement()->ContainsLocalVariableWithDestructor())
+    if (clone->Statement()->ContainsLocalVariableWithDestructor())
     {
         bool prevCollect = collect;
         collect = true;
         BoundCompoundStatementNode* prevCompound = currentCompound;
+        if (!prevCompound)
+        {
+            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
+        }
         currentCompound = nullptr;
         node.Statement()->Accept(*this);
         clone->SetStatement(boundStatement.release());
@@ -707,11 +763,15 @@ void InvokeAndCleanupGenerator::Visit(BoundCaseStatementNode& node)
 void InvokeAndCleanupGenerator::Visit(BoundDefaultStatementNode& node)
 {
     std::unique_ptr<BoundDefaultStatementNode> clone(static_cast<BoundDefaultStatementNode*>(node.Clone()));
-    if (node.Statement()->ContainsLocalVariableWithDestructor())
+    if (clone->Statement()->ContainsLocalVariableWithDestructor())
     {
         bool prevCollect = collect;
         collect = true;
         BoundCompoundStatementNode* prevCompound = currentCompound;
+        if (!prevCompound)
+        {
+            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
+        }
         currentCompound = nullptr;
         node.Statement()->Accept(*this);
         clone->SetStatement(boundStatement.release());
@@ -747,11 +807,20 @@ void InvokeAndCleanupGenerator::Visit(BoundWhileStatementNode& node)
         }
     }
     std::unique_ptr<BoundWhileStatementNode> clone(static_cast<BoundWhileStatementNode*>(node.Clone()));
-    if (node.Statement()->ContainsLocalVariableWithDestructor())
+    if (clone->GetCondition()->MayThrow())
+    {
+        BoundVariableNode* boundLocalVariable = ConvertCondition(clone->GetCondition(), node.GetSourcePos());
+        clone->SetCondition(boundLocalVariable);
+    }
+    if (clone->Statement()->ContainsLocalVariableWithDestructor())
     {
         bool prevCollect = collect;
         collect = true;
         BoundCompoundStatementNode* prevCompound = currentCompound;
+        if (!prevCompound)
+        {
+            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
+        }
         currentCompound = nullptr;
         node.Statement()->Accept(*this);
         clone->SetStatement(boundStatement.release());
@@ -769,11 +838,15 @@ void InvokeAndCleanupGenerator::Visit(BoundWhileStatementNode& node)
 void InvokeAndCleanupGenerator::Visit(BoundDoStatementNode& node)
 {
     std::unique_ptr<BoundDoStatementNode> clone(static_cast<BoundDoStatementNode*>(node.Clone()));
-    if (node.Statement()->ContainsLocalVariableWithDestructor())
+    if (clone->Statement()->ContainsLocalVariableWithDestructor())
     {
         bool prevCollect = collect;
         collect = true;
         BoundCompoundStatementNode* prevCompound = currentCompound;
+        if (!prevCompound)
+        {
+            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
+        }
         currentCompound = nullptr;
         node.Statement()->Accept(*this);
         clone->SetStatement(boundStatement.release());
@@ -809,11 +882,20 @@ void InvokeAndCleanupGenerator::Visit(BoundForStatementNode& node)
         }
     }
     std::unique_ptr<BoundForStatementNode> clone(static_cast<BoundForStatementNode*>(node.Clone()));
-    if (node.Statement()->ContainsLocalVariableWithDestructor())
+    if (clone->GetCondition()->MayThrow())
+    {
+        BoundVariableNode* boundLocalVariable = ConvertCondition(clone->GetCondition(), node.GetSourcePos());
+        clone->SetCondition(boundLocalVariable);
+    }
+    if (clone->Statement()->ContainsLocalVariableWithDestructor())
     {
         bool prevCollect = collect;
         collect = true;
         BoundCompoundStatementNode* prevCompound = currentCompound;
+        if (!prevCompound)
+        {
+            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
+        }
         currentCompound = nullptr;
         node.Statement()->Accept(*this);
         clone->SetStatement(boundStatement.release());
@@ -835,17 +917,31 @@ void InvokeAndCleanupGenerator::Visit(BoundSequenceStatementNode& node)
     {
         bool prevCollect = collect;
         collect = true;
+        BoundCompoundStatementNode* prevCompound = currentCompound;
+        if (!prevCompound)
+        {
+            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
+        }
+        currentCompound = nullptr;
         node.First()->Accept(*this);
         clone->SetFirst(boundStatement.release());
         collect = prevCollect;
+        currentCompound = prevCompound;
     }
     if (node.Second()->ContainsLocalVariableWithDestructor())
     {
         bool prevCollect = collect;
         collect = true;
+        BoundCompoundStatementNode* prevCompound = currentCompound;
+        if (!prevCompound)
+        {
+            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
+        }
+        currentCompound = nullptr;
         node.Second()->Accept(*this);
         clone->SetSecond(boundStatement.release());
         collect = prevCollect;
+        currentCompound = prevCompound;
     }
     Emit(clone.release());
 }
@@ -882,7 +978,10 @@ void InvokeAndCleanupGenerator::Visit(BoundLabeledStatementNode& node)
         node.Statement()->Accept(*this);
         clone->SetStatement(boundStatement.release());
         collect = prevCollect;
-        currentCompound = prevCompound;
+        if (!collect)
+        {
+            currentCompound = prevCompound;
+        }
     }
     Emit(clone.release());
 }
