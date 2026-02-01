@@ -24,6 +24,7 @@ class LexerBase
 {
 public:
     using Self = LexerBase<Char>;
+    LexerBase() noexcept {}
     virtual ~LexerBase() {}
     virtual void Retract() noexcept = 0;
     virtual std::int64_t GetKeywordToken(const Lexeme<Char>& lexeme) const noexcept = 0;

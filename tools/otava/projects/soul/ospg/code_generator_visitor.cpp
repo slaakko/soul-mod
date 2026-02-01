@@ -12,7 +12,8 @@ import soul.lexer.error;
 
 namespace soul::spg {
 
-CodeGeneratorVisitor::CodeGeneratorVisitor(soul::ast::spg::SpgFile* spgFile_, bool verbose_, bool noDebugSupport_, const std::string& version_, soul::lexer::FileMap& fileMap_) :
+CodeGeneratorVisitor::CodeGeneratorVisitor(soul::ast::spg::SpgFile* spgFile_, bool verbose_, bool noDebugSupport_, const std::string& version_, 
+    soul::lexer::FileMap& fileMap_) :
     spgFile(spgFile_), verbose(verbose_), noDebugSupport(noDebugSupport_), version(version_), formatter(nullptr),
     stage(CodeGenerationStage::generateInterface), currentParser(nullptr), currentRule(nullptr), parentMatchNumber(0), setParentMatchNumber(-1), sn(0), fileMap(fileMap_)
 {
@@ -471,7 +472,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::NonterminalParser& parser)
         soul::ast::spg::RuleParser* rule = parser.Rule();
         soul::ast::spg::GrammarParser* grammar = rule->Grammar();
         soul::ast::spg::ParserFile* parserFile = grammar->GetParserFile();
-        std::string ruleName = parserFile->ExportModule()->NamespaceName() + "::" + grammar->Name() + "<LexerT>::" + rule->Name();
+        std::string ruleName = parserFile->GetExportModule()->NamespaceName() + "::" + grammar->Name() + "<LexerT>::" + rule->Name();
         formatter->Write("soul::parser::Match match = " + ruleName + "(lexer");
         if (parser.Arguments())
         {
@@ -1047,7 +1048,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     formatter->WriteLine();
     formatter->WriteLine("// this file has been automatically generated from '" + parserFile.FilePath() + "' using soul parser generator spg version " + version);
     formatter->WriteLine();
-    soul::ast::common::ExportModule* mod = parserFile.ExportModule();
+    soul::ast::common::ExportModule* mod = parserFile.GetExportModule();
     formatter->WriteLine("export module " + mod->ModuleName() + ";");
     formatter->WriteLine();
     formatter->WriteLine("import std;");

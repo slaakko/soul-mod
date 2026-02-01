@@ -187,6 +187,8 @@
     <ClCompile Include="container_symbol.cppm" />
     <ClCompile Include="context.cpp" />
     <ClCompile Include="context.cppm" />
+    <ClCompile Include="control_xml_generator.cpp" />
+    <ClCompile Include="control_xml_generator.cppm" />
     <ClCompile Include="conversion_table.cpp" />
     <ClCompile Include="conversion_table.cppm" />
     <ClCompile Include="declaration.cpp" />

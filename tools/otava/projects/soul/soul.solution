@@ -10,4 +10,4 @@ project <cpp/cpp.project>;
 project <common/common.project>;
 project <oslg/oslg.project>;
 // project <../oxml/odom/odom.project>;
-// project <spg/spg.project>;
+project <ospg/ospg.project>;

@@ -51,6 +51,7 @@ import otava.symbols.operation.repository;
 import otava.symbols.type.resolver;
 import otava.symbols.project;
 import otava.symbols.exception_handling;
+import otava.symbols.control.xml.generator;
 import util.sha1;
 import util.unicode;
 
@@ -2131,6 +2132,7 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
 #ifdef DEBUG_FUNCTIONS
     std::cout << ">" << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
 #endif
+    bool generate = true;
     functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
     context->PushStatementBinder(&binder);
@@ -2150,16 +2152,26 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
     {
         CheckFunctionReturnPaths(functionDefinitionNode, context);
     }
+    if (functionDefinitionSymbol->IrName(context) == "mfn_Path_GetDirectoryName_978946068A1E83DE16806447630C1071DD84910B")
+    {
+        GenerateControlXml(context->GetBoundFunction());
+        int x = 0;
+    }
     bool skipInvokeChecking = functionDefinitionSymbol->SkipInvokeChecking();
     bool containsStatics = functionDefinitionSymbol->ContainsStatics();
     bool containsNodeWithNoSource = functionDefinitionSymbol->ContainsNodeWithNoSource();
-    if (!functionDefinitionSymbol->IsNoExcept() && !skipInvokeChecking && functionDefinitionSymbol->ContainsLocalVariableWithDestructor() &&
+    if (generate && !functionDefinitionSymbol->IsNoExcept() && !skipInvokeChecking && functionDefinitionSymbol->ContainsLocalVariableWithDestructor() &&
         !containsStatics && !containsNodeWithNoSource)
     {
         context->GetSymbolTable()->BeginScopeGeneric(functionDefinitionSymbol->GetScope(), context);
         std::unique_ptr<BoundCompoundStatementNode> newBody = MakeInvokesAndCleanups(functionDefinitionSymbol, context->GetBoundFunction()->Body(), context);
         context->GetBoundFunction()->SetBody(newBody.release());
         context->GetSymbolTable()->EndScopeGeneric(context);
+    }
+    if (functionDefinitionSymbol->IrName(context) == "mfn_Path_GetDirectoryName_978946068A1E83DE16806447630C1071DD84910B")
+    {
+        GenerateControlXml(context->GetBoundFunction());
+        int x = 0;
     }
 #ifdef DEBUG_FUNCTIONS
     std::cout << "<" << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";

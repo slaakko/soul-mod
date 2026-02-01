@@ -523,7 +523,7 @@ class ParserFile : public soul::ast::common::File
 public:
     ParserFile(const std::string& filePath_);
     void SetExportModule(soul::ast::common::ExportModule* exportModule_);
-    inline soul::ast::common::ExportModule* ExportModule() const noexcept { return exportModule.get(); }
+    inline soul::ast::common::ExportModule* GetExportModule() const noexcept { return exportModule.get(); }
     void AddImport(soul::ast::common::Import* imprt);
     inline const std::vector<std::unique_ptr<soul::ast::common::Import>>& Imports() const noexcept { return imports; }
     void AddParser(soul::ast::spg::GrammarParser* parser);
