@@ -115,7 +115,7 @@ public:
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
-    inline std::string ToString() const override { return id; }
+    std::string ToString() const override { return id; }
 private:
     std::string id;
 };

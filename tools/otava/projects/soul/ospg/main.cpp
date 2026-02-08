@@ -39,103 +39,108 @@ void PrintHelp()
     std::cout << std::endl;
 }
 
+int Action(int argc, const char** argv)
+{
+    bool verbose = false;
+    bool noDebugSupport = false;
+    bool optimize = false;
+    bool xml = false;
+    std::vector<std::string> files;
+    for (int i = 1; i < argc; ++i)
+    {
+        std::string arg = argv[i];
+        if (arg.starts_with("--"))
+        {
+            if (arg == "--help")
+            {
+                PrintHelp();
+                return 1;
+            }
+            else if (arg == "--verbose")
+            {
+                verbose = true;
+            }
+            else if (arg == "--no-debug-support")
+            {
+                noDebugSupport = true;
+            }
+            else if (arg == "--optimize")
+            {
+                optimize = true;
+            }
+            else if (arg == "--xml")
+            {
+                xml = true;
+            }
+            else
+            {
+                throw std::runtime_error("unknown option '" + arg + "'");
+            }
+        }
+        else if (arg.starts_with("-"))
+        {
+            std::string options = arg.substr(1);
+            char unknownOpt = ' ';
+            for (char o : options)
+            {
+                switch (o)
+                {
+                    case 'h':
+                    {
+                        PrintHelp();
+                        return 1;
+                    }
+                    case 'v':
+                    {
+                        verbose = true;
+                        break;
+                    }
+                    case 'n':
+                    {
+                        noDebugSupport = true;
+                        break;
+                    }
+                    case 'o':
+                    {
+                        optimize = true;
+                        break;
+                    }
+                    case 'x':
+                    {
+                        xml = true;
+                        break;
+                    }
+                    default:
+                    {
+                        unknownOpt = o;
+                        break;
+                    }
+                }
+                if (unknownOpt != ' ')
+                {
+                    throw std::runtime_error("unknown option '-" + std::string(1, unknownOpt) + "'");
+                }
+            }
+        }
+        else
+        {
+            files.push_back(util::GetFullPath(arg));
+        }
+    }
+    soul::lexer::FileMap fileMap;
+    for (const std::string& file : files)
+    {
+        std::unique_ptr<soul::ast::spg::SpgFile> spgFile = soul::spg::ParseSpgFile(file, fileMap, verbose);
+        soul::spg::GenerateParsers(spgFile.get(), fileMap, verbose, noDebugSupport, optimize, xml, Version());
+    }
+    return 0;
+}
+
 int main(int argc, const char** argv)
 {
     try
     {
-        bool verbose = false;
-        bool noDebugSupport = false;
-        bool optimize = false;
-        bool xml = false;
-        std::vector<std::string> files;
-        for (int i = 1; i < argc; ++i)
-        {
-            std::string arg = argv[i];
-            if (arg.starts_with("--"))
-            {
-                if (arg == "--help")
-                {
-                    PrintHelp();
-                    return 1;
-                }
-                else if (arg == "--verbose")
-                {
-                    verbose = true;
-                }
-                else if (arg == "--no-debug-support")
-                {
-                    noDebugSupport = true;
-                }
-                else if (arg == "--optimize")
-                {
-                    optimize = true;
-                }
-                else if (arg == "--xml")
-                {
-                    xml = true;
-                }
-                else
-                {
-                    throw std::runtime_error("unknown option '" + arg + "'");
-                }
-            }
-            else if (arg.starts_with("-"))
-            {
-                std::string options = arg.substr(1);
-                char unknownOpt = ' ';
-                for (char o : options)
-                {
-                    switch (o)
-                    {
-                        case 'h':
-                        {
-                            PrintHelp();
-                            return 1;
-                        }
-                        case 'v':
-                        {
-                            verbose = true;
-                            break;
-                        }
-                        case 'n':
-                        {
-                            noDebugSupport = true;
-                            break;
-                        }
-                        case 'o':
-                        {
-                            optimize = true;
-                            break;
-                        }
-                        case 'x':
-                        {
-                            xml = true;
-                            break;
-                        }
-                        default:
-                        {
-                            unknownOpt = o;
-                            break;
-                        }
-                    }
-                    if (unknownOpt != ' ')
-                    {
-                        throw std::runtime_error("unknown option '-" + std::string(1, unknownOpt) + "'");
-                    }
-                }
-            }
-            else
-            {
-                files.push_back(util::GetFullPath(arg));
-            }
-        }
-        soul::lexer::FileMap fileMap;
-        for (const std::string& file : files)
-        {
-            std::unique_ptr<soul::ast::spg::SpgFile> spgFile = soul::spg::ParseSpgFile(file, fileMap, verbose);
-            std::string moduleMapFilePath;
-            soul::spg::GenerateParsers(spgFile.get(), fileMap, verbose, noDebugSupport, optimize, xml, Version());
-        }
+        return Action(argc, argv);
     }
     catch (const std::exception& ex)
     {

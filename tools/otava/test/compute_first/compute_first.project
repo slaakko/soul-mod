@@ -1,0 +1,4 @@
+project compute_first;
+target=program;
+reference <../../projects/util/util.project>;
+source <main.cpp>;

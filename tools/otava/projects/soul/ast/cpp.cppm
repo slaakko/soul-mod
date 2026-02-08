@@ -115,7 +115,7 @@ public:
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
-    inline std::string ToString() const override { return id; }
+    std::string ToString() const override { return id; }
 private:
     std::string id;
 };
@@ -648,8 +648,8 @@ class ForRangeDeclarationNode : public Node
 {
 public:
     ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    inline SimpleDeclarationNode* Declaration() const noexcept { return declaration.get(); }
-    inline const std::string& Declarator() const noexcept { return declarator; }
+    SimpleDeclarationNode* Declaration() const noexcept { return declaration.get(); }
+    const std::string& Declarator() const noexcept { return declarator; }
     void SetDeclarator(const std::string& declarator_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;

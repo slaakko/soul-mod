@@ -860,7 +860,7 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* function
                 if (!simpleDeclarator->Name().empty())
                 {
                     VariableSymbol* variable = nullptr;
-                    if (context->GetFlag(ContextFlags::invoke))
+                    if (context->GetFlag(ContextFlags::invoke | ContextFlags::tryCatch))
                     {
                         variable = ResolveParentVariable(simpleDeclarator, node->GetSourcePos(), context);
                     }
@@ -968,7 +968,9 @@ Declaration ProcessInitCondition(otava::ast::InitConditionNode* initCondition, C
 
 void ProcessMemberDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context)
 {
+    context->PushResetFlag(ContextFlags::invoke);
     ProcessSimpleDeclaration(node, functionNode, context);
+    context->PopFlags();
 }
 
 Declaration ProcessFunctionDeclaration(otava::ast::Node* node, Context* context) 
@@ -1326,7 +1328,8 @@ void GenerateDynamicInitialization(VariableSymbol* variable, BoundExpressionNode
     }
     Exception ex;
     std::vector<TypeSymbol*> templateArgs;
-    std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverload(context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, args, sourcePos, context, ex);
+    std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverload(
+        context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, args, sourcePos, context, ex);
     if (constructorCall)
     {
         std::unique_ptr<BoundFunctionCallNode> atExitCall = MakeAtExitForVariable(variable, sourcePos, context);
@@ -1342,7 +1345,8 @@ std::unique_ptr<BoundFunctionCallNode> MakeAtExitForVariable(VariableSymbol* var
     dtorArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundGlobalVariable, sourcePos, variable->GetType()->AddPointer(context))));
     Exception ex;
     std::vector<TypeSymbol*> templateArgs;
-    std::unique_ptr<BoundFunctionCallNode> destructorCall = ResolveOverload(context->GetSymbolTable()->CurrentScope(), U"@destructor", templateArgs, dtorArgs, sourcePos, context, ex);
+    std::unique_ptr<BoundFunctionCallNode> destructorCall = ResolveOverload(
+        context->GetSymbolTable()->CurrentScope(), U"@destructor", templateArgs, dtorArgs, sourcePos, context, ex);
     std::unique_ptr<BoundFunctionCallNode> atExitCall;
     if (destructorCall && !destructorCall->GetFunctionSymbol()->IsTrivialDestructor())
     {
@@ -1364,7 +1368,8 @@ void AddConvertingConstructorToConversionTable(FunctionSymbol* functionSymbol, c
 {
     if (!functionSymbol->IsExplicit() && functionSymbol->GetFunctionKind() == FunctionKind::constructor && functionSymbol->MemFunArity(context) == 2)
     {
-        TypeSymbol* conversionParamType = functionSymbol->MemFunParameters(context)[0]->GetType()->RemovePointer(context)->DirectType(context)->FinalType(sourcePos, context);
+        TypeSymbol* conversionParamType = functionSymbol->MemFunParameters(context)[0]->GetType()->RemovePointer(context)->DirectType(
+            context)->FinalType(sourcePos, context);
         TypeSymbol* conversionArgType = functionSymbol->MemFunParameters(context)[1]->GetType()->PlainType(context)->DirectType(context)->FinalType(sourcePos, context);
         if (!TypesEqual(conversionParamType, conversionArgType, context))
         {

@@ -15,9 +15,9 @@ import soul.slg.keyword.file.parser;
 import soul.slg.expression.file.parser;
 import soul.slg.lexer.file.parser;
 import soul.slg.slg.file.parser;
-
+ 
 namespace soul::slg {
-
+     
 std::unique_ptr<soul::ast::common::TokenFile> ParseTokenFile(const std::string& tokenFilePath, bool external, soul::lexer::FileMap& fileMap)
 {
     std::int32_t file = fileMap.MapFile(tokenFilePath);

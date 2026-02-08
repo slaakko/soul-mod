@@ -713,7 +713,8 @@ Nfa MakeNfa(LexerContext& lexerContext, Symbol* symbol)
     NfaState* end = lexerContext.MakeNfaState();
     end->SetAccept(true);
     start->AddEdge(NfaEdge(symbol, end));
-    return Nfa(start, end);
+    Nfa nfa(start, end);
+    return nfa;
 }
 
 Nfa Cat(const Nfa& left, const Nfa& right)
@@ -1969,9 +1970,11 @@ Nfa LexerContext::MakeExpr(const std::string& id)
             {
                 soul::ast::slg::Expression* prevExpression = currentExpression;
                 currentExpression = expr;
-                Nfa nfa = exprParser->Parse(expr->Value(), this, expr->FileName(), expr->Line());
+                Nfa* nfa = exprParser->Parse(expr->Value(), this, expr->FileName(), expr->Line());
+                AddNfa(nfa);
+                Nfa retNfa(nfa->Start(), nfa->End());
                 currentExpression = prevExpression;
-                return nfa;
+                return retNfa;
             }
             else
             {

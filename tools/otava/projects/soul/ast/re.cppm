@@ -181,6 +181,7 @@ class Nfa
 {
 public:
     Nfa() noexcept;
+    Nfa(const Nfa& that) noexcept { start = that.start; end = that.end; }
     Nfa(NfaState* start_, NfaState* end_) noexcept;
     inline NfaState* Start() const noexcept { return start; }
     inline void SetStart(NfaState* start_) noexcept { start = start_; }
@@ -243,7 +244,7 @@ class ExprParser
 {
 public:
     virtual ~ExprParser();
-    virtual Nfa Parse(const std::string& expression, LexerContext* lexerContext, const std::string& fileName, int line) = 0;
+    virtual Nfa* Parse(const std::string& expression, LexerContext* lexerContext, const std::string& fileName, int line) = 0;
 };
 
 class LexerContext
@@ -284,8 +285,8 @@ public:
     inline void SetKeywords(soul::ast::slg::Keywords* keywords_) noexcept { keywords = keywords_; }
     inline soul::ast::slg::Expressions* GetExpressions() const noexcept { return expressions; }
     inline void SetExpressions(soul::ast::slg::Expressions* expressions_) noexcept { expressions = expressions_; }
-    inline soul::ast::slg::Lexer* GetLexer() const noexcept { return lexer; }
-    inline void SetLexer(soul::ast::slg::Lexer* lexer_) noexcept { lexer = lexer_; }
+    soul::ast::slg::Lexer* GetLexer() const noexcept { return lexer; }
+    void SetLexer(soul::ast::slg::Lexer* lexer_) noexcept { lexer = lexer_; }
     int AddNfa(Nfa* nfa);
     Nfa* GetNfa(int index) const;
     inline int MasterNfaIndex() const noexcept { return masterNfaIndex; }

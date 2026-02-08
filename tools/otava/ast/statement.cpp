@@ -465,7 +465,8 @@ void DoStatementNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
-RangeForStatementNode::RangeForStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::rangeForStatementNode, sourcePos_), blockId(-1)
+RangeForStatementNode::RangeForStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::rangeForStatementNode, sourcePos_), blockId(-1), 
+    rangeForId(util::random_uuid())
 {
 }
 
@@ -473,7 +474,7 @@ RangeForStatementNode::RangeForStatementNode(const soul::ast::SourcePos& sourceP
     Node* attributes_, const soul::ast::SourcePos& forPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_, 
     const soul::ast::SourcePos& colonPos_) :
     CompoundNode(NodeKind::rangeForStatementNode, sourcePos_), initStmt(initStmt_), declaration(declaration_), initializer(initializer_), stmt(stmt_), 
-    attributes(attributes_), forPos(forPos_), lpPos(lpPos_), rpPos(rpPos_), colonPos(colonPos_), blockId(-1)
+    attributes(attributes_), forPos(forPos_), lpPos(lpPos_), rpPos(rpPos_), colonPos(colonPos_), blockId(-1), rangeForId(util::random_uuid())
 {
 }
 
@@ -492,12 +493,18 @@ Node* RangeForStatementNode::Clone() const
     RangeForStatementNode* clone = new RangeForStatementNode(GetSourcePos(), clonedInitStmt, declaration->Clone(), initializer->Clone(), stmt->Clone(), clonedAttributes,
         forPos, lpPos, rpPos, colonPos);
     clone->SetBlockId(blockId);
+    clone->SetRangeForId(rangeForId);
     return clone;
 }
 
 void RangeForStatementNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+void RangeForStatementNode::SetRangeForId(const util::uuid& rangeForId_) noexcept
+{
+    rangeForId = rangeForId_;
 }
 
 void RangeForStatementNode::Write(Writer& writer)
@@ -513,6 +520,7 @@ void RangeForStatementNode::Write(Writer& writer)
     writer.Write(rpPos);
     writer.Write(colonPos);
     writer.GetBinaryStreamWriter().Write(blockId);
+    writer.GetBinaryStreamWriter().Write(rangeForId);
 }
 
 void RangeForStatementNode::Read(Reader& reader)
@@ -528,6 +536,7 @@ void RangeForStatementNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
     colonPos = reader.ReadSourcePos();
     blockId = reader.GetBinaryStreamReader().ReadInt();
+    reader.GetBinaryStreamReader().ReadUuid(rangeForId);
 }
 
 ForRangeDeclarationNode::ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_) : BinaryNode(NodeKind::forRangeDeclarationNode, sourcePos_, nullptr, nullptr)

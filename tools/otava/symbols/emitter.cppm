@@ -21,6 +21,7 @@ class Emitter
 public:
     Emitter();
     ~Emitter();
+    inline void SetCheck() { check = true; }
     inline void SetFilePath(const std::string& filePath) { context->SetFilePath(filePath); }
     inline const std::string& FilePath() const { return context->FilePath(); }
     void SetCompileUnitInfo(const std::string& compileUnitId, const std::string& sourceFilePath);
@@ -33,7 +34,15 @@ public:
     {
         return context->GetOrInsertFunction(name, functionType);
     }
-    inline otava::intermediate::BasicBlock* CreateBasicBlock() { return context->CurrentFunction()->CreateBasicBlock(); }
+    inline otava::intermediate::BasicBlock* CreateBasicBlock() 
+    { 
+        otava::intermediate::BasicBlock* bb = context->CurrentFunction()->CreateBasicBlock();
+        if (check && bb->Id() == 42)
+        {
+            int x = 0;
+        }
+        return bb;
+    }
     inline void SetCurrentBasicBlock(otava::intermediate::BasicBlock* bb) { context->SetCurrentBasicBlock(bb); }
     otava::intermediate::Type* MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes, const std::string& comment);
     otava::intermediate::Type* MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes);
@@ -207,6 +216,7 @@ private:
     otava::intermediate::Value* retValue;
     std::map<util::uuid, otava::intermediate::StructureType*> forwardDeclarationMap;
     int line;
+    bool check;
 };
 
 } // namespace otava::symbols

@@ -7,6 +7,7 @@ export module otava.ast.statement;
 
 import std;
 import otava.ast.node;
+import util.uuid;
 import soul.ast.lexer.pos.pair;
 
 export namespace otava::ast {
@@ -260,6 +261,8 @@ public:
     inline const soul::ast::SourcePos& ColonPos() const { return colonPos; }
     inline int BlockId() const { return blockId; }
     inline void SetBlockId(int blockId_) { blockId = blockId_; }
+    void SetRangeForId(const util::uuid& rangeForId_) noexcept;
+    inline const util::uuid& RangeForId() const noexcept { return rangeForId; }
 private:
     std::unique_ptr<Node> initStmt;
     std::unique_ptr<Node> declaration;
@@ -271,6 +274,7 @@ private:
     soul::ast::SourcePos rpPos;
     soul::ast::SourcePos colonPos;
     int blockId;
+    util::uuid rangeForId;
 };
 
 class ForRangeDeclarationNode : public BinaryNode

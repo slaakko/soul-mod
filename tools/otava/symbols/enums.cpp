@@ -466,12 +466,14 @@ EnumTypeDefaultCtor::EnumTypeDefaultCtor(const std::u32string& name_) : Function
 {
 }
 
-EnumTypeDefaultCtor::EnumTypeDefaultCtor(EnumeratedTypeSymbol* enumType_, Context* context) : FunctionSymbol(SymbolKind::enumTypeDefaultCtor, U"@constructor"), enumType(enumType_)
+EnumTypeDefaultCtor::EnumTypeDefaultCtor(EnumeratedTypeSymbol* enumType_, Context* context) : 
+    FunctionSymbol(SymbolKind::enumTypeDefaultCtor, U"@constructor"), enumType(enumType_)
 {
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
     AddParameter(thisParam, soul::ast::SourcePos(), context);
+    SetNoExcept();
 }
 
 void EnumTypeDefaultCtor::Write(Writer& writer)
@@ -528,6 +530,7 @@ EnumTypeCopyCtor::EnumTypeCopyCtor(EnumeratedTypeSymbol* enumType_, Context* con
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType);
     AddParameter(thatParam, soul::ast::SourcePos(), context);
+    SetNoExcept();
 }
 
 void EnumTypeCopyCtor::Write(Writer& writer)

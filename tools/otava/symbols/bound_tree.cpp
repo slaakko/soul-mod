@@ -608,6 +608,20 @@ BoundCompoundStatementNode* BoundStatementNode::Block()
     }
 }
 
+BoundEmptyStatementNode::BoundEmptyStatementNode(const soul::ast::SourcePos& sourcePos_) : BoundStatementNode(BoundNodeKind::boundEmptyStatementNode, sourcePos_)
+{
+}
+
+void BoundEmptyStatementNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+BoundStatementNode* BoundEmptyStatementNode::Clone() const
+{
+    return new BoundEmptyStatementNode(GetSourcePos());
+}
+
 BoundCompoundStatementNode::BoundCompoundStatementNode(const soul::ast::SourcePos& sourcePos_) : 
     BoundStatementNode(BoundNodeKind::boundCompoundStatementNode, sourcePos_), blockId(-1)
 {
@@ -648,6 +662,11 @@ void BoundCompoundStatementNode::AddStatement(BoundStatementNode* statement)
 {
     statement->SetParent(this);
     statements.push_back(std::unique_ptr<BoundStatementNode>(statement));
+}
+
+void BoundCompoundStatementNode::SetInvokeStatementsWithDestructor(std::vector<std::unique_ptr<BoundConstructionStatementNode>>&& invokeStatementsWithDestructor_)
+{
+    invokeStatementsWithDestructor = std::move(invokeStatementsWithDestructor_);
 }
 
 bool BoundCompoundStatementNode::EndsWithTerminator() const

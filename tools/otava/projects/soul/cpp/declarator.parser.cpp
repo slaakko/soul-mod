@@ -679,7 +679,7 @@ soul::parser::Match DeclaratorParser<LexerT>::DeclaratorId(LexerT& lexer)
 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DeclaratorId");
 #endif
-                    return soul::parser::Match(true, new soul::parser::Value<std::string>(idExpr.release()->ToString()));
+                    return soul::parser::Match(true, new soul::parser::Value<std::string>(idExpr.release()->ToString())); 
                 }
             }
             *parentMatch1 = match;

@@ -14,6 +14,7 @@ class BoundFunctionNode;
 class BoundClassNode;
 class BoundCtorInitializerNode;
 class BoundDtorTerminatorNode;
+class BoundEmptyStatementNode;
 class BoundCompoundStatementNode;
 class BoundIfStatementNode;
 class BoundSwitchStatementNode;
@@ -78,6 +79,7 @@ public:
     virtual void Visit(BoundClassNode& node) {}
     virtual void Visit(BoundCtorInitializerNode& node) {}
     virtual void Visit(BoundDtorTerminatorNode& node) {}
+    virtual void Visit(BoundEmptyStatementNode& node) {}
     virtual void Visit(BoundCompoundStatementNode& node) {}
     virtual void Visit(BoundIfStatementNode& node) {}
     virtual void Visit(BoundSwitchStatementNode& node) {}

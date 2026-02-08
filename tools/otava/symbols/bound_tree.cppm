@@ -78,7 +78,7 @@ enum class BoundNodeKind
     boundCompileUnitNode, boundClassNode, boundGlobalVariableDefinitionNode, boundFunctionNode,
     boundCompoundStatementNode, boundIfStatementNode, boundSwitchStatementNode, boundCaseStatementNode, boundDefaultStatementNode,
     boundWhileStatementNode, boundDoStatementNode, boundForStatementNode, boundBreakStatementNode, boundContinueStatementNode, 
-    boundReturnStatementNode, boundGotoStatementNode, boundLabeledStatementNode, 
+    boundReturnStatementNode, boundGotoStatementNode, boundLabeledStatementNode, boundEmptyStatementNode,
     boundConstructionStatementNode, boundExpressionStatementNode, boundSequenceStatementNode, boundSetVPtrStatementNode, boundAliasDeclarationStatementNode,
     boundValueNode, boundLiteralNode, boundStringLiteralNode, boundVariableNode, boundParentVariableNode, boundParameterNode, boundParentParameterNode, 
     boundEnumConstantNode, boundFunctionGroupNode, boundClassGroupNode, boundAliasGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, 
@@ -286,6 +286,7 @@ private:
 
 class BoundCompoundStatementNode;
 class BoundReturnStatementNode;
+class BoundConstructionStatementNode;
 
 class BoundFunctionNode : public BoundNode
 {
@@ -330,6 +331,11 @@ public:
     virtual int IndexOf(BoundStatementNode* stmt) { return -1; }
     virtual bool ContainsLocalVariableWithDestructor() const { return false; }
     virtual bool ConstructsLocalVariableWithDestructor() const { return false; }
+    virtual bool HasInvokeStatementsWithDestructor() const { return false; }
+    virtual std::vector<std::unique_ptr<BoundConstructionStatementNode>> ReleaseInvokeStatementsWithDestructor() 
+    { 
+        return std::vector<std::unique_ptr<BoundConstructionStatementNode>>(); 
+    }
     inline BoundStatementNode* Parent() const { return parent; }
     inline void SetParent(BoundStatementNode* parent_) { parent = parent_; }
     inline bool Generated() const { return generated; }
@@ -344,6 +350,15 @@ private:
     bool postfix;
 };
 
+class BoundEmptyStatementNode : public BoundStatementNode
+{
+public:
+    BoundEmptyStatementNode(const soul::ast::SourcePos& sourcePos_);
+    std::string Name() const override { return "empty"; }
+    void Accept(BoundTreeVisitor& visitor) override;
+    BoundStatementNode* Clone() const override;
+};
+
 class BoundCompoundStatementNode : public BoundStatementNode
 {
 public:
@@ -354,12 +369,20 @@ public:
     int IndexOf(BoundStatementNode* stmt) override;
     void AddStatement(BoundStatementNode* statement);
     const std::vector<std::unique_ptr<BoundStatementNode>>& Statements() const { return statements; }
+    void SetInvokeStatementsWithDestructor(std::vector<std::unique_ptr<BoundConstructionStatementNode>>&& invokeStatementsWithDestructor_);
+    bool HasInvokeStatementsWithDestructor() const override { return !invokeStatementsWithDestructor.empty(); }
+    const std::vector<std::unique_ptr<BoundConstructionStatementNode>>& InvokeStatementsWithDestructor() const { return invokeStatementsWithDestructor; }
+    std::vector<std::unique_ptr<BoundConstructionStatementNode>> ReleaseInvokeStatementsWithDestructor() override 
+    { 
+        return std::move(invokeStatementsWithDestructor); 
+    }
     bool EndsWithTerminator() const override;
     bool ContainsLocalVariableWithDestructor() const override;
     inline int BlockId() const { return blockId; }
     inline void SetBlockId(int blockId_) { blockId = blockId_; }
 private:
     std::vector<std::unique_ptr<BoundStatementNode>> statements;
+    std::vector<std::unique_ptr<BoundConstructionStatementNode>> invokeStatementsWithDestructor;
     int blockId;
 };
 
@@ -523,6 +546,11 @@ public:
     bool IsTerminator() const override { return second->IsTerminator(); }
     bool IsReturnOrSequenceReturnStatementNode() const override { return second->IsReturnStatementNode(); }
     bool ContainsLocalVariableWithDestructor() const override;
+    bool HasInvokeStatementsWithDestructor() const override { return first->HasInvokeStatementsWithDestructor(); }
+    std::vector<std::unique_ptr<BoundConstructionStatementNode>> ReleaseInvokeStatementsWithDestructor() override 
+    { 
+        return first->ReleaseInvokeStatementsWithDestructor(); 
+    }
 private:
     std::unique_ptr<BoundStatementNode> first;
     std::unique_ptr<BoundStatementNode> second;

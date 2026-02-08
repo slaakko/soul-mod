@@ -177,6 +177,10 @@ void Invoke::Clear()
 void Invoke::Add(BoundStatementNode* stmt)
 {
     statements.push_back(std::unique_ptr<BoundStatementNode>(stmt));
+    if (stmt->ConstructsLocalVariableWithDestructor())
+    {
+        statementsWithDestructor.push_back(std::unique_ptr<BoundConstructionStatementNode>(static_cast<BoundConstructionStatementNode*>(stmt->Clone())));
+    }
 }
 
 void Invoke::Make(otava::ast::CompoundStatementNode* compoundStatement, Context* context)
@@ -370,7 +374,7 @@ class InvokeAndCleanupGenerator : public DefaultBoundTreeVisitor
 {
 public:
     InvokeAndCleanupGenerator(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_);
-    std::unique_ptr<BoundCompoundStatementNode> GetFunctionBody() { return std::move(functionBody); }
+    std::unique_ptr<BoundCompoundStatementNode> GetFunctionBody();
     void Visit(BoundCompoundStatementNode& node) override;
     void Visit(BoundIfStatementNode& node) override;
     void Visit(BoundSwitchStatementNode& node) override;
@@ -395,21 +399,32 @@ private:
     void Emit(BoundStatementNode* stmt);
     Context* context;
     FunctionDefinitionSymbol* functionDefinitionSymbol;
-    std::unique_ptr<BoundCompoundStatementNode> functionBody;
-    BoundCompoundStatementNode* currentCompound;
+    std::unique_ptr<BoundStatementNode> currentInvoke;
+    std::unique_ptr<BoundStatementNode> currentStatement;
     Cleanup cleanup;
     Invoke invoke;
-    bool collect;
-    std::unique_ptr<BoundStatementNode> boundStatement;
 };
 
 InvokeAndCleanupGenerator::InvokeAndCleanupGenerator(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_) :
-    context(context_), functionDefinitionSymbol(functionDefinitionSymbol_), functionBody(), currentCompound(nullptr), collect(false), boundStatement()
+    context(context_), functionDefinitionSymbol(functionDefinitionSymbol_), currentStatement()
 {
+}
+
+std::unique_ptr<BoundCompoundStatementNode> InvokeAndCleanupGenerator::GetFunctionBody()
+{
+    if (currentStatement->IsBoundCompoundStatementNode())
+    {
+        return std::unique_ptr<BoundCompoundStatementNode>(static_cast<BoundCompoundStatementNode*>(currentStatement.release()));
+    }
+    else
+    {
+        ThrowException("compound statement expected", currentStatement->GetSourcePos(), context);
+    }
 }
 
 void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup(bool skipLast)
 {
+    currentInvoke.reset();
     if (skipLast && cleanup.ContainsOne()) return;
     if (cleanup.IsEmpty()) return;
     if (invoke.IsEmpty()) return;
@@ -490,7 +505,7 @@ void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup(bool skipLast)
         context->PopFlags();
         invokeBlock->AddNode(new otava::ast::BoundStatementNode(boundReturnStmt, sourcePos));
     }
-    else if (functionDefinitionSymbol->ParentFn())
+    if (functionDefinitionSymbol->ParentFn())
     {
         otava::ast::BinaryExprNode* binaryExpr = new otava::ast::BinaryExprNode(sourcePos,
             new otava::ast::AssignNode(sourcePos),
@@ -509,10 +524,16 @@ void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup(bool skipLast)
     context->PushSetFlag(ContextFlags::saveDeclarations | ContextFlags::dontBind);
     invokeBlock->Accept(invokeInstantiator);
     context->PopFlags();
-    std::unique_ptr<BoundStatementNode> boundInvokeBlock(BindStatement(invokeBlock.get(), functionDefinitionSymbol, context));
+    std::unique_ptr<BoundCompoundStatementNode> boundInvokeBlock(static_cast<BoundCompoundStatementNode*>(
+        BindStatement(invokeBlock.get(), functionDefinitionSymbol, context)));
+    if (invoke.HasStatementsWithDestructor())
+    {
+        boundInvokeBlock->SetInvokeStatementsWithDestructor(invoke.StatementsWithDestructor());
+    }
     context->GetSymbolTable()->EndScope();
-    currentCompound->AddStatement(boundInvokeBlock.release());
+    currentInvoke.reset(boundInvokeBlock.release());
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+    context->IncInvokes();
 }
 
 BoundVariableNode* InvokeAndCleanupGenerator::ConvertCondition(BoundExpressionNode* condition, const soul::ast::SourcePos& sourcePos)
@@ -540,6 +561,8 @@ BoundVariableNode* InvokeAndCleanupGenerator::ConvertCondition(BoundExpressionNo
 
 void InvokeAndCleanupGenerator::Emit(BoundStatementNode* stmt)
 {
+    currentInvoke.reset();
+    currentStatement.reset();
     if (stmt->MayThrow() && !cleanup.IsEmpty())
     {
         if (cleanup.Changed())
@@ -555,7 +578,21 @@ void InvokeAndCleanupGenerator::Emit(BoundStatementNode* stmt)
     else
     {
         GenerateInvokeAndCleanup(false);
-        currentCompound->AddStatement(stmt);
+        currentStatement.reset(stmt);
+    }
+    if (currentInvoke && currentStatement)
+    {
+        BoundSequenceStatementNode* sequence = new BoundSequenceStatementNode(stmt->GetSourcePos(), currentInvoke.release(), currentStatement.release());
+        currentStatement.reset(sequence);
+    }
+    else if (currentInvoke)
+    {
+        currentStatement.reset(currentInvoke.release());
+    }
+    else if (!currentStatement)
+    {
+        BoundEmptyStatementNode* empty = new BoundEmptyStatementNode(stmt->GetSourcePos());
+        currentStatement.reset(empty);
     }
 }
 
@@ -584,36 +621,46 @@ void InvokeAndCleanupGenerator::Visit(BoundCompoundStatementNode& node)
             int x = 0;
         }
     }
-    BoundCompoundStatementNode* prevCompound = currentCompound;
-    currentCompound = new BoundCompoundStatementNode(node.GetSourcePos());
+    BoundCompoundStatementNode* compound = new BoundCompoundStatementNode(node.GetSourcePos());
     cleanup.PushCleanupBlock();
+    std::vector<std::unique_ptr<BoundConstructionStatementNode>> invokeStatementsWithDestructor;
     for (const auto& stmt : node.Statements())
     {
         stmt->Accept(*this);
+        if (currentStatement->HasInvokeStatementsWithDestructor())
+        {
+            std::vector<std::unique_ptr<BoundConstructionStatementNode>> currentInvokeStatementsWithDestructor = currentStatement->ReleaseInvokeStatementsWithDestructor(); 
+            for (auto& constructionStatementNode : currentInvokeStatementsWithDestructor)
+            {
+                invokeStatementsWithDestructor.push_back(std::move(constructionStatementNode));
+            }
+        }
+        compound->AddStatement(currentStatement.release());
     }
     GenerateInvokeAndCleanup(false);
+    if (currentInvoke)
+    {
+        if (currentInvoke->HasInvokeStatementsWithDestructor())
+        {
+            std::vector<std::unique_ptr<BoundConstructionStatementNode>> currentInvokeStatementsWithDestructor = currentStatement->ReleaseInvokeStatementsWithDestructor();
+            for (auto& constructionStatementNode : currentInvokeStatementsWithDestructor)
+            {
+                invokeStatementsWithDestructor.push_back(std::move(constructionStatementNode));
+            }
+        }
+        compound->AddStatement(currentInvoke.release());
+    }
     cleanup.PopCleanupBlock();
-    if (!prevCompound)
-    {
-        if (collect)
-        {
-            boundStatement.reset(currentCompound);
-        }
-        else
-        {
-            functionBody.reset(currentCompound);
-        }
-    }
-    else
-    {
-        prevCompound->AddStatement(currentCompound);
-    }
-    currentCompound = prevCompound;
     if (scope)
     {
         context->GetSymbolTable()->EndScopeGeneric(context);
     }
     context->PopParentBlockId();
+    if (!invokeStatementsWithDestructor.empty())
+    {
+        compound->SetInvokeStatementsWithDestructor(std::move(invokeStatementsWithDestructor));
+    }
+    currentStatement.reset(compound);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundIfStatementNode& node)
@@ -649,33 +696,13 @@ void InvokeAndCleanupGenerator::Visit(BoundIfStatementNode& node)
     }
     if (clone->ThenStatement()->ContainsLocalVariableWithDestructor())
     {
-        bool prevCollect = collect;
-        collect = true;
-        BoundCompoundStatementNode* prevCompound = currentCompound;
-        if (!prevCompound)
-        {
-            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
-        }
-        currentCompound = nullptr;
         node.ThenStatement()->Accept(*this);
-        clone->SetThenStatement(boundStatement.release());
-        collect = prevCollect;
-        currentCompound = prevCompound;
+        clone->SetThenStatement(currentStatement.release());
     }
     if (clone->ElseStatement() && clone->ElseStatement()->ContainsLocalVariableWithDestructor())
     {
-        bool prevCollect = collect;
-        collect = true;
-        BoundCompoundStatementNode* prevCompound = currentCompound;
-        if (!prevCompound)
-        {
-            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
-        }
-        currentCompound = nullptr;
         node.ElseStatement()->Accept(*this);
-        clone->SetElseStatement(boundStatement.release());
-        collect = prevCollect;
-        currentCompound = prevCompound;
+        clone->SetElseStatement(currentStatement.release());
     }
     Emit(clone.release());
     if (scope)
@@ -718,18 +745,8 @@ void InvokeAndCleanupGenerator::Visit(BoundSwitchStatementNode& node)
     }
     if (clone->Statement()->ContainsLocalVariableWithDestructor())
     {
-        bool prevCollect = collect;
-        collect = true;
-        BoundCompoundStatementNode* prevCompound = currentCompound;
-        if (!prevCompound)
-        {
-            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
-        }
-        currentCompound = nullptr;
         node.Statement()->Accept(*this);
-        clone->SetStatement(boundStatement.release());
-        collect = prevCollect;
-        currentCompound = prevCompound;
+        clone->SetStatement(currentStatement.release());
     }
     Emit(clone.release());
     if (scope)
@@ -744,18 +761,8 @@ void InvokeAndCleanupGenerator::Visit(BoundCaseStatementNode& node)
     std::unique_ptr<BoundCaseStatementNode> clone(static_cast<BoundCaseStatementNode*>(node.Clone()));
     if (clone->Statement()->ContainsLocalVariableWithDestructor())
     {
-        bool prevCollect = collect;
-        collect = true;
-        BoundCompoundStatementNode* prevCompound = currentCompound;
-        if (!prevCompound)
-        {
-            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
-        }
-        currentCompound = nullptr;
         node.Statement()->Accept(*this);
-        clone->SetStatement(boundStatement.release());
-        collect = prevCollect;
-        currentCompound = prevCompound;
+        clone->SetStatement(currentStatement.release());
     }
     Emit(clone.release());
 }
@@ -765,18 +772,8 @@ void InvokeAndCleanupGenerator::Visit(BoundDefaultStatementNode& node)
     std::unique_ptr<BoundDefaultStatementNode> clone(static_cast<BoundDefaultStatementNode*>(node.Clone()));
     if (clone->Statement()->ContainsLocalVariableWithDestructor())
     {
-        bool prevCollect = collect;
-        collect = true;
-        BoundCompoundStatementNode* prevCompound = currentCompound;
-        if (!prevCompound)
-        {
-            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
-        }
-        currentCompound = nullptr;
         node.Statement()->Accept(*this);
-        clone->SetStatement(boundStatement.release());
-        collect = prevCollect;
-        currentCompound = prevCompound;
+        clone->SetStatement(currentStatement.release());
     }
     Emit(clone.release());
 }
@@ -814,18 +811,8 @@ void InvokeAndCleanupGenerator::Visit(BoundWhileStatementNode& node)
     }
     if (clone->Statement()->ContainsLocalVariableWithDestructor())
     {
-        bool prevCollect = collect;
-        collect = true;
-        BoundCompoundStatementNode* prevCompound = currentCompound;
-        if (!prevCompound)
-        {
-            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
-        }
-        currentCompound = nullptr;
         node.Statement()->Accept(*this);
-        clone->SetStatement(boundStatement.release());
-        collect = prevCollect;
-        currentCompound = prevCompound;
+        clone->SetStatement(currentStatement.release());
     }
     Emit(clone.release());
     if (scope)
@@ -840,18 +827,8 @@ void InvokeAndCleanupGenerator::Visit(BoundDoStatementNode& node)
     std::unique_ptr<BoundDoStatementNode> clone(static_cast<BoundDoStatementNode*>(node.Clone()));
     if (clone->Statement()->ContainsLocalVariableWithDestructor())
     {
-        bool prevCollect = collect;
-        collect = true;
-        BoundCompoundStatementNode* prevCompound = currentCompound;
-        if (!prevCompound)
-        {
-            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
-        }
-        currentCompound = nullptr;
         node.Statement()->Accept(*this);
-        clone->SetStatement(boundStatement.release());
-        collect = prevCollect;
-        currentCompound = prevCompound;
+        clone->SetStatement(currentStatement.release());
     }
     Emit(clone.release());
 }
@@ -889,18 +866,8 @@ void InvokeAndCleanupGenerator::Visit(BoundForStatementNode& node)
     }
     if (clone->Statement()->ContainsLocalVariableWithDestructor())
     {
-        bool prevCollect = collect;
-        collect = true;
-        BoundCompoundStatementNode* prevCompound = currentCompound;
-        if (!prevCompound)
-        {
-            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
-        }
-        currentCompound = nullptr;
         node.Statement()->Accept(*this);
-        clone->SetStatement(boundStatement.release());
-        collect = prevCollect;
-        currentCompound = prevCompound;
+        clone->SetStatement(currentStatement.release());
     }
     Emit(clone.release());
     if (scope)
@@ -915,33 +882,13 @@ void InvokeAndCleanupGenerator::Visit(BoundSequenceStatementNode& node)
     std::unique_ptr<BoundSequenceStatementNode> clone(static_cast<BoundSequenceStatementNode*>(node.Clone()));
     if (node.First()->ContainsLocalVariableWithDestructor())
     {
-        bool prevCollect = collect;
-        collect = true;
-        BoundCompoundStatementNode* prevCompound = currentCompound;
-        if (!prevCompound)
-        {
-            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
-        }
-        currentCompound = nullptr;
         node.First()->Accept(*this);
-        clone->SetFirst(boundStatement.release());
-        collect = prevCollect;
-        currentCompound = prevCompound;
+        clone->SetFirst(currentStatement.release());
     }
     if (node.Second()->ContainsLocalVariableWithDestructor())
     {
-        bool prevCollect = collect;
-        collect = true;
-        BoundCompoundStatementNode* prevCompound = currentCompound;
-        if (!prevCompound)
-        {
-            prevCompound = new BoundCompoundStatementNode(node.GetSourcePos());
-        }
-        currentCompound = nullptr;
         node.Second()->Accept(*this);
-        clone->SetSecond(boundStatement.release());
-        collect = prevCollect;
-        currentCompound = prevCompound;
+        clone->SetSecond(currentStatement.release());
     }
     Emit(clone.release());
 }
@@ -971,17 +918,8 @@ void InvokeAndCleanupGenerator::Visit(BoundLabeledStatementNode& node)
     std::unique_ptr<BoundLabeledStatementNode> clone(static_cast<BoundLabeledStatementNode*>(node.Clone()));
     if (node.Statement()->ContainsLocalVariableWithDestructor())
     {
-        bool prevCollect = collect;
-        collect = true;
-        BoundCompoundStatementNode* prevCompound = currentCompound;
-        currentCompound = nullptr;
         node.Statement()->Accept(*this);
-        clone->SetStatement(boundStatement.release());
-        collect = prevCollect;
-        if (!collect)
-        {
-            currentCompound = prevCompound;
-        }
+        clone->SetStatement(currentStatement.release());
     }
     Emit(clone.release());
 }

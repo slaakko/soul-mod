@@ -1,36 +1,19 @@
-import std.core;
+import std;
 
-void c()
+void foo()
 {
-    void* ctx = pop_context();
-    restore_context(ctx, 123);
-}
-
-void b()
-{
-    std::cout << ">b" << "\n";
-    c();
-    std::cout << "<b" << "\n";
-}
-
-void a()
-{
-    std::cout << ">a" << "\n";
-    b();
-    std::cout << "<a" << "\n";
+    throw std::runtime_error("foo");
 }
 
 int main()
 {
-    int x = 1;
-    void* ctx = push_context();
-    int rv = save_context(ctx);
-    if (rv == 0)
+    try
     {
-        a();
+        foo();
     }
-    else
+    catch (const std::exception& ex)
     {
-        std::cout << "catch " << x << " " << rv << "\n";
+        std::cerr << ex.what() << "\n";
+        return 1;
     }
 }

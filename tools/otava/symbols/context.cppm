@@ -18,6 +18,7 @@ import otava.symbols.function_definition_symbol_set;
 import otava.symbols.templates;
 import otava.symbols.template_param_compare;
 import otava.symbols.trace;
+import util.uuid;
 
 export namespace otava::symbols {
 
@@ -75,7 +76,8 @@ enum class ContextFlags : std::int64_t
     makeCompileUnitInitFn = static_cast<std::int64_t>(1) << 44,
     cast = static_cast<std::int64_t>(1) << 45,
     expected = static_cast<std::int64_t>(1) << 46,
-    lookupOnlyFromMemberScope = static_cast<std::int64_t>(1) << 47
+    lookupOnlyFromMemberScope = static_cast<std::int64_t>(1) << 47,
+    setParentBlockIds = static_cast<std::int64_t>(1) << 48
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -110,6 +112,14 @@ class Project;
 class StatementBinder;
 
 int GetOptLevel(int level, bool release);
+
+struct RangeForBlockIds
+{
+    RangeForBlockIds();
+    int compoundBlockId;
+    int forActionStatementId;
+    int forStatementId;
+};
 
 class Context
 {
@@ -201,6 +211,9 @@ public:
     inline void SetTotalFunctionsCompiled(int totalFunctionsCompiled_) { totalFunctionsCompiled = totalFunctionsCompiled_; }
     inline void SetFunctionCallsInlined(int functionCallsInlined_) { functionCallsInlined = functionCallsInlined_; }
     inline void SetFunctionsInlined(int functionsInlined_) { functionsInlined = functionsInlined_; }
+    inline int Invokes() const { return invokes; }
+    inline void IncInvokes() { ++invokes; }
+    inline void SetInvokes(int invokes_) { invokes = invokes_; }
     inline Emitter* GetEmitter() { return emitter; }
     inline void SetEmitter(Emitter* emitter_) { emitter = emitter_; }
     inline int ArgIndex() const { return argIndex; }
@@ -241,6 +254,7 @@ public:
     inline int ParentBlockId() const { return parentBlockId; }
     void PushParentBlockId(int blockId);
     void PopParentBlockId();
+    RangeForBlockIds& GetRangeForBlockIds(const util::uuid& rangeForId);
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -281,6 +295,7 @@ private:
     int totalFunctionsCompiled;
     int functionCallsInlined;
     int functionsInlined;
+    int invokes;
     int argIndex;
     int boundFunctionSerial;
     int trySerial;
@@ -305,6 +320,7 @@ private:
     std::stack<FunctionDefinitionSymbol*> parentFnStack;
     std::stack<int> parentBlockIdStack;
     int parentBlockId;
+    std::map<util::uuid, RangeForBlockIds> rangeForBlockIdMap;
 };
 
 } // namespace otava::symbols

@@ -40,6 +40,10 @@ int GetOptLevel(int level, bool release)
     }
 }
 
+RangeForBlockIds::RangeForBlockIds() : compoundBlockId(-1), forActionStatementId(-1), forStatementId(-1)
+{
+}
+
 Context::Context() : 
     symbolTable(nullptr), 
     lexer(nullptr), 
@@ -66,6 +70,7 @@ Context::Context() :
     totalFunctionsCompiled(0),
     functionCallsInlined(0),
     functionsInlined(0),
+    invokes(0),
     emitter(nullptr),
     argIndex(0),
     boundFunctionSerial(0),
@@ -510,6 +515,11 @@ void Context::PopParentBlockId()
 {
     parentBlockId = parentBlockIdStack.top();
     parentBlockIdStack.pop();
+}
+
+RangeForBlockIds& Context::GetRangeForBlockIds(const util::uuid& rangeForId)
+{
+    return rangeForBlockIdMap[rangeForId];
 }
 
 } // namespace otava::symbols

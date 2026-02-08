@@ -20,10 +20,13 @@ public:
     void Clear();
     void Add(BoundStatementNode* stmt);
     const std::vector<std::unique_ptr<BoundStatementNode>>& Statements() const { return statements; }
+    inline bool HasStatementsWithDestructor() const { return !statementsWithDestructor.empty(); }
+    std::vector<std::unique_ptr<BoundConstructionStatementNode>> StatementsWithDestructor() { return std::move(statementsWithDestructor); }
     void Make(otava::ast::CompoundStatementNode* compoundStatement, Context* context);
     soul::ast::SourcePos GetSourcePos() const;
 private:
     std::vector<std::unique_ptr<BoundStatementNode>> statements;
+    std::vector<std::unique_ptr<BoundConstructionStatementNode>> statementsWithDestructor;
 };
 
 class Cleanup;

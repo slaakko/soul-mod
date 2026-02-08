@@ -22,7 +22,7 @@ void MakeNfas(soul::ast::re::LexerContext& lexerContext)
 {
     for (auto& rule : lexerContext.GetLexer()->Rules())
     {
-        soul::ast::re::Nfa* nfa = new soul::ast::re::Nfa(lexerContext.GetExprParser()->Parse(rule->Expr(), &lexerContext, lexerContext.FileName(), rule->Line()));
+        soul::ast::re::Nfa* nfa = lexerContext.GetExprParser()->Parse(rule->Expr(), &lexerContext, lexerContext.FileName(), rule->Line());
         nfa->End()->SetRuleIndex(rule->Index());
         int nfaIndex = lexerContext.AddNfa(nfa);
         rule->SetNfaIndex(nfaIndex);
@@ -610,8 +610,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
             for (const auto& p : m)
             {
                 std::int32_t n = p.first;
-                const std::set<std::int32_t>& s = p.second;
-                for (std::int32_t k : s)
+                for (std::int32_t k : p.second)
                 {
                     interfaceFormatter.WriteLine("case " + std::to_string(k) + ":");
                 }
