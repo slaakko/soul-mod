@@ -16,9 +16,9 @@ public:
 };
 
 std::string GetCurrentWorkingDirectory();
-bool FileExists(const std::string& filePath);
-bool DirectoryExists(const std::string& directoryPath);
-bool PathExists(const std::string& path);
+bool FileExists(const std::string& filePath) noexcept;
+bool DirectoryExists(const std::string& directoryPath) noexcept;
+bool PathExists(const std::string& path) noexcept;
 std::string GetFullPath(const std::string& path);
 std::string MakeRelativeDirPath(const std::string& dirPath, const std::string& referenceDirPath);
 

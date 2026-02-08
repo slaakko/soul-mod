@@ -28,17 +28,17 @@ std::string GetCurrentWorkingDirectory()
     }
 }
 
-bool FileExists(const std::string& filePath)
+bool FileExists(const std::string& filePath) noexcept
 {
     return ort_path_exists(filePath.c_str());
 }
 
-bool DirectoryExists(const std::string& directoryPath)
+bool DirectoryExists(const std::string& directoryPath) noexcept
 {
     return ort_path_exists(directoryPath.c_str());
 }
 
-bool PathExists(const std::string& path)
+bool PathExists(const std::string& path) noexcept
 {
     return ort_path_exists(path.c_str());
 }

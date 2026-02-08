@@ -2165,6 +2165,10 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
 #ifdef DEBUG_FUNCTIONS
     std::cout << ">" << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
 #endif
+    if (functionDefinitionSymbol->IrName(context) == "fn_ParseParserFile_D1B880D31B07E4607D17AB5BD2626537ACB8D728")
+    {
+        int x = 0;
+    }
     functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
     context->PushStatementBinder(&binder);
