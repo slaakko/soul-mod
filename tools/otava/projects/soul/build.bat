@@ -14,9 +14,9 @@ popd
 pushd re
 call build.bat
 popd
-pushd slg
+pushd oslg
 call build.bat
 popd
-pushd spg
+pushd ospg
 call build.bat
 popd
