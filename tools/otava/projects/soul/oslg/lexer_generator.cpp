@@ -342,7 +342,7 @@ void MakeMasterNfa(soul::ast::re::LexerContext& lexerContext)
         start->AddEdge(soul::ast::re::NfaEdge(lexerContext.MakeEpsilon(), ruleNfa->Start()));
     }
 }
-
+ 
 void MakeDfa(soul::ast::re::LexerContext& lexerContext)
 {
     soul::ast::re::Nfa* masterNfa = lexerContext.GetNfa(lexerContext.MasterNfaIndex());
@@ -461,12 +461,12 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     std::string sourceFilePath = util::GetFullPath(util::Path::Combine(root, lexerContext.FileName() + ".cpp"));
     std::ofstream interfaceStream(interfaceFilePath);
     util::CodeFormatter interfaceFormatter(interfaceStream);
-    interfaceFormatter.WriteLine("// this file has been automatically generated from '" + lexerContext.FileName() + "' using soul lexer generator slg version " +
+    interfaceFormatter.WriteLine("// this file has been automatically generated from '" + lexerContext.FileName() + "' using soul lexer generator oslg version " +
         util::SoulVersionStr());
     interfaceFormatter.WriteLine();
     std::ofstream sourceStream(sourceFilePath);
     util::CodeFormatter sourceFormatter(sourceStream);
-    sourceFormatter.WriteLine("// this file has been automatically generated from '" + lexerContext.FileName() + "' using soul lexer generator slg version " +
+    sourceFormatter.WriteLine("// this file has been automatically generated from '" + lexerContext.FileName() + "' using soul lexer generator oslg version " +
         util::SoulVersionStr());
     sourceFormatter.WriteLine();
     soul::ast::slg::Lexer* lexer = lexerContext.GetLexer();
@@ -558,7 +558,8 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.WriteLine("switch (state)");
     interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    for (const auto* state : lexerContext.GetDfa().States())
+    const soul::ast::re::Dfa& dfa = lexerContext.GetDfa();
+    for (const auto* state : dfa.States())
     {
         interfaceFormatter.WriteLine("case " + std::to_string(state->Id()) + ":");
         interfaceFormatter.WriteLine("{");

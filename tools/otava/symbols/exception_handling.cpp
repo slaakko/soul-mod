@@ -397,16 +397,20 @@ private:
     void GenerateInvokeAndCleanup(bool skipLast);
     BoundVariableNode* ConvertCondition(BoundExpressionNode* condition, const soul::ast::SourcePos& sourcePos);
     void Emit(BoundStatementNode* stmt);
+    void AddCurrentInvokeToCurrentCompound();
     Context* context;
     FunctionDefinitionSymbol* functionDefinitionSymbol;
     std::unique_ptr<BoundStatementNode> currentInvoke;
     std::unique_ptr<BoundStatementNode> currentStatement;
     Cleanup cleanup;
     Invoke invoke;
+    BoundCompoundStatementNode* currentCompound;
+    std::vector<std::unique_ptr<BoundConstructionStatementNode>>* currentInvokeStatementsWithDestructor;
 };
 
 InvokeAndCleanupGenerator::InvokeAndCleanupGenerator(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_) :
-    context(context_), functionDefinitionSymbol(functionDefinitionSymbol_), currentStatement()
+    context(context_), functionDefinitionSymbol(functionDefinitionSymbol_), currentStatement(), currentCompound(nullptr), 
+    currentInvokeStatementsWithDestructor(nullptr)
 {
 }
 
@@ -596,6 +600,22 @@ void InvokeAndCleanupGenerator::Emit(BoundStatementNode* stmt)
     }
 }
 
+void InvokeAndCleanupGenerator::AddCurrentInvokeToCurrentCompound()
+{
+    if (currentInvoke)
+    {
+        if (currentInvoke->HasInvokeStatementsWithDestructor())
+        {
+            std::vector<std::unique_ptr<BoundConstructionStatementNode>> constructionStatements = currentInvoke->ReleaseInvokeStatementsWithDestructor();
+            for (auto& constructionStatementNode : constructionStatements)
+            {
+                currentInvokeStatementsWithDestructor->push_back(std::move(constructionStatementNode));
+            }
+        }
+        currentCompound->AddStatement(currentInvoke.release());
+    }
+}
+
 void InvokeAndCleanupGenerator::Visit(BoundCompoundStatementNode& node)
 {
     int blockId = node.BlockId();
@@ -623,14 +643,18 @@ void InvokeAndCleanupGenerator::Visit(BoundCompoundStatementNode& node)
     }
     BoundCompoundStatementNode* compound = new BoundCompoundStatementNode(node.GetSourcePos());
     cleanup.PushCleanupBlock();
+    BoundCompoundStatementNode* prevCompound = currentCompound;
+    currentCompound = compound;
     std::vector<std::unique_ptr<BoundConstructionStatementNode>> invokeStatementsWithDestructor;
+    std::vector<std::unique_ptr<BoundConstructionStatementNode>>* prevInvokeStatementsWithDestructor = currentInvokeStatementsWithDestructor;
+    currentInvokeStatementsWithDestructor = &invokeStatementsWithDestructor;
     for (const auto& stmt : node.Statements())
     {
         stmt->Accept(*this);
         if (currentStatement->HasInvokeStatementsWithDestructor())
         {
-            std::vector<std::unique_ptr<BoundConstructionStatementNode>> currentInvokeStatementsWithDestructor = currentStatement->ReleaseInvokeStatementsWithDestructor(); 
-            for (auto& constructionStatementNode : currentInvokeStatementsWithDestructor)
+            std::vector<std::unique_ptr<BoundConstructionStatementNode>> constructionStatements = currentStatement->ReleaseInvokeStatementsWithDestructor(); 
+            for (auto& constructionStatementNode : constructionStatements)
             {
                 invokeStatementsWithDestructor.push_back(std::move(constructionStatementNode));
             }
@@ -661,10 +685,14 @@ void InvokeAndCleanupGenerator::Visit(BoundCompoundStatementNode& node)
         compound->SetInvokeStatementsWithDestructor(std::move(invokeStatementsWithDestructor));
     }
     currentStatement.reset(compound);
+    currentCompound = prevCompound;
+    currentInvokeStatementsWithDestructor = prevInvokeStatementsWithDestructor;
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundIfStatementNode& node)
 {
+    GenerateInvokeAndCleanup(false);
+    AddCurrentInvokeToCurrentCompound();
     int blockId = node.BlockId();
     context->PushParentBlockId(blockId);
     Scope* scope = nullptr;
@@ -714,6 +742,8 @@ void InvokeAndCleanupGenerator::Visit(BoundIfStatementNode& node)
 
 void InvokeAndCleanupGenerator::Visit(BoundSwitchStatementNode& node)
 {
+    GenerateInvokeAndCleanup(false);
+    AddCurrentInvokeToCurrentCompound();
     int blockId = node.BlockId();
     context->PushParentBlockId(blockId);
     Scope* scope = nullptr;
@@ -780,6 +810,8 @@ void InvokeAndCleanupGenerator::Visit(BoundDefaultStatementNode& node)
 
 void InvokeAndCleanupGenerator::Visit(BoundWhileStatementNode& node)
 {
+    GenerateInvokeAndCleanup(false);
+    AddCurrentInvokeToCurrentCompound();
     int blockId = node.BlockId();
     context->PushParentBlockId(blockId);
     Scope* scope = nullptr;
@@ -824,6 +856,8 @@ void InvokeAndCleanupGenerator::Visit(BoundWhileStatementNode& node)
 
 void InvokeAndCleanupGenerator::Visit(BoundDoStatementNode& node)
 {
+    GenerateInvokeAndCleanup(false);
+    AddCurrentInvokeToCurrentCompound();
     std::unique_ptr<BoundDoStatementNode> clone(static_cast<BoundDoStatementNode*>(node.Clone()));
     if (clone->Statement()->ContainsLocalVariableWithDestructor())
     {
@@ -835,6 +869,8 @@ void InvokeAndCleanupGenerator::Visit(BoundDoStatementNode& node)
 
 void InvokeAndCleanupGenerator::Visit(BoundForStatementNode& node)
 {
+    GenerateInvokeAndCleanup(false);
+    AddCurrentInvokeToCurrentCompound();
     int blockId = node.BlockId();
     context->PushParentBlockId(blockId);
     Scope* scope = nullptr;

@@ -1046,7 +1046,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     formatter = &interfaceFormatter;
 
     formatter->WriteLine();
-    formatter->WriteLine("// this file has been automatically generated from '" + parserFile.FilePath() + "' using soul parser generator spg version " + version);
+    formatter->WriteLine("// this file has been automatically generated from '" + parserFile.FilePath() + "' using soul parser generator ospg version " + version);
     formatter->WriteLine();
     soul::ast::common::ExportModule* mod = parserFile.GetExportModule();
     formatter->WriteLine("export module " + mod->ModuleName() + ";");
@@ -1093,7 +1093,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     formatter = &implementationFormatter;
 
     formatter->WriteLine();
-    formatter->WriteLine("// this file has been automatically generated from '" + parserFile.FilePath() + "' using soul parser generator spg version " + version);
+    formatter->WriteLine("// this file has been automatically generated from '" + parserFile.FilePath() + "' using soul parser generator ospg version " + version);
     formatter->WriteLine();
     formatter->WriteLine("module " + mod->ModuleName() + ";");
     formatter->WriteLine();
