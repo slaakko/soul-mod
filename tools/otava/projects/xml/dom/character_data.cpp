@@ -17,10 +17,10 @@ std::string XmlCharDataEscape(const std::string& text)
     {
         switch (c)
         {
-            case '<': result.append("&lt;"); break;
-            case '&': result.append("&amp;"); break;
-            case '\r': case '\n': result.append(1, static_cast<char>(c)); break;
-            default: 
+            case '<': { result.append("&lt;"); break; }
+            case '&': { result.append("&amp;"); break; }
+            case '\r': case '\n': { result.append(1, static_cast<char>(c)); break; }
+            default:
             {
                 if (c >= 32 && c < 127)
                 {
@@ -40,12 +40,12 @@ std::string XmlCharDataEscape(const std::string& text)
     return result;
 }
 
-CharacterData::CharacterData(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::string& name_) : 
+CharacterData::CharacterData(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::string& name_) :
     CharacterData(kind_, sourcePos_, name_, std::string())
 {
 }
 
-CharacterData::CharacterData(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::string& name_, const std::string& data_) : 
+CharacterData::CharacterData(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::string& name_, const std::string& data_) :
     Node(kind_, sourcePos_, name_), data(data_)
 {
 }

@@ -1579,6 +1579,7 @@ void StatementBinder::Visit(otava::ast::ExceptionDeclarationNode& node)
 {
     context->PushFlags();
     context->ResetFlags();
+    context->PushSetFlag(ContextFlags::dontProcess);
     Declaration declaration = ProcessExceptionDeclaration(&node, context);
     TypeSymbol* type = declaration.type;
     if (type)
@@ -1640,6 +1641,7 @@ void StatementBinder::Visit(otava::ast::ExceptionDeclarationNode& node)
         }
         lastElse = nullptr;
     }
+    context->PopFlags();
     context->PopFlags();
 }
 

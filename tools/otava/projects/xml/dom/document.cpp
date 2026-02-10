@@ -18,7 +18,7 @@ Document::Document() :
 {
 }
 
-Document::Document(const soul::ast::SourcePos& sourcePos_) : 
+Document::Document(const soul::ast::SourcePos& sourcePos_) :
     ParentNode(NodeKind::documentNode, sourcePos_, "document"), documentElement(nullptr), indexValid(false), xmlStandalone(false)
 {
 }
