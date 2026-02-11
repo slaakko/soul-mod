@@ -1,0 +1,13 @@
+project xpath_test;
+target=program;
+reference <../../../util/util.project>;
+reference <../../ast/ast.project>;
+reference <../../lexer/lexer.project>;
+reference <../../parser/parser.project>;
+reference <../dom/soul.xml.dom.project>;
+reference <../dom_parser/soul.xml.dom_parser.project>;
+reference <../xml_parser/soul.xml.xml_parser.project>;
+reference <../processor/soul.xml.processor.project>;
+reference <../xpath/soul.xml.xpath.project>;
+source <main.cpp>;
+resource <../xpath/soul.xml.xpath.lexer.classmap.rc>;
