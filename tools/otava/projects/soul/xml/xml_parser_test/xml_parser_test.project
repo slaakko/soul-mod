@@ -1,0 +1,11 @@
+project xml_parser_test;
+target=program;
+reference <../../../util/util.project>;
+reference <../../ast/ast.project>;
+reference <../../lexer/lexer.project>;
+reference <../../parser/parser.project>;
+reference <../dom/soul.xml.dom.project>;
+reference <../dom_parser/soul.xml.dom_parser.project>;
+reference <../xml_parser/soul.xml.xml_parser.project>;
+reference <../processor/soul.xml.processor.project>;
+source <main.cpp>;

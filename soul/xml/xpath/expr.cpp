@@ -610,7 +610,7 @@ std::unique_ptr<soul::xml::xpath::Object> EvaluateCombineStepExpr(Expr* left, Ex
     return std::unique_ptr<soul::xml::xpath::Object>(result.release()); 
 }
 
-Expr::Expr(ExprKind kind_) : kind(kind_)
+Expr::Expr(ExprKind kind_) noexcept : kind(kind_)
 {
 }
 
@@ -630,7 +630,7 @@ soul::xml::Element* Expr::ToXmlElement() const
     return element;
 }
 
-UnaryExpr::UnaryExpr(Operator op_, Expr* operand_) : Expr(ExprKind::unaryExpr), op(op_), operand(operand_)
+UnaryExpr::UnaryExpr(Operator op_, Expr* operand_) noexcept : Expr(ExprKind::unaryExpr), op(op_), operand(operand_)
 {
 }
 
@@ -659,7 +659,7 @@ soul::xml::Element* UnaryExpr::ToXmlElement() const
     return element;
 }
 
-BinaryExpr::BinaryExpr(Operator op_, Expr* left_, Expr* right_) : Expr(ExprKind::binaryExpr), op(op_), left(left_), right(right_)
+BinaryExpr::BinaryExpr(Operator op_, Expr* left_, Expr* right_) noexcept : Expr(ExprKind::binaryExpr), op(op_), left(left_), right(right_)
 {
 }
 
@@ -742,7 +742,7 @@ soul::xml::Element* BinaryExpr::ToXmlElement() const
     return element;
 }
 
-Root::Root() : Expr(ExprKind::root)
+Root::Root() noexcept : Expr(ExprKind::root)
 {
 }
 
@@ -760,7 +760,7 @@ std::unique_ptr<soul::xml::xpath::Object> Root::Evaluate(Context& context) const
     return std::unique_ptr<soul::xml::xpath::Object>(nodeSet.release());
 }
 
-FilterExpr::FilterExpr(Expr* subject_, Expr* predicate_) : Expr(ExprKind::filterExpr), subject(subject_), predicate(predicate_)
+FilterExpr::FilterExpr(Expr* subject_, Expr* predicate_) noexcept : Expr(ExprKind::filterExpr), subject(subject_), predicate(predicate_)
 {
 }
 
@@ -832,7 +832,7 @@ std::string NodeTestStr(NodeTestKind nodeTest)
     return "<unknown node-test>";
 }
 
-NodeTest::NodeTest(NodeTestKind kind_) : kind(kind_)
+NodeTest::NodeTest(NodeTestKind kind_) noexcept : kind(kind_)
 {
 }
 
@@ -886,7 +886,7 @@ soul::xml::Element* NodeTest::ToXmlElement() const
     return element;
 }
 
-PILiteralNodeTest::PILiteralNodeTest(Literal* literal_) : NodeTest(NodeTestKind::piLiteralTest), literal(literal_)
+PILiteralNodeTest::PILiteralNodeTest(Literal* literal_) noexcept : NodeTest(NodeTestKind::piLiteralTest), literal(literal_)
 {
 }
 
@@ -1081,7 +1081,7 @@ soul::xml::Element* Literal::ToXmlElement() const
     return element;
 }
 
-NumberExpr::NumberExpr(double value_) : Expr(ExprKind::numberExpr), value(value_)
+NumberExpr::NumberExpr(double value_) noexcept : Expr(ExprKind::numberExpr), value(value_)
 {
 }
 

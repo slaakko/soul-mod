@@ -15,7 +15,7 @@ export namespace soul::xml::processor {
 
 struct Tag
 {
-    inline Tag() : sourcePos(), name() {}
+    inline Tag() noexcept : sourcePos(), name() {}
     inline Tag(const soul::ast::SourcePos& sourcePos_, const std::string& name_) : sourcePos(sourcePos_), name(name_) {}
     soul::ast::SourcePos sourcePos;
     std::string name;

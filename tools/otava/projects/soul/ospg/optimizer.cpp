@@ -6,7 +6,7 @@
 module soul.spg.optimizer;
 
 import soul.spg.first.set.computer;
-//import soul.spg.xml.printer;
+import soul.spg.xml.printer;
 import soul.spg.linking;
 
 namespace soul::spg {
@@ -418,7 +418,7 @@ std::unique_ptr<soul::ast::spg::SpgFile> Optimize(soul::ast::spg::SpgFile* spgFi
     ComputeFirstSets(spgFile, verbose);
     if (xml)
     {
-        //PrintXml(spgFile, verbose, false);
+        PrintXml(spgFile, verbose, false);
     }
     SetOptimizationFlags(spgFile, verbose);
     soul::ast::spg::SpgFile* optimizedSpg = GenerateOptimizedSpg(spgFile, verbose);

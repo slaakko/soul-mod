@@ -1263,7 +1263,10 @@ void BoundExpressionStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundExpressionStatementNode::Clone() const
 {
     BoundExpressionStatementNode* clone = new BoundExpressionStatementNode(GetSourcePos());
-    clone->SetExpr(expr->Clone());
+    if (expr)
+    {
+        clone->SetExpr(expr->Clone());
+    }
     if (Source())
     {
         clone->SetSource(Source()->Clone());

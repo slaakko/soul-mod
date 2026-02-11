@@ -474,6 +474,10 @@ ExpressionBinder::ExpressionBinder(Context* context_, SymbolGroupKind symbolGrou
 
 void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::SourcePos& sourcePos, BoundExpressionNode* left, BoundExpressionNode* right)
 {
+    if (!left)
+    {
+        ThrowException("left expression is null", sourcePos, context);
+    }
     if (!left->GetType())
     {
         ThrowException("left type is null", left->GetSourcePos(), context);

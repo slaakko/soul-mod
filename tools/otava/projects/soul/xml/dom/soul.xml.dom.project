@@ -1,8 +1,8 @@
 project soul.xml.dom;
 target=library;
-reference <../../util/util.project>;
-reference <../../soul/ast/ast.project>;
-reference <../../soul/lexer/lexer.project>;
+reference <../../../util/util.project>;
+reference <../../ast/ast.project>;
+reference <../../lexer/lexer.project>;
 interface <attribute_node.cppm>;
 source <attribute_node.cpp>;
 interface <axis.cppm>;

@@ -2186,10 +2186,6 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
     {
         CheckFunctionReturnPaths(functionDefinitionNode, context);
     }
-    if (functionDefinitionSymbol->IrName(context) == "fn_MakeDfa_0BACE86422FD3990C2DF166D8A28415658234644")
-    {
-        int x = 0;
-    }
     bool skipInvokeChecking = functionDefinitionSymbol->SkipInvokeChecking();
     bool containsStatics = functionDefinitionSymbol->ContainsStatics();
     bool containsNodeWithNoSource = functionDefinitionSymbol->ContainsNodeWithNoSource();

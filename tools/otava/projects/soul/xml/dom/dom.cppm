@@ -5,8 +5,6 @@
 
 export module soul.xml.dom;
 
-export namespace soul::xml::dom {}
-
 export import soul.xml.node;
 export import soul.xml.attribute.node;
 export import soul.xml.cdata.section;

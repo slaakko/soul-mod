@@ -810,6 +810,10 @@ void NewNode::SetTypeId(Node* typeId_) noexcept
 Node* NewNode::Clone() const
 {
     NewNode* clone = new NewNode(GetSourcePos(), global);
+    if (parens)
+    {
+        clone->SetParens(true);
+    }
     if (typeId)
     {
         clone->SetTypeId(typeId->Clone());
@@ -886,6 +890,10 @@ void NewNode::Write(CodeFormatter& formatter)
             node->Write(formatter);
         }
         formatter.Write(")");
+    }
+    else
+    {
+        formatter.Write("()");
     }
 }
 

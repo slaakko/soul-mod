@@ -201,7 +201,7 @@ public:
     }
     inline void clear() noexcept
     { 
-        deallocate; 
+        deallocate(); 
     }
     inline bool empty() const noexcept
     { 

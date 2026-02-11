@@ -23,11 +23,11 @@ class Object
 public:
     Object(ObjectKind kind_);
     virtual ~Object();
-    inline ObjectKind Kind() const { return kind; }
-    inline bool IsNodeSet() const { return kind == ObjectKind::nodeSet; }
-    inline bool IsBoolean() const { return kind == ObjectKind::boolean; }
-    inline bool IsNumber() const { return kind == ObjectKind::number; }
-    inline bool IsString() const { return kind == ObjectKind::string; }
+    inline ObjectKind Kind() const noexcept { return kind; }
+    inline bool IsNodeSet() const noexcept { return kind == ObjectKind::nodeSet; }
+    inline bool IsBoolean() const noexcept { return kind == ObjectKind::boolean; }
+    inline bool IsNumber() const noexcept { return kind == ObjectKind::number; }
+    inline bool IsString() const noexcept { return kind == ObjectKind::string; }
     virtual soul::xml::Element* ToXmlElement() const = 0;
 private:
     ObjectKind kind;
@@ -37,8 +37,8 @@ class NodeSet : public Object
 {
 public:
     NodeSet();
-    inline const std::vector<soul::xml::Node*>& Nodes() const { return nodes; }
-    inline int Count() const { return nodes.size(); }
+    inline const std::vector<soul::xml::Node*>& Nodes() const noexcept { return nodes; }
+    inline int Count() const noexcept { return nodes.size(); }
     void Add(soul::xml::Node* node);
     Node* GetNode(int index) const;
     soul::xml::Element* ToXmlElement() const override;
@@ -49,9 +49,9 @@ private:
 class Boolean : public Object
 {
 public:
-    Boolean();
-    Boolean(bool value_);
-    inline bool Value() const { return value; }
+    Boolean() noexcept;
+    Boolean(bool value_) noexcept;
+    inline bool Value() const noexcept { return value; }
     soul::xml::Element* ToXmlElement() const override;
 private:
     bool value;
@@ -60,9 +60,9 @@ private:
 class Number : public Object
 {
 public:
-    Number();
-    Number(double value_);
-    inline double Value() const { return value; }
+    Number() noexcept;
+    Number(double value_) noexcept;
+    inline double Value() const noexcept { return value; }
     soul::xml::Element* ToXmlElement() const override;
 private:
     double value;
@@ -71,9 +71,9 @@ private:
 class String : public Object
 {
 public:
-    String();
+    String() noexcept;
     String(const std::string& value_);
-    inline const std::string& Value() const { return value; }
+    inline const std::string& Value() const noexcept { return value; }
     soul::xml::Element* ToXmlElement() const override;
 private:
     std::string value;

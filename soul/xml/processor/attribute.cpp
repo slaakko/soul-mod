@@ -34,7 +34,7 @@ void Attributes::AddAttribute(Attribute* attribute)
 }
 
 
-const std::string* Attributes::GetAttributeValue(const std::string& qualifiedName) const
+const std::string* Attributes::GetAttributeValue(const std::string& qualifiedName) const noexcept
 {
     for (const auto& attribute : attributes)
     {

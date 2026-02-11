@@ -62,7 +62,7 @@ public:
     CharSet* Clone() const;
     inline bool Inverse() const noexcept { return inverse; }
     inline void SetInverse() noexcept { inverse = true; }
-    inline const std::vector<Range>& Ranges() const noexcept { return ranges; }
+    const std::vector<Range>& Ranges() const noexcept { return ranges; }
     void AddRange(const Range& range);
 private:
     bool inverse;

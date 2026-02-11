@@ -16,8 +16,8 @@ class XmlContentHandler
 {
 public:
     XmlContentHandler();
-    inline soul::lexer::LexerBase<char32_t>* GetLexer() { return lexer; }
-    inline void SetLexer(soul::lexer::LexerBase<char32_t>* lexer_) { lexer = lexer_; }
+    inline soul::lexer::LexerBase<char32_t>* GetLexer() noexcept { return lexer; }
+    inline void SetLexer(soul::lexer::LexerBase<char32_t>* lexer_) noexcept { lexer = lexer_; }
     virtual ~XmlContentHandler();
     virtual void StartDocument(const soul::ast::SourcePos& sourcePos) {}
     virtual void EndDocument() {}

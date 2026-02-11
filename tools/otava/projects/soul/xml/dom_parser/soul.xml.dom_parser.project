@@ -1,0 +1,12 @@
+project soul.xml.dom_parser;
+target=library;
+reference <../../../util/util.project>;
+reference <../../ast/ast.project>;
+reference <../../lexer/lexer.project>;
+reference <../dom/soul.xml.dom.project>;
+reference <../processor/soul.xml.processor.project>;
+reference <../xml_parser/soul.xml.xml_parser.project>;
+interface <document_handler.cppm>;
+source <document_handler.cpp>;
+interface <dom_parser.cppm>;
+source <dom_parser.cpp>;

@@ -28,7 +28,8 @@ void ArrayGeneratorVisitor::Visit(soul::ast::spg::StringParser& parser)
     parser.SetArrayName(s);
     formatter.Write("static constexpr std::int32_t " + s + "[] = {");
     bool first = true;
-    for (char32_t c : parser.Str())
+    const std::u32string& str = parser.Str();
+    for (char32_t c : str)
     {
         if (first)
         {
@@ -50,7 +51,8 @@ void ArrayGeneratorVisitor::Visit(soul::ast::spg::CharSetParser& parser)
     parser.SetArrayName(s);
     formatter.Write("static constexpr soul::ast::spg::Range " + s + "[] = {");
     bool first = true;
-    for (const soul::ast::spg::Range& range : parser.GetCharSet()->Ranges())
+    soul::ast::spg::CharSet* charSet = parser.GetCharSet();
+    for (const auto& range : charSet->Ranges())
     {
         if (first)
         {

@@ -10,7 +10,7 @@ import soul.spg.file.parsers;
 import soul.spg.linking;
 import soul.spg.optimizer;
 import soul.spg.code.generator;
-//import soul.spg.xml.printer;
+import soul.spg.xml.printer;
 import soul.ast.common;
 
 namespace soul::spg {
@@ -118,7 +118,7 @@ void GenerateParsers(soul::ast::spg::SpgFile* spgFile, soul::lexer::FileMap& fil
     }
     if (xml)
     {
-        //PrintXml(spgFile, verbose, optimize);
+        PrintXml(spgFile, verbose, optimize);
     }
     GenerateCode(spgFile, verbose, noDebugSupport, version, fileMap);
     GenerateRuleNameModule(spgFile, verbose);
