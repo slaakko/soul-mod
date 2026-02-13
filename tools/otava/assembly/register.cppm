@@ -33,17 +33,17 @@ enum class GlobalReg : std::uint8_t
     none = 0, rax = 1 << 0, rbx = 1 << 1, rcx = 1 << 2, rdx = 1 << 3, r8 = 1 << 4, r9 = 1 << 5, r10 = 1 << 6, r11 = 1 << 7
 };
 
-constexpr GlobalReg operator|(GlobalReg left, GlobalReg right)
+constexpr GlobalReg operator|(GlobalReg left, GlobalReg right) noexcept
 {
     return GlobalReg(static_cast<std::uint8_t>(left) | static_cast<std::uint8_t>(right));
 }
 
-constexpr GlobalReg operator&(GlobalReg left, GlobalReg right)
+constexpr GlobalReg operator&(GlobalReg left, GlobalReg right) noexcept
 {
     return GlobalReg(static_cast<std::uint8_t>(left) & static_cast<std::uint8_t>(right));
 }
 
-constexpr GlobalReg operator~(GlobalReg reg)
+constexpr GlobalReg operator~(GlobalReg reg) noexcept
 {
     return GlobalReg(~std::uint8_t(reg));
 }
@@ -57,11 +57,10 @@ class Register : public Value
 public:
     Register();
     Register(RegisterKind kind_, RegisterGroupKind group_, int size_);
-    inline RegisterKind RegKind() const { return kind; }
-    inline RegisterGroupKind Group() const { return group; }
-    inline int Size() const { return size; }
-    inline bool IsFloatingPointReg() const { return group >= RegisterGroupKind::xmm0 && group <= RegisterGroupKind::xmm15; }
-    void FreeRegs(Context* context) override;
+    inline RegisterKind RegKind() const noexcept { return kind; }
+    inline RegisterGroupKind Group() const noexcept { return group; }
+    inline int Size() const noexcept { return size; }
+    inline bool IsFloatingPointReg() const noexcept { return group >= RegisterGroupKind::xmm0 && group <= RegisterGroupKind::xmm15; }
 private:
     RegisterKind kind;
     RegisterGroupKind group;
@@ -75,15 +74,15 @@ class RegisterGroup
 public:
     RegisterGroup();
     RegisterGroup(RegisterGroupKind kind_);
-    inline RegisterGroupKind Kind() const { return kind; }
+    inline RegisterGroupKind Kind() const noexcept { return kind; }
     const Register* GetReg(std::int64_t size) const;
     Register* GetReg(std::int64_t size);
     void SetReg(std::int64_t size, const Register& reg);
     bool IsLocal() const;
-    inline bool IsFloatingPointReg() const { return kind >= RegisterGroupKind::xmm0 && kind <= RegisterGroupKind::xmm15; }
-    inline bool IsVolatile() const { return !nonvolatile; }
-    inline bool IsNonvolatile() const { return nonvolatile; }
-    inline void SetNonvolatile(bool nonvolatile_) { nonvolatile = nonvolatile_; }
+    inline bool IsFloatingPointReg() const noexcept { return kind >= RegisterGroupKind::xmm0 && kind <= RegisterGroupKind::xmm15; }
+    inline bool IsVolatile() const noexcept { return !nonvolatile; }
+    inline bool IsNonvolatile() const noexcept { return nonvolatile; }
+    inline void SetNonvolatile(bool nonvolatile_) noexcept { nonvolatile = nonvolatile_; }
 private:
     RegisterGroupKind kind;
     Register regs[16];
@@ -94,15 +93,15 @@ class Registers
 {
 public:
     Registers();
-    inline const RegisterGroup* GetRegisterGroup(RegisterGroupKind kind) const { return regGroups[int(kind)].get(); }
-    inline RegisterGroup* GetRegisterGroup(RegisterGroupKind kind) { return regGroups[int(kind)].get(); }
+    inline const RegisterGroup* GetRegisterGroup(RegisterGroupKind kind) const noexcept { return regGroups[int(kind)].get(); }
+    inline RegisterGroup* GetRegisterGroup(RegisterGroupKind kind) noexcept { return regGroups[int(kind)].get(); }
 private:
     std::vector<std::unique_ptr<RegisterGroup>> regGroups;
 };
 
 struct RegisterGroupLess
 {
-    bool operator()(RegisterGroup* left, RegisterGroup* right) const;
+    bool operator()(RegisterGroup* left, RegisterGroup* right) const noexcept;
 };
 
 class RegisterPool
@@ -115,17 +114,15 @@ public:
     RegisterGroup* GetLocalRegisterGroup();
     RegisterGroup* GetLocalXMMRegisterGroup();
     RegisterGroup* GetRegisterGroup(RegisterGroupKind regGroupKind, bool used);
-    inline int LocalRegisterCount() const { return localRegisterCount; }
-    inline int LocalXMMRegisterCount() const { return localXMMRegisterCount; }
-    inline int NumFreeLocalRegisters() const { return localRegisterPool.size(); }
-    inline int NumFreeLocalXMMRegisters() const { return localXMMRegisterPool.size(); }
-    inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedLocalRegs() const { return usedLocalRegs; }
-    inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedNonvolatileRegs() const { return usedNonvolatileRegs; }
-    inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedLocalXMMRegs() const { return usedLocalXMMRegs; }
-    inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedNonvolatileXMMRegs() const { return usedNonvolatileXMMRegs; }
-    void UseGlobalReg(Register* reg);
-    void FreeGlobalReg(Register* reg);
-    inline bool IsChildFnRegisterPool() const { return isChildFnRegisterPool; }
+    inline int LocalRegisterCount() const noexcept { return localRegisterCount; }
+    inline int LocalXMMRegisterCount() const noexcept { return localXMMRegisterCount; }
+    inline int NumFreeLocalRegisters() const noexcept { return localRegisterPool.size(); }
+    inline int NumFreeLocalXMMRegisters() const noexcept { return localXMMRegisterPool.size(); }
+    inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedLocalRegs() const noexcept { return usedLocalRegs; }
+    inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedNonvolatileRegs() const noexcept { return usedNonvolatileRegs; }
+    inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedLocalXMMRegs() const noexcept { return usedLocalXMMRegs; }
+    inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedNonvolatileXMMRegs() const noexcept { return usedNonvolatileXMMRegs; }
+    inline bool IsChildFnRegisterPool() const noexcept { return isChildFnRegisterPool; }
 private:
     Registers& registers;
     int localRegisterCount;

@@ -18,15 +18,15 @@ class Function;
 class File;
 class Value;
 
-class Context
+class AssemblyContext
 {
 public:
-    Context();
-    inline void SetFile(File* file_) { file = file_; }
-    inline File* GetFile() const { return file; }
-    inline RegisterPool* GetRegisterPool() { return registerPool.get(); }
+    AssemblyContext();
+    inline void SetFile(File* file_) noexcept { file = file_; }
+    inline File* GetFile() const noexcept { return file; }
+    inline RegisterPool* GetRegisterPool() noexcept { return registerPool.get(); }
     void ResetRegisterPool();
-    inline void SetCurrentFunction(Function* function) { currentFunction = function; }
+    inline void SetCurrentFunction(Function* function) noexcept { currentFunction = function; }
     Register* GetLocalReg(std::int64_t size);
     Register* GetGlobalReg(std::int64_t size, RegisterGroupKind regGroupKind);
     Register* GetGlobalReg(std::int64_t size, RegisterGroupKind regGroupKind, bool used);
@@ -38,7 +38,7 @@ public:
     Value* MakeContent(Value* value);
     Value* MakeSizePrefix(std::int64_t size, Value* value);
     Value* MakeBinaryExpr(Value* left, Value* right, Operator op);
-    inline int GetNextJumpTabLabelId() { return jumpTabLabelCounter++; }
+    inline int GetNextJumpTabLabelId() noexcept { return jumpTabLabelCounter++; }
 private:
     bool childFn;
     Registers registers;

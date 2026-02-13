@@ -66,7 +66,7 @@ bool IsIdentityFunction(otava::intermediate::Function* fn)
     return false;
 }
 
-void RemoveIdentityFunctionCall(otava::intermediate::FunctionCallInstruction* identityFnCallInst, otava::intermediate::Context* context)
+void RemoveIdentityFunctionCall(otava::intermediate::FunctionCallInstruction* identityFnCallInst, otava::intermediate::IntermediateContext* context)
 {
     otava::intermediate::Instruction* prev = identityFnCallInst->Prev();
     if (!prev || !prev->IsArgInstruction())
@@ -86,7 +86,7 @@ void RemoveIdentityFunctionCall(otava::intermediate::FunctionCallInstruction* id
     identityFnCallInst->Parent()->RemoveInstruction(identityFnCallInst);
 }
 
-void OptimizeIdentityCalls(otava::intermediate::Function* fn, otava::intermediate::Context* context)
+void OptimizeIdentityCalls(otava::intermediate::Function* fn, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     otava::intermediate::BasicBlock* bb = fn->FirstBasicBlock();

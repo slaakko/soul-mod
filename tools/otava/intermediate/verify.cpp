@@ -19,7 +19,7 @@ namespace otava::intermediate {
 class VerifierVisitor : public Visitor
 {
 public:
-    VerifierVisitor(Context* context_);
+    VerifierVisitor(IntermediateContext* context_);
     void Visit(Function& function) override;
     void Visit(BasicBlock& basicBlock) override;
     void Visit(StoreInstruction& inst) override;
@@ -90,7 +90,7 @@ private:
     int index;
 };
 
-VerifierVisitor::VerifierVisitor(Context* context_) : Visitor(context_), currentFunction(nullptr), currentBasicBlock(nullptr), numParams(0), regNumber(0), index(0)
+VerifierVisitor::VerifierVisitor(IntermediateContext* context_) : Visitor(context_), currentFunction(nullptr), currentBasicBlock(nullptr), numParams(0), regNumber(0), index(0)
 {
 }
 
@@ -853,7 +853,7 @@ void VerifierVisitor::Visit(GetRbpInstruction& inst)
     inst.SetIndex(index++);
 }
 
-void Verify(Context& context)
+void Verify(IntermediateContext& context)
 {
     VerifierVisitor visitor(&context);
     context.GetCode().VisitFunctions(visitor);

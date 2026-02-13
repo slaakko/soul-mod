@@ -1,0 +1,5 @@
+project ooc;
+target=program;
+reference <../../util/util.project>;
+reference <../assembly/assembly.project>;
+source <main.cpp>;

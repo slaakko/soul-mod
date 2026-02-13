@@ -28,7 +28,7 @@ void EmitJumpTableSwitch(otava::intermediate::SwitchInstruction& inst, otava::in
             return;
         }
     }
-    otava::assembly::Context* assemblyContext = codeGenerator.Ctx()->AssemblyContext();
+    otava::assembly::AssemblyContext* assemblyContext = codeGenerator.Ctx()->GetAssemblyContext();
     int size = static_cast<int>(inst.Cond()->GetType()->Size());
     std::vector<otava::intermediate::CaseTarget> caseTargets = inst.CaseTargets();
     std::sort(caseTargets.begin(), caseTargets.end(), CaseLess());

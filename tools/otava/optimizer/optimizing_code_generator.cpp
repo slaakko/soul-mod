@@ -10,7 +10,7 @@ import otava.optimizer.jump_table_switch;
 
 namespace otava::optimizer {
 
-OptimizingCodeGenerator::OptimizingCodeGenerator(otava::intermediate::Context* context_, const std::string& assemblyFilePath_) : 
+OptimizingCodeGenerator::OptimizingCodeGenerator(otava::intermediate::IntermediateContext* context_, const std::string& assemblyFilePath_) : 
     otava::intermediate::CodeGenerator(context_, assemblyFilePath_)
 {
 }
@@ -178,9 +178,8 @@ void OptimizingCodeGenerator::Visit(otava::intermediate::NoOperationInstruction&
     CodeGenerator::Visit(inst);
 }
 
-int OptimizingCodeGenerator::ExitLabelId() const
+int OptimizingCodeGenerator::ExitLabelId() const noexcept
 {
-
     if (HasOptimization(Optimizations::jump))
     {
         otava::intermediate::BasicBlock* lastBB = CurrentFunction()->LastBasicBlock();
@@ -213,7 +212,7 @@ void OptimizingCodeGenerator::EmitBranchJumps(otava::intermediate::BranchInstruc
         if (branchInst.TrueTargetBasicBlock() == bb->Next())
         {
             otava::assembly::Instruction* jzInstruction = new otava::assembly::Instruction(otava::assembly::OpCode::JZ);
-            jzInstruction->AddOperand(Ctx()->AssemblyContext()->MakeSymbol("@" + std::to_string(branchInst.FalseTargetBasicBlock()->Id())));
+            jzInstruction->AddOperand(Ctx()->GetAssemblyContext()->MakeSymbol("@" + std::to_string(branchInst.FalseTargetBasicBlock()->Id())));
             Emit(jzInstruction);
             return;
         }

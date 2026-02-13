@@ -17,13 +17,13 @@ const int maxJumpTableEntries = 1024;
 class OptimizingCodeGenerator : public otava::intermediate::CodeGenerator
 {
 public:
-    OptimizingCodeGenerator(otava::intermediate::Context* context_, const std::string& assemblyFilePath_);
+    OptimizingCodeGenerator(otava::intermediate::IntermediateContext* context_, const std::string& assemblyFilePath_);
     void Emit(otava::assembly::Instruction* assemblyInstruction) override;
     void Visit(otava::intermediate::SwitchInstruction& inst) override;
     void Visit(otava::intermediate::JmpInstruction& inst) override;
     void Visit(otava::intermediate::RetInstruction& inst) override;
     void Visit(otava::intermediate::NoOperationInstruction& inst) override;
-    int ExitLabelId() const override;
+    int ExitLabelId() const noexcept override;
     void EmitJumpToExit(otava::intermediate::RetInstruction& retInst) override;
     void EmitBranchJumps(otava::intermediate::BranchInstruction& branchInst) override;
 private:

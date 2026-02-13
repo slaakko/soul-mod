@@ -43,7 +43,7 @@ void Optimizer::SetOptimizations(const std::string& optLevel)
     }
 }
 
-void Optimize(otava::intermediate::Context* context)
+void Optimize(otava::intermediate::IntermediateContext* context)
 {
     otava::intermediate::Code* code = &context->GetCode();
     otava::intermediate::Function* fn = code->FirstFunction();

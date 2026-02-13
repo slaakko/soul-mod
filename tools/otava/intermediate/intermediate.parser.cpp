@@ -13,7 +13,7 @@ import otava.intermediate.lexer;
 namespace otava::intermediate::parser {
 
 template<typename LexerT>
-void IntermediateParser<LexerT>::Parse(LexerT& lexer, otava::intermediate::Context* context)
+void IntermediateParser<LexerT>::Parse(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
@@ -50,7 +50,7 @@ void IntermediateParser<LexerT>::Parse(LexerT& lexer, otava::intermediate::Conte
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::IntermediateFile(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::IntermediateFile(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -200,7 +200,7 @@ soul::parser::Match IntermediateParser<LexerT>::IntermediateFile(LexerT& lexer, 
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::TypeDeclarations(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::TypeDeclarations(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -317,7 +317,7 @@ soul::parser::Match IntermediateParser<LexerT>::TypeDeclarations(LexerT& lexer, 
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::TypeDeclaration(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::TypeDeclaration(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -1051,7 +1051,7 @@ soul::parser::Match IntermediateParser<LexerT>::TypeRef(LexerT& lexer)
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::StructureType(LexerT& lexer, otava::intermediate::Context* context, std::int32_t typeId)
+soul::parser::Match IntermediateParser<LexerT>::StructureType(LexerT& lexer, otava::intermediate::IntermediateContext* context, std::int32_t typeId)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -1277,7 +1277,7 @@ soul::parser::Match IntermediateParser<LexerT>::StructureType(LexerT& lexer, ota
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::ArrayType(LexerT& lexer, otava::intermediate::Context* context, std::int32_t typeId)
+soul::parser::Match IntermediateParser<LexerT>::ArrayType(LexerT& lexer, otava::intermediate::IntermediateContext* context, std::int32_t typeId)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -1434,7 +1434,7 @@ soul::parser::Match IntermediateParser<LexerT>::ArrayType(LexerT& lexer, otava::
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::FunctionType(LexerT& lexer, otava::intermediate::Context* context, std::int32_t typeId)
+soul::parser::Match IntermediateParser<LexerT>::FunctionType(LexerT& lexer, otava::intermediate::IntermediateContext* context, std::int32_t typeId)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -1662,7 +1662,7 @@ soul::parser::Match IntermediateParser<LexerT>::FunctionType(LexerT& lexer, otav
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::DataDefinitions(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::DataDefinitions(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -1779,7 +1779,7 @@ soul::parser::Match IntermediateParser<LexerT>::DataDefinitions(LexerT& lexer, o
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::DataDefinition(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::DataDefinition(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -1943,7 +1943,7 @@ soul::parser::Match IntermediateParser<LexerT>::DataDefinition(LexerT& lexer, ot
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::Constant(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type)
+soul::parser::Match IntermediateParser<LexerT>::Constant(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -2526,7 +2526,7 @@ soul::parser::Match IntermediateParser<LexerT>::Constant(LexerT& lexer, otava::i
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::BoolConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::BoolConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -2641,7 +2641,7 @@ soul::parser::Match IntermediateParser<LexerT>::BoolConstant(LexerT& lexer, otav
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::SByteConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::SByteConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -2709,7 +2709,7 @@ soul::parser::Match IntermediateParser<LexerT>::SByteConstant(LexerT& lexer, ota
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::ByteConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::ByteConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -2777,7 +2777,7 @@ soul::parser::Match IntermediateParser<LexerT>::ByteConstant(LexerT& lexer, otav
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::ShortConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::ShortConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -2845,7 +2845,7 @@ soul::parser::Match IntermediateParser<LexerT>::ShortConstant(LexerT& lexer, ota
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::UShortConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::UShortConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -2913,7 +2913,7 @@ soul::parser::Match IntermediateParser<LexerT>::UShortConstant(LexerT& lexer, ot
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::IntConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::IntConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -2981,7 +2981,7 @@ soul::parser::Match IntermediateParser<LexerT>::IntConstant(LexerT& lexer, otava
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::UIntConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::UIntConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -3049,7 +3049,7 @@ soul::parser::Match IntermediateParser<LexerT>::UIntConstant(LexerT& lexer, otav
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::LongConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::LongConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -3117,7 +3117,7 @@ soul::parser::Match IntermediateParser<LexerT>::LongConstant(LexerT& lexer, otav
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::ULongConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::ULongConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -3185,7 +3185,7 @@ soul::parser::Match IntermediateParser<LexerT>::ULongConstant(LexerT& lexer, ota
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::FloatConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::FloatConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -3253,7 +3253,7 @@ soul::parser::Match IntermediateParser<LexerT>::FloatConstant(LexerT& lexer, ota
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::DoubleConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::DoubleConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -3321,7 +3321,7 @@ soul::parser::Match IntermediateParser<LexerT>::DoubleConstant(LexerT& lexer, ot
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::AddressConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::AddressConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -3445,7 +3445,7 @@ soul::parser::Match IntermediateParser<LexerT>::AddressConstant(LexerT& lexer, o
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::ArrayConstant(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type)
+soul::parser::Match IntermediateParser<LexerT>::ArrayConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -3645,7 +3645,7 @@ soul::parser::Match IntermediateParser<LexerT>::ArrayConstant(LexerT& lexer, ota
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::StructureConstant(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type)
+soul::parser::Match IntermediateParser<LexerT>::StructureConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -3844,7 +3844,7 @@ soul::parser::Match IntermediateParser<LexerT>::StructureConstant(LexerT& lexer,
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::StringConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::StringConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -3893,7 +3893,7 @@ soul::parser::Match IntermediateParser<LexerT>::StringConstant(LexerT& lexer, ot
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::StringArrayConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::StringArrayConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -4164,7 +4164,7 @@ soul::parser::Match IntermediateParser<LexerT>::StringArrayPrefix(LexerT& lexer)
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::ConversionConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::ConversionConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -4300,7 +4300,7 @@ soul::parser::Match IntermediateParser<LexerT>::ConversionConstant(LexerT& lexer
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::ClsIdConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::ClsIdConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -4379,7 +4379,7 @@ soul::parser::Match IntermediateParser<LexerT>::ClsIdConstant(LexerT& lexer, ota
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::SymbolConstant(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::SymbolConstant(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -4453,7 +4453,7 @@ soul::parser::Match IntermediateParser<LexerT>::SymbolConstant(LexerT& lexer, ot
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::Value(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type)
+soul::parser::Match IntermediateParser<LexerT>::Value(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -4567,7 +4567,7 @@ soul::parser::Match IntermediateParser<LexerT>::Value(LexerT& lexer, otava::inte
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::RegValue(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type)
+soul::parser::Match IntermediateParser<LexerT>::RegValue(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -4648,7 +4648,7 @@ soul::parser::Match IntermediateParser<LexerT>::RegValue(LexerT& lexer, otava::i
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::ResultRegValue(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type)
+soul::parser::Match IntermediateParser<LexerT>::ResultRegValue(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -4729,7 +4729,7 @@ soul::parser::Match IntermediateParser<LexerT>::ResultRegValue(LexerT& lexer, ot
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::SymbolValue(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type)
+soul::parser::Match IntermediateParser<LexerT>::SymbolValue(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -4809,7 +4809,7 @@ soul::parser::Match IntermediateParser<LexerT>::SymbolValue(LexerT& lexer, otava
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::LiteralValue(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type)
+soul::parser::Match IntermediateParser<LexerT>::LiteralValue(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -4986,7 +4986,7 @@ soul::parser::Match IntermediateParser<LexerT>::LiteralValue(LexerT& lexer, otav
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::FunctionDefinitions(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::FunctionDefinitions(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -5055,7 +5055,7 @@ soul::parser::Match IntermediateParser<LexerT>::FunctionDefinitions(LexerT& lexe
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::FunctionDeclaration(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::FunctionDeclaration(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -5194,7 +5194,7 @@ soul::parser::Match IntermediateParser<LexerT>::FunctionDeclaration(LexerT& lexe
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::FunctionDefinition(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::FunctionDefinition(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -5310,7 +5310,7 @@ soul::parser::Match IntermediateParser<LexerT>::FunctionDefinition(LexerT& lexer
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::FunctionHeader(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::FunctionHeader(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -5611,7 +5611,7 @@ soul::parser::Match IntermediateParser<LexerT>::FunctionHeader(LexerT& lexer, ot
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::BasicBlock(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Function* function)
+soul::parser::Match IntermediateParser<LexerT>::BasicBlock(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::Function* function)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -5737,7 +5737,7 @@ soul::parser::Match IntermediateParser<LexerT>::Label(LexerT& lexer)
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::Operand(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::Operand(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -5811,7 +5811,7 @@ soul::parser::Match IntermediateParser<LexerT>::Operand(LexerT& lexer, otava::in
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::Instructions(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::BasicBlock* basicBlock)
+soul::parser::Match IntermediateParser<LexerT>::Instructions(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::BasicBlock* basicBlock)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -5898,7 +5898,7 @@ soul::parser::Match IntermediateParser<LexerT>::Instructions(LexerT& lexer, otav
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::Instruction(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::Instruction(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -6176,7 +6176,7 @@ soul::parser::Match IntermediateParser<LexerT>::Instruction(LexerT& lexer, otava
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::StoreInstruction(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::StoreInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -6347,7 +6347,7 @@ soul::parser::Match IntermediateParser<LexerT>::StoreInstruction(LexerT& lexer, 
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::ArgInstruction(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::ArgInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -6452,7 +6452,7 @@ soul::parser::Match IntermediateParser<LexerT>::ArgInstruction(LexerT& lexer, ot
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::JmpInstruction(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::JmpInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -6528,7 +6528,7 @@ soul::parser::Match IntermediateParser<LexerT>::JmpInstruction(LexerT& lexer, ot
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::BranchInstruction(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::BranchInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -6707,7 +6707,7 @@ soul::parser::Match IntermediateParser<LexerT>::BranchInstruction(LexerT& lexer,
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::ProcedureCallInstruction(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::ProcedureCallInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -6812,7 +6812,7 @@ soul::parser::Match IntermediateParser<LexerT>::ProcedureCallInstruction(LexerT&
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::RetInstruction(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::RetInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -7017,7 +7017,7 @@ soul::parser::Match IntermediateParser<LexerT>::RetInstruction(LexerT& lexer, ot
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::SwitchInstruction(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::SwitchInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -7451,7 +7451,7 @@ soul::parser::Match IntermediateParser<LexerT>::SwitchInstruction(LexerT& lexer,
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::ValueInstruction(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::ValueInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -7573,7 +7573,7 @@ soul::parser::Match IntermediateParser<LexerT>::ValueInstruction(LexerT& lexer, 
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::Operation(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result)
+soul::parser::Match IntermediateParser<LexerT>::Operation(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -7912,7 +7912,7 @@ soul::parser::Match IntermediateParser<LexerT>::Operation(LexerT& lexer, otava::
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::UnaryInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result)
+soul::parser::Match IntermediateParser<LexerT>::UnaryInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -8561,7 +8561,7 @@ soul::parser::Match IntermediateParser<LexerT>::UnaryInstruction(LexerT& lexer, 
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::BinaryInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result)
+soul::parser::Match IntermediateParser<LexerT>::BinaryInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -9770,7 +9770,7 @@ soul::parser::Match IntermediateParser<LexerT>::BinaryInstruction(LexerT& lexer,
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::ParamInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result)
+soul::parser::Match IntermediateParser<LexerT>::ParamInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -9820,7 +9820,7 @@ soul::parser::Match IntermediateParser<LexerT>::ParamInstruction(LexerT& lexer, 
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::LocalInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result)
+soul::parser::Match IntermediateParser<LexerT>::LocalInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -9899,7 +9899,7 @@ soul::parser::Match IntermediateParser<LexerT>::LocalInstruction(LexerT& lexer, 
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::PLocalInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result)
+soul::parser::Match IntermediateParser<LexerT>::PLocalInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -10043,7 +10043,7 @@ soul::parser::Match IntermediateParser<LexerT>::PLocalInstruction(LexerT& lexer,
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::LoadInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result)
+soul::parser::Match IntermediateParser<LexerT>::LoadInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -10119,7 +10119,7 @@ soul::parser::Match IntermediateParser<LexerT>::LoadInstruction(LexerT& lexer, o
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::ElemAddrInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result)
+soul::parser::Match IntermediateParser<LexerT>::ElemAddrInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -10232,7 +10232,7 @@ soul::parser::Match IntermediateParser<LexerT>::ElemAddrInstruction(LexerT& lexe
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::PtrOffsetInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result)
+soul::parser::Match IntermediateParser<LexerT>::PtrOffsetInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -10345,7 +10345,7 @@ soul::parser::Match IntermediateParser<LexerT>::PtrOffsetInstruction(LexerT& lex
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::PtrDiffInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result)
+soul::parser::Match IntermediateParser<LexerT>::PtrDiffInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -10458,7 +10458,7 @@ soul::parser::Match IntermediateParser<LexerT>::PtrDiffInstruction(LexerT& lexer
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::GetRbpInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result)
+soul::parser::Match IntermediateParser<LexerT>::GetRbpInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -10522,7 +10522,7 @@ soul::parser::Match IntermediateParser<LexerT>::GetRbpInstruction(LexerT& lexer,
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::FunctionCallInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result)
+soul::parser::Match IntermediateParser<LexerT>::FunctionCallInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -10627,7 +10627,7 @@ soul::parser::Match IntermediateParser<LexerT>::FunctionCallInstruction(LexerT& 
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::BlockValue(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::BlockValue(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -10754,7 +10754,7 @@ soul::parser::Match IntermediateParser<LexerT>::BlockValue(LexerT& lexer, otava:
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::NoOperationInstruction(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::NoOperationInstruction(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -10804,7 +10804,7 @@ soul::parser::Match IntermediateParser<LexerT>::NoOperationInstruction(LexerT& l
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::Metadata(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::Metadata(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -10921,7 +10921,7 @@ soul::parser::Match IntermediateParser<LexerT>::Metadata(LexerT& lexer, otava::i
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::MetadataStruct(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::MetadataStruct(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -11137,7 +11137,7 @@ soul::parser::Match IntermediateParser<LexerT>::MetadataStruct(LexerT& lexer, ot
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::MetadataField(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::MetadataStruct* parent)
+soul::parser::Match IntermediateParser<LexerT>::MetadataField(LexerT& lexer, otava::intermediate::IntermediateContext* context, otava::intermediate::MetadataStruct* parent)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -11228,7 +11228,7 @@ soul::parser::Match IntermediateParser<LexerT>::MetadataField(LexerT& lexer, ota
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::MetadataItem(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::MetadataItem(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -11365,7 +11365,7 @@ soul::parser::Match IntermediateParser<LexerT>::MetadataItem(LexerT& lexer, otav
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::MetadataBool(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::MetadataBool(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -11455,7 +11455,7 @@ soul::parser::Match IntermediateParser<LexerT>::MetadataBool(LexerT& lexer, otav
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::MetadataLong(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::MetadataLong(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -11503,7 +11503,7 @@ soul::parser::Match IntermediateParser<LexerT>::MetadataLong(LexerT& lexer, otav
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::MetadataString(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::MetadataString(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
@@ -11551,7 +11551,7 @@ soul::parser::Match IntermediateParser<LexerT>::MetadataString(LexerT& lexer, ot
 }
 
 template<typename LexerT>
-soul::parser::Match IntermediateParser<LexerT>::MetadataRef(LexerT& lexer, otava::intermediate::Context* context)
+soul::parser::Match IntermediateParser<LexerT>::MetadataRef(LexerT& lexer, otava::intermediate::IntermediateContext* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;

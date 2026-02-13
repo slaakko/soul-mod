@@ -18,7 +18,7 @@ parser IntermediateParser
     lexer otava::intermediate::lexer::IntermediateLexer<char32_t>;
     main;
 
-    IntermediateFile(otava::intermediate::Context* context)
+    IntermediateFile(otava::intermediate::IntermediateContext* context)
         ::= empty{ context->SetFilePath(lexer.FileName()); }
             TypeDeclarations(context):types?
             DataDefinitions(context):data?
@@ -26,14 +26,14 @@ parser IntermediateParser
             Metadata(context):metadata?
         ;
 
-    TypeDeclarations(otava::intermediate::Context* context)
+    TypeDeclarations(otava::intermediate::IntermediateContext* context)
         ::= TYPES LBRACE TypeDeclaration(context):typeDeclaration* RBRACE
         {
             context->ResolveTypes();
         }
         ;
 
-    TypeDeclaration(otava::intermediate::Context* context, var std::int32_t tid)
+    TypeDeclaration(otava::intermediate::IntermediateContext* context, var std::int32_t tid)
         ::= TypeId:typeId{ tid = typeId;} ASSIGN TYPE
         (   StructureType(context, tid):structureType
         |   ArrayType(context, tid):arrayType
@@ -76,7 +76,7 @@ parser IntermediateParser
         }
         ;
 
-    StructureType(otava::intermediate::Context* context, std::int32_t typeId, var soul::ast::Span span, var std::vector<otava::intermediate::TypeRef> fieldTypeRefs)
+    StructureType(otava::intermediate::IntermediateContext* context, std::int32_t typeId, var soul::ast::Span span, var std::vector<otava::intermediate::TypeRef> fieldTypeRefs)
         ::= LBRACE{ span = lexer.GetSpan(pos); } 
             (TypeRef:first{ fieldTypeRefs.push_back(first); } 
             (COMMA TypeRef:next{ fieldTypeRefs.push_back(next); })*)? 
@@ -87,7 +87,7 @@ parser IntermediateParser
         }
         ;
 
-    ArrayType(otava::intermediate::Context* context, std::int32_t typeId, var soul::ast::Span span, var std::int64_t size)
+    ArrayType(otava::intermediate::IntermediateContext* context, std::int32_t typeId, var soul::ast::Span span, var std::int64_t size)
         ::= LBRACKET { span = lexer.GetSpan(pos); } 
             NUMBER{ size = lexer.GetToken(pos).ToLong(); } 
             ID{ pass = util::ToUtf8(lexer.GetToken(pos).ToString()) == "x"; } 
@@ -98,7 +98,7 @@ parser IntermediateParser
         }
         ;
 
-    FunctionType(otava::intermediate::Context* context, std::int32_t typeId, var soul::ast::Span span, var std::vector<otava::intermediate::TypeRef> paramTypeRefs)
+    FunctionType(otava::intermediate::IntermediateContext* context, std::int32_t typeId, var soul::ast::Span span, var std::vector<otava::intermediate::TypeRef> paramTypeRefs)
         ::= FUNCTION{ span = lexer.GetSpan(pos); } 
             TypeRef:returnTypeRef 
             LPAREN 
@@ -110,11 +110,11 @@ parser IntermediateParser
         }
         ;
 
-    DataDefinitions(otava::intermediate::Context* context) 
+    DataDefinitions(otava::intermediate::IntermediateContext* context) 
         ::= DATA LBRACE DataDefinition(context):dataDefinition* RBRACE{ context->ResolveData(); }
         ;
 
-    DataDefinition(otava::intermediate::Context* context, 
+    DataDefinition(otava::intermediate::IntermediateContext* context, 
         var otava::intermediate::TypeRef tref, var soul::ast::Span span, var std::string variableName) 
         ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); }  
             ID{ span = lexer.GetSpan(pos); variableName = util::ToUtf8(lexer.GetToken(pos).ToString()); } 
@@ -123,7 +123,7 @@ parser IntermediateParser
         )
         ;
 
-    Constant(otava::intermediate::Context* context, otava::intermediate::Type* type) : otava::intermediate::Value*
+    Constant(otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type) : otava::intermediate::Value*
         ::= BoolConstant(context):boolConstant{ return boolConstant; }
         |   SByteConstant(context):sbyteConstant{ return sbyteConstant; }
         |   ByteConstant(context):byteConstant{ return byteConstant; }
@@ -145,54 +145,54 @@ parser IntermediateParser
         |   SymbolConstant(context):symbolConstant{ return symbolConstant; }
         ;
 
-    BoolConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
+    BoolConstant(otava::intermediate::IntermediateContext* context) : otava::intermediate::Value*
         ::= BOOL
         (   TRUE{ return context->GetTrueValue(); }
         |   FALSE{ return context->GetFalseValue(); }
         )
         ;
 
-    SByteConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
+    SByteConstant(otava::intermediate::IntermediateContext* context) : otava::intermediate::Value*
         ::= SBYTE NUMBER{ return context->GetSByteValue(lexer.GetToken(pos).ToSByte()); }
         ;
 
-    ByteConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
+    ByteConstant(otava::intermediate::IntermediateContext* context) : otava::intermediate::Value*
         ::= BYTE NUMBER{ return context->GetByteValue(lexer.GetToken(pos).ToByte()); }
         ;
 
-    ShortConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
+    ShortConstant(otava::intermediate::IntermediateContext* context) : otava::intermediate::Value*
         ::= SHORT NUMBER{ return context->GetShortValue(lexer.GetToken(pos).ToShort()); }
         ;
 
-    UShortConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
+    UShortConstant(otava::intermediate::IntermediateContext* context) : otava::intermediate::Value*
         ::= USHORT NUMBER{ return context->GetUShortValue(lexer.GetToken(pos).ToUShort()); }
         ;
 
-    IntConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
+    IntConstant(otava::intermediate::IntermediateContext* context) : otava::intermediate::Value*
         ::= INT NUMBER{ return context->GetIntValue(lexer.GetToken(pos).ToInt()); }
         ;
 
-    UIntConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
+    UIntConstant(otava::intermediate::IntermediateContext* context) : otava::intermediate::Value*
         ::= UINT NUMBER{ return context->GetUIntValue(lexer.GetToken(pos).ToUInt()); }
         ;
 
-    LongConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
+    LongConstant(otava::intermediate::IntermediateContext* context) : otava::intermediate::Value*
         ::= LONG NUMBER{ return context->GetLongValue(lexer.GetToken(pos).ToLong()); }
         ;
 
-    ULongConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
+    ULongConstant(otava::intermediate::IntermediateContext* context) : otava::intermediate::Value*
         ::= ULONG NUMBER{ return context->GetULongValue(lexer.GetToken(pos).ToULong()); }
         ;
 
-    FloatConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
+    FloatConstant(otava::intermediate::IntermediateContext* context) : otava::intermediate::Value*
         ::= FLOAT NUMBER{ return context->GetFloatValue(lexer.GetToken(pos).ToFloat()); }
         ;
 
-    DoubleConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
+    DoubleConstant(otava::intermediate::IntermediateContext* context) : otava::intermediate::Value*
         ::= DOUBLE NUMBER{ return context->GetDoubleValue(lexer.GetToken(pos).ToDouble()); }
         ;
 
-    AddressConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref) : otava::intermediate::Value*
+    AddressConstant(otava::intermediate::IntermediateContext* context, var otava::intermediate::TypeRef tref) : otava::intermediate::Value*
         ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } 
         (   NULL_TOKEN
             {
@@ -205,7 +205,7 @@ parser IntermediateParser
         )
         ;
 
-    ArrayConstant(otava::intermediate::Context* context, otava::intermediate::Type* type, var otava::intermediate::ArrayType* arrayType, 
+    ArrayConstant(otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type, var otava::intermediate::ArrayType* arrayType, 
         var otava::intermediate::Type* elementType,
         var soul::ast::Span span, var std::vector<otava::intermediate::Value*> elements) : otava::intermediate::Value*
         ::= LBRACKET{ span = lexer.GetSpan(pos); arrayType = static_cast<otava::intermediate::ArrayType*>(type->BaseType()); elementType = arrayType->ElementType(); } 
@@ -217,7 +217,7 @@ parser IntermediateParser
         }
         ;
 
-    StructureConstant(otava::intermediate::Context* context, otava::intermediate::Type* type, var otava::intermediate::StructureType* structureType, var int index,
+    StructureConstant(otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type, var otava::intermediate::StructureType* structureType, var int index,
         var soul::ast::Span span, var std::vector<otava::intermediate::Value*> fieldValues) : otava::intermediate::Value*
         ::= LBRACE{ span = lexer.GetSpan(pos); structureType = static_cast<otava::intermediate::StructureType*>(type->BaseType()); }
             (Constant(context, structureType->FieldType(index++)):first{ fieldValues.push_back(first); }
@@ -228,11 +228,11 @@ parser IntermediateParser
         }
         ;
 
-    StringConstant(otava::intermediate::Context* context, var soul::ast::Span span) : otava::intermediate::Value*
+    StringConstant(otava::intermediate::IntermediateContext* context, var soul::ast::Span span) : otava::intermediate::Value*
         ::= STRING{ return context->MakeStringValue(lexer.GetSpan(pos), util::ToUtf8(lexer.GetToken(pos).ToString()), true); }
         ;
 
-    StringArrayConstant(otava::intermediate::Context* context, 
+    StringArrayConstant(otava::intermediate::IntermediateContext* context, 
         var soul::ast::Span span, var std::vector<otava::intermediate::Value*> elements) : otava::intermediate::Value*
         ::= StringArrayPrefix:prefix{ span = lexer.GetSpan(pos); } 
             LBRACKET 
@@ -248,48 +248,48 @@ parser IntermediateParser
         ::= ID{ std::string p = util::ToUtf8(lexer.GetToken(pos).ToString()); pass = p == "u" || p == "w" || p == "b"; if (pass) { return p[0]; } }
         ;
 
-    ConversionConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref, var soul::ast::Span span) : otava::intermediate::Value*
+    ConversionConstant(otava::intermediate::IntermediateContext* context, var otava::intermediate::TypeRef tref, var soul::ast::Span span) : otava::intermediate::Value*
         ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); span = lexer.GetSpan(pos); } CONV LPAREN Constant(context, nullptr):from RPAREN
         {
             return context->MakeConversionValue(span, tref.GetType(), from);
         }
         ;
 
-    ClsIdConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref, var soul::ast::Span span) : otava::intermediate::Value*
+    ClsIdConstant(otava::intermediate::IntermediateContext* context, var otava::intermediate::TypeRef tref, var soul::ast::Span span) : otava::intermediate::Value*
         ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); span = lexer.GetSpan(pos); } CLSID 
         {
             return context->MakeClsIdValue(span, tref.GetType(), util::ToUtf8(lexer.GetToken(pos).ToString()));
         }
         ;
 
-    SymbolConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref) : otava::intermediate::Value*
+    SymbolConstant(otava::intermediate::IntermediateContext* context, var otava::intermediate::TypeRef tref) : otava::intermediate::Value*
         ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } SymbolValue(context, tref.GetType()):symbolValue
         {
             return symbolValue;
         }
         ;
 
-    Value(otava::intermediate::Context* context, otava::intermediate::Type* type) : otava::intermediate::Value*
+    Value(otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type) : otava::intermediate::Value*
         ::= RegValue(context, type):regValue{ return regValue; }
         |   SymbolValue(context, type):symbolValue{ return symbolValue; }
         |   LiteralValue(context, type):literalValue{ return literalValue; }
         ;
 
-    RegValue(otava::intermediate::Context* context, otava::intermediate::Type* type, var soul::ast::Span span) : otava::intermediate::Value*
+    RegValue(otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type, var soul::ast::Span span) : otava::intermediate::Value*
         ::= DOLLAR{ span = lexer.GetSpan(pos); } 
             NUMBER{ span.Union(lexer.GetSpan(pos)); std::int32_t reg = lexer.GetToken(pos).ToInt(); return context->CurrentFunction()->GetRegRef(span, type, reg, context); }
         ;
 
-    ResultRegValue(otava::intermediate::Context* context, otava::intermediate::Type* type, var soul::ast::Span span) : otava::intermediate::RegValue*
+    ResultRegValue(otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type, var soul::ast::Span span) : otava::intermediate::RegValue*
         ::= DOLLAR{ span = lexer.GetSpan(pos); } 
             NUMBER{ span.Union(lexer.GetSpan(pos)); std::int32_t reg = lexer.GetToken(pos).ToInt(); return context->CurrentFunction()->MakeRegValue(span, type, reg, context); }
         ;
 
-    SymbolValue(otava::intermediate::Context* context, otava::intermediate::Type* type, var soul::ast::Span span) : otava::intermediate::Value*
+    SymbolValue(otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type, var soul::ast::Span span) : otava::intermediate::Value*
         ::= AT{ span = lexer.GetSpan(pos); } ID{ span.Union(lexer.GetSpan(pos)); return context->MakeSymbolValue(span, type, util::ToUtf8(lexer.GetToken(pos).ToString()));  }
         ;
 
-    LiteralValue(otava::intermediate::Context* context, otava::intermediate::Type* type) : otava::intermediate::Value*
+    LiteralValue(otava::intermediate::IntermediateContext* context, otava::intermediate::Type* type) : otava::intermediate::Value*
         ::= TRUE{ return context->GetBooleanLiteral(lexer.GetSpan(pos), type, true); }
         |   FALSE{ return context->GetBooleanLiteral(lexer.GetSpan(pos), type, false); }
         |   NULL_TOKEN{ return context->GetNullValue(lexer.GetSpan(pos), type); }
@@ -297,14 +297,14 @@ parser IntermediateParser
         |   ID{ return context->MakeAddressLiteral(lexer.GetSpan(pos), type, util::ToUtf8(lexer.GetToken(pos).ToString()), true); }
         ;
 
-    FunctionDefinitions(otava::intermediate::Context* context)
+    FunctionDefinitions(otava::intermediate::IntermediateContext* context)
         ::= 
             (   FunctionDeclaration(context):declaration
             |   FunctionDefinition(context):function
             )*
         ;
 
-    FunctionDeclaration(otava::intermediate::Context* context, var otava::intermediate::TypeRef functionTypeRef, 
+    FunctionDeclaration(otava::intermediate::IntermediateContext* context, var otava::intermediate::TypeRef functionTypeRef, 
         var soul::ast::Span span, var std::string functionId) 
         ::= 
         (   
@@ -318,11 +318,11 @@ parser IntermediateParser
         }
         ;
 
-    FunctionDefinition(otava::intermediate::Context* context, var otava::intermediate::Function* function)
+    FunctionDefinition(otava::intermediate::IntermediateContext* context, var otava::intermediate::Function* function)
         ::= FunctionHeader(context):header{ function = header; context->SetCurrentFunction(function); } LBRACE BasicBlock(context, function):basicBlock* RBRACE
         ;
 
-    FunctionHeader(otava::intermediate::Context* context, 
+    FunctionHeader(otava::intermediate::IntermediateContext* context, 
         var otava::intermediate::TypeRef functionTypeRef, var soul::ast::Span span, var std::string functionId, var bool inline_, var bool linkOnce, var bool child) : 
             otava::intermediate::Function*
         ::= 
@@ -340,7 +340,7 @@ parser IntermediateParser
         }
         ;
 
-    BasicBlock(otava::intermediate::Context* context, otava::intermediate::Function* function, var otava::intermediate::BasicBlock* basicBlock, 
+    BasicBlock(otava::intermediate::IntermediateContext* context, otava::intermediate::Function* function, var otava::intermediate::BasicBlock* basicBlock, 
         var soul::ast::Span span)
         ::= Label:id{ span = lexer.GetSpan(pos); basicBlock = function->AddBasicBlock(span, id, context); } Instructions(context, basicBlock):instructions
         ;
@@ -349,21 +349,21 @@ parser IntermediateParser
         ::= AT NUMBER{ return lexer.GetToken(pos).ToInt(); }
         ;
 
-    Operand(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref) : otava::intermediate::Value*
+    Operand(otava::intermediate::IntermediateContext* context, var otava::intermediate::TypeRef tref) : otava::intermediate::Value*
         ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } Value(context, tref.GetType()):value
         {
             return value;
         }
         ;
 
-    Instructions(otava::intermediate::Context* context, otava::intermediate::BasicBlock* basicBlock)
+    Instructions(otava::intermediate::IntermediateContext* context, otava::intermediate::BasicBlock* basicBlock)
         ::= 
         (
             Instruction(context):instruction{ basicBlock->AddInstruction(instruction); }
         )+
         ;
 
-    Instruction(otava::intermediate::Context* context) : otava::intermediate::Instruction*
+    Instruction(otava::intermediate::IntermediateContext* context) : otava::intermediate::Instruction*
         ::= StoreInstruction(context):store{ return store; }
         |   ArgInstruction(context):arg{ return arg; }
         |   JmpInstruction(context):jmp{ return jmp; }
@@ -375,7 +375,7 @@ parser IntermediateParser
         |   NoOperationInstruction(context):nopInst{ return nopInst; }
         ;
 
-    StoreInstruction(otava::intermediate::Context* context, 
+    StoreInstruction(otava::intermediate::IntermediateContext* context, 
         var soul::ast::Span span, var otava::intermediate::TypeRef tref, var otava::intermediate::TypeRef ptref) : otava::intermediate::Instruction*
         ::= STORE{ span = lexer.GetSpan(pos); }
             TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } 
@@ -388,7 +388,7 @@ parser IntermediateParser
         }
         ;
 
-    ArgInstruction(otava::intermediate::Context* context, var soul::ast::Span span, var otava::intermediate::TypeRef tref) : otava::intermediate::Instruction*
+    ArgInstruction(otava::intermediate::IntermediateContext* context, var soul::ast::Span span, var otava::intermediate::TypeRef tref) : otava::intermediate::Instruction*
         ::= ARG{ span = lexer.GetSpan(pos); }
             TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } 
             Value(context, tref.GetType()):arg
@@ -397,7 +397,7 @@ parser IntermediateParser
         }
         ;
 
-    JmpInstruction(otava::intermediate::Context* context, var soul::ast::Span span) : otava::intermediate::Instruction*
+    JmpInstruction(otava::intermediate::IntermediateContext* context, var soul::ast::Span span) : otava::intermediate::Instruction*
         ::= JMP{ span = lexer.GetSpan(pos); }
             Label:target
         {
@@ -405,7 +405,7 @@ parser IntermediateParser
         }
         ;
 
-    BranchInstruction(otava::intermediate::Context* context, var soul::ast::Span span, var otava::intermediate::TypeRef tref) : otava::intermediate::Instruction*
+    BranchInstruction(otava::intermediate::IntermediateContext* context, var soul::ast::Span span, var otava::intermediate::TypeRef tref) : otava::intermediate::Instruction*
         ::= BRANCH{ span = lexer.GetSpan(pos); }
             TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); }
             Value(context, tref.GetType()):cond
@@ -418,7 +418,7 @@ parser IntermediateParser
         }
         ;
 
-    ProcedureCallInstruction(otava::intermediate::Context* context, 
+    ProcedureCallInstruction(otava::intermediate::IntermediateContext* context, 
         var soul::ast::Span span, var otava::intermediate::TypeRef tref) : otava::intermediate::Instruction*
         ::= CALL{ span = lexer.GetSpan(pos); }
             TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); }
@@ -428,7 +428,7 @@ parser IntermediateParser
         }
         ;
 
-    RetInstruction(otava::intermediate::Context* context, var soul::ast::Span span, var otava::intermediate::TypeRef tref) : 
+    RetInstruction(otava::intermediate::IntermediateContext* context, var soul::ast::Span span, var otava::intermediate::TypeRef tref) : 
         otava::intermediate::Instruction*
         ::= RET{ span = lexer.GetSpan(pos); }
         (   (VOID - (VOID AST)){ return new otava::intermediate::RetInstruction(span, nullptr); }
@@ -437,7 +437,7 @@ parser IntermediateParser
         )
         ;
 
-    SwitchInstruction(otava::intermediate::Context* context, 
+    SwitchInstruction(otava::intermediate::IntermediateContext* context, 
         var soul::ast::Span span, var otava::intermediate::TypeRef tref, var otava::intermediate::TypeRef caseTref, 
         var otava::intermediate::SwitchInstruction* inst) : otava::intermediate::Instruction*
         ::= 
@@ -462,7 +462,7 @@ parser IntermediateParser
         }
         ;
 
-    ValueInstruction(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref, var otava::intermediate::RegValue* rslt) : 
+    ValueInstruction(otava::intermediate::IntermediateContext* context, var otava::intermediate::TypeRef tref, var otava::intermediate::RegValue* rslt) : 
         otava::intermediate::Instruction*
         ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } ResultRegValue(context, tref.GetType()):result{ rslt = result; } ASSIGN Operation(context, rslt):inst
         {
@@ -470,7 +470,7 @@ parser IntermediateParser
         }
         ;
 
-    Operation(otava::intermediate::Context* context, otava::intermediate::RegValue* result) : otava::intermediate::Instruction*
+    Operation(otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result) : otava::intermediate::Instruction*
         ::= UnaryInstruction(context, result):unaryInst{ return unaryInst; }
         |   BinaryInstruction(context, result):binaryInst{ return binaryInst; }
         |   ParamInstruction(context, result):paramInst{ return paramInst; }
@@ -484,7 +484,7 @@ parser IntermediateParser
         |   FunctionCallInstruction(context, result):functionCallInst{ return functionCallInst; }
         ;
 
-    UnaryInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : otava::intermediate::Instruction*
+    UnaryInstruction(otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : otava::intermediate::Instruction*
         ::= NOT{ span = lexer.GetSpan(pos); } Operand(context):notOp{ return new otava::intermediate::NotInstruction(span, result, notOp); }
         |   NEG{ span = lexer.GetSpan(pos); } Operand(context):negOp{ return new otava::intermediate::NegInstruction(span, result, negOp); }
         |   SIGNEXTEND{ span = lexer.GetSpan(pos); } Operand(context):sextOp{ return new otava::intermediate::SignExtendInstruction(span, result, sextOp); }
@@ -498,7 +498,7 @@ parser IntermediateParser
         |   PTRTOINT{ span = lexer.GetSpan(pos); } Operand(context):piOp{ return new otava::intermediate::PtrToIntInstruction(span, result, piOp); }
         ;
 
-    BinaryInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : otava::intermediate::Instruction*
+    BinaryInstruction(otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : otava::intermediate::Instruction*
         ::= 
         (   ADD{ span = lexer.GetSpan(pos); } 
             Operand(context):leftAdd 
@@ -609,18 +609,18 @@ parser IntermediateParser
         }
         ;
 
-    ParamInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : 
+    ParamInstruction(otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : 
         otava::intermediate::Instruction*
         ::= PARAM{ span = lexer.GetSpan(pos); return new otava::intermediate::ParamInstruction(span, result); }
         ;
 
-    LocalInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::Span span, 
+    LocalInstruction(otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result, var soul::ast::Span span, 
         var otava::intermediate::TypeRef tref) : otava::intermediate::Instruction*
         ::= LOCAL{ span = lexer.GetSpan(pos); } 
             TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); return new otava::intermediate::LocalInstruction(span, result, tref.GetType()); }
         ;
 
-    PLocalInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::Span span, 
+    PLocalInstruction(otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result, var soul::ast::Span span, 
         var otava::intermediate::TypeRef tref, var int level) : otava::intermediate::Instruction*
         ::= 
         (
@@ -634,11 +634,11 @@ parser IntermediateParser
         }
         ;
 
-    LoadInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : otava::intermediate::Instruction*
+    LoadInstruction(otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : otava::intermediate::Instruction*
         ::= LOAD{ span = lexer.GetSpan(pos); } Operand(context):ptr{ return new otava::intermediate::LoadInstruction(span, result, ptr); }
         ;
 
-    ElemAddrInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : 
+    ElemAddrInstruction(otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : 
         otava::intermediate::Instruction*
         ::= ELEMADDR{ span = lexer.GetSpan(pos); } Operand(context):ptr COMMA Operand(context):index
         { 
@@ -646,7 +646,7 @@ parser IntermediateParser
         }
         ;
 
-    PtrOffsetInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : 
+    PtrOffsetInstruction(otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : 
         otava::intermediate::Instruction*
         ::= PTROFFSET{ span = lexer.GetSpan(pos); } Operand(context):ptr COMMA Operand(context):offset
         { 
@@ -654,7 +654,7 @@ parser IntermediateParser
         }
         ;
 
-    PtrDiffInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : 
+    PtrDiffInstruction(otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : 
         otava::intermediate::Instruction*
         ::= PTRDIFF{ span = lexer.GetSpan(pos); } Operand(context):leftPtr COMMA Operand(context):rightPtr
         { 
@@ -662,7 +662,7 @@ parser IntermediateParser
         }
         ;
 
-    GetRbpInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : 
+    GetRbpInstruction(otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result, var soul::ast::Span span) : 
         otava::intermediate::Instruction*
         ::= 
         (
@@ -673,7 +673,7 @@ parser IntermediateParser
         }
         ;
 
-    FunctionCallInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var otava::intermediate::TypeRef tref, 
+    FunctionCallInstruction(otava::intermediate::IntermediateContext* context, otava::intermediate::RegValue* result, var otava::intermediate::TypeRef tref, 
         var soul::ast::Span span) : otava::intermediate::Instruction*
         ::= CALL{ span = lexer.GetSpan(pos); } TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } Value(context, tref.GetType()):callee
         { 
@@ -681,7 +681,7 @@ parser IntermediateParser
         }
         ;
 
-    BlockValue(otava::intermediate::Context* context) : otava::intermediate::BlockValue
+    BlockValue(otava::intermediate::IntermediateContext* context) : otava::intermediate::BlockValue
         ::= 
         (
             LBRACKET Operand(context):operand COMMA Label:blockId RBRACKET
@@ -691,18 +691,18 @@ parser IntermediateParser
         }
         ;
 
-    NoOperationInstruction(otava::intermediate::Context* context, var soul::ast::Span span) : otava::intermediate::Instruction*
+    NoOperationInstruction(otava::intermediate::IntermediateContext* context, var soul::ast::Span span) : otava::intermediate::Instruction*
         ::= NOP{ span = lexer.GetSpan(pos); return new otava::intermediate::NoOperationInstruction(span); }
         ;
 
-    Metadata(otava::intermediate::Context* context)
+    Metadata(otava::intermediate::IntermediateContext* context)
         ::= METADATA LBRACE MetadataStruct(context):mds* RBRACE
         {
             context->ResolveMetadataReferences();
         }
         ;
 
-    MetadataStruct(otava::intermediate::Context* context, var otava::intermediate::MetadataStruct* value)
+    MetadataStruct(otava::intermediate::IntermediateContext* context, var otava::intermediate::MetadataStruct* value)
         ::= EXCLAMATION NUMBER{ value = context->AddMetadataStruct(lexer.GetSpan(pos), lexer.GetToken(pos).ToInt()); }
             ASSIGN 
             LBRACE
@@ -710,31 +710,31 @@ parser IntermediateParser
             RBRACE
         ;
 
-    MetadataField(otava::intermediate::Context* context, otava::intermediate::MetadataStruct* parent, var std::string fieldName)
+    MetadataField(otava::intermediate::IntermediateContext* context, otava::intermediate::MetadataStruct* parent, var std::string fieldName)
         ::= ID{ fieldName = util::ToUtf8(lexer.GetToken(pos).ToString()); } COLON MetadataItem(context):item{ parent->AddItem(fieldName, item); }
         ;
 
-    MetadataItem(otava::intermediate::Context* context) : otava::intermediate::MetadataItem*
+    MetadataItem(otava::intermediate::IntermediateContext* context) : otava::intermediate::MetadataItem*
         ::= MetadataBool(context):mdBool{ return mdBool; }
         |   MetadataLong(context):mdLong{ return mdLong; }
         |   MetadataString(context):mdString{ return mdString; }
         |   MetadataRef(context):mdRef{ return mdRef; }
         ;
 
-    MetadataBool(otava::intermediate::Context* context) : otava::intermediate::MetadataItem*
+    MetadataBool(otava::intermediate::IntermediateContext* context) : otava::intermediate::MetadataItem*
         ::= TRUE{ return context->CreateMetadataBool(true); }
         |   FALSE{ return context->CreateMetadataBool(false); }
         ;
 
-    MetadataLong(otava::intermediate::Context* context) : otava::intermediate::MetadataItem*
+    MetadataLong(otava::intermediate::IntermediateContext* context) : otava::intermediate::MetadataItem*
         ::= NUMBER{ return context->CreateMetadataLong(lexer.GetToken(pos).ToLong()); }
         ;
 
-    MetadataString(otava::intermediate::Context* context) : otava::intermediate::MetadataItem*
+    MetadataString(otava::intermediate::IntermediateContext* context) : otava::intermediate::MetadataItem*
         ::= STRING{ return context->CreateMetadataString(util::ToUtf8(lexer.GetToken(pos).ToString()), true); }
         ;
 
-    MetadataRef(otava::intermediate::Context* context) : otava::intermediate::MetadataRef*
+    MetadataRef(otava::intermediate::IntermediateContext* context) : otava::intermediate::MetadataRef*
         ::= EXCLAMATION NUMBER{ return context->CreateMetadataRef(lexer.GetSpan(pos), lexer.GetToken(pos).ToInt()); }
         ;
                 

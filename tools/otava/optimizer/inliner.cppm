@@ -10,6 +10,6 @@ import otava.intermediate;
 
 export namespace otava::optimizer {
 
-void Inline(otava::intermediate::Function* fn, otava::intermediate::Context* context);
+void Inline(otava::intermediate::Function* fn, otava::intermediate::IntermediateContext* context);
 
 } // otava::optimizer

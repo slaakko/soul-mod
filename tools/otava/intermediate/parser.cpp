@@ -12,7 +12,7 @@ import util;
 
 namespace otava::intermediate {
 
-void Parse(const std::string& filePath, Context& context, bool verbose)
+void Parse(const std::string& filePath, IntermediateContext& context, bool verbose)
 {
     if (verbose)
     {

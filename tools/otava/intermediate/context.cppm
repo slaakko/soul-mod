@@ -1,5 +1,4 @@
 // =================================
-// =================================
 // Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
@@ -24,34 +23,34 @@ enum class ContextFlags : int
     none = 0, debug = 1 << 0
 };
 
-constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
+constexpr ContextFlags operator|(ContextFlags left, ContextFlags right) noexcept
 {
     return ContextFlags(int(left) | int(right));
 }
 
-constexpr ContextFlags operator&(ContextFlags left, ContextFlags right)
+constexpr ContextFlags operator&(ContextFlags left, ContextFlags right) noexcept
 {
     return ContextFlags(int(left) & int(right));
 }
 
-constexpr ContextFlags operator~(ContextFlags flags)
+constexpr ContextFlags operator~(ContextFlags flags) noexcept
 {
     return ContextFlags(~int(flags));
 }
 
-class Context
+class IntermediateContext
 {
 public:
-    Context();
-    inline CompileUnit& GetCompileUnit() { return compileUnit; }
-    inline Types& GetTypes() { return types; }
-    inline Data& GetData() { return data; }
-    inline Code& GetCode() { return code; }
-    inline Metadata& GetMetadata() { return metadata; }
+    IntermediateContext();
+    inline CompileUnit& GetCompileUnit() noexcept { return compileUnit; }
+    inline Types& GetTypes() noexcept { return types; }
+    inline Data& GetData() noexcept { return data; }
+    inline Code& GetCode() noexcept { return code; }
+    inline Metadata& GetMetadata() noexcept { return metadata; }
     void SetFilePath(const std::string& filePath_);
     const std::string& FilePath() const;
-    inline void SetFileId(std::int32_t fileId_) { fileId = fileId_; }
-    inline std::int32_t FileId() const { return fileId; }
+    inline void SetFileId(std::int32_t fileId_) noexcept { fileId = fileId_; }
+    inline std::int32_t FileId() const noexcept { return fileId; }
     std::string ErrorLines(const soul::ast::LineColLen& lineColLen);
     void SetCompileUnitInfo(const std::string& compileUnitId, MetadataRef* mdRef);
     void SetCompileUnitInfo(const std::string& compileUnitId_, const std::string& sourceFilePath);
@@ -107,18 +106,18 @@ public:
     {
         return data.MakeAddressLiteral(span, type, id, resolve);
     }
-    inline Type* GetVoidType() { return types.GetVoidType(); }
-    inline Type* GetBoolType() { return types.GetBoolType(); }
-    inline Type* GetSByteType() { return types.GetSByteType(); }
-    inline Type* GetByteType() { return types.GetByteType(); }
-    inline Type* GetShortType() { return types.GetShortType(); }
-    inline Type* GetUShortType() { return types.GetUShortType(); }
-    inline Type* GetIntType() { return types.GetIntType(); }
-    inline Type* GetUIntType() { return types.GetUIntType(); }
-    inline Type* GetLongType() { return types.GetLongType(); }
-    inline Type* GetULongType() { return types.GetULongType(); }
-    inline Type* GetFloatType() { return types.GetFloatType(); }
-    inline Type* GetDoubleType() { return types.GetDoubleType(); }
+    inline Type* GetVoidType() noexcept { return types.GetVoidType(); }
+    inline Type* GetBoolType() noexcept { return types.GetBoolType(); }
+    inline Type* GetSByteType() noexcept { return types.GetSByteType(); }
+    inline Type* GetByteType() noexcept { return types.GetByteType(); }
+    inline Type* GetShortType() noexcept { return types.GetShortType(); }
+    inline Type* GetUShortType() noexcept { return types.GetUShortType(); }
+    inline Type* GetIntType() noexcept { return types.GetIntType(); }
+    inline Type* GetUIntType() noexcept { return types.GetUIntType(); }
+    inline Type* GetLongType() noexcept { return types.GetLongType(); }
+    inline Type* GetULongType() noexcept { return types.GetULongType(); }
+    inline Type* GetFloatType() noexcept { return types.GetFloatType(); }
+    inline Type* GetDoubleType() noexcept { return types.GetDoubleType(); }
     inline Type* MakePtrType(Type* baseType) { return types.MakePtrType(baseType); }
     inline StructureType* GetStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
     {
@@ -210,26 +209,26 @@ public:
     SwitchInstruction* CreateSwitch(Value* cond, BasicBlock* defaultDest);
     Instruction* CreateNop();
     Instruction* CreateGetRbp();
-    inline soul::lexer::FileMap& GetFileMap() { return fileMap; }
-    inline std::int32_t NextTypeId() { return types.NextTypeId(); }
+    inline soul::lexer::FileMap& GetFileMap() noexcept { return fileMap; }
+    inline std::int32_t NextTypeId() noexcept { return types.NextTypeId(); }
     inline std::string GetNextStringValueId() { return data.GetNextStringValueId(); }
-    inline otava::assembly::Context* AssemblyContext() { return &assemblyContext; }
+    inline otava::assembly::AssemblyContext* GetAssemblyContext() noexcept { return &assemblyContext; }
     void WriteFile();
-    inline void SetInlineDepth(int inlineDepth_) { inlineDepth = inlineDepth_; }
-    inline int InlineDepth() const { return inlineDepth; }
-    inline void SetMaxArithmeticOptimizationCount(int maxArithmeticOptimizationCount_) { maxArithmeticOptimizationCount = maxArithmeticOptimizationCount_; }
-    inline int MaxArithmeticOptimizationCount() const { return maxArithmeticOptimizationCount; }
-    inline void SetContextFlag(ContextFlags flag) { flags = flags | flag; }
-    inline bool GetContextFlag(ContextFlags flag) const { return (flags & flag) != ContextFlags::none; }
-    inline int TotalFunctions() const { return totalFunctions; }
-    inline void IncTotalFunctions() { ++totalFunctions; }
+    inline void SetInlineDepth(int inlineDepth_) noexcept { inlineDepth = inlineDepth_; }
+    inline int InlineDepth() const noexcept { return inlineDepth; }
+    inline void SetMaxArithmeticOptimizationCount(int maxArithmeticOptimizationCount_) noexcept { maxArithmeticOptimizationCount = maxArithmeticOptimizationCount_; }
+    inline int MaxArithmeticOptimizationCount() const noexcept { return maxArithmeticOptimizationCount; }
+    inline void SetContextFlag(ContextFlags flag) noexcept { flags = flags | flag; }
+    inline bool GetContextFlag(ContextFlags flag) const noexcept { return (flags & flag) != ContextFlags::none; }
+    inline int TotalFunctions() const noexcept { return totalFunctions; }
+    inline void IncTotalFunctions() noexcept { ++totalFunctions; }
     void AddLineInfo(Instruction* inst);
-    inline void IncInlinedFunctionCalls() { ++inlinedFunctionCalls; }
-    inline int InlinedFunctionCalls() const { return inlinedFunctionCalls; }
-    inline int FunctionsInlined() const { return functionsInlined; }
-    inline void IncFunctionsInlined() { ++functionsInlined; }
-    inline soul::lexer::LexerBase<char32_t>* GetLexer() const { return lexer; }
-    inline void SetLexer(soul::lexer::LexerBase<char32_t>* lexer_) { lexer = lexer_; }
+    inline void IncInlinedFunctionCalls() noexcept { ++inlinedFunctionCalls; }
+    inline int InlinedFunctionCalls() const noexcept { return inlinedFunctionCalls; }
+    inline int FunctionsInlined() const noexcept { return functionsInlined; }
+    inline void IncFunctionsInlined() noexcept { ++functionsInlined; }
+    inline soul::lexer::LexerBase<char32_t>* GetLexer() const noexcept { return lexer; }
+    inline void SetLexer(soul::lexer::LexerBase<char32_t>* lexer_) noexcept { lexer = lexer_; }
 private:
     RegValue* MakeRegValue(Type* type);
     CompileUnit compileUnit;
@@ -242,7 +241,7 @@ private:
     std::map<int, MetadataRef*> lineNumberInfoMap;
     soul::lexer::FileMap fileMap;
     std::int32_t fileId;
-    otava::assembly::Context assemblyContext;
+    otava::assembly::AssemblyContext assemblyContext;
     int inlineDepth;
     int maxArithmeticOptimizationCount;
     std::unique_ptr<otava::intermediate::MetadataRef> metadataRef;

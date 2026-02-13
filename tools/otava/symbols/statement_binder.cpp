@@ -2168,6 +2168,10 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
     std::cout << ">" << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
 #endif
     functionDefinitionSymbol->SetBound();
+    if (functionDefinitionSymbol->GroupName() == U"GetBoolValue")
+    {
+        int x = 0;
+    }
     StatementBinder binder(context, functionDefinitionSymbol);
     context->PushStatementBinder(&binder);
     GenerateEnterFunctionCode(functionDefinitionNode, functionDefinitionSymbol, context);

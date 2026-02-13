@@ -7,7 +7,7 @@ module otava.optimizer.arithmetics;
 
 namespace otava::optimizer {
 
-bool OptimizeNot(otava::intermediate::NotInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeNot(otava::intermediate::NotInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     if (inst->Operand()->IsBoolValue())
@@ -20,7 +20,7 @@ bool OptimizeNot(otava::intermediate::NotInstruction* inst, otava::intermediate:
     return optimized;
 }
 
-bool OptimizeNeg(otava::intermediate::NegInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeNeg(otava::intermediate::NegInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     switch (inst->Operand()->Kind())
@@ -77,7 +77,7 @@ bool OptimizeNeg(otava::intermediate::NegInstruction* inst, otava::intermediate:
     return optimized;
 }
 
-bool OptimizeSignExtend(otava::intermediate::SignExtendInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeSignExtend(otava::intermediate::SignExtendInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     switch (inst->Result()->GetType()->Id())
@@ -151,7 +151,7 @@ bool OptimizeSignExtend(otava::intermediate::SignExtendInstruction* inst, otava:
     return optimized;
 }
 
-bool OptimizeZeroExtend(otava::intermediate::ZeroExtendInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeZeroExtend(otava::intermediate::ZeroExtendInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     switch (inst->Result()->GetType()->Id())
@@ -225,7 +225,7 @@ bool OptimizeZeroExtend(otava::intermediate::ZeroExtendInstruction* inst, otava:
     return optimized;
 }
 
-bool OptimizeAdd(otava::intermediate::AddInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeAdd(otava::intermediate::AddInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     otava::intermediate::Value* left = inst->Left();
@@ -326,7 +326,7 @@ bool OptimizeAdd(otava::intermediate::AddInstruction* inst, otava::intermediate:
     return optimized;
 }
 
-bool OptimizeSub(otava::intermediate::SubInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeSub(otava::intermediate::SubInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     otava::intermediate::Value* left = inst->Left();
@@ -422,7 +422,7 @@ bool OptimizeSub(otava::intermediate::SubInstruction* inst, otava::intermediate:
     return optimized;
 }
 
-bool OptimizeMul(otava::intermediate::MulInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeMul(otava::intermediate::MulInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     otava::intermediate::Value* left = inst->Left();
@@ -565,7 +565,7 @@ bool OptimizeMul(otava::intermediate::MulInstruction* inst, otava::intermediate:
     return optimized;
 }
 
-bool OptimizeDiv(otava::intermediate::DivInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeDiv(otava::intermediate::DivInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     otava::intermediate::Value* left = inst->Left();
@@ -675,7 +675,7 @@ bool OptimizeDiv(otava::intermediate::DivInstruction* inst, otava::intermediate:
     return optimized;
 }
 
-bool OptimizeMod(otava::intermediate::ModInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeMod(otava::intermediate::ModInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     otava::intermediate::Value* left = inst->Left();
@@ -763,7 +763,7 @@ bool OptimizeMod(otava::intermediate::ModInstruction* inst, otava::intermediate:
     return optimized;
 }
 
-bool OptimizeAnd(otava::intermediate::AndInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeAnd(otava::intermediate::AndInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     otava::intermediate::Value* left = inst->Left();
@@ -835,7 +835,7 @@ bool OptimizeAnd(otava::intermediate::AndInstruction* inst, otava::intermediate:
     return optimized;
 }
 
-bool OptimizeOr(otava::intermediate::OrInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeOr(otava::intermediate::OrInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     otava::intermediate::Value* left = inst->Left();
@@ -907,7 +907,7 @@ bool OptimizeOr(otava::intermediate::OrInstruction* inst, otava::intermediate::C
     return optimized;
 }
 
-bool OptimizeXor(otava::intermediate::XorInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeXor(otava::intermediate::XorInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     otava::intermediate::Value* left = inst->Left();
@@ -979,7 +979,7 @@ bool OptimizeXor(otava::intermediate::XorInstruction* inst, otava::intermediate:
     return optimized;
 }
 
-bool OptimizeShl(otava::intermediate::ShlInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeShl(otava::intermediate::ShlInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     otava::intermediate::Value* left = inst->Left();
@@ -1051,7 +1051,7 @@ bool OptimizeShl(otava::intermediate::ShlInstruction* inst, otava::intermediate:
     return optimized;
 }
 
-bool OptimizeShr(otava::intermediate::ShrInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeShr(otava::intermediate::ShrInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     otava::intermediate::Value* left = inst->Left();
@@ -1123,7 +1123,7 @@ bool OptimizeShr(otava::intermediate::ShrInstruction* inst, otava::intermediate:
     return optimized;
 }
 
-bool OptimizeEqual(otava::intermediate::EqualInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeEqual(otava::intermediate::EqualInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     otava::intermediate::Value* left = inst->Left();
@@ -1219,7 +1219,7 @@ bool OptimizeEqual(otava::intermediate::EqualInstruction* inst, otava::intermedi
     return optimized;
 }
 
-bool OptimizeLess(otava::intermediate::LessInstruction* inst, otava::intermediate::Context* context)
+bool OptimizeLess(otava::intermediate::LessInstruction* inst, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = false;
     otava::intermediate::Value* left = inst->Left();
@@ -1315,7 +1315,7 @@ bool OptimizeLess(otava::intermediate::LessInstruction* inst, otava::intermediat
     return optimized;
 }
 
-bool OptimizeArithmetics(otava::intermediate::Function* fn, otava::intermediate::Context* context)
+bool OptimizeArithmetics(otava::intermediate::Function* fn, otava::intermediate::IntermediateContext* context)
 {
     bool optimized = true;
     int count = 0;

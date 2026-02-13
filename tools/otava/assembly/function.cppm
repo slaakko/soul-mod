@@ -37,16 +37,16 @@ class Function : public util::Component
 {
 public:
     Function(const std::string& name_);
-    inline const std::string& Name() const { return name; }
+    inline const std::string& Name() const noexcept { return name; }
     void SetActiveFunctionPart(FunctionPart activeFunctionPart_);
     void AddInstruction(Instruction* inst);
     void Write(util::CodeFormatter& formatter);
     void AddMacro(Macro* macro);
     Macro* GetMacro(const std::string& name) const;
-    inline const std::string& Comment() const { return comment; }
+    inline const std::string& Comment() const noexcept { return comment; }
     void SetComment(const std::string& comment_);
-    Instruction* FirstInstruction() const;
-    Instruction* LastInstruction() const;
+    Instruction* FirstInstruction() const noexcept;
+    Instruction* LastInstruction() const noexcept;
 private:
     std::string name;
     FunctionPart activeFunctionPart;

@@ -23,29 +23,29 @@ void CheckSize(std::int64_t size, const std::string& message)
     }
 }
 
-Context::Context() : 
+AssemblyContext::AssemblyContext() : 
     file(nullptr), registerPool(new RegisterPool(registers)), currentFunction(nullptr), floatingLiteralCounter(0), jumpTabLabelCounter(0)
 {
 }
 
-void Context::ResetRegisterPool()
+void AssemblyContext::ResetRegisterPool()
 {
     registerPool.reset(new RegisterPool(registers));
 }
 
-Register* Context::GetLocalReg(std::int64_t size)
+Register* AssemblyContext::GetLocalReg(std::int64_t size)
 {
     CheckSize(size, "otava.assembly.GetLocalReg: invalid size: " + std::to_string(size));
     RegisterGroup* regGroup = registerPool->GetLocalRegisterGroup();
     return regGroup->GetReg(static_cast<int>(size));
 }
 
-Register* Context::GetGlobalReg(std::int64_t size, RegisterGroupKind regGroupKind)
+Register* AssemblyContext::GetGlobalReg(std::int64_t size, RegisterGroupKind regGroupKind)
 {
     return GetGlobalReg(size, regGroupKind, true);
 }
 
-Register* Context::GetGlobalReg(std::int64_t size, RegisterGroupKind regGroupKind, bool used)
+Register* AssemblyContext::GetGlobalReg(std::int64_t size, RegisterGroupKind regGroupKind, bool used)
 {
     CheckSize(size, "otava.assembly.GetGlobalReg: invalid size: " + std::to_string(size));
     RegisterGroup* regGroup = registerPool->GetRegisterGroup(regGroupKind, used);
@@ -56,14 +56,14 @@ Register* Context::GetGlobalReg(std::int64_t size, RegisterGroupKind regGroupKin
     return regGroup->GetReg(static_cast<int>(size));
 }
 
-IntegerLiteral* Context::MakeIntegerLiteral(std::int64_t value, int size)
+IntegerLiteral* AssemblyContext::MakeIntegerLiteral(std::int64_t value, int size)
 {
     IntegerLiteral* literal = new IntegerLiteral(value, size);
     values.push_back(std::unique_ptr<Value>(literal));
     return literal;
 }
 
-Value* Context::MakeFloatLiteralSymbol(float value)
+Value* AssemblyContext::MakeFloatLiteralSymbol(float value)
 {
     FloatLiteral* literal = new FloatLiteral(value);
     values.push_back(std::unique_ptr<Value>(literal));
@@ -79,7 +79,7 @@ Value* Context::MakeFloatLiteralSymbol(float value)
     return expr;
 }
 
-Value* Context::MakeDoubleLiteralSymbol(double value)
+Value* AssemblyContext::MakeDoubleLiteralSymbol(double value)
 {
     DoubleLiteral* literal = new DoubleLiteral(value);
     values.push_back(std::unique_ptr<Value>(literal));
@@ -95,17 +95,17 @@ Value* Context::MakeDoubleLiteralSymbol(double value)
     return expr;
 }
 
-Symbol* Context::MakeSymbol(const std::string& symbolName)
+Symbol* AssemblyContext::MakeSymbol(const std::string& symbolName)
 {
     Symbol* symbol = new Symbol(symbolName);
     values.push_back(std::unique_ptr<Value>(symbol));
     return symbol;
 }
 
-Macro* Context::MakeMacro(const std::string& name)
+Macro* AssemblyContext::MakeMacro(const std::string& name)
 {
     Macro* macro = new Macro(name);
-    values.push_back(std::unique_ptr<Macro>(macro));
+    values.push_back(std::unique_ptr<Value>(macro));
     if (currentFunction)
     {
         currentFunction->AddMacro(macro);
@@ -113,14 +113,14 @@ Macro* Context::MakeMacro(const std::string& name)
     return macro;
 }
 
-Value* Context::MakeContent(Value* value)
+Value* AssemblyContext::MakeContent(Value* value)
 {
     Value* content = new Content(value);
     values.push_back(std::unique_ptr<Value>(content));
     return content;
 }
 
-Value* Context::MakeSizePrefix(std::int64_t size, Value* value)
+Value* AssemblyContext::MakeSizePrefix(std::int64_t size, Value* value)
 {
     CheckSize(size, "otava.assembly.MakeSizePrefix: invalid size");
     Value* sizePrefix = new SizePrefix(static_cast<int>(size), value);
@@ -128,7 +128,7 @@ Value* Context::MakeSizePrefix(std::int64_t size, Value* value)
     return sizePrefix;
 }
 
-Value* Context::MakeBinaryExpr(Value* left, Value* right, Operator op)
+Value* AssemblyContext::MakeBinaryExpr(Value* left, Value* right, Operator op)
 {
     Value* value = new BinaryExpr(left, right, op);
     values.push_back(std::unique_ptr<Value>(value));

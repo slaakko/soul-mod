@@ -40,6 +40,7 @@ interface <std.functional.cppm>;
 interface <std.hash.cppm>;
 source <std.hash.cpp>;
 interface <std.iterator.cppm>;
+interface <std.limits.cppm>;
 interface <std.new_delete.cppm>;
 source <std.new_delete.cpp>;
 interface <std.container.rb_tree.cppm>;

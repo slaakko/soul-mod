@@ -25,7 +25,7 @@ public:
     inline void SetFilePath(const std::string& filePath) { context->SetFilePath(filePath); }
     inline const std::string& FilePath() const { return context->FilePath(); }
     void SetCompileUnitInfo(const std::string& compileUnitId, const std::string& sourceFilePath);
-    inline otava::intermediate::Context* GetIntermediateContext() { return context; }
+    inline otava::intermediate::IntermediateContext* GetIntermediateContext() { return context; }
     void ResolveReferences();
     void Emit();
     otava::intermediate::Function* CreateFunction(const std::string& name, otava::intermediate::Type* type, bool inline_, bool once, bool child);
@@ -208,7 +208,7 @@ public:
     inline int Line() const { return line; }
     inline void SetLine(int line_) { line = line_; }
 private:
-    otava::intermediate::Context* context;
+    otava::intermediate::IntermediateContext* context;
     IrValueStack* stack;
     std::map<util::uuid, otava::intermediate::Type*> typeMap;
     std::map<void*, otava::intermediate::Value*> irObjectMap;

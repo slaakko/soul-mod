@@ -128,7 +128,7 @@ void Instruction::Write(util::CodeFormatter& formatter)
     }
 }
 
-int Instruction::Length() const
+int Instruction::Length() const noexcept
 {
     int length = 0;
     if (!label.empty())
@@ -170,14 +170,6 @@ Instruction* MakeInst(OpCode opCode, Value* left, Value* right)
     inst->AddOperand(left);
     inst->AddOperand(right);
     return inst;
-}
-
-void FreeGlobalRegs(Context* context, Instruction* inst)
-{
-    for (Value* operand : inst->Operands())
-    { 
-        operand->FreeRegs(context);
-    }
 }
 
 } // namespace otava::assembly

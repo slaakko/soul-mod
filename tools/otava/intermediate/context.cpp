@@ -12,7 +12,7 @@ import util;
 
 namespace otava::intermediate {
 
-Context::Context() :
+IntermediateContext::IntermediateContext() :
     compileUnit(), inlineDepth(4), maxArithmeticOptimizationCount(8), 
     flags(ContextFlags::none), functionsInlined(0), totalFunctions(0), currentBasicBlock(nullptr), currentLineNumber(0), lexer(nullptr), fileId(-1), assemblyContext()
 {
@@ -24,17 +24,17 @@ Context::Context() :
     metadata.SetContext(this);
 }
 
-void Context::SetFilePath(const std::string& filePath_)
+void IntermediateContext::SetFilePath(const std::string& filePath_)
 {
     compileUnit.SetFilePath(filePath_);
 }
 
-const std::string& Context::FilePath() const
+const std::string& IntermediateContext::FilePath() const
 {
     return compileUnit.FilePath();
 }
 
-std::string Context::ErrorLines(const soul::ast::LineColLen& lineColLen)
+std::string IntermediateContext::ErrorLines(const soul::ast::LineColLen& lineColLen)
 {
     if (lineColLen.IsValid())
     {
@@ -48,12 +48,12 @@ std::string Context::ErrorLines(const soul::ast::LineColLen& lineColLen)
     }
 }
 
-void Context::SetCompileUnitInfo(const std::string& compileUnitId, MetadataRef* mdRef)
+void IntermediateContext::SetCompileUnitInfo(const std::string& compileUnitId, MetadataRef* mdRef)
 {
     compileUnit.SetInfo(compileUnitId, mdRef);
 }
 
-void Context::SetCompileUnitInfo(const std::string& compileUnitId_, const std::string& sourceFilePath)
+void IntermediateContext::SetCompileUnitInfo(const std::string& compileUnitId_, const std::string& sourceFilePath)
 {
     MetadataStruct* sourceFileStruct = metadata.CreateMetadataStruct();
     sourceFileStruct->AddItem("nodeType", metadata.CreateMetadataLong(fileInfoNodeType));
@@ -62,42 +62,42 @@ void Context::SetCompileUnitInfo(const std::string& compileUnitId_, const std::s
     compileUnit.SetInfo(compileUnitId_, sourceFileNameRef);
 }
 
-void Context::AddStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs, MetadataRef* mdRef)
+void IntermediateContext::AddStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs, MetadataRef* mdRef)
 {
     types.AddStructureType(span, typeId, fieldTypeRefs, mdRef);
 }
 
-void Context::AddArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef)
+void IntermediateContext::AddArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef)
 {
     types.AddArrayType(span, typeId, size, elementTypeRef);
 }
 
-void Context::AddFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
+void IntermediateContext::AddFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
 {
     types.AddFunctionType(span, typeId, returnTypeRef, paramTypeRefs);
 }
 
-GlobalVariable* Context::AddGlobalVariable(const soul::ast::Span& span, Type* type, const std::string& variableName, Value* initializer)
+GlobalVariable* IntermediateContext::AddGlobalVariable(const soul::ast::Span& span, Type* type, const std::string& variableName, Value* initializer)
 {
     return data.AddGlobalVariable(span, type, variableName, initializer, this);
 }
 
-GlobalVariable* Context::GetGlobalVariableForString(otava::intermediate::Value* stringValue, Type* charType)
+GlobalVariable* IntermediateContext::GetGlobalVariableForString(otava::intermediate::Value* stringValue, Type* charType)
 {
     return data.GetGlobalVariableForString(stringValue, charType);
 }
 
-void Context::ResolveTypes()
+void IntermediateContext::ResolveTypes()
 {
     types.Resolve(this);
 }
 
-void Context::ResolveType(TypeRef& typeRef)
+void IntermediateContext::ResolveType(TypeRef& typeRef)
 {
     types.ResolveType(typeRef, this);
 }
 
-Value* Context::GetBooleanLiteral(const soul::ast::Span& span, Type* type, bool value)
+Value* IntermediateContext::GetBooleanLiteral(const soul::ast::Span& span, Type* type, bool value)
 {
     if (type->IsBooleanType())
     {
@@ -117,7 +117,7 @@ Value* Context::GetBooleanLiteral(const soul::ast::Span& span, Type* type, bool 
     return nullptr;
 }
 
-Value* Context::GetNullValue(const soul::ast::Span& span, Type* type)
+Value* IntermediateContext::GetNullValue(const soul::ast::Span& span, Type* type)
 {
     if (type->IsPointerType())
     {
@@ -130,7 +130,7 @@ Value* Context::GetNullValue(const soul::ast::Span& span, Type* type)
     return nullptr;
 }
 
-Function* Context::AddFunctionDefinition(const soul::ast::Span& span, Type* type, const std::string& functionId, bool inline_, bool linkOnce, bool child, bool createEntry,
+Function* IntermediateContext::AddFunctionDefinition(const soul::ast::Span& span, Type* type, const std::string& functionId, bool inline_, bool linkOnce, bool child, bool createEntry,
     otava::intermediate::MetadataRef* metadataRef)
 {
     if (type->IsPointerType())
@@ -149,7 +149,7 @@ Function* Context::AddFunctionDefinition(const soul::ast::Span& span, Type* type
     return nullptr;
 }
 
-Function* Context::AddFunctionDeclaration(const soul::ast::Span& span, Type* type, const std::string& functionId)
+Function* IntermediateContext::AddFunctionDeclaration(const soul::ast::Span& span, Type* type, const std::string& functionId)
 {
     if (type->IsPointerType())
     {
@@ -167,7 +167,7 @@ Function* Context::AddFunctionDeclaration(const soul::ast::Span& span, Type* typ
     return nullptr;
 }
 
-Instruction* Context::CreateNot(Value* arg)
+Instruction* IntermediateContext::CreateNot(Value* arg)
 {
     Instruction* inst = new NotInstruction(soul::ast::Span(), MakeRegValue(arg->GetType()), arg);
     AddLineInfo(inst);
@@ -178,7 +178,7 @@ Instruction* Context::CreateNot(Value* arg)
     return inst;
 }
 
-Instruction* Context::CreateNeg(Value* arg)
+Instruction* IntermediateContext::CreateNeg(Value* arg)
 {
     Instruction* inst = new NegInstruction(soul::ast::Span(), MakeRegValue(arg->GetType()), arg);
     AddLineInfo(inst);
@@ -189,7 +189,7 @@ Instruction* Context::CreateNeg(Value* arg)
     return inst;
 }
 
-Instruction* Context::CreateAdd(Value* left, Value* right)
+Instruction* IntermediateContext::CreateAdd(Value* left, Value* right)
 {
     Instruction* inst = new AddInstruction(soul::ast::Span(), MakeRegValue(left->GetType()), left, right);
     AddLineInfo(inst);
@@ -200,7 +200,7 @@ Instruction* Context::CreateAdd(Value* left, Value* right)
     return inst;
 }
 
-Instruction* Context::CreateSub(Value* left, Value* right)
+Instruction* IntermediateContext::CreateSub(Value* left, Value* right)
 {
     Instruction* inst = new SubInstruction(soul::ast::Span(), MakeRegValue(left->GetType()), left, right);
     AddLineInfo(inst);
@@ -211,7 +211,7 @@ Instruction* Context::CreateSub(Value* left, Value* right)
     return inst;
 }
 
-Instruction* Context::CreateMul(Value* left, Value* right)
+Instruction* IntermediateContext::CreateMul(Value* left, Value* right)
 {
     Instruction* inst = new MulInstruction(soul::ast::Span(), MakeRegValue(left->GetType()), left, right);
     AddLineInfo(inst);
@@ -222,7 +222,7 @@ Instruction* Context::CreateMul(Value* left, Value* right)
     return inst;
 }
 
-Instruction* Context::CreateDiv(Value* left, Value* right)
+Instruction* IntermediateContext::CreateDiv(Value* left, Value* right)
 {
     Instruction* inst = new DivInstruction(soul::ast::Span(), MakeRegValue(left->GetType()), left, right);
     AddLineInfo(inst);
@@ -233,7 +233,7 @@ Instruction* Context::CreateDiv(Value* left, Value* right)
     return inst;
 }
 
-Instruction* Context::CreateMod(Value* left, Value* right)
+Instruction* IntermediateContext::CreateMod(Value* left, Value* right)
 {
     Instruction* inst = new ModInstruction(soul::ast::Span(), MakeRegValue(left->GetType()), left, right);
     AddLineInfo(inst);
@@ -244,7 +244,7 @@ Instruction* Context::CreateMod(Value* left, Value* right)
     return inst;
 }
 
-Instruction* Context::CreateAnd(Value* left, Value* right)
+Instruction* IntermediateContext::CreateAnd(Value* left, Value* right)
 {
     Instruction* inst = new AndInstruction(soul::ast::Span(), MakeRegValue(left->GetType()), left, right);
     AddLineInfo(inst);
@@ -255,7 +255,7 @@ Instruction* Context::CreateAnd(Value* left, Value* right)
     return inst;
 }
 
-Instruction* Context::CreateOr(Value* left, Value* right)
+Instruction* IntermediateContext::CreateOr(Value* left, Value* right)
 {
     Instruction* inst = new OrInstruction(soul::ast::Span(), MakeRegValue(left->GetType()), left, right);
     AddLineInfo(inst);
@@ -266,7 +266,7 @@ Instruction* Context::CreateOr(Value* left, Value* right)
     return inst;
 }
 
-Instruction* Context::CreateXor(Value* left, Value* right)
+Instruction* IntermediateContext::CreateXor(Value* left, Value* right)
 {
     Instruction* inst = new XorInstruction(soul::ast::Span(), MakeRegValue(left->GetType()), left, right);
     AddLineInfo(inst);
@@ -277,7 +277,7 @@ Instruction* Context::CreateXor(Value* left, Value* right)
     return inst;
 }
 
-Instruction* Context::CreateShl(Value* left, Value* right)
+Instruction* IntermediateContext::CreateShl(Value* left, Value* right)
 {
     Instruction* inst = new ShlInstruction(soul::ast::Span(), MakeRegValue(left->GetType()), left, right);
     AddLineInfo(inst);
@@ -288,7 +288,7 @@ Instruction* Context::CreateShl(Value* left, Value* right)
     return inst;
 }
 
-Instruction* Context::CreateShr(Value* left, Value* right)
+Instruction* IntermediateContext::CreateShr(Value* left, Value* right)
 {
     Instruction* inst = new ShrInstruction(soul::ast::Span(), MakeRegValue(left->GetType()), left, right);
     AddLineInfo(inst);
@@ -299,7 +299,7 @@ Instruction* Context::CreateShr(Value* left, Value* right)
     return inst;
 }
 
-Instruction* Context::CreateEqual(Value* left, Value* right)
+Instruction* IntermediateContext::CreateEqual(Value* left, Value* right)
 {
     Instruction* inst = new EqualInstruction(soul::ast::Span(), MakeRegValue(GetBoolType()), left, right);
     AddLineInfo(inst);
@@ -310,7 +310,7 @@ Instruction* Context::CreateEqual(Value* left, Value* right)
     return inst;
 }
 
-Instruction* Context::CreateLess(Value* left, Value* right)
+Instruction* IntermediateContext::CreateLess(Value* left, Value* right)
 {
     Instruction* inst = new LessInstruction(soul::ast::Span(), MakeRegValue(GetBoolType()), left, right);
     AddLineInfo(inst);
@@ -321,7 +321,7 @@ Instruction* Context::CreateLess(Value* left, Value* right)
     return inst;
 }
 
-Instruction* Context::CreateSignExtend(Value* arg, Type* destType)
+Instruction* IntermediateContext::CreateSignExtend(Value* arg, Type* destType)
 {
     Instruction* inst = new SignExtendInstruction(soul::ast::Span(), MakeRegValue(destType), arg);
     AddLineInfo(inst);
@@ -332,7 +332,7 @@ Instruction* Context::CreateSignExtend(Value* arg, Type* destType)
     return inst;
 }
 
-Instruction* Context::CreateZeroExtend(Value* arg, Type* destType)
+Instruction* IntermediateContext::CreateZeroExtend(Value* arg, Type* destType)
 {
     Instruction* inst = new ZeroExtendInstruction(soul::ast::Span(), MakeRegValue(destType), arg);
     AddLineInfo(inst);
@@ -343,7 +343,7 @@ Instruction* Context::CreateZeroExtend(Value* arg, Type* destType)
     return inst;
 }
 
-Instruction* Context::CreateFloatingPointExtend(Value* arg, Type* destType)
+Instruction* IntermediateContext::CreateFloatingPointExtend(Value* arg, Type* destType)
 {
     Instruction* inst = new FloatingPointExtendInstruction(soul::ast::Span(), MakeRegValue(destType), arg);
     AddLineInfo(inst);
@@ -354,7 +354,7 @@ Instruction* Context::CreateFloatingPointExtend(Value* arg, Type* destType)
     return inst;
 }
 
-Instruction* Context::CreateTruncate(Value* arg, Type* destType)
+Instruction* IntermediateContext::CreateTruncate(Value* arg, Type* destType)
 {
     Instruction* inst = new TruncateInstruction(soul::ast::Span(), MakeRegValue(destType), arg);
     AddLineInfo(inst);
@@ -365,7 +365,7 @@ Instruction* Context::CreateTruncate(Value* arg, Type* destType)
     return inst;
 }
 
-Instruction* Context::CreateBitcast(Value* arg, Type* destType)
+Instruction* IntermediateContext::CreateBitcast(Value* arg, Type* destType)
 {
     Instruction* inst = new BitcastInstruction(soul::ast::Span(), MakeRegValue(destType), arg);
     AddLineInfo(inst);
@@ -376,7 +376,7 @@ Instruction* Context::CreateBitcast(Value* arg, Type* destType)
     return inst;
 }
 
-Instruction* Context::CreateIntToFloat(Value* arg, Type* destType)
+Instruction* IntermediateContext::CreateIntToFloat(Value* arg, Type* destType)
 {
     Instruction* inst = new IntToFloatInstruction(soul::ast::Span(), MakeRegValue(destType), arg);
     AddLineInfo(inst);
@@ -387,7 +387,7 @@ Instruction* Context::CreateIntToFloat(Value* arg, Type* destType)
     return inst;
 }
 
-Instruction* Context::CreateFloatToInt(Value* arg, Type* destType)
+Instruction* IntermediateContext::CreateFloatToInt(Value* arg, Type* destType)
 {
     Instruction* inst = new FloatToIntInstruction(soul::ast::Span(), MakeRegValue(destType), arg);
     AddLineInfo(inst);
@@ -398,7 +398,7 @@ Instruction* Context::CreateFloatToInt(Value* arg, Type* destType)
     return inst;
 }
 
-Instruction* Context::CreateIntToPtr(Value* arg, Type* destType)
+Instruction* IntermediateContext::CreateIntToPtr(Value* arg, Type* destType)
 {
     Instruction* inst = new IntToPtrInstruction(soul::ast::Span(), MakeRegValue(destType), arg);
     AddLineInfo(inst);
@@ -409,7 +409,7 @@ Instruction* Context::CreateIntToPtr(Value* arg, Type* destType)
     return inst;
 }
 
-Instruction* Context::CreatePtrToInt(Value* arg, Type* destType)
+Instruction* IntermediateContext::CreatePtrToInt(Value* arg, Type* destType)
 {
     Instruction* inst = new PtrToIntInstruction(soul::ast::Span(), MakeRegValue(destType), arg);
     AddLineInfo(inst);
@@ -420,7 +420,7 @@ Instruction* Context::CreatePtrToInt(Value* arg, Type* destType)
     return inst;
 }
 
-Instruction* Context::CreateParam(Type* type)
+Instruction* IntermediateContext::CreateParam(Type* type)
 {
     Instruction* inst = new ParamInstruction(soul::ast::Span(), MakeRegValue(type));
     AddLineInfo(inst);
@@ -431,7 +431,7 @@ Instruction* Context::CreateParam(Type* type)
     return inst;
 }
 
-Instruction* Context::CreateLocal(Type* type)
+Instruction* IntermediateContext::CreateLocal(Type* type)
 {
     Type* ptrType = MakePtrType(type);
     Instruction* inst = new LocalInstruction(soul::ast::Span(), MakeRegValue(ptrType), type);
@@ -443,7 +443,7 @@ Instruction* Context::CreateLocal(Type* type)
     return inst;
 }
 
-Instruction* Context::CreateLocalInEntryBlock(Type* type)
+Instruction* IntermediateContext::CreateLocalInEntryBlock(Type* type)
 {
     Type* ptrType = MakePtrType(type);
     Instruction* inst = new LocalInstruction(soul::ast::Span(), MakeRegValue(ptrType), type);
@@ -453,7 +453,7 @@ Instruction* Context::CreateLocalInEntryBlock(Type* type)
     return inst;
 }
 
-Instruction* Context::CreatePLocal(Type* type, int level)
+Instruction* IntermediateContext::CreatePLocal(Type* type, int level)
 {
     Type* ptrType = MakePtrType(type);
     Instruction* inst = new PLocalInstruction(soul::ast::Span(), MakeRegValue(ptrType), type, level);
@@ -465,7 +465,7 @@ Instruction* Context::CreatePLocal(Type* type, int level)
     return inst;
 }
 
-Instruction* Context::CreateLoad(Value* ptr)
+Instruction* IntermediateContext::CreateLoad(Value* ptr)
 {
     Instruction* inst = new LoadInstruction(soul::ast::Span(), MakeRegValue(ptr->GetType()->RemovePointer(soul::ast::Span(), this)), ptr);
     AddLineInfo(inst);
@@ -476,7 +476,7 @@ Instruction* Context::CreateLoad(Value* ptr)
     return inst;
 }
 
-Instruction* Context::CreateStore(Value* value, Value* ptr)
+Instruction* IntermediateContext::CreateStore(Value* value, Value* ptr)
 {
     Instruction* inst = new StoreInstruction(soul::ast::Span(), value, ptr);
     AddLineInfo(inst);
@@ -487,7 +487,7 @@ Instruction* Context::CreateStore(Value* value, Value* ptr)
     return inst;
 }
 
-Instruction* Context::CreateArg(Value* arg)
+Instruction* IntermediateContext::CreateArg(Value* arg)
 {
     Instruction* inst = new ArgInstruction(soul::ast::Span(), arg);
     AddLineInfo(inst);
@@ -498,7 +498,7 @@ Instruction* Context::CreateArg(Value* arg)
     return inst;
 }
 
-Instruction* Context::CreateElemAddr(Value* ptr, Value* index, Type* type)
+Instruction* IntermediateContext::CreateElemAddr(Value* ptr, Value* index, Type* type)
 {
     Instruction* inst = new ElemAddrInstruction(soul::ast::Span(), MakeRegValue(type), ptr, index);
     AddLineInfo(inst);
@@ -509,7 +509,7 @@ Instruction* Context::CreateElemAddr(Value* ptr, Value* index, Type* type)
     return inst;
 }
 
-Instruction* Context::CreatePtrOffset(Value* ptr, Value* offset)
+Instruction* IntermediateContext::CreatePtrOffset(Value* ptr, Value* offset)
 {
     Instruction* inst = new PtrOffsetInstruction(soul::ast::Span(), MakeRegValue(ptr->GetType()), ptr, offset);
     AddLineInfo(inst);
@@ -520,7 +520,7 @@ Instruction* Context::CreatePtrOffset(Value* ptr, Value* offset)
     return inst;
 }
 
-Instruction* Context::CreatePtrDiff(Value* leftPtr, Value* rightPtr)
+Instruction* IntermediateContext::CreatePtrDiff(Value* leftPtr, Value* rightPtr)
 {
     Instruction* inst = new PtrDiffInstruction(soul::ast::Span(), MakeRegValue(GetLongType()), leftPtr, rightPtr);
     AddLineInfo(inst);
@@ -531,7 +531,7 @@ Instruction* Context::CreatePtrDiff(Value* leftPtr, Value* rightPtr)
     return inst;
 }
 
-Instruction* Context::CreateCall(Value* callee)
+Instruction* IntermediateContext::CreateCall(Value* callee)
 {
     Type* type = callee->GetType();
     if (type->IsFunctionPtrType())
@@ -571,7 +571,7 @@ Instruction* Context::CreateCall(Value* callee)
     }
 }
 
-Instruction* Context::CreateRet(Value* value)
+Instruction* IntermediateContext::CreateRet(Value* value)
 {
     Instruction* inst = new RetInstruction(soul::ast::Span(), value);
     AddLineInfo(inst);
@@ -582,7 +582,7 @@ Instruction* Context::CreateRet(Value* value)
     return inst;
 }
 
-Instruction* Context::CreateJump(BasicBlock* dest)
+Instruction* IntermediateContext::CreateJump(BasicBlock* dest)
 {
     JmpInstruction* inst = new JmpInstruction(soul::ast::Span(), dest->Id());
     inst->SetTargetBasicBlock(dest);
@@ -594,7 +594,7 @@ Instruction* Context::CreateJump(BasicBlock* dest)
     return inst;
 }
 
-Instruction* Context::CreateBranch(Value* cond, BasicBlock* trueDest, BasicBlock* falseDest)
+Instruction* IntermediateContext::CreateBranch(Value* cond, BasicBlock* trueDest, BasicBlock* falseDest)
 {
     BranchInstruction* inst = new BranchInstruction(soul::ast::Span(), cond, trueDest->Id(), falseDest->Id());
     inst->SetTrueTargetBasicBlock(trueDest);
@@ -607,7 +607,7 @@ Instruction* Context::CreateBranch(Value* cond, BasicBlock* trueDest, BasicBlock
     return inst;
 }
 
-SwitchInstruction* Context::CreateSwitch(Value* cond, BasicBlock* defaultDest)
+SwitchInstruction* IntermediateContext::CreateSwitch(Value* cond, BasicBlock* defaultDest)
 {
     SwitchInstruction* inst = new SwitchInstruction(soul::ast::Span(), cond, defaultDest->Id());
     AddLineInfo(inst);
@@ -618,7 +618,7 @@ SwitchInstruction* Context::CreateSwitch(Value* cond, BasicBlock* defaultDest)
     return inst;
 }
 
-Instruction* Context::CreateNop()
+Instruction* IntermediateContext::CreateNop()
 {
     Instruction* inst = new NoOperationInstruction(soul::ast::Span());
     AddLineInfo(inst);
@@ -629,7 +629,7 @@ Instruction* Context::CreateNop()
     return inst;
 }
 
-Instruction* Context::CreateGetRbp()
+Instruction* IntermediateContext::CreateGetRbp()
 {
     Instruction* inst = new GetRbpInstruction(soul::ast::Span(), MakeRegValue(types.GetVoidType()->AddPointer(this)));
     AddLineInfo(inst);
@@ -640,7 +640,7 @@ Instruction* Context::CreateGetRbp()
     return inst;
 }
 
-void Context::AddLineInfo(Instruction* inst)
+void IntermediateContext::AddLineInfo(Instruction* inst)
 {
     if (currentLineNumber != 0 && !inst->IsNopInstruction())
     {
@@ -662,14 +662,14 @@ void Context::AddLineInfo(Instruction* inst)
     }
 }
 
-RegValue* Context::MakeRegValue(Type* type)
+RegValue* IntermediateContext::MakeRegValue(Type* type)
 {
     Function* currentFunction = CurrentFunction();
     RegValue* regValue = currentFunction->MakeRegValue(soul::ast::Span(), type, currentFunction->NextRegNumber(), this);
     return regValue;
 }
 
-void Context::WriteFile()
+void IntermediateContext::WriteFile()
 {
     compileUnit.Write();
 }

@@ -12,10 +12,8 @@ import std;
 
 export namespace otava::intermediate {
 
-export namespace metadata {}
-
 class MetadataStruct;
-class Context;
+class IntermediateContext;
 
 enum class MetadataItemKind
 {
@@ -29,13 +27,13 @@ const std::int64_t lineInfoNodeType = 2;
 class MetadataItem
 {
 public:
-    MetadataItem(MetadataItemKind kind_);
+    MetadataItem(MetadataItemKind kind_) noexcept;
     virtual ~MetadataItem();
-    inline MetadataItemKind Kind() const { return kind; }
-    inline bool IsMetadataRef() const { return kind == MetadataItemKind::metadataRef; }
-    inline bool IsMetadataBool() const { return kind == MetadataItemKind::metadataBool; }
-    inline bool IsMetadataLong() const { return kind == MetadataItemKind::metadataLong; }
-    inline bool IsMetadataString() const { return kind == MetadataItemKind::metadataString; }
+    inline MetadataItemKind Kind() const noexcept { return kind; }
+    inline bool IsMetadataRef() const noexcept { return kind == MetadataItemKind::metadataRef; }
+    inline bool IsMetadataBool() const noexcept { return kind == MetadataItemKind::metadataBool; }
+    inline bool IsMetadataLong() const noexcept { return kind == MetadataItemKind::metadataLong; }
+    inline bool IsMetadataString() const noexcept { return kind == MetadataItemKind::metadataString; }
     virtual void Write(util::CodeFormatter& formatter) = 0;
 private:
     MetadataItemKind kind;
@@ -44,11 +42,11 @@ private:
 class MetadataRef : public MetadataItem
 {
 public:
-    MetadataRef(const soul::ast::Span& span_, std::int32_t nodeId_);
-    inline const soul::ast::Span& GetSpan() const { return span; }
-    inline std::int32_t NodeId() const { return nodeId; }
-    inline MetadataStruct* GetMetadataStruct() const { return metadataStruct; }
-    inline void SetMetadataStruct(MetadataStruct* metadataStruct_) { metadataStruct = metadataStruct_; }
+    MetadataRef(const soul::ast::Span& span_, std::int32_t nodeId_) noexcept;
+    inline const soul::ast::Span& GetSpan() const noexcept { return span; }
+    inline std::int32_t NodeId() const noexcept { return nodeId; }
+    inline MetadataStruct* GetMetadataStruct() const noexcept { return metadataStruct; }
+    inline void SetMetadataStruct(MetadataStruct* metadataStruct_) noexcept { metadataStruct = metadataStruct_; }
     void Write(util::CodeFormatter& formatter) override;
 private:
     soul::ast::Span span;
@@ -59,8 +57,8 @@ private:
 class MetadataBool : public MetadataItem
 {
 public:
-    MetadataBool(bool value_);
-    inline bool Value() const { return value; }
+    MetadataBool(bool value_) noexcept;
+    inline bool Value() const noexcept { return value; }
     void Write(util::CodeFormatter& formatter) override;
 private:
     bool value;
@@ -69,8 +67,8 @@ private:
 class MetadataLong : public MetadataItem
 {
 public:
-    MetadataLong(std::int64_t value_);
-    inline std::int64_t Value() const { return value; }
+    MetadataLong(std::int64_t value_) noexcept;
+    inline std::int64_t Value() const noexcept { return value; }
     void Write(util::CodeFormatter& formatter) override;
 private:
     std::int64_t value;
@@ -80,7 +78,7 @@ class MetadataString : public MetadataItem
 {
 public:
     MetadataString(const std::string& value_);
-    inline const std::string& Value() const { return value; }
+    inline const std::string& Value() const noexcept { return value; }
     void Write(util::CodeFormatter& formatter) override;
 private:
     std::string value;
@@ -92,10 +90,10 @@ public:
     MetadataStruct(const soul::ast::Span& span_, std::int32_t id_);
     MetadataStruct(const MetadataStruct&) = delete;
     MetadataStruct& operator=(const MetadataStruct&) = delete;
-    inline const soul::ast::Span& GetSpan() const { return span; }
-    inline std::int32_t Id() const { return id; }
+    inline const soul::ast::Span& GetSpan() const noexcept { return span; }
+    inline std::int32_t Id() const noexcept { return id; }
     void AddItem(const std::string& fieldName, MetadataItem* item);
-    MetadataItem* GetItem(const std::string& fieldName) const;
+    MetadataItem* GetItem(const std::string& fieldName) const noexcept;
     void Write(util::CodeFormatter& formatter) override;
     void WriteDefinition(util::CodeFormatter& formatter);
 private:
@@ -107,11 +105,11 @@ private:
 class Metadata
 {
 public:
-    Metadata();
+    Metadata() noexcept;
     Metadata(const Metadata&) = delete;
     Metadata& operator=(const Metadata&) = delete;
-    inline Context* GetContext() const { return context; }
-    inline void SetContext(Context* context_) { context = context_; }
+    inline IntermediateContext* GetContext() const noexcept { return context; }
+    inline void SetContext(IntermediateContext* context_) noexcept { context = context_; }
     MetadataStruct* CreateMetadataStruct();
     MetadataStruct* GetMetadataStruct(std::int32_t id) const;
     MetadataStruct* AddMetadataStruct(const soul::ast::Span& span, std::int32_t id);
@@ -122,7 +120,7 @@ public:
     void ResolveMetadataReferences();
     void Write(util::CodeFormatter& formatter);
 private:
-    Context* context;
+    IntermediateContext* context;
     std::vector<std::unique_ptr<MetadataStruct>> metadataNodes;
     std::vector<std::unique_ptr<MetadataItem>> metadataItems;
     std::map<std::int32_t, MetadataStruct*> metadataMap;

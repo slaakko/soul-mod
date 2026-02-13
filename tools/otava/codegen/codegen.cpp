@@ -340,7 +340,9 @@ public:
     void Visit(otava::symbols::BoundLiteralNode& node) override;
     void Visit(otava::symbols::BoundStringLiteralNode& node) override;
     void Visit(otava::symbols::BoundVariableNode& node) override;
+    void Visit(otava::symbols::BoundParentVariableNode& node) override;
     void Visit(otava::symbols::BoundParameterNode& node) override;
+    void Visit(otava::symbols::BoundParentParameterNode& node) override;
     void Visit(otava::symbols::BoundEnumConstant& node) override;
     void Visit(otava::symbols::BoundMemberExprNode& node) override;
     void Visit(otava::symbols::BoundFunctionCallNode& node) override;
@@ -761,9 +763,9 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
     }
     emitter->ResolveReferences();
     emitter->Emit();
-    otava::intermediate::Context intermediateContext;
-    otava::intermediate::Context optimizationContext;
-    otava::intermediate::Context* finalContext = &intermediateContext;
+    otava::intermediate::IntermediateContext intermediateContext;
+    otava::intermediate::IntermediateContext optimizationContext;
+    otava::intermediate::IntermediateContext* finalContext = &intermediateContext;
     otava::intermediate::Parse(emitter->FilePath(), intermediateContext, verbose);
     otava::intermediate::Verify(intermediateContext);
     std::string assemblyFilePath;
@@ -860,6 +862,10 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     if (functionDefinition->ContainsGotosOrLabels())
     {
         BuildGotoTargetMap(node.Body(), &context);
+    }
+    if (functionDefinition->FullName() == U"otava::intermediate::invoke_1_compile_unit_30C8AE26057B92DD4E9DBA86C4FC2A4F58107238(void*)")
+    {
+        int x = 0;
     }
     std::string functionDefinitionName = functionDefinition->IrName(&context);
     if (functionDefinition->GroupName() == U"main")
@@ -1552,7 +1558,21 @@ void CodeGenerator::Visit(otava::symbols::BoundVariableNode& node)
     GenJumpingBoolCode();
 }
 
+void CodeGenerator::Visit(otava::symbols::BoundParentVariableNode& node)
+{
+    SetCurrentLineNumber(node.GetSourcePos());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    GenJumpingBoolCode();
+}
+
 void CodeGenerator::Visit(otava::symbols::BoundParameterNode& node)
+{
+    SetCurrentLineNumber(node.GetSourcePos());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    GenJumpingBoolCode();
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundParentParameterNode& node)
 {
     SetCurrentLineNumber(node.GetSourcePos());
     node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);

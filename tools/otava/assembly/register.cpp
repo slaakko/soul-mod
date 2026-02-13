@@ -114,11 +114,6 @@ Register::Register(RegisterKind kind_, RegisterGroupKind group_, int size_) : Va
 {
 }
 
-void Register::FreeRegs(Context* context)
-{
-    context->GetRegisterPool()->FreeGlobalReg(this);
-}
-
 RegisterGroup::RegisterGroup() : kind(RegisterGroupKind::max), nonvolatile(false)
 {
 }
@@ -509,23 +504,7 @@ RegisterGroup* RegisterPool::GetRegisterGroup(RegisterGroupKind regGroupKind, bo
     return regGroup;
 }
 
-void RegisterPool::UseGlobalReg(Register* reg)
-{
-    GlobalReg globalReg = RegisterGroupKindToGlobalReg(reg->Group());
-    if ((usedGlobalRegs & globalReg) != GlobalReg::none)
-    {
-        throw std::runtime_error("global register " + GlobalRegsToString(globalReg) + " in use");
-    }
-    usedGlobalRegs = usedGlobalRegs | globalReg;
-}
-
-void RegisterPool::FreeGlobalReg(Register* reg)
-{
-    GlobalReg globalReg = RegisterGroupKindToGlobalReg(reg->Group());
-    usedGlobalRegs = usedGlobalRegs & ~globalReg;
-}
-
-bool RegisterGroupLess::operator()(RegisterGroup* left, RegisterGroup* right) const
+bool RegisterGroupLess::operator()(RegisterGroup* left, RegisterGroup* right) const noexcept
 {
     return int(left->Kind()) < int(right->Kind());
 }

@@ -3,9 +3,6 @@
 // Distributed under the MIT license
 // =================================
 
-module;
-#include <util/assert.hpp>
-
 module otava.intermediate.code;
 
 import otava.intermediate.context;
@@ -24,7 +21,7 @@ const char* opCodeStr[] =
     "param", "local", "plocal", "load", "elemaddr", "ptroffset", "ptrdiff", "call", "nop", "getrbp"
 };
 
-RegValue::RegValue(const soul::ast::Span& span_, Type* type_, std::int32_t reg_) : Value(span_, ValueKind::regValue, type_), reg(reg_), inst(nullptr)
+RegValue::RegValue(const soul::ast::Span& span_, Type* type_, std::int32_t reg_) noexcept : Value(span_, ValueKind::regValue, type_), reg(reg_), inst(nullptr)
 {
 }
 
@@ -107,7 +104,7 @@ void AddToUsesVec(std::vector<Instruction*>& uses, Value* value)
     }
 }
 
-Instruction::Instruction(const soul::ast::Span& span_, Type* type_, OpCode opCode_) :
+Instruction::Instruction(const soul::ast::Span& span_, Type* type_, OpCode opCode_) noexcept :
     Value(span_, ValueKind::instruction, type_), opCode(opCode_), metadataRef(nullptr), index(-1), regValueIndex(-1), assemblyInstruction(nullptr)
 {
 }
@@ -118,7 +115,7 @@ void Instruction::Check()
     {
         if (user->opCode < OpCode::store || user->opCode > OpCode::nop)
         {
-            Assert(false, "invalid instruction");
+            throw std::runtime_error("invalid instruction");
         }
     }
 }
@@ -128,13 +125,13 @@ std::string Instruction::Name() const
     return opCodeStr[static_cast<int>(opCode)];
 }
 
-bool Instruction::IsLeader() const
+bool Instruction::IsLeader() const noexcept
 {
     BasicBlock* basicBlock = Parent();
     return this == basicBlock->Leader();
 }
 
-bool Instruction::IsTerminator() const
+bool Instruction::IsTerminator() const noexcept
 {
     switch (opCode)
     {
@@ -152,7 +149,7 @@ bool Instruction::IsTerminator() const
     }
 }
 
-bool Instruction::IsValueInstruction() const
+bool Instruction::IsValueInstruction() const noexcept
 {
     switch (opCode)
     {
@@ -198,58 +195,58 @@ bool Instruction::IsValueInstruction() const
     }
 }
 
-bool Instruction::IsUnaryInstruction() const
+bool Instruction::IsUnaryInstruction() const noexcept
 {
     switch (opCode)
     {
-    case OpCode::not_:
-    case OpCode::neg:
-    case OpCode::signextend:
-    case OpCode::zeroextend:
-    case OpCode::fpextend:
-    case OpCode::truncate:
-    case OpCode::bitcast:
-    case OpCode::inttofloat:
-    case OpCode::floattoint:
-    case OpCode::inttoptr:
-    case OpCode::ptrtoint:
-    {
-        return true;
-    }
-    default:
-    {
-        return false;
-    }
+        case OpCode::not_:
+        case OpCode::neg:
+        case OpCode::signextend:
+        case OpCode::zeroextend:
+        case OpCode::fpextend:
+        case OpCode::truncate:
+        case OpCode::bitcast:
+        case OpCode::inttofloat:
+        case OpCode::floattoint:
+        case OpCode::inttoptr:
+        case OpCode::ptrtoint:
+        {
+            return true;
+        }
+        default:
+        {
+            return false;
+        }
     }
 }
 
-bool Instruction::IsBinaryInstruction() const
+bool Instruction::IsBinaryInstruction() const noexcept
 {
     switch (opCode)
     {
-    case OpCode::add:
-    case OpCode::sub:
-    case OpCode::mul:
-    case OpCode::div_:
-    case OpCode::mod:
-    case OpCode::and_:
-    case OpCode::or_:
-    case OpCode::xor_:
-    case OpCode::shl:
-    case OpCode::shr:
-    case OpCode::equal:
-    case OpCode::less:
-    {
-        return true;
-    }
-    default:
-    {
-        return false;
-    }
+        case OpCode::add:
+        case OpCode::sub:
+        case OpCode::mul:
+        case OpCode::div_:
+        case OpCode::mod:
+        case OpCode::and_:
+        case OpCode::or_:
+        case OpCode::xor_:
+        case OpCode::shl:
+        case OpCode::shr:
+        case OpCode::equal:
+        case OpCode::less:
+        {
+            return true;
+        }
+        default:
+        {
+            return false;
+        }
     }
 }
 
-bool Instruction::RequiresLocalRegister() const
+bool Instruction::RequiresLocalRegister() const noexcept
 {
     switch (opCode)
     {
@@ -327,7 +324,7 @@ std::vector<BasicBlock*> Instruction::Successors() const
     return successors;
 }
 
-BasicBlock* Instruction::Parent() const
+BasicBlock* Instruction::Parent() const noexcept
 {
     return static_cast<BasicBlock*>(GetContainer()->Parent());
 }
@@ -353,7 +350,7 @@ void Instruction::ReplaceUsesWith(Value* value)
     if (use)
     {
         std::vector<Instruction*> copiedUsers = users;
-        for (const auto& user : copiedUsers)
+        for (auto* user : copiedUsers)
         {
             user->ReplaceValue(use, value);
         }
@@ -361,7 +358,7 @@ void Instruction::ReplaceUsesWith(Value* value)
     else
     {
         Code* code = fn->Parent();
-        Context* context = code->GetContext();
+        IntermediateContext* context = code->GetContext();
         Error("reg value " + std::to_string(RegValueIndex()) + "not found", Span(), context);
     }
 }
@@ -379,7 +376,7 @@ void Instruction::ReplaceValue(Value* use, Value* value)
 {
 }
 
-bool Instruction::IsRetVoid() const
+bool Instruction::IsRetVoid() const noexcept
 {
     if (IsRetInstruction())
     {
@@ -389,7 +386,8 @@ bool Instruction::IsRetVoid() const
     return false;
 }
 
-StoreInstruction::StoreInstruction(const soul::ast::Span& span_, Value* value_, Value* ptr_) : Instruction(span_, nullptr, OpCode::store), value(value_), ptr(ptr_)
+StoreInstruction::StoreInstruction(const soul::ast::Span& span_, Value* value_, Value* ptr_) noexcept : 
+    Instruction(span_, nullptr, OpCode::store), value(value_), ptr(ptr_)
 {
 }
 
@@ -428,7 +426,7 @@ void StoreInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* StoreInstruction::Clone(CloneContext& cloneContext) const
+Value* StoreInstruction::Clone(CloneContext& cloneContext) const
 {
     StoreInstruction* clone = new StoreInstruction(Span(), value->Clone(cloneContext), ptr->Clone(cloneContext));
     clone->SetIndex(Index());
@@ -449,7 +447,7 @@ void StoreInstruction::Write(util::CodeFormatter& formatter)
     formatter.Write(ptr->ToString());
 }
 
-ArgInstruction::ArgInstruction(const soul::ast::Span& span_, Value* arg_) : Instruction(span_, nullptr, OpCode::arg), arg(arg_)
+ArgInstruction::ArgInstruction(const soul::ast::Span& span_, Value* arg_) noexcept : Instruction(span_, nullptr, OpCode::arg), arg(arg_)
 {
 }
 
@@ -458,7 +456,7 @@ void ArgInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* ArgInstruction::Clone(CloneContext& cloneContext) const
+Value* ArgInstruction::Clone(CloneContext& cloneContext) const
 {
     ArgInstruction* clone = new ArgInstruction(Span(), arg->Clone(cloneContext));
     clone->SetIndex(Index());
@@ -497,7 +495,7 @@ void ArgInstruction::Write(util::CodeFormatter& formatter)
     formatter.Write(arg->ToString());
 }
 
-JmpInstruction::JmpInstruction(const soul::ast::Span& span_, std::int32_t targetLabelId_) :
+JmpInstruction::JmpInstruction(const soul::ast::Span& span_, std::int32_t targetLabelId_) noexcept :
     Instruction(span_, nullptr, OpCode::jmp), targetLabelId(targetLabelId_), targetBasicBlock(nullptr)
 {
 }
@@ -507,7 +505,7 @@ void JmpInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* JmpInstruction::Clone(CloneContext& cloneContext) const
+Value* JmpInstruction::Clone(CloneContext& cloneContext) const
 {
     JmpInstruction* clone = new JmpInstruction(Span(), targetBasicBlock->Id());
     clone->SetIndex(Index());
@@ -531,7 +529,7 @@ void JmpInstruction::Write(util::CodeFormatter& formatter)
     formatter.Write("@" + std::to_string(targetBasicBlock->Id()));
 }
 
-BranchInstruction::BranchInstruction(const soul::ast::Span& span_, Value* cond_, std::int32_t trueTargetLabelId_, std::int32_t falseTargetLabelId_) :
+BranchInstruction::BranchInstruction(const soul::ast::Span& span_, Value* cond_, std::int32_t trueTargetLabelId_, std::int32_t falseTargetLabelId_) noexcept :
     Instruction(span_, nullptr, OpCode::branch),
     cond(cond_), trueTargetLabelId(trueTargetLabelId_), trueTargetBasicBlock(nullptr), falseTargetLabelId(falseTargetLabelId_), falseTargetBasicBlock(nullptr)
 {
@@ -542,7 +540,7 @@ void BranchInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* BranchInstruction::Clone(CloneContext& cloneContext) const
+Value* BranchInstruction::Clone(CloneContext& cloneContext) const
 {
     BranchInstruction* clone = new BranchInstruction(Span(), cond->Clone(cloneContext), trueTargetBasicBlock->Id(), falseTargetBasicBlock->Id());
     clone->SetIndex(Index());
@@ -603,7 +601,8 @@ void BranchInstruction::Write(util::CodeFormatter& formatter)
     formatter.Write("@" + std::to_string(falseTargetBasicBlock->Id()));
 }
 
-ProcedureCallInstruction::ProcedureCallInstruction(const soul::ast::Span& span_, Value* callee_) : Instruction(span_, nullptr, OpCode::procedure_call), callee(callee_)
+ProcedureCallInstruction::ProcedureCallInstruction(const soul::ast::Span& span_, Value* callee_) noexcept : 
+    Instruction(span_, nullptr, OpCode::procedure_call), callee(callee_)
 {
 }
 
@@ -612,7 +611,7 @@ void ProcedureCallInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* ProcedureCallInstruction::Clone(CloneContext& cloneContext) const
+Value* ProcedureCallInstruction::Clone(CloneContext& cloneContext) const
 {
     ProcedureCallInstruction* clone = new ProcedureCallInstruction(Span(), callee->Clone(cloneContext));
     clone->SetIndex(Index());
@@ -632,7 +631,7 @@ void ProcedureCallInstruction::SetArgs(std::vector<Value*>&& args_)
     args = std::move(args_);
 }
 
-Function* ProcedureCallInstruction::CalleeFn() const
+Function* ProcedureCallInstruction::CalleeFn() const noexcept
 {
     if (callee->IsSymbolValue())
     {
@@ -689,7 +688,8 @@ void ProcedureCallInstruction::Write(util::CodeFormatter& formatter)
     formatter.Write(callee->ToString());
 }
 
-RetInstruction::RetInstruction(const soul::ast::Span& span_, Value* returnValue_) : Instruction(span_, nullptr, OpCode::ret), returnValue(returnValue_)
+RetInstruction::RetInstruction(const soul::ast::Span& span_, Value* returnValue_) noexcept : 
+    Instruction(span_, nullptr, OpCode::ret), returnValue(returnValue_)
 {
 }
 
@@ -698,7 +698,7 @@ void RetInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* RetInstruction::Clone(CloneContext& cloneContext) const
+Value* RetInstruction::Clone(CloneContext& cloneContext) const
 {
     Value* clonedReturnValue = nullptr;
     if (returnValue)
@@ -727,7 +727,7 @@ void RetInstruction::Write(util::CodeFormatter& formatter)
     }
 }
 
-bool RetInstruction::IsFloatingPointInstruction() const
+bool RetInstruction::IsFloatingPointInstruction() const noexcept
 {
     if (returnValue)
     {
@@ -761,11 +761,11 @@ std::vector<Instruction*> RetInstruction::Uses() const
     return uses;
 }
 
-CaseTarget::CaseTarget() : caseValue(nullptr), targetLabelId(-1), targetBlock(nullptr)
+CaseTarget::CaseTarget() noexcept : caseValue(nullptr), targetLabelId(-1), targetBlock(nullptr)
 {
 }
 
-SwitchInstruction::SwitchInstruction(const soul::ast::Span& span_, Value* cond_, std::int32_t defaultTargetLabelId_) :
+SwitchInstruction::SwitchInstruction(const soul::ast::Span& span_, Value* cond_, std::int32_t defaultTargetLabelId_) noexcept :
     Instruction(span_, nullptr, OpCode::switch_), cond(cond_), defaultTargetLabelId(defaultTargetLabelId_), defaultTargetBlock(nullptr)
 {
 }
@@ -775,7 +775,7 @@ void SwitchInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* SwitchInstruction::Clone(CloneContext& cloneContext) const
+Value* SwitchInstruction::Clone(CloneContext& cloneContext) const
 {
     SwitchInstruction* clone = new SwitchInstruction(Span(), cond->Clone(cloneContext), defaultTargetBlock->Id());
     clone->SetIndex(Index());
@@ -883,7 +883,8 @@ std::vector<Instruction*> SwitchInstruction::Uses() const
     return uses;
 }
 
-ValueInstruction::ValueInstruction(const soul::ast::Span& span_, RegValue* result_, OpCode opCode_) : Instruction(span_, result_->GetType(), opCode_), result(result_)
+ValueInstruction::ValueInstruction(const soul::ast::Span& span_, RegValue* result_, OpCode opCode_) noexcept : 
+    Instruction(span_, result_->GetType(), opCode_), result(result_)
 {
     result->SetInst(this);
 }
@@ -902,7 +903,7 @@ void ValueInstruction::WriteResult(util::CodeFormatter& formatter)
     formatter.Write(" " + result->ToString());
 }
 
-UnaryInstruction::UnaryInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_, OpCode opCode_) :
+UnaryInstruction::UnaryInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_, OpCode opCode_) noexcept :
     ValueInstruction(span_, result_, opCode_), operand(operand_)
 {
 }
@@ -936,7 +937,8 @@ void UnaryInstruction::WriteArg(util::CodeFormatter& formatter)
     formatter.Write(operand->ToString());
 }
 
-NotInstruction::NotInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : UnaryInstruction(span_, result_, operand_, OpCode::not_)
+NotInstruction::NotInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) noexcept : 
+    UnaryInstruction(span_, result_, operand_, OpCode::not_)
 {
 }
 
@@ -945,7 +947,7 @@ void NotInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* NotInstruction::Clone(CloneContext& cloneContext) const
+Value* NotInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     NotInstruction* clone = new NotInstruction(Span(), result, Operand()->Clone(cloneContext));
@@ -963,7 +965,8 @@ void NotInstruction::Write(util::CodeFormatter& formatter)
     WriteArg(formatter);
 }
 
-NegInstruction::NegInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : UnaryInstruction(span_, result_, operand_, OpCode::neg)
+NegInstruction::NegInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) noexcept : 
+    UnaryInstruction(span_, result_, operand_, OpCode::neg)
 {
 }
 
@@ -972,7 +975,7 @@ void NegInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* NegInstruction::Clone(CloneContext& cloneContext) const
+Value* NegInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     NegInstruction* clone = new NegInstruction(Span(), result, Operand()->Clone(cloneContext));
@@ -990,7 +993,7 @@ void NegInstruction::Write(util::CodeFormatter& formatter)
     WriteArg(formatter);
 }
 
-SignExtendInstruction::SignExtendInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : 
+SignExtendInstruction::SignExtendInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) noexcept :
     UnaryInstruction(span_, result_, operand_, OpCode::signextend)
 {
 }
@@ -1000,7 +1003,7 @@ void SignExtendInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* SignExtendInstruction::Clone(CloneContext& cloneContext) const
+Value* SignExtendInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     SignExtendInstruction* clone = new SignExtendInstruction(Span(), result, Operand()->Clone(cloneContext));
@@ -1018,7 +1021,7 @@ void SignExtendInstruction::Write(util::CodeFormatter& formatter)
     WriteArg(formatter);
 }
 
-ZeroExtendInstruction::ZeroExtendInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : 
+ZeroExtendInstruction::ZeroExtendInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) noexcept :
     UnaryInstruction(span_, result_, operand_, OpCode::zeroextend)
 {
 }
@@ -1028,7 +1031,7 @@ void ZeroExtendInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* ZeroExtendInstruction::Clone(CloneContext& cloneContext) const
+Value* ZeroExtendInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     ZeroExtendInstruction* clone = new ZeroExtendInstruction(Span(), result, Operand()->Clone(cloneContext));
@@ -1046,7 +1049,7 @@ void ZeroExtendInstruction::Write(util::CodeFormatter& formatter)
     WriteArg(formatter);
 }
 
-FloatingPointExtendInstruction::FloatingPointExtendInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) :
+FloatingPointExtendInstruction::FloatingPointExtendInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) noexcept :
     UnaryInstruction(span_, result_, operand_, OpCode::fpextend)
 {
 }
@@ -1056,7 +1059,7 @@ void FloatingPointExtendInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* FloatingPointExtendInstruction::Clone(CloneContext& cloneContext) const
+Value* FloatingPointExtendInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     FloatingPointExtendInstruction* clone = new FloatingPointExtendInstruction(Span(), result, Operand()->Clone(cloneContext));
@@ -1074,7 +1077,8 @@ void FloatingPointExtendInstruction::Write(util::CodeFormatter& formatter)
     WriteArg(formatter);
 }
 
-TruncateInstruction::TruncateInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : UnaryInstruction(span_, result_, operand_, OpCode::truncate)
+TruncateInstruction::TruncateInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) noexcept : 
+    UnaryInstruction(span_, result_, operand_, OpCode::truncate)
 {
 }
 
@@ -1083,7 +1087,7 @@ void TruncateInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* TruncateInstruction::Clone(CloneContext& cloneContext) const
+Value* TruncateInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     TruncateInstruction* clone = new TruncateInstruction(Span(), result, Operand()->Clone(cloneContext));
@@ -1101,7 +1105,8 @@ void TruncateInstruction::Write(util::CodeFormatter& formatter)
     WriteArg(formatter);
 }
 
-BitcastInstruction::BitcastInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : UnaryInstruction(span_, result_, operand_, OpCode::bitcast)
+BitcastInstruction::BitcastInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) noexcept : 
+    UnaryInstruction(span_, result_, operand_, OpCode::bitcast)
 {
 }
 
@@ -1110,7 +1115,7 @@ void BitcastInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* BitcastInstruction::Clone(CloneContext& cloneContext) const
+Value* BitcastInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     BitcastInstruction* clone = new BitcastInstruction(Span(), result, Operand()->Clone(cloneContext));
@@ -1128,7 +1133,7 @@ void BitcastInstruction::Write(util::CodeFormatter& formatter)
     WriteArg(formatter);
 }
 
-IntToFloatInstruction::IntToFloatInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : 
+IntToFloatInstruction::IntToFloatInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) noexcept :
     UnaryInstruction(span_, result_, operand_, OpCode::inttofloat)
 {
 }
@@ -1138,7 +1143,7 @@ void IntToFloatInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* IntToFloatInstruction::Clone(CloneContext& cloneContext) const
+Value* IntToFloatInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     IntToFloatInstruction* clone = new IntToFloatInstruction(Span(), result, Operand()->Clone(cloneContext));
@@ -1156,7 +1161,7 @@ void IntToFloatInstruction::Write(util::CodeFormatter& formatter)
     WriteArg(formatter);
 }
 
-FloatToIntInstruction::FloatToIntInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : 
+FloatToIntInstruction::FloatToIntInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) noexcept :
     UnaryInstruction(span_, result_, operand_, OpCode::floattoint)
 {
 }
@@ -1166,7 +1171,7 @@ void FloatToIntInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* FloatToIntInstruction::Clone(CloneContext& cloneContext) const
+Value* FloatToIntInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     FloatToIntInstruction* clone = new FloatToIntInstruction(Span(), result, Operand()->Clone(cloneContext));
@@ -1184,7 +1189,8 @@ void FloatToIntInstruction::Write(util::CodeFormatter& formatter)
     WriteArg(formatter);
 }
 
-IntToPtrInstruction::IntToPtrInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : UnaryInstruction(span_, result_, operand_, OpCode::inttoptr)
+IntToPtrInstruction::IntToPtrInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) noexcept : 
+    UnaryInstruction(span_, result_, operand_, OpCode::inttoptr)
 {
 }
 
@@ -1193,7 +1199,7 @@ void IntToPtrInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* IntToPtrInstruction::Clone(CloneContext& cloneContext) const
+Value* IntToPtrInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     IntToPtrInstruction* clone = new IntToPtrInstruction(Span(), result, Operand()->Clone(cloneContext));
@@ -1211,7 +1217,8 @@ void IntToPtrInstruction::Write(util::CodeFormatter& formatter)
     WriteArg(formatter);
 }
 
-PtrToIntInstruction::PtrToIntInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) : UnaryInstruction(span_, result_, operand_, OpCode::ptrtoint)
+PtrToIntInstruction::PtrToIntInstruction(const soul::ast::Span& span_, RegValue* result_, Value* operand_) noexcept : 
+    UnaryInstruction(span_, result_, operand_, OpCode::ptrtoint)
 {
 }
 
@@ -1220,7 +1227,7 @@ void PtrToIntInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* PtrToIntInstruction::Clone(CloneContext& cloneContext) const
+Value* PtrToIntInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     PtrToIntInstruction* clone = new PtrToIntInstruction(Span(), result, Operand()->Clone(cloneContext));
@@ -1238,7 +1245,7 @@ void PtrToIntInstruction::Write(util::CodeFormatter& formatter)
     WriteArg(formatter);
 }
 
-BinaryInstruction::BinaryInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_, OpCode opCode_) :
+BinaryInstruction::BinaryInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_, OpCode opCode_) noexcept :
     ValueInstruction(span_, result_, opCode_), left(left_), right(right_)
 {
 }
@@ -1284,7 +1291,8 @@ void BinaryInstruction::WriteArgs(util::CodeFormatter& formatter)
     formatter.Write(right->ToString());
 }
 
-AddInstruction::AddInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : BinaryInstruction(span_, result_, left_, right_, OpCode::add)
+AddInstruction::AddInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) noexcept : 
+    BinaryInstruction(span_, result_, left_, right_, OpCode::add)
 {
 }
 
@@ -1293,7 +1301,7 @@ void AddInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* AddInstruction::Clone(CloneContext& cloneContext) const
+Value* AddInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     AddInstruction* clone = new AddInstruction(Span(), result, Left()->Clone(cloneContext), Right()->Clone(cloneContext));
@@ -1311,7 +1319,8 @@ void AddInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-SubInstruction::SubInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : BinaryInstruction(span_, result_, left_, right_, OpCode::sub)
+SubInstruction::SubInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) noexcept : 
+    BinaryInstruction(span_, result_, left_, right_, OpCode::sub)
 {
 }
 
@@ -1320,7 +1329,7 @@ void SubInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* SubInstruction::Clone(CloneContext& cloneContext) const
+Value* SubInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     SubInstruction* clone = new SubInstruction(Span(), result, Left()->Clone(cloneContext), Right()->Clone(cloneContext));
@@ -1338,7 +1347,8 @@ void SubInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-MulInstruction::MulInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : BinaryInstruction(span_, result_, left_, right_, OpCode::mul)
+MulInstruction::MulInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) noexcept : 
+    BinaryInstruction(span_, result_, left_, right_, OpCode::mul)
 {
 }
 
@@ -1347,7 +1357,7 @@ void MulInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* MulInstruction::Clone(CloneContext& cloneContext) const
+Value* MulInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     MulInstruction* clone = new MulInstruction(Span(), result, Left()->Clone(cloneContext), Right()->Clone(cloneContext));
@@ -1365,7 +1375,7 @@ void MulInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-DivInstruction::DivInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : 
+DivInstruction::DivInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) noexcept :
     BinaryInstruction(span_, result_, left_, right_, OpCode::div_)
 {
 }
@@ -1375,7 +1385,7 @@ void DivInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* DivInstruction::Clone(CloneContext& cloneContext) const
+Value* DivInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     DivInstruction* clone = new DivInstruction(Span(), result, Left()->Clone(cloneContext), Right()->Clone(cloneContext));
@@ -1393,7 +1403,8 @@ void DivInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-ModInstruction::ModInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : BinaryInstruction(span_, result_, left_, right_, OpCode::mod)
+ModInstruction::ModInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) noexcept : 
+    BinaryInstruction(span_, result_, left_, right_, OpCode::mod)
 {
 }
 
@@ -1402,7 +1413,7 @@ void ModInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* ModInstruction::Clone(CloneContext& cloneContext) const
+Value* ModInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     ModInstruction* clone = new ModInstruction(Span(), result, Left()->Clone(cloneContext), Right()->Clone(cloneContext));
@@ -1420,7 +1431,7 @@ void ModInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-AndInstruction::AndInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : 
+AndInstruction::AndInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) noexcept :
     BinaryInstruction(span_, result_, left_, right_, OpCode::and_)
 {
 }
@@ -1430,7 +1441,7 @@ void AndInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* AndInstruction::Clone(CloneContext& cloneContext) const
+Value* AndInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     AndInstruction* clone = new AndInstruction(Span(), result, Left()->Clone(cloneContext), Right()->Clone(cloneContext));
@@ -1448,7 +1459,8 @@ void AndInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-OrInstruction::OrInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : BinaryInstruction(span_, result_, left_, right_, OpCode::or_)
+OrInstruction::OrInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) noexcept : 
+    BinaryInstruction(span_, result_, left_, right_, OpCode::or_)
 {
 }
 
@@ -1457,7 +1469,7 @@ void OrInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* OrInstruction::Clone(CloneContext& cloneContext) const
+Value* OrInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     OrInstruction* clone = new OrInstruction(Span(), result, Left()->Clone(cloneContext), Right()->Clone(cloneContext));
@@ -1475,7 +1487,7 @@ void OrInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-XorInstruction::XorInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : 
+XorInstruction::XorInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) noexcept :
     BinaryInstruction(span_, result_, left_, right_, OpCode::xor_)
 {
 }
@@ -1485,7 +1497,7 @@ void XorInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* XorInstruction::Clone(CloneContext& cloneContext) const
+Value* XorInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     XorInstruction* clone = new XorInstruction(Span(), result, Left()->Clone(cloneContext), Right()->Clone(cloneContext));
@@ -1503,7 +1515,8 @@ void XorInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-ShlInstruction::ShlInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : BinaryInstruction(span_, result_, left_, right_, OpCode::shl)
+ShlInstruction::ShlInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) noexcept : 
+    BinaryInstruction(span_, result_, left_, right_, OpCode::shl)
 {
 }
 
@@ -1512,7 +1525,7 @@ void ShlInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* ShlInstruction::Clone(CloneContext& cloneContext) const
+Value* ShlInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     ShlInstruction* clone = new ShlInstruction(Span(), result, Left()->Clone(cloneContext), Right()->Clone(cloneContext));
@@ -1530,7 +1543,8 @@ void ShlInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-ShrInstruction::ShrInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : BinaryInstruction(span_, result_, left_, right_, OpCode::shr)
+ShrInstruction::ShrInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) noexcept : 
+    BinaryInstruction(span_, result_, left_, right_, OpCode::shr)
 {
 }
 
@@ -1539,7 +1553,7 @@ void ShrInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* ShrInstruction::Clone(CloneContext& cloneContext) const
+Value* ShrInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     ShrInstruction* clone = new ShrInstruction(Span(), result, Left()->Clone(cloneContext), Right()->Clone(cloneContext));
@@ -1557,7 +1571,7 @@ void ShrInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-EqualInstruction::EqualInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : 
+EqualInstruction::EqualInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) noexcept :
     BinaryInstruction(span_, result_, left_, right_, OpCode::equal)
 {
 }
@@ -1567,7 +1581,7 @@ void EqualInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* EqualInstruction::Clone(CloneContext& cloneContext) const
+Value* EqualInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     EqualInstruction* clone = new EqualInstruction(Span(), result, Left()->Clone(cloneContext), Right()->Clone(cloneContext));
@@ -1585,7 +1599,7 @@ void EqualInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-LessInstruction::LessInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) : 
+LessInstruction::LessInstruction(const soul::ast::Span& span_, RegValue* result_, Value* left_, Value* right_) noexcept :
     BinaryInstruction(span_, result_, left_, right_, OpCode::less)
 {
 }
@@ -1595,7 +1609,7 @@ void LessInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* LessInstruction::Clone(CloneContext& cloneContext) const
+Value* LessInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     LessInstruction* clone = new LessInstruction(Span(), result, Left()->Clone(cloneContext), Right()->Clone(cloneContext));
@@ -1613,7 +1627,8 @@ void LessInstruction::Write(util::CodeFormatter& formatter)
     WriteArgs(formatter);
 }
 
-ParamInstruction::ParamInstruction(const soul::ast::Span& span_, RegValue* result_) : ValueInstruction(span_, result_, OpCode::param)
+ParamInstruction::ParamInstruction(const soul::ast::Span& span_, RegValue* result_) noexcept : 
+    ValueInstruction(span_, result_, OpCode::param)
 {
 }
 
@@ -1622,7 +1637,7 @@ void ParamInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* ParamInstruction::Clone(CloneContext& cloneContext) const
+Value* ParamInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     ParamInstruction* clone = new ParamInstruction(Span(), result);
@@ -1639,7 +1654,7 @@ void ParamInstruction::Write(util::CodeFormatter& formatter)
     formatter.Write(" = param");
 }
 
-LocalInstruction::LocalInstruction(const soul::ast::Span& span_, RegValue* result_, Type* localType_) : 
+LocalInstruction::LocalInstruction(const soul::ast::Span& span_, RegValue* result_, Type* localType_) noexcept :
     ValueInstruction(span_, result_, OpCode::local), localType(localType_)
 {
 }
@@ -1649,7 +1664,7 @@ void LocalInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* LocalInstruction::Clone(CloneContext& cloneContext) const
+Value* LocalInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     LocalInstruction* clone = new LocalInstruction(Span(), result, localType);
@@ -1667,7 +1682,7 @@ void LocalInstruction::Write(util::CodeFormatter& formatter)
     formatter.Write(localType->Name());
 }
 
-PLocalInstruction::PLocalInstruction(const soul::ast::Span& span_, RegValue* result_, Type* localType_, int level_) : 
+PLocalInstruction::PLocalInstruction(const soul::ast::Span& span_, RegValue* result_, Type* localType_, int level_) noexcept :
     ValueInstruction(span_, result_, OpCode::plocal), localType(localType_), level(level_)
 {
 }
@@ -1677,7 +1692,7 @@ void PLocalInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* PLocalInstruction::Clone(CloneContext& cloneContext) const
+Value* PLocalInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     PLocalInstruction* clone = new PLocalInstruction(Span(), result, localType, level);
@@ -1696,7 +1711,8 @@ void PLocalInstruction::Write(util::CodeFormatter& formatter)
     formatter.Write(", " + std::to_string(level));
 }
 
-LoadInstruction::LoadInstruction(const soul::ast::Span& span_, RegValue* result_, Value* ptr_) : ValueInstruction(span_, result_, OpCode::load), ptr(ptr_)
+LoadInstruction::LoadInstruction(const soul::ast::Span& span_, RegValue* result_, Value* ptr_) noexcept : 
+    ValueInstruction(span_, result_, OpCode::load), ptr(ptr_)
 {
 }
 
@@ -1705,7 +1721,7 @@ void LoadInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* LoadInstruction::Clone(CloneContext& cloneContext) const
+Value* LoadInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     LoadInstruction* clone = new LoadInstruction(Span(), result, ptr->Clone(cloneContext));
@@ -1747,7 +1763,7 @@ std::vector<Instruction*> LoadInstruction::Uses() const
     return uses;
 }
 
-ElemAddrInstruction::ElemAddrInstruction(const soul::ast::Span& span_, RegValue* result_, Value* ptr_, Value* indexValue_) :
+ElemAddrInstruction::ElemAddrInstruction(const soul::ast::Span& span_, RegValue* result_, Value* ptr_, Value* indexValue_) noexcept :
     ValueInstruction(span_, result_, OpCode::elemaddr), ptr(ptr_), indexValue(indexValue_)
 {
 }
@@ -1757,7 +1773,7 @@ void ElemAddrInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* ElemAddrInstruction::Clone(CloneContext& cloneContext) const
+Value* ElemAddrInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     ElemAddrInstruction* clone = new ElemAddrInstruction(Span(), result, Ptr()->Clone(cloneContext), IndexValue()->Clone(cloneContext));
@@ -1781,7 +1797,7 @@ void ElemAddrInstruction::Write(util::CodeFormatter& formatter)
     formatter.Write(indexValue->ToString());
 }
 
-ElemAddrKind ElemAddrInstruction::GetElemAddrKind(Context* context) const
+ElemAddrKind ElemAddrInstruction::GetElemAddrKind(IntermediateContext* context) const
 {
     if (ptr->GetType()->IsPointerType())
     {
@@ -1830,7 +1846,7 @@ std::vector<Instruction*> ElemAddrInstruction::Uses() const
     return uses;
 }
 
-PtrOffsetInstruction::PtrOffsetInstruction(const soul::ast::Span& span_, RegValue* result_, Value* ptr_, Value* offset_) :
+PtrOffsetInstruction::PtrOffsetInstruction(const soul::ast::Span& span_, RegValue* result_, Value* ptr_, Value* offset_) noexcept :
     ValueInstruction(span_, result_, OpCode::ptroffset), ptr(ptr_), offset(offset_)
 {
 }
@@ -1840,7 +1856,7 @@ void PtrOffsetInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* PtrOffsetInstruction::Clone(CloneContext& cloneContext) const
+Value* PtrOffsetInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     PtrOffsetInstruction* clone = new PtrOffsetInstruction(Span(), result, Ptr()->Clone(cloneContext), offset->Clone(cloneContext));
@@ -1894,7 +1910,7 @@ std::vector<Instruction*> PtrOffsetInstruction::Uses() const
     return uses;
 }
 
-PtrDiffInstruction::PtrDiffInstruction(const soul::ast::Span& span_, RegValue* result_, Value* leftPtr_, Value* rightPtr_) :
+PtrDiffInstruction::PtrDiffInstruction(const soul::ast::Span& span_, RegValue* result_, Value* leftPtr_, Value* rightPtr_) noexcept :
     ValueInstruction(span_, result_, OpCode::ptrdiff), leftPtr(leftPtr_), rightPtr(rightPtr_)
 {
 }
@@ -1904,7 +1920,7 @@ void PtrDiffInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* PtrDiffInstruction::Clone(CloneContext& cloneContext) const
+Value* PtrDiffInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     PtrDiffInstruction* clone = new PtrDiffInstruction(Span(), result, leftPtr->Clone(cloneContext), rightPtr->Clone(cloneContext));
@@ -1958,7 +1974,7 @@ std::vector<Instruction*> PtrDiffInstruction::Uses() const
     return uses;
 }
 
-FunctionCallInstruction::FunctionCallInstruction(const soul::ast::Span& span_, RegValue* result_, Value* callee_) :
+FunctionCallInstruction::FunctionCallInstruction(const soul::ast::Span& span_, RegValue* result_, Value* callee_) noexcept :
     ValueInstruction(span_, result_, OpCode::function_call), callee(callee_)
 {
 }
@@ -1968,7 +1984,7 @@ void FunctionCallInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* FunctionCallInstruction::Clone(CloneContext& cloneContext) const
+Value* FunctionCallInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     FunctionCallInstruction* clone = new FunctionCallInstruction(Span(), result, callee->Clone(cloneContext));
@@ -1990,7 +2006,7 @@ void FunctionCallInstruction::SetArgs(std::vector<Value*>&& args_)
     args = std::move(args_);
 }
 
-Function* FunctionCallInstruction::CalleeFn() const
+Function* FunctionCallInstruction::CalleeFn() const noexcept
 {
     if (callee->IsSymbolValue())
     {
@@ -2048,11 +2064,12 @@ std::vector<Instruction*> FunctionCallInstruction::Uses() const
     return uses;
 }
 
-BlockValue::BlockValue(Value* value_, BasicBlock* block_) : value(value_), blockId(block_->Id()), block(block_)
+BlockValue::BlockValue(Value* value_, BasicBlock* block_) noexcept : value(value_), blockId(block_->Id()), block(block_)
 {
 }
 
-NoOperationInstruction::NoOperationInstruction(const soul::ast::Span& span_) : Instruction(span_, nullptr, OpCode::nop)
+NoOperationInstruction::NoOperationInstruction(const soul::ast::Span& span_) noexcept : 
+    Instruction(span_, nullptr, OpCode::nop)
 {
 }
 
@@ -2061,7 +2078,7 @@ void NoOperationInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* NoOperationInstruction::Clone(CloneContext& cloneContext) const
+Value* NoOperationInstruction::Clone(CloneContext& cloneContext) const
 {
     NoOperationInstruction* clone = new NoOperationInstruction(Span());
     clone->SetIndex(Index());
@@ -2075,7 +2092,8 @@ void NoOperationInstruction::Write(util::CodeFormatter& formatter)
     formatter.Write("nop");
 }
 
-GetRbpInstruction::GetRbpInstruction(const soul::ast::Span& span_, RegValue* result_) : ValueInstruction(span_, result_, OpCode::getrbp)
+GetRbpInstruction::GetRbpInstruction(const soul::ast::Span& span_, RegValue* result_) noexcept : 
+    ValueInstruction(span_, result_, OpCode::getrbp)
 {
 }
 
@@ -2084,7 +2102,7 @@ void GetRbpInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Instruction* GetRbpInstruction::Clone(CloneContext& cloneContext) const
+Value* GetRbpInstruction::Clone(CloneContext& cloneContext) const
 {
     RegValue* result = cloneContext.CurrentFunction()->MakeRegValue(Span(), GetType(), Result()->Reg(), cloneContext.GetContext());
     GetRbpInstruction* clone = new GetRbpInstruction(Span(), result);
@@ -2100,7 +2118,7 @@ void GetRbpInstruction::Write(util::CodeFormatter& formatter)
     formatter.Write(" = getrbp");
 }
 
-BasicBlock::BasicBlock(const soul::ast::Span& span_, std::int32_t id_) : span(span_), id(id_), instructions(this)
+BasicBlock::BasicBlock(const soul::ast::Span& span_, std::int32_t id_) noexcept : span(span_), id(id_), instructions(this)
 {
 }
 
@@ -2165,13 +2183,13 @@ std::string BasicBlock::Name() const
     }
 }
 
-bool BasicBlock::IsLast() const
+bool BasicBlock::IsLast() const noexcept
 {
     Function* fn = Parent();
     return this == fn->LastBasicBlock();
 }
 
-bool BasicBlock::ContainsOnlyNops()
+bool BasicBlock::ContainsOnlyNops() noexcept
 {
     Instruction* inst = FirstInstruction();
     while (inst && !inst->IsTerminator())
@@ -2193,7 +2211,7 @@ void BasicBlock::AddInstruction(Instruction* instruction, bool mapInstruction)
     if (mapInstruction && instruction->IsValueInstruction())
     {
         ValueInstruction* valueInstruction = static_cast<ValueInstruction*>(instruction);
-        Context* context = fn->Parent()->GetContext();
+        IntermediateContext* context = fn->Parent()->GetContext();
         fn->MapInstruction(valueInstruction->Result()->Reg(), valueInstruction, context);
         nextRegNumber = std::max(valueInstruction->Result()->Reg() + 1, nextRegNumber);
     }
@@ -2218,7 +2236,7 @@ void BasicBlock::InsertInstructionAfter(Instruction* instruction, Instruction* a
     if (instruction->IsValueInstruction())
     {
         ValueInstruction* valueInstruction = static_cast<ValueInstruction*>(instruction);
-        Context* context = fn->Parent()->GetContext();
+        IntermediateContext* context = fn->Parent()->GetContext();
         fn->MapInstruction(valueInstruction->Result()->Reg(), valueInstruction, context);
         nextRegNumber = std::max(valueInstruction->Result()->Reg() + 1, nextRegNumber);
     }
@@ -2240,7 +2258,7 @@ void BasicBlock::InsertFront(Instruction* instruction)
     if (instruction->IsValueInstruction())
     {
         ValueInstruction* valueInstruction = static_cast<ValueInstruction*>(instruction);
-        Context* context = fn->Parent()->GetContext();
+        IntermediateContext* context = fn->Parent()->GetContext();
         fn->MapInstruction(valueInstruction->Result()->Reg(), valueInstruction, context);
         nextRegNumber = std::max(valueInstruction->Result()->Reg() + 1, nextRegNumber);
     }
@@ -2250,7 +2268,7 @@ void BasicBlock::InsertFront(Instruction* instruction)
 BasicBlock* BasicBlock::SplitAfter(Instruction* instruction)
 {
     Function* fn = Parent();
-    Context* context = fn->Parent()->GetContext();
+    IntermediateContext* context = fn->Parent()->GetContext();
     std::unique_ptr<BasicBlock> newBB(new BasicBlock(Span(), fn->GetNextBasicBlockNumber()));
     BasicBlock* nbb = newBB.get();
     fn->InsertBasicBlockAfter(newBB.release(), instruction->Parent());
@@ -2304,7 +2322,7 @@ void BasicBlock::ClearSuccessorsAndPredecessors()
     predecessors.clear();
 }
 
-int BasicBlock::IndexOf(Instruction* x)
+int BasicBlock::IndexOf(Instruction* x) noexcept
 {
     int index = 0;
     Instruction* inst = FirstInstruction();
@@ -2320,19 +2338,18 @@ int BasicBlock::IndexOf(Instruction* x)
     return -1;
 }
 
-Function* BasicBlock::Parent() const
+Function* BasicBlock::Parent() const noexcept
 {
     return static_cast<Function*>(GetContainer()->Parent());
 }
 
-Instruction* BasicBlock::Leader() const
+Instruction* BasicBlock::Leader() const noexcept
 {
     Instruction* leader = const_cast<BasicBlock*>(this)->FirstInstruction();
     while (leader && leader->IsNopInstruction())
     {
         leader = leader->Next();
     }
-    Assert(leader, "leader is null");
     return leader;
 }
 
@@ -2365,7 +2382,7 @@ void BasicBlock::Write(util::CodeFormatter& formatter)
 }
 
 Function::Function(const soul::ast::Span& span_, FunctionType* type_, const std::string& name_, bool once_, bool definition_, bool createEntry, 
-    MetadataRef* metadataRef_, Context* context) :
+    MetadataRef* metadataRef_, IntermediateContext* context) :
     Value(span_, ValueKind::function, type_), 
     flags(FunctionFlags::none), span(span_), type(type_), name(name_), metadataRef(metadataRef_), basicBlocks(this), nextRegNumber(0), nextBBNumber(0), mdId(-1)
 {
@@ -2384,7 +2401,7 @@ Function::Function(const soul::ast::Span& span_, FunctionType* type_, const std:
     }
 }
 
-void Function::CreateEntry(Context* context)
+void Function::CreateEntry(IntermediateContext* context)
 {
     if (entryBlock) return;
     entryBlock.reset(new BasicBlock(Span(), nextBBNumber++));
@@ -2478,12 +2495,12 @@ void Function::VisitBasicBlocks(Visitor& visitor)
     }
 }
 
-Code* Function::Parent() const
+Code* Function::Parent() const noexcept
 {
     return static_cast<Code*>(GetContainer()->Parent());
 }
 
-BasicBlock* Function::GetBasicBlock(std::int32_t id) const
+BasicBlock* Function::GetBasicBlock(std::int32_t id) const noexcept
 {
     auto it = basicBlockMap.find(id);
     if (it != basicBlockMap.cend())
@@ -2511,7 +2528,7 @@ BasicBlock* Function::CreateBasicBlock()
     return bb;
 }
 
-BasicBlock* Function::AddBasicBlock(const soul::ast::Span& span, std::int32_t id, Context* context)
+BasicBlock* Function::AddBasicBlock(const soul::ast::Span& span, std::int32_t id, IntermediateContext* context)
 {
     BasicBlock* prev = GetBasicBlock(id);
     if (prev)
@@ -2561,7 +2578,7 @@ std::unique_ptr<BasicBlock> Function::RemoveBasicBlock(BasicBlock* block)
     return std::unique_ptr<BasicBlock>(static_cast<BasicBlock*>(basicBlocks.RemoveChild(block).release()));
 }
 
-RegValue* Function::GetRegValue(std::int32_t reg) const
+RegValue* Function::GetRegValue(std::int32_t reg) const noexcept
 {
     auto it = regValueMap.find(reg);
     if (it != regValueMap.cend())
@@ -2574,7 +2591,7 @@ RegValue* Function::GetRegValue(std::int32_t reg) const
     }
 }
 
-RegValue* Function::GetRegRef(const soul::ast::Span& span, Type* type, std::int32_t reg, Context* context) const
+RegValue* Function::GetRegRef(const soul::ast::Span& span, Type* type, std::int32_t reg, IntermediateContext* context) const
 {
     RegValue* regValue = GetRegValue(reg);
     if (regValue)
@@ -2595,7 +2612,7 @@ RegValue* Function::GetRegRef(const soul::ast::Span& span, Type* type, std::int3
     return nullptr;
 }
 
-RegValue* Function::MakeRegValue(const soul::ast::Span& span, Type* type, std::int32_t reg, Context* context)
+RegValue* Function::MakeRegValue(const soul::ast::Span& span, Type* type, std::int32_t reg, IntermediateContext* context)
 {
     RegValue* regValue = new RegValue(span, type, reg);
     regValues.push_back(std::unique_ptr<RegValue>(regValue));
@@ -2603,7 +2620,7 @@ RegValue* Function::MakeRegValue(const soul::ast::Span& span, Type* type, std::i
     return regValue;
 }
 
-RegValue* Function::MakeNextRegValue(const soul::ast::Span& span, Type* type, Context* context)
+RegValue* Function::MakeNextRegValue(const soul::ast::Span& span, Type* type, IntermediateContext* context)
 {
     return MakeRegValue(span, type, GetNextRegNumber(), context);
 }
@@ -2618,7 +2635,7 @@ void Function::RemoveRegValue(std::int32_t reg)
     regValueMap.erase(reg);
 }
 
-Instruction* Function::GetInstruction(std::int32_t reg) const
+Instruction* Function::GetInstruction(std::int32_t reg) const noexcept
 {
     auto it = instructionMap.find(reg);
     if (it != instructionMap.cend())
@@ -2631,12 +2648,12 @@ Instruction* Function::GetInstruction(std::int32_t reg) const
     }
 }
 
-void Function::MapInstruction(std::int32_t reg, Instruction* inst, Context* context)
+void Function::MapInstruction(std::int32_t reg, Instruction* inst, IntermediateContext* context)
 {
     instructionMap[reg] = inst;
 }
 
-int Function::NumBasicBlocks() const
+int Function::NumBasicBlocks() const noexcept
 {
     return basicBlockMap.size();
 }
@@ -2730,7 +2747,7 @@ Value* Function::GetParam(int index) const
 
 void Function::SetNumbers()
 {
-    Context* context = Parent()->GetContext();
+    IntermediateContext* context = Parent()->GetContext();
     basicBlockMap.clear();
     regValueMap.clear();
     instructionMap.clear();
@@ -2839,7 +2856,7 @@ void Function::Write(util::CodeFormatter& formatter)
     {
         formatter.Write("child ");
     }
-    Context* context = Parent()->GetContext();
+    IntermediateContext* context = Parent()->GetContext();
     Type* ptrType = type->AddPointer(context);
     if (metadataRef)
     {
@@ -2882,11 +2899,11 @@ void Function::Write(util::CodeFormatter& formatter)
     formatter.WriteLine("}");
 }
 
-Code::Code() : context(nullptr), currentFunction(nullptr), functions(this), totalFunctions(0)
+Code::Code() noexcept : context(nullptr), currentFunction(nullptr), functions(this), totalFunctions(0)
 {
 }
 
-void Code::SetCurrentFunction(Function* function)
+void Code::SetCurrentFunction(Function* function) noexcept
 {
     currentFunction = function;
 }
@@ -2913,7 +2930,7 @@ Function* Code::GetOrInsertFunction(const std::string& functionId, FunctionType*
     }
 }
 
-Function* Code::GetFunction(const std::string& functionId) const
+Function* Code::GetFunction(const std::string& functionId) const noexcept
 {
     auto it = functionMap.find(functionId);
     if (it != functionMap.cend())

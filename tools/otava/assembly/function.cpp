@@ -64,12 +64,12 @@ void Function::SetComment(const std::string& comment_)
     comment = comment_;
 }
 
-Instruction* Function::FirstInstruction() const
+Instruction* Function::FirstInstruction() const noexcept
 { 
     return static_cast<Instruction*>(body.FirstChild()); 
 }
 
-Instruction* Function::LastInstruction() const
+Instruction* Function::LastInstruction() const noexcept
 { 
     return static_cast<Instruction*>(body.LastChild()); 
 }

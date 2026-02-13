@@ -53,7 +53,7 @@ LiveRange GetLiveRange(Instruction* inst)
     }
 }
 
-LinearScanRegisterAllocator::LinearScanRegisterAllocator(Function& function, Context* context_) :
+LinearScanRegisterAllocator::LinearScanRegisterAllocator(Function& function, IntermediateContext* context_) :
     frame(), liveRanges(), activeInteger(), activeFP(), frameLocations(), registerGroups(), context(context_)
 {
     ComputeLiveRanges(function);
@@ -77,11 +77,11 @@ void LinearScanRegisterAllocator::AddFreeRegGroupToPool(Instruction* inst)
     {
         if (reg->IsFloatingPointReg())
         {
-            context->AssemblyContext()->GetRegisterPool()->AddLocalXMMRegisterGroup(reg);
+            context->GetAssemblyContext()->GetRegisterPool()->AddLocalXMMRegisterGroup(reg);
         }
         else
         {
-            context->AssemblyContext()->GetRegisterPool()->AddLocalRegisterGroup(reg);
+            context->GetAssemblyContext()->GetRegisterPool()->AddLocalRegisterGroup(reg);
         }
         RemoveRegisterGroup(inst);
     }
@@ -107,15 +107,15 @@ bool LinearScanRegisterAllocator::NoFreeRegs(bool floatingPoint) const
 {
     if (floatingPoint)
     {
-        return context->AssemblyContext()->GetRegisterPool()->NumFreeLocalXMMRegisters() == 0;
+        return context->GetAssemblyContext()->GetRegisterPool()->NumFreeLocalXMMRegisters() == 0;
     }
     else
     {
-        return context->AssemblyContext()->GetRegisterPool()->NumFreeLocalRegisters() == 0;
+        return context->GetAssemblyContext()->GetRegisterPool()->NumFreeLocalRegisters() == 0;
     }
 }
 
-otava::assembly::RegisterGroup* LinearScanRegisterAllocator::GetRegisterGroup(Instruction* inst) const
+otava::assembly::RegisterGroup* LinearScanRegisterAllocator::GetRegisterGroup(Instruction* inst) const noexcept
 {
     auto it = registerGroups.find(inst);
     if (it != registerGroups.cend())
@@ -133,7 +133,7 @@ void LinearScanRegisterAllocator::RemoveRegisterGroup(Instruction* inst)
     registerGroups.erase(inst);
 }
 
-FrameLocation LinearScanRegisterAllocator::GetFrameLocation(Instruction* inst) const
+FrameLocation LinearScanRegisterAllocator::GetFrameLocation(Instruction* inst) const noexcept
 {
     auto it = frameLocations.find(inst);
     if (it != frameLocations.cend())
@@ -150,11 +150,11 @@ void LinearScanRegisterAllocator::AllocateRegister(Instruction* inst)
 {
     if (inst->IsFloatingPointInstruction())
     {
-        registerGroups[inst] = context->AssemblyContext()->GetRegisterPool()->GetLocalXMMRegisterGroup();
+        registerGroups[inst] = context->GetAssemblyContext()->GetRegisterPool()->GetLocalXMMRegisterGroup();
     }
     else
     {
-        registerGroups[inst] = context->AssemblyContext()->GetRegisterPool()->GetLocalRegisterGroup();
+        registerGroups[inst] = context->GetAssemblyContext()->GetRegisterPool()->GetLocalRegisterGroup();
     }
     LiveRange range = GetLiveRange(inst);
     if (inst->IsFloatingPointInstruction())
@@ -186,7 +186,7 @@ void LinearScanRegisterAllocator::AllocateFrameLocation(Instruction* inst, bool 
         }
         else
         {
-            frameLocations[paramInst] = frame.AllocateParamLocation(size, context->AssemblyContext());
+            frameLocations[paramInst] = frame.AllocateParamLocation(size, context->GetAssemblyContext());
             locations[paramInst] = locations[paramInst] | Locations::frame;
         }
     }
@@ -258,7 +258,7 @@ void LinearScanRegisterAllocator::RemoveFromRegisterGroups(Instruction* inst)
     registerGroups.erase(inst);
 }
 
-LiveRange LinearScanRegisterAllocator::GetLiveRange(Instruction* inst) const
+LiveRange LinearScanRegisterAllocator::GetLiveRange(Instruction* inst) const noexcept
 {
     auto it = instructionRangeMap.find(inst);
     if (it != instructionRangeMap.cend())
@@ -271,7 +271,7 @@ LiveRange LinearScanRegisterAllocator::GetLiveRange(Instruction* inst) const
     }
 }
 
-const std::vector<Instruction*>& LinearScanRegisterAllocator::GetInstructions(const LiveRange& range) const
+const std::vector<Instruction*>& LinearScanRegisterAllocator::GetInstructions(const LiveRange& range) const noexcept
 {
     static std::vector<Instruction*> empty;
     auto it = rangeInstructionMap.find(range);
@@ -336,7 +336,7 @@ void LinearScanRegisterAllocator::ExpireOldRanges(const LiveRange& range)
     }
 }
 
-Locations LinearScanRegisterAllocator::GetLocations(Instruction* inst) const
+Locations LinearScanRegisterAllocator::GetLocations(Instruction* inst) const 
 {
     auto it = locations.find(inst);
     if (it != locations.cend())
@@ -352,7 +352,7 @@ void LinearScanRegisterAllocator::AddRegisterLocation(Instruction* inst, otava::
     registerGroups[inst] = regGroup;
 }
 
-int LinearScanRegisterAllocator::LastActiveLocalRegGroup() const
+int LinearScanRegisterAllocator::LastActiveLocalRegGroup() const noexcept
 {
     int lastActiveLocalRegGroup = -1;
     for (const auto& instRegGroup : registerGroups)
@@ -392,7 +392,7 @@ RegisterAllocationAction LinearScanRegisterAllocator::Run(Instruction* inst)
     }
 }
 
-const std::vector<SpillData>& LinearScanRegisterAllocator::GetSpillData() const
+const std::vector<SpillData>& LinearScanRegisterAllocator::GetSpillData() const noexcept
 {
     return spillDataVec;
 }
@@ -407,7 +407,7 @@ Frame& LinearScanRegisterAllocator::GetPFrame(int level)
     return pframes[level];
 }
 
-std::unique_ptr<LinearScanRegisterAllocator> CreateLinearScanRegisterAllocator(Function& function, Context* context)
+std::unique_ptr<LinearScanRegisterAllocator> CreateLinearScanRegisterAllocator(Function& function, IntermediateContext* context)
 {
     std::unique_ptr<LinearScanRegisterAllocator> registerAllocator(new LinearScanRegisterAllocator(function, context));
     return registerAllocator;

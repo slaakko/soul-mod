@@ -8,7 +8,7 @@ module otava.optimizer.inliner;
 namespace otava::optimizer {
 
 void ReplaceParamsWithArgs(otava::intermediate::Instruction* callInst, otava::intermediate::ArgInstruction* firstArg, otava::intermediate::Function* callee,
-    otava::intermediate::Function* originalCallee, otava::intermediate::Context* context)
+    otava::intermediate::Function* originalCallee, otava::intermediate::IntermediateContext* context)
 {
     otava::intermediate::BasicBlock* bb = callee->FirstBasicBlock();
     while (bb)
@@ -70,7 +70,7 @@ void MoveInstructions(otava::intermediate::BasicBlock* fromBasicBlock, otava::in
 }
 
 void MergeSingleBasicBlock(otava::intermediate::Function* fn, otava::intermediate::BasicBlock* basicBlock, otava::intermediate::Instruction* callInst,
-    otava::intermediate::Context* context)
+    otava::intermediate::IntermediateContext* context)
 {
     std::vector<otava::intermediate::RetInstruction*> rets;
     MoveInstructions(basicBlock, callInst, rets);
@@ -106,7 +106,7 @@ void MergeSingleBasicBlock(otava::intermediate::Function* fn, otava::intermediat
 }
 
 void MergeManyBasicBlocks(otava::intermediate::Function* fn, otava::intermediate::Function* callee, otava::intermediate::Instruction* callInst,
-    otava::intermediate::Context* context)
+    otava::intermediate::IntermediateContext* context)
 {
     otava::intermediate::Instruction* lastInst = callInst;
     otava::intermediate::LocalInstruction* localInst = nullptr;
@@ -170,7 +170,7 @@ void MergeManyBasicBlocks(otava::intermediate::Function* fn, otava::intermediate
 }
 
 void MergeBasicBlocks(otava::intermediate::Function* fn, otava::intermediate::Function* callee, otava::intermediate::Instruction* callInst,
-    otava::intermediate::Context* context)
+    otava::intermediate::IntermediateContext* context)
 {
     if (callee->NumBasicBlocks() == 1)
     {
@@ -187,7 +187,7 @@ void MergeBasicBlocks(otava::intermediate::Function* fn, otava::intermediate::Fu
 }
 
 void Inline(otava::intermediate::Function* fn, otava::intermediate::Instruction* callInst, otava::intermediate::ArgInstruction* firstArg,
-    otava::intermediate::Function* callee, otava::intermediate::Context* context)
+    otava::intermediate::Function* callee, otava::intermediate::IntermediateContext* context)
 {
     std::unique_ptr<otava::intermediate::Function> clonedCallee(callee->Clone());
     ReplaceParamsWithArgs(callInst, firstArg, clonedCallee.get(), callee, context);
@@ -195,7 +195,7 @@ void Inline(otava::intermediate::Function* fn, otava::intermediate::Instruction*
     fn->SetNumbers();
 }
 
-void Inline(otava::intermediate::Function* fn, otava::intermediate::Context* context)
+void Inline(otava::intermediate::Function* fn, otava::intermediate::IntermediateContext* context)
 {
     bool fnInlined = false;
     bool inlined = false;

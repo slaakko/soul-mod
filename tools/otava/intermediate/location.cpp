@@ -15,11 +15,11 @@ void FrameLocation::Dump()
     std::cout << "index=" << index << ", offset=" << offset << ", size=" << size << "\n";
 }
 
-Frame::Frame() : calleeParamAreaSize(32), numUsedXMMRegs(0), rbxPushed(false), isPFrame(false)
+Frame::Frame() noexcept : calleeParamAreaSize(32), numUsedXMMRegs(0), rbxPushed(false), isPFrame(false)
 {
 }
 
-FrameLocation Frame::AllocateParamLocation(std::int64_t size, otava::assembly::Context* assemblyContext)
+FrameLocation Frame::AllocateParamLocation(std::int64_t size, otava::assembly::AssemblyContext* assemblyContext)
 {
     if (paramLocations.empty())
     {
@@ -80,7 +80,7 @@ FrameLocation Frame::AllocateFrameLocation(std::int64_t size)
     }
 }
 
-FrameLocation Frame::GetFrameLocation(int index, const soul::ast::Span& span, Context* context) const
+FrameLocation Frame::GetFrameLocation(int index, const soul::ast::Span& span, IntermediateContext* context) const
 {
     if (index >= 0 && index < frameLocations.size())
     {
@@ -92,13 +92,13 @@ FrameLocation Frame::GetFrameLocation(int index, const soul::ast::Span& span, Co
     }
 }
 
-FrameLocation Frame::GetParentFrameLocation(const soul::ast::Span& span, Context* context) const
+FrameLocation Frame::GetParentFrameLocation(const soul::ast::Span& span, IntermediateContext* context) const
 {
     FrameLocation parentFrameLocation(otava::assembly::RegisterGroupKind::rsi, 0, 8, 8);
     return  parentFrameLocation;
 }
 
-std::int64_t Frame::Size() const
+std::int64_t Frame::Size() const noexcept
 {
     if (frameLocations.empty())
     {
@@ -119,7 +119,7 @@ void Frame::Dump()
     }
 }
 
-void Frame::SetMacroValues(otava::assembly::Context* assemblyContext)
+void Frame::SetMacroValues(otava::assembly::AssemblyContext* assemblyContext)
 {
     int retVal = 1;
     int pushRbp = 1;
@@ -146,7 +146,7 @@ void Frame::SetMacroValues(otava::assembly::Context* assemblyContext)
     }
 }
 
-CallFrame::CallFrame()
+CallFrame::CallFrame() noexcept
 {
 }
 
@@ -165,7 +165,7 @@ void CallFrame::AllocateArgLocation(std::int64_t size)
     }
 }
 
-ArgLocation CallFrame::GetArgLocation(int index)
+ArgLocation CallFrame::GetArgLocation(int index) noexcept
 {
     return argLocations[index];
 }
