@@ -588,7 +588,7 @@ bool OptimizeDiv(otava::intermediate::DivInstruction* inst, otava::intermediate:
             otava::intermediate::ReplaceInstructionWithInstruction(inst, shrInst);
             optimized = true;
         }
-        else 
+        else
         {
             if (left->IsSByteValue() && right->IsSByteValue())
             {
@@ -684,7 +684,7 @@ bool OptimizeMod(otava::intermediate::ModInstruction* inst, otava::intermediate:
     {
         otava::intermediate::Warning("division by zero", inst->Span(), context);
     }
-    else 
+    else
     {
         otava::intermediate::Value* rightModPowerOfTwo = right->ModPowerOfTwo(context);
         if (rightModPowerOfTwo)

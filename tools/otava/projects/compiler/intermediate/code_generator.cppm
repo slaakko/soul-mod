@@ -7,20 +7,20 @@ export module otava.intermediate.code_generator;
 
 import otava.assembly;
 import otava.intermediate.visitor;
+import otava.intermediate.code;
 import otava.intermediate.data;
 import soul.ast.span;
 import std;
 
 export namespace otava::intermediate {
 
-class Instruction;
 class RegisterAllocator;
 
 class CodeGenerator : public Visitor
 {
 public:
     CodeGenerator(IntermediateContext* context_, const std::string& assemblyFilePath_);
-    inline IntermediateContext* Ctx() const noexcept { return context; }
+    IntermediateContext* Ctx() const noexcept { return context; }
     inline RegisterAllocator* RegAllocator() const noexcept { return registerAllocator; }
     inline otava::assembly::Function* AssemblyFunction() const noexcept { return assemblyFunction; }
     inline Function* CurrentFunction() const noexcept { return currentFunction; }
