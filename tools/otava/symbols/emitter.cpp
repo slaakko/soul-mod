@@ -153,7 +153,7 @@ otava::intermediate::Value* Emitter::EmitCall(otava::intermediate::Value* functi
     return context->CreateCall(function);
 }
 
-otava::intermediate::Type* Emitter::GetType(const util::uuid& id) const
+otava::intermediate::Type* Emitter::GetType(const util::uuid& id) const noexcept
 {
     auto it = typeMap.find(id);
     if (it != typeMap.cend())
@@ -171,7 +171,7 @@ void Emitter::SetType(const util::uuid& id, otava::intermediate::Type* type)
     typeMap[id] = type;
 }
 
-otava::intermediate::Value* Emitter::GetIrObject(void* symbol) const
+otava::intermediate::Value* Emitter::GetIrObject(void* symbol) const noexcept
 {
     auto it = irObjectMap.find(symbol);
     if (it != irObjectMap.cend())
@@ -189,7 +189,7 @@ void Emitter::SetIrObject(void* symbol, otava::intermediate::Value* irObject)
     irObjectMap[symbol] = irObject;
 }
 
-otava::intermediate::Value* Emitter::GetVTabVariable(const std::u32string& className) const
+otava::intermediate::Value* Emitter::GetVTabVariable(const std::u32string& className) const noexcept
 {
     auto it = vtabVariableMap.find(className);
     if (it != vtabVariableMap.cend())

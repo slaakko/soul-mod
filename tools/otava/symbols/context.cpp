@@ -21,7 +21,7 @@ import util;
 
 namespace otava::symbols {
 
-int GetOptLevel(int level, bool release)
+int GetOptLevel(int level, bool release) noexcept
 {
     if (release)
     {
@@ -90,37 +90,37 @@ Context::Context() :
 {
 }
 
-void Context::SetLexer(Lexer* lexer_)
+void Context::SetLexer(Lexer* lexer_) noexcept
 {
     lexer = lexer_;
 }
 
-void Context::SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_)
+void Context::SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_) noexcept
 {
     functionDefinitionSymbolSet = functionDefinitionSymbolSet_;
 }
 
-FunctionDefinitionSymbolSet* Context::GetFunctionDefinitionSymbolSet() const
+FunctionDefinitionSymbolSet* Context::GetFunctionDefinitionSymbolSet() const noexcept
 {
     return functionDefinitionSymbolSet;
 }
 
-void Context::SetSymbolTable(SymbolTable* symbolTable_)
+void Context::SetSymbolTable(SymbolTable* symbolTable_) noexcept
 {
     symbolTable = symbolTable_;
 }
 
-Module* Context::GetModule()
+Module* Context::GetModule() noexcept
 {
     return symbolTable->GetModule();
 }
 
-OperationRepository* Context::GetOperationRepository() const
+OperationRepository* Context::GetOperationRepository() const noexcept
 {
     return GetBoundCompileUnit()->GetOperationRepository();
 }
 
-EvaluationContext* Context::GetEvaluationContext()
+EvaluationContext* Context::GetEvaluationContext() noexcept
 {
     return symbolTable->GetModule()->GetEvaluationContext();
 }
@@ -179,17 +179,17 @@ std::string Context::FileName() const
     }
 }
 
-void Context::PushFlags()
+void Context::PushFlags() 
 {
     flagStack.push(flags);
 }
 
-void Context::ResetFlags()
+void Context::ResetFlags() noexcept
 {
     flags = ContextFlags();
 }
 
-void Context::PopFlags()
+void Context::PopFlags() 
 {
     flags = flagStack.top();
     flagStack.pop();
@@ -207,12 +207,12 @@ void Context::PushResetFlag(ContextFlags flag)
     ResetFlag(flag);
 }
 
-int Context::OptLevel() const
+int Context::OptLevel() const noexcept
 {
     return GetOptLevel(optLevel, ReleaseConfig());
 }
 
-bool Context::IsConstructorNameNode(otava::ast::Node* node) const
+bool Context::IsConstructorNameNode(otava::ast::Node* node) const noexcept
 {
     if (!GetFlag(ContextFlags::parsingParameters) && !GetFlag(ContextFlags::retMemberDeclSpecifiers) && !GetFlag(ContextFlags::parsingTemplateId))
     {
@@ -229,7 +229,7 @@ bool Context::IsConstructorNameNode(otava::ast::Node* node) const
     return false;
 }
 
-bool Context::EnableNoDeclSpecFunctionDeclaration() const
+bool Context::EnableNoDeclSpecFunctionDeclaration() const noexcept
 {
     Scope* currentScope = symbolTable->CurrentScope();
     if (currentScope->IsTemplateDeclarationScope())
@@ -244,7 +244,7 @@ bool Context::EnableNoDeclSpecFunctionDeclaration() const
     return false;
 }
 
-bool Context::EnableNoDeclSpecFunctionDefinition() const
+bool Context::EnableNoDeclSpecFunctionDefinition() const noexcept
 {
     Scope* currentScope = symbolTable->CurrentScope();
     if (currentScope->IsTemplateDeclarationScope())
@@ -323,7 +323,7 @@ void Context::PopSwitchCondType()
     switchCondTypeStack.pop();
 }
 
-void Context::SetInstantiationQueue(InstantiationQueue* instantiationQueue_)
+void Context::SetInstantiationQueue(InstantiationQueue* instantiationQueue_) noexcept
 {
     instantiationQueue = instantiationQueue_;
 }
@@ -338,7 +338,7 @@ void Context::ClearTemporaryAliasTypes()
     temporaryAliasTypes.clear();
 }
 
-FunctionSymbol* Context::GetSpecialization(otava::ast::Node* functionNode)  const
+FunctionSymbol* Context::GetSpecialization(otava::ast::Node* functionNode)  const noexcept
 {
     auto it = specializationMap.find(functionNode);
     if (it != specializationMap.end())
@@ -365,7 +365,7 @@ void Context::RemoveSpecialization(otava::ast::Node* functionNode)
     specializationMap.erase(functionNode);
 }
 
-ClassTemplateSpecializationSymbol* Context::GetClassTemplateSpecialization(otava::ast::Node* functionNode) const
+ClassTemplateSpecializationSymbol* Context::GetClassTemplateSpecialization(otava::ast::Node* functionNode) const noexcept
 {
     auto it = classTemplateSpecializationMap.find(functionNode);
     if (it != classTemplateSpecializationMap.end())
@@ -421,7 +421,7 @@ void Context::PopStatementBinder()
     statementBinders.pop_back();
 }
 
-StatementBinder* Context::GetParentStatementBinder() const
+StatementBinder* Context::GetParentStatementBinder() const noexcept
 {
     if (!statementBinders.empty())
     {

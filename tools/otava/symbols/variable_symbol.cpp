@@ -132,27 +132,27 @@ void VariableSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-bool VariableSymbol::IsLocalVariable() const
+bool VariableSymbol::IsLocalVariable() const noexcept
 {
     return Parent()->IsFunctionSymbol() || Parent()->IsBlockSymbol();
 }
 
-bool VariableSymbol::IsMemberVariable() const
+bool VariableSymbol::IsMemberVariable() const noexcept
 {
     return Parent()->IsClassTypeSymbol();
 }
 
-bool VariableSymbol::IsGlobalVariable() const
+bool VariableSymbol::IsGlobalVariable() const noexcept
 {
     return Parent()->IsNamespaceSymbol();
 }
 
-void VariableSymbol::SetInitializerType(TypeSymbol* initializerType_)
+void VariableSymbol::SetInitializerType(TypeSymbol* initializerType_) noexcept
 {
     initializerType = initializerType_;
 }
 
-TypeSymbol* VariableSymbol::GetType() const
+TypeSymbol* VariableSymbol::GetType() const noexcept
 {
     if (declaredType->GetBaseType()->IsAutoTypeSymbol())
     {
@@ -164,7 +164,7 @@ TypeSymbol* VariableSymbol::GetType() const
     }
 }
 
-TypeSymbol* VariableSymbol::GetReferredType() const
+TypeSymbol* VariableSymbol::GetReferredType() const noexcept
 {
     TypeSymbol* referredType = GetType();
     if (!referredType)
@@ -181,9 +181,10 @@ TypeSymbol* VariableSymbol::GetReferredType() const
 
 bool VariableSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
 { 
-    if (visited.find(this) == visited.end())
+    const Symbol* thisSymbol = this;
+    if (visited.find(thisSymbol) == visited.end())
     {
-        visited.insert(this);
+        visited.insert(thisSymbol);
         TypeSymbol* type = GetType();
         if (type)
         {
@@ -211,12 +212,12 @@ std::string VariableSymbol::IrName(Context* context) const
     return irName;
 }
 
-bool VariableSymbol::IsStatic() const
+bool VariableSymbol::IsStatic() const noexcept
 {
     return (GetDeclarationFlags() & DeclarationFlags::staticFlag) != DeclarationFlags::none;
 }
 
-bool VariableLess::operator()(VariableSymbol* left, VariableSymbol* right) const
+bool VariableLess::operator()(VariableSymbol* left, VariableSymbol* right) const noexcept
 {
     return left->Name() < right->Name();
 }

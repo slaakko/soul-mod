@@ -20,6 +20,7 @@ class Context;
 
 struct FunctionTemplateKey
 {
+    FunctionTemplateKey();
     FunctionTemplateKey(FunctionSymbol* functionTemplate_, const std::vector<TypeSymbol*>& templateArgumentTypes_);
     FunctionSymbol* functionTemplate;
     std::vector<TypeSymbol*> templateArgumentTypes;
@@ -27,14 +28,14 @@ struct FunctionTemplateKey
 
 struct FunctionTemplateKeyLess
 {
-    bool operator()(const FunctionTemplateKey& left, const FunctionTemplateKey& right) const;
+    bool operator()(const FunctionTemplateKey& left, const FunctionTemplateKey& right) const noexcept;
 };
 
 class FunctionTemplateRepository
 {
 public:
     FunctionTemplateRepository();
-    FunctionDefinitionSymbol* GetFunctionDefinition(const FunctionTemplateKey& key) const;
+    FunctionDefinitionSymbol* GetFunctionDefinition(const FunctionTemplateKey& key) const noexcept;
     void AddFunctionDefinition(const FunctionTemplateKey& key, FunctionDefinitionSymbol* functionDefinitionSymbol, otava::ast::Node* functionDefinitionNode);
 private:
     std::map<FunctionTemplateKey, FunctionDefinitionSymbol*, FunctionTemplateKeyLess> functionTemplateMap;

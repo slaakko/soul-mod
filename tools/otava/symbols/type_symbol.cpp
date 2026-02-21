@@ -27,7 +27,7 @@ TypeSymbol::TypeSymbol(SymbolKind kind_, const util::uuid& id_, const std::u32st
 {
 }
 
-bool TypeSymbol::IsAutoTypeSymbol() const
+bool TypeSymbol::IsAutoTypeSymbol() const noexcept
 {
     if (IsFundamentalTypeSymbol())
     {
@@ -37,7 +37,7 @@ bool TypeSymbol::IsAutoTypeSymbol() const
     return false;
 }
 
-bool TypeSymbol::IsPointerType() const
+bool TypeSymbol::IsPointerType() const noexcept
 {
     if (IsCompoundTypeSymbol())
     {
@@ -47,12 +47,12 @@ bool TypeSymbol::IsPointerType() const
     return false;
 }
 
-bool TypeSymbol::IsArrayType() const
+bool TypeSymbol::IsArrayType() const noexcept
 {
     return Kind() == SymbolKind::arrayTypeSymbol;
 }
 
-bool TypeSymbol::IsConstType() const
+bool TypeSymbol::IsConstType() const noexcept
 {
     if (IsCompoundTypeSymbol())
     {
@@ -62,7 +62,7 @@ bool TypeSymbol::IsConstType() const
     return false;
 }
 
-bool TypeSymbol::IsLValueRefType() const
+bool TypeSymbol::IsLValueRefType() const noexcept
 {
     if (IsCompoundTypeSymbol())
     {
@@ -72,7 +72,7 @@ bool TypeSymbol::IsLValueRefType() const
     return false;
 }
 
-bool TypeSymbol::IsRValueRefType() const
+bool TypeSymbol::IsRValueRefType() const noexcept
 {
     if (IsCompoundTypeSymbol())
     {
@@ -82,7 +82,7 @@ bool TypeSymbol::IsRValueRefType() const
     return false;
 }
 
-bool TypeSymbol::IsReferenceType() const
+bool TypeSymbol::IsReferenceType() const noexcept
 {
     return IsLValueRefType() || IsRValueRefType();
 }
@@ -203,6 +203,7 @@ TypeSymbol* TypeSymbol::Unify(TypeSymbol* argType, Context* context)
 otava::intermediate::Type* TypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     ThrowException("IRTYPE not implemented for " + SymbolKindToString(Kind()), sourcePos, context);
+    return nullptr;
 }
 
 void TypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)

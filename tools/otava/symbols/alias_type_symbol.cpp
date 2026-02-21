@@ -57,17 +57,17 @@ void AliasTypeSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-bool AliasTypeSymbol::IsExportSymbol(Context* context) const
+bool AliasTypeSymbol::IsExportSymbol(Context* context) const noexcept
 {
     return TypeSymbol::IsExportSymbol(context);
 }
 
-bool AliasTypeSymbol::IsExportMapSymbol(Context* context) const
+bool AliasTypeSymbol::IsExportMapSymbol(Context* context) const noexcept
 {
     return false;
 }
 
-TemplateDeclarationSymbol* AliasTypeSymbol::ParentTemplateDeclaration()
+TemplateDeclarationSymbol* AliasTypeSymbol::ParentTemplateDeclaration() noexcept
 {
     Symbol* parentSymbol = Parent();
     if (parentSymbol->IsTemplateDeclarationSymbol())
@@ -77,7 +77,7 @@ TemplateDeclarationSymbol* AliasTypeSymbol::ParentTemplateDeclaration()
     return nullptr;
 }
 
-int AliasTypeSymbol::Arity() 
+int AliasTypeSymbol::Arity() noexcept
 {
     TemplateDeclarationSymbol* templateDeclaration = ParentTemplateDeclaration();
     if (templateDeclaration)
@@ -90,7 +90,7 @@ int AliasTypeSymbol::Arity()
     }
 }
 
-TypeSymbol* AliasTypeSymbol::DirectType(Context* context)
+TypeSymbol* AliasTypeSymbol::DirectType(Context* context) 
 {
     return referredType->DirectType(context);
 }
@@ -115,8 +115,8 @@ class AliasDeclarationProcessor : public otava::ast::DefaultVisitor
 public:
     AliasDeclarationProcessor(Context* context_);
     void Visit(otava::ast::AliasDeclarationNode& node) override;
-    otava::ast::Node* GetIdNode() const { return idNode; }
-    TypeSymbol* GetType() const { return type; }
+    otava::ast::Node* GetIdNode() const noexcept { return idNode; }
+    TypeSymbol* GetType() const noexcept { return type; }
 private:
     Context* context;
     otava::ast::Node* idNode;
@@ -170,7 +170,7 @@ void ProcessAliasDeclaration(otava::ast::Node* aliasDeclarationNode, Context* co
     }
 }
 
-bool AliasTypeLess::operator()(AliasTypeSymbol* left, AliasTypeSymbol* right) const
+bool AliasTypeLess::operator()(AliasTypeSymbol* left, AliasTypeSymbol* right) const noexcept
 {
     return left->Name() < right->Name();
 }
@@ -181,7 +181,8 @@ void AddTemporaryTypeAlias(otava::ast::Node* aliasDeclarationNode, Context* cont
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
     if (aliasDeclarationNode->IsAliasDeclarationNode())
     {
-        otava::ast::Node* idNode = static_cast<otava::ast::AliasDeclarationNode*>(aliasDeclarationNode)->Identifier();
+        otava::ast::AliasDeclarationNode* node = static_cast<otava::ast::AliasDeclarationNode*>(aliasDeclarationNode);
+        otava::ast::Node* idNode = node->Identifier();
         AliasTypeSymbol* temporaryAlias = context->GetSymbolTable()->AddAliasType(idNode, aliasDeclarationNode, GenericTypeSymbol::Instance(), context);
         context->AddTemporaryAliasType(temporaryAlias);
     }

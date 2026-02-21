@@ -11,7 +11,8 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-AttributeSpecifierSequenceNode::AttributeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) : SequenceNode(NodeKind::attributeSpecifierSequenceNode, sourcePos_)
+AttributeSpecifierSequenceNode::AttributeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    SequenceNode(NodeKind::attributeSpecifierSequenceNode, sourcePos_)
 {
 }
 
@@ -30,7 +31,7 @@ void AttributeSpecifierSequenceNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-AttributeSpecifierNode::AttributeSpecifierNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::attributeSpecifierNode, sourcePos_)
+AttributeSpecifierNode::AttributeSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::attributeSpecifierNode, sourcePos_)
 {
 }
 
@@ -70,7 +71,7 @@ void AttributeSpecifierNode::Read(Reader& reader)
 }
 
 void AttributeSpecifierNode::SetBracketPositions(const soul::ast::SourcePos& lbPos1_, const soul::ast::SourcePos& lbPos2_, 
-    const soul::ast::SourcePos& rbPos1_, const soul::ast::SourcePos& rbPos2_)
+    const soul::ast::SourcePos& rbPos1_, const soul::ast::SourcePos& rbPos2_) noexcept
 {
     lbPos1 = lbPos1_;
     lbPos2 = lbPos2_;
@@ -78,11 +79,11 @@ void AttributeSpecifierNode::SetBracketPositions(const soul::ast::SourcePos& lbP
     rbPos2 = rbPos2_;
 }
 
-AttributeUsingPrefixNode::AttributeUsingPrefixNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::attributeUsingPrefixNode, sourcePos_, nullptr)
+AttributeUsingPrefixNode::AttributeUsingPrefixNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::attributeUsingPrefixNode, sourcePos_, nullptr)
 {
 }
 
-AttributeUsingPrefixNode::AttributeUsingPrefixNode(const soul::ast::SourcePos& sourcePos_, Node* atttributeNamespace_, const soul::ast::SourcePos& colonPos_) :
+AttributeUsingPrefixNode::AttributeUsingPrefixNode(const soul::ast::SourcePos& sourcePos_, Node* atttributeNamespace_, const soul::ast::SourcePos& colonPos_) noexcept :
     UnaryNode(NodeKind::attributeUsingPrefixNode, sourcePos_, atttributeNamespace_), colonPos(colonPos_)
 {
 }
@@ -110,12 +111,12 @@ void AttributeUsingPrefixNode::Read(Reader& reader)
     colonPos = reader.ReadSourcePos();
 }
 
-AttributeNode::AttributeNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::attrbuteNode, sourcePos_)
+AttributeNode::AttributeNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::attributeNode, sourcePos_)
 {
 }
 
-AttributeNode::AttributeNode(const soul::ast::SourcePos& sourcePos_, Node* attributeToken_, Node* attributeArgs_) :
-    CompoundNode(NodeKind::attrbuteNode, sourcePos_), attributeToken(attributeToken_), attributeArgs(attributeArgs_)
+AttributeNode::AttributeNode(const soul::ast::SourcePos& sourcePos_, Node* attributeToken_, Node* attributeArgs_) noexcept :
+    CompoundNode(NodeKind::attributeNode, sourcePos_), attributeToken(attributeToken_), attributeArgs(attributeArgs_)
 {
 }
 
@@ -144,11 +145,11 @@ void AttributeNode::Read(Reader& reader)
     attributeArgs.reset(reader.ReadNode());
 }
 
-AttributeScopedTokenNode::AttributeScopedTokenNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::attributeScopedTokenNode, sourcePos_)
+AttributeScopedTokenNode::AttributeScopedTokenNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::attributeScopedTokenNode, sourcePos_)
 {
 }
 
-AttributeScopedTokenNode::AttributeScopedTokenNode(const soul::ast::SourcePos& sourcePos_, Node* ns_, Node* colonColon_, Node* identifier_) :
+AttributeScopedTokenNode::AttributeScopedTokenNode(const soul::ast::SourcePos& sourcePos_, Node* ns_, Node* colonColon_, Node* identifier_) noexcept :
     CompoundNode(NodeKind::attributeScopedTokenNode, sourcePos_), ns(ns_), colonColon(colonColon_), identifier(identifier_)
 {
 }
@@ -180,12 +181,12 @@ void AttributeScopedTokenNode::Read(Reader& reader)
     identifier.reset(reader.ReadNode());
 }
 
-AttributeArgumentsNode::AttributeArgumentsNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::attributeArgumentsNode, sourcePos_)
+AttributeArgumentsNode::AttributeArgumentsNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::attributeArgumentsNode, sourcePos_)
 {
 }
 
 AttributeArgumentsNode::AttributeArgumentsNode(const soul::ast::SourcePos& sourcePos_, Node* balancedTokenSequence_, 
-    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     CompoundNode(NodeKind::attributeArgumentsNode, sourcePos_), balancedTokenSequence(balancedTokenSequence_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }
@@ -217,7 +218,7 @@ void AttributeArgumentsNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
-BalancedTokenSequenceNode::BalancedTokenSequenceNode(const soul::ast::SourcePos& sourcePos_) : SequenceNode(NodeKind::balancedTokenSequenceNode, sourcePos_)
+BalancedTokenSequenceNode::BalancedTokenSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept : SequenceNode(NodeKind::balancedTokenSequenceNode, sourcePos_)
 {
 }
 
@@ -236,7 +237,7 @@ void BalancedTokenSequenceNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-TokenNode::TokenNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::tokenNode, sourcePos_)
+TokenNode::TokenNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::tokenNode, sourcePos_)
 {
 }
 
@@ -267,12 +268,12 @@ void TokenNode::Read(Reader& reader)
     str = reader.ReadStr();
 }
 
-AlignmentSpecifierNode::AlignmentSpecifierNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::alignmentSpecifierNode, sourcePos_)
+AlignmentSpecifierNode::AlignmentSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::alignmentSpecifierNode, sourcePos_)
 {
 }
 
 AlignmentSpecifierNode::AlignmentSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* alignment_, Node* ellipsis_, 
-    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     CompoundNode(NodeKind::alignmentSpecifierNode, sourcePos_), alignment(alignment_), ellipsis(ellipsis_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }

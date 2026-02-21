@@ -36,7 +36,7 @@ import util.unicode;
 
 namespace otava::symbols {
 
-ArgumentMatch::ArgumentMatch() :
+ArgumentMatch::ArgumentMatch() noexcept :
     conversionFun(nullptr),
     conversionKind(ConversionKind::implicitConversion),
     distance(0),
@@ -47,7 +47,7 @@ ArgumentMatch::ArgumentMatch() :
 {
 }
 
-std::int32_t ArgumentConversionValue(const ArgumentMatch& match)
+std::int32_t ArgumentConversionValue(const ArgumentMatch& match) noexcept
 {
     std::int32_t argumentConversionValue = 0;
     if (match.conversionFun)
@@ -64,10 +64,10 @@ std::int32_t ArgumentConversionValue(const ArgumentMatch& match)
 
 struct BetterArgumentMatch
 {
-    bool operator()(const ArgumentMatch& left, const ArgumentMatch& right) const;
+    bool operator()(const ArgumentMatch& left, const ArgumentMatch& right) const noexcept;
 };
 
-bool BetterArgumentMatch::operator()(const ArgumentMatch& left, const ArgumentMatch& right) const
+bool BetterArgumentMatch::operator()(const ArgumentMatch& left, const ArgumentMatch& right) const noexcept
 {
     if (left.conversionFun == nullptr && right.conversionFun != nullptr) return true; 
     if (right.conversionFun == nullptr && left.conversionFun != nullptr) return false; 
@@ -85,11 +85,11 @@ bool BetterArgumentMatch::operator()(const ArgumentMatch& left, const ArgumentMa
     return false;
 }
 
-FunctionMatch::FunctionMatch() : function(nullptr), numConversions(0), numQualifyingConversions(0), specialization(nullptr)
+FunctionMatch::FunctionMatch() noexcept : function(nullptr), numConversions(0), numQualifyingConversions(0), specialization(nullptr)
 {
 }
 
-FunctionMatch::FunctionMatch(FunctionSymbol* function_, Context* context_) : 
+FunctionMatch::FunctionMatch(FunctionSymbol* function_, Context* context_) noexcept :
     function(function_), context(context_), numConversions(0), numQualifyingConversions(0), specialization(nullptr)
 {
 }
@@ -106,7 +106,7 @@ FunctionMatch& FunctionMatch::operator=(const FunctionMatch& that)
     return *this;
 }
 
-bool BetterFunctionMatch::operator()(const FunctionMatch& left, const FunctionMatch& right) const
+bool BetterFunctionMatch::operator()(const FunctionMatch& left, const FunctionMatch& right) const noexcept
 {
     if (left.function->IsTemplate() && !right.function->IsTemplate())
     {
@@ -219,14 +219,6 @@ bool BetterFunctionMatch::operator()(const FunctionMatch& left, const FunctionMa
         return true;
     }
     if (!left.function->IsConst() && right.function->IsConst())
-    {
-        return false;
-    }
-    if (left.function->IsFunctionDefinitionSymbol() && !right.function->IsFunctionDefinitionSymbol())
-    {
-        return true;
-    }
-    if (!left.function->IsFunctionDefinitionSymbol() && right.function->IsFunctionDefinitionSymbol())
     {
         return false;
     }
@@ -413,14 +405,14 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundConversionFunctionCall(Functio
     return CreateBoundFunctionCall(functionMatch, args, sourcePos, ex, context);
 }
 
-bool FindQualificationConversion(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, ArgumentMatch& argumentMatch)
+bool FindQualificationConversion(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, ArgumentMatch& argumentMatch) noexcept
 {
     int distance = 0;
     int fundamentalTypeDistance = 0;
     if (paramType->IsFundamentalTypeSymbol())
     {
         FundamentalTypeSymbol* fundamentalTypeSymbol = static_cast<FundamentalTypeSymbol*>(paramType);
-        fundamentalTypeDistance = static_cast<std::int32_t>(fundamentalTypeSymbol->GetFundamentalTypeKind());
+        fundamentalTypeDistance = static_cast<std::uint8_t>(fundamentalTypeSymbol->GetFundamentalTypeKind());
         argumentMatch.fundamentalTypeDistance = fundamentalTypeDistance;
     }
     if (argumentMatch.conversionFun)
@@ -524,7 +516,7 @@ bool FindQualificationConversion(TypeSymbol* argType, TypeSymbol* paramType, Bou
 }
 
 bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, 
-    Context* context)
+    Context* context) 
 {
     if (!paramType->GetBaseType()->IsTemplateParameterSymbol()) return false;
     TemplateParameterSymbol* templateParameter = static_cast<TemplateParameterSymbol*>(paramType->GetBaseType());
@@ -613,7 +605,7 @@ bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, Boun
 }
 
 bool FindClassTemplateMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch,
-    const soul::ast::SourcePos& sourcePos, Context* context)
+    const soul::ast::SourcePos& sourcePos, Context* context) 
 {
     if (!paramType->GetBaseType()->IsClassTypeSymbol()) return false;
     ClassTypeSymbol* paramClassType = static_cast<ClassTypeSymbol*>(paramType->GetBaseType());
@@ -768,7 +760,9 @@ bool PlainTemplateArgsEqual(const std::vector<Symbol*>& sourceTemplateArguments,
         Symbol* sourceTemplateArg = sourceTemplateArguments[i];
         Symbol* targetTemplateArg = targetTemplateArguments[i];
         if (!sourceTemplateArg->IsTypeSymbol() || !targetTemplateArg->IsTypeSymbol()) return false;
-        if (!TypesEqual(static_cast<TypeSymbol*>(sourceTemplateArg)->PlainType(context), static_cast<TypeSymbol*>(targetTemplateArg)->PlainType(context), context))
+        TypeSymbol* sourceType = static_cast<TypeSymbol*>(sourceTemplateArg);
+        TypeSymbol* targetType = static_cast<TypeSymbol*>(targetTemplateArg);
+        if (!TypesEqual(sourceType->PlainType(context), targetType->PlainType(context), context))
         {
             return false;
         }
@@ -1139,6 +1133,7 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
     std::vector<std::unique_ptr<FunctionMatch>> functionMatches;
     std::set<FunctionSymbol*> viableFunctionSet;
     std::set<std::u32string> viableFunctionFullNameSet;
+    std::set<std::u32string> viableFunctionDeclarationFullNameSet;
     int n = viableFunctions.size();
     for (int i = 0; i < n; ++i)
     {
@@ -1152,11 +1147,21 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
         {
             continue;
         }
+        else if (!viableFunction->IsFunctionDefinitionSymbol() && 
+            viableFunctionDeclarationFullNameSet.find(viableFunction->FullName()) != viableFunctionDeclarationFullNameSet.end())
+        {
+            continue;
+        }
         viableFunctionSet.insert(viableFunction);
         if (viableFunction->IsFunctionDefinitionSymbol())
         {
             std::u32string fullName = viableFunction->FullName();
             viableFunctionFullNameSet.insert(fullName);
+        }
+        else
+        {
+            std::u32string fullName = viableFunction->FullName();
+            viableFunctionDeclarationFullNameSet.insert(fullName);
         }
         std::unique_ptr<FunctionMatch> functionMatch(new FunctionMatch(viableFunction, context));
         SetTemplateArgs(viableFunction, functionMatch->templateParameterMap, templateArgs);

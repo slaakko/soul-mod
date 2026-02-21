@@ -140,6 +140,8 @@ const std::u32string& OperatorGroupNameMap::GetGroupName(otava::ast::NodeKind no
     else
     {
         ThrowException("group name for node kind '" + otava::ast::NodeKindStr(nodeKind) + "' not found", sourcePos, context);
+        static std::u32string empty;
+        return empty;
     }
 }
 
@@ -1123,7 +1125,8 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
             Symbol* sym = variableGroup->GetSingleSymbol();
             if (sym && sym->IsVariableSymbol())
             {
-                VariableSymbol* variable = static_cast<VariableSymbol*>(sym)->Final();
+                VariableSymbol* variable = static_cast<VariableSymbol*>(sym);
+                variable = variable->Final();
                 Scope* scope = variable->Parent()->GetScope();
                 if (scope && scope->IsContainerScope())
                 {
@@ -1313,7 +1316,8 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                 Symbol* sym = variableGroup->GetSingleSymbol();
                 if (sym && sym->IsVariableSymbol())
                 {
-                    VariableSymbol* variable = static_cast<VariableSymbol*>(sym)->Final();
+                    VariableSymbol* variable = static_cast<VariableSymbol*>(sym);
+                    variable = variable->Final();
                     if (foundFromParentFn)
                     {
                         BoundParentVariableNode* boundParentVariable = new BoundParentVariableNode(variable, node.GetSourcePos());
@@ -1979,6 +1983,10 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
             context->PushSetFlag(ContextFlags::suppress_warning);
             flagsPushed = true;
         }
+        if (groupName == U"Lookup")
+        {
+            int x = 0;
+        }
         std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverload(subjectScope, groupName, templateArgs, args, node.GetSourcePos(), context, ex1,
             resolutionFlags);
         if (flagsPushed)
@@ -2410,36 +2418,45 @@ void ExpressionBinder::Visit(otava::ast::BracedInitListNode& node)
 
 void ExpressionBinder::Visit(otava::ast::ThrowExprNode& node)
 {
-    if (node.Child())
+    try
     {
-        std::unique_ptr<otava::symbols::BoundExpressionNode> expr(BindExpression(node.Child(), context));
-        std::uint64_t ext1 = 0;
-        std::uint64_t ext2 = 0;
-        util::UuidToInts(expr->GetType()->Id(), ext1, ext2);
-        std::u32string throwExprStr;
-        throwExprStr.append(U"ort_throw((ort_is_bad_alloc(").append(util::ToUtf32(std::to_string(ext1)).append(U"ull, ").
-            append(util::ToUtf32(std::to_string(ext2)).append(U"ull) ? ort_get_bad_alloc() : ")));
-        std::u32string exprStr = node.Child()->Str();
-        if (expr->IsBoundLiteralNode() || expr->IsBoundVariableNode() || expr->IsBoundParentVariableNode())
+        if (node.Child())
         {
-            std::u32string typeName = expr->GetType()->FullName();
-            throwExprStr.append(U"new ").append(typeName).append(U"(").append(exprStr).append(U")");
+            std::unique_ptr<otava::symbols::BoundExpressionNode> expr(BindExpression(node.Child(), context));
+            std::uint64_t ext1 = 0;
+            std::uint64_t ext2 = 0;
+            util::UuidToInts(expr->GetType()->Id(), ext1, ext2);
+            std::u32string throwExprStr;
+            throwExprStr.append(U"ort_throw((ort_is_bad_alloc(").append(util::ToUtf32(std::to_string(ext1)).append(U"ull, ").
+                append(util::ToUtf32(std::to_string(ext2)).append(U"ull) ? ort_get_bad_alloc() : ")));
+            std::u32string exprStr = node.Child()->Str();
+            if (expr->IsBoundLiteralNode() || 
+                expr->IsBoundVariableNode() || expr->IsBoundParentVariableNode() || 
+                expr->IsBoundParameterNode() || expr->IsBoundParentParameterNode())
+            {
+                std::u32string typeName = expr->GetType()->FullName();
+                throwExprStr.append(U"new ").append(typeName).append(U"(").append(exprStr).append(U")");
+            }
+            else if (node.Child()->IsInvokeExprNode())
+            {
+                throwExprStr.append(U"new ").append(exprStr);
+            }
+            throwExprStr.append(U"), ").append(util::ToUtf32(std::to_string(ext1)).append(U"ull, ").
+                append(util::ToUtf32(std::to_string(ext2)).append(U"ull)")));
+            std::unique_ptr<otava::ast::Node> invokeThrowExprNode = ParseExpression(throwExprStr, context);
+            boundExpression = BindExpression(invokeThrowExprNode.get(), context);
         }
-        else if (node.Child()->IsInvokeExprNode())
+        else
         {
-            throwExprStr.append(U"new ").append(exprStr);
+            std::u32string throwExprStr;
+            throwExprStr.append(U"ort_rethrow()");
+            std::unique_ptr<otava::ast::Node> invokeThrowExprNode = ParseExpression(throwExprStr, context);
+            boundExpression = BindExpression(invokeThrowExprNode.get(), context);
         }
-        throwExprStr.append(U"), ").append(util::ToUtf32(std::to_string(ext1)).append(U"ull, ").
-            append(util::ToUtf32(std::to_string(ext2)).append(U"ull)")));
-        std::unique_ptr<otava::ast::Node> invokeThrowExprNode = ParseExpression(throwExprStr, context);
-        boundExpression = BindExpression(invokeThrowExprNode.get(), context);
     }
-    else
+    catch (const std::exception& ex)
     {
-        std::u32string throwExprStr;
-        throwExprStr.append(U"ort_rethrow()");
-        std::unique_ptr<otava::ast::Node> invokeThrowExprNode = ParseExpression(throwExprStr, context);
-        boundExpression = BindExpression(invokeThrowExprNode.get(), context);
+        ThrowException(std::string("error parsing throw expression: ") + ex.what(), node.GetSourcePos(), context);
     }
 }
 

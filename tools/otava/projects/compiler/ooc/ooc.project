@@ -1,5 +1,16 @@
 project ooc;
 target=program;
 reference <../../util/util.project>;
+reference <../../soul/ast/ast.project>;
+reference <../../soul/lexer/lexer.project>;
+reference <../../soul/parser/parser.project>;
+reference <../../soul/xml/dom/soul.xml.dom.project>;
 reference <../assembly/assembly.project>;
+reference <../intermediate/intermediate.project>;
+reference <../optimizer/optimizer.project>;
+reference <../lexer/lexer.project>;
+reference <../ast/ast.project>;
+reference <../symbols/symbols.project>;
+reference <../parser/parser.project>;
+reference <../codegen/codegen.project>;
 source <main.cpp>;

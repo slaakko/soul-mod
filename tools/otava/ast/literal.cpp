@@ -11,7 +11,7 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-LiteralNode::LiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : Node(kind_, sourcePos_), rep()
+LiteralNode::LiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : Node(kind_, sourcePos_), rep()
 {
 }
 
@@ -31,7 +31,7 @@ void LiteralNode::Read(Reader& reader)
     rep = reader.ReadStr();
 }
 
-IntegerLiteralNode::IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_) : LiteralNode(NodeKind::integerLiteralNode, sourcePos_), value(), suffix(), base()
+IntegerLiteralNode::IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept : LiteralNode(NodeKind::integerLiteralNode, sourcePos_), value(), suffix(), base()
 {
 }
 
@@ -67,7 +67,8 @@ void IntegerLiteralNode::Read(Reader& reader)
     base = static_cast<Base>(reader.GetBinaryStreamReader().ReadByte());
 }
 
-FloatingLiteralNode::FloatingLiteralNode(const soul::ast::SourcePos& sourcePos_) : LiteralNode(NodeKind::floatingLiteralNode, sourcePos_), value(), suffix(), base()
+FloatingLiteralNode::FloatingLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    LiteralNode(NodeKind::floatingLiteralNode, sourcePos_), value(), suffix(), base()
 {
 }
 
@@ -103,11 +104,13 @@ void FloatingLiteralNode::Read(Reader& reader)
     base = static_cast<Base>(reader.GetBinaryStreamReader().ReadByte());
 }
 
-CharacterLiteralNode::CharacterLiteralNode(const soul::ast::SourcePos& sourcePos_) : LiteralNode(NodeKind::characterLiteralNode, sourcePos_), value(), encodingPrefix(), hasMultipleCharacters(false)
+CharacterLiteralNode::CharacterLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    LiteralNode(NodeKind::characterLiteralNode, sourcePos_), value(), encodingPrefix(), hasMultipleCharacters(false)
 {
 }
 
-CharacterLiteralNode::CharacterLiteralNode(const soul::ast::SourcePos& sourcePos_, char32_t value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_, bool hasMultipleCharacters_) :
+CharacterLiteralNode::CharacterLiteralNode(const soul::ast::SourcePos& sourcePos_, char32_t value_, EncodingPrefix encodingPrefix_, 
+    const std::u32string& rep_, bool hasMultipleCharacters_) :
     LiteralNode(NodeKind::characterLiteralNode, sourcePos_, rep_), value(value_), encodingPrefix(encodingPrefix_), hasMultipleCharacters(hasMultipleCharacters_)
 {
 }
@@ -139,7 +142,8 @@ void CharacterLiteralNode::Read(Reader& reader)
     hasMultipleCharacters = reader.GetBinaryStreamReader().ReadBool();
 }
 
-StringLiteralNode::StringLiteralNode(const soul::ast::SourcePos& sourcePos_) : LiteralNode(NodeKind::stringLiteralNode, sourcePos_), value(), encodingPrefix()
+StringLiteralNode::StringLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    LiteralNode(NodeKind::stringLiteralNode, sourcePos_), value(), encodingPrefix()
 {
 }
 
@@ -152,7 +156,8 @@ StringLiteralNode::StringLiteralNode(const soul::ast::SourcePos& sourcePos_, con
 {
 }
 
-StringLiteralNode::StringLiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_) :
+StringLiteralNode::StringLiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_, 
+    const std::u32string& rep_) :
     LiteralNode(kind_, sourcePos_, rep_), value(value_), encodingPrefix(encodingPrefix_)
 {
 }
@@ -182,7 +187,7 @@ void StringLiteralNode::Read(Reader& reader)
     encodingPrefix = static_cast<EncodingPrefix>(reader.GetBinaryStreamReader().ReadByte());
 }
 
-RawStringLiteralNode::RawStringLiteralNode(const soul::ast::SourcePos& sourcePos_) : StringLiteralNode(NodeKind::rawStringLiteralNode, sourcePos_)
+RawStringLiteralNode::RawStringLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept : StringLiteralNode(NodeKind::rawStringLiteralNode, sourcePos_)
 {
 }
 
@@ -194,7 +199,7 @@ RawStringLiteralNode::RawStringLiteralNode(const soul::ast::SourcePos& sourcePos
 
 Node* RawStringLiteralNode::Clone() const
 {
-    RawStringLiteralNode* clone = new RawStringLiteralNode(GetSourcePos(), Value(), EncodingPrefix(), delimSequence, Rep());
+    RawStringLiteralNode* clone = new RawStringLiteralNode(GetSourcePos(), GetValue(), EncodingPrefix(), delimSequence, Rep());
     return clone;
 }
 
@@ -215,7 +220,7 @@ void RawStringLiteralNode::Read(Reader& reader)
     delimSequence = reader.ReadStr();
 }
 
-BooleanLiteralNode::BooleanLiteralNode(const soul::ast::SourcePos& sourcePos_) : LiteralNode(NodeKind::booleanLiteralNode, sourcePos_), value()
+BooleanLiteralNode::BooleanLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept : LiteralNode(NodeKind::booleanLiteralNode, sourcePos_), value()
 {
 }
 
@@ -247,7 +252,7 @@ void BooleanLiteralNode::Read(Reader& reader)
     value = reader.ReadBool();
 }
 
-NullPtrLiteralNode::NullPtrLiteralNode(const soul::ast::SourcePos& sourcePos_) : LiteralNode(NodeKind::nullPtrLiteralNode, sourcePos_)
+NullPtrLiteralNode::NullPtrLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept : LiteralNode(NodeKind::nullPtrLiteralNode, sourcePos_)
 {
 }
 
@@ -267,11 +272,12 @@ void NullPtrLiteralNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-UserDefinedLiteraNode::UserDefinedLiteraNode(const soul::ast::SourcePos& sourcePos_) : BinaryNode(NodeKind::userDefinedLiteralNode, sourcePos_, nullptr, nullptr)
+UserDefinedLiteraNode::UserDefinedLiteraNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    BinaryNode(NodeKind::userDefinedLiteralNode, sourcePos_, nullptr, nullptr)
 {
 }
 
-UserDefinedLiteraNode::UserDefinedLiteraNode(const soul::ast::SourcePos& sourcePos_, Node* literalNode_, Node* udSuffix_) :
+UserDefinedLiteraNode::UserDefinedLiteraNode(const soul::ast::SourcePos& sourcePos_, Node* literalNode_, Node* udSuffix_) noexcept :
     BinaryNode(NodeKind::userDefinedLiteralNode, sourcePos_, literalNode_, udSuffix_)
 {
 }
@@ -287,11 +293,11 @@ void UserDefinedLiteraNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-LiteralOperatorIdNode::LiteralOperatorIdNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::literalOperatorIdNode, sourcePos_, nullptr)
+LiteralOperatorIdNode::LiteralOperatorIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::literalOperatorIdNode, sourcePos_, nullptr)
 {
 }
 
-LiteralOperatorIdNode::LiteralOperatorIdNode(const soul::ast::SourcePos& sourcePos_, Node* id_, const soul::ast::SourcePos& stringLitPos_) :
+LiteralOperatorIdNode::LiteralOperatorIdNode(const soul::ast::SourcePos& sourcePos_, Node* id_, const soul::ast::SourcePos& stringLitPos_) noexcept :
     UnaryNode(NodeKind::literalOperatorIdNode, sourcePos_, id_), stringLitPos(stringLitPos_)
 {
 }
@@ -332,7 +338,7 @@ std::u32string EncodingPrefixStr(EncodingPrefix encodingPrefix)
     return std::u32string();
 }
 
-EncodingPrefix CommonEncodingPrefix(otava::ast::EncodingPrefix leftEncodingPrefix, otava::ast::EncodingPrefix rightEncodingPrefix)
+EncodingPrefix CommonEncodingPrefix(otava::ast::EncodingPrefix leftEncodingPrefix, otava::ast::EncodingPrefix rightEncodingPrefix) noexcept
 {
     switch (leftEncodingPrefix)
     {
@@ -340,14 +346,14 @@ EncodingPrefix CommonEncodingPrefix(otava::ast::EncodingPrefix leftEncodingPrefi
         {
             switch (rightEncodingPrefix)
             {
-            case EncodingPrefix::none:
-            {
-                return EncodingPrefix::none;
-            }
-            default:
-            {
-                return rightEncodingPrefix;
-            }
+                case EncodingPrefix::none:
+                {
+                    return EncodingPrefix::none;
+                }
+                default:
+                {
+                    return rightEncodingPrefix;
+                }
             }
             break;
         }
@@ -355,14 +361,14 @@ EncodingPrefix CommonEncodingPrefix(otava::ast::EncodingPrefix leftEncodingPrefi
         {
             switch (rightEncodingPrefix)
             {
-            case EncodingPrefix::none:
-            {
-                return leftEncodingPrefix;
-            }
-            default:
-            {
-                return EncodingPrefix::u8;
-            }
+                case EncodingPrefix::none:
+                {
+                    return leftEncodingPrefix;
+                }
+                default:
+                {
+                    return EncodingPrefix::u8;
+                }
             }
             break;
         }

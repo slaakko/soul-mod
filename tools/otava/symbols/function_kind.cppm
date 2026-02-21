@@ -9,21 +9,21 @@ import std;
 
 export namespace otava::symbols {
 
-enum class FunctionKind
+enum class FunctionKind : std::uint8_t
 {
     function, constructor, destructor, special, conversionMemFn
 };
 
 std::string FunctionKindStr(FunctionKind functionKind);
 
-enum class SpecialFunctionKind
+enum class SpecialFunctionKind : std::uint8_t
 {
     none, defaultCtor, copyCtor, moveCtor, copyAssignment, moveAssignment, dtor
 };
 
 std::string SpecialFunctionKindPrefix(SpecialFunctionKind specialFunctionKind);
 
-enum class Linkage : std::int32_t
+enum class Linkage : std::uint8_t
 {
     c_linkage, cpp_linkage
 };
@@ -34,24 +34,24 @@ enum class FunctionQualifiers : std::uint16_t
     noreturn = 1 << 7, isNoexcept = 1 << 8
 };
 
-enum class ConversionKind : std::int32_t
+enum class ConversionKind : std::uint8_t
 {
     implicitConversion, explicitConversion
 };
 
-constexpr FunctionQualifiers operator|(FunctionQualifiers left, FunctionQualifiers right)
+constexpr FunctionQualifiers operator|(FunctionQualifiers left, FunctionQualifiers right) noexcept
 {
-    return FunctionQualifiers(std::int32_t(left) | std::int32_t(right));
+    return FunctionQualifiers(std::uint16_t(left) | std::uint16_t(right));
 }
 
-constexpr FunctionQualifiers operator&(FunctionQualifiers left, FunctionQualifiers right)
+constexpr FunctionQualifiers operator&(FunctionQualifiers left, FunctionQualifiers right) noexcept
 {
-    return FunctionQualifiers(std::int32_t(left) & std::int32_t(right));
+    return FunctionQualifiers(std::uint16_t(left) & std::uint16_t(right));
 }
 
-constexpr FunctionQualifiers operator~(FunctionQualifiers qualifiers)
+constexpr FunctionQualifiers operator~(FunctionQualifiers qualifiers) noexcept
 {
-    return FunctionQualifiers(~std::int32_t(qualifiers));
+    return FunctionQualifiers(~std::uint16_t(qualifiers));
 }
 
 std::string MakeFunctionQualifierStr(FunctionQualifiers qualifiers);
@@ -63,17 +63,17 @@ enum class FunctionSymbolFlags : std::int32_t
     containsLocalVariableWithDestructor = 1 << 13,
 };
 
-constexpr FunctionSymbolFlags operator|(FunctionSymbolFlags left, FunctionSymbolFlags right)
+constexpr FunctionSymbolFlags operator|(FunctionSymbolFlags left, FunctionSymbolFlags right) noexcept
 {
     return FunctionSymbolFlags(std::int32_t(left) | std::int32_t(right));
 }
 
-constexpr FunctionSymbolFlags operator&(FunctionSymbolFlags left, FunctionSymbolFlags right)
+constexpr FunctionSymbolFlags operator&(FunctionSymbolFlags left, FunctionSymbolFlags right) noexcept
 {
     return FunctionSymbolFlags(std::int32_t(left) & std::int32_t(right));
 }
 
-constexpr FunctionSymbolFlags operator~(FunctionSymbolFlags flags)
+constexpr FunctionSymbolFlags operator~(FunctionSymbolFlags flags) noexcept
 {
     return FunctionSymbolFlags(~std::int32_t(flags));
 }

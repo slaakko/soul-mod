@@ -21,7 +21,7 @@ ClassGroupSymbol::ClassGroupSymbol(const std::u32string& name_) : Symbol(SymbolK
 {
 }
 
-bool ClassGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
+bool ClassGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcept
 {
     switch (scopeKind)
     {
@@ -50,7 +50,7 @@ void ClassGroupSymbol::AddClass(ClassTypeSymbol* classTypeSymbol)
     }
 }
 
-Symbol* ClassGroupSymbol::GetSingleSymbol() 
+Symbol* ClassGroupSymbol::GetSingleSymbol() noexcept
 {
     if (classes.size() == 1)
     {
@@ -66,7 +66,7 @@ Symbol* ClassGroupSymbol::GetSingleSymbol()
     }
 }
 
-ClassTypeSymbol* ClassGroupSymbol::GetClass(int arity) const
+ClassTypeSymbol* ClassGroupSymbol::GetClass(int arity) const noexcept
 {
     for (ClassTypeSymbol* classTypeSymbol : classes)
     {
@@ -89,7 +89,7 @@ void ClassGroupSymbol::AddForwardDeclaration(ForwardClassDeclarationSymbol* forw
     }
 }
 
-ForwardClassDeclarationSymbol* ClassGroupSymbol::GetForwardDeclaration(int arity) const
+ForwardClassDeclarationSymbol* ClassGroupSymbol::GetForwardDeclaration(int arity) const noexcept
 {
     for (ForwardClassDeclarationSymbol* forwardDeclaration : forwardDeclarations)
     {
@@ -164,7 +164,7 @@ void ClassGroupSymbol::Merge(ClassGroupSymbol* that)
 
 struct ViableClassGreater
 {
-    bool operator()(const std::pair<ClassTypeSymbol*, TemplateMatchInfo>& left, const std::pair<ClassTypeSymbol*, TemplateMatchInfo>& right) const
+    inline bool operator()(const std::pair<ClassTypeSymbol*, TemplateMatchInfo>& left, const std::pair<ClassTypeSymbol*, TemplateMatchInfo>& right) const noexcept
     {
         return left.second.matchValue > right.second.matchValue;
     }
@@ -268,7 +268,7 @@ std::vector<Symbol*> MakeTemplateArgs(const std::map<TemplateParameterSymbol*, T
     return templateArgs;
 }
 
-ClassTypeSymbol* ClassGroupSymbol::GetBestMatchingClass(const std::vector<Symbol*>& templateArgs, TemplateMatchInfo& matchInfo, Context* context) const
+ClassTypeSymbol* ClassGroupSymbol::GetBestMatchingClass(const std::vector<Symbol*>& templateArgs, TemplateMatchInfo& matchInfo, Context* context) const noexcept
 {
     std::vector<std::pair<ClassTypeSymbol*, TemplateMatchInfo>> viableClasses;
     int arity = templateArgs.size();

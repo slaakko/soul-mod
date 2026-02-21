@@ -45,17 +45,17 @@ enum class SymbolGroupKind : std::int32_t
 
 std::string SymbolGroupStr(SymbolGroupKind group);
 
-constexpr SymbolGroupKind operator|(SymbolGroupKind left, SymbolGroupKind right)
+constexpr SymbolGroupKind operator|(SymbolGroupKind left, SymbolGroupKind right) noexcept
 {
     return SymbolGroupKind(std::int32_t(left) | std::int32_t(right));
 }
 
-constexpr SymbolGroupKind operator&(SymbolGroupKind left, SymbolGroupKind right)
+constexpr SymbolGroupKind operator&(SymbolGroupKind left, SymbolGroupKind right) noexcept
 {
     return SymbolGroupKind(std::int32_t(left) & std::int32_t(right));
 }
 
-constexpr SymbolGroupKind operator~(SymbolGroupKind kind)
+constexpr SymbolGroupKind operator~(SymbolGroupKind kind) noexcept
 {
     return SymbolGroupKind(~std::int32_t(kind));
 }
@@ -67,25 +67,26 @@ std::string ScopeKindStr(ScopeKind kind);
 class Scope
 {
 public:
-    Scope();
+    Scope() noexcept;
     virtual ~Scope();
-    inline ScopeKind Kind() const { return kind; }
-    inline void SetKind(ScopeKind kind_) { kind = kind_; }
+    inline ScopeKind Kind() const noexcept { return kind; }
+    inline void SetKind(ScopeKind kind_) noexcept { kind = kind_; }
     void Install(Symbol* symbol, Context* context);
     void Install(Symbol* symbol, Symbol* from, Context* context);
     void Uninstall(Symbol* symbol);
-    Symbol* Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags) const;
-    inline bool IsBlockScope() const { return kind == ScopeKind::blockScope; }
-    inline bool IsClassScope() const { return kind == ScopeKind::classScope; }
-    inline bool IsNamespaceScope() const { return kind == ScopeKind::namespaceScope;  }
-    inline bool IsTemplateDeclarationScope() const { return kind == ScopeKind::templateDeclarationScope; }
-    virtual Scope* GroupScope();
-    virtual Scope* SymbolScope();
+    Symbol* Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, const soul::ast::SourcePos& sourcePos, 
+        Context* context, LookupFlags flags) const;
+    inline bool IsBlockScope() const noexcept { return kind == ScopeKind::blockScope; }
+    inline bool IsClassScope() const noexcept { return kind == ScopeKind::classScope; }
+    inline bool IsNamespaceScope() const noexcept { return kind == ScopeKind::namespaceScope;  }
+    inline bool IsTemplateDeclarationScope() const noexcept { return kind == ScopeKind::templateDeclarationScope; }
+    virtual Scope* GroupScope() noexcept;
+    virtual Scope* SymbolScope() noexcept;
     virtual std::string FullName() const = 0;
-    virtual bool IsContainerScope() const { return false; }
-    virtual Scope* GetClassScope() const { return nullptr; }
-    virtual Scope* GetNamespaceScope() const { return nullptr; }
-    virtual Symbol* GetSymbol() { return nullptr; }
+    virtual bool IsContainerScope() const noexcept { return false; }
+    virtual Scope* GetClassScope() const noexcept { return nullptr; }
+    virtual Scope* GetNamespaceScope() const noexcept { return nullptr; }
+    virtual Symbol* GetSymbol() noexcept { return nullptr; }
     virtual ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(std::set<Scope*>& visited) const { return nullptr; }
     virtual void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags, 
         std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const;
@@ -95,7 +96,7 @@ public:
     virtual void AddParentScope(Scope* parentScope_);
     virtual void PushParentScope(Scope* parentScope);
     virtual void PopParentScope();
-    virtual bool HasParentScope(const Scope* parentScope) const { return false; }
+    virtual bool HasParentScope(const Scope* parentScope) const noexcept { return false; }
     virtual void ClearParentScopes() {}
     virtual void AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual void AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::SourcePos& sourcePos, Context* context);
@@ -115,21 +116,21 @@ private:
 class ContainerScope : public Scope
 {
 public:
-    ContainerScope();
+    ContainerScope() noexcept;
     void Import(Scope* that, Context* context) override;
     std::vector<Scope*> ParentScopes() const override { return parentScopes; }
     void AddParentScope(Scope* parentScope) override;
     void PushParentScope(Scope* parentScope) override;
     void PopParentScope() override;
     void ClearParentScopes() override;
-    bool IsContainerScope() const override { return true; }
-    Scope* GetClassScope() const override;
-    Scope* GetNamespaceScope() const override;
+    bool IsContainerScope() const noexcept override { return true; }
+    Scope* GetClassScope() const noexcept override;
+    Scope* GetNamespaceScope() const noexcept override;
     void AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    Symbol* GetSymbol() override;
+    Symbol* GetSymbol() noexcept override;
     ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(std::set<Scope*>& visited) const override;
-    inline ContainerSymbol* GetContainerSymbol() const { return containerSymbol; }
-    void SetContainerSymbol(ContainerSymbol* containerSymbol_) { containerSymbol = containerSymbol_; }
+    inline ContainerSymbol* GetContainerSymbol() const noexcept { return containerSymbol; }
+    inline void SetContainerSymbol(ContainerSymbol* containerSymbol_) noexcept { containerSymbol = containerSymbol_; }
     void AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void AddUsingDirective(NamespaceSymbol* ns, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::string FullName() const override;
@@ -143,7 +144,7 @@ public:
     VariableGroupSymbol* GetOrInsertVariableGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
     AliasGroupSymbol* GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
     EnumGroupSymbol* GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    bool HasParentScope(const Scope* parentScope) const override;
+    bool HasParentScope(const Scope* parentScope) const noexcept override;
 private:
     std::vector<Scope*> parentScopes;
     std::vector<Scope*> baseScopes;
@@ -157,7 +158,7 @@ private:
 class UsingDeclarationScope : public Scope
 {
 public:
-    UsingDeclarationScope(ContainerScope* parentScope_);
+    UsingDeclarationScope(ContainerScope* parentScope_) noexcept;
     std::string FullName() const override;
     void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags, 
         std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const override;
@@ -168,7 +169,7 @@ private:
 class UsingDirectiveScope : public Scope
 {
 public:
-    UsingDirectiveScope(NamespaceSymbol* ns_);
+    UsingDirectiveScope(NamespaceSymbol* ns_) noexcept;
     void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags, 
         std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const override;
     std::string FullName() const override;
@@ -180,18 +181,18 @@ private:
 class InstantiationScope : public Scope
 {
 public:
-    InstantiationScope(Scope* parentScope_);
+    InstantiationScope(Scope* parentScope_) noexcept;
     std::string FullName() const override;
-    Scope* GroupScope() override;
-    Scope* SymbolScope() override;
-    Scope* GetClassScope() const override;
-    Scope* GetNamespaceScope() const override;
+    Scope* GroupScope() noexcept override;
+    Scope* SymbolScope() noexcept override;
+    Scope* GetClassScope() const noexcept override;
+    Scope* GetNamespaceScope() const noexcept override;
     ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(std::set<Scope*>& visited) const override;
     void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags, 
         std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const override;
     void PushParentScope(Scope* parentScope_) override;
     void PopParentScope() override;
-    bool HasParentScope(const Scope* parentScope) const override;
+    bool HasParentScope(const Scope* parentScope) const noexcept override;
 private:
     std::vector<Scope*> parentScopes;
 };

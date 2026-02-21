@@ -11,11 +11,12 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-TemplateDeclarationNode::TemplateDeclarationNode(const soul::ast::SourcePos& sourcePos_) : BinaryNode(NodeKind::templateDeclarationNode, sourcePos_, nullptr, nullptr)
+TemplateDeclarationNode::TemplateDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    BinaryNode(NodeKind::templateDeclarationNode, sourcePos_, nullptr, nullptr)
 {
 }
 
-TemplateDeclarationNode::TemplateDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* templateHead_, Node* declaration_) :
+TemplateDeclarationNode::TemplateDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* templateHead_, Node* declaration_) noexcept :
     BinaryNode(NodeKind::templateDeclarationNode, sourcePos_, templateHead_, declaration_)
 {
 }
@@ -31,16 +32,16 @@ void TemplateDeclarationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-TemplateHeadNode::TemplateHeadNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::templateHeadNode, sourcePos_)
+TemplateHeadNode::TemplateHeadNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::templateHeadNode, sourcePos_)
 {
 }
 
-void TemplateHeadNode::SetTemplateParameterList(Node* templateParamList_)
+void TemplateHeadNode::SetTemplateParameterList(Node* templateParamList_) noexcept
 {
     templateParamList.reset(templateParamList_);
 }
 
-void TemplateHeadNode::SetRequiresClause(Node* requiresClause_)
+void TemplateHeadNode::SetRequiresClause(Node* requiresClause_) noexcept
 {
     requiresClause.reset(requiresClause_);
 }
@@ -78,7 +79,7 @@ void TemplateHeadNode::Read(Reader& reader)
     requiresClause.reset(reader.ReadNode());
 }
 
-TemplateParameterListNode::TemplateParameterListNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::templateParameterListNode, sourcePos_)
+TemplateParameterListNode::TemplateParameterListNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::templateParameterListNode, sourcePos_)
 {
 }
 
@@ -113,12 +114,14 @@ void TemplateParameterListNode::Read(Reader& reader)
     raPos = reader.ReadSourcePos();
 }
 
-TypeParameterNode::TypeParameterNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::typeParameterNode, sourcePos_)
+TypeParameterNode::TypeParameterNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::typeParameterNode, sourcePos_)
 {
 }
 
-TypeParameterNode::TypeParameterNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_, Node* identifier_, Node* assign_, Node* typeId_, Node* ellipsis_, Node* templateHead_) :
-    CompoundNode(NodeKind::typeParameterNode, sourcePos_), typeConstraint(typeConstraint_), identifier(identifier_), assign(assign_), typeId(typeId_), ellipsis(ellipsis_), templateHead(templateHead_)
+TypeParameterNode::TypeParameterNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_, Node* identifier_, Node* assign_, Node* typeId_, 
+    Node* ellipsis_, Node* templateHead_) noexcept :
+    CompoundNode(NodeKind::typeParameterNode, sourcePos_), typeConstraint(typeConstraint_), identifier(identifier_), assign(assign_), typeId(typeId_), 
+    ellipsis(ellipsis_), templateHead(templateHead_)
 {
 }
 
@@ -144,7 +147,8 @@ Node* TypeParameterNode::Clone() const
     {
         clonedTemplateHead = templateHead->Clone();
     }
-    TypeParameterNode* clone = new TypeParameterNode(GetSourcePos(), typeConstraint->Clone(), identifier->Clone(), clonedAssign, clonedTypeId, clonedEllipsis, clonedTemplateHead);
+    TypeParameterNode* clone = new TypeParameterNode(GetSourcePos(), typeConstraint->Clone(), identifier->Clone(), clonedAssign, clonedTypeId, 
+        clonedEllipsis, clonedTemplateHead);
     return clone;
 }
 
@@ -175,11 +179,12 @@ void TypeParameterNode::Read(Reader& reader)
     templateHead.reset(reader.ReadNode());
 }
 
-TemplateIdNode::TemplateIdNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::templateIdNode, sourcePos_)
+TemplateIdNode::TemplateIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::templateIdNode, sourcePos_)
 {
 }
 
-TemplateIdNode::TemplateIdNode(const soul::ast::SourcePos& sourcePos_, Node* templateName_) : ListNode(NodeKind::templateIdNode, sourcePos_), templateName(templateName_)
+TemplateIdNode::TemplateIdNode(const soul::ast::SourcePos& sourcePos_, Node* templateName_) noexcept : 
+    ListNode(NodeKind::templateIdNode, sourcePos_), templateName(templateName_)
 {
 }
 
@@ -219,7 +224,7 @@ void TemplateIdNode::SetTemplateArgKinds(const std::vector<bool>& templateArgKin
     templateArgKinds = templateArgKinds_;
 }
 
-TypenameNode::TypenameNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::typenameNode, sourcePos_)
+TypenameNode::TypenameNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::typenameNode, sourcePos_)
 {
 }
 
@@ -234,14 +239,14 @@ void TypenameNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-DeductionGuideNode::DeductionGuideNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::deductionGuideNode, sourcePos_)
+DeductionGuideNode::DeductionGuideNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::deductionGuideNode, sourcePos_)
 {
 }
 
-DeductionGuideNode::DeductionGuideNode(const soul::ast::SourcePos& sourcePos_, Node* templateName_, Node* params_, Node* arrow_, Node* templateId_, Node* explicitSpecifier_, 
-    Node* semicolon_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
-    CompoundNode(NodeKind::deductionGuideNode, sourcePos_), templateName(templateName_), params(params_), arrow(arrow_), explicitSpecifier(explicitSpecifier_), semicolon(semicolon_),
-    lpPos(lpPos_), rpPos(rpPos_)
+DeductionGuideNode::DeductionGuideNode(const soul::ast::SourcePos& sourcePos_, Node* templateName_, Node* params_, Node* arrow_, Node* templateId_, 
+    Node* explicitSpecifier_, Node* semicolon_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
+    CompoundNode(NodeKind::deductionGuideNode, sourcePos_), templateName(templateName_), params(params_), arrow(arrow_), explicitSpecifier(explicitSpecifier_), 
+    semicolon(semicolon_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }
 
@@ -288,11 +293,11 @@ void DeductionGuideNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
-ExplicitInstantiationNode::ExplicitInstantiationNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::explicitInstantiationNode, sourcePos_)
+ExplicitInstantiationNode::ExplicitInstantiationNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::explicitInstantiationNode, sourcePos_)
 {
 }
 
-ExplicitInstantiationNode::ExplicitInstantiationNode(const soul::ast::SourcePos& sourcePos_, Node* extrn_, Node* tmp_, Node* declaration_) :
+ExplicitInstantiationNode::ExplicitInstantiationNode(const soul::ast::SourcePos& sourcePos_, Node* extrn_, Node* tmp_, Node* declaration_) noexcept :
     CompoundNode(NodeKind::explicitInstantiationNode, sourcePos_), extrn(extrn_), tmp(tmp_), declaration(declaration_)
 {
 }
@@ -329,7 +334,7 @@ void ExplicitInstantiationNode::Read(Reader& reader)
     declaration.reset(reader.ReadNode());
 }
 
-TemplateNode::TemplateNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::templateNode, sourcePos_)
+TemplateNode::TemplateNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::templateNode, sourcePos_)
 {
 }
 
@@ -344,12 +349,12 @@ void TemplateNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ExplicitSpecializationNode::ExplicitSpecializationNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::explicitSpecializationNode, sourcePos_)
+ExplicitSpecializationNode::ExplicitSpecializationNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::explicitSpecializationNode, sourcePos_)
 {
 }
 
 ExplicitSpecializationNode::ExplicitSpecializationNode(const soul::ast::SourcePos& sourcePos_, Node* tmp_, Node* templateHeadNode_, Node* declaration_,
-    const soul::ast::SourcePos& laPos_, const soul::ast::SourcePos& raPos_) :
+    const soul::ast::SourcePos& laPos_, const soul::ast::SourcePos& raPos_) noexcept :
     CompoundNode(NodeKind::explicitSpecializationNode, sourcePos_), tmp(tmp_), templateHeadNode(templateHeadNode_), declaration(declaration_), laPos(laPos_), raPos(raPos_)
 {
 }

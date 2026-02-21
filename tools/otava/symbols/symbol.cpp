@@ -38,7 +38,7 @@ namespace otava::symbols {
 
 SymbolDestroyedFunc symbolDestroyedFunc = nullptr;
 
-void SetSymbolDestroyedFunc(SymbolDestroyedFunc func)
+void SetSymbolDestroyedFunc(SymbolDestroyedFunc func) noexcept
 {
     symbolDestroyedFunc = func;
 }
@@ -235,11 +235,12 @@ std::u32string Symbol::FullName() const
     return fullName;
 }
 
-bool Symbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
+bool Symbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const 
 {
-    if (visited.find(this) == visited.end())
+    const Symbol* thisSymbol = this;
+    if (visited.find(thisSymbol) == visited.end())
     {
-        visited.insert(this);
+        visited.insert(thisSymbol);
     }
     return false;
 }
@@ -281,7 +282,7 @@ void Symbol::Resolve(SymbolTable& symbolTable, Context* context)
 {
 }
 
-FunctionSymbol* Symbol::ParentFunction() const
+FunctionSymbol* Symbol::ParentFunction() const noexcept
 {
     Symbol* parentSymbol = parent;
     while (parentSymbol)
@@ -295,7 +296,7 @@ FunctionSymbol* Symbol::ParentFunction() const
     return nullptr;
 }
 
-ClassTypeSymbol* Symbol::ParentClassType() const
+ClassTypeSymbol* Symbol::ParentClassType() const noexcept
 {
     Symbol* parentSymbol = parent;
     while (parentSymbol)
@@ -309,7 +310,7 @@ ClassTypeSymbol* Symbol::ParentClassType() const
     return nullptr;
 }
 
-NamespaceSymbol* Symbol::ParentNamespace() const
+NamespaceSymbol* Symbol::ParentNamespace() const noexcept
 {
     Symbol* parentSymbol = parent;
     while (parentSymbol)
@@ -331,7 +332,7 @@ std::string Symbol::DocName() const
     return docName;
 }
 
-bool Symbol::IsLocalVariableSymbol() const
+bool Symbol::IsLocalVariableSymbol() const noexcept
 {
     if (IsVariableSymbol())
     {
@@ -341,7 +342,7 @@ bool Symbol::IsLocalVariableSymbol() const
     return false;
 }
 
-bool Symbol::IsMemberVariableSymbol() const
+bool Symbol::IsMemberVariableSymbol() const noexcept
 {
     if (IsVariableSymbol())
     {
@@ -351,7 +352,7 @@ bool Symbol::IsMemberVariableSymbol() const
     return false;
 }
 
-bool Symbol::IsGlobalVariableSymbol() const
+bool Symbol::IsGlobalVariableSymbol() const noexcept
 {
     if (IsVariableSymbol())
     {
@@ -361,7 +362,7 @@ bool Symbol::IsGlobalVariableSymbol() const
     return false;
 }
 
-bool Symbol::CanInstall() const
+bool Symbol::CanInstall() const noexcept
 {
     switch (kind)
     {
@@ -444,7 +445,7 @@ bool Symbol::CanInstall() const
     return true;
 }
 
-bool Symbol::IsTypeSymbol() const
+bool Symbol::IsTypeSymbol() const noexcept
 {
     switch (kind)
     {
@@ -475,7 +476,7 @@ bool Symbol::IsTypeSymbol() const
     return false;
 }
 
-bool Symbol::IsFunctionSymbol() const
+bool Symbol::IsFunctionSymbol() const noexcept
 {
     switch (kind)
     {
@@ -543,7 +544,7 @@ bool Symbol::IsFunctionSymbol() const
     return false;
 }
 
-bool Symbol::IsValueSymbol() const
+bool Symbol::IsValueSymbol() const noexcept
 {
     switch (kind)
     {
@@ -563,7 +564,7 @@ bool Symbol::IsValueSymbol() const
     return false;
 }
 
-SymbolGroupKind Symbol::GetSymbolGroupKind() const
+SymbolGroupKind Symbol::GetSymbolGroupKind() const noexcept
 {
     switch (kind)
     {
@@ -639,7 +640,7 @@ SymbolGroupKind Symbol::GetSymbolGroupKind() const
     return SymbolGroupKind::none;
 }
 
-bool Symbol::IsDefaultCtor() const
+bool Symbol::IsDefaultCtor() const noexcept
 {
     switch (kind)
     {
@@ -651,7 +652,7 @@ bool Symbol::IsDefaultCtor() const
     return false;
 }
 
-bool Symbol::IsCopyCtor() const
+bool Symbol::IsCopyCtor() const noexcept
 {
     switch (kind)
     {
@@ -663,7 +664,7 @@ bool Symbol::IsCopyCtor() const
     return false;
 }
 
-bool Symbol::IsMoveCtor() const
+bool Symbol::IsMoveCtor() const noexcept
 {
     switch (kind)
     {
@@ -675,7 +676,7 @@ bool Symbol::IsMoveCtor() const
     return false;
 }
 
-bool Symbol::IsCopyAssignment() const
+bool Symbol::IsCopyAssignment() const noexcept
 {
     switch (kind)
     {
@@ -687,7 +688,7 @@ bool Symbol::IsCopyAssignment() const
     return false;
 }
 
-bool Symbol::IsMoveAssignment() const
+bool Symbol::IsMoveAssignment() const noexcept
 {
     switch (kind)
     {
@@ -699,7 +700,7 @@ bool Symbol::IsMoveAssignment() const
     return false;
 }
 
-bool Symbol::IsDtor() const
+bool Symbol::IsDtor() const noexcept
 {
     // todo
     return false;
@@ -710,7 +711,7 @@ void* Symbol::IrObject(Emitter& emitter, const soul::ast::SourcePos& sourcePos, 
     return emitter.GetIrObject(this);
 }
 
-bool Symbol::IsExtern() const
+bool Symbol::IsExtern() const noexcept
 {
     return (declarationFlags & DeclarationFlags::externFlag) != DeclarationFlags::none;
 }

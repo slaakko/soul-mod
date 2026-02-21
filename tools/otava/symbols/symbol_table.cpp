@@ -68,7 +68,7 @@ void SetProjectReady(bool projectReady_)
     projectReady = projectReady_;
 }
 
-bool ClassTemplateNameLess::operator()(ClassTemplateSpecializationSymbol* left, ClassTemplateSpecializationSymbol* right) const
+bool ClassTemplateNameLess::operator()(ClassTemplateSpecializationSymbol* left, ClassTemplateSpecializationSymbol* right) const noexcept
 {
     return left->FullName() < right->FullName();
 }
@@ -277,7 +277,7 @@ void SymbolTable::ImportSpecializations(const SymbolTable& that)
         classTemplateSpecializationMap.erase(s.first);
         classTemplateSpecializationMap.insert(s);
     }
-    for (const auto& a : that.aliasTypeTemplateSpecializationSet)
+    for (auto* a : that.aliasTypeTemplateSpecializationSet)
     {
         aliasTypeTemplateSpecializationSet.insert(a);
     }
@@ -285,7 +285,7 @@ void SymbolTable::ImportSpecializations(const SymbolTable& that)
 
 void SymbolTable::ImportArrayTypes(const SymbolTable& that)
 {
-    for (const auto& s : that.arrayTypeSet)
+    for (auto* s : that.arrayTypeSet)
     {
         arrayTypeSet.insert(s);
     }
@@ -297,7 +297,7 @@ void SymbolTable::ImportDependentTypes(const SymbolTable& that)
     {
         dependentTypeSet.insert(dependentType.get());
     }
-    for (const auto& dependentType : that.dependentTypeSet)
+    for (auto* dependentType : that.dependentTypeSet)
     {
         dependentTypeSet.insert(dependentType);
     }
@@ -385,7 +385,7 @@ void SymbolTable::ImportConstraintMap(const SymbolTable& that)
 
 void SymbolTable::ImportForwardDeclarations(const SymbolTable& that)
 {
-    for (const auto& fwd : that.allForwardDeclarations)
+    for (auto* fwd : that.allForwardDeclarations)
     {
         allForwardDeclarations.insert(fwd);
     }
@@ -401,7 +401,7 @@ void SymbolTable::ImportSpecifierMap(const SymbolTable& that)
 
 void SymbolTable::ImportClasses(const SymbolTable& that)
 {
-    for (auto& cls : that.allClasses)
+    for (auto* cls : that.allClasses)
     {
         allClasses.insert(cls);
     }
@@ -508,7 +508,7 @@ void SymbolTable::WriteMaps(Writer& writer, Context* context)
     }
     std::uint32_t nfwd = forwardDeclarations.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(nfwd);
-    for (const auto& fwd : forwardDeclarations)
+    for (const auto* fwd : forwardDeclarations)
     {
         writer.GetBinaryStreamWriter().Write(fwd->Id());
     }
@@ -523,7 +523,7 @@ void SymbolTable::WriteMaps(Writer& writer, Context* context)
     }
     std::uint32_t nc = classes.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(nc);
-    for (auto cls : classes)
+    for (auto * cls : classes)
     {
         const util::uuid& uuid = cls->Id();
         writer.GetBinaryStreamWriter().Write(uuid);
@@ -663,7 +663,7 @@ void SymbolTable::Write(Writer& writer, Context* context)
     }
     std::uint32_t cscount = changedClassTemplateSpecializations.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(cscount);
-    for (const auto& specialization : changedClassTemplateSpecializations)
+    for (auto* specialization : changedClassTemplateSpecializations)
     {
         writer.Write(specialization);
     }
@@ -695,7 +695,7 @@ void SymbolTable::Write(Writer& writer, Context* context)
     }
     std::uint32_t ccount = exportCompoundTypes.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(ccount);
-    for (auto compoundType : exportCompoundTypes)
+    for (auto* compoundType : exportCompoundTypes)
     {
         writer.Write(compoundType);
     }
@@ -772,7 +772,7 @@ void SymbolTable::Read(Reader& reader)
         if (symbol->IsClassTemplateSpecializationSymbol())
         {
             ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(symbol);
-            classTemplateSpecializations.push_back(std::unique_ptr<ClassTemplateSpecializationSymbol>(specialization));
+            classTemplateSpecializations.push_back(std::unique_ptr<Symbol>(specialization));
         }
         else
         {
@@ -787,7 +787,7 @@ void SymbolTable::Read(Reader& reader)
         if (symbol->IsClassTemplateSpecializationSymbol())
         {
             ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(symbol);
-            classTemplateSpecializations.push_back(std::unique_ptr<ClassTemplateSpecializationSymbol>(specialization));
+            classTemplateSpecializations.push_back(std::unique_ptr<Symbol>(specialization));
         }
         else
         {
@@ -966,7 +966,7 @@ void SymbolTable::Resolve(Context* context)
     {
         MapType(static_cast<TypeSymbol*>(arrayType.get()));
     }
-    for (auto& cls : classes)
+    for (auto* cls : classes)
     {
         MapType(static_cast<TypeSymbol*>(cls));
     }
@@ -1082,7 +1082,7 @@ Symbol* SymbolTable::LookupSymbol(Symbol* symbol)
 void SymbolTable::ResolveForwardDeclarations()
 {
     std::vector<Symbol*> resolvedFwdDeclarations;
-    for (const auto& symbol : allForwardDeclarations)
+    for (auto* symbol : allForwardDeclarations)
     {
         if (symbol->IsForwardDeclarationSymbol())
         {
@@ -1103,7 +1103,7 @@ void SymbolTable::ResolveForwardDeclarations()
             }
         }
     }
-    for (const auto& symbol : resolvedFwdDeclarations)
+    for (auto* symbol : resolvedFwdDeclarations)
     {
         ForwardDeclarations().erase(symbol);
         AllForwardDeclarations().erase(symbol);
@@ -1115,8 +1115,10 @@ void SymbolTable::CollectViableFunctions(const std::vector<std::pair<Scope*, Sco
 {
     std::vector<Symbol*> symbols;
     std::set<const Scope*> visited;
-    for (const auto& [scope, lookup] : scopeLookups)
+    for (const auto& p : scopeLookups)
     {
+        Scope* scope = p.first;
+        ScopeLookup lookup = p.second;
         scope->Lookup(groupName, SymbolGroupKind::functionSymbolGroup, lookup, LookupFlags::dontResolveSingle | LookupFlags::all, symbols, visited, context);
         Scope* scp = scope;
         Scope* classScope = scp->GetClassScope();
@@ -1185,7 +1187,7 @@ void SymbolTable::MapNode(otava::ast::Node* node, Symbol* symbol, MapKind kind)
     }
 }
 
-otava::ast::Node* SymbolTable::GetNodeNothrow(Symbol* symbol) const
+otava::ast::Node* SymbolTable::GetNodeNothrow(Symbol* symbol) const noexcept
 {
     auto it = allSymbolNodeMap.find(symbol);
     if (it != allSymbolNodeMap.cend())
@@ -1244,7 +1246,7 @@ void SymbolTable::RemoveSymbol(Symbol* symbol)
     }
 }
 
-otava::ast::Node* SymbolTable::GetSpecifierNode(Symbol* symbol) const
+otava::ast::Node* SymbolTable::GetSpecifierNode(Symbol* symbol) const noexcept
 {
     auto it = allSpecifierNodeMap.find(symbol);
     if (it != allSpecifierNodeMap.cend())
@@ -1263,7 +1265,7 @@ void SymbolTable::SetSpecifierNode(Symbol* symbol, otava::ast::Node* node)
     allSpecifierNodeMap[symbol] = node;
 }
 
-Symbol* SymbolTable::GetSymbolNothrow(otava::ast::Node* node) const
+Symbol* SymbolTable::GetSymbolNothrow(otava::ast::Node* node) const noexcept
 {
     auto it = allNodeSymbolMap.find(node);
     if (it != allNodeSymbolMap.cend())
@@ -1290,7 +1292,7 @@ Symbol* SymbolTable::GetSymbol(otava::ast::Node* node) const
     }
 }
 
-TypeSymbol* SymbolTable::GetTypeNoThrow(const util::uuid& id) const
+TypeSymbol* SymbolTable::GetTypeNoThrow(const util::uuid& id) const noexcept
 {
     auto it = typeMap.find(id);
     if (it != typeMap.cend())
@@ -1324,7 +1326,8 @@ void SymbolTable::MapType(TypeSymbol* type)
 
 void SymbolTable::UnmapType(TypeSymbol* type)
 {
-    auto it = symbolNodeMap.find(type);
+    Symbol* symbol = type;
+    auto it = symbolNodeMap.find(symbol);
     if (it != symbolNodeMap.end())
     {
         otava::ast::Node* node = it->second;
@@ -1498,10 +1501,11 @@ void SymbolTable::AddForwardClassDeclaration(const std::u32string& name, ClassKi
     if (!fwdDeclaration)
     {
         classGroup->AddForwardDeclaration(forwardDeclarationSymbol.get());
-        MapNode(node, forwardDeclarationSymbol.get());
-        forwardDeclarations.insert(forwardDeclarationSymbol.get());
-        allForwardDeclarations.insert(forwardDeclarationSymbol.get());
-        currentScope->SymbolScope()->AddSymbol(forwardDeclarationSymbol.release(), node->GetSourcePos(), context);
+        Symbol* sym = forwardDeclarationSymbol.release();
+        MapNode(node, sym);
+        forwardDeclarations.insert(sym);
+        allForwardDeclarations.insert(sym);
+        currentScope->SymbolScope()->AddSymbol(sym, node->GetSourcePos(), context);
     }
 }
 
@@ -1546,11 +1550,12 @@ void SymbolTable::AddForwardEnumDeclaration(const std::u32string& name, EnumType
     forwardDeclarationSymbol->SetAccess(CurrentAccess());
     forwardDeclarationSymbol->SetEnumTypeKind(enumTypeKind);
     forwardDeclarationSymbol->SetUnderlyingType(underlyingType);
-    currentScope->SymbolScope()->AddSymbol(forwardDeclarationSymbol, node->GetSourcePos(), context);
+    Symbol* sym = forwardDeclarationSymbol;
+    currentScope->SymbolScope()->AddSymbol(sym, node->GetSourcePos(), context);
     enumGroup->SetForwardDeclaration(forwardDeclarationSymbol);
-    MapNode(node, forwardDeclarationSymbol);
-    forwardDeclarations.insert(forwardDeclarationSymbol);
-    allForwardDeclarations.insert(forwardDeclarationSymbol);
+    MapNode(node, sym);
+    forwardDeclarations.insert(sym);
+    allForwardDeclarations.insert(sym);
 }
 
 void SymbolTable::AddEnumerator(const std::u32string& name, Value* value, otava::ast::Node* node, Context* context)
@@ -1726,7 +1731,7 @@ FunctionDefinitionSymbol* SymbolTable::AddOrGetFunctionDefinition(Scope* scope, 
     functionDefinition->SetParent(currentScope->SymbolScope()->GetSymbol());
     if (node) functionDefinition->SetSourcePos(node->GetSourcePos());
     int index = 0;
-    for (const auto& parameterType : parameterTypes)
+    for (auto* parameterType : parameterTypes)
     {
         functionDefinition->AddTemporaryParameter(parameterType, index++);
     }
@@ -1813,7 +1818,7 @@ void SymbolTable::MapCompoundType(CompoundTypeSymbol* compoundType)
     MapType(compoundType);
 }
 
-CompoundTypeSymbol* SymbolTable::GetCompoundType(const util::uuid& compoundTypeId) const
+CompoundTypeSymbol* SymbolTable::GetCompoundType(const util::uuid& compoundTypeId) const noexcept
 {
     auto it = compoundTypeMap.find(compoundTypeId);
     if (it != compoundTypeMap.end())
@@ -1878,7 +1883,7 @@ FunctionTypeSymbol* SymbolTable::MakeFunctionTypeSymbol(FunctionSymbol* function
     FunctionTypeSymbol* sym = symbol.get();
     sym->MakeName();
     functionTypeSet.insert(sym);
-    functionTypes.push_back(std::move(symbol));
+    functionTypes.push_back(std::unique_ptr<Symbol>(symbol.release()));
     MapType(sym);
     return sym;
 }
@@ -1969,7 +1974,7 @@ AliasTypeTemplateSpecializationSymbol* SymbolTable::MakeAliasTypeTemplateSpecial
     }
     AliasTypeTemplateSpecializationSymbol* sym = symbol.get();
     aliasTypeTemplateSpecializationSet.insert(sym);
-    aliasTypeTemplateSpecializations.push_back(std::move(symbol));
+    aliasTypeTemplateSpecializations.push_back(std::unique_ptr<Symbol>(symbol.release()));
     MapType(sym);
     return sym;
 }
@@ -1984,7 +1989,7 @@ ArrayTypeSymbol* SymbolTable::MakeArrayType(TypeSymbol* elementType, std::int64_
     }
     ArrayTypeSymbol* sym = symbol.get();
     arrayTypeSet.insert(sym);
-    arrayTypes.push_back(std::move(symbol));
+    arrayTypes.push_back(std::unique_ptr<Symbol>(symbol.release()));
     MapType(sym);
     return sym;
 }
@@ -2050,12 +2055,12 @@ void SymbolTable::AddIntrinsics()
 void SymbolTable::MapFundamentalType(FundamentalTypeSymbol* fundamentalTypeSymbol)
 {
     FundamentalTypeKind kind = fundamentalTypeSymbol->GetFundamentalTypeKind();
-    fundamentalTypeMap[static_cast<std::int32_t>(kind)] = fundamentalTypeSymbol;
+    fundamentalTypeMap[static_cast<std::uint8_t>(kind)] = fundamentalTypeSymbol;
 }
 
 TypeSymbol* SymbolTable::GetFundamentalTypeSymbol(FundamentalTypeKind kind)
 {
-    auto it = fundamentalTypeMap.find(static_cast<std::int32_t>(kind));
+    auto it = fundamentalTypeMap.find(static_cast<std::uint8_t>(kind));
     if (it != fundamentalTypeMap.cend())
     {
         return it->second;
@@ -2063,7 +2068,8 @@ TypeSymbol* SymbolTable::GetFundamentalTypeSymbol(FundamentalTypeKind kind)
     else
     {
         otava::ast::SetExceptionThrown();
-        throw std::runtime_error("fundamental type " + std::to_string(static_cast<std::int32_t>(kind)) + " not found");
+        std::string kindStr = std::to_string(static_cast<std::uint8_t>(kind));
+        throw std::runtime_error("fundamental type " + kindStr + " not found");
     }
 }
 
@@ -2266,16 +2272,16 @@ void SymbolTable::AddToRecomputeNameSet(CompoundTypeSymbol* compoundTypeSymbol)
 
 void SymbolTable::RecomputeNames()
 {
-    for (const auto& compoundType : recomputeNameSet)
+    for (auto* compoundType : recomputeNameSet)
     {
         compoundType->SetName(MakeCompoundTypeName(compoundType->BaseType(), compoundType->GetDerivations()));
     }
     recomputeNameSet.clear();
 }
 
-TypeSymbol* SymbolTable::GetFundamentalType(FundamentalTypeKind kind) const
+TypeSymbol* SymbolTable::GetFundamentalType(FundamentalTypeKind kind) const noexcept
 {
-    auto it = fundamentalTypeMap.find(static_cast<std::int32_t>(kind));
+    auto it = fundamentalTypeMap.find(static_cast<std::uint8_t>(kind));
     if (it != fundamentalTypeMap.cend())
     {
         return it->second;
@@ -2322,7 +2328,7 @@ void SymbolTable::MapExplicitInstantiation(ExplicitInstantiationSymbol* explicit
     explicitInstantiationMap[explicitInstantition->Specialization()] = explicitInstantition;
 }
 
-ClassTemplateSpecializationSymbol* SymbolTable::GetClassTemplateSpecialization(const util::uuid& id) const
+ClassTemplateSpecializationSymbol* SymbolTable::GetClassTemplateSpecialization(const util::uuid& id) const noexcept
 {
     auto it = classTemplateSpecializationMap.find(id);
     if (it != classTemplateSpecializationMap.end())
@@ -2337,7 +2343,7 @@ ClassTemplateSpecializationSymbol* SymbolTable::GetClassTemplateSpecialization(c
 
 void SymbolTable::AddClassTemplateSpecialization(ClassTemplateSpecializationSymbol* sp)
 {
-    classTemplateSpecializations.push_back(std::unique_ptr<ClassTemplateSpecializationSymbol>(sp));
+    classTemplateSpecializations.push_back(std::unique_ptr<Symbol>(sp));
 }
 
 void SymbolTable::MapClassTemplateSpecialization(ClassTemplateSpecializationSymbol* sp)
@@ -2369,7 +2375,7 @@ void SymbolTable::AddArrayTypeToSet(ArrayTypeSymbol* a)
 
 void SymbolTable::ImportAfterResolve()
 {
-    for (const auto& st : importAfterResolve)
+    for (const auto* st : importAfterResolve)
     {
         ImportSpecializations(*st);
         ImportArrayTypes(*st);
@@ -2435,6 +2441,8 @@ const util::uuid& SymbolTable::GetTemplateParameterId(int index) const
     else
     {
         ThrowException("too many template parameters (max=" + std::to_string(templateParameterIds.size()) + ")");
+        static util::uuid u;
+        return u;
     }
 }
 
@@ -2447,6 +2455,8 @@ const util::uuid& SymbolTable::GetCompoundTypeId(int index) const
     else
     {
         ThrowException("invalid compound type id index (max=" + std::to_string(compoundTypeIds.size()) + ")");
+        static util::uuid u;
+        return u;
     }
 }
 
@@ -2459,6 +2469,8 @@ const util::uuid& SymbolTable::GetLevelId(int level) const
     else
     {
         ThrowException("invalid level id index (max=" + std::to_string(levelIds.size()) + ")");
+        static util::uuid u;
+        return u;
     }
 }
 

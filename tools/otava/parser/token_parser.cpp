@@ -123,151 +123,152 @@ char32_t ParseEscape(const char32_t*& p, const char32_t* e, bool& valid)
     valid = true;
     if (p != e)
     {
-        switch (*p)
+        char32_t c = *p;
+        switch (c)
         {
-        case '\'':
-        {
-            ++p;
-            value = '\'';
-            break;
-        }
-        case '\"':
-        {
-            ++p;
-            value = '\"';
-            break;
-        }
-        case '\?':
-        {
-            ++p;
-            value = '\?';
-            break;
-        }
-        case '\\':
-        {
-            ++p;
-            value = '\\';
-            break;
-        }
-        case 'a':
-        {
-            ++p;
-            value = '\a';
-            break;
-        }
-        case 'b':
-        {
-            ++p;
-            value = '\b';
-            break;
-        }
-        case 'f':
-        {
-            ++p;
-            value = '\f';
-            break;
-        }
-        case 'n':
-        {
-            ++p;
-            value = '\n';
-            break;
-        }
-        case 'r':
-        {
-            ++p;
-            value = '\r';
-            break;
-        }
-        case 't':
-        {
-            ++p;
-            value = '\t';
-            break;
-        }
-        case 'v':
-        {
-            ++p;
-            value = '\v';
-            break;
-        }
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        {
-            value = *p - '0';
-            ++p;
-            if (p != e && *p >= '0' && *p <= '7')
+            case '\'':
             {
-                value = 8 * value + *p - '0';
+                ++p;
+                value = '\'';
+                break;
+            }
+            case '\"':
+            {
+                ++p;
+                value = '\"';
+                break;
+            }
+            case '\?':
+            {
+                ++p;
+                value = '\?';
+                break;
+            }
+            case '\\':
+            {
+                ++p;
+                value = '\\';
+                break;
+            }
+            case 'a':
+            {
+                ++p;
+                value = '\a';
+                break;
+            }
+            case 'b':
+            {
+                ++p;
+                value = '\b';
+                break;
+            }
+            case 'f':
+            {
+                ++p;
+                value = '\f';
+                break;
+            }
+            case 'n':
+            {
+                ++p;
+                value = '\n';
+                break;
+            }
+            case 'r':
+            {
+                ++p;
+                value = '\r';
+                break;
+            }
+            case 't':
+            {
+                ++p;
+                value = '\t';
+                break;
+            }
+            case 'v':
+            {
+                ++p;
+                value = '\v';
+                break;
+            }
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            {
+                value = *p - '0';
                 ++p;
                 if (p != e && *p >= '0' && *p <= '7')
                 {
                     value = 8 * value + *p - '0';
                     ++p;
+                    if (p != e && *p >= '0' && *p <= '7')
+                    {
+                        value = 8 * value + *p - '0';
+                        ++p;
+                    }
                 }
+                break;
             }
-            break;
-        }
-        case 'x':
-        {
-            ++p;
-            valid = false;
-            while (p != e && IsHexChar(*p))
+            case 'x':
             {
-                value = static_cast<char32_t>(16 * value + ParseHexChar(*p));
                 ++p;
-                valid = true;
-            }
-            break;
-        }
-        case 'u':
-        {
-            ++p;
-            for (int i = 0; i < 4; ++i)
-            {
-                if (p != e && IsHexChar(*p))
+                valid = false;
+                while (p != e && IsHexChar(*p))
                 {
                     value = static_cast<char32_t>(16 * value + ParseHexChar(*p));
+                    ++p;
+                    valid = true;
                 }
-                else
-                {
-                    valid = false;
-                    break;
-                }
-                ++p;
+                break;
             }
-            break;
-        }
-        case 'U':
-        {
-            ++p;
-            for (int i = 0; i < 8; ++i)
+            case 'u':
             {
-                if (p != e && IsHexChar(*p))
-                {
-                    value = static_cast<char32_t>(16 * value + ParseHexChar(*p));
-                }
-                else
-                {
-                    valid = false;
-                    break;
-                }
                 ++p;
+                for (int i = 0; i < 4; ++i)
+                {
+                    if (p != e && IsHexChar(*p))
+                    {
+                        value = static_cast<char32_t>(16 * value + ParseHexChar(*p));
+                    }
+                    else
+                    {
+                        valid = false;
+                        break;
+                    }
+                    ++p;
+                }
+                break;
             }
-            break;
-        }
-        default:
-        {
-            value = *p;
-            ++p;
-            break;
-        }
+            case 'U':
+            {
+                ++p;
+                for (int i = 0; i < 8; ++i)
+                {
+                    if (p != e && IsHexChar(*p))
+                    {
+                        value = static_cast<char32_t>(16 * value + ParseHexChar(*p));
+                    }
+                    else
+                    {
+                        valid = false;
+                        break;
+                    }
+                    ++p;
+                }
+                break;
+            }
+            default:
+            {
+                value = *p;
+                ++p;
+                break;
+            }
         }
     }
     return value;

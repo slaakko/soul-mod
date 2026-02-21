@@ -98,7 +98,7 @@ Cleanup::Cleanup() : changed(false)
 {
 }
 
-bool Cleanup::IsEmpty() const
+bool Cleanup::IsEmpty() const noexcept
 {
     int n = cleanupBlocks.size();
     for (int i = 0; i < n; ++i)
@@ -109,7 +109,7 @@ bool Cleanup::IsEmpty() const
     return true;
 }
 
-bool Cleanup::ContainsOne() const
+bool Cleanup::ContainsOne() const noexcept
 {
     int n = cleanupBlocks.size();
     for (int i = 0; i < n; ++i)
@@ -424,6 +424,7 @@ std::unique_ptr<BoundCompoundStatementNode> InvokeAndCleanupGenerator::GetFuncti
     {
         ThrowException("compound statement expected", currentStatement->GetSourcePos(), context);
     }
+    return std::unique_ptr<BoundCompoundStatementNode>();
 }
 
 void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup(bool skipLast)

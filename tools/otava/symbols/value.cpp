@@ -24,7 +24,7 @@ import otava.ast.error;
 
 namespace otava::symbols {
 
-ValueKind CommonValueKind(ValueKind left, ValueKind right) 
+ValueKind CommonValueKind(ValueKind left, ValueKind right) noexcept
 {
     switch (left)
     {
@@ -116,7 +116,7 @@ void Value::Resolve(SymbolTable& symbolTable, Context* context)
     }
 }
 
-ValueKind Value::GetValueKind() const
+ValueKind Value::GetValueKind() const noexcept
 {
     switch (Kind())
     {
@@ -159,6 +159,7 @@ ValueKind Value::GetValueKind() const
 otava::intermediate::Value* Value::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     ThrowException("cannot evaluate statically", sourcePos, context);
+    return nullptr;
 }
 
 BoolValue::BoolValue(TypeSymbol* type_) : Value(SymbolKind::boolValueSymbol, std::u32string(U"false"), type_), value(false)
@@ -180,12 +181,12 @@ Value* BoolValue::Convert(ValueKind kind, EvaluationContext& context)
         case ValueKind::boolValue: return this;
         case ValueKind::integerValue: 
         {
-            return context.GetIntegerValue(static_cast<std::int64_t>(value), util::ToUtf32(std::to_string(value)),
+            return context.GetIntegerValue(static_cast<std::int64_t>(value), util::ToUtf32(std::to_string(static_cast<int>(value))),
                 context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::intType));
         }
         case ValueKind::floatingValue: 
         {
-            return context.GetFloatingValue(static_cast<double>(value), util::ToUtf32(std::to_string(value)),
+            return context.GetFloatingValue(static_cast<double>(static_cast<int>(value)), util::ToUtf32(std::to_string(static_cast<int>(value))),
                 context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::doubleType));
         }
     }
@@ -416,6 +417,7 @@ otava::intermediate::Value* StringValue::IrValue(Emitter& emitter, const soul::a
     {
         ThrowException("unknown base type for string type '" + util::ToUtf8(type->FullName()) + "'");
     }
+    return nullptr;
 }
 
 CharValue::CharValue(TypeSymbol* type_) : Value(SymbolKind::charValueSymbol, U"", type_), value()
@@ -506,7 +508,7 @@ BoolValue* SymbolValue::ToBoolValue(EvaluationContext& context)
     return context.GetBoolValue(false);
 }
 
-bool SymbolValue::IsExportSymbol(Context* context) const
+bool SymbolValue::IsExportSymbol(Context* context) const noexcept
 {
     return false;
 }
@@ -572,7 +574,7 @@ BoolValue* InvokeValue::ToBoolValue(EvaluationContext& context)
     return context.GetBoolValue(false);
 }
 
-bool InvokeValue::IsExportSymbol(Context* context) const
+bool InvokeValue::IsExportSymbol(Context* context) const noexcept
 {
     return false;
 }
@@ -950,12 +952,14 @@ void EvaluationContext::Read(Reader& reader)
             if (symbol->IsIntegerValueSymbol())
             {
                 IntegerValue* integerValue = static_cast<IntegerValue*>(symbol);
-                integerValueMap[std::make_pair(std::make_pair(integerValue->GetValue(), integerValue->Rep()), integerValue->GetType())] = integerValue;
+                integerValueMap[std::make_pair(std::make_pair(
+                    integerValue->GetValue(), integerValue->Rep()), integerValue->GetType())] = integerValue;
             }
             else if (symbol->IsFloatingValueSymbol())
             {
                 FloatingValue* floatingValue = static_cast<FloatingValue*>(symbol);
-                floatingValueMap[std::make_pair(std::make_pair(floatingValue->GetValue(), floatingValue->Rep()), floatingValue->GetType())] = floatingValue;
+                floatingValueMap[std::make_pair(std::make_pair(
+                    floatingValue->GetValue(), floatingValue->Rep()), floatingValue->GetType())] = floatingValue;
             }
             else if (symbol->IsStringValueSymbol())
             {

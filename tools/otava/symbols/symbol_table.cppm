@@ -14,8 +14,16 @@ import otava.symbols.specialization.compare;
 import otava.symbols.array.type.compare;
 import otava.symbols.function.type.compare;
 import otava.symbols.type_compare;
-import util.uuid;
+import otava.symbols.function.kind;
+import otava.symbols.enums;
+import otava.symbols.scope;
+import otava.symbols.symbol;
+import otava.symbols.classes;
+import otava.symbols.fundamental.type.symbol;
+import otava.symbols.conversion.table;
+import otava.symbols.compound.type.symbol;
 import class_info_index;
+import util.uuid;
 
 export namespace otava::symbols {
 
@@ -23,35 +31,25 @@ const int maxTemplateParameters = 16;
 const int numCompoundTypeIds = 256;
 const int maxLevels = 16;
 
-enum class FunctionKind;
-enum class FunctionQualifiers;
-enum class EnumTypeKind;
-enum class DeclarationFlags : std::int32_t;
-enum class Linkage : std::int32_t;
-
 enum class MapKind : std::int32_t
 {
     none, nodeToSymbol = 1 << 0, symbolToNode = 1 << 1, both = nodeToSymbol | symbolToNode
 };
 
-constexpr MapKind operator|(MapKind left, MapKind right)
+constexpr MapKind operator|(MapKind left, MapKind right) noexcept
 {
     return MapKind(int(left) | int(right));
 }
 
-constexpr MapKind operator&(MapKind left, MapKind right)
+constexpr MapKind operator&(MapKind left, MapKind right) noexcept
 {
     return MapKind(int(left) & int(right));
 }
 
-constexpr MapKind operator~(MapKind kind)
+constexpr MapKind operator~(MapKind kind) noexcept
 {
     return MapKind(~int(kind));
 }
-
-enum class FundamentalTypeKind : std::int32_t;
-enum class ClassKind;
-enum class Access : std::int32_t;
 
 class Context;
 class Module;
@@ -73,7 +71,6 @@ class FunctionGroupSymbol;
 class FunctionGroupTypeSymbol;
 class ClassTemplateSpecializationSymbol;
 class AliasTypeTemplateSpecializationSymbol;
-class CompoundTypeSymbol;
 class ExplicitInstantiationSymbol;
 class NamespaceSymbol;
 class TypeSymbol;
@@ -86,27 +83,24 @@ class VariableSymbol;
 class Reader;
 class Writer;
 class Visitor;
-class ConversionTable;
 class FunctionDefinitionSymbolSet;
 class DependentTypeSymbol;
 class SymbolMap;
-
-enum class SymbolGroupKind : std::int32_t;
 
 void SetProjectReady(bool projectReady_);
 
 struct ClassTemplateNameLess
 {
-    bool operator()(ClassTemplateSpecializationSymbol* left, ClassTemplateSpecializationSymbol* right) const;
+    bool operator()(ClassTemplateSpecializationSymbol* left, ClassTemplateSpecializationSymbol* right) const noexcept;
 };
 
 class SymbolTable
 {
 public:
     SymbolTable();
-    inline void SetModule(Module* module_) { module = module_; }
-    inline Module* GetModule() const { return module; }
-    inline NamespaceSymbol* GlobalNs() const { return globalNs.get(); }
+    inline void SetModule(Module* module_) noexcept { module = module_; }
+    inline Module* GetModule() const noexcept { return module; }
+    inline NamespaceSymbol* GlobalNs() const noexcept { return globalNs.get(); }
     void Init();
     void Import(const SymbolTable& that, FunctionDefinitionSymbolSet* functionDefinitionSymbolSet);
     void Write(Writer& writer, Context* context);
@@ -116,11 +110,11 @@ public:
     void WriteMaps(Writer& writer, Context* context);
     void ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap);
     TypeSymbol* GetFundamentalTypeSymbol(FundamentalTypeKind kind);
-    inline Symbol* GetTypenameConstraintSymbol() { return typenameConstraintSymbol; }
-    inline void SetTypenameConstraintSymbol(Symbol* typenameConstraintSymbol_) { typenameConstraintSymbol = typenameConstraintSymbol_; }
-    inline TypeSymbol* GetErrorTypeSymbol() { return errorTypeSymbol; }
-    inline void SetErrorTypeSymbol(TypeSymbol* errorTypeSymbol_) { errorTypeSymbol = errorTypeSymbol_; }
-    inline Scope* CurrentScope() const { return currentScope; }
+    inline Symbol* GetTypenameConstraintSymbol() noexcept { return typenameConstraintSymbol; }
+    inline void SetTypenameConstraintSymbol(Symbol* typenameConstraintSymbol_) noexcept { typenameConstraintSymbol = typenameConstraintSymbol_; }
+    inline TypeSymbol* GetErrorTypeSymbol() noexcept { return errorTypeSymbol; }
+    inline void SetErrorTypeSymbol(TypeSymbol* errorTypeSymbol_) noexcept { errorTypeSymbol = errorTypeSymbol_; }
+    inline Scope* CurrentScope() const noexcept { return currentScope; }
     void SetCurrentScope(Scope* scope);
     Scope* GetNamespaceScope(const std::u32string& nsName, const soul::ast::SourcePos& sourcePos, Context* context);
     void PushScope();
@@ -131,8 +125,8 @@ public:
     void EndScopeGeneric(Context* context);
     void PushTopScopeIndex();
     void PopTopScopeIndex();
-    void SetTopScopeIndex(int topScopeIndex_) { topScopeIndex = topScopeIndex_; }
-    inline int TopScopeIndex() const { return topScopeIndex; }
+    inline void SetTopScopeIndex(int topScopeIndex_) noexcept { topScopeIndex = topScopeIndex_; }
+    inline int TopScopeIndex() const noexcept { return topScopeIndex; }
     void BeginNamespace(const std::u32string& name, otava::ast::Node* node, Context* context);
     void EndNamespace();
     void BeginNamespace(otava::ast::Node* node, Context* context);
@@ -169,7 +163,7 @@ public:
     TypeSymbol* MakeCompoundType(TypeSymbol* baseType, Derivations derivations, Context* context);
     void AddCompoundType(CompoundTypeSymbol* compoundType);
     void MapCompoundType(CompoundTypeSymbol* compoundType);
-    CompoundTypeSymbol* GetCompoundType(const util::uuid& compoundTypeId) const;
+    CompoundTypeSymbol* GetCompoundType(const util::uuid& compoundTypeId) const noexcept;
     TypeSymbol* MakeConstCharPtrType(Context* context);
     TypeSymbol* MakeConstChar8PtrType(Context* context);
     TypeSymbol* MakeConstChar16PtrType(Context* context);
@@ -195,15 +189,15 @@ public:
     void MapNode(otava::ast::Node* node);
     void MapNode(otava::ast::Node* node, Symbol* symbol);
     void MapNode(otava::ast::Node* node, Symbol* symbol, MapKind kind);
-    otava::ast::Node* GetNodeNothrow(Symbol* symbol) const;
+    otava::ast::Node* GetNodeNothrow(Symbol* symbol) const noexcept;
     otava::ast::Node* GetNode(Symbol* symbol) const;
     void RemoveNode(otava::ast::Node* node);
     void RemoveSymbol(Symbol* symbol);
-    otava::ast::Node* GetSpecifierNode(Symbol* symbol) const;
+    otava::ast::Node* GetSpecifierNode(Symbol* symbol) const noexcept;
     void SetSpecifierNode(Symbol* symbol, otava::ast::Node* node);
-    Symbol* GetSymbolNothrow(otava::ast::Node* node) const;
+    Symbol* GetSymbolNothrow(otava::ast::Node* node) const noexcept;
     Symbol* GetSymbol(otava::ast::Node* node) const;
-    TypeSymbol* GetTypeNoThrow(const util::uuid& id) const;
+    TypeSymbol* GetTypeNoThrow(const util::uuid& id) const noexcept;
     TypeSymbol* GetType(const util::uuid& id) const;
     void MapType(TypeSymbol* type);
     void UnmapType(TypeSymbol* type);
@@ -226,7 +220,7 @@ public:
     FunctionGroupSymbol* GetFunctionGroup(const util::uuid& id) const;
     ClassGroupSymbol* GetClassGroup(const util::uuid& id) const;
     AliasGroupSymbol* GetAliasGroup(const util::uuid& id) const;
-    TypeSymbol* GetFundamentalType(FundamentalTypeKind kind) const;
+    TypeSymbol* GetFundamentalType(FundamentalTypeKind kind) const noexcept;
     inline void SetAddToRecomputeNameSet(bool addToRecomputeNameSet_) { addToRecomputeNameSet = addToRecomputeNameSet_; }
     inline bool AddToRecomputeNameSet() const { return addToRecomputeNameSet; }
     void AddToRecomputeNameSet(CompoundTypeSymbol* compoundTypeSymbol);
@@ -255,7 +249,7 @@ public:
     void MapExplicitInstantiation(ExplicitInstantiationSymbol* explicitInstantition);
     const info::class_index& ClassIndex() const { return index; }
     info::class_index& ClassIndex() { return index; }
-    ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(const util::uuid& id) const;
+    ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(const util::uuid& id) const noexcept;
     void AddClassTemplateSpecialization(ClassTemplateSpecializationSymbol* sp);
     void MapClassTemplateSpecialization(ClassTemplateSpecializationSymbol* sp);
     void AddChangedClassTemplateSpecialization(ClassTemplateSpecializationSymbol* sp);

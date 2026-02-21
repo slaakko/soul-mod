@@ -16,7 +16,7 @@ public:
     FriendSymbol(const std::u32string& name_);
     std::string SymbolKindStr() const override { return "friend symbol"; }
     std::string SymbolDocKindStr() const override { return "friend"; }
-    bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
+    bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
     void Accept(Visitor& visitor) override;
 };
 

@@ -10,12 +10,12 @@ import otava.symbols.function.type.symbol;
 
 namespace otava::symbols {
 
-bool TypeIdLess::operator()(TypeSymbol* left, TypeSymbol* right) const
+bool TypeIdLess::operator()(TypeSymbol* left, TypeSymbol* right) const noexcept
 {
     return left->Id() < right->Id();
 }
 
-bool TypesEqual(TypeSymbol* left, TypeSymbol* right, Context* context)
+bool TypesEqual(TypeSymbol* left, TypeSymbol* right, Context* context) noexcept
 {
     if (left->IsForwardClassDeclarationSymbol())
     {

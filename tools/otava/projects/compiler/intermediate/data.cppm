@@ -386,8 +386,15 @@ template<class T>
 class ValueMap
 {
 public:
-    ValueMap();
-    Value* Get(const T& value, Data* data, const Types& types);
+    ValueMap()
+    {
+    }
+    Value* Get(const T& value, Data* data, const Types& types)
+    {
+        Value* constantValue = data->MakeValue(value, types);
+        valueMap[value] = constantValue;
+        return constantValue;
+    }
 private:
     std::map<T, Value*> valueMap;
 };
@@ -464,26 +471,5 @@ private:
     std::map<std::string, GlobalVariable*> globalStringVariableMap;
     std::int32_t nextStringValueId;
 };
-
-template<class T>
-ValueMap<T>::ValueMap()
-{
-}
-
-template<class T>
-Value* ValueMap<T>::Get(const T& value, Data* data, const Types& types)
-{
-    auto it = valueMap.find(value);
-    if (it != valueMap.cend())
-    {
-        return it->second;
-    }
-    else
-    {
-        Value* constantValue = data->MakeValue(value, types);
-        valueMap[value] = constantValue;
-        return constantValue;
-    }
-}
 
 } // otava::intermediate

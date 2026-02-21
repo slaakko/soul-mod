@@ -58,7 +58,7 @@ class MetadataBool : public MetadataItem
 {
 public:
     MetadataBool(bool value_) noexcept;
-    inline bool Value() const noexcept { return value; }
+    inline bool GetValue() const noexcept { return value; }
     void Write(util::CodeFormatter& formatter) override;
 private:
     bool value;
@@ -68,7 +68,7 @@ class MetadataLong : public MetadataItem
 {
 public:
     MetadataLong(std::int64_t value_) noexcept;
-    inline std::int64_t Value() const noexcept { return value; }
+    inline std::int64_t GetValue() const noexcept { return value; }
     void Write(util::CodeFormatter& formatter) override;
 private:
     std::int64_t value;

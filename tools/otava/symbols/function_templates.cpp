@@ -26,12 +26,16 @@ import util.unicode;
 
 namespace otava::symbols {
 
+FunctionTemplateKey::FunctionTemplateKey() : functionTemplate(nullptr), templateArgumentTypes()
+{
+}
+
 FunctionTemplateKey::FunctionTemplateKey(FunctionSymbol* functionTemplate_, const std::vector<TypeSymbol*>& templateArgumentTypes_) :
     functionTemplate(functionTemplate_), templateArgumentTypes(templateArgumentTypes_)
 {
 }
 
-bool FunctionTemplateKeyLess::operator()(const FunctionTemplateKey& left, const FunctionTemplateKey& right) const
+bool FunctionTemplateKeyLess::operator()(const FunctionTemplateKey& left, const FunctionTemplateKey& right) const noexcept
 {
     if (left.functionTemplate < right.functionTemplate) return true;
     if (left.functionTemplate > right.functionTemplate) return false;
@@ -42,7 +46,7 @@ FunctionTemplateRepository::FunctionTemplateRepository()
 {
 }
 
-FunctionDefinitionSymbol* FunctionTemplateRepository::GetFunctionDefinition(const FunctionTemplateKey& key) const
+FunctionDefinitionSymbol* FunctionTemplateRepository::GetFunctionDefinition(const FunctionTemplateKey& key) const noexcept
 {
     auto it = functionTemplateMap.find(key);
     if (it != functionTemplateMap.cend())
@@ -128,7 +132,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
             {
                 templateArg = templateArgumentTypes[i];
             }
-            BoundTemplateParameterSymbol* boundTemplateParameter(new BoundTemplateParameterSymbol(templateParameter->Name()));
+            BoundTemplateParameterSymbol* boundTemplateParameter = new BoundTemplateParameterSymbol(templateParameter->Name());
             boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
             boundTemplateParameter->SetBoundSymbol(templateArg);
             boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
@@ -237,7 +241,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
             {
                 templateArg = templateArgumentTypes[i];
             }
-            BoundTemplateParameterSymbol* boundTemplateParameter(new BoundTemplateParameterSymbol(templateParameter->Name()));
+            BoundTemplateParameterSymbol* boundTemplateParameter = new BoundTemplateParameterSymbol(templateParameter->Name());
             boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
             boundTemplateParameter->SetBoundSymbol(templateArg);
             boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));

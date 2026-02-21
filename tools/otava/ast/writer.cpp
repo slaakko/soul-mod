@@ -35,7 +35,8 @@ void Writer::Write(const soul::ast::SourcePos& sourcePos)
 
 void Writer::Write(NodeKind nodeKind)
 {
-    writerPtr->WriteULEB128UInt(static_cast<std::uint32_t>(nodeKind));
+    std::uint32_t u = static_cast<std::uint16_t>(nodeKind);
+    writerPtr->WriteULEB128UInt(u);
 }
 
 void Writer::Write(const std::u32string& str)

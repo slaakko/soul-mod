@@ -94,7 +94,7 @@ void ConceptSymbol::Resolve(SymbolTable& symbolTable, Context* context)
     // todo
 }
 
-TemplateDeclarationSymbol* ConceptSymbol::ParentTemplateDeclaration()
+TemplateDeclarationSymbol* ConceptSymbol::ParentTemplateDeclaration() noexcept
 {
     Symbol* parentSymbol = Parent();
     if (parentSymbol->IsTemplateDeclarationSymbol())
@@ -104,7 +104,7 @@ TemplateDeclarationSymbol* ConceptSymbol::ParentTemplateDeclaration()
     return nullptr;
 }
 
-bool ConceptSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
+bool ConceptSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcept
 {
     switch (scopeKind)
     {
@@ -118,7 +118,7 @@ bool ConceptSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
     return false;
 }
 
-int ConceptSymbol::Arity()
+int ConceptSymbol::Arity() noexcept
 {
     TemplateDeclarationSymbol* templateDeclaration = ParentTemplateDeclaration();
     if (templateDeclaration)
@@ -128,7 +128,7 @@ int ConceptSymbol::Arity()
     return 0;
 }
 
-bool IsConceptName(otava::ast::Node* node, Context* context)
+bool IsConceptName(otava::ast::Node* node, Context* context) noexcept
 {
     std::u32string name = node->Str();
     Symbol* symbol = context->GetSymbolTable()->Lookup(name, SymbolGroupKind::conceptSymbolGroup, node->GetSourcePos(), context);
@@ -173,7 +173,7 @@ void ProcessConcept(otava::ast::Node* node, Context* context)
     node->Accept(processor);
 }
 
-bool ConceptLess::operator()(ConceptSymbol* left, ConceptSymbol* right) const
+bool ConceptLess::operator()(ConceptSymbol* left, ConceptSymbol* right) const noexcept
 {
     return left->Name() < right->Name();
 }

@@ -46,12 +46,12 @@ Symbol* Reader::ReadSymbol()
     }
 }
 
-void Reader::SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_)
+void Reader::SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_) noexcept
 {
     functionDefinitionSymbolSet = functionDefinitionSymbolSet_;
 }
 
-FunctionDefinitionSymbolSet* Reader::GetFunctionDefinitionSymbolSet() const
+FunctionDefinitionSymbolSet* Reader::GetFunctionDefinitionSymbolSet() const noexcept
 {
     return functionDefinitionSymbolSet;
 }

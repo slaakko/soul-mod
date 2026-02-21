@@ -11,7 +11,7 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-TypeSpecifierSequenceNode::TypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) : SequenceNode(NodeKind::typeSpecifierSequenceNode, sourcePos_)
+TypeSpecifierSequenceNode::TypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept : SequenceNode(NodeKind::typeSpecifierSequenceNode, sourcePos_)
 {
 }
 
@@ -30,11 +30,11 @@ void TypeSpecifierSequenceNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-TypenameSpecifierNode::TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::typenameSpecifierNode, sourcePos_)
+TypenameSpecifierNode::TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::typenameSpecifierNode, sourcePos_)
 {
 }
 
-TypenameSpecifierNode::TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* id_, Node* templateNode_) :
+TypenameSpecifierNode::TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* id_, Node* templateNode_) noexcept :
     CompoundNode(NodeKind::typenameSpecifierNode, sourcePos_), nns(nns_), id(id_), templateNode(templateNode_)
 {
 }
@@ -71,11 +71,11 @@ void TypenameSpecifierNode::Read(Reader& reader)
     templateNode.reset(reader.ReadNode());
 }
 
-TypeIdNode::TypeIdNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::typeIdNode, sourcePos_)
+TypeIdNode::TypeIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::typeIdNode, sourcePos_)
 {
 }
 
-TypeIdNode::TypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_, Node* declarator_) :
+TypeIdNode::TypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_, Node* declarator_) noexcept :
     CompoundNode(NodeKind::typeIdNode, sourcePos_), typeSpecifiers(typeSpecifiers_), declarator(declarator_)
 {
 }
@@ -110,11 +110,11 @@ void TypeIdNode::Read(Reader& reader)
     declarator.reset(reader.ReadNode());
 }
 
-DefiningTypeIdNode::DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::definingTypeIdNode, sourcePos_)
+DefiningTypeIdNode::DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::definingTypeIdNode, sourcePos_)
 {
 }
 
-DefiningTypeIdNode::DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* definingTypeSpecifiers_, Node* abstractDeclarator_) :
+DefiningTypeIdNode::DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* definingTypeSpecifiers_, Node* abstractDeclarator_) noexcept :
     CompoundNode(NodeKind::definingTypeIdNode, sourcePos_), definingTypeSpecifiers(definingTypeSpecifiers_), abstractDeclarator(abstractDeclarator_)
 {
 }
@@ -149,7 +149,7 @@ void DefiningTypeIdNode::Read(Reader& reader)
     abstractDeclarator.reset(reader.ReadNode());
 }
 
-DefiningTypeSpecifierSequenceNode::DefiningTypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) :
+DefiningTypeSpecifierSequenceNode::DefiningTypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept :
     SequenceNode(NodeKind::definingTypeSpecifierSequenceNode, sourcePos_)
 {
 }
@@ -169,11 +169,12 @@ void DefiningTypeSpecifierSequenceNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-TrailingReturnTypeNode::TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::trailingReturnTypeNode, sourcePos_, nullptr)
+TrailingReturnTypeNode::TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::trailingReturnTypeNode, sourcePos_, nullptr)
 {
 }
 
-TrailingReturnTypeNode::TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_) : UnaryNode(NodeKind::trailingReturnTypeNode, sourcePos_, typeId_)
+TrailingReturnTypeNode::TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_) noexcept : 
+    UnaryNode(NodeKind::trailingReturnTypeNode, sourcePos_, typeId_)
 {
 }
 
@@ -188,11 +189,12 @@ void TrailingReturnTypeNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ElaboratedTypeSpecifierNode::ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::elaboratedTypeSpecifierNode, sourcePos_)
+ElaboratedTypeSpecifierNode::ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    CompoundNode(NodeKind::elaboratedTypeSpecifierNode, sourcePos_)
 {
 }
 
-ElaboratedTypeSpecifierNode::ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* id_, Node* attributes_) :
+ElaboratedTypeSpecifierNode::ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* id_, Node* attributes_) noexcept :
     CompoundNode(NodeKind::elaboratedTypeSpecifierNode, sourcePos_), classKey(classKey_), id(id_), attributes(attributes_)
 {
 }
@@ -229,11 +231,12 @@ void ElaboratedTypeSpecifierNode::Read(Reader& reader)
     attributes.reset(reader.ReadNode());
 }
 
-DeclTypeSpecifierNode::DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::declTypeSpecifierNode, sourcePos_)
+DeclTypeSpecifierNode::DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::declTypeSpecifierNode, sourcePos_)
 {
 }
 
-DeclTypeSpecifierNode::DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+DeclTypeSpecifierNode::DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, 
+    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     CompoundNode(NodeKind::declTypeSpecifierNode, sourcePos_), expr(expr_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }
@@ -265,12 +268,13 @@ void DeclTypeSpecifierNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
-PlaceholderTypeSpecifierNode::PlaceholderTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::placeholderTypeSpecifierNode, sourcePos_)
+PlaceholderTypeSpecifierNode::PlaceholderTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    CompoundNode(NodeKind::placeholderTypeSpecifierNode, sourcePos_)
 {
 }
 
 PlaceholderTypeSpecifierNode::PlaceholderTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_,
-    const soul::ast::SourcePos& dtPos_, const soul::ast::SourcePos& autoPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+    const soul::ast::SourcePos& dtPos_, const soul::ast::SourcePos& autoPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     CompoundNode(NodeKind::placeholderTypeSpecifierNode, sourcePos_), typeConstraint(typeConstraint_), dtPos(dtPos_), autoPos(autoPos_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }

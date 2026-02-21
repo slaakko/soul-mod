@@ -28,7 +28,7 @@ CompoundTypeSymbol::CompoundTypeSymbol(TypeSymbol* baseType_, Derivations deriva
 {
 }
 
-TypeSymbol* CompoundTypeSymbol::PlainType(Context* context)
+TypeSymbol* CompoundTypeSymbol::PlainType(Context* context) noexcept
 {
     Derivations plainDerivations = Plain(derivations);
     return context->GetSymbolTable()->MakeCompoundType(BaseType(), plainDerivations, context);
@@ -78,12 +78,12 @@ void CompoundTypeSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-bool CompoundTypeSymbol::IsExportSymbol(Context* context) const
+bool CompoundTypeSymbol::IsExportSymbol(Context* context) const noexcept
 {
     return TypeSymbol::IsExportSymbol(context);
 }
 
-int CompoundTypeSymbol::PointerCount() const
+int CompoundTypeSymbol::PointerCount() const noexcept
 {
     return otava::symbols::PointerCount(GetDerivations());
 }
@@ -139,7 +139,7 @@ TypeSymbol* CompoundTypeSymbol::RemoveDerivations(Derivations sourceDerivations,
     return context->GetSymbolTable()->MakeCompoundType(baseType, resultDerivations, context);
 }
 
-TypeSymbol* CompoundTypeSymbol::Unify(TypeSymbol* argType, Context* context)
+TypeSymbol* CompoundTypeSymbol::Unify(TypeSymbol* argType, Context* context) 
 {
     TypeSymbol* newBaseType = baseType->Unify(argType->GetBaseType(), context);
     return context->GetSymbolTable()->MakeCompoundType(newBaseType, UnifyDerivations(derivations, argType->GetDerivations()), context);
@@ -235,16 +235,17 @@ TypeSymbol* CompoundTypeSymbol::FinalType(const soul::ast::SourcePos& sourcePos,
     return context->GetSymbolTable()->MakeCompoundType(finalBaseType, derivations, context);
 }
 
-TypeSymbol* CompoundTypeSymbol::DirectType(Context* context)
+TypeSymbol* CompoundTypeSymbol::DirectType(Context* context) 
 {
     TypeSymbol* directBaseType = baseType->DirectType(context);
     return context->GetSymbolTable()->MakeCompoundType(directBaseType, derivations, context);
 }
 
-bool CompoundTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const
+bool CompoundTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const noexcept
 {
-    if (visited.find(this) != visited.end()) return true;
-    visited.insert(this);
+    const TypeSymbol* thisSymbol = this;
+    if (visited.find(thisSymbol) != visited.end()) return true;
+    visited.insert(thisSymbol);
     if (PointerCount() > 0 || HasDerivation(derivations, Derivations::refMask))
     {
         return true;
@@ -254,9 +255,10 @@ bool CompoundTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const 
 
 bool CompoundTypeSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const 
 { 
-    if (visited.find(this) == visited.end())
+    const Symbol* thisSymbol = this;
+    if (visited.find(thisSymbol) == visited.end())
     {
-        visited.insert(this);
+        visited.insert(thisSymbol);
         return baseType->IsTemplateParameterInstantiation(context, visited);
     }
     return false;
@@ -312,18 +314,18 @@ std::u32string MakeCompoundTypeName(TypeSymbol* baseType, Derivations derivation
     return name;
 }
 
-util::uuid CompoundTypeSymbol::IrId(Context* context) const
+util::uuid CompoundTypeSymbol::IrId(Context* context) const noexcept
 {
     util::uuid irId = baseType->IrId(context);
-    util::uuid derivationsId = context->GetSymbolTable()->GetCompoundTypeId(static_cast<int>(derivations));
+    util::uuid derivationsId = context->GetSymbolTable()->GetCompoundTypeId(static_cast<std::uint8_t>(derivations));
     util::Xor(irId, derivationsId);
     return irId;
 }
 
-util::uuid MakeCompoundTypeId(TypeSymbol* baseType, Derivations derivations, const soul::ast::SourcePos& sourcePos, Context* context)
+util::uuid MakeCompoundTypeId(TypeSymbol* baseType, Derivations derivations, const soul::ast::SourcePos& sourcePos, Context* context) noexcept
 {
     util::uuid id = baseType->Id();
-    util::uuid derivationsId = context->GetSymbolTable()->GetCompoundTypeId(static_cast<int>(derivations));
+    util::uuid derivationsId = context->GetSymbolTable()->GetCompoundTypeId(static_cast<std::uint8_t>(derivations));
     util::Xor(id, derivationsId);
     return id;
 }

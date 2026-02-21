@@ -21,8 +21,8 @@ public:
     std::string SymbolDocKindStr() const override { return "block"; }
     void Accept(Visitor& visitor) override;
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    inline int BlockId() const { return blockId; }
-    inline void SetBlockId(int blockId_) { blockId = blockId_; }
+    inline int BlockId() const noexcept { return blockId; }
+    inline void SetBlockId(int blockId_) noexcept { blockId = blockId_; }
 private:
     std::vector<VariableSymbol*> localVariables;
     int blockId;

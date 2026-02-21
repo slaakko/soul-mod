@@ -35,10 +35,10 @@ public:
     std::string SymbolKindStr() const override { return "template parameter symbol"; }
     std::string SymbolDocKindStr() const override { return "template_paremeter"; }
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
-    inline Symbol* Constraint() const { return constraint; }
-    inline otava::ast::Node* DefaultTemplateArg() const { return defaultTemplateArgNode; }
-    inline int Index() const { return index; }
-    inline ParameterSymbol* GetParameterSymbol() const { return parameterSymbol; }
+    inline Symbol* Constraint() const noexcept { return constraint; }
+    inline otava::ast::Node* DefaultTemplateArg() const noexcept { return defaultTemplateArgNode; }
+    inline int Index() const noexcept { return index; }
+    inline ParameterSymbol* GetParameterSymbol() const noexcept { return parameterSymbol; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
@@ -61,12 +61,12 @@ public:
     BoundTemplateParameterSymbol(const std::u32string& name_);
     std::string SymbolKindStr() const override { return "bound template parameter symbol"; }
     std::string SymbolDocKindStr() const override { return "bound_template_paremeter"; }
-    TemplateParameterSymbol* GetTemplateParameterSymbol() const { return templateParameterSymbol; }
-    void SetTemplateParameterSymbol(TemplateParameterSymbol* templateParameterSymbol_) { templateParameterSymbol = templateParameterSymbol_; }
-    inline Symbol* BoundSymbol() const { return boundSymbol; }
-    inline void SetBoundSymbol(Symbol* symbol) { boundSymbol = symbol; }
+    inline TemplateParameterSymbol* GetTemplateParameterSymbol() const noexcept { return templateParameterSymbol; }
+    inline void SetTemplateParameterSymbol(TemplateParameterSymbol* templateParameterSymbol_) noexcept { templateParameterSymbol = templateParameterSymbol_; }
+    inline Symbol* BoundSymbol() const noexcept { return boundSymbol; }
+    inline void SetBoundSymbol(Symbol* symbol) noexcept { boundSymbol = symbol; }
     void Accept(Visitor& visitor) override;
-    bool IsExportSymbol(Context* context) const override { return false; }
+    bool IsExportSymbol(Context* context) const noexcept override { return false; }
 private:
     TemplateParameterSymbol* templateParameterSymbol;
     Symbol* boundSymbol;
@@ -77,10 +77,10 @@ class TemplateDeclarationSymbol : public ContainerSymbol
 public:
     TemplateDeclarationSymbol();
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    inline int Arity() const { return templateParameters.size(); }
+    inline int Arity() const noexcept { return templateParameters.size(); }
     std::string SymbolKindStr() const override { return "template declaration symbol"; }
     std::string SymbolDocKindStr() const override { return "template_declaration"; }
-    inline const std::vector<TemplateParameterSymbol*>& TemplateParameters() const { return templateParameters; }
+    inline const std::vector<TemplateParameterSymbol*>& TemplateParameters() const noexcept { return templateParameters; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
@@ -93,10 +93,11 @@ class ExplicitInstantiationSymbol : public Symbol
 public:
     ExplicitInstantiationSymbol();
     ExplicitInstantiationSymbol(ClassTemplateSpecializationSymbol* specialization_);
-    inline ClassTemplateSpecializationSymbol* Specialization() const { return specialization; }
+    ~ExplicitInstantiationSymbol();
+    inline ClassTemplateSpecializationSymbol* Specialization() const noexcept { return specialization; }
     void AddFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol, const soul::ast::SourcePos& sourcePos, Context* context);
-    FunctionDefinitionSymbol* GetFunctionDefinitionSymbol(int index)  const;
-    FunctionDefinitionSymbol* Destructor() const;
+    FunctionDefinitionSymbol* GetFunctionDefinitionSymbol(int index)  const noexcept;
+    FunctionDefinitionSymbol* Destructor() const noexcept;
     std::string SymbolKindStr() const override { return "explicit instantiation symbol"; }
     std::string SymbolDocKindStr() const override { return "explicit_instantiation"; }
     void Write(Writer& writer) override;
@@ -106,7 +107,7 @@ public:
 private:
     ClassTemplateSpecializationSymbol* specialization;
     util::uuid specializationId;
-    std::vector<std::unique_ptr<ExplicitlyInstantiatedFunctionDefinitionSymbol>> functionDefinitionSymbols;
+    std::vector<ExplicitlyInstantiatedFunctionDefinitionSymbol*> functionDefinitionSymbols;
     std::map<std::int32_t, ExplicitlyInstantiatedFunctionDefinitionSymbol*> functionDefinitionSymbolMap;
     FunctionDefinitionSymbol* destructor;
 };

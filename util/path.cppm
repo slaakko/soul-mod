@@ -21,6 +21,8 @@ bool DirectoryExists(const std::string& directoryPath);
 bool PathExists(const std::string& path);
 std::string GetFullPath(const std::string& path);
 std::string MakeRelativeDirPath(const std::string& dirPath, const std::string& referenceDirPath);
+void CreateDirectories(const std::string& dirPath);
+std::int64_t LastWriteTime(const std::string& path);
 
 class Path
 {

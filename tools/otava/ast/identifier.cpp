@@ -11,11 +11,12 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-IdentifierNode::IdentifierNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::identifierNode, sourcePos_)
+IdentifierNode::IdentifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::identifierNode, sourcePos_)
 {
 }
 
-IdentifierNode::IdentifierNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& str_) : CompoundNode(NodeKind::identifierNode, sourcePos_), str(str_)
+IdentifierNode::IdentifierNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& str_) noexcept : 
+    CompoundNode(NodeKind::identifierNode, sourcePos_), str(str_)
 {
 }
 
@@ -42,7 +43,7 @@ void IdentifierNode::Read(Reader& reader)
     str = reader.ReadStr();
 }
 
-UnnamedNode::UnnamedNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::unnamedNode, sourcePos_)
+UnnamedNode::UnnamedNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::unnamedNode, sourcePos_)
 {
 }
 
@@ -57,7 +58,7 @@ void UnnamedNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ColonColonNode::ColonColonNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::colonColonNode, sourcePos_)
+ColonColonNode::ColonColonNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::colonColonNode, sourcePos_)
 {
 }
 
@@ -72,7 +73,7 @@ void ColonColonNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-NestedNameSpecifierNode::NestedNameSpecifierNode(const soul::ast::SourcePos& sourcePos_) : SequenceNode(NodeKind::nestedNameSpecifierNode, sourcePos_)
+NestedNameSpecifierNode::NestedNameSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : SequenceNode(NodeKind::nestedNameSpecifierNode, sourcePos_)
 {
 }
 
@@ -91,11 +92,12 @@ void NestedNameSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-QualifiedIdNode::QualifiedIdNode(const soul::ast::SourcePos& sourcePos_) : BinaryNode(NodeKind::qualifiedIdNode, sourcePos_, nullptr, nullptr)
+QualifiedIdNode::QualifiedIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : BinaryNode(NodeKind::qualifiedIdNode, sourcePos_, nullptr, nullptr)
 {
 }
 
-QualifiedIdNode::QualifiedIdNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* unqualifiedId_) : BinaryNode(NodeKind::qualifiedIdNode, sourcePos_, nns_, unqualifiedId_)
+QualifiedIdNode::QualifiedIdNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* unqualifiedId_) noexcept : 
+    BinaryNode(NodeKind::qualifiedIdNode, sourcePos_, nns_, unqualifiedId_)
 {
 }
 
@@ -110,7 +112,7 @@ void QualifiedIdNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-IdentifierListNode::IdentifierListNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::identifierListNode, sourcePos_)
+IdentifierListNode::IdentifierListNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::identifierListNode, sourcePos_)
 {
 }
 
@@ -129,7 +131,7 @@ void IdentifierListNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ModuleNameNode::ModuleNameNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::moduleNameNode, sourcePos_)
+ModuleNameNode::ModuleNameNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::moduleNameNode, sourcePos_)
 {
 }
 

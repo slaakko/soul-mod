@@ -24,7 +24,7 @@ import util;
 
 namespace otava::symbols {
 
-util::uuid MakeTemplateParameterId(const util::uuid& id, const std::u32string& name)
+util::uuid MakeTemplateParameterId(const util::uuid& id, const std::u32string& name) noexcept
 {
     util::uuid x = id;
     util::Xor(x, util::ToUuid(name));
@@ -142,9 +142,10 @@ TypeSymbol* TemplateParameterSymbol::UnifyTemplateArgumentType(const std::map<Te
 
 bool TemplateParameterSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const 
 { 
-    if (visited.find(this) == visited.end())
+    const Symbol* thisSymbol = this;
+    if (visited.find(thisSymbol) == visited.end())
     {
-        visited.insert(this);
+        visited.insert(thisSymbol);
     }
     return true; 
 }
@@ -316,6 +317,14 @@ ExplicitInstantiationSymbol::ExplicitInstantiationSymbol(ClassTemplateSpecializa
 {
 }
 
+ExplicitInstantiationSymbol::~ExplicitInstantiationSymbol()
+{
+    for (ExplicitlyInstantiatedFunctionDefinitionSymbol* functionDefinitionSymbol : functionDefinitionSymbols)
+    {
+        delete functionDefinitionSymbol;
+    }
+}
+
 void ExplicitInstantiationSymbol::AddFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     functionDefinitionSymbol->SetFlag(FunctionSymbolFlags::fixedIrName);
@@ -327,7 +336,7 @@ void ExplicitInstantiationSymbol::AddFunctionDefinitionSymbol(FunctionDefinition
     ExplicitlyInstantiatedFunctionDefinitionSymbol* explicitlyInstantiatedSymbol = new ExplicitlyInstantiatedFunctionDefinitionSymbol(
         functionDefinitionSymbol, sourcePos, context);
     explicitlyInstantiatedSymbol->SetFunctionKind(functionDefinitionSymbol->GetFunctionKind());
-    functionDefinitionSymbols.push_back(std::unique_ptr<ExplicitlyInstantiatedFunctionDefinitionSymbol>(explicitlyInstantiatedSymbol));
+    functionDefinitionSymbols.push_back(explicitlyInstantiatedSymbol);
     functionDefinitionSymbolMap[functionDefinitionSymbol->DefIndex()] = explicitlyInstantiatedSymbol;
     if (explicitlyInstantiatedSymbol->GetFunctionKind() == FunctionKind::destructor)
     {
@@ -335,7 +344,7 @@ void ExplicitInstantiationSymbol::AddFunctionDefinitionSymbol(FunctionDefinition
     }
 }
 
-FunctionDefinitionSymbol* ExplicitInstantiationSymbol::GetFunctionDefinitionSymbol(int index)  const
+FunctionDefinitionSymbol* ExplicitInstantiationSymbol::GetFunctionDefinitionSymbol(int index)  const noexcept
 {
     auto it = functionDefinitionSymbolMap.find(index);
     if (it != functionDefinitionSymbolMap.end())
@@ -348,9 +357,10 @@ FunctionDefinitionSymbol* ExplicitInstantiationSymbol::GetFunctionDefinitionSymb
     {
         ThrowException("explicitly instantiated function " + std::to_string(index) + " not found");
     }
+    return nullptr;
 }
 
-FunctionDefinitionSymbol* ExplicitInstantiationSymbol::Destructor() const
+FunctionDefinitionSymbol* ExplicitInstantiationSymbol::Destructor() const noexcept
 {
     if (destructor)
     {
@@ -365,9 +375,9 @@ void ExplicitInstantiationSymbol::Write(Writer& writer)
     writer.GetBinaryStreamWriter().Write(specialization->Id());
     std::int32_t n = functionDefinitionSymbols.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(n);
-    for (auto& fnDefSymbol : functionDefinitionSymbols)
+    for (auto* fnDefSymbol : functionDefinitionSymbols)
     {
-        writer.Write(fnDefSymbol.get());
+        writer.Write(fnDefSymbol);
     }
 }
 
@@ -382,7 +392,7 @@ void ExplicitInstantiationSymbol::Read(Reader& reader)
         if (symbol->IsExplicitlyInstantiatedFunctionDefinitionSymbol())
         {
             ExplicitlyInstantiatedFunctionDefinitionSymbol* explicitlyInstantiatedSymbol = static_cast<ExplicitlyInstantiatedFunctionDefinitionSymbol*>(symbol);
-            functionDefinitionSymbols.push_back(std::unique_ptr<ExplicitlyInstantiatedFunctionDefinitionSymbol>(explicitlyInstantiatedSymbol));
+            functionDefinitionSymbols.push_back(explicitlyInstantiatedSymbol);
             if (explicitlyInstantiatedSymbol->GetFunctionKind() == FunctionKind::destructor)
             {
                 destructor = explicitlyInstantiatedSymbol;
@@ -405,7 +415,7 @@ void ExplicitInstantiationSymbol::Resolve(SymbolTable& symbolTable, Context* con
         specialization = static_cast<ClassTemplateSpecializationSymbol*>(specializationType);
         symbolTable.MapExplicitInstantiation(this);
     }
-    for (auto& functionDefSymbol : functionDefinitionSymbols)
+    for (auto* functionDefSymbol : functionDefinitionSymbols)
     {
         functionDefSymbol->Resolve(symbolTable, context);
     }
@@ -450,7 +460,8 @@ void ExplicitInstantiationProcessor::Visit(otava::ast::ExplicitInstantiationNode
                 {
                     FunctionDefinitionSymbol* memFnDefSymbol = memFnDefSymbolPair.second;
                     std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
-                    FunctionSymbol* instantiatedFunctionSymbol = InstantiateMemFnOfClassTemplate(memFnDefSymbol, specialization, templateParameterMap, node.GetSourcePos(), context);
+                    FunctionSymbol* instantiatedFunctionSymbol = InstantiateMemFnOfClassTemplate(
+                        memFnDefSymbol, specialization, templateParameterMap, node.GetSourcePos(), context);
                     if (instantiatedFunctionSymbol->IsFunctionDefinitionSymbol())
                     {
                         FunctionDefinitionSymbol* instantiatedMemFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(instantiatedFunctionSymbol);

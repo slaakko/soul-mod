@@ -207,7 +207,7 @@ public:
         args[0]->Store(emitter, OperationFlags::setPtr, sourcePos, context);
         emitter.Stack().Push(context->Ptr());
     }
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     TypeSymbol* type;
@@ -435,7 +435,7 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -451,7 +451,7 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     TypeSymbol* type;
@@ -468,7 +468,7 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     TypeSymbol* type;
@@ -485,7 +485,7 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     TypeSymbol* type;
@@ -502,7 +502,7 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     TypeSymbol* type;

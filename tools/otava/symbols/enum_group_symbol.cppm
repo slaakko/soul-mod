@@ -18,12 +18,12 @@ public:
     EnumGroupSymbol(const std::u32string& name_);
     std::string SymbolKindStr() const override { return "enum group symbol"; }
     std::string SymbolDocKindStr() const override { return "enum_group"; }
-    bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
-    Symbol* GetSingleSymbol() override;
-    inline EnumeratedTypeSymbol* GetEnumType() const { return enumType; }
-    inline void SetEnumType(EnumeratedTypeSymbol* enumType_) { enumType = enumType_; }
-    inline ForwardEnumDeclarationSymbol* GetForwardDeclaration() const { return forwardDeclaration; }
-    inline void SetForwardDeclaration(ForwardEnumDeclarationSymbol* forwardDeclaration_) { forwardDeclaration = forwardDeclaration_; }
+    bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
+    Symbol* GetSingleSymbol() noexcept override;
+    inline EnumeratedTypeSymbol* GetEnumType() const noexcept { return enumType; }
+    inline void SetEnumType(EnumeratedTypeSymbol* enumType_) noexcept { enumType = enumType_; }
+    inline ForwardEnumDeclarationSymbol* GetForwardDeclaration() const noexcept { return forwardDeclaration; }
+    inline void SetForwardDeclaration(ForwardEnumDeclarationSymbol* forwardDeclaration_) noexcept { forwardDeclaration = forwardDeclaration_; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;

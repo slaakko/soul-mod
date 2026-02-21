@@ -11,11 +11,11 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-BinaryExprNode::BinaryExprNode(const soul::ast::SourcePos& sourcePos_) : BinaryNode(NodeKind::binaryExprNode, sourcePos_, nullptr, nullptr)
+BinaryExprNode::BinaryExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : BinaryNode(NodeKind::binaryExprNode, sourcePos_, nullptr, nullptr)
 {
 }
 
-BinaryExprNode::BinaryExprNode(const soul::ast::SourcePos& sourcePos_, Node* op_, Node* left_, Node* right_) :
+BinaryExprNode::BinaryExprNode(const soul::ast::SourcePos& sourcePos_, Node* op_, Node* left_, Node* right_) noexcept :
     BinaryNode(NodeKind::binaryExprNode, sourcePos_, left_, right_), op(op_)
 {
 }
@@ -50,11 +50,12 @@ std::u32string BinaryExprNode::Str() const
     return str;
 }
 
-UnaryExprNode::UnaryExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::unaryExprNode, sourcePos_, nullptr)
+UnaryExprNode::UnaryExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::unaryExprNode, sourcePos_, nullptr)
 {
 }
 
-UnaryExprNode::UnaryExprNode(const soul::ast::SourcePos& sourcePos_, Node* op_, Node* child_) : UnaryNode(NodeKind::unaryExprNode, sourcePos_, child_), op(op_)
+UnaryExprNode::UnaryExprNode(const soul::ast::SourcePos& sourcePos_, Node* op_, Node* child_) noexcept : 
+    UnaryNode(NodeKind::unaryExprNode, sourcePos_, child_), op(op_)
 {
 }
 
@@ -88,7 +89,7 @@ std::u32string UnaryExprNode::Str() const
     return str;
 }
 
-ExpressionListNode::ExpressionListNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::expressionListNode, sourcePos_)
+ExpressionListNode::ExpressionListNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::expressionListNode, sourcePos_)
 {
 }
 
@@ -128,11 +129,11 @@ std::u32string ExpressionListNode::Str() const
     return str;
 }
 
-AssignmentInitNode::AssignmentInitNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::assignmentInitializerNode, sourcePos_, nullptr)
+AssignmentInitNode::AssignmentInitNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::assignmentInitializerNode, sourcePos_, nullptr)
 {
 }
 
-AssignmentInitNode::AssignmentInitNode(const soul::ast::SourcePos& sourcePos_, Node* initializer_) : 
+AssignmentInitNode::AssignmentInitNode(const soul::ast::SourcePos& sourcePos_, Node* initializer_) noexcept :
     UnaryNode(NodeKind::assignmentInitializerNode, sourcePos_, initializer_)
 {
 }
@@ -155,11 +156,11 @@ void AssignmentInitNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-YieldExprNode::YieldExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::yieldExprNode, sourcePos_, nullptr)
+YieldExprNode::YieldExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::yieldExprNode, sourcePos_, nullptr)
 {
 }
 
-YieldExprNode::YieldExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_) : UnaryNode(NodeKind::yieldExprNode, sourcePos_, child_)
+YieldExprNode::YieldExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept : UnaryNode(NodeKind::yieldExprNode, sourcePos_, child_)
 {
 }
 
@@ -174,11 +175,11 @@ void YieldExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ConditionalExprNode::ConditionalExprNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::conditionalExprNode, sourcePos_)
+ConditionalExprNode::ConditionalExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::conditionalExprNode, sourcePos_)
 {
 }
 
-ConditionalExprNode::ConditionalExprNode(const soul::ast::SourcePos& sourcePos_, Node* condition_, Node* quest_, Node* thenExpr_, Node* colon_, Node* elseExpr_) :
+ConditionalExprNode::ConditionalExprNode(const soul::ast::SourcePos& sourcePos_, Node* condition_, Node* quest_, Node* thenExpr_, Node* colon_, Node* elseExpr_) noexcept :
     CompoundNode(NodeKind::conditionalExprNode, sourcePos_), condition(condition_), quest(quest_), thenExpr(thenExpr_), colon(colon_), elseExpr(elseExpr_)
 {
 }
@@ -222,7 +223,7 @@ std::u32string ConditionalExprNode::Str() const
     return str;
 }
 
-AssignNode::AssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::assignNode, sourcePos_)
+AssignNode::AssignNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::assignNode, sourcePos_)
 {
 }
 
@@ -237,7 +238,7 @@ void AssignNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-PlusAssignNode::PlusAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::plusAssignNode, sourcePos_)
+PlusAssignNode::PlusAssignNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::plusAssignNode, sourcePos_)
 {
 }
 
@@ -252,7 +253,7 @@ void PlusAssignNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-MinusAssignNode::MinusAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::minusAssignNode, sourcePos_)
+MinusAssignNode::MinusAssignNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::minusAssignNode, sourcePos_)
 {
 }
 
@@ -267,7 +268,7 @@ void MinusAssignNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-MulAssignNode::MulAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::mulAssignNode, sourcePos_)
+MulAssignNode::MulAssignNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::mulAssignNode, sourcePos_)
 {
 }
 
@@ -282,7 +283,7 @@ void MulAssignNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-DivAssignNode::DivAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::divAssignNode, sourcePos_)
+DivAssignNode::DivAssignNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::divAssignNode, sourcePos_)
 {
 }
 
@@ -297,7 +298,7 @@ void DivAssignNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ModAssignNode::ModAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::modAssignNode, sourcePos_)
+ModAssignNode::ModAssignNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::modAssignNode, sourcePos_)
 {
 }
 
@@ -312,7 +313,7 @@ void ModAssignNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-XorAssignNode::XorAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::xorAssignNode, sourcePos_)
+XorAssignNode::XorAssignNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::xorAssignNode, sourcePos_)
 {
 }
 
@@ -327,7 +328,7 @@ void XorAssignNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-AndAssignNode::AndAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::andAssignNode, sourcePos_)
+AndAssignNode::AndAssignNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::andAssignNode, sourcePos_)
 {
 }
 
@@ -342,7 +343,7 @@ void AndAssignNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-OrAssignNode::OrAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::orAssignNode, sourcePos_)
+OrAssignNode::OrAssignNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::orAssignNode, sourcePos_)
 {
 }
 
@@ -357,7 +358,7 @@ void OrAssignNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ShiftLeftAssignNode::ShiftLeftAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::shiftLeftAssignNode, sourcePos_)
+ShiftLeftAssignNode::ShiftLeftAssignNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::shiftLeftAssignNode, sourcePos_)
 {
 }
 
@@ -372,7 +373,7 @@ void ShiftLeftAssignNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ShiftRightAssignNode::ShiftRightAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::shiftRightAssignNode, sourcePos_)
+ShiftRightAssignNode::ShiftRightAssignNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::shiftRightAssignNode, sourcePos_)
 {
 }
 
@@ -387,7 +388,7 @@ void ShiftRightAssignNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-DisjunctionNode::DisjunctionNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::disjunctionNode, sourcePos_)
+DisjunctionNode::DisjunctionNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::disjunctionNode, sourcePos_)
 {
 }
 
@@ -402,7 +403,7 @@ void DisjunctionNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ConjunctionNode::ConjunctionNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::conjunctionNode, sourcePos_)
+ConjunctionNode::ConjunctionNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::conjunctionNode, sourcePos_)
 {
 }
 
@@ -417,7 +418,7 @@ void ConjunctionNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-InclusiveOrNode::InclusiveOrNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::inclusiveOrNode, sourcePos_)
+InclusiveOrNode::InclusiveOrNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::inclusiveOrNode, sourcePos_)
 {
 }
 
@@ -432,7 +433,7 @@ void InclusiveOrNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ExclusiveOrNode::ExclusiveOrNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::exclusiveOrNode, sourcePos_)
+ExclusiveOrNode::ExclusiveOrNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::exclusiveOrNode, sourcePos_)
 {
 }
 
@@ -447,7 +448,7 @@ void ExclusiveOrNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-AndNode::AndNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::andNode, sourcePos_)
+AndNode::AndNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::andNode, sourcePos_)
 {
 }
 
@@ -462,7 +463,7 @@ void AndNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-EqualNode::EqualNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::equalNode, sourcePos_)
+EqualNode::EqualNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::equalNode, sourcePos_)
 {
 }
 
@@ -477,7 +478,7 @@ void EqualNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-NotEqualNode::NotEqualNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::notEqualNode, sourcePos_)
+NotEqualNode::NotEqualNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::notEqualNode, sourcePos_)
 {
 }
 
@@ -492,7 +493,7 @@ void NotEqualNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-LessNode::LessNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::lessNode, sourcePos_)
+LessNode::LessNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::lessNode, sourcePos_)
 {
 }
 
@@ -507,7 +508,7 @@ void LessNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-GreaterNode::GreaterNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::greaterNode, sourcePos_)
+GreaterNode::GreaterNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::greaterNode, sourcePos_)
 {
 }
 
@@ -522,7 +523,7 @@ void GreaterNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-LessOrEqualNode::LessOrEqualNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::lessOrEqualNode, sourcePos_)
+LessOrEqualNode::LessOrEqualNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::lessOrEqualNode, sourcePos_)
 {
 }
 
@@ -537,7 +538,7 @@ void LessOrEqualNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-GreaterOrEqualNode::GreaterOrEqualNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::greaterOrEqualNode, sourcePos_)
+GreaterOrEqualNode::GreaterOrEqualNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::greaterOrEqualNode, sourcePos_)
 {
 }
 
@@ -552,7 +553,7 @@ void GreaterOrEqualNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-CompareNode::CompareNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::compareNode, sourcePos_)
+CompareNode::CompareNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::compareNode, sourcePos_)
 {
 }
 
@@ -567,7 +568,7 @@ void CompareNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ShiftLeftNode::ShiftLeftNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::shiftLeftNode, sourcePos_)
+ShiftLeftNode::ShiftLeftNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::shiftLeftNode, sourcePos_)
 {
 }
 
@@ -582,7 +583,7 @@ void ShiftLeftNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ShiftRightNode::ShiftRightNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::shiftRightNode, sourcePos_)
+ShiftRightNode::ShiftRightNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::shiftRightNode, sourcePos_)
 {
 }
 
@@ -597,7 +598,7 @@ void ShiftRightNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-PlusNode::PlusNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::plusNode, sourcePos_)
+PlusNode::PlusNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::plusNode, sourcePos_)
 {
 }
 
@@ -612,7 +613,7 @@ void PlusNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-MinusNode::MinusNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::minusNode, sourcePos_)
+MinusNode::MinusNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::minusNode, sourcePos_)
 {
 }
 
@@ -627,7 +628,7 @@ void MinusNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-MulNode::MulNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::mulNode, sourcePos_)
+MulNode::MulNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::mulNode, sourcePos_)
 {
 }
 
@@ -642,7 +643,7 @@ void MulNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-DivNode::DivNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::divNode, sourcePos_)
+DivNode::DivNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::divNode, sourcePos_)
 {
 }
 
@@ -657,7 +658,7 @@ void DivNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ModNode::ModNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::modNode, sourcePos_)
+ModNode::ModNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::modNode, sourcePos_)
 {
 }
 
@@ -672,7 +673,7 @@ void ModNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-DotStarNode::DotStarNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::dotStarNode, sourcePos_)
+DotStarNode::DotStarNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::dotStarNode, sourcePos_)
 {
 }
 
@@ -687,7 +688,7 @@ void DotStarNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ArrowStarNode::ArrowStarNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::arrowStarNode, sourcePos_)
+ArrowStarNode::ArrowStarNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::arrowStarNode, sourcePos_)
 {
 }
 
@@ -702,11 +703,12 @@ void ArrowStarNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-CastExprNode::CastExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::castExprNode, sourcePos_, nullptr)
+CastExprNode::CastExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::castExprNode, sourcePos_, nullptr)
 {
 }
 
-CastExprNode::CastExprNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+CastExprNode::CastExprNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_, Node* child_, 
+    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     UnaryNode(NodeKind::castExprNode, sourcePos_, child_), typeId(typeId_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }
@@ -745,7 +747,7 @@ std::u32string CastExprNode::Str() const
     return str;
 }
 
-DerefNode::DerefNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::derefNode, sourcePos_)
+DerefNode::DerefNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::derefNode, sourcePos_)
 {
 }
 
@@ -760,7 +762,7 @@ void DerefNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-AddrOfNode::AddrOfNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::addrOfNode, sourcePos_)
+AddrOfNode::AddrOfNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::addrOfNode, sourcePos_)
 {
 }
 
@@ -775,7 +777,7 @@ void AddrOfNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-NotNode::NotNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::notNode, sourcePos_)
+NotNode::NotNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::notNode, sourcePos_)
 {
 }
 
@@ -790,7 +792,7 @@ void NotNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ComplementNode::ComplementNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::complementNode, sourcePos_)
+ComplementNode::ComplementNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::complementNode, sourcePos_)
 {
 }
 
@@ -805,7 +807,7 @@ void ComplementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-PrefixIncNode::PrefixIncNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::prefixIncNode, sourcePos_)
+PrefixIncNode::PrefixIncNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::prefixIncNode, sourcePos_)
 {
 }
 
@@ -820,7 +822,7 @@ void PrefixIncNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-PrefixDecNode::PrefixDecNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::prefixDecNode, sourcePos_)
+PrefixDecNode::PrefixDecNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::prefixDecNode, sourcePos_)
 {
 }
 
@@ -835,11 +837,11 @@ void PrefixDecNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-AwaitExprNode::AwaitExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::awaitExprNode, sourcePos_, nullptr)
+AwaitExprNode::AwaitExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::awaitExprNode, sourcePos_, nullptr)
 {
 }
 
-AwaitExprNode::AwaitExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_) : UnaryNode(NodeKind::awaitExprNode, sourcePos_, child_)
+AwaitExprNode::AwaitExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept : UnaryNode(NodeKind::awaitExprNode, sourcePos_, child_)
 {
 }
 
@@ -854,11 +856,12 @@ void AwaitExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-SizeOfTypeExprNode::SizeOfTypeExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::sizeOfTypeExprNode, sourcePos_, nullptr)
+SizeOfTypeExprNode::SizeOfTypeExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::sizeOfTypeExprNode, sourcePos_, nullptr)
 {
 }
 
-SizeOfTypeExprNode::SizeOfTypeExprNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+SizeOfTypeExprNode::SizeOfTypeExprNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_, 
+    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     UnaryNode(NodeKind::sizeOfTypeExprNode, sourcePos_, typeId_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }
@@ -888,12 +891,12 @@ void SizeOfTypeExprNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
-SizeOfPackExprNode::SizeOfPackExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::sizeOfPackExpNode, sourcePos_, nullptr)
+SizeOfPackExprNode::SizeOfPackExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::sizeOfPackExpNode, sourcePos_, nullptr)
 {
 }
 
 SizeOfPackExprNode::SizeOfPackExprNode(const soul::ast::SourcePos& sourcePos_, Node* idNode_, const soul::ast::SourcePos& ellipsisPos_, 
-    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     UnaryNode(NodeKind::sizeOfPackExpNode, sourcePos_, idNode_), ellipsisPos(ellipsisPos_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }
@@ -925,11 +928,11 @@ void SizeOfPackExprNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
-SizeOfUnaryExprNode::SizeOfUnaryExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::sizeOfUnaryExprNode, sourcePos_, nullptr)
+SizeOfUnaryExprNode::SizeOfUnaryExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::sizeOfUnaryExprNode, sourcePos_, nullptr)
 {
 }
 
-SizeOfUnaryExprNode::SizeOfUnaryExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_) :
+SizeOfUnaryExprNode::SizeOfUnaryExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept :
     UnaryNode(NodeKind::sizeOfUnaryExprNode, sourcePos_, child_)
 {
 }
@@ -945,11 +948,11 @@ void SizeOfUnaryExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-AlignOfExprNode::AlignOfExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::alignOfExprNode, sourcePos_, nullptr)
+AlignOfExprNode::AlignOfExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::alignOfExprNode, sourcePos_, nullptr)
 {
 }
 
-AlignOfExprNode::AlignOfExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+AlignOfExprNode::AlignOfExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     UnaryNode(NodeKind::alignOfExprNode, sourcePos_, child_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }
@@ -979,11 +982,11 @@ void AlignOfExprNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
-NoexceptExprNode::NoexceptExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::noexceptExprNode, sourcePos_, nullptr)
+NoexceptExprNode::NoexceptExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::noexceptExprNode, sourcePos_, nullptr)
 {
 }
 
-NoexceptExprNode::NoexceptExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+NoexceptExprNode::NoexceptExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     UnaryNode(NodeKind::noexceptExprNode, sourcePos_, child_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }
@@ -1013,11 +1016,12 @@ void NoexceptExprNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
-NewExprNode::NewExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::newExprNode, sourcePos_, nullptr)
+NewExprNode::NewExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::newExprNode, sourcePos_, nullptr)
 {
 }
 
-NewExprNode::NewExprNode(const soul::ast::SourcePos& sourcePos_, Node* placement_, Node* child_, Node* initializer_, Node* colonColonHead_, const soul::ast::SourcePos& newPos_) :
+NewExprNode::NewExprNode(const soul::ast::SourcePos& sourcePos_, Node* placement_, Node* child_, Node* initializer_, Node* colonColonHead_, 
+    const soul::ast::SourcePos& newPos_) noexcept :
     UnaryNode(NodeKind::newExprNode, sourcePos_, child_), placement(placement_), initializer(initializer_), colonColonHead(colonColonHead_), newPos(newPos_)
 {
 }
@@ -1066,7 +1070,7 @@ void NewExprNode::Read(Reader& reader)
     newPos = reader.ReadSourcePos();
 }
 
-NewPlacementNode::NewPlacementNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::newPlacementNode, sourcePos_)
+NewPlacementNode::NewPlacementNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::newPlacementNode, sourcePos_)
 {
 }
 
@@ -1101,11 +1105,12 @@ void NewPlacementNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
-ParenNewTypeIdNode::ParenNewTypeIdNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::parenNewTypeIdNode, sourcePos_, nullptr)
+ParenNewTypeIdNode::ParenNewTypeIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::parenNewTypeIdNode, sourcePos_, nullptr)
 {
 }
 
-ParenNewTypeIdNode::ParenNewTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+ParenNewTypeIdNode::ParenNewTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* child_, 
+    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     UnaryNode(NodeKind::parenNewTypeIdNode, sourcePos_, child_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }
@@ -1135,11 +1140,11 @@ void ParenNewTypeIdNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
-NewTypeIdNode::NewTypeIdNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::newTypeIdNode, sourcePos_)
+NewTypeIdNode::NewTypeIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::newTypeIdNode, sourcePos_)
 {
 }
 
-NewTypeIdNode::NewTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifierSeq_, Node* newDeclarator_) : 
+NewTypeIdNode::NewTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifierSeq_, Node* newDeclarator_) noexcept :
     CompoundNode(NodeKind::newTypeIdNode, sourcePos_), typeSpecifierSeq(typeSpecifierSeq_), newDeclarator(newDeclarator_)
 {
 }
@@ -1174,12 +1179,12 @@ void NewTypeIdNode::Read(Reader& reader)
     newDeclarator.reset(reader.ReadNode());
 }
 
-ArrayDeletePtrNode::ArrayDeletePtrNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::arrayDeletePtrNode, sourcePos_, nullptr)
+ArrayDeletePtrNode::ArrayDeletePtrNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::arrayDeletePtrNode, sourcePos_, nullptr)
 {
 }
 
 ArrayDeletePtrNode::ArrayDeletePtrNode(const soul::ast::SourcePos& sourcePos_, Node* ptr_, Node* colonColonHead_, const soul::ast::SourcePos& deletePos_, 
-    const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) :
+    const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) noexcept :
     UnaryNode(NodeKind::arrayDeletePtrNode, sourcePos_, ptr_), colonColonHead(colonColonHead_), deletePos(deletePos_), lbPos(lbPos_), rbPos(rbPos_)
 {
 }
@@ -1218,11 +1223,11 @@ void ArrayDeletePtrNode::Read(Reader& reader)
     rbPos = reader.ReadSourcePos();
 }
 
-DeletePtrNode::DeletePtrNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::deletePtrNode, sourcePos_, nullptr)
+DeletePtrNode::DeletePtrNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::deletePtrNode, sourcePos_, nullptr)
 {
 }
 
-DeletePtrNode::DeletePtrNode(const soul::ast::SourcePos& sourcePos_, Node* ptr_, Node* colonColonHead_, const soul::ast::SourcePos& deletePos_) :
+DeletePtrNode::DeletePtrNode(const soul::ast::SourcePos& sourcePos_, Node* ptr_, Node* colonColonHead_, const soul::ast::SourcePos& deletePos_) noexcept :
     UnaryNode(NodeKind::deletePtrNode, sourcePos_, ptr_), colonColonHead(colonColonHead_), deletePos(deletePos_)
 {
 }
@@ -1257,11 +1262,12 @@ void DeletePtrNode::Read(Reader& reader)
     deletePos = reader.ReadSourcePos();
 }
 
-SubscriptExprNode::SubscriptExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::subscriptExprNode, sourcePos_, nullptr)
+SubscriptExprNode::SubscriptExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::subscriptExprNode, sourcePos_, nullptr)
 {
 }
 
-SubscriptExprNode::SubscriptExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* index_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) :
+SubscriptExprNode::SubscriptExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* index_, 
+    const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) noexcept :
     UnaryNode(NodeKind::subscriptExprNode, sourcePos_, child_), index(index_), lbPos(lbPos_), rbPos(rbPos_)
 {
 }
@@ -1300,11 +1306,11 @@ std::u32string SubscriptExprNode::Str() const
     return str;
 }
 
-InvokeExprNode::InvokeExprNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::invokeExprNode, sourcePos_), compileUnitInitFn(false)
+InvokeExprNode::InvokeExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::invokeExprNode, sourcePos_), compileUnitInitFn(false)
 {
 }
 
-InvokeExprNode::InvokeExprNode(const soul::ast::SourcePos& sourcePos_, Node* subject_) : 
+InvokeExprNode::InvokeExprNode(const soul::ast::SourcePos& sourcePos_, Node* subject_) noexcept :
     ListNode(NodeKind::invokeExprNode, sourcePos_), subject(subject_), compileUnitInitFn(false)
 {
 }
@@ -1366,11 +1372,11 @@ std::u32string InvokeExprNode::Str() const
     return str;
 }
 
-PairNode::PairNode(const soul::ast::SourcePos& sourcePos_) : BinaryNode(NodeKind::pairNode, sourcePos_, nullptr, nullptr)
+PairNode::PairNode(const soul::ast::SourcePos& sourcePos_) noexcept : BinaryNode(NodeKind::pairNode, sourcePos_, nullptr, nullptr)
 {
 }
 
-PairNode::PairNode(const soul::ast::SourcePos& sourcePos_, Node* left_, Node* right_) : BinaryNode(NodeKind::pairNode, sourcePos_, left_, right_)
+PairNode::PairNode(const soul::ast::SourcePos& sourcePos_, Node* left_, Node* right_) noexcept : BinaryNode(NodeKind::pairNode, sourcePos_, left_, right_)
 {
 }
 
@@ -1385,7 +1391,7 @@ void PairNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-DotNode::DotNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::dotNode, sourcePos_)
+DotNode::DotNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::dotNode, sourcePos_)
 {
 }
 
@@ -1400,7 +1406,7 @@ void DotNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ArrowNode::ArrowNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::arrowNode, sourcePos_)
+ArrowNode::ArrowNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::arrowNode, sourcePos_)
 {
 }
 
@@ -1415,11 +1421,11 @@ void ArrowNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-MemberExprNode::MemberExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::memberExprNode, sourcePos_, nullptr)
+MemberExprNode::MemberExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::memberExprNode, sourcePos_, nullptr)
 {
 }
 
-MemberExprNode::MemberExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* op_, Node* id_) : 
+MemberExprNode::MemberExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* op_, Node* id_) noexcept :
     UnaryNode(NodeKind::memberExprNode, sourcePos_, child_), op(op_), id(id_)
 {
 }
@@ -1456,11 +1462,11 @@ std::u32string MemberExprNode::Str() const
     return str;
 }
 
-PostfixIncExprNode::PostfixIncExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::postfixIncExprNode, sourcePos_, nullptr)
+PostfixIncExprNode::PostfixIncExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::postfixIncExprNode, sourcePos_, nullptr)
 {
 }
 
-PostfixIncExprNode::PostfixIncExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& opPos_) : 
+PostfixIncExprNode::PostfixIncExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& opPos_) noexcept :
     UnaryNode(NodeKind::postfixIncExprNode, sourcePos_, child_), opPos(opPos_)
 {
 }
@@ -1495,11 +1501,11 @@ std::u32string PostfixIncExprNode::Str() const
     return str;
 }
 
-PostfixDecExprNode::PostfixDecExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::postfixDecExprNode, sourcePos_, nullptr)
+PostfixDecExprNode::PostfixDecExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::postfixDecExprNode, sourcePos_, nullptr)
 {
 }
 
-PostfixDecExprNode::PostfixDecExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& opPos_) : 
+PostfixDecExprNode::PostfixDecExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& opPos_) noexcept :
     UnaryNode(NodeKind::postfixDecExprNode, sourcePos_, child_), opPos(opPos_)
 {
 }
@@ -1534,11 +1540,11 @@ std::u32string PostfixDecExprNode::Str() const
     return str;
 }
 
-TypeIdExprNode::TypeIdExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::typeIdExprNode, sourcePos_, nullptr)
+TypeIdExprNode::TypeIdExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::typeIdExprNode, sourcePos_, nullptr)
 {
 }
 
-TypeIdExprNode::TypeIdExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+TypeIdExprNode::TypeIdExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     UnaryNode(NodeKind::typeIdExprNode, sourcePos_, child_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }
@@ -1575,7 +1581,7 @@ std::u32string TypeIdExprNode::Str() const
     return str;
 }
 
-DynamicCastNode::DynamicCastNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::dynamicCastNode, sourcePos_)
+DynamicCastNode::DynamicCastNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::dynamicCastNode, sourcePos_)
 {
 }
 
@@ -1590,7 +1596,7 @@ void DynamicCastNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-StaticCastNode::StaticCastNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::staticCastNode, sourcePos_)
+StaticCastNode::StaticCastNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::staticCastNode, sourcePos_)
 {
 }
 
@@ -1605,7 +1611,7 @@ void StaticCastNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ReinterpretCastNode::ReinterpretCastNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::reinterpretCastNode, sourcePos_)
+ReinterpretCastNode::ReinterpretCastNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::reinterpretCastNode, sourcePos_)
 {
 }
 
@@ -1620,7 +1626,7 @@ void ReinterpretCastNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ConstCastNode::ConstCastNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::constCastNode, sourcePos_)
+ConstCastNode::ConstCastNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::constCastNode, sourcePos_)
 {
 }
 
@@ -1635,12 +1641,12 @@ void ConstCastNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-CppCastExprNode::CppCastExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::cppCastExprNode, sourcePos_, nullptr)
+CppCastExprNode::CppCastExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::cppCastExprNode, sourcePos_, nullptr)
 {
 }
 
 CppCastExprNode::CppCastExprNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_, Node* child_, Node* op_, 
-    const soul::ast::SourcePos& laPos_, const soul::ast::SourcePos& raPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+    const soul::ast::SourcePos& laPos_, const soul::ast::SourcePos& raPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     UnaryNode(NodeKind::cppCastExprNode, sourcePos_, child_), typeId(typeId_), op(op_), laPos(laPos_), raPos(raPos_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }
@@ -1685,7 +1691,7 @@ std::u32string CppCastExprNode::Str() const
     return str;
 }
 
-ThisNode::ThisNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::thisNode, sourcePos_)
+ThisNode::ThisNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::thisNode, sourcePos_)
 {
 }
 
@@ -1700,11 +1706,12 @@ void ThisNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ParenthesizedExprNode::ParenthesizedExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::parenExprNode, sourcePos_, nullptr)
+ParenthesizedExprNode::ParenthesizedExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::parenExprNode, sourcePos_, nullptr)
 {
 }
 
-ParenthesizedExprNode::ParenthesizedExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+ParenthesizedExprNode::ParenthesizedExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, 
+    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     UnaryNode(NodeKind::parenExprNode, sourcePos_, child_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }
@@ -1741,7 +1748,7 @@ std::u32string ParenthesizedExprNode::Str() const
     return str;
 }
 
-FoldExprNode::FoldExprNode(const soul::ast::SourcePos& sourcePos_) : SequenceNode(NodeKind::foldExprNode, sourcePos_)
+FoldExprNode::FoldExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : SequenceNode(NodeKind::foldExprNode, sourcePos_)
 {
 }
 
@@ -1776,7 +1783,7 @@ void FoldExprNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
-NewDeclaratorNode::NewDeclaratorNode(const soul::ast::SourcePos& sourcePos_) : SequenceNode(NodeKind::newDeclaratorNode, sourcePos_)
+NewDeclaratorNode::NewDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept : SequenceNode(NodeKind::newDeclaratorNode, sourcePos_)
 {
 }
 
@@ -1795,7 +1802,7 @@ void NewDeclaratorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ArrayNewDeclaratorNode::ArrayNewDeclaratorNode(const soul::ast::SourcePos& sourcePos_) : SequenceNode(NodeKind::arrayNewDeclaratorNode, sourcePos_)
+ArrayNewDeclaratorNode::ArrayNewDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept : SequenceNode(NodeKind::arrayNewDeclaratorNode, sourcePos_)
 {
 }
 
@@ -1814,7 +1821,7 @@ void ArrayNewDeclaratorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-NewInitializerNode::NewInitializerNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::newInitializerNode, sourcePos_)
+NewInitializerNode::NewInitializerNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::newInitializerNode, sourcePos_)
 {
 }
 
@@ -1847,7 +1854,7 @@ void NewInitializerNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
-BracedInitListNode::BracedInitListNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::bracedInitListNode, sourcePos_)
+BracedInitListNode::BracedInitListNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::bracedInitListNode, sourcePos_)
 {
 }
 
@@ -1866,11 +1873,12 @@ void BracedInitListNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-DesignatedInitializerNode::DesignatedInitializerNode(const soul::ast::SourcePos& sourcePos_) : BinaryNode(NodeKind::designatedInitializerNode, sourcePos_, nullptr, nullptr)
+DesignatedInitializerNode::DesignatedInitializerNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    BinaryNode(NodeKind::designatedInitializerNode, sourcePos_, nullptr, nullptr)
 {
 }
 
-DesignatedInitializerNode::DesignatedInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* designator_, Node* initializer_) :
+DesignatedInitializerNode::DesignatedInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* designator_, Node* initializer_) noexcept :
     BinaryNode(NodeKind::designatedInitializerNode, sourcePos_, designator_, initializer_)
 {
 }
@@ -1886,11 +1894,11 @@ void DesignatedInitializerNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-DesignatorNode::DesignatorNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::designatorNode, sourcePos_, nullptr)
+DesignatorNode::DesignatorNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::designatorNode, sourcePos_, nullptr)
 {
 }
 
-DesignatorNode::DesignatorNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_) : UnaryNode(NodeKind::designatorNode, sourcePos_, identifier_)
+DesignatorNode::DesignatorNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_) noexcept : UnaryNode(NodeKind::designatorNode, sourcePos_, identifier_)
 {
 }
 
@@ -1905,11 +1913,11 @@ void DesignatorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ThrowExprNode::ThrowExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::throwExprNode, sourcePos_, nullptr)
+ThrowExprNode::ThrowExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::throwExprNode, sourcePos_, nullptr)
 {
 }
 
-ThrowExprNode::ThrowExprNode(const soul::ast::SourcePos& sourcePos_, Node* expr_) : UnaryNode(NodeKind::throwExprNode, sourcePos_, expr_)
+ThrowExprNode::ThrowExprNode(const soul::ast::SourcePos& sourcePos_, Node* expr_) noexcept : UnaryNode(NodeKind::throwExprNode, sourcePos_, expr_)
 {
 }
 

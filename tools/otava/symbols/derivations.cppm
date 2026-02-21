@@ -20,35 +20,35 @@ enum class Derivations : std::uint8_t
 constexpr int pointerShift = 4;
 constexpr int maxPointerCount = 15;
 
-constexpr Derivations operator|(Derivations left, Derivations right)
+constexpr Derivations operator|(Derivations left, Derivations right) noexcept
 {
     return Derivations(std::uint8_t(left) | std::uint8_t(right));
 }
 
-constexpr Derivations operator&(Derivations left, Derivations right)
+constexpr Derivations operator&(Derivations left, Derivations right) noexcept
 {
     return Derivations(std::uint8_t(left) & std::uint8_t(right));
 }
 
-constexpr Derivations operator~(Derivations derivations)
+constexpr Derivations operator~(Derivations derivations) noexcept
 {
     return Derivations(~std::uint8_t(derivations));
 }
 
-constexpr bool HasDerivation(Derivations derivations, Derivations derivation) { return (derivations & derivation) != Derivations::none; }
-constexpr int PointerCount(Derivations derivations) { return static_cast<int>(static_cast<std::uint8_t>(derivations & Derivations::pointerMask)) >> pointerShift; }
-constexpr Derivations SetPointerCount(Derivations derivations, int pointerCount)
+constexpr bool HasDerivation(Derivations derivations, Derivations derivation) noexcept { return (derivations & derivation) != Derivations::none; }
+constexpr int PointerCount(Derivations derivations) noexcept { return static_cast<int>(static_cast<std::uint8_t>(derivations & Derivations::pointerMask)) >> pointerShift; }
+constexpr Derivations SetPointerCount(Derivations derivations, int pointerCount) noexcept
 {
     return (derivations & ~Derivations::pointerMask) | static_cast<Derivations>(static_cast<std::uint8_t>(std::min(std::max(0, pointerCount), maxPointerCount) << pointerShift));
 }
-constexpr Derivations Plain(Derivations derivations) { return derivations & Derivations::pointerMask; }
-constexpr Derivations RemoveConst(Derivations derivations) { return derivations & ~Derivations::constDerivation; }
-constexpr Derivations RemovePointer(Derivations derivations) { return SetPointerCount(derivations, std::max(0, PointerCount(derivations) - 1)); }
-constexpr Derivations RemoveLValueRef(Derivations derivations) { return derivations & ~Derivations::lvalueRefDerivation; }
-constexpr Derivations RemoveRValueRef(const Derivations& derivations) { return derivations & ~Derivations::rvalueRefDerivation; }
-Derivations Merge(Derivations left, Derivations right);
-Derivations UnifyDerivations(Derivations left, Derivations right);
-int CountMatchingDerivations(Derivations left, Derivations right);
+constexpr Derivations Plain(Derivations derivations) noexcept { return derivations & Derivations::pointerMask; }
+constexpr Derivations RemoveConst(Derivations derivations) noexcept { return derivations & ~Derivations::constDerivation; }
+constexpr Derivations RemovePointer(Derivations derivations) noexcept { return SetPointerCount(derivations, std::max(0, PointerCount(derivations) - 1)); }
+constexpr Derivations RemoveLValueRef(Derivations derivations) noexcept { return derivations & ~Derivations::lvalueRefDerivation; }
+constexpr Derivations RemoveRValueRef(const Derivations& derivations) noexcept { return derivations & ~Derivations::rvalueRefDerivation; }
+Derivations Merge(Derivations left, Derivations right) noexcept;
+Derivations UnifyDerivations(Derivations left, Derivations right) noexcept;
+int CountMatchingDerivations(Derivations left, Derivations right) noexcept;
 
 class Writer;
 class Reader;

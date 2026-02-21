@@ -20,17 +20,17 @@ enum class Suffix : std::uint8_t
     f = 1 << 4
 };
 
-inline Suffix operator|(Suffix left, Suffix right)
+inline Suffix operator|(Suffix left, Suffix right) noexcept
 {
     return Suffix(std::uint8_t(left) | std::uint8_t(right));
 }
 
-inline Suffix operator&(Suffix left, Suffix right)
+inline Suffix operator&(Suffix left, Suffix right) noexcept
 {
     return Suffix(std::uint8_t(left) & std::uint8_t(right));
 }
 
-inline Suffix operator~(Suffix suffix)
+inline Suffix operator~(Suffix suffix) noexcept
 {
     return Suffix(~std::uint8_t(suffix));
 }
@@ -48,11 +48,11 @@ enum class EncodingPrefix : std::uint8_t
 class LiteralNode : public Node
 {
 public:
-    LiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
+    LiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept;
     LiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::u32string& rep_);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline const std::u32string& Rep() const { return rep; }
+    inline const std::u32string& Rep() const noexcept { return rep; }
     std::u32string Str() const override { return rep; }
 private:
     std::u32string rep;
@@ -61,16 +61,16 @@ private:
 class IntegerLiteralNode : public LiteralNode
 {
 public:
-    IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_);
+    IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_, std::uint64_t value_, Suffix suffix_, Base base_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline std::uint64_t Value() const { return value; }
-    inline void SetValue(std::uint64_t value_) { value = value_; }
-    inline Suffix GetSuffix() const { return suffix; }
-    inline Base GetBase() const { return base; }
+    inline std::uint64_t GetValue() const noexcept { return value; }
+    inline void SetValue(std::uint64_t value_) noexcept { value = value_; }
+    inline Suffix GetSuffix() const noexcept { return suffix; }
+    inline Base GetBase() const noexcept { return base; }
 private:
     std::uint64_t value;
     Suffix suffix;
@@ -80,15 +80,15 @@ private:
 class FloatingLiteralNode : public LiteralNode
 {
 public:
-    FloatingLiteralNode(const soul::ast::SourcePos& sourcePos_);
+    FloatingLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     FloatingLiteralNode(const soul::ast::SourcePos& sourcePos_, double value_, Suffix suffix_, Base base_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline double Value() const { return value; }
-    inline Suffix GetSuffix() const { return suffix; }
-    inline Base GetBase() const { return base; }
+    inline double GetValue() const noexcept { return value; }
+    inline Suffix GetSuffix() const noexcept { return suffix; }
+    inline Base GetBase() const noexcept { return base; }
 private:
     double value;
     Suffix suffix;
@@ -98,15 +98,15 @@ private:
 class CharacterLiteralNode : public LiteralNode
 {
 public:
-    CharacterLiteralNode(const soul::ast::SourcePos& sourcePos_);
+    CharacterLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     CharacterLiteralNode(const soul::ast::SourcePos& sourcePos_, char32_t value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_, bool hasMultipleCharacters_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline char32_t Value() const { return value; }
-    inline EncodingPrefix GetEncodingPrefix() const { return encodingPrefix; }
-    inline bool HasMultipleCharacters() const { return hasMultipleCharacters; }
+    inline char32_t GetValue() const noexcept { return value; }
+    inline EncodingPrefix GetEncodingPrefix() const noexcept { return encodingPrefix; }
+    inline bool HasMultipleCharacters() const noexcept { return hasMultipleCharacters; }
 private:
     char32_t value;
     EncodingPrefix encodingPrefix;
@@ -116,7 +116,7 @@ private:
 class StringLiteralNode : public LiteralNode
 {
 public:
-    StringLiteralNode(const soul::ast::SourcePos& sourcePos_);
+    StringLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     StringLiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
     StringLiteralNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_);
     StringLiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_);
@@ -124,8 +124,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline const std::u32string& Value() const { return value; }
-    inline EncodingPrefix GetEncodingPrefix() const { return encodingPrefix; }
+    inline const std::u32string& GetValue() const noexcept { return value; }
+    inline EncodingPrefix GetEncodingPrefix() const noexcept { return encodingPrefix; }
 private:
     std::u32string value;
     EncodingPrefix encodingPrefix;
@@ -134,13 +134,14 @@ private:
 class RawStringLiteralNode : public StringLiteralNode
 {
 public:
-    RawStringLiteralNode(const soul::ast::SourcePos& sourcePos_);
-    RawStringLiteralNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_, const std::u32string& delimSequence_, const std::u32string& rep_);
+    RawStringLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    RawStringLiteralNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_, 
+        const std::u32string& delimSequence_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline const std::u32string& DelimSequence() const { return delimSequence; }
+    inline const std::u32string& DelimSequence() const noexcept { return delimSequence; }
 private:
     std::u32string delimSequence;
 };
@@ -148,13 +149,13 @@ private:
 class BooleanLiteralNode : public LiteralNode
 {
 public:
-    BooleanLiteralNode(const soul::ast::SourcePos& sourcePos_);
+    BooleanLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     BooleanLiteralNode(const soul::ast::SourcePos& sourcePos_, bool value_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline bool Value() const { return value; }
+    inline bool GetValue() const noexcept { return value; }
 private:
     bool value;
 };
@@ -162,7 +163,7 @@ private:
 class NullPtrLiteralNode : public LiteralNode
 {
 public:
-    NullPtrLiteralNode(const soul::ast::SourcePos& sourcePos_);
+    NullPtrLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     NullPtrLiteralNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -171,8 +172,8 @@ public:
 class UserDefinedLiteraNode : public BinaryNode
 {
 public:
-    UserDefinedLiteraNode(const soul::ast::SourcePos& sourcePos_);
-    UserDefinedLiteraNode(const soul::ast::SourcePos& sourcePos_, Node* literalNode_, Node* udSuffix_);
+    UserDefinedLiteraNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    UserDefinedLiteraNode(const soul::ast::SourcePos& sourcePos_, Node* literalNode_, Node* udSuffix_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -180,18 +181,18 @@ public:
 class LiteralOperatorIdNode : public UnaryNode
 {
 public:
-    LiteralOperatorIdNode(const soul::ast::SourcePos& sourcePos_);
-    LiteralOperatorIdNode(const soul::ast::SourcePos& sourcePos_, Node* id_, const soul::ast::SourcePos& stringLitPos_);
+    LiteralOperatorIdNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    LiteralOperatorIdNode(const soul::ast::SourcePos& sourcePos_, Node* id_, const soul::ast::SourcePos& stringLitPos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline const soul::ast::SourcePos& StringLitPos() const { return stringLitPos; }
+    inline const soul::ast::SourcePos& StringLitPos() const noexcept { return stringLitPos; }
 private:
     soul::ast::SourcePos stringLitPos;
 };
 
 std::u32string EncodingPrefixStr(EncodingPrefix encodingPrefix);
-EncodingPrefix CommonEncodingPrefix(otava::ast::EncodingPrefix leftEncodingPrefix, otava::ast::EncodingPrefix rightEncodingPrefix);
+EncodingPrefix CommonEncodingPrefix(otava::ast::EncodingPrefix leftEncodingPrefix, otava::ast::EncodingPrefix rightEncodingPrefix) noexcept;
 
 } // namespace otava::ast

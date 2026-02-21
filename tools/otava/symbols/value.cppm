@@ -21,7 +21,7 @@ enum class ValueKind : std::int32_t
     none, boolValue, integerValue, floatingValue, nullPtrValue, stringValue, charValue, symbolValue, invokeValue, arrayValue
 };
 
-ValueKind CommonValueKind(ValueKind left, ValueKind right);
+ValueKind CommonValueKind(ValueKind left, ValueKind right) noexcept;
 
 bool readingEvaluationContext = false;
 bool cloning = false;
@@ -30,25 +30,25 @@ class Value : public Symbol
 {
 public:
     Value(SymbolKind symbolKind_, const std::u32string& rep_, TypeSymbol* type_);
-    inline bool IsBoolValue() const { return GetValueKind() == ValueKind::boolValue; }
-    inline bool IsIntegerValue() const { return GetValueKind() == ValueKind::integerValue; }
-    inline bool IsFloatingValue() const { return GetValueKind() == ValueKind::floatingValue; }
-    inline bool IsStringValue() const { return GetValueKind() == ValueKind::stringValue; }
-    inline bool IsCharValue() const { return GetValueKind() == ValueKind::charValue; }
-    inline bool IsNullPtrValue() const { return GetValueKind() == ValueKind::nullPtrValue; }
-    inline bool IsSymbolValue() const { return GetValueKind() == ValueKind::symbolValue; }
-    inline bool IsInvokeValue() const { return GetValueKind() == ValueKind::invokeValue; }
-    inline bool IsArrayValue() const { return GetValueKind() == ValueKind::arrayValue; }
+    inline bool IsBoolValue() const noexcept { return GetValueKind() == ValueKind::boolValue; }
+    inline bool IsIntegerValue() const noexcept { return GetValueKind() == ValueKind::integerValue; }
+    inline bool IsFloatingValue() const noexcept { return GetValueKind() == ValueKind::floatingValue; }
+    inline bool IsStringValue() const noexcept { return GetValueKind() == ValueKind::stringValue; }
+    inline bool IsCharValue() const noexcept { return GetValueKind() == ValueKind::charValue; }
+    inline bool IsNullPtrValue() const noexcept { return GetValueKind() == ValueKind::nullPtrValue; }
+    inline bool IsSymbolValue() const noexcept { return GetValueKind() == ValueKind::symbolValue; }
+    inline bool IsInvokeValue() const noexcept { return GetValueKind() == ValueKind::invokeValue; }
+    inline bool IsArrayValue() const noexcept { return GetValueKind() == ValueKind::arrayValue; }
     virtual BoolValue* ToBoolValue(EvaluationContext& context) = 0;
     virtual Value* Convert(ValueKind kind, EvaluationContext& context) = 0;
     virtual otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
-    ValueKind GetValueKind() const;
+    ValueKind GetValueKind() const noexcept;
     const std::u32string& Rep() const { return Name(); }
     virtual std::u32string ToString() const { return Rep(); }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
-    TypeSymbol* GetType() const { return type; }
+    inline TypeSymbol* GetType() const noexcept { return type; }
     virtual Value* Clone() const = 0;
 private:
     TypeSymbol* type;
@@ -73,7 +73,7 @@ public:
     BoolValue(bool value_, const std::u32string& rep_, TypeSymbol* type_);
     std::string SymbolKindStr() const override { return "bool value"; }
     std::string SymbolDocKindStr() const override { return "bool_value"; }
-    inline bool GetValue() const { return value; }
+    inline bool GetValue() const noexcept { return value; }
     BoolValue* ToBoolValue(EvaluationContext& context) override { return this; }
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     void Write(Writer& writer) override;
@@ -93,7 +93,7 @@ public:
     IntegerValue(std::int64_t value_, const std::u32string& rep_, TypeSymbol* type_);
     std::string SymbolKindStr() const override { return "integer value"; }
     std::string SymbolDocKindStr() const override { return "integer_value"; }
-    std::int64_t GetValue() const { return value; }
+    inline std::int64_t GetValue() const noexcept { return value; }
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     void Write(Writer& writer) override;
@@ -113,7 +113,7 @@ public:
     FloatingValue(double value_, const std::u32string& rep_, TypeSymbol* type_);
     std::string SymbolKindStr() const override { return "floating value"; }
     std::string SymbolDocKindStr() const override { return "floating_value"; }
-    inline double GetValue() const { return value; }
+    inline double GetValue() const noexcept { return value; }
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     void Write(Writer& writer) override;
@@ -188,7 +188,7 @@ public:
     std::string SymbolKindStr() const override { return "symbol value"; }
     std::string SymbolDocKindStr() const override { return "symbol_value"; }
     BoolValue* ToBoolValue(EvaluationContext& context) override;
-    bool IsExportSymbol(Context* context) const override;
+    bool IsExportSymbol(Context* context) const noexcept override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
@@ -211,7 +211,7 @@ public:
     std::string SymbolKindStr() const override { return "invoke value"; }
     std::string SymbolDocKindStr() const override { return "invoke_value"; }
     BoolValue* ToBoolValue(EvaluationContext& context) override;
-    bool IsExportSymbol(Context* context) const override;
+    bool IsExportSymbol(Context* context) const noexcept override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;

@@ -16,7 +16,7 @@ export namespace otava::symbols {
 
 class Value;
 
-enum class EnumTypeKind
+enum class EnumTypeKind : std::uint8_t
 {
     enum_, enumClass, enumStruct
 };
@@ -27,19 +27,19 @@ public:
     EnumeratedTypeSymbol(const std::u32string& name_);
     std::string SymbolKindStr() const override { return "enumerated type symbol"; }
     std::string SymbolDocKindStr() const override { return "enum_type"; }
-    bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
-    inline EnumTypeKind GetEnumTypeKind() const { return kind; }
-    inline void SetEnumTypeKind(EnumTypeKind kind_) { kind = kind_; }
-    inline TypeSymbol* UnderlyingType() const { return underlyingType; }
-    inline void SetUnderlyingType(TypeSymbol* underlyingType_) { underlyingType = underlyingType_; }
+    bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
+    inline EnumTypeKind GetEnumTypeKind() const noexcept { return kind; }
+    inline void SetEnumTypeKind(EnumTypeKind kind_) noexcept { kind = kind_; }
+    inline TypeSymbol* UnderlyingType() const noexcept { return underlyingType; }
+    inline void SetUnderlyingType(TypeSymbol* underlyingType_) noexcept { underlyingType = underlyingType_; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    inline bool IsBound() const { return bound; }
-    inline void SetBound() { bound = true; }
-    int Rank() const override { return underlyingType ? underlyingType->Rank() : -1; }
+    inline bool IsBound() const noexcept { return bound; }
+    inline void SetBound() noexcept { bound = true; }
+    int Rank() const noexcept override { return underlyingType ? underlyingType->Rank() : -1; }
 private:
     bool bound;
     EnumTypeKind kind;
@@ -51,15 +51,15 @@ class ForwardEnumDeclarationSymbol : public TypeSymbol
 {
 public:
     ForwardEnumDeclarationSymbol(const std::u32string& name_);
-    void SetEnumTypeKind(EnumTypeKind enumTypeKind_) { enumTypeKind = enumTypeKind_; }
-    EnumTypeKind GetEnumTypeKind() const { return enumTypeKind; }
-    TypeSymbol* GetUnderlyingType() const { return underlyingType; }
-    void SetUnderlyingType(TypeSymbol* underlyingType_) { underlyingType = underlyingType_; }
-    void SetEnumeratedTypeSymbol(EnumeratedTypeSymbol* enumTypeSymbol_) { enumTypeSymbol = enumTypeSymbol_; }
-    EnumeratedTypeSymbol* GetEnumeratedTypeSymbol() const { return enumTypeSymbol; }
+    inline void SetEnumTypeKind(EnumTypeKind enumTypeKind_) noexcept { enumTypeKind = enumTypeKind_; }
+    inline EnumTypeKind GetEnumTypeKind() const noexcept { return enumTypeKind; }
+    inline TypeSymbol* GetUnderlyingType() const noexcept { return underlyingType; }
+    inline void SetUnderlyingType(TypeSymbol* underlyingType_) noexcept { underlyingType = underlyingType_; }
+    inline void SetEnumeratedTypeSymbol(EnumeratedTypeSymbol* enumTypeSymbol_) noexcept { enumTypeSymbol = enumTypeSymbol_; }
+    inline EnumeratedTypeSymbol* GetEnumeratedTypeSymbol() const noexcept { return enumTypeSymbol; }
     std::string SymbolKindStr() const override { return "forward enum declaration symbol"; }
     std::string SymbolDocKindStr() const override { return "forward_enum"; }
-    bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
+    bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -76,17 +76,17 @@ class EnumConstantSymbol : public Symbol
 {
 public:
     EnumConstantSymbol(const std::u32string& name_);
-    Value* GetValue() const { return value; }
-    void SetValue(Value* value_) { value = value_; }
+    Value* GetValue() const noexcept { return value; }
+    void SetValue(Value* value_) noexcept { value = value_; }
     std::string SymbolKindStr() const override { return "enum constant symbol"; }
     std::string SymbolDocKindStr() const override { return "enum_constant"; }
-    bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
+    bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
-    EnumeratedTypeSymbol* GetEnumType() const { return enumType; }
-    void SetEnumType(EnumeratedTypeSymbol* enumType_) { enumType = enumType_; }
+    inline EnumeratedTypeSymbol* GetEnumType() const noexcept { return enumType; }
+    inline void SetEnumType(EnumeratedTypeSymbol* enumType_) noexcept { enumType = enumType_; }
 private:
     Value* value;
     util::uuid valueId;
@@ -96,7 +96,7 @@ private:
 
 struct EnumTypeLessFunctor
 {
-    bool operator()(EnumeratedTypeSymbol* left, EnumeratedTypeSymbol* right) const;
+    bool operator()(EnumeratedTypeSymbol* left, EnumeratedTypeSymbol* right) const noexcept;
 };
 
 class EnumTypeDefaultCtor : public FunctionSymbol
@@ -109,7 +109,7 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     util::uuid enumTypeId;
@@ -126,7 +126,7 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     util::uuid enumTypeId;
@@ -143,7 +143,7 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     util::uuid enumTypeId;
@@ -160,7 +160,7 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     util::uuid enumTypeId;
@@ -177,7 +177,7 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     util::uuid enumTypeId;

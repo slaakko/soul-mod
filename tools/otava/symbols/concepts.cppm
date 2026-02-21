@@ -19,7 +19,7 @@ class ConstraintExprSymbol : public Symbol
 public:
     ConstraintExprSymbol();
     ConstraintExprSymbol(otava::ast::Node* constraintExprNode_);
-    inline otava::ast::Node* GetConstraintExprNode() const { return constraintExprNode; }
+    inline otava::ast::Node* GetConstraintExprNode() const noexcept { return constraintExprNode; }
     std::string SymbolKindStr() const override { return "concept expression symbol"; }
     std::string SymbolDocKindStr() const override { return "concept_expr"; }
     void Accept(Visitor& visitor) override;
@@ -35,26 +35,26 @@ class ConceptSymbol : public Symbol
 {
 public:
     ConceptSymbol(const std::u32string& name_);
-    int Arity();
+    int Arity() noexcept;
     std::string SymbolKindStr() const override { return "concept symbol"; }
     std::string SymbolDocKindStr() const override { return "concept"; }
-    bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
-    TemplateDeclarationSymbol* ParentTemplateDeclaration();
+    bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
+    TemplateDeclarationSymbol* ParentTemplateDeclaration() noexcept;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void SetConstraintExpr(ConstraintExprSymbol* constraintExpr_);
-    inline ConstraintExprSymbol* GetConstraintExpr() const { return constraintExpr.get(); }
+    inline ConstraintExprSymbol* GetConstraintExpr() const noexcept { return constraintExpr.get(); }
 private:
     std::unique_ptr<ConstraintExprSymbol> constraintExpr;
 };
 
-bool IsConceptName(otava::ast::Node* node, Context* context);
+bool IsConceptName(otava::ast::Node* node, Context* context) noexcept;
 
 struct ConceptLess
 {
-    bool operator()(ConceptSymbol* left, ConceptSymbol* right) const;
+    bool operator()(ConceptSymbol* left, ConceptSymbol* right) const noexcept;
 };
 
 void ProcessConcept(otava::ast::Node* node, Context* context);

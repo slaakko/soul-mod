@@ -510,6 +510,16 @@ std::string MakeRelativeDirPath(const std::string& dirPath, const std::string& r
     return result;
 }
 
+void CreateDirectories(const std::string& dirPath)
+{
+    std::filesystem::create_directories(dirPath);
+}
+
+std::int64_t LastWriteTime(const std::string& path)
+{
+    return std::filesystem::last_write_time(path).time_since_epoch().count();
+}
+
 std::string MakeNativePath(const std::string& path)
 {
 #ifdef _WIN32

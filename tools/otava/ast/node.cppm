@@ -25,7 +25,7 @@ std::string NodeTypeStr(NodeType nodeType);
 
 using NodeDestroyedFunc = void(*)(Node*);
 
-void SetNodeDestroyedFunc(NodeDestroyedFunc func);
+void SetNodeDestroyedFunc(NodeDestroyedFunc func) noexcept;
 
 constexpr std::int32_t internallyMappedFlag = 0x40000000;
 constexpr std::int32_t destructorNodeId = 0x20000000;
@@ -84,7 +84,7 @@ enum class NodeKind : std::uint16_t
     conceptDefinitionNode, requiresExprNode, requirementBodyNode, simpleRequirementNode, typeRequirementNode, compoundRequirementNode, returnTypeRequirementNode, 
     nestedRequirementNode,
     typeConstraintNode, requiresClauseNode,
-    attributeSpecifierSequenceNode, attributeSpecifierNode, attributeUsingPrefixNode, attrbuteNode, attributeScopedTokenNode, 
+    attributeSpecifierSequenceNode, attributeSpecifierNode, attributeUsingPrefixNode, attributeNode, attributeScopedTokenNode,
     attributeArgumentsNode, balancedTokenSequenceNode, tokenNode,
     lparenNode, rparenNode, lbracketNode, rbracketNode, lbraceNode, rbraceNode, alignmentSpecifierNode,
     pragmaNode, boundStatementNode,
@@ -96,64 +96,64 @@ std::string NodeKindStr(NodeKind nodeKind);
 class Node
 {
 public:
-    Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
+    Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept;
     virtual ~Node();
     virtual Node* Clone() const = 0;
-    inline NodeKind Kind() const { return kind; }
-    inline void SetId(std::int64_t id_) { id = id_; }
+    inline NodeKind Kind() const noexcept { return kind; }
+    inline void SetId(std::int64_t id_) noexcept { id = id_; }
     virtual std::u32string Str() const { return std::u32string(); }
-    virtual NodeType Type() const { return NodeType::single; }
-    virtual int Count() const { return 0; }
-    inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
-    inline void SetSourcePos(const soul::ast::SourcePos& sourcePos_) { sourcePos = sourcePos_; }
+    virtual NodeType Type() const noexcept { return NodeType::single; }
+    virtual int Count() const noexcept { return 0; }
+    inline const soul::ast::SourcePos& GetSourcePos() const noexcept { return sourcePos; }
+    inline void SetSourcePos(const soul::ast::SourcePos& sourcePos_) noexcept { sourcePos = sourcePos_; }
     virtual void Accept(Visitor& visitor) = 0;
     virtual void Write(Writer& writer);
     virtual void Read(Reader& reader);
     virtual void AddNode(Node* node);
     virtual void Clear();
-    inline Node* Parent() const { return parent; }
-    inline void SetParent(Node* parent_) { parent = parent_; }
-    inline std::int32_t NodeId() const { return id & 0xFFFFFFFF; }
-    inline std::int64_t InternalId() const { return id & ~internallyMappedFlag; }
-    inline bool IsInternallyMapped() const { return (id & internallyMappedFlag) != 0; }
-    inline bool IsImportDeclarationNode() const { return kind == NodeKind::importDeclarationNode; }
-    inline bool IsClassNode() const { return kind == NodeKind::classNode; }
-    inline bool IsStructNode() const { return kind == NodeKind::structNode;  }
-    inline bool IsUnionNode() const { return kind == NodeKind::unionNode; }
-    inline bool IsClassSpecifierNode() const { return kind == NodeKind::classSpecifierNode; }
-    inline bool IsCompoundStatementNode() const { return kind == NodeKind::compoundStatementNode; }
-    inline bool IsSequenceStatemetnNode() const { return kind == NodeKind::sequenceStatementNode; }
-    inline bool IsReturnStatementNode() const { return kind == NodeKind::returnStatementNode; }
-    inline bool IsInitConditionNode() const { return kind == NodeKind::initConditionNode; }
-    inline bool IsCtorInitializerNode() const { return kind == NodeKind::constructorInitializerNode; }
-    inline bool IsFunctionBodyNode() const { return kind == NodeKind::functionBodyNode; }
-    inline bool IsConstructorNode() const { return kind == NodeKind::constructorNode; }
-    inline bool IsEnumeratorNode() const { return kind == NodeKind::enumeratorNode; }
-    inline bool IsIdentifierNode() const { return kind == NodeKind::identifierNode; }
-    inline bool IsQualifiedIdNode() const { return kind == NodeKind::qualifiedIdNode; }
-    inline bool IsTemplateIdNode() const { return kind == NodeKind::templateIdNode; }
-    inline bool IsArrowNode() const { return kind == NodeKind::arrowNode; }
-    inline bool IsDotNode() const { return kind == NodeKind::dotNode; }
-    inline bool IsInvokeExprNode() const { return kind == NodeKind::invokeExprNode; }
-    inline bool IsMemberExprNode() const { return kind == NodeKind::memberExprNode; }
-    inline bool IsBinaryExprNode() const { return kind == NodeKind::binaryExprNode; }
-    inline bool IsDefaultedOrDeletedFunctionNode() const { return kind == NodeKind::defaultedOrDeletedFunctionNode; }
-    inline bool IsStringLiteralNode() const { return kind == NodeKind::stringLiteralNode; }
-    inline bool IsFunctionDefinitionNode() const { return kind == NodeKind::functionDefinitionNode; }
-    inline bool IsNewPlacementNode() const { return kind == NodeKind::newPlacementNode; }
-    inline bool IsCommaNode() const { return kind == NodeKind::commaNode; }
-    inline bool IsStaticNode() const { return kind == NodeKind::staticNode; }
-    inline bool IsBoundStatementNode() const { return kind == NodeKind::boundStatementNode; }
-    inline bool IsInitDeclaratorNode() const { return kind == NodeKind::initDeclaratorNode; }
-    inline bool IsAliasDeclarationNode() const { return kind == NodeKind::aliasDeclarationNode; }
-    inline bool IsLBraceNode() const { return kind == NodeKind::lbraceNode; }
-    inline bool IsRBraceNode() const { return kind == NodeKind::rbraceNode; }
-    inline bool IsFunctionDeclaratorNode() const { return kind == NodeKind::functionDeclaratorNode; }
-    inline bool IsTypenameSpecifierNode() const { return kind == NodeKind::typenameSpecifierNode; }
-    inline bool IsConstNode() const { return kind == NodeKind::constNode; }
-    inline bool IsLvalueRefNode() const { return kind == NodeKind::lvalueRefNode; }
-    inline bool IsRvalueRefNode() const { return kind == NodeKind::rvalueRefNode; }
-    inline bool IsPtrNode() const { return kind == NodeKind::ptrNode; }
+    inline Node* Parent() const noexcept { return parent; }
+    inline void SetParent(Node* parent_) noexcept { parent = parent_; }
+    inline std::int32_t NodeId() const noexcept { return id & 0xFFFFFFFF; }
+    inline std::int64_t InternalId() const noexcept { return id & ~internallyMappedFlag; }
+    inline bool IsInternallyMapped() const noexcept { return (id & internallyMappedFlag) != 0; }
+    inline bool IsImportDeclarationNode() const noexcept { return kind == NodeKind::importDeclarationNode; }
+    inline bool IsClassNode() const noexcept { return kind == NodeKind::classNode; }
+    inline bool IsStructNode() const noexcept { return kind == NodeKind::structNode;  }
+    inline bool IsUnionNode() const noexcept { return kind == NodeKind::unionNode; }
+    inline bool IsClassSpecifierNode() const noexcept { return kind == NodeKind::classSpecifierNode; }
+    inline bool IsCompoundStatementNode() const noexcept { return kind == NodeKind::compoundStatementNode; }
+    inline bool IsSequenceStatemetnNode() const noexcept { return kind == NodeKind::sequenceStatementNode; }
+    inline bool IsReturnStatementNode() const noexcept { return kind == NodeKind::returnStatementNode; }
+    inline bool IsInitConditionNode() const noexcept { return kind == NodeKind::initConditionNode; }
+    inline bool IsCtorInitializerNode() const noexcept { return kind == NodeKind::constructorInitializerNode; }
+    inline bool IsFunctionBodyNode() const noexcept { return kind == NodeKind::functionBodyNode; }
+    inline bool IsConstructorNode() const noexcept { return kind == NodeKind::constructorNode; }
+    inline bool IsEnumeratorNode() const noexcept { return kind == NodeKind::enumeratorNode; }
+    inline bool IsIdentifierNode() const noexcept { return kind == NodeKind::identifierNode; }
+    inline bool IsQualifiedIdNode() const noexcept { return kind == NodeKind::qualifiedIdNode; }
+    inline bool IsTemplateIdNode() const noexcept { return kind == NodeKind::templateIdNode; }
+    inline bool IsArrowNode() const noexcept { return kind == NodeKind::arrowNode; }
+    inline bool IsDotNode() const noexcept { return kind == NodeKind::dotNode; }
+    inline bool IsInvokeExprNode() const noexcept { return kind == NodeKind::invokeExprNode; }
+    inline bool IsMemberExprNode() const noexcept { return kind == NodeKind::memberExprNode; }
+    inline bool IsBinaryExprNode() const noexcept { return kind == NodeKind::binaryExprNode; }
+    inline bool IsDefaultedOrDeletedFunctionNode() const noexcept { return kind == NodeKind::defaultedOrDeletedFunctionNode; }
+    inline bool IsStringLiteralNode() const noexcept { return kind == NodeKind::stringLiteralNode; }
+    inline bool IsFunctionDefinitionNode() const noexcept { return kind == NodeKind::functionDefinitionNode; }
+    inline bool IsNewPlacementNode() const noexcept { return kind == NodeKind::newPlacementNode; }
+    inline bool IsCommaNode() const noexcept { return kind == NodeKind::commaNode; }
+    inline bool IsStaticNode() const noexcept { return kind == NodeKind::staticNode; }
+    inline bool IsBoundStatementNode() const noexcept { return kind == NodeKind::boundStatementNode; }
+    inline bool IsInitDeclaratorNode() const noexcept { return kind == NodeKind::initDeclaratorNode; }
+    inline bool IsAliasDeclarationNode() const noexcept { return kind == NodeKind::aliasDeclarationNode; }
+    inline bool IsLBraceNode() const noexcept { return kind == NodeKind::lbraceNode; }
+    inline bool IsRBraceNode() const noexcept { return kind == NodeKind::rbraceNode; }
+    inline bool IsFunctionDeclaratorNode() const noexcept { return kind == NodeKind::functionDeclaratorNode; }
+    inline bool IsTypenameSpecifierNode() const noexcept { return kind == NodeKind::typenameSpecifierNode; }
+    inline bool IsConstNode() const noexcept { return kind == NodeKind::constNode; }
+    inline bool IsLvalueRefNode() const noexcept { return kind == NodeKind::lvalueRefNode; }
+    inline bool IsRvalueRefNode() const noexcept { return kind == NodeKind::rvalueRefNode; }
+    inline bool IsPtrNode() const noexcept { return kind == NodeKind::ptrNode; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;
@@ -164,21 +164,21 @@ private:
 class CompoundNode : public Node
 {
 public:
-    CompoundNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
-    NodeType Type() const override { return NodeType::compound; }
+    CompoundNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept;
+    NodeType Type() const noexcept override { return NodeType::compound; }
 };
 
 class UnaryNode : public Node
 {
 public:
-    UnaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* child_);
+    UnaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept;
     UnaryNode(const UnaryNode&) = delete;
     UnaryNode& operator=(const UnaryNode&) = delete;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    NodeType Type() const override { return NodeType::unary; }
-    int Count() const override { return 1; }
-    inline Node* Child() const { return child.get(); }
+    NodeType Type() const noexcept override { return NodeType::unary; }
+    int Count() const noexcept override { return 1; }
+    inline Node* Child() const noexcept  { return child.get(); }
     std::u32string Str() const override;
 private:
     std::unique_ptr<Node> child;
@@ -187,15 +187,15 @@ private:
 class BinaryNode : public Node
 {
 public:
-    BinaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* left_, Node* right_);
+    BinaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* left_, Node* right_) noexcept;
     BinaryNode(const BinaryNode&) = delete;
     BinaryNode& operator=(const BinaryNode&) = delete;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    NodeType Type() const override { return NodeType::binary; }
-    int Count() const override { return 2; }
-    inline Node* Left() const { return left.get(); }
-    inline Node* Right() const { return right.get(); }
+    NodeType Type() const noexcept override { return NodeType::binary; }
+    int Count() const noexcept override { return 2; }
+    inline Node* Left() const noexcept { return left.get(); }
+    inline Node* Right() const noexcept { return right.get(); }
     std::u32string Str() const override;
 private:
     std::unique_ptr<Node> left;
@@ -205,16 +205,16 @@ private:
 class SequenceNode : public Node
 {
 public:
-    SequenceNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
+    SequenceNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    NodeType Type() const override { return NodeType::sequence; }
-    int Count() const override { return nodes.Count(); }
+    NodeType Type() const noexcept override { return NodeType::sequence; }
+    int Count() const noexcept override { return nodes.Count(); }
     void AddNode(Node* node) override;
     void InsertNode(int index, Node* node);
     void Clear() override;
-    inline NodeList<Node>& Nodes() { return nodes; }
-    inline const NodeList<Node>& Nodes() const { return nodes; }
+    inline NodeList<Node>& Nodes() noexcept { return nodes; }
+    inline const NodeList<Node>& Nodes() const noexcept { return nodes; }
     std::u32string Str() const override;
 private:
     NodeList<Node> nodes;
@@ -223,16 +223,16 @@ private:
 class ListNode : public Node
 {
 public:
-    ListNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
+    ListNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    NodeType Type() const override { return NodeType::list; }
-    int Count() const override { return nodes.Count(); }
+    NodeType Type() const noexcept override { return NodeType::list; }
+    int Count() const noexcept override { return nodes.Count(); }
     void AddNode(Node* node) override;
     void Clear() override;
-    inline NodeList<Node>& Nodes() { return nodes; }
-    inline const NodeList<Node>& Nodes() const { return nodes; }
-    inline const std::vector<Node*>& Items() const { return items; }
+    inline NodeList<Node>& Nodes() noexcept { return nodes; }
+    inline const NodeList<Node>& Nodes() const noexcept { return nodes; }
+    inline const std::vector<Node*>& Items() const noexcept { return items; }
     std::u32string Str() const override;
 private:
     NodeList<Node> nodes;
@@ -242,11 +242,11 @@ private:
 class NodeIdFactory
 {
 public:
-    NodeIdFactory();
-    void SetInternallyMapped(bool internallyMapped_);
-    bool IsInternallyMapped() const;
-    inline void SetModuleId(std::int32_t moduleId_) { moduleId = moduleId_; }
-    std::int64_t GetNextNodeId();
+    NodeIdFactory() noexcept;
+    void SetInternallyMapped(bool internallyMapped_) noexcept;
+    bool IsInternallyMapped() const noexcept;
+    inline void SetModuleId(std::int32_t moduleId_) noexcept { moduleId = moduleId_; }
+    std::int64_t GetNextNodeId() noexcept;
 private:
     std::int32_t moduleId;
     std::int32_t nodeId;
@@ -254,8 +254,8 @@ private:
 };
 
 void MakeNodeFactoryCollection();
-void SetNodeIdFactory(NodeIdFactory* factory);
+void SetNodeIdFactory(NodeIdFactory* factory) noexcept;
 Node* CreateNode(NodeKind nodeKind, const soul::ast::SourcePos& sourcePos);
-std::int64_t GetNextNodeId();
+std::int64_t GetNextNodeId() noexcept;
 
 } // namespace otava::ast

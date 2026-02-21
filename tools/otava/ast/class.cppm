@@ -14,19 +14,19 @@ export namespace otava::ast {
 class ClassSpecifierNode : public SequenceNode
 {
 public:
-    ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_);
-    ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classHead_);
+    ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classHead_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline Node* ClassHead() const { return classHead.get(); }
-    inline void SetLBracePos(const soul::ast::SourcePos& lbPos_) { lbPos = lbPos_; }
-    inline void SetRBracePos(const soul::ast::SourcePos& rbPos_) { rbPos = rbPos_; }
-    inline const soul::ast::SourcePos& LBracePos() const { return lbPos; }
-    inline const soul::ast::SourcePos& RBracePos() const { return rbPos; }
-    inline bool Complete() const { return complete; }
-    inline void SetComplete() { complete = true; }
+    inline Node* ClassHead() const noexcept { return classHead.get(); }
+    inline void SetLBracePos(const soul::ast::SourcePos& lbPos_) noexcept { lbPos = lbPos_; }
+    inline void SetRBracePos(const soul::ast::SourcePos& rbPos_) noexcept { rbPos = rbPos_; }
+    inline const soul::ast::SourcePos& LBracePos() const noexcept { return lbPos; }
+    inline const soul::ast::SourcePos& RBracePos() const noexcept { return rbPos; }
+    inline bool Complete() const noexcept { return complete; }
+    inline void SetComplete() noexcept { complete = true; }
 private:
     std::unique_ptr<Node> classHead;
     soul::ast::SourcePos lbPos;
@@ -37,17 +37,17 @@ private:
 class ClassHeadNode : public CompoundNode
 {
 public:
-    ClassHeadNode(const soul::ast::SourcePos& sourcePos_);
-    ClassHeadNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* classHeadName_, Node* classVirtSpecifier_, Node* baseClause_, Node* attributes_);
+    ClassHeadNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ClassHeadNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* classHeadName_, Node* classVirtSpecifier_, Node* baseClause_, Node* attributes_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline Node* ClassKey() const { return classKey.get(); }
-    inline Node* ClassHeadName() const { return classHeadName.get(); }
-    inline Node* ClassVirtSpecifier() const { return classVirtSpecifier.get(); }
-    inline Node* BaseClause() const { return baseClause.get(); }
-    inline Node* Attibutes() const { return attributes.get(); }
+    inline Node* ClassKey() const noexcept { return classKey.get(); }
+    inline Node* ClassHeadName() const noexcept { return classHeadName.get(); }
+    inline Node* ClassVirtSpecifier() const noexcept { return classVirtSpecifier.get(); }
+    inline Node* BaseClause() const noexcept { return baseClause.get(); }
+    inline Node* Attibutes() const noexcept { return attributes.get(); }
 private:
     std::unique_ptr<Node> classKey;
     std::unique_ptr<Node> classHeadName;
@@ -59,8 +59,8 @@ private:
 class BaseClauseNode : public UnaryNode
 {
 public:
-    BaseClauseNode(const soul::ast::SourcePos& sourcePos_);
-    BaseClauseNode(const soul::ast::SourcePos& sourcePos_, Node* baseSpecifierList_);
+    BaseClauseNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    BaseClauseNode(const soul::ast::SourcePos& sourcePos_, Node* baseSpecifierList_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -68,7 +68,7 @@ public:
 class BaseSpecifierListNode : public ListNode
 {
 public:
-    BaseSpecifierListNode(const soul::ast::SourcePos& sourcePos_);
+    BaseSpecifierListNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -76,17 +76,18 @@ public:
 class BaseSpecifierNode : public CompoundNode
 {
 public:
-    BaseSpecifierNode(const soul::ast::SourcePos& sourcePos_);
-    BaseSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classOrDeclType_, Node* accessSpecifier_, Node* virtualSpecifier_, Node* attributes_, bool virtualFirst_);
+    BaseSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    BaseSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classOrDeclType_, Node* accessSpecifier_, Node* virtualSpecifier_, Node* attributes_, 
+        bool virtualFirst_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline Node* ClassOrDeclType() const { return classOrDeclType.get(); }
-    inline Node* AccessSpecifier() const { return accessSpecifier.get(); }
-    inline Node* VirtualSpecifier() const { return virtualSpecifier.get(); }
-    inline Node* Attributes() const { return attributes.get(); }
-    inline bool VirtualFirst() const { return virtualFirst; }
+    inline Node* ClassOrDeclType() const noexcept { return classOrDeclType.get(); }
+    inline Node* AccessSpecifier() const noexcept { return accessSpecifier.get(); }
+    inline Node* VirtualSpecifier() const noexcept { return virtualSpecifier.get(); }
+    inline Node* Attributes() const noexcept { return attributes.get(); }
+    inline bool VirtualFirst() const noexcept { return virtualFirst; }
 private:
     std::unique_ptr<Node> classOrDeclType;
     std::unique_ptr<Node> accessSpecifier;
@@ -98,13 +99,13 @@ private:
 class BeginAccessGroupNode : public UnaryNode
 {
 public:
-    BeginAccessGroupNode(const soul::ast::SourcePos& sourcePos_);
-    BeginAccessGroupNode(const soul::ast::SourcePos& sourcePos_, Node* accessSpecifier_, const soul::ast::SourcePos& colonPos_);
+    BeginAccessGroupNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    BeginAccessGroupNode(const soul::ast::SourcePos& sourcePos_, Node* accessSpecifier_, const soul::ast::SourcePos& colonPos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline const soul::ast::SourcePos& ColonPos() const { return colonPos; }
+    inline const soul::ast::SourcePos& ColonPos() const noexcept { return colonPos; }
 private:
     soul::ast::SourcePos colonPos;
 };
@@ -112,16 +113,16 @@ private:
 class MemberDeclarationNode : public CompoundNode
 {
 public:
-    MemberDeclarationNode(const soul::ast::SourcePos& sourcePos_);
-    MemberDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* declSpecifiers_, Node* memberDeclarators_, Node* semicolon_);
+    MemberDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    MemberDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* declSpecifiers_, Node* memberDeclarators_, Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline Node* Attributes() const { return attributes.get(); }
-    inline Node* DeclSpecifiers() const { return declSpecifiers.get(); }
-    inline Node* MemberDeclarators() const { return memberDeclarators.get(); }
-    inline Node* Semicolon() const { return semicolon.get(); }
+    inline Node* Attributes() const noexcept { return attributes.get(); }
+    inline Node* DeclSpecifiers() const noexcept { return declSpecifiers.get(); }
+    inline Node* MemberDeclarators() const noexcept { return memberDeclarators.get(); }
+    inline Node* Semicolon() const noexcept { return semicolon.get(); }
 private:
     std::unique_ptr<Node> attributes;
     std::unique_ptr<Node> declSpecifiers;
@@ -132,7 +133,7 @@ private:
 class MemberDeclaratorListNode : public ListNode
 {
 public:
-    MemberDeclaratorListNode(const soul::ast::SourcePos& sourcePos_);
+    MemberDeclaratorListNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -140,8 +141,8 @@ public:
 class ConstructorNode : public BinaryNode
 {
 public:
-    ConstructorNode(const soul::ast::SourcePos& sourcePos_);
-    ConstructorNode(const soul::ast::SourcePos& sourcePos_, Node* constructorInitializer_, Node* compoundStatement_);
+    ConstructorNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ConstructorNode(const soul::ast::SourcePos& sourcePos_, Node* constructorInitializer_, Node* compoundStatement_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -149,18 +150,18 @@ public:
 class ConstructorInitializerNode : public CompoundNode
 {
 public:
-    ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_);
-    ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* memberInitializerList_);
-    inline Node* MemberInitializerListNode() const { return memberInitializerListNode.get(); }
-    void SetMemberInitializerListNode(Node* memberInitializerListNode_);
+    ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* memberInitializerList_) noexcept;
+    inline Node* MemberInitializerListNode() const noexcept { return memberInitializerListNode.get(); }
+    void SetMemberInitializerListNode(Node* memberInitializerListNode_) noexcept;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    void SetLexerPosPair(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair_);
-    inline const soul::ast::lexer::pos::pair::LexerPosPair& GetLexerPosPair() const { return lexerPosPair; }
-    inline void* FunctionScope() const { return functionScope; }
-    inline void SetFunctionScope(void* functionScope_) { functionScope = functionScope_; }
+    void SetLexerPosPair(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair_) noexcept;
+    inline const soul::ast::lexer::pos::pair::LexerPosPair& GetLexerPosPair() const noexcept { return lexerPosPair; }
+    inline void* FunctionScope() const noexcept { return functionScope; }
+    inline void SetFunctionScope(void* functionScope_) noexcept { functionScope = functionScope_; }
 private:
     std::unique_ptr<Node> memberInitializerListNode;
     soul::ast::lexer::pos::pair::LexerPosPair lexerPosPair;
@@ -170,7 +171,7 @@ private:
 class MemberInitializerListNode : public ListNode
 {
 public:
-    MemberInitializerListNode(const soul::ast::SourcePos& sourcePos_);
+    MemberInitializerListNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -178,8 +179,8 @@ public:
 class MemberInitializerNode : public BinaryNode
 {
 public:
-    MemberInitializerNode(const soul::ast::SourcePos& sourcePos_);
-    MemberInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* id_, Node* initializer_);
+    MemberInitializerNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    MemberInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* id_, Node* initializer_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -187,7 +188,7 @@ public:
 class VirtSpecifierSequenceNode : public SequenceNode
 {
 public:
-    VirtSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_);
+    VirtSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -195,7 +196,7 @@ public:
 class ClassNode : public Node
 {
 public:
-    ClassNode(const soul::ast::SourcePos& sourcePos_);
+    ClassNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -203,7 +204,7 @@ public:
 class StructNode : public Node
 {
 public:
-    StructNode(const soul::ast::SourcePos& sourcePos_);
+    StructNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -211,7 +212,7 @@ public:
 class UnionNode : public Node
 {
 public:
-    UnionNode(const soul::ast::SourcePos& sourcePos_);
+    UnionNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -219,7 +220,7 @@ public:
 class PublicNode : public Node
 {
 public:
-    PublicNode(const soul::ast::SourcePos& sourcePos_);
+    PublicNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -227,7 +228,7 @@ public:
 class ProtectedNode : public Node
 {
 public:
-    ProtectedNode(const soul::ast::SourcePos& sourcePos_);
+    ProtectedNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -235,7 +236,7 @@ public:
 class PrivateNode : public Node
 {
 public:
-    PrivateNode(const soul::ast::SourcePos& sourcePos_);
+    PrivateNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -243,7 +244,7 @@ public:
 class VirtualNode : public Node
 {
 public:
-    VirtualNode(const soul::ast::SourcePos& sourcePos_);
+    VirtualNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -251,7 +252,7 @@ public:
 class OverrideNode : public Node
 {
 public:
-    OverrideNode(const soul::ast::SourcePos& sourcePos_);
+    OverrideNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -259,7 +260,7 @@ public:
 class FinalNode : public Node
 {
 public:
-    FinalNode(const soul::ast::SourcePos& sourcePos_);
+    FinalNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -267,13 +268,13 @@ public:
 class PureSpecifierNode : public Node
 {
 public:
-    PureSpecifierNode(const soul::ast::SourcePos& sourcePos_);
-    PureSpecifierNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& zeroPos_);
+    PureSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    PureSpecifierNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& zeroPos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline const soul::ast::SourcePos& ZeroPos() const { return zeroPos; }
+    inline const soul::ast::SourcePos& ZeroPos() const noexcept { return zeroPos; }
 private:
     soul::ast::SourcePos zeroPos;
 };

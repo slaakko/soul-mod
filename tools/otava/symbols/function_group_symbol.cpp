@@ -23,7 +23,7 @@ FunctionGroupSymbol::FunctionGroupSymbol(const std::u32string& name_) : Symbol(S
 {
 }
 
-bool FunctionGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
+bool FunctionGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcept
 {
     switch (scopeKind)
     {
@@ -39,7 +39,7 @@ bool FunctionGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
     return false;
 }
 
-Symbol* FunctionGroupSymbol::GetSingleSymbol() 
+Symbol* FunctionGroupSymbol::GetSingleSymbol() noexcept
 {
     if (functions.size() == 1)
     {
@@ -51,8 +51,8 @@ Symbol* FunctionGroupSymbol::GetSingleSymbol()
     }
 }
 
-FunctionDefinitionSymbol* FunctionGroupSymbol::GetSingleDefinition()
-{
+FunctionDefinitionSymbol* FunctionGroupSymbol::GetSingleDefinition() noexcept
+{ 
     if (definitions.size() == 1)
     {
         return definitions.front();
@@ -249,7 +249,7 @@ void FunctionGroupSymbol::SetVTabIndex(FunctionSymbol* function, int vtabIndex, 
     }
     for (FunctionDefinitionSymbol* def : definitions)
     {
-        if (def != function && FunctionMatches(def, function, context))
+        if (function != def && FunctionMatches(def, function, context))
         {
             def->SetVTabIndex(vtabIndex);
         }
@@ -387,7 +387,7 @@ void FunctionGroupSymbol::CollectBestMatchingViableFunctionTemplates(int arity, 
         int score = MatchFunctionTemplate(functionDefinition, templateArgs, context);
         if (score >= 0)
         {
-            functionDefScores.push_back(std::make_pair(functionDefinition, score));
+            functionDefScores.push_back(std::make_pair(static_cast<FunctionSymbol*>(functionDefinition), score));
         }
     }
     std::sort(functionDefScores.begin(), functionDefScores.end(), FunctionScoreGreater());

@@ -11,11 +11,12 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-EnumSpecifierNode::EnumSpecifierNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::enumSpecifierNode, sourcePos_)
+EnumSpecifierNode::EnumSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::enumSpecifierNode, sourcePos_)
 {
 }
 
-EnumSpecifierNode::EnumSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* enumHead_) : ListNode(NodeKind::enumSpecifierNode, sourcePos_), enumHead(enumHead_)
+EnumSpecifierNode::EnumSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* enumHead_) noexcept : 
+    ListNode(NodeKind::enumSpecifierNode, sourcePos_), enumHead(enumHead_)
 {
 }
 
@@ -50,11 +51,11 @@ void EnumSpecifierNode::Read(Reader& reader)
     rbPos = reader.ReadSourcePos();
 }
 
-EnumHeadNode::EnumHeadNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::enumHeadNode, sourcePos_)
+EnumHeadNode::EnumHeadNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::enumHeadNode, sourcePos_)
 {
 }
 
-EnumHeadNode::EnumHeadNode(const soul::ast::SourcePos& sourcePos_, Node* enumKey_, Node* enumHeadName_, Node* enumBase_, Node* attributes_) :
+EnumHeadNode::EnumHeadNode(const soul::ast::SourcePos& sourcePos_, Node* enumKey_, Node* enumHeadName_, Node* enumBase_, Node* attributes_) noexcept :
     CompoundNode(NodeKind::enumHeadNode, sourcePos_), enumKey(enumKey_), enumHeadName(enumHeadName_), enumBase(enumBase_), attributes(attributes_)
 {
 }
@@ -98,11 +99,11 @@ void EnumHeadNode::Read(Reader& reader)
     attributes.reset(reader.ReadNode());
 }
 
-EnumBaseNode::EnumBaseNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::enumBaseNode, sourcePos_, nullptr)
+EnumBaseNode::EnumBaseNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::enumBaseNode, sourcePos_, nullptr)
 {
 }
 
-EnumBaseNode::EnumBaseNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_) : UnaryNode(NodeKind::enumBaseNode, sourcePos_, typeSpecifiers_)
+EnumBaseNode::EnumBaseNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_) noexcept : UnaryNode(NodeKind::enumBaseNode, sourcePos_, typeSpecifiers_)
 {
 }
 
@@ -117,11 +118,12 @@ void EnumBaseNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-EnumClassNode::EnumClassNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::enumClassNode, sourcePos_)
+EnumClassNode::EnumClassNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::enumClassNode, sourcePos_)
 {
 }
 
-EnumClassNode::EnumClassNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& classPos_) : CompoundNode(NodeKind::enumClassNode, sourcePos_), classPos(classPos_)
+EnumClassNode::EnumClassNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& classPos_) noexcept : 
+    CompoundNode(NodeKind::enumClassNode, sourcePos_), classPos(classPos_)
 {
 }
 
@@ -148,11 +150,11 @@ void EnumClassNode::Read(Reader& reader)
     classPos = reader.ReadSourcePos();
 }
 
-EnumStructNode::EnumStructNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::enumStructNode, sourcePos_)
+EnumStructNode::EnumStructNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::enumStructNode, sourcePos_)
 {
 }
 
-EnumStructNode::EnumStructNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& structPos_) : 
+EnumStructNode::EnumStructNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& structPos_) noexcept :
     CompoundNode(NodeKind::enumStructNode, sourcePos_), structPos(structPos_)
 {
 }
@@ -180,7 +182,7 @@ void EnumStructNode::Read(Reader& reader)
     structPos = reader.ReadSourcePos();
 }
 
-EnumNode::EnumNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::enumNode, sourcePos_)
+EnumNode::EnumNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::enumNode, sourcePos_)
 {
 }
 
@@ -195,11 +197,12 @@ void EnumNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-EnumeratorDefinitionNode::EnumeratorDefinitionNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::enumeratorDefinitionNode, sourcePos_)
+EnumeratorDefinitionNode::EnumeratorDefinitionNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::enumeratorDefinitionNode, sourcePos_)
 {
 }
 
-EnumeratorDefinitionNode::EnumeratorDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* enumerator_, Node* value_, const soul::ast::SourcePos& assignPos_) :
+EnumeratorDefinitionNode::EnumeratorDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* enumerator_, Node* value_, 
+    const soul::ast::SourcePos& assignPos_) noexcept :
     CompoundNode(NodeKind::enumeratorDefinitionNode, sourcePos_), enumerator(enumerator_), value(value_), assignPos(assignPos_)
 {
 }
@@ -236,11 +239,11 @@ void EnumeratorDefinitionNode::Read(Reader& reader)
     assignPos = reader.ReadSourcePos();
 }
 
-EnumeratorNode::EnumeratorNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::enumeratorNode, sourcePos_)
+EnumeratorNode::EnumeratorNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::enumeratorNode, sourcePos_)
 {
 }
 
-EnumeratorNode::EnumeratorNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* attributes_) :
+EnumeratorNode::EnumeratorNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* attributes_) noexcept :
     CompoundNode(NodeKind::enumeratorNode, sourcePos_), identifier(identifier_), attributes(attributes_)
 {
 }
@@ -275,11 +278,12 @@ void EnumeratorNode::Read(Reader& reader)
     attributes.reset(reader.ReadNode());
 }
 
-ElaboratedEnumSpecifierNode::ElaboratedEnumSpecifierNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::elaboratedEnumSpecifierNode, sourcePos_, nullptr)
+ElaboratedEnumSpecifierNode::ElaboratedEnumSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    UnaryNode(NodeKind::elaboratedEnumSpecifierNode, sourcePos_, nullptr)
 {
 }
 
-ElaboratedEnumSpecifierNode::ElaboratedEnumSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* enumName_) :
+ElaboratedEnumSpecifierNode::ElaboratedEnumSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* enumName_) noexcept :
     UnaryNode(NodeKind::elaboratedEnumSpecifierNode, sourcePos_, enumName_)
 {
 }
@@ -295,12 +299,14 @@ void ElaboratedEnumSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-OpaqueEnumDeclarationNode::OpaqueEnumDeclarationNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::opaqueEnumDeclarationNode, sourcePos_)
+OpaqueEnumDeclarationNode::OpaqueEnumDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::opaqueEnumDeclarationNode, sourcePos_)
 {
 }
 
-OpaqueEnumDeclarationNode::OpaqueEnumDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* enumKey_, Node* enumHeadName_, Node* enumBase_, Node* attributes_, Node* semicolon_) :
-    CompoundNode(NodeKind::opaqueEnumDeclarationNode, sourcePos_), enumKey(enumKey_), enumHeadName(enumHeadName_), enumBase(enumBase_), attributes(attributes_), semicolon(semicolon_)
+OpaqueEnumDeclarationNode::OpaqueEnumDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* enumKey_, Node* enumHeadName_, Node* enumBase_, 
+    Node* attributes_, Node* semicolon_) noexcept :
+    CompoundNode(NodeKind::opaqueEnumDeclarationNode, sourcePos_), enumKey(enumKey_), enumHeadName(enumHeadName_), enumBase(enumBase_), 
+    attributes(attributes_), semicolon(semicolon_)
 {
 }
 
@@ -316,7 +322,8 @@ Node* OpaqueEnumDeclarationNode::Clone() const
     {
         clonedAttributes = attributes->Clone();
     }
-    OpaqueEnumDeclarationNode* clone = new OpaqueEnumDeclarationNode(GetSourcePos(), enumKey->Clone(), enumHeadName->Clone(), clonedEnumBase, clonedAttributes, semicolon->Clone());
+    OpaqueEnumDeclarationNode* clone = new OpaqueEnumDeclarationNode(GetSourcePos(), enumKey->Clone(), enumHeadName->Clone(), clonedEnumBase, clonedAttributes, 
+        semicolon->Clone());
     return clone;
 }
 

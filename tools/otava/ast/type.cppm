@@ -13,7 +13,7 @@ export namespace otava::ast {
 class TypeSpecifierSequenceNode : public SequenceNode
 {
 public:
-    TypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_);
+    TypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -21,15 +21,15 @@ public:
 class TypenameSpecifierNode : public CompoundNode
 {
 public:
-    TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_);
-    TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* id_, Node* templateNode_);
+    TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* id_, Node* templateNode_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline Node* NestedNameSpecifier() const { return nns.get(); }
-    inline Node* Id() const { return id.get(); }
-    inline Node* TemplateNode() const { return templateNode.get(); }
+    inline Node* NestedNameSpecifier() const noexcept { return nns.get(); }
+    inline Node* Id() const noexcept { return id.get(); }
+    inline Node* TemplateNode() const noexcept { return templateNode.get(); }
 private:
     std::unique_ptr<Node> nns;
     std::unique_ptr<Node> id;
@@ -39,14 +39,14 @@ private:
 class TypeIdNode : public CompoundNode
 {
 public:
-    TypeIdNode(const soul::ast::SourcePos& sourcePos_);
-    TypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_, Node* declarator_);
+    TypeIdNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    TypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_, Node* declarator_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline Node* TypeSpecifiers() const { return typeSpecifiers.get(); }
-    inline Node* Declarator() const { return declarator.get(); }
+    inline Node* TypeSpecifiers() const noexcept { return typeSpecifiers.get(); }
+    inline Node* Declarator() const noexcept { return declarator.get(); }
 private:
     std::unique_ptr<Node> typeSpecifiers;
     std::unique_ptr<Node> declarator;
@@ -55,14 +55,14 @@ private:
 class DefiningTypeIdNode : public CompoundNode
 {
 public:
-    DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_);
-    DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* definingTypeSpecifiers_, Node* abstractDeclarator_);
+    DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* definingTypeSpecifiers_, Node* abstractDeclarator_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline Node* DefiningTypeSpecifiers() const { return definingTypeSpecifiers.get(); }
-    inline Node* AbstractDeclarator() const { return abstractDeclarator.get(); }
+    inline Node* DefiningTypeSpecifiers() const noexcept { return definingTypeSpecifiers.get(); }
+    inline Node* AbstractDeclarator() const noexcept { return abstractDeclarator.get(); }
 private:
     std::unique_ptr<Node> definingTypeSpecifiers;
     std::unique_ptr<Node> abstractDeclarator;
@@ -71,7 +71,7 @@ private:
 class DefiningTypeSpecifierSequenceNode : public SequenceNode
 {
 public:
-    DefiningTypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_);
+    DefiningTypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -79,8 +79,8 @@ public:
 class TrailingReturnTypeNode : public UnaryNode
 {
 public:
-    TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_);
-    TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_);
+    TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -88,15 +88,15 @@ public:
 class ElaboratedTypeSpecifierNode : public CompoundNode
 {
 public:
-    ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_);
-    ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* id_, Node* attributes_);
+    ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* id_, Node* attributes_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline Node* ClassKey() const { return classKey.get(); }
-    inline Node* Id() const { return id.get(); }
-    inline Node* Attributes() const { return attributes.get(); }
+    inline Node* ClassKey() const noexcept { return classKey.get(); }
+    inline Node* Id() const noexcept { return id.get(); }
+    inline Node* Attributes() const noexcept { return attributes.get(); }
 private:
     std::unique_ptr<Node> classKey;
     std::unique_ptr<Node> id;
@@ -106,15 +106,15 @@ private:
 class DeclTypeSpecifierNode : public CompoundNode
 {
 public:
-    DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_);
-    DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
+    DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline Node* Expression() const { return expr.get(); }
-    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline Node* Expression() const noexcept { return expr.get(); }
+    inline const soul::ast::SourcePos& LParenPos() const noexcept { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const noexcept { return rpPos; }
 private:
     std::unique_ptr<Node> expr;
     soul::ast::SourcePos lpPos;
@@ -124,18 +124,19 @@ private:
 class PlaceholderTypeSpecifierNode : public CompoundNode
 {
 public:
-    PlaceholderTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_);
-    PlaceholderTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_, const soul::ast::SourcePos& dtPos_, const soul::ast::SourcePos& autoPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
+    PlaceholderTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    PlaceholderTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_, const soul::ast::SourcePos& dtPos_, 
+        const soul::ast::SourcePos& autoPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* TypeConstraint() const { return typeConstraint.get(); }
-    inline const soul::ast::SourcePos& DeclTypePos() const { return dtPos; }
-    inline const soul::ast::SourcePos& AutoPos() const { return autoPos; }
-    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
-    inline bool IsDeclType() const { return dtPos.IsValid(); };
+    inline const soul::ast::SourcePos& DeclTypePos() const noexcept { return dtPos; }
+    inline const soul::ast::SourcePos& AutoPos() const noexcept { return autoPos; }
+    inline const soul::ast::SourcePos& LParenPos() const noexcept { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const noexcept { return rpPos; }
+    inline bool IsDeclType() const noexcept { return dtPos.IsValid(); };
 private:
     std::unique_ptr<Node> typeConstraint;
     soul::ast::SourcePos dtPos;

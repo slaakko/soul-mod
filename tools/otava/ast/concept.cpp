@@ -11,11 +11,11 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-ConceptDefinitionNode::ConceptDefinitionNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::conceptDefinitionNode, sourcePos_)
+ConceptDefinitionNode::ConceptDefinitionNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::conceptDefinitionNode, sourcePos_)
 {
 }
 
-ConceptDefinitionNode::ConceptDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* conceptName_, Node* assign_, Node* constraintExpr_, Node* semicolon_) :
+ConceptDefinitionNode::ConceptDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* conceptName_, Node* assign_, Node* constraintExpr_, Node* semicolon_) noexcept :
     CompoundNode(NodeKind::conceptDefinitionNode, sourcePos_), conceptName(conceptName_), assign(assign_), constraintExpr(constraintExpr_), semicolon(semicolon_)
 {
 }
@@ -49,11 +49,12 @@ void ConceptDefinitionNode::Read(Reader& reader)
     semicolon.reset(reader.ReadNode());
 }
 
-RequiresExprNode::RequiresExprNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::requiresExprNode, sourcePos_)
+RequiresExprNode::RequiresExprNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::requiresExprNode, sourcePos_)
 {
 }
 
-RequiresExprNode::RequiresExprNode(const soul::ast::SourcePos& sourcePos_, Node* params_, Node* body_) : CompoundNode(NodeKind::requiresExprNode, sourcePos_), params(params_), body(body_)
+RequiresExprNode::RequiresExprNode(const soul::ast::SourcePos& sourcePos_, Node* params_, Node* body_) noexcept : 
+    CompoundNode(NodeKind::requiresExprNode, sourcePos_), params(params_), body(body_)
 {
 }
 
@@ -87,7 +88,7 @@ void RequiresExprNode::Read(Reader& reader)
     body.reset(reader.ReadNode());
 }
 
-RequirementBodyNode::RequirementBodyNode(const soul::ast::SourcePos& sourcePos_) : SequenceNode(NodeKind::requirementBodyNode, sourcePos_)
+RequirementBodyNode::RequirementBodyNode(const soul::ast::SourcePos& sourcePos_) noexcept : SequenceNode(NodeKind::requirementBodyNode, sourcePos_)
 {
 }
 
@@ -122,21 +123,23 @@ void RequirementBodyNode::Read(Reader& reader)
     rbPos = reader.ReadSourcePos();
 }
 
-void RequirementBodyNode::SetLBracePos(const soul::ast::SourcePos& lbPos_)
+void RequirementBodyNode::SetLBracePos(const soul::ast::SourcePos& lbPos_) noexcept
 {
     lbPos = lbPos_;
 }
 
-void RequirementBodyNode::SetRBracePos(const soul::ast::SourcePos& rbPos_)
+void RequirementBodyNode::SetRBracePos(const soul::ast::SourcePos& rbPos_) noexcept
 {
     rbPos = rbPos_;
 }
 
-SimpleRequirementNode::SimpleRequirementNode(const soul::ast::SourcePos& sourcePos_) : BinaryNode(NodeKind::simpleRequirementNode, sourcePos_, nullptr, nullptr)
+SimpleRequirementNode::SimpleRequirementNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    BinaryNode(NodeKind::simpleRequirementNode, sourcePos_, nullptr, nullptr)
 {
 }
 
-SimpleRequirementNode::SimpleRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, Node* semicolon_) : BinaryNode(NodeKind::simpleRequirementNode, sourcePos_, expr_, semicolon_)
+SimpleRequirementNode::SimpleRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, Node* semicolon_) noexcept : 
+    BinaryNode(NodeKind::simpleRequirementNode, sourcePos_, expr_, semicolon_)
 {
 }
 
@@ -151,11 +154,11 @@ void SimpleRequirementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-TypeRequirementNode::TypeRequirementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::typeRequirementNode, sourcePos_)
+TypeRequirementNode::TypeRequirementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::typeRequirementNode, sourcePos_)
 {
 }
 
-TypeRequirementNode::TypeRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* typeName_, Node* semicolon_) :
+TypeRequirementNode::TypeRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* typeName_, Node* semicolon_) noexcept :
     CompoundNode(NodeKind::typeRequirementNode, sourcePos_), nns(nns_), typeName(typeName_), semicolon(semicolon_)
 {
 }
@@ -192,13 +195,14 @@ void TypeRequirementNode::Read(Reader& reader)
     semicolon.reset(reader.ReadNode());
 }
 
-CompoundRequirementNode::CompoundRequirementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::compoundRequirementNode, sourcePos_)
+CompoundRequirementNode::CompoundRequirementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::compoundRequirementNode, sourcePos_)
 {
 }
 
 CompoundRequirementNode::CompoundRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, Node* noexcept_, Node* returnTypeRequirement_, Node* semicolon_,
-    const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) :
-    CompoundNode(NodeKind::compoundRequirementNode, sourcePos_), expr(expr_), noexceptNode(noexcept_), returnTypeRequirement(returnTypeRequirement_), semicolon(semicolon_), lbPos(lbPos_), rbPos(rbPos_)
+    const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) noexcept :
+    CompoundNode(NodeKind::compoundRequirementNode, sourcePos_), expr(expr_), noexceptNode(noexcept_), returnTypeRequirement(returnTypeRequirement_), 
+    semicolon(semicolon_), lbPos(lbPos_), rbPos(rbPos_)
 {
 }
 
@@ -245,11 +249,13 @@ void CompoundRequirementNode::Read(Reader& reader)
     rbPos = reader.ReadSourcePos();
 }
 
-ReturnTypeRequirementNode::ReturnTypeRequirementNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::returnTypeRequirementNode, sourcePos_, nullptr)
+ReturnTypeRequirementNode::ReturnTypeRequirementNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    UnaryNode(NodeKind::returnTypeRequirementNode, sourcePos_, nullptr)
 {
 }
 
-ReturnTypeRequirementNode::ReturnTypeRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_) : UnaryNode(NodeKind::returnTypeRequirementNode, sourcePos_, typeConstraint_)
+ReturnTypeRequirementNode::ReturnTypeRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_) noexcept : 
+    UnaryNode(NodeKind::returnTypeRequirementNode, sourcePos_, typeConstraint_)
 {
 }
 
@@ -264,11 +270,12 @@ void ReturnTypeRequirementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-NestedRequirementNode::NestedRequirementNode(const soul::ast::SourcePos& sourcePos_) : BinaryNode(NodeKind::nestedRequirementNode, sourcePos_, nullptr, nullptr)
+NestedRequirementNode::NestedRequirementNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    BinaryNode(NodeKind::nestedRequirementNode, sourcePos_, nullptr, nullptr)
 {
 }
 
-NestedRequirementNode::NestedRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* constraintExpression_, Node* semicolon_) :
+NestedRequirementNode::NestedRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* constraintExpression_, Node* semicolon_) noexcept :
     BinaryNode(NodeKind::nestedRequirementNode, sourcePos_, constraintExpression_, semicolon_)
 {
 }
@@ -284,11 +291,13 @@ void NestedRequirementNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-TypeConstraintNode::TypeConstraintNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::typeConstraintNode, sourcePos_), hasTemplateArgumentList(false)
+TypeConstraintNode::TypeConstraintNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    ListNode(NodeKind::typeConstraintNode, sourcePos_), hasTemplateArgumentList(false)
 {
 }
 
-TypeConstraintNode::TypeConstraintNode(const soul::ast::SourcePos& sourcePos_, Node* conceptName_) : ListNode(NodeKind::typeConstraintNode, sourcePos_), conceptName(conceptName_), hasTemplateArgumentList(false)
+TypeConstraintNode::TypeConstraintNode(const soul::ast::SourcePos& sourcePos_, Node* conceptName_) noexcept : 
+    ListNode(NodeKind::typeConstraintNode, sourcePos_), conceptName(conceptName_), hasTemplateArgumentList(false)
 {
 }
 
@@ -325,21 +334,21 @@ void TypeConstraintNode::Read(Reader& reader)
     raPos = reader.ReadSourcePos();
 }
 
-void TypeConstraintNode::SetLAnglePos(const soul::ast::SourcePos& laPos_)
+void TypeConstraintNode::SetLAnglePos(const soul::ast::SourcePos& laPos_) noexcept
 {
     laPos = laPos_;
 }
 
-void TypeConstraintNode::SetRAnglePos(const soul::ast::SourcePos& raPos_)
+void TypeConstraintNode::SetRAnglePos(const soul::ast::SourcePos& raPos_) noexcept
 {
     raPos = raPos_;
 }
 
-RequiresClauseNode::RequiresClauseNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::requiresClauseNode, sourcePos_, nullptr)
+RequiresClauseNode::RequiresClauseNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::requiresClauseNode, sourcePos_, nullptr)
 {
 }
 
-RequiresClauseNode::RequiresClauseNode(const soul::ast::SourcePos& sourcePos_, Node* constraintLogicalOrExpr_) : 
+RequiresClauseNode::RequiresClauseNode(const soul::ast::SourcePos& sourcePos_, Node* constraintLogicalOrExpr_) noexcept :
     UnaryNode(NodeKind::requiresClauseNode, sourcePos_, constraintLogicalOrExpr_)
 {
 }

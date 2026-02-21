@@ -22,8 +22,8 @@ enum class TemplateMatchKind
 
 struct TemplateMatchInfo
 {
-    inline TemplateMatchInfo() : kind(TemplateMatchKind::straight), matchValue(0) {}
-    inline TemplateMatchInfo(TemplateMatchKind kind_, int matchValue_) : kind(kind_), matchValue(matchValue_) {}
+    inline TemplateMatchInfo() noexcept : kind(TemplateMatchKind::straight), matchValue(0) {}
+    inline TemplateMatchInfo(TemplateMatchKind kind_, int matchValue_) noexcept : kind(kind_), matchValue(matchValue_) {}
     TemplateMatchKind kind;
     int matchValue;
     std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
@@ -36,15 +36,15 @@ public:
     ClassGroupSymbol(const std::u32string& name_);
     std::string SymbolKindStr() const override { return "class group symbol"; }
     std::string SymbolDocKindStr() const override { return "class_group"; }
-    bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
-    Symbol* GetSingleSymbol() override;
+    bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
+    Symbol* GetSingleSymbol() noexcept override;
     void AddClass(ClassTypeSymbol* classTypeSymbol);
-    ClassTypeSymbol* GetClass(int arity) const;
-    inline const std::vector<ClassTypeSymbol*>& Classes() const { return classes; }
+    ClassTypeSymbol* GetClass(int arity) const noexcept;
+    inline const std::vector<ClassTypeSymbol*>& Classes() const noexcept { return classes; }
     void AddForwardDeclaration(ForwardClassDeclarationSymbol* forwardDeclaration);
-    ForwardClassDeclarationSymbol* GetForwardDeclaration(int arity) const;
-    inline const std::vector<ForwardClassDeclarationSymbol*>& ForwardDeclarations() const { return forwardDeclarations; }
-    ClassTypeSymbol* GetBestMatchingClass(const std::vector<Symbol*>& templateArgs, TemplateMatchInfo& matchInfo, Context* context) const;
+    ForwardClassDeclarationSymbol* GetForwardDeclaration(int arity) const noexcept;
+    inline const std::vector<ForwardClassDeclarationSymbol*>& ForwardDeclarations() const noexcept { return forwardDeclarations; }
+    ClassTypeSymbol* GetBestMatchingClass(const std::vector<Symbol*>& templateArgs, TemplateMatchInfo& matchInfo, Context* context) const noexcept;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;

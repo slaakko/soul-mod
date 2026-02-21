@@ -34,10 +34,10 @@ class PointerDefaultCtor : public FunctionSymbol
 {
 public:
     PointerDefaultCtor(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    TypeSymbol* Type() const { return type; }
+    inline TypeSymbol* Type() const noexcept { return type; }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
 private:
     TypeSymbol* type;
 };
@@ -104,10 +104,10 @@ class PointerCopyCtor : public FunctionSymbol
 {
 public:
     PointerCopyCtor(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    TypeSymbol* Type() const { return type; }
+    inline TypeSymbol* Type() const noexcept { return type; }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
 private:
     TypeSymbol* type;
 };
@@ -180,10 +180,10 @@ class PointerMoveCtor : public FunctionSymbol
 {
 public:
     PointerMoveCtor(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    TypeSymbol* Type() const { return type; }
+    inline TypeSymbol* Type() const noexcept { return type; }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
 private:
     TypeSymbol* type;
 };
@@ -254,11 +254,11 @@ class PointerCopyAssignment : public FunctionSymbol
 {
 public:
     PointerCopyAssignment(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    TypeSymbol* Type() const { return type; }
+    inline TypeSymbol* Type() const noexcept { return type; }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
-    bool IsPointerCopyAssignment() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
+    bool IsPointerCopyAssignment() const noexcept override { return true; }
 private:
     TypeSymbol* type;
 };
@@ -322,10 +322,10 @@ class PointerMoveAssignment : public FunctionSymbol
 {
 public:
     PointerMoveAssignment(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    TypeSymbol* Type() const { return type; }
+    inline TypeSymbol* Type() const noexcept { return type; }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
 private:
     TypeSymbol* type;
 };
@@ -817,7 +817,7 @@ public:
     PointerArrow(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
 private:
     TypeSymbol* type;
 };
@@ -876,7 +876,7 @@ public:
     CopyRef(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
 private:
     TypeSymbol* type;
 };
@@ -938,7 +938,7 @@ class ClassDefaultCtor : public FunctionDefinitionSymbol
 {
 public:
     ClassDefaultCtor(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    ClassTypeSymbol* ClassType() const { return classType; }
+    inline ClassTypeSymbol* ClassType() const noexcept { return classType; }
 private:
     ClassTypeSymbol* classType;
     std::string irName;
@@ -987,7 +987,8 @@ FunctionSymbol* ClassDefaultCtorOperation::Get(std::vector<std::unique_ptr<Bound
         return defaultCtor;
     }
     if (classType->HasUserDefinedConstructor()) return nullptr;
-    auto it = functionMap.find(classType);
+    TypeSymbol* ct = classType;
+    auto it = functionMap.find(ct);
     if (it != functionMap.cend())
     {
         FunctionSymbol* function = it->second;
@@ -1126,7 +1127,7 @@ class ClassCopyCtor : public FunctionDefinitionSymbol
 public:
     ClassCopyCtor(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     ~ClassCopyCtor();
-    ClassTypeSymbol* ClassType() const { return classType; }
+    inline ClassTypeSymbol* ClassType() const noexcept { return classType; }
 private:
     ClassTypeSymbol* classType;
     std::string irName;
@@ -1190,7 +1191,8 @@ FunctionSymbol* ClassCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundExp
     {
         return copyCtor;
     }
-    auto it = functionMap.find(classType);
+    TypeSymbol* ct = classType;
+    auto it = functionMap.find(ct);
     if (it != functionMap.cend())
     {
         FunctionSymbol* function = it->second;
@@ -1344,7 +1346,7 @@ class ClassMoveCtor : public FunctionDefinitionSymbol
 {
 public:
     ClassMoveCtor(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    ClassTypeSymbol* ClassType() const { return classType; }
+    inline ClassTypeSymbol* ClassType() const noexcept { return classType; }
 private:
     ClassTypeSymbol* classType;
     std::string irName;
@@ -1401,7 +1403,8 @@ FunctionSymbol* ClassMoveCtorOperation::Get(std::vector<std::unique_ptr<BoundExp
     {
         return moveCtor;
     }
-    auto it = functionMap.find(classType);
+    TypeSymbol* ct = classType;
+    auto it = functionMap.find(ct);
     if (it != functionMap.cend())
     {
         FunctionSymbol* function = it->second;
@@ -1607,7 +1610,8 @@ FunctionSymbol* ClassCopyAssignmentOperation::Get(std::vector<std::unique_ptr<Bo
     {
         return copyAssignment;
     }
-    auto it = functionMap.find(classType);
+    TypeSymbol* ct = classType;
+    auto it = functionMap.find(ct);
     if (it != functionMap.cend())
     {
         FunctionSymbol* function = it->second;
@@ -1695,7 +1699,7 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
     BoundReturnStatementNode* returnStatement = new BoundReturnStatementNode(sourcePos);
-    otava::ast::ThisNode* thisNode(new otava::ast::ThisNode(sourcePos));
+    otava::ast::ThisNode* thisNode = new otava::ast::ThisNode(sourcePos);
     otava::ast::UnaryExprNode derefNode(sourcePos, new otava::ast::DerefNode(sourcePos), thisNode);
     BoundExpressionNode* derefThisExpr = BindExpression(&derefNode, context);
     returnStatement->SetExpr(derefThisExpr, sourcePos, context);
@@ -1729,7 +1733,7 @@ class ClassMoveAssignment : public FunctionDefinitionSymbol
 {
 public:
     ClassMoveAssignment(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    ClassTypeSymbol* ClassType() const { return classType; }
+    inline ClassTypeSymbol* ClassType() const noexcept { return classType; }
 private:
     ClassTypeSymbol* classType;
     std::string irName;
@@ -1783,7 +1787,8 @@ FunctionSymbol* ClassMoveAssignmentOperation::Get(std::vector<std::unique_ptr<Bo
     {
         return moveAssignment;
     }
-    auto it = functionMap.find(classType);
+    TypeSymbol* ct = classType;
+    auto it = functionMap.find(ct);
     if (it != functionMap.cend())
     {
         FunctionSymbol* function = it->second;
@@ -1861,7 +1866,7 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
     BoundReturnStatementNode* returnStatement = new BoundReturnStatementNode(sourcePos);
-    otava::ast::ThisNode* thisNode(new otava::ast::ThisNode(sourcePos));
+    otava::ast::ThisNode* thisNode = new otava::ast::ThisNode(sourcePos);
     otava::ast::UnaryExprNode derefNode(sourcePos, new otava::ast::DerefNode(sourcePos), thisNode);
     BoundExpressionNode* derefThisExpr = BindExpression(&derefNode, context);
     returnStatement->SetExpr(derefThisExpr, sourcePos, context);

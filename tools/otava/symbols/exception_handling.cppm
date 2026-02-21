@@ -16,11 +16,11 @@ class Invoke
 {
 public:
     Invoke();
-    inline bool IsEmpty() const { return statements.empty(); }
+    inline bool IsEmpty() const noexcept { return statements.empty(); }
     void Clear();
     void Add(BoundStatementNode* stmt);
-    const std::vector<std::unique_ptr<BoundStatementNode>>& Statements() const { return statements; }
-    inline bool HasStatementsWithDestructor() const { return !statementsWithDestructor.empty(); }
+    inline const std::vector<std::unique_ptr<BoundStatementNode>>& Statements() const noexcept { return statements; }
+    inline bool HasStatementsWithDestructor() const noexcept { return !statementsWithDestructor.empty(); }
     std::vector<std::unique_ptr<BoundConstructionStatementNode>> StatementsWithDestructor() { return std::move(statementsWithDestructor); }
     void Make(otava::ast::CompoundStatementNode* compoundStatement, Context* context);
     soul::ast::SourcePos GetSourcePos() const;
@@ -35,8 +35,8 @@ class CleanupBlock
 {
 public:
     CleanupBlock(Cleanup* cleanup_);
-    inline bool IsEmpty() const { return destructorCalls.empty(); }
-    inline bool ContainsOne() const { return destructorCalls.size() == 1; }
+    inline bool IsEmpty() const noexcept { return destructorCalls.empty(); }
+    inline bool ContainsOne() const noexcept { return destructorCalls.size() == 1; }
     void Add(BoundFunctionCallNode* destructorCall, Context* context);
     void Make(otava::ast::CompoundStatementNode* compoundStatement, bool skipLast);
     soul::ast::SourcePos GetSourcePos() const;
@@ -49,14 +49,14 @@ class Cleanup
 {
 public:
     Cleanup();
-    bool IsEmpty() const;
-    bool ContainsOne() const;
+    bool IsEmpty() const noexcept;
+    bool ContainsOne() const noexcept;
     void PushCleanupBlock();
     void PopCleanupBlock();
-    CleanupBlock* CurrentCleanupBlock() const { return cleanupBlocks.back().get(); }
-    inline bool Changed() const { return changed; }
-    inline void SetChanged() { changed = true; }
-    inline void ResetChanged() { changed = false; }
+    CleanupBlock* CurrentCleanupBlock() const noexcept { return cleanupBlocks.back().get(); }
+    inline bool Changed() const noexcept { return changed; }
+    inline void SetChanged() noexcept { changed = true; }
+    inline void ResetChanged() noexcept { changed = false; }
     void Make(otava::ast::CompoundStatementNode* compoundStatement, bool skipLast);
     soul::ast::SourcePos GetSourcePos() const;
 private:

@@ -18,11 +18,11 @@ public:
     VariableGroupSymbol(const std::u32string& name_);
     std::string SymbolKindStr() const override { return "variable group symbol"; }
     std::string SymbolDocKindStr() const override { return "variable_group"; }
-    bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
-    Symbol* GetSingleSymbol() override;
+    bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
+    Symbol* GetSingleSymbol() noexcept override;
     void AddVariable(VariableSymbol* variableSymbol);
-    VariableSymbol* GetVariable(int arity) const;
-    inline const std::vector<VariableSymbol*>& Variables() const { return variables; }
+    VariableSymbol* GetVariable(int arity) const noexcept;
+    inline const std::vector<VariableSymbol*>& Variables() const noexcept { return variables; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;

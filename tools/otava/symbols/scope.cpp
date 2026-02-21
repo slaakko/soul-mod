@@ -126,7 +126,7 @@ std::string ScopeKindStr(ScopeKind kind)
     return "<unknown scope>";
 }
 
-Scope::Scope() : kind(ScopeKind::none)
+Scope::Scope() noexcept : kind(ScopeKind::none)
 {
 }
 
@@ -200,7 +200,7 @@ void Scope::Uninstall(Symbol* symbol)
 }
 
 Symbol* Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, const soul::ast::SourcePos& sourcePos, Context* context, 
-    LookupFlags flags) const
+    LookupFlags flags) const 
 {
     std::vector<Symbol*> symbols;
     std::set<const Scope*> visited;
@@ -240,7 +240,7 @@ Symbol* Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind,
     }
 }
 
-Scope* Scope::GroupScope()
+Scope* Scope::GroupScope() noexcept
 {
     if (IsTemplateDeclarationScope())
     {
@@ -253,7 +253,7 @@ Scope* Scope::GroupScope()
     }
 }
 
-Scope* Scope::SymbolScope()
+Scope* Scope::SymbolScope() noexcept
 {
     return this;
 }
@@ -363,7 +363,7 @@ EnumGroupSymbol* Scope::GetOrInsertEnumGroup(const std::u32string& name, const s
     ThrowException("cannot add enum group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
 }
 
-ContainerScope::ContainerScope() : Scope(), parentScopes(), usingDeclarationScope(nullptr), containerSymbol(nullptr), parentScopePushed(false)
+ContainerScope::ContainerScope() noexcept : Scope(), parentScopes(), usingDeclarationScope(nullptr), containerSymbol(nullptr), parentScopePushed(false)
 {
 }
 
@@ -422,7 +422,7 @@ void ContainerScope::Import(Scope* that, Context* context)
     }
 }
 
-Scope* ContainerScope::GetClassScope() const
+Scope* ContainerScope::GetClassScope() const noexcept
 {
     if (Kind() == ScopeKind::classScope)
     {
@@ -439,7 +439,7 @@ Scope* ContainerScope::GetClassScope() const
     return nullptr;
 }
 
-Scope* ContainerScope::GetNamespaceScope() const
+Scope* ContainerScope::GetNamespaceScope() const noexcept
 {
     if (Kind() == ScopeKind::namespaceScope)
     {
@@ -467,7 +467,7 @@ void ContainerScope::AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& 
     baseScopes.push_back(baseScope);
 }
 
-Symbol* ContainerScope::GetSymbol()
+Symbol* ContainerScope::GetSymbol() noexcept
 {
     return containerSymbol;
 }
@@ -625,9 +625,9 @@ EnumGroupSymbol* ContainerScope::GetOrInsertEnumGroup(const std::u32string& name
     return enumGroupSymbol;
 }
 
-bool ContainerScope::HasParentScope(const Scope* parentScope) const
+bool ContainerScope::HasParentScope(const Scope* parentScope) const noexcept
 {
-    if (this == parentScope)
+    if (parentScope == this)
     {
         return true;
     }
@@ -702,7 +702,7 @@ AliasGroupSymbol* ContainerScope::GetOrInsertAliasGroup(const std::u32string& na
     return aliasGroupSymbol;
 }
 
-UsingDeclarationScope::UsingDeclarationScope(ContainerScope* parentScope_) : Scope(), parentScope(parentScope_)
+UsingDeclarationScope::UsingDeclarationScope(ContainerScope* parentScope_) noexcept : Scope(), parentScope(parentScope_)
 {
     SetKind(ScopeKind::usingDeclarationScope);
 }
@@ -718,7 +718,7 @@ void UsingDeclarationScope::Lookup(const std::u32string& id, SymbolGroupKind sym
     Scope::Lookup(id, symbolGroupKinds, ScopeLookup::thisScope, flags, symbols, visited, context);
 }
 
-UsingDirectiveScope::UsingDirectiveScope(NamespaceSymbol* ns_) : Scope(), ns(ns_)
+UsingDirectiveScope::UsingDirectiveScope(NamespaceSymbol* ns_) noexcept : Scope(), ns(ns_)
 {
     SetKind(ScopeKind::usingDirectiveScope);
 }
@@ -738,7 +738,7 @@ std::string UsingDirectiveScope::FullName() const
     return util::ToUtf8(ns->FullName());
 }
 
-InstantiationScope::InstantiationScope(Scope* parentScope_)
+InstantiationScope::InstantiationScope(Scope* parentScope_) noexcept
 {
     SetKind(ScopeKind::instantiationScope);
     parentScopes.push_back(parentScope_);
@@ -750,13 +750,13 @@ std::string InstantiationScope::FullName() const
     return first->FullName();
 }
 
-Scope* InstantiationScope::GroupScope()
+Scope* InstantiationScope::GroupScope() noexcept
 {
     Scope* first = *parentScopes.begin();
     return first->GroupScope();
 }
 
-Scope* InstantiationScope::SymbolScope()
+Scope* InstantiationScope::SymbolScope() noexcept
 {
     Scope* first = *parentScopes.begin();
     return first->SymbolScope();
@@ -772,9 +772,9 @@ void InstantiationScope::PopParentScope()
     parentScopes.erase(parentScopes.begin());
 }
 
-bool InstantiationScope::HasParentScope(const Scope* parentScope) const
+bool InstantiationScope::HasParentScope(const Scope* parentScope) const noexcept
 {
-    if (this == parentScope)
+    if (parentScope == this)
     {
         return true;
     }
@@ -802,7 +802,7 @@ ClassTemplateSpecializationSymbol* InstantiationScope::GetClassTemplateSpecializ
     return nullptr;
 }
 
-Scope* InstantiationScope::GetClassScope() const
+Scope* InstantiationScope::GetClassScope() const noexcept
 {
     for (Scope* parentScope : parentScopes)
     {
@@ -815,7 +815,7 @@ Scope* InstantiationScope::GetClassScope() const
     return nullptr;
 }
 
-Scope* InstantiationScope::GetNamespaceScope() const
+Scope* InstantiationScope::GetNamespaceScope() const noexcept
 {
     for (Scope* parentScope : parentScopes)
     {

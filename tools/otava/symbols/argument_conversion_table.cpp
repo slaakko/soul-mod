@@ -36,11 +36,11 @@ public:
     IdentityConversion(TypeSymbol* type_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    TypeSymbol* ConversionParamType() const override { return type; }
-    TypeSymbol* ConversionArgType() const override { return type; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
-    std::int32_t ConversionDistance() const override { return 0; }
-    bool IsIdentityConversion() const override { return true; }
+    TypeSymbol* ConversionParamType() const noexcept override { return type; }
+    TypeSymbol* ConversionArgType() const noexcept override { return type; }
+    ConversionKind GetConversionKind() const noexcept override { return ConversionKind::implicitConversion; }
+    std::int32_t ConversionDistance() const noexcept override { return 0; }
+    bool IsIdentityConversion() const noexcept override { return true; }
 private:
     TypeSymbol* type;
 };
@@ -83,11 +83,11 @@ public:
     DerivedToBaseConversion(TypeSymbol* derivedTypePtr_, TypeSymbol* baseTypePtr_, int distance_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    bool IsDerivedToBaseConversion() const override { return true; }    
-    TypeSymbol* ConversionParamType() const override { return baseTypePtr; }
-    TypeSymbol* ConversionArgType() const override { return derivedTypePtr; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
-    std::int32_t ConversionDistance() const override { return distance; }
+    bool IsDerivedToBaseConversion() const noexcept override { return true; }
+    TypeSymbol* ConversionParamType() const noexcept override { return baseTypePtr; }
+    TypeSymbol* ConversionArgType() const noexcept override { return derivedTypePtr; }
+    ConversionKind GetConversionKind() const noexcept override { return ConversionKind::implicitConversion; }
+    std::int32_t ConversionDistance() const noexcept override { return distance; }
 private:
     TypeSymbol* derivedTypePtr;
     TypeSymbol* baseTypePtr;
@@ -163,10 +163,10 @@ public:
     BaseToDerivedConversion(TypeSymbol* baseTypePtr_, TypeSymbol* derivedTypePtr_, int distance_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    TypeSymbol* ConversionParamType() const override { return derivedTypePtr; }
-    TypeSymbol* ConversionArgType() const override { return baseTypePtr; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    std::int32_t ConversionDistance() const override { return distance; }
+    TypeSymbol* ConversionParamType() const noexcept override { return derivedTypePtr; }
+    TypeSymbol* ConversionArgType() const noexcept override { return baseTypePtr; }
+    ConversionKind GetConversionKind() const noexcept override { return ConversionKind::explicitConversion; }
+    std::int32_t ConversionDistance() const noexcept override { return distance; }
 private:
     TypeSymbol* baseTypePtr;
     TypeSymbol* derivedTypePtr;
@@ -308,10 +308,10 @@ public:
     NullPtrToPtrConversion(TypeSymbol* argType_, TypeSymbol* pointerType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    TypeSymbol* ConversionParamType() const override { return pointerType; }
-    TypeSymbol* ConversionArgType() const override { return argType; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
-    std::int32_t ConversionDistance() const override { return 1; }
+    TypeSymbol* ConversionParamType() const noexcept override { return pointerType; }
+    TypeSymbol* ConversionArgType() const noexcept override { return argType; }
+    ConversionKind GetConversionKind() const noexcept override { return ConversionKind::implicitConversion; }
+    std::int32_t ConversionDistance() const noexcept override { return 1; }
 private:
     TypeSymbol* argType;
     TypeSymbol* pointerType;
@@ -358,10 +358,10 @@ public:
     VoidPtrToPtrConversion(TypeSymbol* voidPtrType_, TypeSymbol* targetPointerType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    TypeSymbol* ConversionParamType() const override { return targetPointerType; }
-    TypeSymbol* ConversionArgType() const override { return voidPtrType; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    std::int32_t ConversionDistance() const override { return 255; }
+    TypeSymbol* ConversionParamType() const noexcept override { return targetPointerType; }
+    TypeSymbol* ConversionArgType() const noexcept override { return voidPtrType; }
+    ConversionKind GetConversionKind() const noexcept override { return ConversionKind::explicitConversion; }
+    std::int32_t ConversionDistance() const noexcept override { return 255; }
 private:
     TypeSymbol* voidPtrType;
     TypeSymbol* targetPointerType;
@@ -409,10 +409,10 @@ public:
     PtrToVoidPtrConversion(TypeSymbol* ptrType_, TypeSymbol* voidPtrType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    TypeSymbol* ConversionParamType() const override { return voidPtrType; }
-    TypeSymbol* ConversionArgType() const override { return ptrType; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
-    std::int32_t ConversionDistance() const override { return 10; }
+    TypeSymbol* ConversionParamType() const noexcept override { return voidPtrType; }
+    TypeSymbol* ConversionArgType() const noexcept override { return ptrType; }
+    ConversionKind GetConversionKind() const noexcept override { return ConversionKind::implicitConversion; }
+    std::int32_t ConversionDistance() const noexcept override { return 10; }
 private:
     TypeSymbol* ptrType;
     TypeSymbol* voidPtrType;
@@ -459,10 +459,10 @@ public:
     PtrToPtrConversion(TypeSymbol* sourcePtrType_, TypeSymbol* targetPtrType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    TypeSymbol* ConversionParamType() const override { return targetPtrType; }
-    TypeSymbol* ConversionArgType() const override { return sourcePtrType; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    std::int32_t ConversionDistance() const override { return 255; }
+    TypeSymbol* ConversionParamType() const noexcept override { return targetPtrType; }
+    TypeSymbol* ConversionArgType() const noexcept override { return sourcePtrType; }
+    ConversionKind GetConversionKind() const noexcept override { return ConversionKind::explicitConversion; }
+    std::int32_t ConversionDistance() const noexcept override { return 255; }
 private:
     TypeSymbol* sourcePtrType;
     TypeSymbol* targetPtrType;
@@ -513,10 +513,10 @@ public:
     VoidPtrToUInt64Conversion(TypeSymbol* ptrType_, TypeSymbol* uint64Type_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    TypeSymbol* ConversionParamType() const override { return uint64Type; }
-    TypeSymbol* ConversionArgType() const override { return ptrType; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    std::int32_t ConversionDistance() const override { return 255; }
+    TypeSymbol* ConversionParamType() const noexcept override { return uint64Type; }
+    TypeSymbol* ConversionArgType() const noexcept override { return ptrType; }
+    ConversionKind GetConversionKind() const noexcept override { return ConversionKind::explicitConversion; }
+    std::int32_t ConversionDistance() const noexcept override { return 255; }
 private:
     TypeSymbol* ptrType;
     TypeSymbol* uint64Type;
@@ -565,10 +565,10 @@ public:
     UInt64ToVoidPtrConversion(TypeSymbol* uint64Type_, TypeSymbol* ptrType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    TypeSymbol* ConversionParamType() const override { return ptrType; }
-    TypeSymbol* ConversionArgType() const override { return uint64Type; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    std::int32_t ConversionDistance() const override { return 255; }
+    TypeSymbol* ConversionParamType() const noexcept override { return ptrType; }
+    TypeSymbol* ConversionArgType() const noexcept override { return uint64Type; }
+    ConversionKind GetConversionKind() const noexcept override { return ConversionKind::explicitConversion; }
+    std::int32_t ConversionDistance() const noexcept override { return 255; }
 private:
     TypeSymbol* uint64Type;
     TypeSymbol* ptrType;
@@ -617,10 +617,10 @@ public:
     PtrToBooleanConversion(TypeSymbol* ptrType_, TypeSymbol* boolType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    TypeSymbol* ConversionParamType() const override { return boolType; }
-    TypeSymbol* ConversionArgType() const override { return ptrType; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
-    std::int32_t ConversionDistance() const override { return 1; }
+    TypeSymbol* ConversionParamType() const noexcept override { return boolType; }
+    TypeSymbol* ConversionArgType() const noexcept override { return ptrType; }
+    ConversionKind GetConversionKind() const noexcept override { return ConversionKind::implicitConversion; }
+    std::int32_t ConversionDistance() const noexcept override { return 1; }
 private:
     TypeSymbol* ptrType;
     TypeSymbol* boolType;
@@ -673,10 +673,10 @@ public:
     ArrayToPtrConversion(ArrayTypeSymbol* arrayType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    TypeSymbol* ConversionParamType() const override { return elementPtrType; }
-    TypeSymbol* ConversionArgType() const override { return arrayPtrType; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
-    std::int32_t ConversionDistance() const override { return 1; }
+    TypeSymbol* ConversionParamType() const noexcept override { return elementPtrType; }
+    TypeSymbol* ConversionArgType() const noexcept override { return arrayPtrType; }
+    ConversionKind GetConversionKind() const noexcept override { return ConversionKind::implicitConversion; }
+    std::int32_t ConversionDistance() const noexcept override { return 1; }
 private:
     ArrayTypeSymbol* arrayType;
     TypeSymbol* arrayPtrType;
@@ -772,10 +772,10 @@ public:
     EnumTypeToUnderlyingTypeConversion(EnumeratedTypeSymbol* enumType_, TypeSymbol* underlyingType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    TypeSymbol* ConversionParamType() const override { return underlyingType; }
-    TypeSymbol* ConversionArgType() const override { return enumType; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    std::int32_t ConversionDistance() const override { return 100; }
+    TypeSymbol* ConversionParamType() const noexcept override { return underlyingType; }
+    TypeSymbol* ConversionArgType() const noexcept override { return enumType; }
+    ConversionKind GetConversionKind() const noexcept override { return ConversionKind::explicitConversion; }
+    std::int32_t ConversionDistance() const noexcept override { return 100; }
 private:
     EnumeratedTypeSymbol* enumType;
     TypeSymbol* underlyingType;
@@ -833,10 +833,10 @@ public:
     UnderlyingTypeToEnumTypeConversion(EnumeratedTypeSymbol* enumType_, TypeSymbol* underlyingType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-    TypeSymbol* ConversionParamType() const override { return enumType; }
-    TypeSymbol* ConversionArgType() const override { return underlyingType; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    std::int32_t ConversionDistance() const override { return 255; }
+    TypeSymbol* ConversionParamType() const noexcept override { return enumType; }
+    TypeSymbol* ConversionArgType() const noexcept override { return underlyingType; }
+    ConversionKind GetConversionKind() const noexcept override { return ConversionKind::explicitConversion; }
+    std::int32_t ConversionDistance() const noexcept override { return 255; }
 private:
     EnumeratedTypeSymbol* enumType;
     TypeSymbol* underlyingType;
@@ -892,10 +892,10 @@ class FunctionToFunctionPtrConversion : public FunctionSymbol
 {
 public:
     FunctionToFunctionPtrConversion(TypeSymbol* functionPtrType_, FunctionSymbol* function_, int32_t distance_, Context* context);
-    TypeSymbol* ConversionParamType() const override { return functionPtrType; }
-    TypeSymbol* ConversionArgType() const override { return functionType; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
-    std::int32_t ConversionDistance() const override { return distance; }
+    TypeSymbol* ConversionParamType() const noexcept override { return functionPtrType; }
+    TypeSymbol* ConversionArgType() const noexcept override { return functionType; }
+    ConversionKind GetConversionKind() const noexcept override { return ConversionKind::implicitConversion; }
+    std::int32_t ConversionDistance() const noexcept override { return distance; }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
 private:
@@ -1186,7 +1186,8 @@ FunctionSymbol* ArgumentConversionTable::GetArgumentConversion(TypeSymbol* param
                 if (conversionFunction)
                 {
                     std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
-                    FunctionSymbol* instantiatedConversionFunction = InstantiateMemFnOfClassTemplate(conversionFunction, specialization, templateParameterMap, sourcePos, context);
+                    FunctionSymbol* instantiatedConversionFunction = InstantiateMemFnOfClassTemplate(
+                        conversionFunction, specialization, templateParameterMap, sourcePos, context);
                     return instantiatedConversionFunction;
                 }
             }

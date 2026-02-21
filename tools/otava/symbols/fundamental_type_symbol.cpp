@@ -25,7 +25,7 @@ constexpr const char* fundamentalTypeNames[] =
     "float", "double", "long double", "void", "auto", "nullptr_t"
 };
 
-int Rank(FundamentalTypeKind fundamentalTypeKind)
+int Rank(FundamentalTypeKind fundamentalTypeKind) noexcept
 {
     switch (fundamentalTypeKind)
     {
@@ -67,7 +67,7 @@ int Rank(FundamentalTypeKind fundamentalTypeKind)
     return -1;
 }
 
-bool IsSignedIntegerType(FundamentalTypeKind fundamentalTypeKind)
+bool IsSignedIntegerType(FundamentalTypeKind fundamentalTypeKind) noexcept
 {
     switch (fundamentalTypeKind)
     {
@@ -83,7 +83,7 @@ bool IsSignedIntegerType(FundamentalTypeKind fundamentalTypeKind)
     return false;
 }
 
-bool IsUnsignedIntegerType(FundamentalTypeKind fundamentalTypeKind)
+bool IsUnsignedIntegerType(FundamentalTypeKind fundamentalTypeKind) noexcept
 {
     switch (fundamentalTypeKind)
     {
@@ -181,7 +181,7 @@ FundamentalTypeSymbol::FundamentalTypeSymbol(FundamentalTypeKind kind_) : TypeSy
 {
 }
 
-bool FundamentalTypeSymbol::IsIntegralType() const
+bool FundamentalTypeSymbol::IsIntegralType() const noexcept
 {
     switch (fundamentalTypeKind)
     {

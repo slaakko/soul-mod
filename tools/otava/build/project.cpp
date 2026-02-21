@@ -72,7 +72,7 @@ void Project::AddDefine(const std::string& symbol, std::int64_t value)
     defines.push_back(Define(symbol, value));
 }
 
-bool Project::HasDefine(const std::string& symbol) const
+bool Project::HasDefine(const std::string& symbol) const noexcept
 {
     for (const auto& define : defines)
     {

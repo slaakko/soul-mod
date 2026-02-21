@@ -26,17 +26,17 @@ enum class OverloadResolutionFlags : std::int32_t
     none = 0, dontInstantiate = 1 << 0, dontSearchArgumentScopes = 1 << 1, noMemberFunctions = 1 << 2
 };
 
-constexpr OverloadResolutionFlags operator|(OverloadResolutionFlags left, OverloadResolutionFlags right)
+constexpr OverloadResolutionFlags operator|(OverloadResolutionFlags left, OverloadResolutionFlags right) noexcept
 {
     return OverloadResolutionFlags(std::int32_t(left) | std::int32_t(right));
 }
 
-constexpr OverloadResolutionFlags operator&(OverloadResolutionFlags left, OverloadResolutionFlags right)
+constexpr OverloadResolutionFlags operator&(OverloadResolutionFlags left, OverloadResolutionFlags right) noexcept
 {
     return OverloadResolutionFlags(std::int32_t(left) & std::int32_t(right));
 }
 
-constexpr OverloadResolutionFlags operator~(OverloadResolutionFlags flags)
+constexpr OverloadResolutionFlags operator~(OverloadResolutionFlags flags) noexcept
 {
     return OverloadResolutionFlags(~std::int32_t(flags));
 }
@@ -49,7 +49,7 @@ class ClassTemplateSpecializationSymbol;
 
 struct ArgumentMatch
 {
-    ArgumentMatch();
+    ArgumentMatch() noexcept;
     FunctionSymbol* conversionFun;
     ConversionKind conversionKind;
     std::int32_t distance;
@@ -62,8 +62,8 @@ struct ArgumentMatch
 
 struct FunctionMatch
 {
-    FunctionMatch();
-    FunctionMatch(FunctionSymbol* function_, Context* context_);
+    FunctionMatch() noexcept;
+    FunctionMatch(FunctionSymbol* function_, Context* context_) noexcept;
     FunctionMatch& operator=(const FunctionMatch& that);
     FunctionSymbol* function;
     Context* context;
@@ -77,8 +77,11 @@ struct FunctionMatch
 
 struct BetterFunctionMatch
 {
-    inline bool operator()(const std::unique_ptr<FunctionMatch>& left, const std::unique_ptr<FunctionMatch>& right) const { return BetterFunctionMatch()(*left, *right); }
-    bool operator()(const FunctionMatch& left, const FunctionMatch& right) const;
+    inline bool operator()(const std::unique_ptr<FunctionMatch>& left, const std::unique_ptr<FunctionMatch>& right) const noexcept 
+    { 
+        return BetterFunctionMatch()(*left, *right); 
+    }
+    bool operator()(const FunctionMatch& left, const FunctionMatch& right) const noexcept;
 };
 
 bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos,

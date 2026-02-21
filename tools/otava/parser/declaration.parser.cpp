@@ -346,7 +346,7 @@ soul::parser::Match DeclarationParser<LexerT>::NamespaceDeclarationSeq(LexerT& l
                                                     {
                                                         if (!nextIsRBrace)
                                                         {
-                                                            ThrowDeclarationParsingError(lexer.GetSourcePos(pos), context);
+                                                            otava::symbols::ThrowDeclarationParsingError(lexer.GetSourcePos(pos), context);
                                                         }
                                                         else
                                                         {

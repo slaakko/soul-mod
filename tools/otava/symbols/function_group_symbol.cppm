@@ -7,6 +7,7 @@ export module otava.symbols.function.group.symbol;
 
 import std;
 import otava.symbols.symbol;
+import otava.symbols.function.kind;
 
 export namespace otava::symbols {
 
@@ -15,20 +16,18 @@ class FunctionDefinitionSymbol;
 class ParameterSymbol;
 class TypeSymbol;
 
-enum class FunctionQualifiers : std::int32_t;
-
 class FunctionGroupSymbol : public Symbol
 {
 public:
     FunctionGroupSymbol(const std::u32string& name_);
     std::string SymbolKindStr() const override { return "function group symbol"; }
     std::string SymbolDocKindStr() const override { return "function_group"; }
-    bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
-    Symbol* GetSingleSymbol() override;
-    FunctionDefinitionSymbol* GetSingleDefinition();
+    bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
+    Symbol* GetSingleSymbol() noexcept override;
+    FunctionDefinitionSymbol* GetSingleDefinition() noexcept;
     void AddFunction(FunctionSymbol* function);
-    inline const std::vector<FunctionSymbol*>& Functions() const { return functions; }
-    inline const std::vector<FunctionDefinitionSymbol*>& Definitions() const { return definitions; }
+    inline const std::vector<FunctionSymbol*>& Functions() const noexcept { return functions; }
+    inline const std::vector<FunctionDefinitionSymbol*>& Definitions() const noexcept { return definitions; }
     FunctionSymbol* ResolveFunction(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, const std::vector<TypeSymbol*>& specialization,
         TemplateDeclarationSymbol* templateDeclaration, bool isSpecialization, Context* context) const;
     void Write(Writer& writer) override;

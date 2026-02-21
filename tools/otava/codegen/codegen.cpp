@@ -166,7 +166,7 @@ void ConstantExpressionEvaluator::Visit(otava::symbols::BoundVariableNode& node)
     otava::symbols::Value* value = variable->GetValue();
     if (!value)
     {
-        ThrowException("cannot evaluate statically", sourcePos, &context);
+        otava::symbols::ThrowException("cannot evaluate statically", sourcePos, &context);
     }
     otava::intermediate::Value* irValue = value->IrValue(emitter, sourcePos, &context);
     emitter.Stack().Push(irValue);
@@ -226,19 +226,20 @@ void ConstantExpressionEvaluator::Visit(otava::symbols::BoundConversionNode& nod
                 }
                 default:
                 {
-                    ThrowException("cannot evaluate statically", sourcePos, &context);
+                    otava::symbols::ThrowException("cannot evaluate statically", sourcePos, &context);
+                    break;
                 }
             }
             emitter.Stack().Push(value);
         }
         else
         {
-            ThrowException("cannot evaluate statically", sourcePos, &context);
+            otava::symbols::ThrowException("cannot evaluate statically", sourcePos, &context);
         }
     }
     else
     {
-        ThrowException("cannot evaluate statically", sourcePos, &context);
+        otava::symbols::ThrowException("cannot evaluate statically", sourcePos, &context);
     }
 }
 
@@ -249,7 +250,7 @@ void EvaluateConstantExpr(otava::symbols::Emitter& emitter, const soul::ast::Sou
     constantExpr->Accept(evaluator);
     if (emitter.Stack().IsEmpty())
     {
-        ThrowException("cannot evaluate statically", sourcePos, &context);
+        otava::symbols::ThrowException("cannot evaluate statically", sourcePos, &context);
     }
 }
 
@@ -302,7 +303,7 @@ void BlockExit::CheckUnique(const soul::ast::SourcePos& sourcePos, otava::symbol
                     otava::symbols::VariableSymbol* variable = boundVariableNode->GetVariable();
                     if (variables.find(variable) != variables.end())
                     {
-                        ThrowException("block exit not unique", sourcePos, context);
+                        otava::symbols::ThrowException("block exit not unique", sourcePos, context);
                     }
                     variables.insert(variable);
                 }
@@ -559,7 +560,7 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
             }
             else
             {
-                ThrowException("function type expected", sourcePos, &context);
+                otava::symbols::ThrowException("function type expected", sourcePos, &context);
             }
         }
         else
@@ -680,7 +681,7 @@ void CodeGenerator::GenerateGlobalInitializationFunction()
     std::u32string setBadAllocExStr;
     std::uint64_t ext1 = 0;
     std::uint64_t ext2 = 0;
-    otava::symbols::FunctionDefinitionSymbol* globalInit(new otava::symbols::FunctionDefinitionSymbol(U"__global_init__"));
+    otava::symbols::FunctionDefinitionSymbol* globalInit = new otava::symbols::FunctionDefinitionSymbol(U"__global_init__");
     globalInit->SetLinkage(otava::symbols::Linkage::c_linkage);
     otava::ast::NestedNameSpecifierNode* nnsNode = new otava::ast::NestedNameSpecifierNode(soul::ast::SourcePos());
     nnsNode->AddNode(new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"std"));
@@ -807,7 +808,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
     context.SetFunctionsInlined(context.FunctionsInlined() + optimizationContext.FunctionsInlined());
     context.SetFunctionCallsInlined(context.FunctionCallsInlined() + intermediateContext.InlinedFunctionCalls());
     context.SetFunctionCallsInlined(context.FunctionCallsInlined() + optimizationContext.InlinedFunctionCalls());
-    for (const auto& cls : context.GetSymbolTable()->Classes())
+    for (auto* cls : context.GetSymbolTable()->Classes())
     {
         AddClassInfo(cls);
     }
@@ -836,9 +837,9 @@ void CodeGenerator::AddClassInfo(otava::symbols::ClassTypeSymbol* cls)
     info::class_key key = info::class_key::cls;
     switch (kind)
     {
-        case otava::symbols::ClassKind::class_: key = info::class_key::cls; break;
-        case otava::symbols::ClassKind::struct_: key = info::class_key::strct; break;
-        case otava::symbols::ClassKind::union_: key = info::class_key::uni; break;
+        case otava::symbols::ClassKind::class_: { key = info::class_key::cls; break; }
+        case otava::symbols::ClassKind::struct_: { key = info::class_key::strct; break; }
+        case otava::symbols::ClassKind::union_: { key = info::class_key::uni; break; }
     }
     std::unique_ptr<info::class_info> info(new info::class_info(id, key, util::ToUtf8(cls->FullName()), clsType->Size()));
     for (otava::symbols::ClassTypeSymbol* base : cls->BaseClasses())
@@ -862,10 +863,6 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     if (functionDefinition->ContainsGotosOrLabels())
     {
         BuildGotoTargetMap(node.Body(), &context);
-    }
-    if (functionDefinition->FullName() == U"otava::intermediate::invoke_1_compile_unit_30C8AE26057B92DD4E9DBA86C4FC2A4F58107238(void*)")
-    {
-        int x = 0;
     }
     std::string functionDefinitionName = functionDefinition->IrName(&context);
     if (functionDefinition->GroupName() == U"main")
@@ -1184,7 +1181,7 @@ void CodeGenerator::Visit(otava::symbols::BoundSwitchStatementNode& node)
     {
         const auto& caseTarget = switchTargets->Cases()[i];
         emitter->SetCurrentBasicBlock(caseTarget->block);
-        for (const auto& expr : caseTarget->exprs)
+        for (auto* expr : caseTarget->exprs)
         {
             EvaluateConstantExpr(*emitter, node.GetSourcePos(), context, expr);
             otava::intermediate::Value* caseValue = emitter->Stack().Pop();
@@ -1511,7 +1508,9 @@ void CodeGenerator::Visit(otava::symbols::BoundSetVPtrStatementNode& node)
             emitter->MakePtrType(emitter->GetVoidType()));
         emitter->EmitStore(vptr, ptr);
         otava::symbols::ClassTypeSymbol* vptrHolderClass = node.GetVPtrHolderClass();
-        auto [succeeded, delta] = otava::symbols::Delta(vptrHolderClass, forClass, *emitter, &context);
+        std::pair<bool, std::int64_t> p = otava::symbols::Delta(vptrHolderClass, forClass, *emitter, &context);
+        bool succeeded = p.first;
+        std::int64_t delta = p.second;
         if (!succeeded)
         {
             otava::symbols::ThrowException("classes '" + util::ToUtf8(forClass->FullName()) + "' and '" + util::ToUtf8(vptrHolderClass->FullName()) +

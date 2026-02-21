@@ -8,7 +8,7 @@ class TemplateParameterSymbol;
 
 struct TemplateParamLess
 {
-    bool operator()(TemplateParameterSymbol* left, TemplateParameterSymbol* right) const;
+    bool operator()(TemplateParameterSymbol* left, TemplateParameterSymbol* right) const noexcept;
 };
 
 } // namespace otava::symbols

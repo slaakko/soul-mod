@@ -65,11 +65,11 @@ ArrayDeclarator::ArrayDeclarator(const std::u32string& name_, otava::ast::Node* 
 {
 }
 
-Declaration::Declaration() : flags(DeclarationFlags::none), type(nullptr), declarator(nullptr), value(nullptr), initializer(nullptr), variable(nullptr)
+Declaration::Declaration() noexcept : flags(DeclarationFlags::none), type(nullptr), declarator(nullptr), value(nullptr), initializer(nullptr), variable(nullptr)
 {
 }
 
-Declaration::Declaration(DeclarationFlags flags_, TypeSymbol* type_, Declarator* declarator_) : 
+Declaration::Declaration(DeclarationFlags flags_, TypeSymbol* type_, Declarator* declarator_) noexcept :
     flags(flags_), type(type_), declarator(declarator_), value(nullptr), initializer(nullptr), variable(nullptr)
 {
 }

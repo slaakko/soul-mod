@@ -75,7 +75,7 @@ public:
     inline const std::vector<std::string>& ModuleNames() const { return moduleNames; }
     inline const std::vector<Define>& Defines() const { return defines; }
     void AddDefine(const std::string& symbol, std::int64_t value);
-    bool HasDefine(const std::string& symbol) const override;
+    bool HasDefine(const std::string& symbol) const noexcept override;
     void ResolveForwardDeclarationsAndAddDerivedClasses(otava::symbols::ModuleMapper& moduleMapper, const std::string& config, int optLevel);
     inline void SetTarget(Target target_) { target = target_; }
     inline Target GetTarget() const { return target; }

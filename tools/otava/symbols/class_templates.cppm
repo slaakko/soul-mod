@@ -23,46 +23,46 @@ class ClassTemplateSpecializationSymbol : public ClassTypeSymbol
 public:
     ClassTemplateSpecializationSymbol(const std::u32string& name_);
     ClassTemplateSpecializationSymbol(const util::uuid& id_, const std::u32string& name_);
-    util::uuid IrId(Context* context) const override;
-    inline bool Instantiated() const { return instantiated; }
-    inline void SetInstantiated() { instantiated = true; }
+    util::uuid IrId(Context* context) const noexcept override;
+    inline bool Instantiated() const noexcept { return instantiated; }
+    inline void SetInstantiated() noexcept { instantiated = true; }
     std::string SymbolKindStr() const override { return "specialization symbol"; }
     std::string SymbolDocKindStr() const override { return "specialization"; }
-    inline ClassTypeSymbol* ClassTemplate() const { return classTemplate; }
-    void SetClassTemplate(ClassTypeSymbol* classTemplate_);
-    const std::u32string& SimpleName() const override { return ClassTemplate()->SimpleName(); }
+    inline ClassTypeSymbol* ClassTemplate() const noexcept { return classTemplate; }
+    void SetClassTemplate(ClassTypeSymbol* classTemplate_) noexcept;
+    const std::u32string& SimpleName() const noexcept override { return ClassTemplate()->SimpleName(); }
     std::u32string FullName() const override;
     std::string IrName(Context* context) const override;
-    inline const std::vector<Symbol*>& TemplateArguments() const { return templateArguments; }
+    inline const std::vector<Symbol*>& TemplateArguments() const noexcept { return templateArguments; }
     void AddTemplateArgument(Symbol* templateArgument);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, 
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+        const soul::ast::SourcePos& sourcePos, Context* context) noexcept override;
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
-    inline FunctionSymbol* Destructor() const { return destructor; }
-    inline void SetDestructor(FunctionSymbol* destructor_) { destructor = destructor_; }
+    inline FunctionSymbol* Destructor() const noexcept { return destructor; }
+    inline void SetDestructor(FunctionSymbol* destructor_) noexcept { destructor = destructor_; }
     TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
-    bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const override;
-    inline bool InstantiatingDestructor() const { return instantiatingDestructor; }
-    inline void SetInstantiatingDestructor(bool instantiating) { instantiatingDestructor = instantiating; }
+    bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const noexcept override;
+    inline bool InstantiatingDestructor() const noexcept { return instantiatingDestructor; }
+    inline void SetInstantiatingDestructor(bool instantiating) noexcept { instantiatingDestructor = instantiating; }
     void AddInstantiatedVirtualFunctionSpecialization(FunctionSymbol* specialization);
-    FunctionSymbol* GetMatchingVirtualFunctionSpecialization(FunctionSymbol* newcomer, Context* context) const;
-    bool ContainsVirtualFunctionSpecialization(FunctionSymbol* specialization) const;
-    ClassGroupSymbol* Group() const override { return ClassTemplate()->Group(); }
-    bool IsBasicStringCharType(Context* context) override
+    FunctionSymbol* GetMatchingVirtualFunctionSpecialization(FunctionSymbol* newcomer, Context* context) const noexcept;
+    bool ContainsVirtualFunctionSpecialization(FunctionSymbol* specialization) const noexcept;
+    ClassGroupSymbol* Group() const noexcept override { return ClassTemplate()->Group(); }
+    bool IsBasicStringCharType(Context* context) noexcept override
     {
         return classTemplate->Name() == U"basic_string" &&
             templateArguments.size() == 1 &&
             (templateArguments.front()->IsCharTypeSymbol() || templateArguments.front()->IsChar8TypeSymbol());
     }
-    bool IsBasicStringChar16Type(Context* context) override
+    bool IsBasicStringChar16Type(Context* context) noexcept override
     { 
         return classTemplate->Name() == U"basic_string" && templateArguments.size() == 1 && templateArguments.front()->IsChar16TypeSymbol(); 
     }
-    bool IsBasicStringChar32Type(Context* context) override
+    bool IsBasicStringChar32Type(Context* context) noexcept override
     { 
         return classTemplate->Name() == U"basic_string" && templateArguments.size() == 1 && templateArguments.front()->IsChar32TypeSymbol(); 
     }
@@ -79,13 +79,14 @@ private:
 };
 
 util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, 
-    const soul::ast::SourcePos& sourcePos, Context* context);
+    const soul::ast::SourcePos& sourcePos, Context* context) noexcept;
 
 util::uuid MakeClassTemplateSpecializationSymbolIrId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments,
-    const soul::ast::SourcePos& sourcePos, Context* context);
+    const soul::ast::SourcePos& sourcePos, Context* context) noexcept;
 
 struct MemFunKey
 {
+    MemFunKey();
     MemFunKey(FunctionSymbol* memFun_, const std::vector<TypeSymbol*>& templateArgumentTypes_);
     FunctionSymbol* memFun;
     std::vector<TypeSymbol*> templateArgumentTypes;
@@ -93,14 +94,14 @@ struct MemFunKey
 
 struct MemFunKeyLess
 {
-    bool operator()(const MemFunKey& left, const MemFunKey& right) const;
+    bool operator()(const MemFunKey& left, const MemFunKey& right) const noexcept;
 };
 
 class ClassTemplateRepository
 {
 public:
     ClassTemplateRepository();
-    FunctionDefinitionSymbol* GetFunctionDefinition(const MemFunKey& key) const;
+    FunctionDefinitionSymbol* GetFunctionDefinition(const MemFunKey& key) const noexcept;
     void AddFunctionDefinition(const MemFunKey& key, FunctionDefinitionSymbol* functionDefinitionSymbol, otava::ast::Node* functionDefinitionNode);
 private:
     std::map<MemFunKey, FunctionDefinitionSymbol*, MemFunKeyLess> memFunMap;
@@ -109,8 +110,8 @@ private:
 
 std::u32string MakeSpecializationName(TypeSymbol* templateSymbol, const std::vector<Symbol*>& templateArguments);
 
-CompoundTypeSymbol* GetCompoundSpecializationArgType(TypeSymbol* specialization, int index);
-ClassTemplateSpecializationSymbol* GetClassTemplateSpecializationArgType(TypeSymbol* specialization, int index);
+CompoundTypeSymbol* GetCompoundSpecializationArgType(TypeSymbol* specialization, int index) noexcept;
+ClassTemplateSpecializationSymbol* GetClassTemplateSpecializationArgType(TypeSymbol* specialization, int index) noexcept;
 
 ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs, 
     const soul::ast::SourcePos& sourcePos, Context* context);

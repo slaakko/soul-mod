@@ -2951,7 +2951,7 @@ soul::parser::Match ClassParser<LexerT>::MemberDeclaration(LexerT& lexer, otava:
                     {
                         if (!nextIsRBrace)
                         {
-                            ThrowMemberDeclarationParsingError(lexer.GetSourcePos(pos), context);
+                            otava::symbols::ThrowMemberDeclarationParsingError(lexer.GetSourcePos(pos), context);
                         }
                         else
                         {

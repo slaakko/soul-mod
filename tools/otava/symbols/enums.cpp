@@ -31,7 +31,7 @@ EnumeratedTypeSymbol::EnumeratedTypeSymbol(const std::u32string& name_) :
     GetScope()->SetKind(ScopeKind::enumerationScope);
 }
 
-bool EnumeratedTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
+bool EnumeratedTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcept
 {
     switch (scopeKind)
     {
@@ -106,7 +106,7 @@ ForwardEnumDeclarationSymbol::ForwardEnumDeclarationSymbol(const std::u32string&
     GetScope()->SetKind(ScopeKind::enumerationScope);
 }
 
-bool ForwardEnumDeclarationSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
+bool ForwardEnumDeclarationSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcept
 {
     switch (scopeKind)
     {
@@ -183,7 +183,7 @@ EnumConstantSymbol::EnumConstantSymbol(const std::u32string& name_) : Symbol(Sym
 {
 }
 
-bool EnumConstantSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
+bool EnumConstantSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcept
 {
     if (enumType->GetEnumTypeKind() == EnumTypeKind::enumClass || enumType->GetEnumTypeKind() == EnumTypeKind::enumStruct)
     {
@@ -234,7 +234,7 @@ void EnumConstantSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-bool EnumTypeLessFunctor::operator()(EnumeratedTypeSymbol* left, EnumeratedTypeSymbol* right) const
+bool EnumTypeLessFunctor::operator()(EnumeratedTypeSymbol* left, EnumeratedTypeSymbol* right) const noexcept
 {
     return left->Name() < right->Name();
 }
@@ -339,9 +339,9 @@ void EnumCreator::Visit(otava::ast::EnumeratorDefinitionNode& node)
     {
         valueType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType);
     }
-    if (node.Value())
+    if (node.GetValue())
     {
-        Value* val = Evaluate(node.Value(), context);
+        Value* val = Evaluate(node.GetValue(), context);
         if (val->IsIntegerValue())
         {
             IntegerValue* intVal = static_cast<IntegerValue*>(val);

@@ -18,6 +18,9 @@ import otava.symbols.function_definition_symbol_set;
 import otava.symbols.templates;
 import otava.symbols.template_param_compare;
 import otava.symbols.trace;
+import otava.symbols.declaration;
+import otava.symbols.operation.repository;
+import otava.symbols.function.templates;
 import util.uuid;
 
 export namespace otava::symbols {
@@ -80,17 +83,17 @@ enum class ContextFlags : std::int64_t
     setParentBlockIds = static_cast<std::int64_t>(1) << 48
 };
 
-constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
+constexpr ContextFlags operator|(ContextFlags left, ContextFlags right) noexcept
 {
     return ContextFlags(std::int64_t(left) | std::int64_t(right));
 }
 
-constexpr ContextFlags operator&(ContextFlags left, ContextFlags right)
+constexpr ContextFlags operator&(ContextFlags left, ContextFlags right) noexcept
 {
     return ContextFlags(std::int64_t(left) & std::int64_t(right));
 }
 
-constexpr ContextFlags operator~(ContextFlags flags)
+constexpr ContextFlags operator~(ContextFlags flags) noexcept
 {
     return ContextFlags(~std::int64_t(flags));
 }
@@ -111,7 +114,7 @@ class Emitter;
 class Project;
 class StatementBinder;
 
-int GetOptLevel(int level, bool release);
+int GetOptLevel(int level, bool release) noexcept;
 
 struct RangeForBlockIds
 {
@@ -125,115 +128,115 @@ class Context
 {
 public:
     Context();
-    inline Lexer* GetLexer() { return lexer; }
-    void SetLexer(Lexer* lexer_);
-    inline SymbolTable* GetSymbolTable() { return symbolTable; }
-    void SetSymbolTable(SymbolTable* symbolTable_);
-    Module* GetModule();
-    inline TraceInfo* GetTraceInfo() const { return traceInfo; }
-    inline void SetTraceInfo(TraceInfo* traceInfo_) { traceInfo = traceInfo_; }
-    void SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_);
-    FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() const;
-    inline BoundCompileUnitNode* GetBoundCompileUnit() const { return boundCompileUnit.get(); }
-    OperationRepository* GetOperationRepository() const;
-    inline BoundFunctionNode* GetBoundFunction() const { return boundFunction.get(); }
-    inline BoundFunctionNode* ReleaseBoundFunction() { return boundFunction.release(); }
+    Lexer* GetLexer() noexcept { return lexer; }
+    void SetLexer(Lexer* lexer_) noexcept;
+    SymbolTable* GetSymbolTable() noexcept { return symbolTable; }
+    void SetSymbolTable(SymbolTable* symbolTable_) noexcept;
+    Module* GetModule() noexcept;
+    inline TraceInfo* GetTraceInfo() const noexcept { return traceInfo; }
+    inline void SetTraceInfo(TraceInfo* traceInfo_) noexcept { traceInfo = traceInfo_; }
+    void SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_) noexcept;
+    FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() const noexcept;
+    inline BoundCompileUnitNode* GetBoundCompileUnit() const noexcept { return boundCompileUnit.get(); }
+    OperationRepository* GetOperationRepository() const noexcept;
+    inline BoundFunctionNode* GetBoundFunction() const noexcept { return boundFunction.get(); }
+    inline BoundFunctionNode* ReleaseBoundFunction() noexcept { return boundFunction.release(); }
     void PushBoundFunction(BoundFunctionNode* boundFunction_);
     void PopBoundFunction();
     BoundExpressionNode* GetThisPtr(const soul::ast::SourcePos& sourcePos);
-    EvaluationContext* GetEvaluationContext();
+    EvaluationContext* GetEvaluationContext() noexcept;
     std::string FileName() const;
     void SetFileName(const std::string& fileName_);
     void PushFlags();
     void PopFlags();
-    void ResetFlags();
+    void ResetFlags() noexcept;
     void PushSetFlag(ContextFlags flag);
     void PushResetFlag(ContextFlags flag);
-    inline void SetFlag(ContextFlags flag) { flags = flags | flag; }
-    inline bool GetFlag(ContextFlags flag) const { return (flags & flag) != ContextFlags::none; }
-    inline void ResetFlag(ContextFlags flag) { flags = flags & ~flag; }
-    inline bool ReleaseConfig() const { return GetFlag(ContextFlags::release); }
-    inline void SetReleaseConfig() { SetFlag(ContextFlags::release); }
-    int OptLevel() const;
-    inline void SetOptLevel(int optLevel_) { optLevel = optLevel_; }
-    bool IsConstructorNameNode(otava::ast::Node* node) const;
-    bool EnableNoDeclSpecFunctionDeclaration() const;
-    bool EnableNoDeclSpecFunctionDefinition() const;
+    inline void SetFlag(ContextFlags flag) noexcept { flags = flags | flag; }
+    inline bool GetFlag(ContextFlags flag) const noexcept { return (flags & flag) != ContextFlags::none; }
+    inline void ResetFlag(ContextFlags flag) noexcept { flags = flags & ~flag; }
+    inline bool ReleaseConfig() const noexcept { return GetFlag(ContextFlags::release); }
+    inline void SetReleaseConfig() noexcept { SetFlag(ContextFlags::release); }
+    int OptLevel() const noexcept;
+    inline void SetOptLevel(int optLevel_) noexcept { optLevel = optLevel_; }
+    bool IsConstructorNameNode(otava::ast::Node* node) const noexcept;
+    bool EnableNoDeclSpecFunctionDeclaration() const noexcept;
+    bool EnableNoDeclSpecFunctionDefinition() const noexcept;
     void PushNode(otava::ast::Node* node_);
     void PopNode();
-    inline otava::ast::Node* GetNode() const { return node; }
+    inline otava::ast::Node* GetNode() const noexcept { return node; }
     void SetDeclarationList(otava::ast::Node* node, DeclarationList* declarations);
     std::unique_ptr<DeclarationList> ReleaseDeclarationList(otava::ast::Node* node);
-    inline soul::lexer::FileMap* GetFileMap() const { return fileMap; }
-    inline void SetFileMap(soul::lexer::FileMap* fileMap_) { fileMap = fileMap_; }
-    inline void SetAliasType(AliasTypeSymbol* aliasType_) { aliasType = aliasType_; }
-    inline AliasTypeSymbol* GetAliasType() const { return aliasType; }
-    inline void SetPtr(otava::intermediate::Value* ptr_) { ptr = ptr_; }
-    inline otava::intermediate::Value* Ptr() const { return ptr; }
-    inline int MemFunDefSymbolIndex() const { return memFunDefSymbolIndex; }
-    inline void SetMemFunDefSymbolIndex(int index) { memFunDefSymbolIndex = index; }
-    inline void ResetRejectTemplateId() { rejectTemplateId = false; }
-    inline void SetRejectTemplateId() { rejectTemplateId = true; }
-    inline bool RejectTemplateId() const { return rejectTemplateId; }
+    inline soul::lexer::FileMap* GetFileMap() const noexcept { return fileMap; }
+    inline void SetFileMap(soul::lexer::FileMap* fileMap_) noexcept { fileMap = fileMap_; }
+    inline void SetAliasType(AliasTypeSymbol* aliasType_) noexcept { aliasType = aliasType_; }
+    inline AliasTypeSymbol* GetAliasType() const noexcept { return aliasType; }
+    inline void SetPtr(otava::intermediate::Value* ptr_) noexcept { ptr = ptr_; }
+    inline otava::intermediate::Value* Ptr() const noexcept { return ptr; }
+    inline int MemFunDefSymbolIndex() const noexcept { return memFunDefSymbolIndex; }
+    inline void SetMemFunDefSymbolIndex(int index) noexcept { memFunDefSymbolIndex = index; }
+    inline void ResetRejectTemplateId() noexcept { rejectTemplateId = false; }
+    inline void SetRejectTemplateId() noexcept { rejectTemplateId = true; }
+    inline bool RejectTemplateId() const noexcept { return rejectTemplateId; }
     void PushSwitchCondType(TypeSymbol* switchCondType_);
     void PopSwitchCondType();
-    inline TypeSymbol* GetSwitchCondType() const { return switchCondType; }
-    void SetInstantiationQueue(InstantiationQueue* instantiationQueue_);
-    inline InstantiationQueue* GetInstantiationQueue() { return instantiationQueue; }
+    inline TypeSymbol* GetSwitchCondType() const noexcept { return switchCondType; }
+    void SetInstantiationQueue(InstantiationQueue* instantiationQueue_) noexcept;
+    inline InstantiationQueue* GetInstantiationQueue() noexcept { return instantiationQueue; }
     void AddTemporaryAliasType(AliasTypeSymbol* temporaryAliasType);
-    inline const std::vector<AliasTypeSymbol*>& TemporaryAliasTypes() const { return temporaryAliasTypes; }
+    inline const std::vector<AliasTypeSymbol*>& TemporaryAliasTypes() const noexcept { return temporaryAliasTypes; }
     void ClearTemporaryAliasTypes();
-    inline void SetDeclaredInitializerType(TypeSymbol* type) { declaredInitializerType = type; }
-    inline TypeSymbol* DeclaredInitializerType() const { return declaredInitializerType; }
-    FunctionSymbol* GetSpecialization(otava::ast::Node* functionNode) const;
+    inline void SetDeclaredInitializerType(TypeSymbol* type) noexcept { declaredInitializerType = type; }
+    inline TypeSymbol* DeclaredInitializerType() const noexcept { return declaredInitializerType; }
+    FunctionSymbol* GetSpecialization(otava::ast::Node* functionNode) const noexcept;
     void SetSpecialization(FunctionSymbol* specialization, otava::ast::Node* functionNode);
     void RemoveSpecialization(otava::ast::Node* functionNode);
-    ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(otava::ast::Node* functionNode) const;
+    ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(otava::ast::Node* functionNode) const noexcept;
     void SetClassTemplateSpecialization(otava::ast::Node* functionNode, ClassTemplateSpecializationSymbol* sp);
     void RemoveClassTemplateSpecialization(otava::ast::Node* functionNode);
     void SetInstantiationIrName(const std::string& instantiationIrName_);
-    inline const std::string& InstantiationIrName() const { return instantiationIrName; }
+    inline const std::string& InstantiationIrName() const noexcept { return instantiationIrName; }
     void AddBoundVTabFunction(BoundFunctionNode* node);
-    inline const std::vector<std::unique_ptr<BoundFunctionNode>>& BoundVTabFunctions() const { return boundVTabFunctions; }
+    inline const std::vector<std::unique_ptr<BoundFunctionNode>>& BoundVTabFunctions() const noexcept { return boundVTabFunctions; }
     void ClearBoundVTabFunctions();
     void PushTemplateParameterMap(std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>* templateParamMap);
     void PopTemplateParameterMap();
-    inline std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>* TemplateParameterMap() const { return templateParameterMap; }
-    inline void SetSourcePos(const soul::ast::SourcePos& sourcePos_) { sourcePos = sourcePos_; }
-    inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
-    inline TypeSymbol* ArgType() { return argType; }
-    inline void SetArgType(TypeSymbol* argType_) { argType = argType_; }
-    inline TypeSymbol* ParamType() { return paramType; }
-    inline void SetParamType(TypeSymbol* paramType_) { paramType = paramType_; }
-    inline int TotalFunctionsCompiled() const { return totalFunctionsCompiled; }
-    inline int FunctionCallsInlined() const { return functionCallsInlined; }
-    inline int FunctionsInlined() const { return functionsInlined; }
-    inline void SetTotalFunctionsCompiled(int totalFunctionsCompiled_) { totalFunctionsCompiled = totalFunctionsCompiled_; }
-    inline void SetFunctionCallsInlined(int functionCallsInlined_) { functionCallsInlined = functionCallsInlined_; }
-    inline void SetFunctionsInlined(int functionsInlined_) { functionsInlined = functionsInlined_; }
-    inline int Invokes() const { return invokes; }
-    inline void IncInvokes() { ++invokes; }
-    inline void SetInvokes(int invokes_) { invokes = invokes_; }
-    inline Emitter* GetEmitter() { return emitter; }
-    inline void SetEmitter(Emitter* emitter_) { emitter = emitter_; }
-    inline int ArgIndex() const { return argIndex; }
-    void SetArgIndex(int argIndex_) { argIndex = argIndex_; }
-    inline void SetRequesterModule(Module* requesterModule_) { requesterModule = requesterModule_;  }
-    inline Module* GetRequesterModule() const { return requesterModule; }
-    inline Project* CurrentProject() const { return currentProject; }
-    inline void SetCurrentProject(Project* project) { currentProject = project; }
-    inline int NextTrySerial() { return trySerial++; }
-    inline int NextInvokeSerial() { return invokeSerial++; }
-    inline int NextCleanupSerial() { return cleanupSerial++; }
-    inline int NextResultSerial() { return resultSerial++; }
-    inline int NextLabelSerial() { return labelSerial++; }
-    inline int NextEhReturnFromSerial() { return ehReturnFromSerial++; }
-    inline int NextChildControlResultSerial() { return childControlResultSerial++; }
-    inline int NextConditionVariableSerial() { return conditionVariableSerial++; }
+    inline std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>* TemplateParameterMap() const noexcept { return templateParameterMap; }
+    inline void SetSourcePos(const soul::ast::SourcePos& sourcePos_) noexcept { sourcePos = sourcePos_; }
+    inline const soul::ast::SourcePos& GetSourcePos() const noexcept { return sourcePos; }
+    inline TypeSymbol* ArgType() noexcept { return argType; }
+    inline void SetArgType(TypeSymbol* argType_) noexcept { argType = argType_; }
+    inline TypeSymbol* ParamType() noexcept { return paramType; }
+    inline void SetParamType(TypeSymbol* paramType_) noexcept { paramType = paramType_; }
+    inline int TotalFunctionsCompiled() const noexcept { return totalFunctionsCompiled; }
+    inline int FunctionCallsInlined() const noexcept { return functionCallsInlined; }
+    inline int FunctionsInlined() const noexcept { return functionsInlined; }
+    inline void SetTotalFunctionsCompiled(int totalFunctionsCompiled_) noexcept { totalFunctionsCompiled = totalFunctionsCompiled_; }
+    inline void SetFunctionCallsInlined(int functionCallsInlined_) noexcept { functionCallsInlined = functionCallsInlined_; }
+    inline void SetFunctionsInlined(int functionsInlined_) noexcept { functionsInlined = functionsInlined_; }
+    inline int Invokes() const noexcept { return invokes; }
+    inline void IncInvokes() noexcept { ++invokes; }
+    inline void SetInvokes(int invokes_) noexcept { invokes = invokes_; }
+    inline Emitter* GetEmitter() noexcept { return emitter; }
+    inline void SetEmitter(Emitter* emitter_) noexcept { emitter = emitter_; }
+    inline int ArgIndex() const noexcept { return argIndex; }
+    void SetArgIndex(int argIndex_) noexcept { argIndex = argIndex_; }
+    inline void SetRequesterModule(Module* requesterModule_) noexcept { requesterModule = requesterModule_;  }
+    inline Module* GetRequesterModule() const noexcept { return requesterModule; }
+    Project* CurrentProject() const noexcept { return currentProject; }
+    inline void SetCurrentProject(Project* project) noexcept { currentProject = project; }
+    inline int NextTrySerial() noexcept { return trySerial++; }
+    inline int NextInvokeSerial() noexcept { return invokeSerial++; }
+    inline int NextCleanupSerial() noexcept { return cleanupSerial++; }
+    inline int NextResultSerial() noexcept { return resultSerial++; }
+    inline int NextLabelSerial() noexcept { return labelSerial++; }
+    inline int NextEhReturnFromSerial() noexcept { return ehReturnFromSerial++; }
+    inline int NextChildControlResultSerial() noexcept { return childControlResultSerial++; }
+    inline int NextConditionVariableSerial() noexcept { return conditionVariableSerial++; }
     void PushStatementBinder(StatementBinder* statementBinder_);
     void PopStatementBinder();
-    inline StatementBinder* GetStatementBinder() const { return statementBinder; }
-    StatementBinder* GetParentStatementBinder() const;
+    inline StatementBinder* GetStatementBinder() const noexcept { return statementBinder; }
+    StatementBinder* GetParentStatementBinder() const noexcept;
     const std::u32string& ResultVarName() const { return resultVariableName; }
     void PushResultVarName(const std::u32string& resultVarName_);
     void PopResultVarName();
@@ -244,14 +247,14 @@ public:
     std::u32string NextEhReturnFromVarName();
     std::u32string NextChildControlResultVarName();
     std::u32string NextConditionVariableName();
-    inline int NextBlockId() { return nextBlockId++; }
-    inline int CurrentBlockId() const { return currentBlockId; }
+    inline int NextBlockId() noexcept { return nextBlockId++; }
+    inline int CurrentBlockId() const noexcept { return currentBlockId; }
     void PushBlockId(int blockId);
     void PopBlockId();
-    FunctionDefinitionSymbol* ParentFn() const { return parentFn; }
+    FunctionDefinitionSymbol* ParentFn() const noexcept { return parentFn; }
     void PushParentFn(FunctionDefinitionSymbol* parentFn_);
     void PopParentFn();
-    inline int ParentBlockId() const { return parentBlockId; }
+    inline int ParentBlockId() const noexcept { return parentBlockId; }
     void PushParentBlockId(int blockId);
     void PopParentBlockId();
     RangeForBlockIds& GetRangeForBlockIds(const util::uuid& rangeForId);
@@ -324,7 +327,3 @@ private:
 };
 
 } // namespace otava::symbols
-
-export namespace otava::symbols::context {
-
-} // otava::symbols::context;

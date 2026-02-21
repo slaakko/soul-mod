@@ -73,7 +73,7 @@ void TraceInfo::AddSourceFileInfo(std::int32_t moduleId, const std::string& sour
     }
 }
 
-std::int64_t TraceInfo::GetSourceFileId(const std::string& sourceFilePath) const
+std::int64_t TraceInfo::GetSourceFileId(const std::string& sourceFilePath) const noexcept
 {
     auto it = sourceFileInfoMap.find(sourceFilePath);
     if (it != sourceFileInfoMap.end())
@@ -97,7 +97,7 @@ void TraceInfo::AddFunctionTraceInfo(std::int64_t sourceFileId, std::int32_t mod
     }
 }
 
-std::int64_t TraceInfo::GetFunctionId(const std::string& functionFullName) const
+std::int64_t TraceInfo::GetFunctionId(const std::string& functionFullName) const noexcept
 {
     auto it = functionTraceInfoMap.find(functionFullName);
     if (it != functionTraceInfoMap.end())
@@ -206,7 +206,7 @@ void TraceBin::Read(util::BinaryStreamReader& reader)
     }
 }
 
-SourceFileInfo* TraceBin::GetSourceFileInfo(std::int64_t sourceFileId) const
+SourceFileInfo* TraceBin::GetSourceFileInfo(std::int64_t sourceFileId) const noexcept
 {
     auto it = sourceFileInfosMap.find(sourceFileId);
     if (it != sourceFileInfosMap.end())
@@ -219,7 +219,7 @@ SourceFileInfo* TraceBin::GetSourceFileInfo(std::int64_t sourceFileId) const
     }
 }
 
-FunctionTraceInfo* TraceBin::GetFunctionTraceInfo(std::int64_t functionId) const
+FunctionTraceInfo* TraceBin::GetFunctionTraceInfo(std::int64_t functionId) const noexcept
 {
     auto it = functionTraceInfoMap.find(functionId);
     if (it != functionTraceInfoMap.end())

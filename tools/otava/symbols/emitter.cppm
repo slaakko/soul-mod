@@ -21,11 +21,11 @@ class Emitter
 public:
     Emitter();
     ~Emitter();
-    inline void SetCheck() { check = true; }
+    inline void SetCheck() noexcept { check = true; }
     inline void SetFilePath(const std::string& filePath) { context->SetFilePath(filePath); }
-    inline const std::string& FilePath() const { return context->FilePath(); }
+    inline const std::string& FilePath() const noexcept { return context->FilePath(); }
     void SetCompileUnitInfo(const std::string& compileUnitId, const std::string& sourceFilePath);
-    inline otava::intermediate::IntermediateContext* GetIntermediateContext() { return context; }
+    inline otava::intermediate::IntermediateContext* GetIntermediateContext() noexcept { return context; }
     void ResolveReferences();
     void Emit();
     otava::intermediate::Function* CreateFunction(const std::string& name, otava::intermediate::Type* type, bool inline_, bool once, bool child);
@@ -43,7 +43,7 @@ public:
         }
         return bb;
     }
-    inline void SetCurrentBasicBlock(otava::intermediate::BasicBlock* bb) { context->SetCurrentBasicBlock(bb); }
+    inline void SetCurrentBasicBlock(otava::intermediate::BasicBlock* bb) noexcept { context->SetCurrentBasicBlock(bb); }
     otava::intermediate::Type* MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes, const std::string& comment);
     otava::intermediate::Type* MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes);
     otava::intermediate::Type* MakeArrayType(std::int64_t size, otava::intermediate::Type* elementType);
@@ -57,18 +57,18 @@ public:
     }
     otava::intermediate::Type* GetOrInsertFwdDeclaredStructureType(const util::uuid& id, const std::string& comment);
     void ResolveForwardReferences(const util::uuid& typeId, otava::intermediate::StructureType* structureType);
-    inline otava::intermediate::Type* GetVoidType() { return context->GetVoidType(); }
-    inline otava::intermediate::Type* GetBoolType() { return context->GetBoolType(); }
-    inline otava::intermediate::Type* GetSByteType() { return context->GetSByteType(); }
-    inline otava::intermediate::Type* GetByteType() { return context->GetByteType(); }
-    inline otava::intermediate::Type* GetShortType() { return context->GetShortType(); }
-    inline otava::intermediate::Type* GetUShortType() { return context->GetUShortType(); }
-    inline otava::intermediate::Type* GetIntType() { return context->GetIntType(); }
-    inline otava::intermediate::Type* GetUIntType() { return context->GetUIntType(); }
-    inline otava::intermediate::Type* GetLongType() { return context->GetLongType(); }
-    inline otava::intermediate::Type* GetULongType() { return context->GetULongType(); }
-    inline otava::intermediate::Type* GetFloatType() { return context->GetFloatType(); }
-    inline otava::intermediate::Type* GetDoubleType() { return context->GetDoubleType(); }
+    inline otava::intermediate::Type* GetVoidType() noexcept { return context->GetVoidType(); }
+    inline otava::intermediate::Type* GetBoolType() noexcept { return context->GetBoolType(); }
+    inline otava::intermediate::Type* GetSByteType() noexcept { return context->GetSByteType(); }
+    inline otava::intermediate::Type* GetByteType() noexcept { return context->GetByteType(); }
+    inline otava::intermediate::Type* GetShortType() noexcept { return context->GetShortType(); }
+    inline otava::intermediate::Type* GetUShortType() noexcept { return context->GetUShortType(); }
+    inline otava::intermediate::Type* GetIntType() noexcept { return context->GetIntType(); }
+    inline otava::intermediate::Type* GetUIntType() noexcept { return context->GetUIntType(); }
+    inline otava::intermediate::Type* GetLongType() noexcept { return context->GetLongType(); }
+    inline otava::intermediate::Type* GetULongType() noexcept { return context->GetULongType(); }
+    inline otava::intermediate::Type* GetFloatType() noexcept { return context->GetFloatType(); }
+    inline otava::intermediate::Type* GetDoubleType() noexcept { return context->GetDoubleType(); }
     inline otava::intermediate::Type* MakePtrType(otava::intermediate::Type* baseType) { return context->MakePtrType(baseType); }
     otava::intermediate::Value* EmitBool(bool value);
     inline otava::intermediate::Value* EmitSByte(std::int8_t value) { return context->GetSByteValue(value); }
@@ -191,13 +191,13 @@ public:
         return context->CreateGetRbp();
     }
     inline void EmitNop() { context->CreateNop(); }
-    otava::intermediate::Type* GetType(const util::uuid& id) const;
+    otava::intermediate::Type* GetType(const util::uuid& id) const noexcept;
     void SetType(const util::uuid& id, otava::intermediate::Type* type);
-    otava::intermediate::Value* GetIrObject(void* symbol) const;
+    otava::intermediate::Value* GetIrObject(void* symbol) const noexcept;
     void SetIrObject(void* symbol, otava::intermediate::Value* irObject);
-    otava::intermediate::Value* GetVTabVariable(const std::u32string& className) const;
+    otava::intermediate::Value* GetVTabVariable(const std::u32string& className) const noexcept;
     void SetVTabVariable(const std::u32string& className, otava::intermediate::Value* vtabVariable);
-    IrValueStack& Stack() { return *stack; }
+    IrValueStack& Stack() noexcept { return *stack; }
     otava::intermediate::Value* EmitClassPtrConversion(otava::intermediate::Value* classPtr, otava::intermediate::Value* delta, otava::intermediate::Type* destType,
         bool checkNull);
     inline otava::intermediate::MetadataStruct* CreateMetadataStruct() { return context->CreateMetadataStruct(); }
@@ -205,8 +205,8 @@ public:
     inline otava::intermediate::MetadataLong* CreateMetadataLong(std::int64_t value) { return context->CreateMetadataLong(value); }
     inline otava::intermediate::MetadataString* CreateMetadataString(const std::string& value) { return context->CreateMetadataString(value, false); }
     inline otava::intermediate::MetadataRef* CreateMetadataRef(int nodeId) { return context->CreateMetadataRef(soul::ast::Span(), nodeId); }
-    inline int Line() const { return line; }
-    inline void SetLine(int line_) { line = line_; }
+    inline int Line() const noexcept { return line; }
+    inline void SetLine(int line_) noexcept { line = line_; }
 private:
     otava::intermediate::IntermediateContext* context;
     IrValueStack* stack;

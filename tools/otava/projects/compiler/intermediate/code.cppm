@@ -793,7 +793,7 @@ public:
     void MoveRegValues(Function* toFunction);
     inline void SetMdId(int mdId_) noexcept { mdId = mdId_; }
     inline int MdId() const noexcept { return mdId; }
-    inline void SetMetadataRef(MetadataRef* metadataRef_) noexcept { metadataRef = metadataRef_; }
+    void SetMetadataRef(MetadataRef* metadataRef_) noexcept { metadataRef = metadataRef_; }
     inline MetadataRef* GetMetadataRef() const noexcept { return metadataRef; }
     void SetComment(const std::string& comment_);
     inline const std::string& Comment() const noexcept { return comment; }

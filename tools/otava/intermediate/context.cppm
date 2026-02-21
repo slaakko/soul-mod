@@ -63,35 +63,35 @@ public:
     inline void ResolveData() { data.ResolveAddressValues(); }
     void ResolveType(TypeRef& typeRef);
     inline Value* GetBoolValue(bool value) { if (value) return GetTrueValue(); else return GetFalseValue(); }
-    inline Value* GetTrueValue() { return data.GetTrueValue(types); }
-    inline Value* GetFalseValue() { return data.GetFalseValue(types); }
+    Value* GetTrueValue() { return data.GetTrueValue(types); }
+    Value* GetFalseValue() { return data.GetFalseValue(types); }
     Value* GetBooleanLiteral(const soul::ast::Span& span, Type* type, bool value);
     inline Value* GetSByteValue(std::int8_t value) { return data.GetSByteValue(value, types); }
     inline Value* GetByteValue(std::uint8_t value) { return data.GetByteValue(value, types); }
     inline Value* GetShortValue(std::int16_t value) { return data.GetShortValue(value, types); }
-    inline Value* GetUShortValue(std::uint16_t value) { return data.GetUShortValue(value, types); }
+    Value* GetUShortValue(std::uint16_t value) { return data.GetUShortValue(value, types); }
     inline Value* GetIntValue(std::int32_t value) { return data.GetIntValue(value, types); }
-    inline Value* GetUIntValue(std::uint32_t value) { return data.GetUIntValue(value, types); }
-    inline Value* GetLongValue(std::int64_t value) { return data.GetLongValue(value, types); }
-    inline Value* GetULongValue(std::uint64_t value) { return data.GetULongValue(value, types); }
-    inline Value* GetIntegerValue(Type* type, std::int64_t value) { return data.GetIntegerValue(type, value, types); }
+    Value* GetUIntValue(std::uint32_t value) { return data.GetUIntValue(value, types); }
+    Value* GetLongValue(std::int64_t value) { return data.GetLongValue(value, types); }
+    Value* GetULongValue(std::uint64_t value) { return data.GetULongValue(value, types); }
+    Value* GetIntegerValue(Type* type, std::int64_t value) { return data.GetIntegerValue(type, value, types); }
     inline Value* GetFloatValue(float value) { return data.GetFloatValue(value, types); }
     inline Value* GetDoubleValue(double value) { return data.GetDoubleValue(value, types); }
-    inline Value* GetFloatingValue(Type* type, double value) { return data.GetFloatingValue(type, value, types); }
+    Value* GetFloatingValue(Type* type, double value) { return data.GetFloatingValue(type, value, types); }
     Value* GetNullValue(const soul::ast::Span& span, Type* type);
-    inline Value* MakeArrayValue(const soul::ast::Span& span, const std::vector<Value*>& elements, ArrayType* arrayType) 
+    Value* MakeArrayValue(const soul::ast::Span& span, const std::vector<Value*>& elements, ArrayType* arrayType) 
     { 
         return data.MakeArrayValue(span, elements, arrayType); 
     }
-    inline Value* MakeStructureValue(const soul::ast::Span& span, const std::vector<Value*>& fieldValues, StructureType* structureType)
+    Value* MakeStructureValue(const soul::ast::Span& span, const std::vector<Value*>& fieldValues, StructureType* structureType)
     {
         return data.MakeStructureValue(span, fieldValues, structureType);
     }
-    inline Value* MakeStringValue(const soul::ast::Span& span, const std::string& value, bool crop)
+    Value* MakeStringValue(const soul::ast::Span& span, const std::string& value, bool crop)
     {
         return data.MakeStringValue(span, value, crop);
     }
-    inline Value* MakeStringArrayValue(const soul::ast::Span& span, char prefix, const std::vector<Value*>& elements)
+    Value* MakeStringArrayValue(const soul::ast::Span& span, char prefix, const std::vector<Value*>& elements)
     {
         return data.MakeStringArrayValue(span, prefix, elements);
     }
@@ -160,9 +160,9 @@ public:
     inline MetadataRef* CreateMetadataRef(const soul::ast::Span& span, std::int32_t nodeId) { return metadata.CreateMetadataRef(span, nodeId); }
     inline MetadataStruct* CreateMetadataStruct() { return metadata.CreateMetadataStruct(); }
     inline void ResolveMetadataReferences() { metadata.ResolveMetadataReferences(); }
-    inline void SetCurrentBasicBlock(BasicBlock* bb) { currentBasicBlock = bb; }
+    inline void SetCurrentBasicBlock(BasicBlock* bb) noexcept { currentBasicBlock = bb; }
     inline BasicBlock* CreateBasicBlock() { return CurrentFunction()->CreateBasicBlock(); }
-    inline void SetCurrentLineNumber(int lineNumber) 
+    inline void SetCurrentLineNumber(int lineNumber)  noexcept
     {
         if (lineNumber != -1)
         {

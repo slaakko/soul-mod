@@ -7,8 +7,7 @@ export module otava.symbols.statement.binder;
 
 import otava.symbols.bound.tree;
 import std;
-import otava.ast.node;
-import otava.ast.visitor;
+import otava.ast;
 
 export namespace otava::symbols {
 
@@ -59,10 +58,10 @@ public:
     inline FunctionDefinitionSymbol* GetFunctionDefinitionSymbol() const { return functionDefinitionSymbol; }
     void SetStatement(BoundStatementNode* statement);
 private:
-    bool HasThisInitializer() const;
+    bool HasThisInitializer() const noexcept;
     void CompleteMemberInitializers(const soul::ast::SourcePos& sourcePos);
     void AddDefaultMemberInitializer(VariableSymbol* memberVar, const soul::ast::SourcePos& sourcePos);
-    int GetBaseInitializerOrTerminatorIndex(TypeSymbol* baseClass) const;
+    int GetBaseInitializerOrTerminatorIndex(TypeSymbol* baseClass) const noexcept;
     void CompleteBaseInitializers(const soul::ast::SourcePos& sourcePos);
     void AddDefaultBaseInitializer(TypeSymbol* baseClass, int index, const soul::ast::SourcePos& sourcePos);
     void GenerateDefaultCtorInitializer(const soul::ast::SourcePos& sourcePos);

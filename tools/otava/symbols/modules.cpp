@@ -56,14 +56,14 @@ std::string MakeProjectFilePath(const std::string& root, const std::string& modu
     return util::GetFullPath(util::Path::Combine(root, moduleName + ".project"));
 }
 
-bool ModuleLess::operator()(Module* left, Module* right) const
+bool ModuleLess::operator()(Module* left, Module* right) const noexcept
 {
     if (left->ImportIndex() < right->ImportIndex()) return true;
     if (left->ImportIndex() > right->ImportIndex()) return false;
     return left->Id() < right->Id();
 }
 
-util::uuid MakeProjectId(const std::string& projectName)
+util::uuid MakeProjectId(const std::string& projectName) noexcept
 {
     std::uint64_t hashCode = std::hash<std::string>()(projectName);
     util::uuid projectId;
@@ -81,12 +81,12 @@ Module::~Module()
 {
 }
 
-void Module::SetProjectId(const util::uuid& projectId_)
+void Module::SetProjectId(const util::uuid& projectId_) noexcept
 {
     projectId = projectId_;
 }
 
-std::int32_t Module::Id() const
+std::int32_t Module::Id() const noexcept
 {
     return static_cast<std::int32_t>(std::hash<std::string>()(name) & 0x7FFFFFFF);
 }
@@ -228,13 +228,14 @@ void Module::ResolveAllForwardDeclarations()
 
 void Module::AddDerivedClasses()
 {
-    for (auto cls : symbolTable.Classes())
+    for (auto* cls : symbolTable.Classes())
     {
-        for (auto baseClass : cls->BaseClasses())
+        for (auto* baseClass : cls->BaseClasses())
         {
             if (baseClass->IsClassTypeSymbol())
             {
-                static_cast<ClassTypeSymbol*>(baseClass)->AddDerivedClass(cls);
+                ClassTypeSymbol* bc = static_cast<ClassTypeSymbol*>(baseClass);
+                bc->AddDerivedClass(cls);
             }
         }
     }
@@ -253,7 +254,7 @@ void Module::Init()
     symbolTable.Init();
 }
 
-void Module::SetFile(otava::ast::File* astFile_)
+void Module::SetFile(otava::ast::File* astFile_) noexcept
 {
     astFile.reset(astFile_);
 }
@@ -476,7 +477,7 @@ std::string ModuleMapper::GetProjectFilePath(const std::string& moduleName) cons
     for (const auto& root : roots)
     {
         std::string projectFilePath = MakeProjectFilePath(root, moduleName);
-        if (std::filesystem::exists(projectFilePath))
+        if (util::FileExists(projectFilePath))
         {
             return projectFilePath;
         }
@@ -489,7 +490,7 @@ std::string ModuleMapper::GetModuleFilePath(const std::string& moduleName, const
     for (const auto& root : roots)
     {
         std::string moduleFilePath = MakeModuleFilePath(root, config, optLevel, moduleName);
-        if (std::filesystem::exists(moduleFilePath))
+        if (util::FileExists(moduleFilePath))
         {
             return moduleFilePath;
         }
@@ -513,7 +514,7 @@ Module* ModuleMapper::GetModule(const std::string& moduleName, const std::string
         for (const auto& root : roots)
         {
             std::string moduleFilePath = MakeModuleFilePath(root, config, optLevel, moduleName);
-            if (std::filesystem::exists(moduleFilePath))
+            if (util::FileExists(moduleFilePath))
             {
                 return LoadModule(moduleName, moduleFilePath, config, optLevel);
             }
@@ -571,36 +572,36 @@ void ModuleMapper::SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* f
     functionDefinitionSymbolSet = functionDefinitionSymbolSet_;
 }
 
-FunctionDefinitionSymbolSet* ModuleMapper::GetFunctionDefinitionSymbolSet() const
+FunctionDefinitionSymbolSet* ModuleMapper::GetFunctionDefinitionSymbolSet() const noexcept
 {
     return functionDefinitionSymbolSet;
 }
 
-int32_t ModuleMapper::ModuleCount() const
+int32_t ModuleMapper::ModuleCount() const noexcept
 {
     return modules.size();
 }
 
 thread_local ModuleMapper* moduleMapper = nullptr;
 
-ModuleMapper* GetModuleMapper()
+ModuleMapper* GetModuleMapper() noexcept
 {
     return moduleMapper;
 }
 
-void SetModuleMapper(ModuleMapper* moduleMapper_)
+void SetModuleMapper(ModuleMapper* moduleMapper_) noexcept
 {
     moduleMapper = moduleMapper_;
 }
 
 thread_local Module* currentModule = nullptr;
 
-Module* GetCurrentModule()
+Module* GetCurrentModule() noexcept
 {
     return currentModule;
 }
 
-void SetCurrentModule(Module* module)
+void SetCurrentModule(Module* module) noexcept
 {
     currentModule = module;
 }

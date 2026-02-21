@@ -26,7 +26,7 @@ NamespaceSymbol::NamespaceSymbol(const std::u32string& name_) : ContainerSymbol(
     GetScope()->SetKind(ScopeKind::namespaceScope);
 }
 
-bool NamespaceSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
+bool NamespaceSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcept
 {
     switch (scopeKind)
     {
@@ -116,7 +116,7 @@ void NamespaceSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-bool NamespaceSymbol::ContainsSymbols() const
+bool NamespaceSymbol::ContainsSymbols() const noexcept
 {
     for (const auto& symbol : Symbols())
     {
@@ -172,7 +172,7 @@ void EndNamespace(otava::ast::Node* node, int level, Context* context)
     context->GetSymbolTable()->EndNamespace(level);
 }
 
-bool NamespaceLess::operator()(NamespaceSymbol* left, NamespaceSymbol* right) const
+bool NamespaceLess::operator()(NamespaceSymbol* left, NamespaceSymbol* right) const noexcept
 {
     return left->FullName() < right->FullName();
 }

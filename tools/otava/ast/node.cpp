@@ -34,7 +34,7 @@ namespace otava::ast {
 
 NodeDestroyedFunc nodeDestroyedFunc = nullptr;
 
-void SetNodeDestroyedFunc(NodeDestroyedFunc func)
+void SetNodeDestroyedFunc(NodeDestroyedFunc func) noexcept
 {
     nodeDestroyedFunc = func;
 }
@@ -116,7 +116,7 @@ const char* nodeKindStr[] =
     "conversionFnIdNode", "conversionTypeIdNode", "conversionDeclaratorNode", "destructorIdNode", "parameterNode", "parameterListNode", "noexceptNode", 
     "functionTryBlock", "conceptDefinitionNode", "requiresExprNode", "requirementBodyNode", "simpleRequirementNode", "typeRequirementNode", 
     "compoundRequirementNode", "returnTypeRequirementNode", "nestedRequirementNode", "typeConstraintNode", "requiresClauseNode",
-    "attributeSpecifierSequenceNode", "attributeSpecifierNode", "attributeUsingPrefixNode", "attrbuteNode", "attributeScopedTokenNode", "attributeArgumentsNode", 
+    "attributeSpecifierSequenceNode", "attributeSpecifierNode", "attributeUsingPrefixNode", "attributeNode", "attributeScopedTokenNode", "attributeArgumentsNode", 
     "balancedTokenSequenceNode", "tokenNode",
     "lparenNode", "rparenNode", "lbracketNode", "rbracketNode", "lbraceNode", "rbraceNode", "alignmentSpecifierNode", "pragmaNode", "boundStatementNode"
 };
@@ -126,7 +126,7 @@ std::string NodeKindStr(NodeKind nodeKind)
     return nodeKindStr[static_cast<int>(nodeKind)];
 }
 
-Node::Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : kind(kind_), sourcePos(sourcePos_), parent(nullptr), id(GetNextNodeId())
+Node::Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : kind(kind_), sourcePos(sourcePos_), parent(nullptr), id(GetNextNodeId())
 {
 }
 
@@ -162,11 +162,11 @@ void Node::Read(Reader& reader)
     sourcePos = reader.ReadSourcePos();
 }
 
-CompoundNode::CompoundNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : Node(kind_, sourcePos_)
+CompoundNode::CompoundNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : Node(kind_, sourcePos_)
 {
 }
 
-UnaryNode::UnaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* child_) : Node(kind_, sourcePos_), child(child_)
+UnaryNode::UnaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept : Node(kind_, sourcePos_), child(child_)
 {
     if (child)
     {
@@ -191,7 +191,7 @@ std::u32string UnaryNode::Str() const
     return child->Str();
 }
 
-BinaryNode::BinaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* left_, Node* right_) : Node(kind_, sourcePos_), left(left_), right(right_)
+BinaryNode::BinaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* left_, Node* right_) noexcept : Node(kind_, sourcePos_), left(left_), right(right_)
 {
     if (left)
     {
@@ -224,7 +224,7 @@ std::u32string BinaryNode::Str() const
     return str;
 }
 
-SequenceNode::SequenceNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : Node(kind_, sourcePos_)
+SequenceNode::SequenceNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : Node(kind_, sourcePos_)
 {
 }
 
@@ -278,7 +278,7 @@ std::u32string SequenceNode::Str() const
     return str;
 }
 
-ListNode::ListNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : Node(kind_, sourcePos_)
+ListNode::ListNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : Node(kind_, sourcePos_)
 {
 }
 
@@ -356,7 +356,6 @@ public:
     void Register(NodeKind kind, AbstractNodeFactory* factory);
 private:
     NodeFactoryCollection();
-    static std::unique_ptr<NodeFactoryCollection> instance;
     std::vector<std::unique_ptr<AbstractNodeFactory>> factories;
 };
 
@@ -373,7 +372,7 @@ NodeFactoryCollection::NodeFactoryCollection()
     Register(NodeKind::attributeSpecifierSequenceNode, new NodeFactory<AttributeSpecifierSequenceNode>());
     Register(NodeKind::attributeSpecifierNode, new NodeFactory<AttributeSpecifierNode>());
     Register(NodeKind::attributeUsingPrefixNode, new NodeFactory<AttributeUsingPrefixNode>());
-    Register(NodeKind::attrbuteNode, new NodeFactory<AttributeNode>());
+    Register(NodeKind::attributeNode, new NodeFactory<AttributeNode>());
     Register(NodeKind::attributeScopedTokenNode, new NodeFactory<AttributeScopedTokenNode>());
     Register(NodeKind::attributeArgumentsNode, new NodeFactory<AttributeArgumentsNode>());
     Register(NodeKind::balancedTokenSequenceNode, new NodeFactory<BalancedTokenSequenceNode>());
@@ -736,11 +735,11 @@ void MakeNodeFactoryCollection()
     NodeFactoryCollection::Instance();
 }
 
-NodeIdFactory::NodeIdFactory() : moduleId(0), nodeId(0), internallyMappedBit(0)
+NodeIdFactory::NodeIdFactory() noexcept : moduleId(0), nodeId(0), internallyMappedBit(0)
 {
 }
 
-void NodeIdFactory::SetInternallyMapped(bool internallyMapped_)
+void NodeIdFactory::SetInternallyMapped(bool internallyMapped_) noexcept
 {
     if (internallyMapped_)
     {
@@ -752,12 +751,12 @@ void NodeIdFactory::SetInternallyMapped(bool internallyMapped_)
     }
 }
 
-bool NodeIdFactory::IsInternallyMapped() const
+bool NodeIdFactory::IsInternallyMapped() const noexcept
 {
     return internallyMappedBit != 0;
 }
 
-std::int64_t NodeIdFactory::GetNextNodeId()
+std::int64_t NodeIdFactory::GetNextNodeId() noexcept
 {
     std::int64_t nextNodeId = (static_cast<std::int64_t>(moduleId) << 32) | static_cast<std::int64_t>(nodeId) | static_cast<std::int64_t>(internallyMappedBit);
     ++nodeId;
@@ -766,12 +765,12 @@ std::int64_t NodeIdFactory::GetNextNodeId()
 
 thread_local NodeIdFactory* nodeIdFactory = nullptr;
 
-void SetNodeIdFactory(NodeIdFactory* factory)
+void SetNodeIdFactory(NodeIdFactory* factory) noexcept
 {
     nodeIdFactory = factory;
 }
 
-std::int64_t GetNextNodeId()
+std::int64_t GetNextNodeId() noexcept
 {
     return nodeIdFactory->GetNextNodeId();
 }

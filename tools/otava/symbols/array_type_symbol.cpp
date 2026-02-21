@@ -34,7 +34,7 @@ ArrayTypeSymbol::ArrayTypeSymbol(TypeSymbol* elementType_, std::int64_t size_) :
     GetScope()->SetKind(ScopeKind::arrayScope);
 }
 
-bool ArrayTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
+bool ArrayTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcept
 {
     switch (scopeKind)
     {

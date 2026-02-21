@@ -41,7 +41,7 @@ namespace otava::symbols {
 
 Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 
-std::int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind)
+std::int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind) noexcept
 {
     switch (specialFunctionKind)
     {
@@ -75,7 +75,7 @@ std::int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind)
 
 RecordedParseCompoundStatementFn recordedParseCompoundStatementFn = nullptr;
 
-void SetRecordedParseCompoundStatementFn(RecordedParseCompoundStatementFn fn)
+void SetRecordedParseCompoundStatementFn(RecordedParseCompoundStatementFn fn) noexcept
 {
     recordedParseCompoundStatementFn = fn;
 }
@@ -90,7 +90,7 @@ void RecordedParseCompoundStatement(otava::ast::CompoundStatementNode* compoundS
 
 RecordedParseCtorInitializerFn recordedParseInitializerFn = nullptr;
 
-void SetRecordedParseCtorInitializerFn(RecordedParseCtorInitializerFn fn)
+void SetRecordedParseCtorInitializerFn(RecordedParseCtorInitializerFn fn) noexcept
 {
     recordedParseInitializerFn = fn;
 }
@@ -156,7 +156,7 @@ ClassTypeSymbol::ClassTypeSymbol(SymbolKind kind_, const util::uuid& id_, const 
     GetScope()->SetKind(ScopeKind::classScope);
 }
 
-bool ClassTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
+bool ClassTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcept
 {
     switch (scopeKind)
     {
@@ -185,7 +185,7 @@ void ClassTypeSymbol::AddDerivedClass(ClassTypeSymbol* derivedClass)
     }
 }
 
-bool ClassTypeSymbol::HasBaseClass(TypeSymbol* baseClass, int& distance, Context* context) const
+bool ClassTypeSymbol::HasBaseClass(TypeSymbol* baseClass, int& distance, Context* context) const noexcept
 {
     for (ClassTypeSymbol* baseCls : baseClasses)
     {
@@ -207,7 +207,7 @@ bool ClassTypeSymbol::HasBaseClass(TypeSymbol* baseClass, int& distance, Context
     return false;
 }
 
-bool ClassTypeSymbol::HasPolymorphicBaseClass() const
+bool ClassTypeSymbol::HasPolymorphicBaseClass() const noexcept
 {
     for (ClassTypeSymbol* baseCls : baseClasses)
     {
@@ -219,11 +219,12 @@ bool ClassTypeSymbol::HasPolymorphicBaseClass() const
     return false;
 }
 
-bool ClassTypeSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
+bool ClassTypeSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const 
 {
-    if (visited.find(this) == visited.end())
+    const Symbol* thisSymbol = this;
+    if (visited.find(thisSymbol) == visited.end())
     {
-        visited.insert(this);
+        visited.insert(thisSymbol);
         for (VariableSymbol* memberVariable : memberVariables)
         {
             if (memberVariable->IsTemplateParameterInstantiation(context, visited)) return true;
@@ -236,7 +237,7 @@ bool ClassTypeSymbol::IsTemplateParameterInstantiation(Context* context, std::se
     return false;
 }
 
-void ClassTypeSymbol::SetSpecialization(TypeSymbol* specialization_, Context* context)
+void ClassTypeSymbol::SetSpecialization(TypeSymbol* specialization_, Context* context) noexcept
 {
     specialization = specialization_;
     if (specialization)
@@ -419,7 +420,7 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
     memFnDefSymbolIdMap.clear();
 }
 
-bool ClassTypeSymbol::IsPolymorphic() const
+bool ClassTypeSymbol::IsPolymorphic() const noexcept
 {
     for (ClassTypeSymbol* baseClass : baseClasses)
     {
@@ -481,7 +482,7 @@ void ClassTypeSymbol::MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Co
     }
 }
 
-TemplateDeclarationSymbol* ClassTypeSymbol::ParentTemplateDeclaration() const
+TemplateDeclarationSymbol* ClassTypeSymbol::ParentTemplateDeclaration() const noexcept
 {
     Symbol* parentSymbol = const_cast<ClassTypeSymbol*>(this)->Parent();
     if (parentSymbol && parentSymbol->IsTemplateDeclarationSymbol())
@@ -491,7 +492,7 @@ TemplateDeclarationSymbol* ClassTypeSymbol::ParentTemplateDeclaration() const
     return nullptr;
 }
 
-bool ClassTypeSymbol::IsTemplate() const
+bool ClassTypeSymbol::IsTemplate() const noexcept
 {
     return ParentTemplateDeclaration() != nullptr;
 }
@@ -508,7 +509,7 @@ void ClassTypeSymbol::MakeVTab(Context* context, const soul::ast::SourcePos& sou
     vtabSize = vtab.size();
 }
 
-bool Overrides(FunctionSymbol* f, FunctionSymbol* g, Context* context)
+bool Overrides(FunctionSymbol* f, FunctionSymbol* g, Context* context) noexcept
 {
     if (f->GroupName() == g->GroupName())
     {
@@ -654,7 +655,7 @@ void ClassTypeSymbol::ComputeVTabName(Context* context)
     vtabName.append(IrName(context));
 }
 
-otava::intermediate::Type* ClassTypeSymbol::VPtrType(Emitter& emitter) const
+otava::intermediate::Type* ClassTypeSymbol::VPtrType(Emitter& emitter) const noexcept
 {
     otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
     otava::intermediate::Type* vptrType = emitter.MakePtrType(emitter.MakeArrayType(vtabSize * 2 + otava::symbols::vtabClassIdElementCount, voidPtrIrType));
@@ -674,7 +675,7 @@ otava::intermediate::Value* ClassTypeSymbol::GetVTabVariable(Emitter& emitter, C
     return vtabVariable;
 }
 
-std::vector<ClassTypeSymbol*> ClassTypeSymbol::VPtrHolderClasses() const
+std::vector<ClassTypeSymbol*> ClassTypeSymbol::VPtrHolderClasses() const 
 {
     std::vector<ClassTypeSymbol*> vptrHolderClasses;
     if (vptrIndex != -1)
@@ -698,7 +699,7 @@ std::vector<ClassTypeSymbol*> ClassTypeSymbol::VPtrHolderClasses() const
     return vptrHolderClasses;
 }
 
-int ClassTypeSymbol::Arity() 
+int ClassTypeSymbol::Arity() noexcept
 {
     TemplateDeclarationSymbol* templateDeclaration = ParentTemplateDeclaration();
     if (templateDeclaration)
@@ -721,7 +722,7 @@ void ClassTypeSymbol::SetMemFnDefSymbol(FunctionDefinitionSymbol* memFnDefSymbol
     nextMemFnDefIndex = std::max(nextMemFnDefIndex, memFnDefSymbol->DefIndex() + 1);
 }
 
-FunctionDefinitionSymbol* ClassTypeSymbol::GetMemFnDefSymbol(int32_t defIndex) const
+FunctionDefinitionSymbol* ClassTypeSymbol::GetMemFnDefSymbol(int32_t defIndex) const noexcept
 {
     auto it = memFnDefSymbolMap.find(defIndex);
     if (it != memFnDefSymbolMap.end())
@@ -796,7 +797,7 @@ otava::intermediate::Type* ClassTypeSymbol::IrType(Emitter& emitter, const soul:
     return irType;
 }
 
-std::int32_t ClassTypeSymbol::NextFunctionIndex()
+std::int32_t ClassTypeSymbol::NextFunctionIndex() noexcept
 {
     return currentFunctionIndex++;
 }
@@ -806,7 +807,7 @@ void ClassTypeSymbol::MapFunction(FunctionSymbol* function)
     functionIndexMap[function->Index()] = function;
 }
 
-FunctionSymbol* ClassTypeSymbol::GetFunctionByIndex(std::int32_t functionIndex) const
+FunctionSymbol* ClassTypeSymbol::GetFunctionByIndex(std::int32_t functionIndex) const noexcept
 {
     auto it = functionIndexMap.find(functionIndex);
     if (it != functionIndexMap.cend())
@@ -819,7 +820,7 @@ FunctionSymbol* ClassTypeSymbol::GetFunctionByIndex(std::int32_t functionIndex) 
     }
 }
 
-FunctionSymbol* ClassTypeSymbol::GetFunctionByNodeId(std::int32_t nodeId) const
+FunctionSymbol* ClassTypeSymbol::GetFunctionByNodeId(std::int32_t nodeId) const noexcept
 {
     auto it = functionNodeIdMap.find(nodeId);
     if (it != functionNodeIdMap.end())
@@ -832,7 +833,7 @@ FunctionSymbol* ClassTypeSymbol::GetFunctionByNodeId(std::int32_t nodeId) const
     }
 }
 
-FunctionSymbol* ClassTypeSymbol::GetConversionFunction(TypeSymbol* type, Context* context) const
+FunctionSymbol* ClassTypeSymbol::GetConversionFunction(TypeSymbol* type, Context* context) const noexcept
 {
     for (FunctionSymbol* conversionFunction : conversionFunctions)
     {
@@ -852,10 +853,11 @@ FunctionSymbol* ClassTypeSymbol::GetConversionFunction(TypeSymbol* type, Context
     return nullptr;
 }
 
-bool ClassTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const
+bool ClassTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const noexcept
 {
-    if (visited.find(this) != visited.end()) return true;
-    visited.insert(this);
+    const TypeSymbol* thisSymbol = this;
+    if (visited.find(thisSymbol) != visited.end()) return true;
+    visited.insert(thisSymbol);
     for (ClassTypeSymbol* baseClass : baseClasses)
     {
         if (!baseClass->IsComplete(visited, incompleteType)) return false;
@@ -884,9 +886,9 @@ void ClassTypeSymbol::GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Co
     copyCtor = functionCall->GetFunctionSymbol();
 }
 
-std::pair<bool, std::int64_t> ClassTypeSymbol::Delta(ClassTypeSymbol* base, Emitter& emitter, Context* context)
+std::pair<bool, std::int64_t> ClassTypeSymbol::Delta(ClassTypeSymbol* base, Emitter& emitter, Context* context) noexcept
 {
-    if (TypesEqual(base, this, context)) return std::make_pair(true, 0);
+    if (TypesEqual(base, this, context)) return std::make_pair(true, static_cast<std::int64_t>(0));
     std::int64_t delta = 0;
     for (ClassTypeSymbol* bc : BaseClasses())
     {
@@ -896,10 +898,10 @@ std::pair<bool, std::int64_t> ClassTypeSymbol::Delta(ClassTypeSymbol* base, Emit
         std::int64_t bcsize = bctype->Size();
         delta += bcsize;
     }
-    return std::make_pair(false, 0);
+    return std::make_pair(false, static_cast<std::int64_t>(0));
 }
 
-int ClassTypeSymbol::TotalMemberCount() const
+int ClassTypeSymbol::TotalMemberCount() const noexcept
 {
     int totalMemberCount = 0;
     for (ClassTypeSymbol* baseClass : baseClasses)
@@ -921,7 +923,7 @@ ForwardClassDeclarationSymbol::ForwardClassDeclarationSymbol(const std::u32strin
     GetScope()->SetKind(ScopeKind::classScope);
 }
 
-bool ForwardClassDeclarationSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
+bool ForwardClassDeclarationSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcept
 {
     switch (scopeKind)
     {
@@ -936,7 +938,7 @@ bool ForwardClassDeclarationSymbol::IsValidDeclarationScope(ScopeKind scopeKind)
     return false;
 }
 
-TemplateDeclarationSymbol* ForwardClassDeclarationSymbol::ParentTemplateDeclaration()
+TemplateDeclarationSymbol* ForwardClassDeclarationSymbol::ParentTemplateDeclaration() noexcept
 {
     Symbol* parentSymbol = Parent();
     if (parentSymbol->IsTemplateDeclarationSymbol())
@@ -991,7 +993,7 @@ void ForwardClassDeclarationSymbol::Resolve(SymbolTable& symbolTable, Context* c
     }
 }
 
-int ForwardClassDeclarationSymbol::Arity()
+int ForwardClassDeclarationSymbol::Arity() noexcept
 {
     TemplateDeclarationSymbol* templateDeclaration = ParentTemplateDeclaration();
     if (templateDeclaration)
@@ -1004,7 +1006,7 @@ int ForwardClassDeclarationSymbol::Arity()
     }
 }
 
-util::uuid ForwardClassDeclarationSymbol::IrId(Context* context) const
+util::uuid ForwardClassDeclarationSymbol::IrId(Context* context) const noexcept
 {
     if (classTypeSymbol)
     {
@@ -1041,10 +1043,11 @@ otava::intermediate::Type* ForwardClassDeclarationSymbol::IrType(Emitter& emitte
     }
 }
 
-bool ForwardClassDeclarationSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const
+bool ForwardClassDeclarationSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const noexcept
 {
-    if (visited.find(this) != visited.end()) return true;
-    visited.insert(this);
+    const TypeSymbol* thisSymbol = this;
+    if (visited.find(thisSymbol) != visited.end()) return true;
+    visited.insert(thisSymbol);
     if (classTypeSymbol)
     {
         return classTypeSymbol->IsComplete(visited, incompleteType);
@@ -1065,8 +1068,8 @@ class ClassResolver : public otava::ast::DefaultVisitor
 public:
     ClassResolver(Context* context_);
     std::u32string GetName() const { return name; }
-    otava::symbols::ClassKind GetClassKind() const { return classKind; }
-    TypeSymbol* Specialization() const { return specialization; }
+    otava::symbols::ClassKind GetClassKind() const noexcept { return classKind; }
+    TypeSymbol* Specialization() const noexcept { return specialization; }
     void Visit(otava::ast::ClassSpecifierNode& node) override;
     void Visit(otava::ast::ClassHeadNode& node) override;
     void Visit(otava::ast::ElaboratedTypeSpecifierNode& node) override;
@@ -1356,7 +1359,7 @@ void ParseInlineMemberFunctions(otava::ast::Node* classSpecifierNode, ClassTypeS
     context->GetSymbolTable()->EndScope();
 }
 
-bool ClassLess::operator()(ClassTypeSymbol* left, ClassTypeSymbol* right) const
+bool ClassLess::operator()(ClassTypeSymbol* left, ClassTypeSymbol* right) const noexcept
 {
     return left->Name() < right->Name();
 }
@@ -1614,7 +1617,7 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
 
 void GenerateDestructors(BoundCompileUnitNode* boundCompileUnit, Context* context)
 {
-    for (auto& classType : boundCompileUnit->GenerateDestructorList())
+    for (auto* classType : boundCompileUnit->GenerateDestructorList())
     {
         soul::ast::SourcePos sourcePos = classType->GetSourcePos();
         TypeSymbol* finalType = classType->FinalType(sourcePos, context);
@@ -1626,13 +1629,13 @@ void GenerateDestructors(BoundCompileUnitNode* boundCompileUnit, Context* contex
     }
 }
 
-std::pair<bool, std::int64_t> Delta(ClassTypeSymbol* left, ClassTypeSymbol* right, Emitter& emitter, Context* context)
+std::pair<bool, std::int64_t> Delta(ClassTypeSymbol* left, ClassTypeSymbol* right, Emitter& emitter, Context* context) noexcept
 {
     auto [found, delta] = left->Delta(right, emitter, context);
     if (found) return std::make_pair(true, delta);
     auto [rfound, rdelta] = right->Delta(left, emitter, context);
     if (rfound) return std::make_pair(true, -rdelta);
-    return std::make_pair(false, 0);
+    return std::make_pair(false, static_cast<std::int64_t>(0));
 }
 
 } // namespace otava::symbols

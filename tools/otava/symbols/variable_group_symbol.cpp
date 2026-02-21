@@ -17,7 +17,7 @@ VariableGroupSymbol::VariableGroupSymbol(const std::u32string& name_) : Symbol(S
 {
 }
 
-bool VariableGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
+bool VariableGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcept
 {
     switch (scopeKind)
     {
@@ -32,7 +32,7 @@ bool VariableGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
     return false;
 }
 
-Symbol* VariableGroupSymbol::GetSingleSymbol() 
+Symbol* VariableGroupSymbol::GetSingleSymbol() noexcept
 {
     if (variables.size() == 1)
     {
@@ -52,7 +52,7 @@ void VariableGroupSymbol::AddVariable(VariableSymbol* variableSymbol)
     }
 }
 
-VariableSymbol* VariableGroupSymbol::GetVariable(int arity) const
+VariableSymbol* VariableGroupSymbol::GetVariable(int arity) const noexcept
 {
     for (VariableSymbol* variable : variables)
     {

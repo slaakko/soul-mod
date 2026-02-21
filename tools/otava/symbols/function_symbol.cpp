@@ -284,9 +284,10 @@ ParameterSymbol* ParameterSymbol::Copy() const
 
 bool ParameterSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
 { 
-    if (visited.find(this) == visited.end())
+    const Symbol* thisSymbol = this;
+    if (visited.find(thisSymbol) == visited.end())
     {
-        visited.insert(this);
+        visited.insert(thisSymbol);
         return type->IsTemplateParameterInstantiation(context, visited);
     }
     return false;
@@ -360,7 +361,7 @@ std::u32string FunctionSymbol::GroupName() const
     }
 }
 
-int FunctionSymbol::Arity() const
+int FunctionSymbol::Arity() const noexcept
 {
     return parameters.size();
 }
@@ -370,7 +371,7 @@ int FunctionSymbol::MemFunArity(Context* context) const
     return MemFunParameters(context).size();
 }
 
-int FunctionSymbol::MinArity() const
+int FunctionSymbol::MinArity() const noexcept
 {
     int minArity = Arity();
     for (int i = parameters.size() - 1; i >= 0; --i)
@@ -408,9 +409,10 @@ int FunctionSymbol::MinMemFunArity(Context* context) const
 
 bool FunctionSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
 {
-    if (visited.find(this) == visited.end())
+    const Symbol* thisSymbol = this;
+    if (visited.find(thisSymbol) == visited.end())
     {
-        visited.insert(this);
+        visited.insert(thisSymbol);
         if (IsStatic()) return false;
         for (ParameterSymbol* parameter : MemFunParameters(context))
         {
@@ -428,7 +430,7 @@ bool FunctionSymbol::IsTemplateParameterInstantiation(Context* context, std::set
     return false;
 }
 
-bool FunctionSymbol::IsVirtual() const
+bool FunctionSymbol::IsVirtual() const noexcept
 {
     if ((GetDeclarationFlags() & DeclarationFlags::virtualFlag) != DeclarationFlags::none) return true;
     if ((qualifiers & FunctionQualifiers::isOverride) != FunctionQualifiers::none) return true;
@@ -436,19 +438,19 @@ bool FunctionSymbol::IsVirtual() const
     return false;
 }
 
-bool FunctionSymbol::IsConst() const
+bool FunctionSymbol::IsConst() const noexcept
 {
     if ((qualifiers & FunctionQualifiers::isConst) != FunctionQualifiers::none) return true;
     return false;
 }
 
-bool FunctionSymbol::IsPure() const
+bool FunctionSymbol::IsPure() const noexcept
 {
     if ((qualifiers & FunctionQualifiers::isPure) != FunctionQualifiers::none) return true;
     return false;
 }
 
-bool FunctionSymbol::IsNoExcept() const 
+bool FunctionSymbol::IsNoExcept() const noexcept
 { 
     if ((qualifiers & FunctionQualifiers::isNoexcept) != FunctionQualifiers::none) return true;
     if (GetFunctionKind() == FunctionKind::destructor) return true;
@@ -457,32 +459,32 @@ bool FunctionSymbol::IsNoExcept() const
     return false;
 }
 
-void FunctionSymbol::SetVirtual()
+void FunctionSymbol::SetVirtual() noexcept
 {
     SetDeclarationFlags(GetDeclarationFlags() | DeclarationFlags::virtualFlag);
 }
 
-bool FunctionSymbol::IsOverride() const
+bool FunctionSymbol::IsOverride() const noexcept
 {
     return (qualifiers & FunctionQualifiers::isOverride) != FunctionQualifiers::none;
 }
 
-bool FunctionSymbol::IsFinal() const
+bool FunctionSymbol::IsFinal() const noexcept
 {
     return (qualifiers & FunctionQualifiers::isFinal) != FunctionQualifiers::none;
 }
 
-void FunctionSymbol::SetOverride()
+void FunctionSymbol::SetOverride() noexcept
 {
     qualifiers = qualifiers | FunctionQualifiers::isOverride;
 }
 
-void FunctionSymbol::SetNoExcept()
+void FunctionSymbol::SetNoExcept() noexcept
 {
     qualifiers = qualifiers | FunctionQualifiers::isNoexcept;
 }
 
-ClassTypeSymbol* FunctionSymbol::ParentClassType() const
+ClassTypeSymbol* FunctionSymbol::ParentClassType() const noexcept
 {
     Symbol* parent = const_cast<FunctionSymbol*>(this)->Parent();
     if (parent && parent->IsClassTypeSymbol())
@@ -542,7 +544,7 @@ const std::vector<ParameterSymbol*>& FunctionSymbol::MemFunParameters(Context* c
     return memFunParameters;
 }
 
-bool FunctionSymbol::IsMemberFunction() const
+bool FunctionSymbol::IsMemberFunction() const noexcept
 {
     ClassTypeSymbol* classType = ParentClassType();
     if (classType && Parent() == classType)
@@ -555,7 +557,7 @@ bool FunctionSymbol::IsMemberFunction() const
     }
 }
 
-SpecialFunctionKind FunctionSymbol::GetSpecialFunctionKind(Context* context) const
+SpecialFunctionKind FunctionSymbol::GetSpecialFunctionKind(Context* context) const noexcept
 {
     ClassTypeSymbol* classType = ParentClassType();
     TypeSymbol* classTemplate = nullptr;
@@ -594,7 +596,7 @@ SpecialFunctionKind FunctionSymbol::GetSpecialFunctionKind(Context* context) con
     return SpecialFunctionKind::none;
 }
 
-TemplateDeclarationSymbol* FunctionSymbol::ParentTemplateDeclaration() const
+TemplateDeclarationSymbol* FunctionSymbol::ParentTemplateDeclaration() const noexcept
 {
     Symbol* parentSymbol = const_cast<FunctionSymbol*>(this)->Parent();
     if (parentSymbol && parentSymbol->IsTemplateDeclarationSymbol())
@@ -618,18 +620,18 @@ void FunctionSymbol::SetReturnType(TypeSymbol* returnType_, Context* context)
     }
 }
 
-bool FunctionSymbol::IsTemplate() const
+bool FunctionSymbol::IsTemplate() const noexcept
 {
     return ParentTemplateDeclaration() != nullptr && !IsSpecialization();
 }
 
-int FunctionSymbol::TemplateArity() const
+int FunctionSymbol::TemplateArity() const noexcept
 {
     TemplateDeclarationSymbol* templateDecl = ParentTemplateDeclaration();
     return templateDecl->Arity();
 }
 
-bool FunctionSymbol::IsMemFnOfClassTemplate() const
+bool FunctionSymbol::IsMemFnOfClassTemplate() const noexcept
 {
     if (IsSpecialization()) return false;
     ClassTypeSymbol* parentClassType = ParentClassType();
@@ -640,22 +642,22 @@ bool FunctionSymbol::IsMemFnOfClassTemplate() const
     return false;
 }
 
-void FunctionSymbol::SetConversionParamType(TypeSymbol* conversionParamType_)
+void FunctionSymbol::SetConversionParamType(TypeSymbol* conversionParamType_) noexcept
 {
     conversionParamType = conversionParamType_;
 }
 
-void FunctionSymbol::SetConversionArgType(TypeSymbol* conversionArgType_)
+void FunctionSymbol::SetConversionArgType(TypeSymbol* conversionArgType_) noexcept
 {
     conversionArgType = conversionArgType_;
 }
 
-void FunctionSymbol::SetConversionKind(ConversionKind conversionKind_)
+void FunctionSymbol::SetConversionKind(ConversionKind conversionKind_) noexcept
 {
     conversionKind = conversionKind_;
 }
 
-void FunctionSymbol::SetConversionDistance(std::int32_t conversionDistance_)
+void FunctionSymbol::SetConversionDistance(std::int32_t conversionDistance_) noexcept
 {
     conversionDistance = conversionDistance_;
 }
@@ -732,7 +734,7 @@ void FunctionSymbol::ClearTemporaryParameters()
     SetParent(nullptr);
 }
 
-void FunctionSymbol::SetReturnValueParam(ParameterSymbol* returnValueParam_)
+void FunctionSymbol::SetReturnValueParam(ParameterSymbol* returnValueParam_) noexcept
 {
     returnValueParam.reset(returnValueParam_);
 }
@@ -955,7 +957,7 @@ void FunctionSymbol::GenerateCode(Emitter& emitter, std::vector<BoundExpressionN
 void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, 
     otava::symbols::Context* context)
 {
-    TypeSymbol* thisPtrBaseType = args[0]->GetType()->GetBaseType();
+    TypeSymbol* thisPtrBaseType = args[0]->GetType()->GetBaseType()->DirectType(context)->FinalType(sourcePos, context);
     otava::intermediate::Type* irType = IrType(emitter, sourcePos, context);
     otava::intermediate::FunctionType* functionType = nullptr;
     if (irType->IsFunctionType())
@@ -1202,7 +1204,7 @@ void FunctionSymbol::SetSpecialization(const std::vector<TypeSymbol*>& specializ
     specialization = specialization_;
 }
 
-bool FunctionSymbol::IsExplicitSpecializationDefinitionSymbol() const
+bool FunctionSymbol::IsExplicitSpecializationDefinitionSymbol() const noexcept
 {
     if (!IsFunctionDefinitionSymbol()) return false;
     TemplateDeclarationSymbol* templateDeclaration = ParentTemplateDeclaration();
@@ -1211,7 +1213,7 @@ bool FunctionSymbol::IsExplicitSpecializationDefinitionSymbol() const
     return true;
 }
 
-bool FunctionSymbol::IsExplicitSpecializationDeclaration() const
+bool FunctionSymbol::IsExplicitSpecializationDeclaration() const noexcept
 {
     if (IsFunctionDefinitionSymbol()) return false;
     TemplateDeclarationSymbol* templateDeclaration = ParentTemplateDeclaration();
@@ -1233,17 +1235,17 @@ VariableSymbol* FunctionSymbol::CreateTemporary(TypeSymbol* type)
     return temporary;
 }
 
-bool FunctionSymbol::IsStatic() const
+bool FunctionSymbol::IsStatic() const noexcept
 {
     return (GetDeclarationFlags() & DeclarationFlags::staticFlag) != DeclarationFlags::none;
 }
 
-bool FunctionSymbol::IsExplicit() const
+bool FunctionSymbol::IsExplicit() const noexcept
 {
     return (GetDeclarationFlags() & DeclarationFlags::explicitFlag) != DeclarationFlags::none;
 }
 
-bool FunctionSymbol::IsDestructor() const
+bool FunctionSymbol::IsDestructor() const noexcept
 {
     return GroupName() == U"@destructor";
 }
@@ -1368,7 +1370,7 @@ otava::intermediate::Type* FunctionDefinitionSymbol::IrType(Emitter& emitter, co
     }
 }
 
-bool FunctionDefinitionSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
+bool FunctionDefinitionSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const 
 {
     if (declaration && !declaration->IsTemplateParameterInstantiation(context, visited)) return false;
     return FunctionSymbol::IsTemplateParameterInstantiation(context, visited);
@@ -1383,7 +1385,7 @@ void FunctionDefinitionSymbol::SetReturnType(TypeSymbol* returnType_, Context* c
     FunctionSymbol::SetReturnType(returnType_, context);
 }
 
-FunctionKind FunctionDefinitionSymbol::GetFunctionKind() const
+FunctionKind FunctionDefinitionSymbol::GetFunctionKind() const noexcept
 {
     if (declaration)
     {
@@ -1395,7 +1397,7 @@ FunctionKind FunctionDefinitionSymbol::GetFunctionKind() const
     }
 }
 
-bool FunctionDefinitionSymbol::IsVirtual() const
+bool FunctionDefinitionSymbol::IsVirtual() const noexcept
 {
     if (declaration)
     {
@@ -1407,7 +1409,7 @@ bool FunctionDefinitionSymbol::IsVirtual() const
     }
 }
 
-bool FunctionDefinitionSymbol::IsConst() const
+bool FunctionDefinitionSymbol::IsConst() const noexcept
 {
     if (declaration)
     {
@@ -1419,7 +1421,7 @@ bool FunctionDefinitionSymbol::IsConst() const
     }
 }
 
-bool FunctionDefinitionSymbol::IsPure() const
+bool FunctionDefinitionSymbol::IsPure() const noexcept
 {
     if (declaration)
     {
@@ -1431,7 +1433,7 @@ bool FunctionDefinitionSymbol::IsPure() const
     }
 }
 
-bool FunctionDefinitionSymbol::IsOverride() const
+bool FunctionDefinitionSymbol::IsOverride() const noexcept
 {
     if (declaration)
     {
@@ -1443,7 +1445,7 @@ bool FunctionDefinitionSymbol::IsOverride() const
     }
 }
 
-bool FunctionDefinitionSymbol::IsFinal() const
+bool FunctionDefinitionSymbol::IsFinal() const noexcept
 {
     if (declaration)
     {
@@ -1455,7 +1457,7 @@ bool FunctionDefinitionSymbol::IsFinal() const
     }
 }
 
-bool FunctionDefinitionSymbol::IsNoExcept() const
+bool FunctionDefinitionSymbol::IsNoExcept() const noexcept
 {
     if (declaration)
     {
@@ -1467,7 +1469,7 @@ bool FunctionDefinitionSymbol::IsNoExcept() const
     }
 }
 
-void FunctionDefinitionSymbol::SetNoExcept()
+void FunctionDefinitionSymbol::SetNoExcept() noexcept
 {
     if (declaration)
     {
@@ -1476,7 +1478,7 @@ void FunctionDefinitionSymbol::SetNoExcept()
     FunctionSymbol::SetNoExcept();
 }
 
-std::int32_t FunctionDefinitionSymbol::VTabIndex() const
+std::int32_t FunctionDefinitionSymbol::VTabIndex() const noexcept
 {
     if (declaration)
     {
@@ -1488,7 +1490,7 @@ std::int32_t FunctionDefinitionSymbol::VTabIndex() const
     }
 }
 
-bool FunctionDefinitionSymbol::IsStatic() const
+bool FunctionDefinitionSymbol::IsStatic() const noexcept
 {
     if (declaration)
     {
@@ -1500,7 +1502,7 @@ bool FunctionDefinitionSymbol::IsStatic() const
     }
 }
 
-bool FunctionDefinitionSymbol::IsExplicit() const
+bool FunctionDefinitionSymbol::IsExplicit() const noexcept
 {
     if (declaration)
     {
@@ -1512,7 +1514,7 @@ bool FunctionDefinitionSymbol::IsExplicit() const
     }
 }
 
-TypeSymbol* FunctionDefinitionSymbol::ConversionParamType() const
+TypeSymbol* FunctionDefinitionSymbol::ConversionParamType() const noexcept
 {
     if (declaration)
     {
@@ -1524,7 +1526,7 @@ TypeSymbol* FunctionDefinitionSymbol::ConversionParamType() const
     }
 }
 
-TypeSymbol* FunctionDefinitionSymbol::ConversionArgType() const
+TypeSymbol* FunctionDefinitionSymbol::ConversionArgType() const noexcept
 {
     if (declaration)
     {
@@ -1536,7 +1538,7 @@ TypeSymbol* FunctionDefinitionSymbol::ConversionArgType() const
     }
 }
 
-std::int32_t FunctionDefinitionSymbol::ConversionDistance() const
+std::int32_t FunctionDefinitionSymbol::ConversionDistance() const noexcept
 {
     if (declaration)
     {
@@ -1553,7 +1555,7 @@ void FunctionDefinitionSymbol::AddDefinitionToGroup(Context* context)
     Group()->AddFunctionDefinition(this, context);
 }
 
-bool FunctionDefinitionSymbol::IsMemberFunction() const
+bool FunctionDefinitionSymbol::IsMemberFunction() const noexcept
 {
     if (declaration)
     {
@@ -1574,7 +1576,7 @@ void FunctionDefinitionSymbol::SetResultVarName(const std::u32string& resultVarN
     resultVarName = resultVarName_;
 }
 
-TypeSymbol* FunctionDefinitionSymbol::NonChildFunctionResultType(Context* context) const
+TypeSymbol* FunctionDefinitionSymbol::NonChildFunctionResultType(Context* context) const noexcept
 {
     if (ParentFn())
     {
@@ -1608,7 +1610,7 @@ void FunctionDefinitionSymbol::MapBlock(int blockId, Symbol* block)
     blockMap[blockId] = block;
 }
 
-Symbol* FunctionDefinitionSymbol::GetBlock(int blockId) const
+Symbol* FunctionDefinitionSymbol::GetBlock(int blockId) const noexcept
 {
     auto it = blockMap.find(blockId);
     if (it != blockMap.end())
@@ -1686,14 +1688,14 @@ otava::intermediate::Type* ExplicitlyInstantiatedFunctionDefinitionSymbol::IrTyp
     }
 }
 
-bool FunctionLess::operator()(FunctionSymbol* left, FunctionSymbol* right) const
+bool FunctionLess::operator()(FunctionSymbol* left, FunctionSymbol* right) const noexcept
 {
-    if (int(left->GetFunctionKind()) < int(right->GetFunctionKind())) return true;
-    if (int(left->GetFunctionKind()) > int(right->GetFunctionKind())) return false;
+    if (std::uint8_t(left->GetFunctionKind()) < std::uint8_t(right->GetFunctionKind())) return true;
+    if (std::uint8_t(left->GetFunctionKind()) > std::uint8_t(right->GetFunctionKind())) return false;
     return left->Name() < right->Name();
 }
 
-bool FunctionMatches(FunctionSymbol* left, FunctionSymbol* right, Context* context)
+bool FunctionMatches(FunctionSymbol* left, FunctionSymbol* right, Context* context) noexcept
 {
     if (left->GroupName() != right->GroupName()) return false;
     if (left->IsConst() != right->IsConst()) return false;

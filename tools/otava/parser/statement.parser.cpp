@@ -894,7 +894,7 @@ soul::parser::Match StatementParser<LexerT>::CompoundStatementUnguarded(LexerT& 
                                                                 {
                                                                     if (!nextIsRBrace)
                                                                     {
-                                                                        ThrowStatementParsingError(lexer.GetSourcePos(pos), context);
+                                                                        otava::symbols::ThrowStatementParsingError(lexer.GetSourcePos(pos), context);
                                                                     }
                                                                     else
                                                                     {
@@ -5327,7 +5327,7 @@ soul::parser::Match StatementParser<LexerT>::ExceptionDeclaration(LexerT& lexer,
                             soul::parser::Match* parentMatch9 = &match;
                             {
                                 std::int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = otava::parser::type::TypeParser<LexerT>::TypeSpecifierSeq(lexer, context);
+                                soul::parser::Match match = otava::parser::type::TypeParser<LexerT>::TypeSpecifierSeqReset(lexer, context);
                                 typeSpecifiers.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {

@@ -11,11 +11,11 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-LambdaExpressionNode::LambdaExpressionNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::lambdaExpressionNode, sourcePos_)
+LambdaExpressionNode::LambdaExpressionNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::lambdaExpressionNode, sourcePos_)
 {
 }
 
-LambdaExpressionNode::LambdaExpressionNode(const soul::ast::SourcePos& sourcePos_, Node* introducer_, Node* templateParams_, Node* declarator_, Node* body_) :
+LambdaExpressionNode::LambdaExpressionNode(const soul::ast::SourcePos& sourcePos_, Node* introducer_, Node* templateParams_, Node* declarator_, Node* body_) noexcept :
     CompoundNode(NodeKind::lambdaExpressionNode, sourcePos_), introducer(introducer_), templateParams(templateParams_), declarator(declarator_), body(body_)
 {
 }
@@ -54,11 +54,12 @@ void LambdaExpressionNode::Read(Reader& reader)
     body.reset(reader.ReadNode());
 }
 
-LambdaIntroducerNode::LambdaIntroducerNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::lambdaIntroducerNode, sourcePos_)
+LambdaIntroducerNode::LambdaIntroducerNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::lambdaIntroducerNode, sourcePos_)
 {
 }
 
-LambdaIntroducerNode::LambdaIntroducerNode(const soul::ast::SourcePos& sourcePos_, Node* capture_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) :
+LambdaIntroducerNode::LambdaIntroducerNode(const soul::ast::SourcePos& sourcePos_, Node* capture_, 
+    const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) noexcept :
     CompoundNode(NodeKind::lambdaIntroducerNode, sourcePos_), capture(capture_), lbPos(lbPos_), rbPos(rbPos_)
 {
 }
@@ -95,7 +96,7 @@ void LambdaIntroducerNode::Read(Reader& reader)
     rbPos = reader.ReadSourcePos();
 }
 
-LambdaCaptureNode::LambdaCaptureNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::lambdaCaptureNode, sourcePos_)
+LambdaCaptureNode::LambdaCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::lambdaCaptureNode, sourcePos_)
 {
 }
 
@@ -114,7 +115,7 @@ void LambdaCaptureNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-DefaultRefCaptureNode::DefaultRefCaptureNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::defaultRefCaptureNode, sourcePos_)
+DefaultRefCaptureNode::DefaultRefCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::defaultRefCaptureNode, sourcePos_)
 {
 }
 
@@ -129,7 +130,7 @@ void DefaultRefCaptureNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-DefaultCopyCaptureNode::DefaultCopyCaptureNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::defaultCopyCaptureNode, sourcePos_)
+DefaultCopyCaptureNode::DefaultCopyCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::defaultCopyCaptureNode, sourcePos_)
 {
 }
 
@@ -144,7 +145,7 @@ void DefaultCopyCaptureNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ByRefCaptureNode::ByRefCaptureNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::byRefCaptureNode, sourcePos_)
+ByRefCaptureNode::ByRefCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::byRefCaptureNode, sourcePos_)
 {
 }
 
@@ -159,11 +160,11 @@ void ByRefCaptureNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-SimpleCaptureNode::SimpleCaptureNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::simpleCaptureNode, sourcePos_)
+SimpleCaptureNode::SimpleCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::simpleCaptureNode, sourcePos_)
 {
 }
 
-SimpleCaptureNode::SimpleCaptureNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* byRefCapture_, Node* ellipsis_) :
+SimpleCaptureNode::SimpleCaptureNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* byRefCapture_, Node* ellipsis_) noexcept :
     CompoundNode(NodeKind::simpleCaptureNode, sourcePos_), identifier(identifier_), byRefCapture(byRefCapture_), ellipsis(ellipsis_)
 {
 }
@@ -205,11 +206,12 @@ void SimpleCaptureNode::Read(Reader& reader)
     ellipsis.reset(reader.ReadNode());
 }
 
-CurrentObjectCopyCapture::CurrentObjectCopyCapture(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::currentObjectCopyCapture, sourcePos_)
+CurrentObjectCopyCapture::CurrentObjectCopyCapture(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::currentObjectCopyCapture, sourcePos_)
 {
 }
 
-CurrentObjectCopyCapture::CurrentObjectCopyCapture(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& thisPos_) : CompoundNode(NodeKind::currentObjectCopyCapture, sourcePos_), thisPos(thisPos_)
+CurrentObjectCopyCapture::CurrentObjectCopyCapture(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& thisPos_) noexcept : 
+    CompoundNode(NodeKind::currentObjectCopyCapture, sourcePos_), thisPos(thisPos_)
 {
 }
 
@@ -236,11 +238,12 @@ void CurrentObjectCopyCapture::Read(Reader& reader)
     thisPos = reader.ReadSourcePos();
 }
 
-CurrentObjectByRefCapture::CurrentObjectByRefCapture(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::currentObjectByRefCapture, sourcePos_)
+CurrentObjectByRefCapture::CurrentObjectByRefCapture(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::currentObjectByRefCapture, sourcePos_)
 {
 }
 
-CurrentObjectByRefCapture::CurrentObjectByRefCapture(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& thisPos_) : CompoundNode(NodeKind::currentObjectByRefCapture, sourcePos_), thisPos(thisPos_)
+CurrentObjectByRefCapture::CurrentObjectByRefCapture(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& thisPos_) noexcept : 
+    CompoundNode(NodeKind::currentObjectByRefCapture, sourcePos_), thisPos(thisPos_)
 {
 }
 
@@ -267,11 +270,11 @@ void CurrentObjectByRefCapture::Read(Reader& reader)
     thisPos = reader.ReadSourcePos();
 }
 
-InitCaptureNode::InitCaptureNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::initCaptureNode, sourcePos_)
+InitCaptureNode::InitCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::initCaptureNode, sourcePos_)
 {
 }
 
-InitCaptureNode::InitCaptureNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* initializer_, Node* byRefCapture_, Node* ellipsis_) :
+InitCaptureNode::InitCaptureNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* initializer_, Node* byRefCapture_, Node* ellipsis_) noexcept :
     CompoundNode(NodeKind::initCaptureNode, sourcePos_), identifier(identifier_), initializer(initializer_), byRefCapture(byRefCapture_), ellipsis(ellipsis_)
 {
 }
@@ -315,11 +318,11 @@ void InitCaptureNode::Read(Reader& reader)
     ellipsis.reset(reader.ReadNode());
 }
 
-LambdaDeclaratorNode::LambdaDeclaratorNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::lambdaDeclaratorNode, sourcePos_)
+LambdaDeclaratorNode::LambdaDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::lambdaDeclaratorNode, sourcePos_)
 {
 }
 
-LambdaDeclaratorNode::LambdaDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* parameterList_, Node* specifiers_, Node* requiresClause_) :
+LambdaDeclaratorNode::LambdaDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* parameterList_, Node* specifiers_, Node* requiresClause_) noexcept :
     CompoundNode(NodeKind::lambdaDeclaratorNode, sourcePos_), parameterList(parameterList_), specifiers(specifiers_), requiresClause(requiresClause_)
 {
 }
@@ -361,12 +364,14 @@ void LambdaDeclaratorNode::Read(Reader& reader)
     requiresClause.reset(reader.ReadNode());
 }
 
-LambdaSpecifiersNode::LambdaSpecifiersNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::lambdaSpecifiersNode, sourcePos_)
+LambdaSpecifiersNode::LambdaSpecifiersNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::lambdaSpecifiersNode, sourcePos_)
 {
 }
 
-LambdaSpecifiersNode::LambdaSpecifiersNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifiers_, Node* noexceptSpecifier_, Node* attributes_, Node* trailingReturnType_) :
-    CompoundNode(NodeKind::lambdaSpecifiersNode, sourcePos_), declSpecifiers(declSpecifiers_), noexceptSpecifier(noexceptSpecifier_), attributes(attributes_), trailingReturnType(trailingReturnType_)
+LambdaSpecifiersNode::LambdaSpecifiersNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifiers_, Node* noexceptSpecifier_, Node* attributes_, 
+    Node* trailingReturnType_) noexcept :
+    CompoundNode(NodeKind::lambdaSpecifiersNode, sourcePos_), declSpecifiers(declSpecifiers_), noexceptSpecifier(noexceptSpecifier_), 
+    attributes(attributes_), trailingReturnType(trailingReturnType_)
 {
 }
 
@@ -424,11 +429,12 @@ bool LambdaSpecifiersNode::IsEmpty() const
     return !declSpecifiers && !noexceptSpecifier && !attributes && !trailingReturnType;
 }
 
-LambdaTemplateParamsNode::LambdaTemplateParamsNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::lambdaTemplateParamsNode, sourcePos_)
+LambdaTemplateParamsNode::LambdaTemplateParamsNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    CompoundNode(NodeKind::lambdaTemplateParamsNode, sourcePos_)
 {
 }
 
-LambdaTemplateParamsNode::LambdaTemplateParamsNode(const soul::ast::SourcePos& sourcePos_, Node* templateParams_, Node* requiresClause_) :
+LambdaTemplateParamsNode::LambdaTemplateParamsNode(const soul::ast::SourcePos& sourcePos_, Node* templateParams_, Node* requiresClause_) noexcept :
     CompoundNode(NodeKind::lambdaTemplateParamsNode, sourcePos_), templateParams(templateParams_), requiresClause(requiresClause_)
 {
 }

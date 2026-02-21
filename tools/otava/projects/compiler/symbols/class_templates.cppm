@@ -1,0 +1,125 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module otava.symbols.class_templates;
+
+import std;
+import util.uuid;
+import otava.ast.node;
+import otava.ast.templates;
+import otava.symbols.classes;
+import otava.symbols.templates;
+import otava.symbols.type.symbol;
+
+export namespace otava::symbols {
+
+class CompoundTypeSymbol;
+class FunctionDefinitionSymbol;
+
+class ClassTemplateSpecializationSymbol : public ClassTypeSymbol
+{
+public:
+    ClassTemplateSpecializationSymbol(const std::u32string& name_);
+    ClassTemplateSpecializationSymbol(const util::uuid& id_, const std::u32string& name_);
+    util::uuid IrId(Context* context) const noexcept override;
+    inline bool Instantiated() const noexcept { return instantiated; }
+    inline void SetInstantiated() noexcept { instantiated = true; }
+    std::string SymbolKindStr() const override { return "specialization symbol"; }
+    std::string SymbolDocKindStr() const override { return "specialization"; }
+    inline ClassTypeSymbol* ClassTemplate() const noexcept { return classTemplate; }
+    void SetClassTemplate(ClassTypeSymbol* classTemplate_) noexcept;
+    const std::u32string& SimpleName() const noexcept override { return ClassTemplate()->SimpleName(); }
+    std::u32string FullName() const override;
+    std::string IrName(Context* context) const override;
+    inline const std::vector<Symbol*>& TemplateArguments() const noexcept { return templateArguments; }
+    void AddTemplateArgument(Symbol* templateArgument);
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable, Context* context) override;
+    void Accept(Visitor& visitor) override;
+    TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap,
+        const soul::ast::SourcePos& sourcePos, Context* context) noexcept override;
+    bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
+    inline FunctionSymbol* Destructor() const noexcept { return destructor; }
+    inline void SetDestructor(FunctionSymbol* destructor_) noexcept { destructor = destructor_; }
+    TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const noexcept override;
+    inline bool InstantiatingDestructor() const noexcept { return instantiatingDestructor; }
+    inline void SetInstantiatingDestructor(bool instantiating) noexcept { instantiatingDestructor = instantiating; }
+    void AddInstantiatedVirtualFunctionSpecialization(FunctionSymbol* specialization);
+    FunctionSymbol* GetMatchingVirtualFunctionSpecialization(FunctionSymbol* newcomer, Context* context) const noexcept;
+    bool ContainsVirtualFunctionSpecialization(FunctionSymbol* specialization) const noexcept;
+    ClassGroupSymbol* Group() const noexcept override { return ClassTemplate()->Group(); }
+    bool IsBasicStringCharType(Context* context) noexcept override
+    {
+        return classTemplate->Name() == U"basic_string" &&
+            templateArguments.size() == 1 &&
+            (templateArguments.front()->IsCharTypeSymbol() || templateArguments.front()->IsChar8TypeSymbol());
+    }
+    bool IsBasicStringChar16Type(Context* context) noexcept override
+    {
+        return classTemplate->Name() == U"basic_string" && templateArguments.size() == 1 && templateArguments.front()->IsChar16TypeSymbol();
+    }
+    bool IsBasicStringChar32Type(Context* context) noexcept override
+    {
+        return classTemplate->Name() == U"basic_string" && templateArguments.size() == 1 && templateArguments.front()->IsChar32TypeSymbol();
+    }
+private:
+    ClassTypeSymbol* classTemplate;
+    std::vector<Symbol*> templateArguments;
+    std::vector<std::pair<util::uuid, bool>> ids;
+    FunctionSymbol* destructor;
+    util::uuid destructorId;
+    bool instantiated;
+    bool instantiatingDestructor;
+    std::vector<FunctionSymbol*> instantiatedVirtualFunctionSpecializations;
+    std::vector<util::uuid> instantiatedVirtualFunctionSpecializationIds;
+};
+
+util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments,
+    const soul::ast::SourcePos& sourcePos, Context* context) noexcept;
+
+util::uuid MakeClassTemplateSpecializationSymbolIrId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments,
+    const soul::ast::SourcePos& sourcePos, Context* context) noexcept;
+
+struct MemFunKey
+{
+    MemFunKey();
+    MemFunKey(FunctionSymbol* memFun_, const std::vector<TypeSymbol*>& templateArgumentTypes_);
+    FunctionSymbol* memFun;
+    std::vector<TypeSymbol*> templateArgumentTypes;
+};
+
+struct MemFunKeyLess
+{
+    bool operator()(const MemFunKey& left, const MemFunKey& right) const noexcept;
+};
+
+class ClassTemplateRepository
+{
+public:
+    ClassTemplateRepository();
+    FunctionDefinitionSymbol* GetFunctionDefinition(const MemFunKey& key) const noexcept;
+    void AddFunctionDefinition(const MemFunKey& key, FunctionDefinitionSymbol* functionDefinitionSymbol, otava::ast::Node* functionDefinitionNode);
+private:
+    std::map<MemFunKey, FunctionDefinitionSymbol*, MemFunKeyLess> memFunMap;
+    std::vector<std::unique_ptr<otava::ast::Node>> functionDefinitionNodes;
+};
+
+std::u32string MakeSpecializationName(TypeSymbol* templateSymbol, const std::vector<Symbol*>& templateArguments);
+
+CompoundTypeSymbol* GetCompoundSpecializationArgType(TypeSymbol* specialization, int index) noexcept;
+ClassTemplateSpecializationSymbol* GetClassTemplateSpecializationArgType(TypeSymbol* specialization, int index) noexcept;
+
+ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs,
+    const soul::ast::SourcePos& sourcePos, Context* context);
+
+FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
+    ClassTemplateSpecializationSymbol* classTemplateSpecialization, const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap,
+    const soul::ast::SourcePos& sourcePos, Context* context);
+
+void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, const soul::ast::SourcePos& sourcePos, Context* context);
+
+} // namespace otava::symbols

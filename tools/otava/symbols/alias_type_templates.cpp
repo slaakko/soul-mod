@@ -26,7 +26,7 @@ AliasTypeTemplateSpecializationSymbol::AliasTypeTemplateSpecializationSymbol(con
 {
 }
 
-void AliasTypeTemplateSpecializationSymbol::SetAliasTypeTemplate(TypeSymbol* aliasTypeTemplate_)
+void AliasTypeTemplateSpecializationSymbol::SetAliasTypeTemplate(TypeSymbol* aliasTypeTemplate_) noexcept
 {
     aliasTypeTemplate = aliasTypeTemplate_;
 }
@@ -120,14 +120,15 @@ TypeSymbol* InstantiateAliasTypeSymbol(TypeSymbol* typeSymbol, const std::vector
                     }
                     else
                     {
-                        ThrowException("otava.symbols.alias_type_templates: template parameter " + std::to_string(i) + " has no default type argument", node->GetSourcePos(), context);
+                        ThrowException("otava.symbols.alias_type_templates: template parameter " + std::to_string(i) + 
+                            " has no default type argument", node->GetSourcePos(), context);
                     }
                 }
                 else
                 {
                     templateArg = templateArgs[i];
                 }
-                BoundTemplateParameterSymbol* boundTemplateParameter(new BoundTemplateParameterSymbol(templateParameter->Name()));
+                BoundTemplateParameterSymbol* boundTemplateParameter = new BoundTemplateParameterSymbol(templateParameter->Name());
                 boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
                 boundTemplateParameter->SetBoundSymbol(templateArg);
                 boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));

@@ -19,7 +19,7 @@ EnumGroupSymbol::EnumGroupSymbol(const std::u32string& name_) : Symbol(SymbolKin
 {
 }
 
-bool EnumGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
+bool EnumGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcept
 {
     switch (scopeKind)
     {
@@ -32,7 +32,7 @@ bool EnumGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
     return false;
 }
 
-Symbol* EnumGroupSymbol::GetSingleSymbol()
+Symbol* EnumGroupSymbol::GetSingleSymbol() noexcept
 {
     if (enumType)
     {

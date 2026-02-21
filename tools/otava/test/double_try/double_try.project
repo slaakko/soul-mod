@@ -1,0 +1,3 @@
+project double_try;
+target=program;
+source <main.cpp>;

@@ -147,30 +147,30 @@ Evaluator::Evaluator(Context* context_) : context(context_), value(nullptr), sco
 void Evaluator::Visit(otava::ast::IntegerLiteralNode& node)
 {
     TypeSymbol* type = GetIntegerType(node.GetSuffix(), node.GetSourcePos(), context);
-    value = context->GetEvaluationContext()->GetIntegerValue(node.Value(), node.Rep(), type);
+    value = context->GetEvaluationContext()->GetIntegerValue(node.GetValue(), node.Rep(), type);
 }
 
 void Evaluator::Visit(otava::ast::FloatingLiteralNode& node)
 {
     TypeSymbol* type = GetFloatingPointType(node.GetSuffix(), node.GetSourcePos(), context);
-    value = context->GetEvaluationContext()->GetFloatingValue(node.Value(), node.Rep(), type);
+    value = context->GetEvaluationContext()->GetFloatingValue(node.GetValue(), node.Rep(), type);
 }
 
 void Evaluator::Visit(otava::ast::CharacterLiteralNode& node)
 {
     TypeSymbol* type = GetCharacterType(node.GetEncodingPrefix(), node.GetSourcePos(), context);
-    value = context->GetEvaluationContext()->GetCharValue(node.Value(), type);
+    value = context->GetEvaluationContext()->GetCharValue(node.GetValue(), type);
 }
 
 void Evaluator::Visit(otava::ast::StringLiteralNode& node)
 {
     TypeSymbol* type = GetStringType(node.GetEncodingPrefix(), node.GetSourcePos(), context);
-    value = context->GetEvaluationContext()->GetStringValue(util::ToUtf8(node.Value()), type);
+    value = context->GetEvaluationContext()->GetStringValue(util::ToUtf8(node.GetValue()), type);
 }
 
 void Evaluator::Visit(otava::ast::BooleanLiteralNode& node)
 {
-    value = context->GetEvaluationContext()->GetBoolValue(node.Value());
+    value = context->GetEvaluationContext()->GetBoolValue(node.GetValue());
 }
 
 void Evaluator::Visit(otava::ast::NullPtrLiteralNode& node)

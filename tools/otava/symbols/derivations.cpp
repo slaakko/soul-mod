@@ -10,7 +10,7 @@ import otava.symbols.writer;
 
 namespace otava::symbols {
 
-Derivations Merge(Derivations left, Derivations right)
+Derivations Merge(Derivations left, Derivations right) noexcept
 {
     Derivations merged = Derivations::none;
     if (HasDerivation(left, Derivations::constDerivation))
@@ -52,7 +52,7 @@ Derivations Merge(Derivations left, Derivations right)
     return merged;
 }
 
-Derivations UnifyDerivations(Derivations left, Derivations right)
+Derivations UnifyDerivations(Derivations left, Derivations right) noexcept
 {
     Derivations result = Derivations::none;
     if (HasDerivation(left, Derivations::constDerivation) || HasDerivation(right, Derivations::constDerivation))
@@ -80,7 +80,7 @@ Derivations UnifyDerivations(Derivations left, Derivations right)
     return result;
 }
 
-int CountMatchingDerivations(Derivations left, Derivations right)
+int CountMatchingDerivations(Derivations left, Derivations right) noexcept
 {
     int matchingDerivationsCount = 0;
     if (HasDerivation(left, Derivations::constDerivation) && HasDerivation(right, Derivations::constDerivation))

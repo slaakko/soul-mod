@@ -9,9 +9,9 @@ class Context;
 
 struct TypeIdLess
 {
-    bool operator()(TypeSymbol* left, TypeSymbol* right) const;
+    bool operator()(TypeSymbol* left, TypeSymbol* right) const noexcept;
 };
 
-bool TypesEqual(TypeSymbol* left, TypeSymbol* right, Context* context);
+bool TypesEqual(TypeSymbol* left, TypeSymbol* right, Context* context) noexcept;
 
 } // namespace otava::symbols

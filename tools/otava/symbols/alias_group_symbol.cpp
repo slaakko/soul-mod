@@ -18,7 +18,7 @@ AliasGroupSymbol::AliasGroupSymbol(const std::u32string& name_) : Symbol(SymbolK
 {
 }
 
-bool AliasGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
+bool AliasGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcept
 {
     switch (scopeKind)
     {
@@ -33,7 +33,7 @@ bool AliasGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
     return false;
 }
 
-Symbol* AliasGroupSymbol::GetSingleSymbol() 
+Symbol* AliasGroupSymbol::GetSingleSymbol() noexcept
 {
     if (aliasTypeSymbols.size() == 1)
     {
@@ -45,18 +45,29 @@ Symbol* AliasGroupSymbol::GetSingleSymbol()
     }
 }
 
+struct ReferredTypeEqual
+{
+    ReferredTypeEqual(AliasTypeSymbol* aliasTypeSymbol_, Context* context_) : aliasTypeSymbol(aliasTypeSymbol_), context(context_) {}
+    inline bool operator()(AliasTypeSymbol* symbol) const noexcept
+    {
+        return TypesEqual(symbol->ReferredType(), aliasTypeSymbol->ReferredType(), context);
+    }
+    AliasTypeSymbol* aliasTypeSymbol;
+    Context* context;
+};
+
 void AliasGroupSymbol::AddAliasTypeSymbol(AliasTypeSymbol* aliasTypeSymbol, Context* context)
 {
+    ReferredTypeEqual referredTypeEqual(aliasTypeSymbol, context);
     if (std::find(aliasTypeSymbols.begin(), aliasTypeSymbols.end(), aliasTypeSymbol) == aliasTypeSymbols.end() &&
-        std::find_if(aliasTypeSymbols.begin(), aliasTypeSymbols.end(), 
-            [&](AliasTypeSymbol* symbol) { return TypesEqual(symbol->ReferredType(), aliasTypeSymbol->ReferredType(), context); }) == aliasTypeSymbols.end())
+        std::find_if(aliasTypeSymbols.begin(), aliasTypeSymbols.end(), referredTypeEqual) == aliasTypeSymbols.end())
     {
         aliasTypeSymbol->SetGroup(this);
         aliasTypeSymbols.push_back(aliasTypeSymbol);
     }
 }
 
-AliasTypeSymbol* AliasGroupSymbol::GetAliasTypeSymbol(int arity) const
+AliasTypeSymbol* AliasGroupSymbol::GetAliasTypeSymbol(int arity) const noexcept
 {
     for (AliasTypeSymbol* aliasTypeSymbol : aliasTypeSymbols)
     {
@@ -117,13 +128,13 @@ void AliasGroupSymbol::Merge(AliasGroupSymbol* that, Context* context)
 
 struct ViableAliasTypeGreater
 {
-    bool operator()(const std::pair<AliasTypeSymbol*, int>& left, const std::pair<AliasTypeSymbol*, int>& right) const
+    bool operator()(const std::pair<AliasTypeSymbol*, int>& left, const std::pair<AliasTypeSymbol*, int>& right) noexcept
     {
         return left.second > right.second;
     }
 };
     
-AliasTypeSymbol* AliasGroupSymbol::GetBestMatchingAliasType(const std::vector<Symbol*>& templateArgs, Context* context) const
+AliasTypeSymbol* AliasGroupSymbol::GetBestMatchingAliasType(const std::vector<Symbol*>& templateArgs, Context* context) noexcept
 {
     std::vector<std::pair<AliasTypeSymbol*, int>> viableAliasTypes;
     int arity = templateArgs.size();

@@ -23,8 +23,8 @@ class Operation
 public:
     Operation(const std::u32string& groupName_, int arity_);
     virtual ~Operation();
-    inline const std::u32string& GroupName() const { return groupName; }
-    inline int Arity() const { return arity; }
+    inline const std::u32string& GroupName() const noexcept { return groupName; }
+    inline int Arity() const noexcept { return arity; }
     virtual FunctionSymbol* Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) = 0;
 private:
     std::u32string groupName; 
@@ -35,7 +35,7 @@ class OperationGroup
 {
 public:
     OperationGroup(const std::u32string& name_);
-    inline const std::u32string& Name() const { return name; }
+    inline const std::u32string& Name() const noexcept { return name; }
     void AddOperation(Operation* operation);
     FunctionSymbol* GetOperation(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos,
         otava::symbols::Context* context);

@@ -21,7 +21,7 @@ InstantiationRequest::InstantiationRequest(FunctionSymbol* function_, const std:
 {
 }
 
-bool operator==(const InstantiationRequest& left, const InstantiationRequest& right)
+bool operator==(const InstantiationRequest& left, const InstantiationRequest& right) noexcept
 {
     return left.Function() == right.Function() && left.TemplateParamMap() == right.TemplateParamMap();
 }

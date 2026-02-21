@@ -11,12 +11,12 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-ModuleDeclarationNode::ModuleDeclarationNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::moduleDeclarationNode, sourcePos_)
+ModuleDeclarationNode::ModuleDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::moduleDeclarationNode, sourcePos_)
 {
 }
 
-ModuleDeclarationNode::ModuleDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* exprt_, Node* modle_, Node* moduleName_, Node* modulePartition_,
-    Node* attributes_, Node* semicolon_) :
+ModuleDeclarationNode::ModuleDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* exprt_, Node* modle_, Node* moduleName_, 
+    Node* modulePartition_, Node* attributes_, Node* semicolon_) noexcept :
     CompoundNode(NodeKind::moduleDeclarationNode, sourcePos_), exprt(exprt_), modle(modle_), moduleName(moduleName_), modulePartition(modulePartition_), 
     attributes(attributes_), semicolon(semicolon_)
 {
@@ -39,8 +39,8 @@ Node* ModuleDeclarationNode::Clone() const
     {
         clonedAttributes = attributes->Clone();
     }
-    ModuleDeclarationNode* clone = new ModuleDeclarationNode(GetSourcePos(), clonedExport, modle->Clone(), moduleName->Clone(), clonedModulePartition, clonedAttributes, 
-        semicolon->Clone());
+    ModuleDeclarationNode* clone = new ModuleDeclarationNode(GetSourcePos(), clonedExport, modle->Clone(), moduleName->Clone(), clonedModulePartition, 
+        clonedAttributes, semicolon->Clone());
     return clone;
 }
 
@@ -71,11 +71,12 @@ void ModuleDeclarationNode::Read(Reader& reader)
     semicolon.reset(reader.ReadNode());
 }
 
-ExportDeclarationNode::ExportDeclarationNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::exportDeclarationNode, sourcePos_)
+ExportDeclarationNode::ExportDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::exportDeclarationNode, sourcePos_)
 {
 }
 
-ExportDeclarationNode::ExportDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* exprt_, Node* subject_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) :
+ExportDeclarationNode::ExportDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* exprt_, Node* subject_, 
+    const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) noexcept :
     CompoundNode(NodeKind::exportDeclarationNode, sourcePos_), exprt(exprt_), subject(subject_), lbPos(lbPos_), rbPos(rbPos_)
 {
 }
@@ -114,7 +115,7 @@ void ExportDeclarationNode::Read(Reader& reader)
     rbPos = reader.ReadSourcePos();
 }
 
-ExportNode::ExportNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::exportNode, sourcePos_)
+ExportNode::ExportNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::exportNode, sourcePos_)
 {
 }
 
@@ -129,7 +130,7 @@ void ExportNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ImportNode::ImportNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::importNode, sourcePos_)
+ImportNode::ImportNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::importNode, sourcePos_)
 {
 }
 
@@ -144,11 +145,11 @@ void ImportNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ImportDeclarationNode::ImportDeclarationNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::importDeclarationNode, sourcePos_)
+ImportDeclarationNode::ImportDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::importDeclarationNode, sourcePos_)
 {
 }
 
-ImportDeclarationNode::ImportDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* imprt_, Node* subject_, Node* attributes_, Node* semicolon_) :
+ImportDeclarationNode::ImportDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* imprt_, Node* subject_, Node* attributes_, Node* semicolon_) noexcept :
     CompoundNode(NodeKind::importDeclarationNode, sourcePos_), imprt(imprt_), subject(subject_), attributes(attributes_), semicolon(semicolon_)
 {
 }
@@ -187,11 +188,12 @@ void ImportDeclarationNode::Read(Reader& reader)
     semicolon.reset(reader.ReadNode());
 }
 
-ModulePartitionNode::ModulePartitionNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::modulePartitionNode, sourcePos_, nullptr)
+ModulePartitionNode::ModulePartitionNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::modulePartitionNode, sourcePos_, nullptr)
 {
 }
 
-ModulePartitionNode::ModulePartitionNode(const soul::ast::SourcePos& sourcePos_, Node* moduleName_) : UnaryNode(NodeKind::modulePartitionNode, sourcePos_, moduleName_)
+ModulePartitionNode::ModulePartitionNode(const soul::ast::SourcePos& sourcePos_, Node* moduleName_) noexcept : 
+    UnaryNode(NodeKind::modulePartitionNode, sourcePos_, moduleName_)
 {
 }
 
@@ -206,7 +208,7 @@ void ModulePartitionNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ModuleNode::ModuleNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::moduleNode, sourcePos_)
+ModuleNode::ModuleNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::moduleNode, sourcePos_)
 {
 }
 
@@ -221,11 +223,11 @@ void ModuleNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-GlobalModuleFragmentNode::GlobalModuleFragmentNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::globalModuleFragmentNode, sourcePos_)
+GlobalModuleFragmentNode::GlobalModuleFragmentNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::globalModuleFragmentNode, sourcePos_)
 {
 }
 
-GlobalModuleFragmentNode::GlobalModuleFragmentNode(const soul::ast::SourcePos& sourcePos_, Node* modle_, Node* semicolon_, Node* declarations_) :
+GlobalModuleFragmentNode::GlobalModuleFragmentNode(const soul::ast::SourcePos& sourcePos_, Node* modle_, Node* semicolon_, Node* declarations_) noexcept :
     CompoundNode(NodeKind::globalModuleFragmentNode, sourcePos_), modle(modle_), semicolon(semicolon_), declarations(declarations_)
 {
 }
@@ -262,11 +264,12 @@ void GlobalModuleFragmentNode::Read(Reader& reader)
     declarations.reset(reader.ReadNode());
 }
 
-PrivateModuleFragmentNode::PrivateModuleFragmentNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::privateModuleFragmentNode, sourcePos_)
+PrivateModuleFragmentNode::PrivateModuleFragmentNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::privateModuleFragmentNode, sourcePos_)
 {
 }
 
-PrivateModuleFragmentNode::PrivateModuleFragmentNode(const soul::ast::SourcePos& sourcePos_, Node* modle_, Node* colon_, Node* privat_, Node* semicolon_, Node* declarations_) :
+PrivateModuleFragmentNode::PrivateModuleFragmentNode(const soul::ast::SourcePos& sourcePos_, Node* modle_, Node* colon_, Node* privat_, 
+    Node* semicolon_, Node* declarations_) noexcept :
     CompoundNode(NodeKind::privateModuleFragmentNode, sourcePos_), modle(modle_), colon(colon_), privat(privat_), semicolon(semicolon_), declarations(declarations_)
 {
 }
@@ -278,7 +281,8 @@ Node* PrivateModuleFragmentNode::Clone() const
     {
         clonedDeclarations = declarations->Clone();
     }
-    PrivateModuleFragmentNode* clone = new PrivateModuleFragmentNode(GetSourcePos(), modle->Clone(), colon->Clone(), privat->Clone(), semicolon->Clone(), clonedDeclarations);
+    PrivateModuleFragmentNode* clone = new PrivateModuleFragmentNode(GetSourcePos(), modle->Clone(), colon->Clone(), privat->Clone(), 
+        semicolon->Clone(), clonedDeclarations);
     return clone;
 }
 
@@ -307,7 +311,7 @@ void PrivateModuleFragmentNode::Read(Reader& reader)
     declarations.reset(reader.ReadNode());
 }
 
-AngleHeaderName::AngleHeaderName(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::angleHeaderNameNode, sourcePos_)
+AngleHeaderName::AngleHeaderName(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::angleHeaderNameNode, sourcePos_)
 {
 }
 
@@ -338,7 +342,7 @@ void AngleHeaderName::Read(Reader& reader)
     rep = reader.ReadStr();
 }
 
-QuoteHeaderName::QuoteHeaderName(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::quoteHeaderNameNode, sourcePos_)
+QuoteHeaderName::QuoteHeaderName(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::quoteHeaderNameNode, sourcePos_)
 {
 }
 

@@ -49,7 +49,7 @@ ClassTemplateSpecializationSymbol::ClassTemplateSpecializationSymbol(const util:
     GetScope()->SetKind(ScopeKind::classScope);
 }
 
-void ClassTemplateSpecializationSymbol::SetClassTemplate(ClassTypeSymbol* classTemplate_)
+void ClassTemplateSpecializationSymbol::SetClassTemplate(ClassTypeSymbol* classTemplate_) noexcept
 {
     classTemplate = classTemplate_;
 }
@@ -94,7 +94,7 @@ std::string ClassTemplateSpecializationSymbol::IrName(Context* context) const
     return fullIrName;
 }
 
-util::uuid ClassTemplateSpecializationSymbol::IrId(Context* context) const 
+util::uuid ClassTemplateSpecializationSymbol::IrId(Context* context) const noexcept
 {
     return MakeClassTemplateSpecializationSymbolIrId(classTemplate, templateArguments, context->GetSourcePos(), context);
 }
@@ -226,7 +226,7 @@ void ClassTemplateSpecializationSymbol::Accept(Visitor& visitor)
 }
 
 TypeSymbol* ClassTemplateSpecializationSymbol::UnifyTemplateArgumentType(
-    const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, const soul::ast::SourcePos& sourcePos, Context* context)
+    const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, const soul::ast::SourcePos& sourcePos, Context* context) noexcept
 {
     std::vector<Symbol*> targetTemplateArguments;
     for (int i = 0; i < templateArguments.size(); ++i)
@@ -254,10 +254,12 @@ TypeSymbol* ClassTemplateSpecializationSymbol::UnifyTemplateArgumentType(
     return context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, targetTemplateArguments, sourcePos, context);
 }
 
-bool ClassTemplateSpecializationSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
+bool ClassTemplateSpecializationSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const 
 {
-    if (visited.find(this) == visited.end())
+    const Symbol* thisSymbol = this;
+    if (visited.find(thisSymbol) == visited.end())
     {
+        visited.insert(thisSymbol);
         if (ClassTypeSymbol::IsTemplateParameterInstantiation(context, visited)) return true;
         for (Symbol* templateArg : templateArguments)
         {
@@ -287,10 +289,11 @@ TypeSymbol* ClassTemplateSpecializationSymbol::FinalType(const soul::ast::Source
     return specialization;
 }
 
-bool ClassTemplateSpecializationSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const
+bool ClassTemplateSpecializationSymbol::IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const noexcept
 {
-    if (visited.find(this) != visited.end()) return true;
-    visited.insert(this);
+    const TypeSymbol* thisSymbol = this;
+    if (visited.find(thisSymbol) != visited.end()) return true;
+    visited.insert(thisSymbol);
     for (Symbol* templateArg : templateArguments)
     {
         if (templateArg->IsTypeSymbol())
@@ -311,7 +314,7 @@ void ClassTemplateSpecializationSymbol::AddInstantiatedVirtualFunctionSpecializa
     }
 }
 
-FunctionSymbol* ClassTemplateSpecializationSymbol::GetMatchingVirtualFunctionSpecialization(FunctionSymbol* newcomer, Context* context) const
+FunctionSymbol* ClassTemplateSpecializationSymbol::GetMatchingVirtualFunctionSpecialization(FunctionSymbol* newcomer, Context* context) const noexcept
 {
     bool found = false;
     bool def = newcomer->IsFunctionDefinitionSymbol();
@@ -326,7 +329,7 @@ FunctionSymbol* ClassTemplateSpecializationSymbol::GetMatchingVirtualFunctionSpe
     return nullptr;
 }
 
-bool ClassTemplateSpecializationSymbol::ContainsVirtualFunctionSpecialization(FunctionSymbol* specialization) const
+bool ClassTemplateSpecializationSymbol::ContainsVirtualFunctionSpecialization(FunctionSymbol* specialization) const noexcept
 {
     for (FunctionSymbol* instance : instantiatedVirtualFunctionSpecializations)
     {
@@ -336,7 +339,7 @@ bool ClassTemplateSpecializationSymbol::ContainsVirtualFunctionSpecialization(Fu
 }
 
 util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, int level, 
-    const soul::ast::SourcePos& sourcePos, Context* context)
+    const soul::ast::SourcePos& sourcePos, Context* context) noexcept
 {
     util::uuid id = classTemplate->Id();
     int n = static_cast<int>(templateArguments.size());
@@ -362,7 +365,7 @@ util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplat
 }
 
 util::uuid MakeClassTemplateSpecializationSymbolIrId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, int level,
-    const soul::ast::SourcePos& sourcePos, Context* context)
+    const soul::ast::SourcePos& sourcePos, Context* context) noexcept
 {
     util::uuid id = classTemplate->IrId(context);
     int n = static_cast<int>(templateArguments.size());
@@ -383,13 +386,13 @@ util::uuid MakeClassTemplateSpecializationSymbolIrId(ClassTypeSymbol* classTempl
 }
 
 util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments,
-    const soul::ast::SourcePos& sourcePos, Context* context)
+    const soul::ast::SourcePos& sourcePos, Context* context) noexcept
 {
     return MakeClassTemplateSpecializationSymbolId(classTemplate, templateArguments, 0, sourcePos, context);
 }
 
 util::uuid MakeClassTemplateSpecializationSymbolIrId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments,
-    const soul::ast::SourcePos& sourcePos, Context* context)
+    const soul::ast::SourcePos& sourcePos, Context* context) noexcept
 {
     return MakeClassTemplateSpecializationSymbolIrId(classTemplate, templateArguments, 0, sourcePos, context);
 }
@@ -416,7 +419,7 @@ std::u32string MakeSpecializationName(TypeSymbol* templateSymbol, const std::vec
     return specializationName;
 }
 
-CompoundTypeSymbol* GetCompoundSpecializationArgType(TypeSymbol* specialization, int index)
+CompoundTypeSymbol* GetCompoundSpecializationArgType(TypeSymbol* specialization, int index) noexcept
 {
     if (specialization->IsClassTemplateSpecializationSymbol())
     {
@@ -434,7 +437,7 @@ CompoundTypeSymbol* GetCompoundSpecializationArgType(TypeSymbol* specialization,
     return nullptr;
 }
 
-ClassTemplateSpecializationSymbol* GetClassTemplateSpecializationArgType(TypeSymbol* specialization, int index)
+ClassTemplateSpecializationSymbol* GetClassTemplateSpecializationArgType(TypeSymbol* specialization, int index) noexcept
 {
     if (specialization->IsClassTemplateSpecializationSymbol())
     {
@@ -496,7 +499,7 @@ public:
     void Visit(otava::ast::VirtualNode& node) override;
     void Visit(otava::ast::OverrideNode& node) override;
     void Visit(otava::ast::FinalNode& node) override;
-    bool Value() const { return value; }
+    bool GetValue() const { return value; }
 private:
     bool value;
 };
@@ -524,7 +527,7 @@ bool IsVirtualFunctionNode(otava::ast::Node* node)
 {
     VirtualFunctionNodeClassifierVisitor visitor;
     node->Accept(visitor);
-    return visitor.Value();
+    return visitor.GetValue();
 }
 
 void InstantiateVirtualFunctions(ClassTemplateSpecializationSymbol* specialization, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -666,7 +669,7 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
                 }
             }
         }
-        BoundTemplateParameterSymbol* boundTemplateParameter(new BoundTemplateParameterSymbol(templateParameter->Name()));
+        BoundTemplateParameterSymbol* boundTemplateParameter = new BoundTemplateParameterSymbol(templateParameter->Name());
         boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
         boundTemplateParameter->SetBoundSymbol(templateArg);
         boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
@@ -723,11 +726,15 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
     return specialization;
 }
 
+MemFunKey::MemFunKey() : memFun(nullptr), templateArgumentTypes()
+{
+}
+
 MemFunKey::MemFunKey(FunctionSymbol* memFun_, const std::vector<TypeSymbol*>& templateArgumentTypes_) : memFun(memFun_), templateArgumentTypes(templateArgumentTypes_)
 {
 }
 
-bool MemFunKeyLess::operator()(const MemFunKey& left, const MemFunKey& right) const
+bool MemFunKeyLess::operator()(const MemFunKey& left, const MemFunKey& right) const noexcept
 {
     if (left.memFun < right.memFun) return true;
     if (left.memFun > right.memFun) return false;
@@ -738,7 +745,7 @@ ClassTemplateRepository::ClassTemplateRepository()
 {
 }
 
-FunctionDefinitionSymbol* ClassTemplateRepository::GetFunctionDefinition(const MemFunKey& key) const
+FunctionDefinitionSymbol* ClassTemplateRepository::GetFunctionDefinition(const MemFunKey& key) const noexcept
 {
     auto it = memFunMap.find(key);
     if (it != memFunMap.cend())
@@ -854,7 +861,7 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
         }
         else
         {
-            ThrowException("node for symbol '" + util::ToUtf8(memFn->FullName()) + "¨' not found", sourcePos, context);
+            ThrowException("node for symbol '" + util::ToUtf8(memFn->FullName()) + "' not found", sourcePos, context);
         }
     }
     if (node->IsFunctionDefinitionNode())
@@ -873,7 +880,8 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
         {
             if (parentClass->IsClassTemplateSpecializationSymbol())
             {
-                parentClass = static_cast<ClassTemplateSpecializationSymbol*>(parentClass)->ClassTemplate();
+                ClassTemplateSpecializationSymbol* pc = static_cast<ClassTemplateSpecializationSymbol*>(parentClass);
+                parentClass = pc->ClassTemplate();
             }
             TemplateDeclarationSymbol* templateDeclaration = parentClass->ParentTemplateDeclaration();
             if (templateDeclaration)
@@ -893,13 +901,13 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                 {
                     Symbol* templateArg = templateArgumentTypes[i];
                     TemplateParameterSymbol* templateParameter = templateDeclaration->TemplateParameters()[i];
-                    BoundTemplateParameterSymbol* boundTemplateParameter(new BoundTemplateParameterSymbol(templateParameter->Name()));
+                    BoundTemplateParameterSymbol* boundTemplateParameter = new BoundTemplateParameterSymbol(templateParameter->Name());
                     boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
                     boundTemplateParameter->SetBoundSymbol(templateArg);
                     boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
                     instantiationScope.Install(boundTemplateParameter, context);
                 }
-                BoundTemplateParameterSymbol* templateNameParameter(new BoundTemplateParameterSymbol(classTemplateSpecialization->ClassTemplate()->Name()));
+                BoundTemplateParameterSymbol* templateNameParameter = new BoundTemplateParameterSymbol(classTemplateSpecialization->ClassTemplate()->Name());
                 templateNameParameter->SetBoundSymbol(classTemplateSpecialization);
                 boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(templateNameParameter));
                 instantiationScope.Install(templateNameParameter, context);
@@ -1004,7 +1012,8 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
         {
             if (parentClass->IsClassTemplateSpecializationSymbol())
             {
-                parentClass = static_cast<ClassTemplateSpecializationSymbol*>(parentClass)->ClassTemplate();
+                ClassTemplateSpecializationSymbol* pc = static_cast<ClassTemplateSpecializationSymbol*>(parentClass);
+                parentClass = pc->ClassTemplate();
             }
             TemplateDeclarationSymbol* templateDeclaration = parentClass->ParentTemplateDeclaration();
             if (templateDeclaration)
@@ -1024,13 +1033,13 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                 {
                     Symbol* templateArg = templateArgumentTypes[i];
                     TemplateParameterSymbol* templateParameter = templateDeclaration->TemplateParameters()[i];
-                    BoundTemplateParameterSymbol* boundTemplateParameter(new BoundTemplateParameterSymbol(templateParameter->Name()));
+                    BoundTemplateParameterSymbol* boundTemplateParameter = new BoundTemplateParameterSymbol(templateParameter->Name());
                     boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
                     boundTemplateParameter->SetBoundSymbol(templateArg);
                     boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
                     instantiationScope.Install(boundTemplateParameter, context);
                 }
-                BoundTemplateParameterSymbol* templateNameParameter(new BoundTemplateParameterSymbol(classTemplateSpecialization->ClassTemplate()->Name()));
+                BoundTemplateParameterSymbol* templateNameParameter = new BoundTemplateParameterSymbol(classTemplateSpecialization->ClassTemplate()->Name());
                 templateNameParameter->SetBoundSymbol(classTemplateSpecialization);
                 boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(templateNameParameter));
                 instantiationScope.Install(templateNameParameter, context);
@@ -1105,6 +1114,7 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
             ThrowException("otava.symbols.class_templates: parent class template not found", node->GetSourcePos(), sourcePos, context);
         }
     }
+    return nullptr;
 }
 
 } // namespace otava::symbols

@@ -11,11 +11,12 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-LabeledStatementNode::LabeledStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::labeledStatementNode, sourcePos_)
+LabeledStatementNode::LabeledStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::labeledStatementNode, sourcePos_)
 {
 }
 
-LabeledStatementNode::LabeledStatementNode(const soul::ast::SourcePos& sourcePos_, Node* label_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& colonPos_) :
+LabeledStatementNode::LabeledStatementNode(const soul::ast::SourcePos& sourcePos_, Node* label_, Node* stmt_, Node* attributes_, 
+    const soul::ast::SourcePos& colonPos_) noexcept :
     CompoundNode(NodeKind::labeledStatementNode, sourcePos_), label(label_), stmt(stmt_), attributes(attributes_), colonPos(colonPos_)
 {
 }
@@ -54,12 +55,12 @@ void LabeledStatementNode::Read(Reader& reader)
     colonPos = reader.ReadSourcePos();
 }
 
-CaseStatementNode::CaseStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::caseStatmentNode, sourcePos_)
+CaseStatementNode::CaseStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::caseStatmentNode, sourcePos_)
 {
 }
 
-CaseStatementNode::CaseStatementNode(const soul::ast::SourcePos& sourcePos_, Node* caseExpr_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& casePos_, 
-    const soul::ast::SourcePos& colonPos_) :
+CaseStatementNode::CaseStatementNode(const soul::ast::SourcePos& sourcePos_, Node* caseExpr_, Node* stmt_, Node* attributes_, 
+    const soul::ast::SourcePos& casePos_, const soul::ast::SourcePos& colonPos_) noexcept :
     CompoundNode(NodeKind::caseStatmentNode, sourcePos_), caseExpr(caseExpr_), stmt(stmt_), attributes(attributes_), casePos(casePos_), colonPos(colonPos_)
 {
 }
@@ -100,12 +101,12 @@ void CaseStatementNode::Read(Reader& reader)
     colonPos = reader.ReadSourcePos();
 }
 
-DefaultStatementNode::DefaultStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::defaultStatementNode, sourcePos_)
+DefaultStatementNode::DefaultStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::defaultStatementNode, sourcePos_)
 {
 }
 
 DefaultStatementNode::DefaultStatementNode(const soul::ast::SourcePos& sourcePos_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& defaultPos_, 
-    const soul::ast::SourcePos& colonPos_) :
+    const soul::ast::SourcePos& colonPos_) noexcept :
     CompoundNode(NodeKind::defaultStatementNode, sourcePos_), stmt(stmt_), attributes(attributes_), defaultPos(defaultPos_), colonPos(colonPos_)
 {
 }
@@ -144,12 +145,12 @@ void DefaultStatementNode::Read(Reader& reader)
     colonPos = reader.ReadSourcePos();
 }
 
-CompoundStatementNode::CompoundStatementNode(const soul::ast::SourcePos& sourcePos_) : 
+CompoundStatementNode::CompoundStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
     SequenceNode(NodeKind::compoundStatementNode, sourcePos_), functionScope(nullptr), blockId(-1)
 {
 }
 
-int CompoundStatementNode::Level() const
+int CompoundStatementNode::Level() const noexcept
 {
     Node* parent = Parent();
     while (parent)
@@ -204,16 +205,16 @@ void CompoundStatementNode::Read(Reader& reader)
     blockId = reader.GetBinaryStreamReader().ReadInt();
 }
 
-void CompoundStatementNode::SetLexerPosPair(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair_)
+void CompoundStatementNode::SetLexerPosPair(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair_) noexcept
 {
     lexerPosPair = lexerPosPair_;
 }
 
-SequenceStatementNode::SequenceStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::sequenceStatementNode, sourcePos_)
+SequenceStatementNode::SequenceStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::sequenceStatementNode, sourcePos_)
 {
 }
 
-SequenceStatementNode::SequenceStatementNode(const soul::ast::SourcePos& sourcePos_, Node* firstStmt_, Node* secondStmt_) : 
+SequenceStatementNode::SequenceStatementNode(const soul::ast::SourcePos& sourcePos_, Node* firstStmt_, Node* secondStmt_) noexcept :
     CompoundNode(NodeKind::sequenceStatementNode, sourcePos_), firstStmt(firstStmt_), secondStmt(secondStmt_)
 {
 }
@@ -242,13 +243,13 @@ void SequenceStatementNode::Read(Reader& reader)
     secondStmt.reset(reader.ReadNode());
 }
 
-IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::ifStatementNode, sourcePos_), blockId(-1)
+IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::ifStatementNode, sourcePos_), blockId(-1)
 {
 }
 
 IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, Node* thenStmt_, Node* elseStmt_, Node* attributes_,
     const soul::ast::SourcePos& ifPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_, const soul::ast::SourcePos& constExprPos_, 
-    const soul::ast::SourcePos& elsePos_) :
+    const soul::ast::SourcePos& elsePos_) noexcept :
     CompoundNode(NodeKind::ifStatementNode, sourcePos_), cond(cond_), thenStmt(thenStmt_), elseStmt(elseStmt_), attributes(attributes_),
     ifPos(ifPos_), lpPos(lpPos_), rpPos(rpPos_), constExprPos(constExprPos_), elsePos(elsePos_), blockId(-1)
 {
@@ -307,12 +308,12 @@ void IfStatementNode::Read(Reader& reader)
     blockId = reader.GetBinaryStreamReader().ReadInt();
 }
 
-SwitchStatementNode::SwitchStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::switchStatemeNode, sourcePos_), blockId(-1)
+SwitchStatementNode::SwitchStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::switchStatemeNode, sourcePos_), blockId(-1)
 {
 }
 
 SwitchStatementNode::SwitchStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& switchPos_, 
-    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     CompoundNode(NodeKind::switchStatemeNode, sourcePos_), cond(cond_), stmt(stmt_), attributes(attributes_), switchPos(switchPos_), lpPos(lpPos_), rpPos(rpPos_), 
     blockId(-1)
 {
@@ -360,12 +361,12 @@ void SwitchStatementNode::Read(Reader& reader)
     blockId = reader.GetBinaryStreamReader().ReadInt();
 }
 
-WhileStatementNode::WhileStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::whileStatementNode, sourcePos_), blockId(-1)
+WhileStatementNode::WhileStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::whileStatementNode, sourcePos_), blockId(-1)
 {
 }
 
 WhileStatementNode::WhileStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& whilePos_, 
-    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     CompoundNode(NodeKind::whileStatementNode, sourcePos_), cond(cond_), stmt(stmt_), attributes(attributes_), whilePos(whilePos_), lpPos(lpPos_), rpPos(rpPos_),
     blockId(-1)
 {
@@ -412,12 +413,12 @@ void WhileStatementNode::Read(Reader& reader)
     blockId = reader.GetBinaryStreamReader().ReadInt();
 }
 
-DoStatementNode::DoStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::doStatementNode, sourcePos_)
+DoStatementNode::DoStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::doStatementNode, sourcePos_)
 {
 }
 
 DoStatementNode::DoStatementNode(const soul::ast::SourcePos& sourcePos_, Node* stmt_, Node* expr_, Node* attributes_, Node* semicolon_,
-    const soul::ast::SourcePos& doPos_, const soul::ast::SourcePos& whilePos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+    const soul::ast::SourcePos& doPos_, const soul::ast::SourcePos& whilePos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     CompoundNode(NodeKind::doStatementNode, sourcePos_), stmt(stmt_), expr(expr_), attributes(attributes_), semicolon(semicolon_), doPos(doPos_), whilePos(whilePos_), 
     lpPos(lpPos_), rpPos(rpPos_)
 {
@@ -465,14 +466,14 @@ void DoStatementNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
-RangeForStatementNode::RangeForStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::rangeForStatementNode, sourcePos_), blockId(-1), 
+RangeForStatementNode::RangeForStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::rangeForStatementNode, sourcePos_), blockId(-1),
     rangeForId(util::random_uuid())
 {
 }
 
 RangeForStatementNode::RangeForStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* declaration_, Node* initializer_, Node* stmt_, 
     Node* attributes_, const soul::ast::SourcePos& forPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_, 
-    const soul::ast::SourcePos& colonPos_) :
+    const soul::ast::SourcePos& colonPos_) noexcept :
     CompoundNode(NodeKind::rangeForStatementNode, sourcePos_), initStmt(initStmt_), declaration(declaration_), initializer(initializer_), stmt(stmt_), 
     attributes(attributes_), forPos(forPos_), lpPos(lpPos_), rpPos(rpPos_), colonPos(colonPos_), blockId(-1), rangeForId(util::random_uuid())
 {
@@ -539,11 +540,12 @@ void RangeForStatementNode::Read(Reader& reader)
     reader.GetBinaryStreamReader().ReadUuid(rangeForId);
 }
 
-ForRangeDeclarationNode::ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_) : BinaryNode(NodeKind::forRangeDeclarationNode, sourcePos_, nullptr, nullptr)
+ForRangeDeclarationNode::ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    BinaryNode(NodeKind::forRangeDeclarationNode, sourcePos_, nullptr, nullptr)
 {
 }
 
-ForRangeDeclarationNode::ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifierSeq_, Node* declarator_, Node* attributes_) :
+ForRangeDeclarationNode::ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifierSeq_, Node* declarator_, Node* attributes_) noexcept :
     BinaryNode(NodeKind::forRangeDeclarationNode, sourcePos_, declSpecifierSeq_, declarator_), attributes(attributes_)
 {
 }
@@ -576,14 +578,14 @@ void ForRangeDeclarationNode::Read(Reader& reader)
     attributes.reset(reader.ReadNode());
 }
 
-StructuredBindingNode::StructuredBindingNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::structuredBindingNode, sourcePos_)
+StructuredBindingNode::StructuredBindingNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::structuredBindingNode, sourcePos_)
 {
 }
 
 StructuredBindingNode::StructuredBindingNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifierSeq_, Node* refQualifier_, Node* identifiers_, Node* initializer_, 
-    Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) :
-    CompoundNode(NodeKind::structuredBindingNode, sourcePos_), declSpecifiers(declSpecifierSeq_), refQualifier(refQualifier_), identifiers(identifiers_), initializer(initializer_),
-    attributes(attributes_), semicolon(semicolon_), lbPos(lbPos_), rbPos(rbPos_)
+    Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) noexcept :
+    CompoundNode(NodeKind::structuredBindingNode, sourcePos_), declSpecifiers(declSpecifierSeq_), refQualifier(refQualifier_), identifiers(identifiers_), 
+    initializer(initializer_), attributes(attributes_), semicolon(semicolon_), lbPos(lbPos_), rbPos(rbPos_)
 {
 }
 
@@ -645,12 +647,12 @@ void StructuredBindingNode::Read(Reader& reader)
     rbPos = reader.ReadSourcePos();
 }
 
-ForStatementNode::ForStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::forStatementNode, sourcePos_), blockId(-1)
+ForStatementNode::ForStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::forStatementNode, sourcePos_), blockId(-1)
 {
 }
 
 ForStatementNode::ForStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* cond_, Node* loopExpr_, Node* stmt_, Node* attributes_, Node* semicolon_,
-    const soul::ast::SourcePos& forPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+    const soul::ast::SourcePos& forPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     CompoundNode(NodeKind::forStatementNode, sourcePos_), initStmt(initStmt_), cond(cond_), loopExpr(loopExpr_), stmt(stmt_), attributes(attributes_), 
     semicolon(semicolon_), forPos(forPos_), lpPos(lpPos_), rpPos(rpPos_), blockId(-1)
 {
@@ -719,11 +721,11 @@ void ForStatementNode::Read(Reader& reader)
     blockId = reader.GetBinaryStreamReader().ReadInt();
 }
 
-BreakStatementNode::BreakStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::breakStatementNode, sourcePos_)
+BreakStatementNode::BreakStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::breakStatementNode, sourcePos_)
 {
 }
 
-BreakStatementNode::BreakStatementNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& breakPos_) :
+BreakStatementNode::BreakStatementNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& breakPos_) noexcept :
     CompoundNode(NodeKind::breakStatementNode, sourcePos_), attributes(attributes_), semicolon(semicolon_), breakPos(breakPos_)
 {
 }
@@ -760,11 +762,12 @@ void BreakStatementNode::Read(Reader& reader)
     breakPos = reader.ReadSourcePos();
 }
 
-ContinueStatementNode::ContinueStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::continueStatementNode, sourcePos_)
+ContinueStatementNode::ContinueStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::continueStatementNode, sourcePos_)
 {
 }
 
-ContinueStatementNode::ContinueStatementNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& continuePos_) :
+ContinueStatementNode::ContinueStatementNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* semicolon_, 
+    const soul::ast::SourcePos& continuePos_) noexcept :
     CompoundNode(NodeKind::continueStatementNode, sourcePos_), attributes(attributes_), semicolon(semicolon_), continuePos(continuePos_)
 {
 }
@@ -801,11 +804,12 @@ void ContinueStatementNode::Read(Reader& reader)
     continuePos = reader.ReadSourcePos();
 }
 
-ReturnStatementNode::ReturnStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::returnStatementNode, sourcePos_)
+ReturnStatementNode::ReturnStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::returnStatementNode, sourcePos_)
 {
 }
 
-ReturnStatementNode::ReturnStatementNode(const soul::ast::SourcePos& sourcePos_, Node* returnValue_, Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& returnPos_) :
+ReturnStatementNode::ReturnStatementNode(const soul::ast::SourcePos& sourcePos_, Node* returnValue_, Node* attributes_, Node* semicolon_, 
+    const soul::ast::SourcePos& returnPos_) noexcept :
     CompoundNode(NodeKind::returnStatementNode, sourcePos_), returnValue(returnValue_), attributes(attributes_), semicolon(semicolon_), returnPos(returnPos_)
 {
 }
@@ -854,11 +858,12 @@ void ReturnStatementNode::Read(Reader& reader)
     returnPos = reader.ReadSourcePos();
 }
 
-CoReturnStatementNode::CoReturnStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::coReturnStatementNode, sourcePos_)
+CoReturnStatementNode::CoReturnStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::coReturnStatementNode, sourcePos_)
 {
 }
 
-CoReturnStatementNode::CoReturnStatementNode(const soul::ast::SourcePos& sourcePos_, Node* returnValue_, Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& coReturnPos_) :
+CoReturnStatementNode::CoReturnStatementNode(const soul::ast::SourcePos& sourcePos_, Node* returnValue_, Node* attributes_, Node* semicolon_, 
+    const soul::ast::SourcePos& coReturnPos_) noexcept :
     CompoundNode(NodeKind::coReturnStatementNode, sourcePos_), returnValue(returnValue_), attributes(attributes_), semicolon(semicolon_), coReturnPos(coReturnPos_)
 {
 }
@@ -902,11 +907,12 @@ void CoReturnStatementNode::Read(Reader& reader)
     coReturnPos = reader.ReadSourcePos();
 }
 
-GotoStatementNode::GotoStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::gotoStatementNode, sourcePos_)
+GotoStatementNode::GotoStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::gotoStatementNode, sourcePos_)
 {
 }
 
-GotoStatementNode::GotoStatementNode(const soul::ast::SourcePos& sourcePos_, Node* target_, Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& gotoPos_) :
+GotoStatementNode::GotoStatementNode(const soul::ast::SourcePos& sourcePos_, Node* target_, Node* attributes_, Node* semicolon_, 
+    const soul::ast::SourcePos& gotoPos_) noexcept :
     CompoundNode(NodeKind::gotoStatementNode, sourcePos_), target(target_), attributes(attributes_), semicolon(semicolon_), gotoPos(gotoPos_)
 {
 }
@@ -950,11 +956,12 @@ void GotoStatementNode::Read(Reader& reader)
     gotoPos = reader.ReadSourcePos();
 }
 
-TryStatementNode::TryStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::tryStatementNode, sourcePos_)
+TryStatementNode::TryStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::tryStatementNode, sourcePos_)
 {
 }
 
-TryStatementNode::TryStatementNode(const soul::ast::SourcePos& sourcePos_, Node* tryBlock_, Node* handlers_, Node* attributes_, const soul::ast::SourcePos& tryPos_) :
+TryStatementNode::TryStatementNode(const soul::ast::SourcePos& sourcePos_, Node* tryBlock_, Node* handlers_, Node* attributes_, 
+    const soul::ast::SourcePos& tryPos_) noexcept :
     CompoundNode(NodeKind::tryStatementNode, sourcePos_), tryBlock(tryBlock_), handlers(handlers_), attributes(attributes_), tryPos(tryPos_)
 {
 }
@@ -993,7 +1000,7 @@ void TryStatementNode::Read(Reader& reader)
     tryPos = reader.ReadSourcePos();
 }
 
-HandlerSequenceNode::HandlerSequenceNode(const soul::ast::SourcePos& sourcePos_) : SequenceNode(NodeKind::handlerSequenceNode, sourcePos_)
+HandlerSequenceNode::HandlerSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept : SequenceNode(NodeKind::handlerSequenceNode, sourcePos_)
 {
 }
 
@@ -1012,11 +1019,12 @@ void HandlerSequenceNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-HandlerNode::HandlerNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::handlerNode, sourcePos_)
+HandlerNode::HandlerNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::handlerNode, sourcePos_)
 {
 }
 
-HandlerNode::HandlerNode(const soul::ast::SourcePos& sourcePos_, Node* exception_, Node* catchBlock_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+HandlerNode::HandlerNode(const soul::ast::SourcePos& sourcePos_, Node* exception_, Node* catchBlock_, 
+    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
     CompoundNode(NodeKind::handlerNode, sourcePos_), exception(exception_), catchBlock(catchBlock_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }
@@ -1050,11 +1058,12 @@ void HandlerNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
-ExceptionDeclarationNode::ExceptionDeclarationNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::exceptionDeclarationNode, sourcePos_)
+ExceptionDeclarationNode::ExceptionDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::exceptionDeclarationNode, sourcePos_)
 {
 }
 
-ExceptionDeclarationNode::ExceptionDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_, Node* declarator_, Node* ellipsis_, Node* attributes_) :
+ExceptionDeclarationNode::ExceptionDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_, Node* declarator_, Node* ellipsis_, 
+    Node* attributes_) noexcept :
     CompoundNode(NodeKind::exceptionDeclarationNode, sourcePos_), typeSpecifiers(typeSpecifiers_), declarator(declarator_), ellipsis(ellipsis_), attributes(attributes_)
 {
 }
@@ -1108,11 +1117,11 @@ void ExceptionDeclarationNode::Read(Reader& reader)
     attributes.reset(reader.ReadNode());
 }
 
-ExpressionStatementNode::ExpressionStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::expressionStatementNode, sourcePos_)
+ExpressionStatementNode::ExpressionStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::expressionStatementNode, sourcePos_)
 {
 }
 
-ExpressionStatementNode::ExpressionStatementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, Node* attributes_, Node* semicolon_) :
+ExpressionStatementNode::ExpressionStatementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, Node* attributes_, Node* semicolon_) noexcept :
     CompoundNode(NodeKind::expressionStatementNode, sourcePos_), expr(expr_), attributes(attributes_), semicolon(semicolon_)
 {
 }
@@ -1159,11 +1168,11 @@ void ExpressionStatementNode::Read(Reader& reader)
     semicolon.reset(reader.ReadNode());
 }
 
-DeclarationStatementNode::DeclarationStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::declarationStatementNode, sourcePos_)
+DeclarationStatementNode::DeclarationStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::declarationStatementNode, sourcePos_)
 {
 }
 
-DeclarationStatementNode::DeclarationStatementNode(const soul::ast::SourcePos& sourcePos_, Node* declaration_) :
+DeclarationStatementNode::DeclarationStatementNode(const soul::ast::SourcePos& sourcePos_, Node* declaration_) noexcept :
     CompoundNode(NodeKind::declarationStatementNode, sourcePos_), declaration(declaration_)
 {
 }
@@ -1191,11 +1200,11 @@ void DeclarationStatementNode::Read(Reader& reader)
     declaration.reset(reader.ReadNode());
 }
 
-InitConditionNode::InitConditionNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::initConditionNode, sourcePos_)
+InitConditionNode::InitConditionNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::initConditionNode, sourcePos_)
 {
 }
 
-InitConditionNode::InitConditionNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifiers_, Node* declarator_, Node* initializer_, Node* attributes_) :
+InitConditionNode::InitConditionNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifiers_, Node* declarator_, Node* initializer_, Node* attributes_) noexcept :
     CompoundNode(NodeKind::initConditionNode, sourcePos_), declSpecifiers(declSpecifiers_), declarator(declarator_), initializer(initializer_), attributes(attributes_)
 {
 }
@@ -1234,7 +1243,7 @@ void InitConditionNode::Read(Reader& reader)
     attributes.reset(reader.ReadNode());
 }
 
-BoundStatementNode::BoundStatementNode(void* boundStatementNode_, const soul::ast::SourcePos& sourcePos_) :
+BoundStatementNode::BoundStatementNode(void* boundStatementNode_, const soul::ast::SourcePos& sourcePos_) noexcept :
     Node(NodeKind::boundStatementNode, sourcePos_), boundStatementNode(boundStatementNode_)
 {
 }

@@ -23,54 +23,54 @@ class TypeSymbol : public ContainerSymbol
 public:
     TypeSymbol(SymbolKind kind_, const std::u32string& name_);
     TypeSymbol(SymbolKind kind_, const util::uuid& id_, const std::u32string& name_);
-    virtual TypeSymbol* GetBaseType() { return this; }
-    virtual const TypeSymbol* GetBaseType() const { return this; }
-    inline bool IsCompoundType() const { return Kind() == SymbolKind::compoundTypeSymbol; }
-    bool IsAutoTypeSymbol() const;
-    bool IsPointerType() const;
-    bool IsArrayType() const;
-    bool IsConstType() const;
-    bool IsLValueRefType() const;
-    bool IsRValueRefType() const;
-    bool IsReferenceType() const;
+    virtual TypeSymbol* GetBaseType() noexcept { return this; }
+    virtual const TypeSymbol* GetBaseType() const noexcept { return this; }
+    inline bool IsCompoundType() const noexcept { return Kind() == SymbolKind::compoundTypeSymbol; }
+    bool IsAutoTypeSymbol() const noexcept;
+    bool IsPointerType() const noexcept;
+    bool IsArrayType() const noexcept;
+    bool IsConstType() const noexcept;
+    bool IsLValueRefType() const noexcept;
+    bool IsRValueRefType() const noexcept;
+    bool IsReferenceType() const noexcept;
     virtual TypeSymbol* PlainType(Context* context) { return this; }
     virtual TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) { return this; }
     virtual TypeSymbol* DirectType(Context* context) { return this; }
-    virtual bool HasBaseClass(TypeSymbol* baseClass, int& distance, Context* context) const { return false; }
-    virtual bool IsVoidType() const { return false; }
-    virtual bool IsBoolType() const { return false; }
-    virtual bool IsIntType() const { return false; }
-    virtual bool IsUnsignedShortType() const { return false; }
-    virtual bool IsDoubleType() const { return false; }
-    virtual bool IsFloatType() const { return false; }
-    virtual bool IsNullPtrType() const { return false; }
-    virtual bool IsVoidPtrType() const { return false; }
-    virtual bool IsIntegralType() const { return false; }
-    virtual bool IsPolymorphic() const { return false; }
-    virtual bool IsFunctionType() const { return false; }
-    virtual bool IsBasicStringCharType(Context* context) { return false; }
-    virtual bool IsBasicStringChar16Type(Context* context) { return false; }
-    virtual bool IsBasicStringChar32Type(Context* context) { return false; }
-    inline bool IsConstCharPtrType() const 
+    virtual bool HasBaseClass(TypeSymbol* baseClass, int& distance, Context* context) const noexcept { return false; }
+    virtual bool IsVoidType() const noexcept { return false; }
+    virtual bool IsBoolType() const noexcept { return false; }
+    virtual bool IsIntType() const noexcept { return false; }
+    virtual bool IsUnsignedShortType() const noexcept { return false; }
+    virtual bool IsDoubleType() const noexcept { return false; }
+    virtual bool IsFloatType() const noexcept { return false; }
+    virtual bool IsNullPtrType() const noexcept { return false; }
+    virtual bool IsVoidPtrType() const noexcept { return false; }
+    virtual bool IsIntegralType() const noexcept { return false; }
+    virtual bool IsPolymorphic() const noexcept { return false; }
+    virtual bool IsFunctionType() const noexcept { return false; }
+    virtual bool IsBasicStringCharType(Context* context) noexcept { return false; }
+    virtual bool IsBasicStringChar16Type(Context* context) noexcept { return false; }
+    virtual bool IsBasicStringChar32Type(Context* context) noexcept { return false; }
+    inline bool IsConstCharPtrType() const noexcept
     { 
         return IsConstType() &&
             IsPointerType() &&
             PointerCount() == 1 &&
             (GetBaseType()->IsCharTypeSymbol() || GetBaseType()->IsChar8TypeSymbol());
     }
-    inline bool IsConstChar16PtrType() const { return IsConstType() && IsPointerType() && PointerCount() == 1 && GetBaseType()->IsChar16TypeSymbol(); }
-    inline bool IsConstChar32PtrType() const { return IsConstType() && IsPointerType() && PointerCount() == 1 && GetBaseType()->IsChar32TypeSymbol(); }
-    inline bool IsFunctionPtrType() { return IsPointerType() && PointerCount() == 1 && GetBaseType()->IsFunctionType(); }
-    virtual int Rank() const { return -1; }
-    virtual bool IsSignedIntegerType() const { return false; }
-    virtual bool IsUnsignedIntegerType() const { return false; }
-    virtual int PointerCount() const { return 0; }
-    virtual Derivations GetDerivations() const { return Derivations::none; }
+    inline bool IsConstChar16PtrType() const noexcept { return IsConstType() && IsPointerType() && PointerCount() == 1 && GetBaseType()->IsChar16TypeSymbol(); }
+    inline bool IsConstChar32PtrType() const noexcept { return IsConstType() && IsPointerType() && PointerCount() == 1 && GetBaseType()->IsChar32TypeSymbol(); }
+    inline bool IsFunctionPtrType() noexcept { return IsPointerType() && PointerCount() == 1 && GetBaseType()->IsFunctionType(); }
+    virtual int Rank() const noexcept { return -1; }
+    virtual bool IsSignedIntegerType() const noexcept { return false; }
+    virtual bool IsUnsignedIntegerType() const noexcept { return false; }
+    virtual int PointerCount() const noexcept { return 0; }
+    virtual Derivations GetDerivations() const noexcept { return Derivations::none; }
     virtual TypeSymbol* RemoveDerivations(Derivations sourceDerivations, Context* context);
     virtual TypeSymbol* Unify(TypeSymbol* argType, Context* context);
     virtual TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, 
         const soul::ast::SourcePos& sourcePos, Context* context) { return nullptr; }
-    virtual bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const { return true; }
+    virtual bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const noexcept { return true; }
     TypeSymbol* AddConst(Context* context);
     TypeSymbol* RemoveConst(Context* context);
     TypeSymbol* AddPointer(Context* context);
@@ -104,7 +104,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
-    inline otava::ast::Node* GetNode() const { return node.get(); }
+    inline otava::ast::Node* GetNode() const noexcept { return node.get(); }
 private:
     std::unique_ptr<otava::ast::Node> node;
 };
@@ -125,7 +125,7 @@ public:
     FunctionGroupTypeSymbol(FunctionGroupSymbol* functionGroupSymbol_);
     std::string SymbolKindStr() const override { return "function group type symbol"; }
     std::string SymbolDocKindStr() const override { return "function_group_type"; }
-    FunctionGroupSymbol* FunctionGroup() const { return functionGroupSymbol; }
+    inline FunctionGroupSymbol* FunctionGroup() const noexcept { return functionGroupSymbol; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
@@ -142,7 +142,7 @@ public:
     ClassGroupTypeSymbol(ClassGroupSymbol* classGroupSymbol_);
     std::string SymbolKindStr() const override { return "class group type symbol"; }
     std::string SymbolDocKindStr() const override { return "class_group_type"; }
-    ClassGroupSymbol* ClassGroup() const { return classGroupSymbol; }
+    inline ClassGroupSymbol* ClassGroup() const noexcept { return classGroupSymbol; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
@@ -159,7 +159,7 @@ public:
     AliasGroupTypeSymbol(AliasGroupSymbol* aliasGroupSymbol_);
     std::string SymbolKindStr() const override { return "alias group type symbol"; }
     std::string SymbolDocKindStr() const override { return "alias_group_type"; }
-    AliasGroupSymbol* AliasGroup() const { return aliasGroupSymbol; }
+    inline AliasGroupSymbol* AliasGroup() const noexcept { return aliasGroupSymbol; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;

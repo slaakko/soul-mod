@@ -326,7 +326,7 @@ void TypeResolver::Visit(otava::ast::TypenameSpecifierNode& node)
                 for (const auto& templateParamType : *context->TemplateParameterMap())
                 {
                     TemplateParameterSymbol* templateParameter = templateParamType.first;
-                    BoundTemplateParameterSymbol* boundTemplateParameter(new BoundTemplateParameterSymbol(templateParameter->Name()));
+                    BoundTemplateParameterSymbol* boundTemplateParameter = new BoundTemplateParameterSymbol(templateParameter->Name());
                     boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
                     boundTemplateParameter->SetBoundSymbol(templateParamType.second);
                     boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));

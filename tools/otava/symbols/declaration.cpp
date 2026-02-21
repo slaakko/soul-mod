@@ -96,7 +96,7 @@ public:
     NoReturnAttributeMatcher();
     void Visit(otava::ast::AttributeNode& node) override;
     void Visit(otava::ast::IdentifierNode& node) override;
-    inline bool Value() const { return value; }
+    inline bool GetValue() const { return value; }
 private:
     bool matchId;
     bool value;
@@ -122,12 +122,12 @@ void NoReturnAttributeMatcher::Visit(otava::ast::IdentifierNode& node)
     }
 }
 
-bool HasNoReturnAttribute(otava::ast::Node* attributes)
+bool HasNoReturnAttribute(otava::ast::Node* attributes) noexcept
 {
     if (!attributes) return false;
     NoReturnAttributeMatcher noreturnAttributeMatcher;
     attributes->Accept(noreturnAttributeMatcher);
-    return noreturnAttributeMatcher.Value();
+    return noreturnAttributeMatcher.GetValue();
 }
 
 std::string DeclarationFlagStr(DeclarationFlags flags)
@@ -280,7 +280,7 @@ class DeclarationProcessor : public otava::ast::DefaultVisitor
 {
 public:
     DeclarationProcessor(Context* context_);
-    inline std::unique_ptr<DeclarationList> GetDeclarations();
+    std::unique_ptr<DeclarationList> GetDeclarations();
     inline TypeSymbol* GetType() const { return type; }
     void BeginProcessFunctionDefinition(otava::ast::Node* declSpecifierSeq, otava::ast::Node* declarator, otava::ast::Node* specifierNode);
     void Visit(otava::ast::SimpleDeclarationNode& node) override;
@@ -839,6 +839,7 @@ VariableSymbol* ResolveParentVariable(SimpleDeclarator* simpleDeclarator, const 
         }
     }
     ThrowException("parent function variable '" + util::ToUtf8(simpleDeclarator->Name()) + "' not resolved", sourcePos, context);
+    return nullptr;
 }
 
 void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context)
@@ -968,7 +969,7 @@ Declaration ProcessInitCondition(otava::ast::InitConditionNode* initCondition, C
 
 void ProcessMemberDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context)
 {
-    context->PushResetFlag(ContextFlags::invoke);
+    context->PushResetFlag(ContextFlags::invoke | ContextFlags::tryCatch);
     ProcessSimpleDeclaration(node, functionNode, context);
     context->PopFlags();
 }
@@ -1249,11 +1250,11 @@ void LinkageProcessor::Visit(otava::ast::LinkageSpecificationNode& node)
 
 void LinkageProcessor::Visit(otava::ast::StringLiteralNode& node) 
 {
-    if (node.Value() == U"C")
+    if (node.GetValue() == U"C")
     {
         linkage = Linkage::c_linkage;
     }
-    else if (node.Value() == U"C++")
+    else if (node.GetValue() == U"C++")
     {
         linkage = Linkage::cpp_linkage;
     }
@@ -1307,7 +1308,7 @@ void GenerateDynamicInitialization(VariableSymbol* variable, BoundExpressionNode
     if (context->GetFlag(ContextFlags::noDynamicInit)) return;
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
-    BoundVariableNode* boundGlobalVariable(new BoundVariableNode(variable, sourcePos));
+    BoundVariableNode* boundGlobalVariable = new BoundVariableNode(variable, sourcePos);
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
     args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundGlobalVariable, sourcePos, variable->GetType()->AddPointer(context))));
     if (initializer)
@@ -1341,7 +1342,7 @@ void GenerateDynamicInitialization(VariableSymbol* variable, BoundExpressionNode
 std::unique_ptr<BoundFunctionCallNode> MakeAtExitForVariable(VariableSymbol* variable, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     std::vector<std::unique_ptr<BoundExpressionNode>> dtorArgs;
-    BoundVariableNode* boundGlobalVariable(new BoundVariableNode(variable, sourcePos));
+    BoundVariableNode* boundGlobalVariable = new BoundVariableNode(variable, sourcePos);
     dtorArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundGlobalVariable, sourcePos, variable->GetType()->AddPointer(context))));
     Exception ex;
     std::vector<TypeSymbol*> templateArgs;
@@ -1353,7 +1354,7 @@ std::unique_ptr<BoundFunctionCallNode> MakeAtExitForVariable(VariableSymbol* var
         TypeSymbol* voidPtrType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType)->AddPointer(context);
         std::vector<std::unique_ptr<BoundExpressionNode>> atExitArgs;
         atExitArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundFunctionValueNode(destructorCall->GetFunctionSymbol(), sourcePos, voidPtrType)));
-        BoundVariableNode* boundGlobalVariable(new BoundVariableNode(variable, sourcePos));
+        BoundVariableNode* boundGlobalVariable = new BoundVariableNode(variable, sourcePos);
         atExitArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundVariableAsVoidPtrNode(new BoundAddressOfNode(
             boundGlobalVariable, sourcePos, boundGlobalVariable->GetType()->AddPointer(context)), sourcePos, voidPtrType)));
         Exception ex;

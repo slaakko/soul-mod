@@ -28,6 +28,16 @@ std::string GetCurrentWorkingDirectory()
     }
 }
 
+void CreateDirectories(const std::string& dirPath)
+{
+    ort_create_directories(dirPath.c_str());
+}
+
+std::int64_t LastWriteTime(const std::string& path)
+{
+    return ort_last_write_time(path.c_str());
+}
+
 bool FileExists(const std::string& filePath) noexcept
 {
     return ort_path_exists(filePath.c_str());

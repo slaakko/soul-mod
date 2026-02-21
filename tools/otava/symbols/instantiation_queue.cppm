@@ -19,14 +19,14 @@ class InstantiationRequest
 {
 public:
     InstantiationRequest(FunctionSymbol* function_, const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap_);
-    FunctionSymbol* Function() const { return function; }
-    const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& TemplateParamMap() const { return templateParameterMap; }
+    inline FunctionSymbol* Function() const noexcept { return function; }
+    inline const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& TemplateParamMap() const noexcept { return templateParameterMap; }
 private:
     FunctionSymbol* function;
     std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
 };
 
-bool operator==(const InstantiationRequest& left, const InstantiationRequest& right);
+bool operator==(const InstantiationRequest& left, const InstantiationRequest& right) noexcept;
 
 class InstantiationQueue
 {

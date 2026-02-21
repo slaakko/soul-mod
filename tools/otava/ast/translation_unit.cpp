@@ -11,11 +11,12 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-TranslationUnitNode::TranslationUnitNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::translationUnitNode, sourcePos_)
+TranslationUnitNode::TranslationUnitNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::translationUnitNode, sourcePos_)
 {
 }
 
-TranslationUnitNode::TranslationUnitNode(const soul::ast::SourcePos& sourcePos_, Node* unit_) : CompoundNode(NodeKind::translationUnitNode, sourcePos_), unit(unit_)
+TranslationUnitNode::TranslationUnitNode(const soul::ast::SourcePos& sourcePos_, Node* unit_) noexcept : 
+    CompoundNode(NodeKind::translationUnitNode, sourcePos_), unit(unit_)
 {
 }
 
@@ -47,11 +48,12 @@ void TranslationUnitNode::Read(Reader& reader)
     unit.reset(reader.ReadNode());
 }
 
-ModuleUnitNode::ModuleUnitNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::moduleUnitNode, sourcePos_)
+ModuleUnitNode::ModuleUnitNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::moduleUnitNode, sourcePos_)
 {
 }
 
-ModuleUnitNode::ModuleUnitNode(const soul::ast::SourcePos& sourcePos_, Node* globalModuleFragment_, Node* moduleDeclaration_, Node* declarations_, Node* privateModuleFragment_) :
+ModuleUnitNode::ModuleUnitNode(const soul::ast::SourcePos& sourcePos_, Node* globalModuleFragment_, Node* moduleDeclaration_, Node* declarations_, 
+    Node* privateModuleFragment_) noexcept :
     CompoundNode(NodeKind::moduleUnitNode, sourcePos_), globalModuleFragment(globalModuleFragment_), moduleDeclaration(moduleDeclaration_), declarations(declarations_),
     privateModuleFragment(privateModuleFragment_)
 {

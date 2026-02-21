@@ -12,12 +12,12 @@ import otava.ast.function;
 
 namespace otava::ast {
 
-ClassSpecifierNode::ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_) : 
+ClassSpecifierNode::ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
     SequenceNode(NodeKind::classSpecifierNode, sourcePos_), complete(false)
 {
 }
 
-ClassSpecifierNode::ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classHead_) : 
+ClassSpecifierNode::ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classHead_) noexcept :
     SequenceNode(NodeKind::classSpecifierNode, sourcePos_), classHead(classHead_), complete(false)
 {
 }
@@ -55,11 +55,11 @@ void ClassSpecifierNode::Read(Reader& reader)
     complete = reader.GetBinaryStreamReader().ReadBool();
 }
 
-ClassHeadNode::ClassHeadNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::classHeadNode, sourcePos_)
+ClassHeadNode::ClassHeadNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::classHeadNode, sourcePos_)
 {
 }
 
-ClassHeadNode::ClassHeadNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* classHeadName_, Node* classVirtSpecifier_, Node* baseClause_, Node* attributes_) :
+ClassHeadNode::ClassHeadNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* classHeadName_, Node* classVirtSpecifier_, Node* baseClause_, Node* attributes_) noexcept :
     CompoundNode(NodeKind::classHeadNode, sourcePos_), classKey(classKey_), classHeadName(classHeadName_), classVirtSpecifier(classVirtSpecifier_), baseClause(baseClause_), attributes(attributes_)
 {
 }
@@ -110,11 +110,12 @@ void ClassHeadNode::Read(Reader& reader)
     attributes.reset(reader.ReadNode());
 }
 
-BaseClauseNode::BaseClauseNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::baseClauseNode, sourcePos_, nullptr)
+BaseClauseNode::BaseClauseNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::baseClauseNode, sourcePos_, nullptr)
 {
 }
 
-BaseClauseNode::BaseClauseNode(const soul::ast::SourcePos& sourcePos_, Node* baseSpecifierList_) : UnaryNode(NodeKind::baseClauseNode, sourcePos_, baseSpecifierList_)
+BaseClauseNode::BaseClauseNode(const soul::ast::SourcePos& sourcePos_, Node* baseSpecifierList_) noexcept : 
+    UnaryNode(NodeKind::baseClauseNode, sourcePos_, baseSpecifierList_)
 {
 }
 
@@ -129,7 +130,7 @@ void BaseClauseNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-BaseSpecifierListNode::BaseSpecifierListNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::baseSpecifierListNode, sourcePos_)
+BaseSpecifierListNode::BaseSpecifierListNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::baseSpecifierListNode, sourcePos_)
 {
 }
 
@@ -148,13 +149,14 @@ void BaseSpecifierListNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-BaseSpecifierNode::BaseSpecifierNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::baseSpecifierNode, sourcePos_), virtualFirst(false)
+BaseSpecifierNode::BaseSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::baseSpecifierNode, sourcePos_), virtualFirst(false)
 {
 }
 
-BaseSpecifierNode::BaseSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classOrDeclType_, Node* accessSpecifier_, Node* virtualSpecifier_, Node* attributes_, bool virtualFirst_) :
-    CompoundNode(NodeKind::baseSpecifierNode, sourcePos_), classOrDeclType(classOrDeclType_), accessSpecifier(accessSpecifier_), virtualSpecifier(virtualSpecifier_), attributes(attributes_),
-    virtualFirst(virtualFirst_)
+BaseSpecifierNode::BaseSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classOrDeclType_, Node* accessSpecifier_, Node* virtualSpecifier_, 
+    Node* attributes_, bool virtualFirst_) noexcept :
+    CompoundNode(NodeKind::baseSpecifierNode, sourcePos_), classOrDeclType(classOrDeclType_), accessSpecifier(accessSpecifier_), 
+    virtualSpecifier(virtualSpecifier_), attributes(attributes_), virtualFirst(virtualFirst_)
 {
 }
 
@@ -175,7 +177,8 @@ Node* BaseSpecifierNode::Clone() const
     {
         clonedAttributes = attributes->Clone();
     }
-    BaseSpecifierNode* clone = new BaseSpecifierNode(GetSourcePos(), classOrDeclType->Clone(), clonedAccessSpecifier, clonedVirtualSpecifier, clonedAttributes, virtualFirst);
+    BaseSpecifierNode* clone = new BaseSpecifierNode(GetSourcePos(), classOrDeclType->Clone(), clonedAccessSpecifier, clonedVirtualSpecifier, 
+        clonedAttributes, virtualFirst);
     return clone;
 }
 
@@ -204,11 +207,11 @@ void BaseSpecifierNode::Read(Reader& reader)
     virtualFirst = reader.ReadBool();
 }
 
-BeginAccessGroupNode::BeginAccessGroupNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::beginAccessGroupNode, sourcePos_, nullptr)
+BeginAccessGroupNode::BeginAccessGroupNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::beginAccessGroupNode, sourcePos_, nullptr)
 {
 }
 
-BeginAccessGroupNode::BeginAccessGroupNode(const soul::ast::SourcePos& sourcePos_, Node* accessSpecifier_, const soul::ast::SourcePos& colonPos_) :
+BeginAccessGroupNode::BeginAccessGroupNode(const soul::ast::SourcePos& sourcePos_, Node* accessSpecifier_, const soul::ast::SourcePos& colonPos_) noexcept :
     UnaryNode(NodeKind::beginAccessGroupNode, sourcePos_, accessSpecifier_), colonPos(colonPos_)
 {
 }
@@ -236,12 +239,14 @@ void BeginAccessGroupNode::Read(Reader& reader)
     colonPos = reader.ReadSourcePos();
 }
 
-MemberDeclarationNode::MemberDeclarationNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::memberDeclarationNode, sourcePos_)
+MemberDeclarationNode::MemberDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::memberDeclarationNode, sourcePos_)
 {
 }
 
-MemberDeclarationNode::MemberDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* declSpecifiers_, Node* memberDeclarators_, Node* semicolon_) :
-    CompoundNode(NodeKind::memberDeclarationNode, sourcePos_), attributes(attributes_), declSpecifiers(declSpecifiers_), memberDeclarators(memberDeclarators_), semicolon(semicolon_)
+MemberDeclarationNode::MemberDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* declSpecifiers_, Node* memberDeclarators_, Node* semicolon_) 
+    noexcept :
+    CompoundNode(NodeKind::memberDeclarationNode, sourcePos_), attributes(attributes_), declSpecifiers(declSpecifiers_), 
+    memberDeclarators(memberDeclarators_), semicolon(semicolon_)
 {
 }
 
@@ -289,7 +294,7 @@ void MemberDeclarationNode::Read(Reader& reader)
     semicolon.reset(reader.ReadNode());
 }
 
-MemberDeclaratorListNode::MemberDeclaratorListNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::memberDeclaratorListNode, sourcePos_)
+MemberDeclaratorListNode::MemberDeclaratorListNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::memberDeclaratorListNode, sourcePos_)
 {
 }
 
@@ -308,11 +313,11 @@ void MemberDeclaratorListNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ConstructorNode::ConstructorNode(const soul::ast::SourcePos& sourcePos_) : BinaryNode(NodeKind::constructorNode, sourcePos_, nullptr, nullptr)
+ConstructorNode::ConstructorNode(const soul::ast::SourcePos& sourcePos_) noexcept : BinaryNode(NodeKind::constructorNode, sourcePos_, nullptr, nullptr)
 {
 }
 
-ConstructorNode::ConstructorNode(const soul::ast::SourcePos& sourcePos_, Node* constructorInitializer_, Node* compoundStatement_) :
+ConstructorNode::ConstructorNode(const soul::ast::SourcePos& sourcePos_, Node* constructorInitializer_, Node* compoundStatement_) noexcept :
     BinaryNode(NodeKind::constructorNode, sourcePos_, constructorInitializer_, compoundStatement_)
 {
 }
@@ -328,11 +333,12 @@ void ConstructorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ConstructorInitializerNode::ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::constructorInitializerNode, sourcePos_), functionScope(nullptr)
+ConstructorInitializerNode::ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
+    CompoundNode(NodeKind::constructorInitializerNode, sourcePos_), functionScope(nullptr)
 {
 }
 
-ConstructorInitializerNode::ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* memberInitializerList_) :
+ConstructorInitializerNode::ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* memberInitializerList_) noexcept :
     CompoundNode(NodeKind::constructorInitializerNode, sourcePos_), memberInitializerListNode(memberInitializerList_), functionScope(nullptr)
 {
 }
@@ -360,17 +366,17 @@ void ConstructorInitializerNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void ConstructorInitializerNode::SetLexerPosPair(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair_)
+void ConstructorInitializerNode::SetLexerPosPair(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair_) noexcept
 {
     lexerPosPair = lexerPosPair_;
 }
 
-void ConstructorInitializerNode::SetMemberInitializerListNode(Node* memberInitializerListNode_)
+void ConstructorInitializerNode::SetMemberInitializerListNode(Node* memberInitializerListNode_) noexcept
 {
     memberInitializerListNode.reset(memberInitializerListNode_);
 }
 
-MemberInitializerListNode::MemberInitializerListNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::memberInitializerListNode, sourcePos_)
+MemberInitializerListNode::MemberInitializerListNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::memberInitializerListNode, sourcePos_)
 {
 }
 
@@ -389,12 +395,12 @@ void MemberInitializerListNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-MemberInitializerNode::MemberInitializerNode(const soul::ast::SourcePos& sourcePos_) : 
+MemberInitializerNode::MemberInitializerNode(const soul::ast::SourcePos& sourcePos_) noexcept :
     BinaryNode(NodeKind::memberInitializerNode, sourcePos_, nullptr, nullptr)
 {
 }
 
-MemberInitializerNode::MemberInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* id_, Node* initializer_) : 
+MemberInitializerNode::MemberInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* id_, Node* initializer_) noexcept :
     BinaryNode(NodeKind::memberInitializerNode, sourcePos_, id_, initializer_)
 {
 }
@@ -410,7 +416,7 @@ void MemberInitializerNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-VirtSpecifierSequenceNode::VirtSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) : SequenceNode(NodeKind::virtSpecifierSequenceNode, sourcePos_)
+VirtSpecifierSequenceNode::VirtSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept : SequenceNode(NodeKind::virtSpecifierSequenceNode, sourcePos_)
 {
 }
 
@@ -429,7 +435,7 @@ void VirtSpecifierSequenceNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ClassNode::ClassNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::classNode, sourcePos_)
+ClassNode::ClassNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::classNode, sourcePos_)
 {
 }
 
@@ -444,7 +450,7 @@ void ClassNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-StructNode::StructNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::structNode, sourcePos_)
+StructNode::StructNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::structNode, sourcePos_)
 {
 }
 
@@ -459,7 +465,7 @@ void StructNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-UnionNode::UnionNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::unionNode, sourcePos_)
+UnionNode::UnionNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::unionNode, sourcePos_)
 {
 }
 
@@ -474,7 +480,7 @@ void UnionNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-PublicNode::PublicNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::publicNode, sourcePos_)
+PublicNode::PublicNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::publicNode, sourcePos_)
 {
 }
 
@@ -489,7 +495,7 @@ void PublicNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ProtectedNode::ProtectedNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::protectedNode, sourcePos_)
+ProtectedNode::ProtectedNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::protectedNode, sourcePos_)
 {
 }
 
@@ -504,7 +510,7 @@ void ProtectedNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-PrivateNode::PrivateNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::privateNode, sourcePos_)
+PrivateNode::PrivateNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::privateNode, sourcePos_)
 {
 }
 
@@ -519,7 +525,7 @@ void PrivateNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-VirtualNode::VirtualNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::virtualNode, sourcePos_)
+VirtualNode::VirtualNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::virtualNode, sourcePos_)
 {
 }
 
@@ -534,7 +540,7 @@ void VirtualNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-OverrideNode::OverrideNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::overrideNode, sourcePos_)
+OverrideNode::OverrideNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::overrideNode, sourcePos_)
 {
 }
 
@@ -549,7 +555,7 @@ void OverrideNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-FinalNode::FinalNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::finalNode, sourcePos_)
+FinalNode::FinalNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::finalNode, sourcePos_)
 {
 }
 
@@ -564,11 +570,12 @@ void FinalNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-PureSpecifierNode::PureSpecifierNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::pureSpecifierNode, sourcePos_)
+PureSpecifierNode::PureSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::pureSpecifierNode, sourcePos_)
 {
 }
 
-PureSpecifierNode::PureSpecifierNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& zeroPos_) : Node(NodeKind::pureSpecifierNode, sourcePos_), zeroPos(zeroPos_)
+PureSpecifierNode::PureSpecifierNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& zeroPos_) noexcept : 
+    Node(NodeKind::pureSpecifierNode, sourcePos_), zeroPos(zeroPos_)
 {
 }
 
