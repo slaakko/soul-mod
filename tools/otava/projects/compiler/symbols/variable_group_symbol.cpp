@@ -36,7 +36,8 @@ Symbol* VariableGroupSymbol::GetSingleSymbol() noexcept
 {
     if (variables.size() == 1)
     {
-        return variables.front();
+        Symbol* front = variables.front();
+        return front;
     }
     else
     {

@@ -489,76 +489,76 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
     {
         switch (op)
         {
-        case otava::ast::NodeKind::plusAssignNode:
-        {
-            BoundExpressionNode* clone = left->Clone();
-            BindBinaryOp(otava::ast::NodeKind::plusNode, sourcePos, left, right);
-            BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
-            return;
-        }
-        case otava::ast::NodeKind::minusAssignNode:
-        {
-            BoundExpressionNode* clone = left->Clone();
-            BindBinaryOp(otava::ast::NodeKind::minusNode, sourcePos, left, right);
-            BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
-            return;
-        }
-        case otava::ast::NodeKind::mulAssignNode:
-        {
-            BoundExpressionNode* clone = left->Clone();
-            BindBinaryOp(otava::ast::NodeKind::mulNode, sourcePos, left, right);
-            BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
-            return;
-        }
-        case otava::ast::NodeKind::divAssignNode:
-        {
-            BoundExpressionNode* clone = left->Clone();
-            BindBinaryOp(otava::ast::NodeKind::divNode, sourcePos, left, right);
-            BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
-            return;
-        }
-        case otava::ast::NodeKind::modAssignNode:
-        {
-            BoundExpressionNode* clone = left->Clone();
-            BindBinaryOp(otava::ast::NodeKind::modNode, sourcePos, left, right);
-            BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
-            return;
-        }
-        case otava::ast::NodeKind::andAssignNode:
-        {
-            BoundExpressionNode* clone = left->Clone();
-            BindBinaryOp(otava::ast::NodeKind::andNode, sourcePos, left, right);
-            BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
-            return;
-        }
-        case otava::ast::NodeKind::orAssignNode:
-        {
-            BoundExpressionNode* clone = left->Clone();
-            BindBinaryOp(otava::ast::NodeKind::inclusiveOrNode, sourcePos, left, right);
-            BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
-            return;
-        }
-        case otava::ast::NodeKind::xorAssignNode:
-        {
-            BoundExpressionNode* clone = left->Clone();
-            BindBinaryOp(otava::ast::NodeKind::exclusiveOrNode, sourcePos, left, right);
-            BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
-            return;
-        }
-        case otava::ast::NodeKind::shiftLeftAssignNode:
-        {
-            BoundExpressionNode* clone = left->Clone();
-            BindBinaryOp(otava::ast::NodeKind::shiftLeftNode, sourcePos, left, right);
-            BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
-            return;
-        }
-        case otava::ast::NodeKind::shiftRightAssignNode:
-        {
-            BoundExpressionNode* clone = left->Clone();
-            BindBinaryOp(otava::ast::NodeKind::shiftRightNode, sourcePos, left, right);
-            BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
-            return;
-        }
+            case otava::ast::NodeKind::plusAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::plusNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::minusAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::minusNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::mulAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::mulNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::divAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::divNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::modAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::modNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::andAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::andNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::orAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::inclusiveOrNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::xorAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::exclusiveOrNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::shiftLeftAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::shiftLeftNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
+            case otava::ast::NodeKind::shiftRightAssignNode:
+            {
+                BoundExpressionNode* clone = left->Clone();
+                BindBinaryOp(otava::ast::NodeKind::shiftRightNode, sourcePos, left, right);
+                BindBinaryOp(otava::ast::NodeKind::assignNode, sourcePos, clone, boundExpression);
+                return;
+            }
         }
     }
     std::u32string groupName = OperatorGroupNameMap::Instance().GetGroupName(op, sourcePos, context);
@@ -569,6 +569,10 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
     Exception ex1;
     FunctionMatch match1;
     std::vector<TypeSymbol*> templateArgs;
+    if (groupName == U"operator+")
+    {
+        ort_debug_break();
+    }
     std::unique_ptr<BoundFunctionCallNode> functionCall1 = ResolveOverload(scope, groupName, templateArgs, args, sourcePos, context, ex1, match1);
     Exception ex2;
     FunctionMatch match2;
@@ -583,7 +587,7 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
     {
         if (ex1.Warning())
         {
-            PrintWarning(ex1);
+            PrintWarning(ex1, context);
         }
         functionCall.reset(functionCall1.release());
     }
@@ -591,7 +595,7 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
     {
         if (ex2.Warning())
         {
-            PrintWarning(ex2);
+            PrintWarning(ex2, context);
         }
         functionCall.reset(functionCall2.release());
     }
@@ -601,7 +605,7 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
         {
             if (ex1.Warning())
             {
-                PrintWarning(ex1);
+                PrintWarning(ex1, context);
             }
             functionCall.reset(functionCall1.release());
         }
@@ -609,7 +613,7 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
         {
             if (ex2.Warning())
             {
-                PrintWarning(ex2);
+                PrintWarning(ex2, context);
             }
             functionCall.reset(functionCall2.release());
         }
@@ -617,7 +621,7 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
         {
             if (ex1.Warning())
             {
-                PrintWarning(ex1);
+                PrintWarning(ex1, context);
             }
             functionCall.reset(functionCall1.release());
         }
@@ -661,7 +665,7 @@ void ExpressionBinder::BindUnaryOp(otava::ast::NodeKind op, const soul::ast::Sou
     {
         if (ex1.Warning())
         {
-            PrintWarning(ex1);
+            PrintWarning(ex1, context);
         }
     }
     if (!functionCall)
@@ -675,7 +679,7 @@ void ExpressionBinder::BindUnaryOp(otava::ast::NodeKind op, const soul::ast::Sou
         {
             if (ex2.Warning())
             {
-                PrintWarning(ex2);
+                PrintWarning(ex2, context);
             }
         }
     }
@@ -1999,7 +2003,7 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
         {
             if (ex1.Warning())
             {
-                PrintWarning(ex1);
+                PrintWarning(ex1, context);
             }
         }
         if (!functionCall && thisPtrAdded)
@@ -2021,7 +2025,7 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
             {
                 if (ex2.Warning())
                 {
-                    PrintWarning(ex2);
+                    PrintWarning(ex2, context);
                 }
             }
         }

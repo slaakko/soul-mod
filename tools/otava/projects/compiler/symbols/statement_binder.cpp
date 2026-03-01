@@ -1287,6 +1287,12 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
                                     new BoundAddressOfNode(returnValueExpr, node.GetSourcePos(), returnValueExpr->GetType()->AddPointer(context)), conversion,
                                     node.GetSourcePos());
                             }
+                            else if (argumentMatch.preConversionFlags == OperationFlags::deref)
+                            {
+                                returnValueExpr = new BoundConversionNode(
+                                    new BoundDereferenceNode(returnValueExpr, node.GetSourcePos(), returnValueExpr->GetType()->RemoveReference(context)), conversion,
+                                    node.GetSourcePos());
+                            }
                             else
                             {
                                 returnValueExpr = new BoundConversionNode(returnValueExpr, conversion, node.GetSourcePos());
@@ -1592,8 +1598,7 @@ void StatementBinder::Visit(otava::ast::HandlerSequenceNode& node)
     }
     if (lastElse)
     {
-        context->PushFlags();
-        context->ResetFlags();
+        context->PushResetFlag(~ContextFlags::sticky);
         std::unique_ptr<otava::ast::Node> resume = ParseStatement(U"ort_resume();", context);
         context->PopFlags();
         lastElse->AddNode(resume.release());
@@ -1609,8 +1614,7 @@ void StatementBinder::Visit(otava::ast::HandlerNode& node)
 
 void StatementBinder::Visit(otava::ast::ExceptionDeclarationNode& node)
 {
-    context->PushFlags();
-    context->ResetFlags();
+    context->PushResetFlag(~ContextFlags::sticky);
     context->PushSetFlag(ContextFlags::dontProcess);
     Declaration declaration = ProcessExceptionDeclaration(&node, context);
     TypeSymbol* type = declaration.type;
@@ -2209,10 +2213,6 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
     std::cout << ">" << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
 #endif
     functionDefinitionSymbol->SetBound();
-    if (functionDefinitionSymbol->GroupName() == U"ParseDeclarationSpecifierSequence")
-    {
-        int x = 0;
-    }
     StatementBinder binder(context, functionDefinitionSymbol);
     context->PushStatementBinder(&binder);
     GenerateEnterFunctionCode(functionDefinitionNode, functionDefinitionSymbol, context);

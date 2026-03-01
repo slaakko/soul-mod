@@ -1,19 +1,15 @@
 // this file has been automatically generated from 'D:/work/soul-mod/tools/otava/build/solution.lexer' using soul lexer generator slg version 5.0.0
 
-export module otava.solution_lexer;
+export module otava.build.solution_lexer;
 
 import std;
 import soul.lexer;
-import soul.ast.common;
 import soul.ast.slg;
+import soul.ast.common;
 import util;
-import otava.solution_token;
+import otava.build.solution_token;
 
-using namespace soul;
-using namespace soul::lexer;
-using namespace otava::solution_token;
-
-export namespace otava::solution_lexer {
+export namespace otava::build::solution_lexer {
 
 std::mutex& MakeLexerMtx();
 
@@ -1602,26 +1598,26 @@ struct SolutionLexer
             {
                 lexer.Retract();
                 std::int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match);
-                if (kw == soul::lexer::INVALID_TOKEN) return ID;
+                if (kw == soul::lexer::INVALID_TOKEN) return otava::build::solution_token::ID;
                 else return kw;
                 break;
             }
             case 2:
             {
                 lexer.Retract();
-                return FILEPATH;
+                return otava::build::solution_token::FILEPATH;
                 break;
             }
             case 3:
             {
                 lexer.Retract();
-                return SEMICOLON;
+                return otava::build::solution_token::SEMICOLON;
                 break;
             }
             case 4:
             {
                 lexer.Retract();
-                return DOT;
+                return otava::build::solution_token::DOT;
                 break;
             }
         }
@@ -1632,14 +1628,14 @@ struct SolutionLexer
 template<typename Char>
 soul::lexer::ClassMap<Char>* GetClassMap()
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("otava.solution_lexer.classmap");
+    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("otava.build.solution_lexer.classmap");
     return classmap;
 }
 
 template<typename Char>
 soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "otava.solution_lexer.classmap", resourceFlags);
+    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "otava.build.solution_lexer.classmap", resourceFlags);
     return classmap;
 }
 
@@ -1680,4 +1676,4 @@ soul::lexer::Lexer<SolutionLexer<Char>, Char> MakeLexer(const std::string& modul
     return lexer;
 }
 
-} // namespace otava::solution_lexer
+} // namespace otava::build::solution_lexer

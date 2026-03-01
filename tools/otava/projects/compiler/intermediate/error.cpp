@@ -16,6 +16,11 @@ bool ExceptionThrown()
     return exceptionThrown;
 }
 
+void SetExceptionThrown()
+{
+    exceptionThrown = true;
+}
+
 IntermediateError::IntermediateError(const std::string& message_) : std::runtime_error(message_.c_str()), message(message_)
 {
 }
@@ -23,7 +28,7 @@ IntermediateError::IntermediateError(const std::string& message_) : std::runtime
 [[noreturn]]
 void Error(const std::string& message, const soul::ast::Span& span, IntermediateContext* context)
 {
-    exceptionThrown = true;
+    SetExceptionThrown();
     if (span.IsValid())
     {
         soul::ast::LineColLen lineColLen;
@@ -56,7 +61,7 @@ void Error(const std::string& message, const soul::ast::Span& span, Intermediate
 [[noreturn]]
 void Error(const std::string& message, const soul::ast::Span& span, IntermediateContext* context, const soul::ast::Span& refSpan)
 {
-    exceptionThrown = true;
+    SetExceptionThrown();
     if (span.IsValid() && refSpan.IsValid())
     {
         soul::ast::LineColLen lineColLen;

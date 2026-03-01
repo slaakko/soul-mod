@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/pp/pp.parser' using soul parser generator spg version 4.1.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/pp/pp.parser' using soul parser generator spg version 5.0.0
 
 export module otava.pp.parser;
 
@@ -7,8 +7,6 @@ import std;
 import soul.lexer;
 import soul.parser;
 import otava.pp.state;
-
-using namespace otava::pp::state;
 
 export namespace otava::pp::parser {
 

@@ -6,6 +6,7 @@
 import std;
 import otava.build.parser;
 import otava.build.build;
+import otava.build.config;
 import otava.build_project;
 import otava.build_solution;
 import otava.symbols.init;
@@ -17,6 +18,7 @@ import otava.symbols.namespaces;
 import otava.symbols.compound.type.symbol;
 import otava.symbols.conversion.table;
 import otava.symbols.type.symbol;
+import otava.symbols.exception;
 import otava.parser.recorded.parse;
 import otava.expr.parser;
 import otava.stmt.parser;
@@ -27,31 +29,33 @@ import util;
 
 void PrintHelp()
 {
-    std::cout << "usage: oc [options] { FILE.project | FILE.solution }" << std::endl;
-    std::cout << "options:" << std::endl;
-    std::cout << "--help | -h" << std::endl;
-    std::cout << "  Print help and exit." << std::endl;
-    std::cout << "--verbose | -v" << std::endl;
-    std::cout << "  Be verbose." << std::endl;
-    std::cout << "--config=(debug|release) | -c=(debug|release)" << std::endl;
-    std::cout << "  Set configuration to build to 'debug' or 'release'." << std::endl;
-    std::cout << "  Default configuration is 'debug'." << std::endl;
-    std::cout << "--opt=OPTIMIZATION_LEVEL | -O=OPTIMIZATION_LEVEL" << std::endl;
-    std::cout << "  Set release mode optimization level to OPTIMIZATION_LEVEL (0-3)" << std::endl;
-    std::cout << "--rebuild | -r" << std::endl;
-    std::cout << "  rebuild project" << std::endl;
-    std::cout << "--all | -a" << std::endl;
-    std::cout << "  build all dependent projects" << std::endl;
-    std::cout << "--multithreaded | -m" << std::endl;
-    std::cout << "  Build using all cores." << std::endl;
-    std::cout << "--debug-parse | -d" << std::endl;
-    std::cout << "  Print source parsing log to \"parse.log\" file located in the current working directory." << std::endl;
-    std::cout << "--xml | -x" << std::endl;
-    std::cout << "  Write ASTs as XML." << std::endl;
-    std::cout << "--seed | -s" << std::endl;
-    std::cout << "  Initialize uuid seed from hash code of the file path of each project." << std::endl;
-    std::cout << "--symbol-xml | -y" << std::endl;
-    std::cout << "  Write symbols as XML" << std::endl;
+    std::cout << "usage: oc [options] { FILE.project | FILE.solution }" << "\n";
+    std::cout << "options:" << "\n";
+    std::cout << "--help | -h" << "\n";
+    std::cout << "  Print help and exit." << "\n";
+    std::cout << "--verbose | -v" << "\n";
+    std::cout << "  Be verbose." << "\n";
+    std::cout << "--config=(debug|release|trace|CONFIG) | -c=(debug|release|trace|CONFIG)" << "\n";
+    std::cout << "  Set configuration to build to 'debug', 'release', 'trace' or user defined configuration CONFIG." << "\n";
+    std::cout << "  Default configuration is 'debug'." << "\n";
+    std::cout << "--opt=OPTIMIZATION_LEVEL | -O=OPTIMIZATION_LEVEL" << "\n";
+    std::cout << "  Set release mode optimization level to OPTIMIZATION_LEVEL (0-3)" << "\n";
+    std::cout << "--define=SYMBOL | -d=SYMBOL" << "\n";
+    std::cout << "  Define build symbol SYMBOL." << "\n";
+    std::cout << "--rebuild | -r" << "\n";
+    std::cout << "  rebuild project" << "\n";
+    std::cout << "--all | -a" << "\n";
+    std::cout << "  build all dependent projects" << "\n";
+    std::cout << "--multithreaded | -m" << "\n";
+    std::cout << "  Build using all cores." << "\n";
+    std::cout << "--debug-parse | -p" << "\n";
+    std::cout << "  Print source parsing log to \"parse.log\" file located in the current working directory." << "\n";
+    std::cout << "--xml | -x" << "\n";
+    std::cout << "  Write ASTs as XML." << "\n";
+    std::cout << "--seed | -s" << "\n";
+    std::cout << "  Initialize uuid seed from hash code of the file path of each project." << "\n";
+    std::cout << "--symbol-xml | -y" << "\n";
+    std::cout << "  Write symbols as XML" << "\n";
 }
 
 std::string Version()
@@ -102,13 +106,19 @@ int main(int argc, const char** argv)
                         {
                             optLevel = std::stoi(components[1]);
                         }
+                        else if (components[0] == "--define")
+                        {
+                            otava::build::DefineSymbol(components[1]);
+                        }
                         else
                         {
+                            otava::symbols::SetExceptionThrown();
                             throw std::runtime_error("unknown option '" + arg + "'");
                         }
                     }
                     else
                     {
+                        otava::symbols::SetExceptionThrown();
                         throw std::runtime_error("unknown option '" + arg + "'");
                     }
                 }
@@ -153,6 +163,7 @@ int main(int argc, const char** argv)
                     }
                     else
                     {
+                        otava::symbols::SetExceptionThrown();
                         throw std::runtime_error("unknown option '" + arg + "'");
                     }
                 }
@@ -172,13 +183,19 @@ int main(int argc, const char** argv)
                         {
                             optLevel = std::stoi(components[1]);
                         }
+                        else if (components[0] == "-d")
+                        {
+                            otava::build::DefineSymbol(components[1]);
+                        }
                         else
                         {
+                            otava::symbols::SetExceptionThrown();
                             throw std::runtime_error("unknown option '" + arg + "'");
                         }
                     }
                     else
                     {
+                        otava::symbols::SetExceptionThrown();
                         throw std::runtime_error("unknown option '" + arg + "'");
                     }
                 }
@@ -214,7 +231,7 @@ int main(int argc, const char** argv)
                                 multithreaded = true;
                                 break;
                             }
-                            case 'd':
+                            case 'p':
                             {
                                 debugParse = true;
                                 break;
@@ -236,6 +253,7 @@ int main(int argc, const char** argv)
                             }
                             default:
                             {
+                                otava::symbols::SetExceptionThrown();
                                 throw std::runtime_error("unknown option '-" + std::string(1, o) + "'");
                             }
                         }
@@ -249,11 +267,8 @@ int main(int argc, const char** argv)
         }
         if (files.empty())
         {
+            otava::symbols::SetExceptionThrown();
             throw std::runtime_error("no files given");
-        }
-        if (config != "debug" && config != "release")
-        {
-            throw std::runtime_error("unknown configuration (" + config + "): not 'debug' or 'release'");
         }
         if (optLevel != -1)
         {
@@ -342,6 +357,7 @@ int main(int argc, const char** argv)
             }
             else 
             {
+                otava::symbols::SetExceptionThrown();
                 throw std::runtime_error("file '" + file + "' has invalid extension: not .project or .solution");
             }
         }

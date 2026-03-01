@@ -1994,8 +1994,7 @@ FunctionSymbol* OperationGroup::GetOperation(std::vector<std::unique_ptr<BoundEx
     auto it = arityOperationsMap.find(args.size());
     if (it != arityOperationsMap.cend())
     {
-        const std::vector<Operation*>& operations = it->second;
-        for (Operation* operation : operations)
+        for (Operation* operation : it->second)
         {
             FunctionSymbol* op = operation->Get(args, sourcePos, context);
             if (op)

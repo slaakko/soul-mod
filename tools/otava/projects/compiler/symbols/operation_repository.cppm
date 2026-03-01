@@ -18,6 +18,8 @@ class FunctionDefinitionSymbol;
 class ClassTypeSymbol;
 class Context;
 
+void SetDebug();
+
 class Operation
 {
 public:

@@ -438,8 +438,7 @@ void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup(bool skipLast)
     soul::ast::SourcePos sourcePos = invoke.GetSourcePos();
     InstantiationScope invokeInstantiationScope(context->GetSymbolTable()->CurrentScope());
     context->GetSymbolTable()->BeginScope(&invokeInstantiationScope);
-    context->PushFlags();
-    context->ResetFlags();
+    context->PushResetFlag(~ContextFlags::sticky);
     std::unique_ptr<BoundStatementNode> boundChildControlResultStatement;
     std::unique_ptr<BoundStatementNode> boundVarDeclarationStatement;
     TypeSymbol* resultType = functionDefinitionSymbol->NonChildFunctionResultType(context);
@@ -543,6 +542,7 @@ void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup(bool skipLast)
 
 BoundVariableNode* InvokeAndCleanupGenerator::ConvertCondition(BoundExpressionNode* condition, const soul::ast::SourcePos& sourcePos)
 {
+    bool mayThrow = condition->MayThrow();
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
     std::vector<TypeSymbol*> templateArgs;
@@ -577,6 +577,7 @@ void InvokeAndCleanupGenerator::Emit(BoundStatementNode* stmt)
         invoke.Add(stmt);
         if (stmt->ConstructsLocalVariableWithDestructor())
         {
+            AddCurrentInvokeToCurrentCompound();
             GenerateInvokeAndCleanup(false);
         }
     }
@@ -610,6 +611,7 @@ void InvokeAndCleanupGenerator::AddCurrentInvokeToCurrentCompound()
             std::vector<std::unique_ptr<BoundConstructionStatementNode>> constructionStatements = currentInvoke->ReleaseInvokeStatementsWithDestructor();
             for (auto& constructionStatementNode : constructionStatements)
             {
+                constructionStatementNode->SetStatementIndex(currentCompound->NextStatementIndex());
                 currentInvokeStatementsWithDestructor->push_back(std::move(constructionStatementNode));
             }
         }
@@ -657,6 +659,7 @@ void InvokeAndCleanupGenerator::Visit(BoundCompoundStatementNode& node)
             std::vector<std::unique_ptr<BoundConstructionStatementNode>> constructionStatements = currentStatement->ReleaseInvokeStatementsWithDestructor(); 
             for (auto& constructionStatementNode : constructionStatements)
             {
+                constructionStatementNode->SetStatementIndex(compound->NextStatementIndex());
                 invokeStatementsWithDestructor.push_back(std::move(constructionStatementNode));
             }
         }
@@ -670,6 +673,7 @@ void InvokeAndCleanupGenerator::Visit(BoundCompoundStatementNode& node)
             std::vector<std::unique_ptr<BoundConstructionStatementNode>> currentInvokeStatementsWithDestructor = currentStatement->ReleaseInvokeStatementsWithDestructor();
             for (auto& constructionStatementNode : currentInvokeStatementsWithDestructor)
             {
+                constructionStatementNode->SetStatementIndex(compound->NextStatementIndex());
                 invokeStatementsWithDestructor.push_back(std::move(constructionStatementNode));
             }
         }

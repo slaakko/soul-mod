@@ -37,10 +37,6 @@ public:
     inline otava::intermediate::BasicBlock* CreateBasicBlock() 
     { 
         otava::intermediate::BasicBlock* bb = context->CurrentFunction()->CreateBasicBlock();
-        if (check && bb->Id() == 42)
-        {
-            int x = 0;
-        }
         return bb;
     }
     inline void SetCurrentBasicBlock(otava::intermediate::BasicBlock* bb) noexcept { context->SetCurrentBasicBlock(bb); }

@@ -12,6 +12,7 @@ import otava.assembly.value;
 import otava.assembly.macro;
 import otava.assembly.data;
 import otava.assembly.instruction;
+import otava.assembly.error;
 import otava.assembly.file;
 
 namespace otava::assembly {
@@ -20,6 +21,7 @@ void CheckSize(std::int64_t size, const std::string& message)
 {
     if (size != 1 && size != 2 && size != 4 && size != 8 && size != highByteRegSize && size != 16)
     {
+        SetExceptionThrown();
         throw std::runtime_error(message);
     }
 }
@@ -52,6 +54,7 @@ Register* AssemblyContext::GetGlobalReg(std::int64_t size, RegisterGroupKind reg
     RegisterGroup* regGroup = registerPool->GetRegisterGroup(regGroupKind, used);
     if (regGroup->IsLocal())
     {
+        SetExceptionThrown();
         throw std::runtime_error("global reg group kind expected");
     }
     return regGroup->GetReg(static_cast<int>(size));

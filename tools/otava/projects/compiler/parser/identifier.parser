@@ -119,7 +119,8 @@ parser IdentifierParser
     TypeIdentifierChecked(otava::symbols::Context* context) : otava::ast::Node*
         ::= ID
             { 
-                std::unique_ptr<otava::ast::IdentifierNode> identifier(otava::parser::token::ParseIdentifier(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
+                std::unique_ptr<otava::ast::IdentifierNode> identifier(
+                    otava::parser::token::ParseIdentifier(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
                 otava::symbols::Symbol* symbol = context->GetSymbolTable()->Lookup(
                     identifier->Str(), 
                     otava::symbols::SymbolGroupKind::typeSymbolGroup, 

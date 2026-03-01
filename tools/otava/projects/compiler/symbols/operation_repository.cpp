@@ -30,6 +30,21 @@ import util.sha1;
 
 namespace otava::symbols {
 
+bool debug = false;
+
+void SetDebug()
+{
+    debug = true;
+}
+
+void Debug()
+{
+    if (debug)
+    {
+        ort_debug_break();
+    }
+}
+
 class PointerDefaultCtor : public FunctionSymbol
 {
 public:
@@ -1994,8 +2009,7 @@ FunctionSymbol* OperationGroup::GetOperation(std::vector<std::unique_ptr<BoundEx
     auto it = arityOperationsMap.find(args.size());
     if (it != arityOperationsMap.cend())
     {
-        const std::vector<Operation*>& operations = it->second;
-        for (Operation* operation : operations)
+        for (Operation* operation : it->second)
         {
             FunctionSymbol* op = operation->Get(args, sourcePos, context);
             if (op)
@@ -2061,6 +2075,7 @@ void OperationRepository::AddOperation(Operation* operation)
 FunctionSymbol* OperationRepository::GetOperation(const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
+    Debug();
     auto it = groupMap.find(groupName);
     if (it != groupMap.cend())
     {

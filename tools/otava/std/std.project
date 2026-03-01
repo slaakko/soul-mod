@@ -1,6 +1,5 @@
 project std;
 target=library;
-define TRACE;
 interface <std.atexit.cppm>;
 source <std.atexit.cpp>;
 interface <std.init.cppm>;

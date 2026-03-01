@@ -11,6 +11,8 @@ import soul.lexer;
 import soul.xml.dom;
 import otava.ast.error;
 import otava.intermediate.error;
+import otava.assembly.error;
+import otava.optimizer.error;
 import otava.symbols.alias.type.symbol;
 import otava.symbols.alias.group.symbol;
 import otava.symbols.alias.type.templates;
@@ -86,7 +88,8 @@ SymbolTable::SymbolTable() :
     nodeMap(nullptr),
     classLevel(0),
     conversionTable(new ConversionTable(this)),
-    currentLinkage(Linkage::cpp_linkage)
+    currentLinkage(Linkage::cpp_linkage),
+    functionTypeId(util::nil_uuid())
 {
 }
 
@@ -210,6 +213,7 @@ void SymbolTable::Init()
         InitCompoundTypeIds();
         InitTemplateParameterIds();
         InitLevelIds();
+        InitFunctionTypeId();
         CreateFundamentalTypes();
         AddFundamentalTypeOperations();
         AddIntrinsics();
@@ -257,6 +261,7 @@ void SymbolTable::Import(const SymbolTable& that, FunctionDefinitionSymbolSet* f
     templateParameterIds = that.templateParameterIds;
     compoundTypeIds = that.compoundTypeIds;
     levelIds = that.levelIds;
+    functionTypeId = that.functionTypeId;
 #ifdef DEBUG_SYMBOL_IO
     std::cout << "<import symbol table '" << module->Name() << "' <- '" << that.GetModule()->Name() << "'\n";
 #endif
@@ -530,7 +535,7 @@ void SymbolTable::WriteMaps(Writer& writer, Context* context)
     }
 }
 
-void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap)
+void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, Context* context)
 {
 #ifdef DEBUG_SYMBOL_IO
     std::cout << ">read maps " << GetModule()->Name() << "\n";
@@ -556,7 +561,10 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap)
             }
             else
             {
-                std::cout << "SymbolTable::ReadMaps: warning: node-symbol map: symbol for id '" + util::ToString(symbolId) + "' not found" << "\n";
+                if (!context->GetFlag(ContextFlags::noWarnings))
+                {
+                    std::cout << "SymbolTable::ReadMaps: warning: node-symbol map: symbol for id '" + util::ToString(symbolId) + "' not found" << "\n";
+                }
             }
         }
     }
@@ -653,6 +661,7 @@ void SymbolTable::Write(Writer& writer, Context* context)
         {
             writer.GetBinaryStreamWriter().Write(levelIds[i]);
         }
+        writer.GetBinaryStreamWriter().Write(functionTypeId);
     }
     globalNs->Write(writer);
     std::uint32_t scount = classTemplateSpecializations.size();
@@ -760,6 +769,7 @@ void SymbolTable::Read(Reader& reader)
             reader.GetBinaryStreamReader().ReadUuid(id);
             levelIds.push_back(id);
         }
+        reader.GetBinaryStreamReader().ReadUuid(functionTypeId);
     }
     globalNs->Read(reader);
     std::uint32_t scount = reader.GetBinaryStreamReader().ReadULEB128UInt();
@@ -1216,7 +1226,8 @@ otava::ast::Node* SymbolTable::GetNode(Symbol* symbol) const
 
 void SymbolTable::RemoveNode(otava::ast::Node* node)
 {
-    if (ProjectReady() || soul::lexer::parsing_error_thrown || ExceptionThrown() || otava::ast::ExceptionThrown() || otava::intermediate::ExceptionThrown()) return;
+    if (ProjectReady() || soul::lexer::parsing_error_thrown || ExceptionThrown() || otava::ast::ExceptionThrown() || otava::intermediate::ExceptionThrown() ||
+        otava::assembly::ExceptionThrown() || otava::optimizer::ExceptionThrown()) return;
     Symbol* symbol = nullptr;
     auto it = nodeSymbolMap.find(node);
     if (it != nodeSymbolMap.cend())
@@ -2430,6 +2441,11 @@ void SymbolTable::InitLevelIds()
     {
         levelIds.push_back(util::uuid::random());
     }
+}
+
+void SymbolTable::InitFunctionTypeId()
+{
+    functionTypeId = util::uuid::random();
 }
 
 const util::uuid& SymbolTable::GetTemplateParameterId(int index) const

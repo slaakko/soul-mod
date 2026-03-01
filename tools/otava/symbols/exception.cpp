@@ -111,9 +111,12 @@ void ThrowException(const Exception& ex)
     throw ex;
 }
 
-void PrintWarning(const Exception& ex)
+void PrintWarning(const Exception& ex, Context* context)
 {
-    std::cout << ex.what() << std::endl;
+    if (!context->GetFlag(ContextFlags::noWarnings))
+    {
+        std::cout << ex.what() << std::endl;
+    }
 }
 
 void PrintWarning(const std::string& message, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
@@ -125,7 +128,7 @@ void PrintWarning(const std::string& message, const soul::ast::SourcePos& source
 {
     Exception exception("warning: ", message, sourcePos, refSourcePos, context);
     exception.SetWarning();
-    PrintWarning(exception);
+    PrintWarning(exception, context);
 }
 
 } // namespace otava::symbols

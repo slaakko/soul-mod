@@ -583,7 +583,7 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
     {
         if (ex1.Warning())
         {
-            PrintWarning(ex1);
+            PrintWarning(ex1, context);
         }
         functionCall.reset(functionCall1.release());
     }
@@ -591,7 +591,7 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
     {
         if (ex2.Warning())
         {
-            PrintWarning(ex2);
+            PrintWarning(ex2, context);
         }
         functionCall.reset(functionCall2.release());
     }
@@ -601,7 +601,7 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
         {
             if (ex1.Warning())
             {
-                PrintWarning(ex1);
+                PrintWarning(ex1, context);
             }
             functionCall.reset(functionCall1.release());
         }
@@ -609,7 +609,7 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
         {
             if (ex2.Warning())
             {
-                PrintWarning(ex2);
+                PrintWarning(ex2, context);
             }
             functionCall.reset(functionCall2.release());
         }
@@ -617,7 +617,7 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
         {
             if (ex1.Warning())
             {
-                PrintWarning(ex1);
+                PrintWarning(ex1, context);
             }
             functionCall.reset(functionCall1.release());
         }
@@ -661,7 +661,7 @@ void ExpressionBinder::BindUnaryOp(otava::ast::NodeKind op, const soul::ast::Sou
     {
         if (ex1.Warning())
         {
-            PrintWarning(ex1);
+            PrintWarning(ex1, context);
         }
     }
     if (!functionCall)
@@ -675,7 +675,7 @@ void ExpressionBinder::BindUnaryOp(otava::ast::NodeKind op, const soul::ast::Sou
         {
             if (ex2.Warning())
             {
-                PrintWarning(ex2);
+                PrintWarning(ex2, context);
             }
         }
     }
@@ -1983,10 +1983,6 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
             context->PushSetFlag(ContextFlags::suppress_warning);
             flagsPushed = true;
         }
-        if (groupName == U"Lookup")
-        {
-            int x = 0;
-        }
         std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverload(subjectScope, groupName, templateArgs, args, node.GetSourcePos(), context, ex1,
             resolutionFlags);
         if (flagsPushed)
@@ -1998,7 +1994,7 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
         {
             if (ex1.Warning())
             {
-                PrintWarning(ex1);
+                PrintWarning(ex1, context);
             }
         }
         if (!functionCall && thisPtrAdded)
@@ -2020,7 +2016,7 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
             {
                 if (ex2.Warning())
                 {
-                    PrintWarning(ex2);
+                    PrintWarning(ex2, context);
                 }
             }
         }
@@ -2652,6 +2648,12 @@ BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, Sy
     node->Accept(binder);
     scope = binder.GetScope();
     BoundExpressionNode* expr = binder.GetBoundExpression();
+/*  TODO 
+    if (expr->GetType() && context->GetFlag(ContextFlags::returnRef) && !expr->GetType()->IsReferenceType() && expr->IsLvalueExpression())
+    {
+        return new BoundAddressOfNode(expr, node->GetSourcePos(), expr->GetType()->AddLValueRef(context));
+    }
+*/
     return expr;
 }
 

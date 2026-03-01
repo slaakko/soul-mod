@@ -7,6 +7,7 @@ export module otava.opt;
 
 export import otava.optimizer;
 export import otava.optimizer.dead_code_elimination;
+export import otava.optimizer.error;
 export import otava.optimizer.identity_calls;
 export import otava.optimizer.inliner;
 export import otava.optimizer.locals;

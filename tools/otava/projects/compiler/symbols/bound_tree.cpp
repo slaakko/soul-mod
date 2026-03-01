@@ -584,7 +584,7 @@ void BoundFunctionNode::SetBoundSetLineStatement(BoundStatementNode* boundSetLin
 }
 
 BoundStatementNode::BoundStatementNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundNode(kind_, sourcePos_), parent(nullptr), generated(false), postfix(false)
+    BoundNode(kind_, sourcePos_), parent(nullptr), generated(false), postfix(false), statementIndex(-1)
 {
 }
 
@@ -675,6 +675,7 @@ int BoundCompoundStatementNode::IndexOf(BoundStatementNode* stmt) noexcept
 void BoundCompoundStatementNode::AddStatement(BoundStatementNode* statement)
 {
     statement->SetParent(this);
+    statement->SetStatementIndex(NextStatementIndex());
     statements.push_back(std::unique_ptr<BoundStatementNode>(statement));
 }
 
@@ -691,6 +692,19 @@ bool BoundCompoundStatementNode::EndsWithTerminator() const noexcept
         if (statements.back()->IsBoundCompoundStatementNode() && statements.back()->EndsWithTerminator()) return true;
     }
     return false;
+}
+
+std::vector<BoundConstructionStatementNode*> BoundCompoundStatementNode::InvokeStatementsWithDestructor(int statementIndex) const
+{
+    std::vector<BoundConstructionStatementNode*> statements;
+    for (const auto& statement : invokeStatementsWithDestructor)
+    {
+        if (statement->StatementIndex() == statementIndex)
+        {
+            statements.push_back(statement.get());
+        }
+    }
+    return statements;
 }
 
 bool BoundCompoundStatementNode::ContainsLocalVariableWithDestructor() const noexcept

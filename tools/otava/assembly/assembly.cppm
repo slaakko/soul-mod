@@ -8,6 +8,7 @@ export module otava.assembly;
 export import otava.assembly.context;
 export import otava.assembly.data;
 export import otava.assembly.declaration;
+export import otava.assembly.error;
 export import otava.assembly.expr;
 export import otava.assembly.file;
 export import otava.assembly.function;

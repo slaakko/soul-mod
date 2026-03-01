@@ -1,19 +1,15 @@
 // this file has been automatically generated from 'D:/work/soul-mod/tools/otava/build/project.lexer' using soul lexer generator slg version 5.0.0
 
-export module otava.project_lexer;
+export module otava.build.project_lexer;
 
 import std;
 import soul.lexer;
 import soul.ast.slg;
 import soul.ast.common;
 import util;
-import otava.project_token;
+import otava.build.project_token;
 
-using namespace soul;
-using namespace soul::lexer;
-using namespace otava::project_token;
-
-export namespace otava::project_lexer {
+export namespace otava::build::project_lexer {
 
 std::mutex& MakeLexerMtx();
 
@@ -1689,38 +1685,38 @@ struct ProjectLexer
             {
                 lexer.Retract();
                 std::int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match);
-                if (kw == soul::lexer::INVALID_TOKEN) return ID;
+                if (kw == soul::lexer::INVALID_TOKEN) return otava::build::project_token::ID;
                 else return kw;
                 break;
             }
             case 2:
             {
                 lexer.Retract();
-                return FILEPATH;
+                return otava::build::project_token::FILEPATH;
                 break;
             }
             case 3:
             {
                 lexer.Retract();
-                return SEMICOLON;
+                return otava::build::project_token::SEMICOLON;
                 break;
             }
             case 4:
             {
                 lexer.Retract();
-                return DOT;
+                return otava::build::project_token::DOT;
                 break;
             }
             case 5:
             {
                 lexer.Retract();
-                return ASSIGN;
+                return otava::build::project_token::ASSIGN;
                 break;
             }
             case 6:
             {
                 lexer.Retract();
-                return VALUE;
+                return otava::build::project_token::VALUE;
                 break;
             }
         }
@@ -1731,14 +1727,14 @@ struct ProjectLexer
 template<typename Char>
 soul::lexer::ClassMap<Char>* GetClassMap()
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("otava.project_lexer.classmap");
+    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("otava.build.project_lexer.classmap");
     return classmap;
 }
 
 template<typename Char>
 soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "otava.project_lexer.classmap", resourceFlags);
+    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "otava.build.project_lexer.classmap", resourceFlags);
     return classmap;
 }
 
@@ -1779,4 +1775,4 @@ soul::lexer::Lexer<ProjectLexer<Char>, Char> MakeLexer(const std::string& module
     return lexer;
 }
 
-} // namespace otava::project_lexer
+} // namespace otava::build::project_lexer

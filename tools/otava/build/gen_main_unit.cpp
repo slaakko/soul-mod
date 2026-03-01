@@ -6,6 +6,7 @@
 module otava.build.gen_main_unit;
 
 import util.code.formatter;
+import util.path;
 import otava.symbols.bound.tree;
 import otava.symbols.context;
 import otava.symbols.class_templates;
@@ -130,14 +131,16 @@ std::string GenerateMainWrapper(otava::symbols::Context* context, int numParams)
     {
         otava::symbols::ThrowException("error instantiating main wrapper: function definition symbol expected", soul::ast::SourcePos(), context);
     }
+    return std::string();
 }
 
 std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const std::string& mainFilePath, const std::string& mainFunctionIrName, int numParams, 
-    const std::vector<std::string>& compileUnitInitFnNames, const std::string& config, int optLevel, Project* project)
+    const std::vector<std::string>& compileUnitInitFnNames, const std::string& config, int optLevel, Project* project, const std::set<std::string>& configurations,
+    otava::symbols::Context* parentContext)
 {
-    otava::symbols::Module* std = moduleMapper.GetModule("std", config, optLevel);
+    otava::symbols::Module* std = moduleMapper.GetModule("std", config, optLevel, configurations, parentContext);
     otava::symbols::Module main("main");
-    main.Import(std, moduleMapper, config, optLevel);
+    main.Import(std, moduleMapper, config, optLevel, configurations, parentContext);
     std::unique_ptr<otava::symbols::SymbolTable> symbolTable(new otava::symbols::SymbolTable());
     symbolTable->SetModule(&main);
     symbolTable->Import(*std->GetSymbolTable(), moduleMapper.GetFunctionDefinitionSymbolSet());
@@ -147,14 +150,17 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     context.SetCurrentProject(project);
     context.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
     context.SetSymbolTable(symbolTable.get());
-    if (config == "release")
+    if (configurations.find("release") != configurations.end())
     {
-        context.SetFileName(
-            (std::filesystem::path(mainFilePath).parent_path().parent_path().parent_path() / std::filesystem::path(mainFilePath).filename()).generic_string());
+        std::string fp = util::GetFullPath(util::Path::Combine(util::Path::GetDirectoryName(util::Path::GetDirectoryName(util::Path::GetDirectoryName(mainFilePath))), 
+            util::Path::GetFileName(mainFilePath)));
+        context.SetFileName(fp);
     }
     else
     {
-        context.SetFileName((std::filesystem::path(mainFilePath).parent_path().parent_path() / std::filesystem::path(mainFilePath).filename()).generic_string());
+        std::string fp = util::GetFullPath(util::Path::Combine(util::Path::GetDirectoryName(util::Path::GetDirectoryName(mainFilePath)),
+            util::Path::GetFileName(mainFilePath)));
+        context.SetFileName(fp);
     }
     context.GetBoundCompileUnit()->SetId("main_unit");
     otava::symbols::FunctionSymbol* globalInitFn = context.GetSymbolTable()->AddFunction(U"__global_init__", std::vector<otava::symbols::TypeSymbol*>(), nullptr, 
@@ -176,10 +182,11 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     }
     std::string mainWrapperIrName = GenerateMainWrapper(&context, numParams);
     int np = numParams;
-    std::string asmFilename = otava::codegen::GenerateCode(context, config, optLevel, true, mainWrapperIrName, np, true, compileUnitInitFnNames);
+    std::string asmFilename = otava::codegen::GenerateCode(context, config, optLevel, true, mainWrapperIrName, np, true, compileUnitInitFnNames, configurations);
     std::ofstream mainFile(mainFilePath);
     if (!mainFile)
     {
+        otava::symbols::SetExceptionThrown();
         throw std::runtime_error("could not create file '" + mainFilePath + "'");
     }
     util::CodeFormatter formatter(mainFile);
@@ -198,6 +205,7 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     }
     else
     {
+        otava::symbols::SetExceptionThrown();
         throw std::runtime_error("invalid number of main function parameters");
     }
     formatter.WriteLine("return retVal;");

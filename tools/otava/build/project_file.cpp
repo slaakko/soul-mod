@@ -19,6 +19,7 @@ void MakeClassIndexResourceFile(const std::string& resourceFilePath, const std::
     std::ofstream resourceFile(resourceFilePath);
     if (!resourceFile)
     {
+        otava::symbols::SetExceptionThrown();
         throw std::runtime_error("could not create file '" + resourceFilePath + "'");
     }
     util::CodeFormatter formatter(resourceFile);
@@ -30,6 +31,7 @@ void MakeTraceDataResourceFile(const std::string& resourceFilePath, const std::s
     std::ofstream resourceFile(resourceFilePath);
     if (!resourceFile)
     {
+        otava::symbols::SetExceptionThrown();
         throw std::runtime_error("could not create file '" + resourceFilePath + "'");
     }
     util::CodeFormatter formatter(resourceFile);
@@ -38,14 +40,15 @@ void MakeTraceDataResourceFile(const std::string& resourceFilePath, const std::s
 
 void MakeProjectFile(Project* project, const std::string& projectFilePath, const std::vector<std::string>& asmFiles, const std::vector<std::string>& cppFiles,
     const std::vector<std::string>& resourceFiles, const std::string& libraryDirs, const std::vector<std::unique_ptr<Project>>& referencedProjects,
-    const std::string& config, int optLevel, const std::string& classIndexFilePath, const std::string& traceBinFilePath, ProjectTarget target, bool verbose)
+    const std::string& config, int optLevel, const std::string& classIndexFilePath, const std::string& traceBinFilePath, ProjectTarget target, bool verbose,
+    const std::set<std::string>& configurations)
 {
     std::string references;
     if (!referencedProjects.empty())
     {
         for (const auto& referencedProject : referencedProjects)
         {
-            if (config == "release")
+            if (configurations.find("release") != configurations.end())
             {
                 std::string releaseReference = util::Path::Combine(util::Path::Combine(util::Path::Combine(referencedProject->Root(), config),
                     std::to_string(otava::symbols::GetOptLevel(optLevel, true))), referencedProject->Name() + ".lib");

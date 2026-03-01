@@ -21,6 +21,8 @@ export import util.memory.reader;
 export import util.memory.stream;
 export import util.memory.writer;
 export import util.path;
+export import util.process;
+export import util.rand;
 export import util.sha1;
 export import util.stream;
 export import util.system;

@@ -48,6 +48,22 @@ void FunctionTypeSymbol::MakeName()
     SetName(name);
 }
 
+util::uuid FunctionTypeSymbol::IrId(Context* context) const noexcept
+{
+    util::uuid id = context->GetSymbolTable()->GetFunctionTypeId();
+    util::uuid returnTypeId = returnType->IrId(context);
+    util::Xor(id, returnTypeId);
+    int n = parameterTypes.size();
+    for (int i = 0; i < n; ++i)
+    {
+        TypeSymbol* parameterType = parameterTypes[i];
+        util::uuid paramTypeIrId = parameterType->IrId(context);
+        util::Rotate(paramTypeIrId, (i + 1) & (util::uuid::static_size() - 1));
+        util::Xor(id, paramTypeIrId);
+    }
+    return id;
+}
+
 void FunctionTypeSymbol::AddParameterType(TypeSymbol* parameterType)
 {
     parameterTypes.push_back(parameterType);
@@ -90,7 +106,10 @@ void FunctionTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
         {
             note = ": note: requester module is " + requesterModule->Name();
         }
-        std::cout << "FunctionTypeSymbol::Resolve(): warning: return type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+        if (!context->GetFlag(ContextFlags::noWarnings))
+        {
+            std::cout << "FunctionTypeSymbol::Resolve(): warning: return type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+        }
     }
     for (const auto& parameterTypeId : parameterTypeIds)
     {
@@ -107,7 +126,10 @@ void FunctionTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
             {
                 note = ": note: requester module is " + requesterModule->Name();
             }
-            std::cout << "FunctionTypeSymbol::Resolve(): warning: parameter type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+            if (!context->GetFlag(ContextFlags::noWarnings))
+            {
+                std::cout << "FunctionTypeSymbol::Resolve(): warning: parameter type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+            }
         }
     }
 }

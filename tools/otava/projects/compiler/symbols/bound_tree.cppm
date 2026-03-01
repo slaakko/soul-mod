@@ -340,12 +340,15 @@ public:
     inline void SetGenerated() noexcept { generated = true; }
     inline bool Postfix() const noexcept { return postfix; }
     inline void SetPostfix() noexcept { postfix = true; }
+    inline int StatementIndex() const { return statementIndex; }
+    inline void SetStatementIndex(int statementIndex_) { statementIndex = statementIndex_; }
     bool IsConditionalStatementInBlock(BoundCompoundStatementNode* block) const noexcept;
     BoundCompoundStatementNode* Block() noexcept;
 private:
     BoundStatementNode* parent;
     bool generated;
     bool postfix;
+    int statementIndex;
 };
 
 class BoundEmptyStatementNode : public BoundStatementNode
@@ -365,11 +368,12 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     BoundStatementNode* Clone() const override;
     int IndexOf(BoundStatementNode* stmt) noexcept override;
+    inline int NextStatementIndex() const { return statements.size(); }
     void AddStatement(BoundStatementNode* statement);
     inline const std::vector<std::unique_ptr<BoundStatementNode>>& Statements() const noexcept { return statements; }
     void SetInvokeStatementsWithDestructor(std::vector<std::unique_ptr<BoundConstructionStatementNode>>&& invokeStatementsWithDestructor_);
     bool HasInvokeStatementsWithDestructor() const noexcept override { return !invokeStatementsWithDestructor.empty(); }
-    const std::vector<std::unique_ptr<BoundConstructionStatementNode>>& InvokeStatementsWithDestructor() const { return invokeStatementsWithDestructor; }
+    std::vector<BoundConstructionStatementNode*> InvokeStatementsWithDestructor(int statementIndex) const;
     std::vector<std::unique_ptr<BoundConstructionStatementNode>> ReleaseInvokeStatementsWithDestructor() override
     {
         return std::move(invokeStatementsWithDestructor);

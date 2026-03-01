@@ -6,6 +6,7 @@
 module otava.assembly.reg;
 
 import otava.assembly.context;
+import otava.assembly.error;
 
 namespace otava::assembly {
 
@@ -130,6 +131,7 @@ const Register* RegisterGroup::GetReg(std::int64_t size) const
     }
     else
     {
+        SetExceptionThrown();
         throw std::runtime_error("otava.assembly.RegisterGroup::GetReg: invalid size");
     }
 }
@@ -142,6 +144,7 @@ Register* RegisterGroup::GetReg(std::int64_t size)
     }
     else
     {
+        SetExceptionThrown();
         throw std::runtime_error("otava.assembly.RegisterGroup::GetReg: invalid size");
     }
 }
@@ -154,6 +157,7 @@ void RegisterGroup::SetReg(std::int64_t size, const Register& reg)
     }
     else
     {
+        SetExceptionThrown();
         throw std::runtime_error("otava.assembly.RegisterGroup::SetReg: invalid size");
     }
 }
@@ -474,6 +478,7 @@ RegisterGroup* RegisterPool::GetLocalRegisterGroup()
 {
     if (localRegisterPool.empty())
     {
+        SetExceptionThrown();
         throw std::runtime_error("local register pool is empty");
     }
     RegisterGroup* regGroup = *localRegisterPool.begin();
@@ -486,6 +491,7 @@ RegisterGroup* RegisterPool::GetLocalXMMRegisterGroup()
 {
     if (localXMMRegisterPool.empty())
     {
+        SetExceptionThrown();
         throw std::runtime_error("local XMM register pool is empty");
     }
     RegisterGroup* regGroup = *localXMMRegisterPool.begin();

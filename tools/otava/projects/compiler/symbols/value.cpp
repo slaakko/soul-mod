@@ -108,7 +108,10 @@ void Value::Resolve(SymbolTable& symbolTable, Context* context)
             {
                 note = ": note: requester module is " + requesterModule->Name();
             }
-            std::cout << "Value::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+            if (!context->GetFlag(ContextFlags::noWarnings))
+            {
+                std::cout << "Value::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+            }
         }
     }
 }

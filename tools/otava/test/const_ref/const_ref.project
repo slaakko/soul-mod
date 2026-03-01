@@ -1,0 +1,3 @@
+project const_ref;
+target=program;
+source <main.cpp>;

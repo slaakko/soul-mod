@@ -37,7 +37,8 @@ Symbol* AliasGroupSymbol::GetSingleSymbol() noexcept
 {
     if (aliasTypeSymbols.size() == 1)
     {
-        return aliasTypeSymbols.front();
+        Symbol* front = aliasTypeSymbols.front();
+        return front;
     }
     else
     {

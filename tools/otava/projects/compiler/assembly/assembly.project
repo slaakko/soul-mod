@@ -8,6 +8,8 @@ interface <data.cppm>;
 source <data.cpp>;
 interface <declaration.cppm>;
 source <declaration.cpp>;
+interface <error.cppm>;
+source <error.cpp>;
 interface <expr.cppm>;
 source <expr.cpp>;
 interface <file.cppm>;

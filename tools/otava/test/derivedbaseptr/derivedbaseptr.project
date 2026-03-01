@@ -1,0 +1,3 @@
+project derivedbaseptr;
+target=program;
+source <main.cpp>;

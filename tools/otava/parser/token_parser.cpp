@@ -6,6 +6,7 @@
 module otava.parser.token;
 
 import util.unicode;
+import otava.symbols.exception;
 
 namespace otava::parser::token {
 
@@ -399,16 +400,19 @@ otava::ast::IntegerLiteralNode* ParseIntegerLiteral(const soul::ast::SourcePos& 
     }
     if (firstWasSingleQuote)
     {
+        otava::symbols::SetExceptionThrown();
         throw std::runtime_error("invalid integer literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ", literal begins with single quote: " + 
             util::ToUtf8(token.ToString()));
     }
     else if (lastWasSingleQuote)
     {
+        otava::symbols::SetExceptionThrown();
         throw std::runtime_error("invalid integer literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ", literal ends with single quote: " + 
             util::ToUtf8(token.ToString()));
     }
     else if (p != e)
     {
+        otava::symbols::SetExceptionThrown();
         throw std::runtime_error("invalid integer literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));
     }
     return new otava::ast::IntegerLiteralNode(sourcePos, value, suffix, base, token.ToString());
@@ -519,6 +523,7 @@ otava::ast::FloatingLiteralNode* ParseFloatingLiteral(const soul::ast::SourcePos
     suffix = ParseFloatingSuffix(p, e);
     if (p != e)
     {
+        otava::symbols::SetExceptionThrown();
         throw std::runtime_error("invalid floating literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));
     }
     return new otava::ast::FloatingLiteralNode(sourcePos, value, suffix, base, token.ToString());
@@ -571,6 +576,7 @@ otava::ast::CharacterLiteralNode* ParseCharacterLiteral(const soul::ast::SourceP
     }
     if (p != e || !valid)
     {
+        otava::symbols::SetExceptionThrown();
         throw std::runtime_error("invalid character literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));
     }
     return new otava::ast::CharacterLiteralNode(sourcePos, value, encodingPrefix, token.ToString(), hasMultipleCharacters);
@@ -722,6 +728,7 @@ otava::ast::RawStringLiteralNode* ParseRawStringLiteral(const soul::ast::SourceP
     }
     else
     {
+        otava::symbols::SetExceptionThrown();
         throw std::runtime_error("invalid raw string literal in '" + lexer.FileName() + "' at line " + std::to_string(lexer.Line()));
     }
     return new otava::ast::RawStringLiteralNode(sourcePos, value, encodingPrefix, dm, rep);
@@ -772,6 +779,7 @@ otava::ast::StringLiteralNode* ParseStringLiteral(const soul::ast::SourcePos& so
     }
     if (p != e || !valid)
     {
+        otava::symbols::SetExceptionThrown();
         throw std::runtime_error("invalid string literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));
     }
     return new otava::ast::StringLiteralNode(sourcePos, value, encodingPrefix, token.ToString());
@@ -837,6 +845,7 @@ otava::ast::IdentifierNode* ParseIdentifier(const soul::ast::SourcePos& sourcePo
     }
     if (p != e || !valid)
     {
+        otava::symbols::SetExceptionThrown();
         throw std::runtime_error("invalid identifier in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));
     }
     return new otava::ast::IdentifierNode(sourcePos, s);

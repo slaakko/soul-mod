@@ -38,7 +38,7 @@ void ThrowException(const std::string& message, const soul::ast::SourcePos& sour
 [[noreturn]]
 void ThrowException(const Exception& ex);
 
-void PrintWarning(const Exception& ex);
+void PrintWarning(const Exception& ex, Context* context);
 
 void PrintWarning(const std::string& message, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 

@@ -1,0 +1,11 @@
+<configurations>
+    <configuration name='debug'>
+        <define symbol='DEBUG'/>
+    </configuration>
+    <configuration name='release'>
+        <define symbol='RELEASE'/>
+    </configuration>
+    <configuration name='trace' base='debug'>
+        <define symbol='TRACE'/>
+    </configuration>
+</configurations>

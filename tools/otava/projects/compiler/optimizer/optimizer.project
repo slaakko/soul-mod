@@ -10,6 +10,8 @@ interface <arithmetics.cppm>;
 source <arithmetics.cpp>;
 interface <dead_code_elimination.cppm>;
 source <dead_code_elimination.cpp>;
+interface <error.cppm>;
+source <error.cpp>;
 interface <identity_calls.cppm>;
 source <identity_calls.cpp>;
 interface <inliner.cppm>;

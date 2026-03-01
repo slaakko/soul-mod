@@ -101,6 +101,7 @@ otava::ast::CompoundStatementNode* GetSavedCompoundStatementNode(otava::symbols:
     }
     else
     {
+        otava::ast::SetExceptionThrown();
         throw std::runtime_error("context has no compound statement node");
     }
     return compoundStatementNode;
@@ -126,6 +127,7 @@ otava::ast::ConstructorInitializerNode* GetSavedCtorInitializerNode(otava::symbo
     }
     else
     {
+        otava::ast::SetExceptionThrown();
         throw std::runtime_error("context has no constructor initializer node");
     }
     return ctorInitializerNode;

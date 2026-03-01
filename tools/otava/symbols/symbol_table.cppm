@@ -98,7 +98,7 @@ class SymbolTable
 {
 public:
     SymbolTable();
-    inline void SetModule(Module* module_) noexcept { module = module_; }
+    void SetModule(Module* module_) noexcept { module = module_; }
     inline Module* GetModule() const noexcept { return module; }
     inline NamespaceSymbol* GlobalNs() const noexcept { return globalNs.get(); }
     void Init();
@@ -108,7 +108,7 @@ public:
     void Resolve(Context* context);
     void Accept(Visitor& visitor);
     void WriteMaps(Writer& writer, Context* context);
-    void ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap);
+    void ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, Context* context);
     TypeSymbol* GetFundamentalTypeSymbol(FundamentalTypeKind kind);
     inline Symbol* GetTypenameConstraintSymbol() noexcept { return typenameConstraintSymbol; }
     inline void SetTypenameConstraintSymbol(Symbol* typenameConstraintSymbol_) noexcept { typenameConstraintSymbol = typenameConstraintSymbol_; }
@@ -261,9 +261,11 @@ public:
     void InitTemplateParameterIds();
     void InitCompoundTypeIds();
     void InitLevelIds();
+    void InitFunctionTypeId();
     const util::uuid& GetTemplateParameterId(int index) const;
     const util::uuid& GetCompoundTypeId(int index) const;
     const util::uuid& GetLevelId(int level) const;
+    const util::uuid& GetFunctionTypeId() const noexcept { return functionTypeId; }
 private:
     void CreateFundamentalTypes();
     void AddFundamentalType(FundamentalTypeKind kind);
@@ -358,6 +360,7 @@ private:
     std::vector<util::uuid> templateParameterIds;
     std::vector<util::uuid> compoundTypeIds;
     std::vector<util::uuid> levelIds;
+    util::uuid functionTypeId;
 };
 
 } // namespace otava::symbols

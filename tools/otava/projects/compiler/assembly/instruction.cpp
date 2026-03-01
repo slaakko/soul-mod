@@ -327,6 +327,12 @@ std::string OpCodeStr(OpCode opCode)
         case OpCode::DQ: return "DQ";
         case OpCode::REAL4: return "REAL4";
         case OpCode::REAL8: return "REAL8";
+        case OpCode::ALLOCSTACK: return ".allocstack";
+        case OpCode::PUSHREG: return ".pushreg";
+        case OpCode::SAVEREG: return ".savereg";
+        case OpCode::SAVEXMM128: return ".savexmm128";
+        case OpCode::SETFRAME: return ".setframe";
+        case OpCode::ENDPROLOG: return ".endprolog";
     }
     return "<inst>";
 }

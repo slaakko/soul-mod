@@ -15,20 +15,28 @@ import otava.symbols.exception;
 import util.path;
 import util.code.formatter;
 import util.file.stream;
+import util.unicode;
 
 namespace otava::build {
 
 #ifdef _WIN32
 
-void MSBuild(const std::string& projectFilePath, const std::string& config)
+void MSBuild(const std::string& projectFilePath, const std::string& config, const std::set<std::string>& configurations)
 {
     std::string vcvars64Path = GetVCVars64Path();
+    std::string configFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "config"), "otava.config"));
     if (vcvars64Path.empty())
     {
-        throw std::runtime_error("vcvars64.bat not configured");
+        otava::symbols::SetExceptionThrown();
+        throw std::runtime_error("vcvars64.bat not configured, see configuration file '" + configFilePath + "'");
+    }
+    if (!util::FileExists(vcvars64Path))
+    {
+        otava::symbols::SetExceptionThrown();
+        throw std::runtime_error("'vcvars64.bat' not found from path '" + vcvars64Path + "', see configuration file '" + configFilePath + "'");
     }
     std::string Config = "Debug";
-    if (config == "release")
+    if (configurations.find("release") != configurations.end())
     {
         Config = "Release";
     }
@@ -36,6 +44,11 @@ void MSBuild(const std::string& projectFilePath, const std::string& config)
     std::string buildBatPath = util::GetFullPath(util::Path::Combine(projectDir, "build.bat"));
     {
         std::ofstream buildBatFile(buildBatPath);
+        if (!buildBatFile)
+        {
+            otava::symbols::SetExceptionThrown();
+            throw std::runtime_error("could not create file '" + buildBatPath + "'");
+        }
         util::CodeFormatter formatter(buildBatFile);
         formatter.WriteLine("@echo off");
         formatter.WriteLine("call \"" + vcvars64Path + "\"");
@@ -60,12 +73,12 @@ void MSBuild(const std::string& projectFilePath, const std::string& config)
     GetExitCodeProcess(processInfo.hProcess, &buildExitCode);
     CloseHandle(processInfo.hProcess);
     CloseHandle(processInfo.hThread);
-    if (std::filesystem::exists(projectDir + "/build.out.log"))
+    if (util::FileExists(projectDir + "/build.out.log"))
     {
         std::string buildOutLog = util::ReadFile(projectDir + "/build.out.log");
         std::cout << buildOutLog << std::endl;
     }
-    if (std::filesystem::exists(projectDir + "/build.error.log"))
+    if (util::FileExists(projectDir + "/build.error.log"))
     {
         std::string buildErrorLog = util::ReadFile(projectDir + "/build.error.log");
         if (!buildErrorLog.empty())

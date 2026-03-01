@@ -115,6 +115,7 @@ void Instruction::Check()
     {
         if (user->opCode < OpCode::store || user->opCode > OpCode::nop)
         {
+            SetExceptionThrown();
             throw std::runtime_error("invalid instruction");
         }
     }

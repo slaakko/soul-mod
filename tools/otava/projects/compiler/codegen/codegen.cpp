@@ -184,51 +184,51 @@ void ConstantExpressionEvaluator::Visit(otava::symbols::BoundConversionNode& nod
         {
             switch (type->Id())
             {
-                case otava::intermediate::sbyteTypeId:
-                {
-                    value = emitter.GetIntermediateContext()->GetSByteValue(static_cast<std::int8_t>(val));
-                    break;
-                }
-                case otava::intermediate::byteTypeId:
-                {
-                    value = emitter.GetIntermediateContext()->GetByteValue(static_cast<std::uint8_t>(val));
-                    break;
-                }
-                case otava::intermediate::shortTypeId:
-                {
-                    value = emitter.GetIntermediateContext()->GetShortValue(static_cast<std::int16_t>(val));
-                    break;
-                }
-                case otava::intermediate::ushortTypeId:
-                {
-                    value = emitter.GetIntermediateContext()->GetUShortValue(static_cast<std::uint16_t>(val));
-                    break;
-                }
-                case otava::intermediate::intTypeId:
-                {
-                    value = emitter.GetIntermediateContext()->GetIntValue(static_cast<std::int32_t>(val));
-                    break;
-                }
-                case otava::intermediate::uintTypeId:
-                {
-                    value = emitter.GetIntermediateContext()->GetUIntValue(static_cast<std::uint32_t>(val));
-                    break;
-                }
-                case otava::intermediate::longTypeId:
-                {
-                    value = emitter.GetIntermediateContext()->GetLongValue(static_cast<std::int64_t>(val));
-                    break;
-                }
-                case otava::intermediate::ulongTypeId:
-                {
-                    value = emitter.GetIntermediateContext()->GetULongValue(static_cast<std::uint64_t>(val));
-                    break;
-                }
-                default:
-                {
-                    otava::symbols::ThrowException("cannot evaluate statically", sourcePos, &context);
-                    break;
-                }
+            case otava::intermediate::sbyteTypeId:
+            {
+                value = emitter.GetIntermediateContext()->GetSByteValue(static_cast<std::int8_t>(val));
+                break;
+            }
+            case otava::intermediate::byteTypeId:
+            {
+                value = emitter.GetIntermediateContext()->GetByteValue(static_cast<std::uint8_t>(val));
+                break;
+            }
+            case otava::intermediate::shortTypeId:
+            {
+                value = emitter.GetIntermediateContext()->GetShortValue(static_cast<std::int16_t>(val));
+                break;
+            }
+            case otava::intermediate::ushortTypeId:
+            {
+                value = emitter.GetIntermediateContext()->GetUShortValue(static_cast<std::uint16_t>(val));
+                break;
+            }
+            case otava::intermediate::intTypeId:
+            {
+                value = emitter.GetIntermediateContext()->GetIntValue(static_cast<std::int32_t>(val));
+                break;
+            }
+            case otava::intermediate::uintTypeId:
+            {
+                value = emitter.GetIntermediateContext()->GetUIntValue(static_cast<std::uint32_t>(val));
+                break;
+            }
+            case otava::intermediate::longTypeId:
+            {
+                value = emitter.GetIntermediateContext()->GetLongValue(static_cast<std::int64_t>(val));
+                break;
+            }
+            case otava::intermediate::ulongTypeId:
+            {
+                value = emitter.GetIntermediateContext()->GetULongValue(static_cast<std::uint64_t>(val));
+                break;
+            }
+            default:
+            {
+                otava::symbols::ThrowException("cannot evaluate statically", sourcePos, &context);
+                break;
+            }
             }
             emitter.Stack().Push(value);
         }
@@ -316,7 +316,7 @@ class CodeGenerator : public otava::symbols::DefaultBoundTreeVisitor
 {
 public:
     CodeGenerator(otava::symbols::Context& context_, const std::string& config_, int optLevel_, bool verbose_, std::string& mainIrName_,
-        int& mainFunctionParams_, bool globalMain, const std::vector<std::string>& compileUnitInitFnNames_);
+        int& mainFunctionParams_, bool globalMain, const std::vector<std::string>& compileUnitInitFnNames_, const std::set<std::string>& configurations_);
     void Reset();
     const std::string& GetAsmFileName() const { return asmFileName; }
     void Visit(otava::symbols::BoundEmptyStatementNode& node) override;
@@ -376,6 +376,7 @@ private:
     otava::symbols::Context& context;
     otava::symbols::Emitter* emitter;
     std::string config;
+    std::set<std::string> configurations;
     int optLevel;
     bool verbose;
     int line;
@@ -410,8 +411,8 @@ private:
 };
 
 CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::string& config_, int optLevel_, bool verbose_, std::string& mainIrName_,
-    int& mainFunctionParams_, bool globalMain_, const std::vector<std::string>& compileUnitInitFnNames_) :
-    context(context_), emitter(context.GetEmitter()), config(config_), optLevel(optLevel_), verbose(verbose_),
+    int& mainFunctionParams_, bool globalMain_, const std::vector<std::string>& compileUnitInitFnNames_, const std::set<std::string>& configurations_) :
+    context(context_), emitter(context.GetEmitter()), config(config_), configurations(configurations_), optLevel(optLevel_), verbose(verbose_),
     mainIrName(mainIrName_), mainFunctionParams(mainFunctionParams_),
     functionDefinition(nullptr), entryBlock(nullptr), trueBlock(nullptr), falseBlock(nullptr), defaultBlock(nullptr), breakBlock(nullptr),
     breakBlockId(-1), continueBlock(nullptr), continueBlockId(-1), genJumpingBoolCode(false), lastInstructionWasRet(false),
@@ -420,7 +421,7 @@ CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::strin
     emitLineNumbers(false)
 {
     std::string intermediateCodeFilePath;
-    if (config == "release")
+    if (configurations.find("release") != configurations.end())
     {
         intermediateCodeFilePath = util::GetFullPath(
             util::Path::Combine(
@@ -435,9 +436,8 @@ CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::strin
                 util::Path::GetFileName(context.FileName()) + ".i"));
     }
     emitter->SetFilePath(intermediateCodeFilePath);
-    std::string s = util::Path::GetDirectoryName(intermediateCodeFilePath);
-    ort_create_directories(s.c_str());
-    if (config == "release")
+    util::CreateDirectories(util::Path::GetDirectoryName(intermediateCodeFilePath));
+    if (configurations.find("release") != configurations.end())
     {
         optimizedIntermediateFilePath = util::GetFullPath(
             util::Path::Combine(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config),
@@ -474,7 +474,7 @@ void CodeGenerator::Reset()
     boundFunction = nullptr;
     currentBlock = nullptr;
     line = 0;
-    emitLineNumbers = !context.ReleaseConfig() || context.CurrentProject() && context.CurrentProject()->HasDefine("TRACE");
+    emitLineNumbers = context.CurrentProject() && context.CurrentProject()->HasDefine("TRACE");
 }
 
 void CodeGenerator::StatementPrefix()
@@ -773,7 +773,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
     otava::intermediate::Parse(emitter->FilePath(), intermediateContext, verbose);
     otava::intermediate::Verify(intermediateContext);
     std::string assemblyFilePath;
-    if (config == "release")
+    if (configurations.find("release") != configurations.end())
     {
         assemblyFilePath = util::GetFullPath(
             util::Path::Combine(
@@ -840,9 +840,9 @@ void CodeGenerator::AddClassInfo(otava::symbols::ClassTypeSymbol* cls)
     info::class_key key = info::class_key::cls;
     switch (kind)
     {
-        case otava::symbols::ClassKind::class_: { key = info::class_key::cls; break; }
-        case otava::symbols::ClassKind::struct_: { key = info::class_key::strct; break; }
-        case otava::symbols::ClassKind::union_: { key = info::class_key::uni; break; }
+    case otava::symbols::ClassKind::class_: { key = info::class_key::cls; break; }
+    case otava::symbols::ClassKind::struct_: { key = info::class_key::strct; break; }
+    case otava::symbols::ClassKind::union_: { key = info::class_key::uni; break; }
     }
     std::unique_ptr<info::class_info> info(new info::class_info(id, key, util::ToUtf8(cls->FullName()), clsType->Size()));
     for (otava::symbols::ClassTypeSymbol* base : cls->BaseClasses())
@@ -866,10 +866,6 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     if (functionDefinition->ContainsGotosOrLabels())
     {
         BuildGotoTargetMap(node.Body(), &context);
-    }
-    if (functionDefinition->FullName() == U"otava::intermediate::invoke_1_compile_unit_30C8AE26057B92DD4E9DBA86C4FC2A4F58107238(void*)")
-    {
-        int x = 0;
     }
     std::string functionDefinitionName = functionDefinition->IrName(&context);
     if (functionDefinition->GroupName() == U"main")
@@ -1088,13 +1084,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)
     ++currentBlockId;
     while (currentBlockId >= blockExits.size()) blockExits.push_back(std::unique_ptr<BlockExit>());
     blockExits[currentBlockId].reset(new BlockExit());
-    if (node.HasInvokeStatementsWithDestructor())
-    {
-        for (const auto& constructionStatement : node.InvokeStatementsWithDestructor())
-        {
-            blockExits[currentBlockId]->AddDestructorCall(static_cast<otava::symbols::BoundFunctionCallNode*>(constructionStatement->DestructorCall()->Clone()));
-        }
-    }
+    bool invokeStatementsWithDestructor = node.HasInvokeStatementsWithDestructor();
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
     int n = node.Statements().size();
@@ -1102,6 +1092,15 @@ void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)
     {
         otava::symbols::BoundStatementNode* statement = node.Statements()[i].get();
         statement->Accept(*this);
+        if (invokeStatementsWithDestructor)
+        {
+            int statementIndex = statement->StatementIndex();
+            std::vector<otava::symbols::BoundConstructionStatementNode*> statementsWithDtor = node.InvokeStatementsWithDestructor(statementIndex);
+            for (const auto* constructionStatement : statementsWithDtor)
+            {
+                blockExits[currentBlockId]->AddDestructorCall(static_cast<otava::symbols::BoundFunctionCallNode*>(constructionStatement->DestructorCall()->Clone()));
+            }
+        }
         prevWasTerminator = statement->EndsWithTerminator();
     }
     blockExits[currentBlockId]->CheckUnique(node.GetSourcePos(), &context);
@@ -1762,9 +1761,9 @@ void CodeGenerator::Visit(otava::symbols::BoundLabeledStatementNode& node)
 }
 
 std::string GenerateCode(otava::symbols::Context& context, const std::string& config, int optLevel, bool verbose, std::string& mainIrName,
-    int& mainFunctionParams, bool globalMain, const std::vector<std::string>& compileUnitInitFnNames)
+    int& mainFunctionParams, bool globalMain, const std::vector<std::string>& compileUnitInitFnNames, const std::set<std::string>& configurations)
 {
-    CodeGenerator codeGenerator(context, config, optLevel, verbose, mainIrName, mainFunctionParams, globalMain, compileUnitInitFnNames);
+    CodeGenerator codeGenerator(context, config, optLevel, verbose, mainIrName, mainFunctionParams, globalMain, compileUnitInitFnNames, configurations);
     context.GetBoundCompileUnit()->Accept(codeGenerator);
     return codeGenerator.GetAsmFileName();
 }

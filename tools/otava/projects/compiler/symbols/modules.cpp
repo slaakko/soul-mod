@@ -25,9 +25,9 @@ import otava.ast.error;
 
 namespace otava::symbols {
 
-std::string MakeModuleDirPath(const std::string& root, const std::string& config, int optLevel)
+std::string MakeModuleDirPath(const std::string& root, const std::string& config, int optLevel, const std::set<std::string>& configurations)
 {
-    if (config == "release")
+    if (configurations.find("release") != configurations.end())
     {
         return util::GetFullPath(util::Path::Combine(util::Path::Combine(root, config),
             std::to_string(otava::symbols::GetOptLevel(optLevel, true))));
@@ -38,9 +38,9 @@ std::string MakeModuleDirPath(const std::string& root, const std::string& config
     }
 }
 
-std::string MakeModuleFilePath(const std::string& root, const std::string& config, int optLevel, const std::string& moduleName)
+std::string MakeModuleFilePath(const std::string& root, const std::string& config, int optLevel, const std::string& moduleName, const std::set<std::string>& configurations)
 {
-    if (config == "release")
+    if (configurations.find("release") != configurations.end())
     {
         return util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(root, config),
             std::to_string(otava::symbols::GetOptLevel(optLevel, true))), moduleName + ".module"));
@@ -101,32 +101,32 @@ void Module::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void Module::Import(ModuleMapper& moduleMapper, const std::string& config, int optLevel)
+void Module::Import(ModuleMapper& moduleMapper, const std::string& config, int optLevel, const std::set<std::string>& configurations, Context* context)
 {
     for (const auto& exportedModuleName : exportModuleNames)
     {
-        Module* exportedModule = moduleMapper.GetModule(exportedModuleName, config, optLevel);
+        Module* exportedModule = moduleMapper.GetModule(exportedModuleName, config, optLevel, configurations, context);
         AddExportedModule(exportedModule);
         AddDependsOnModule(exportedModule);
     }
     for (const auto& importedModuleName : importModuleNames)
     {
-        Module* importedModule = moduleMapper.GetModule(importedModuleName, config, optLevel);
+        Module* importedModule = moduleMapper.GetModule(importedModuleName, config, optLevel, configurations, context);
         AddImportedModule(importedModule);
         AddDependsOnModule(importedModule);
     }
     for (auto dependsOnModule : dependsOnModules)
     {
-        Import(dependsOnModule, moduleMapper, config, optLevel);
+        Import(dependsOnModule, moduleMapper, config, optLevel, configurations, context);
     }
 }
 
-void Module::Import(Module* that, ModuleMapper& moduleMapper, const std::string& config, int optLevel)
+void Module::Import(Module* that, ModuleMapper& moduleMapper, const std::string& config, int optLevel, const std::set<std::string>& configurations, Context* context)
 {
     if (importSet.find(that) == importSet.cend())
     {
         importSet.insert(that);
-        that->Import(moduleMapper, config, optLevel);
+        that->Import(moduleMapper, config, optLevel, configurations, context);
         symbolTable.Import(that->symbolTable, moduleMapper.GetFunctionDefinitionSymbolSet());
         evaluationContext.Init();
     }
@@ -241,9 +241,9 @@ void Module::AddDerivedClasses()
     }
 }
 
-void Module::Write(const std::string& root, const std::string& config, int optLevel, Context* context)
+void Module::Write(const std::string& root, const std::string& config, int optLevel, Context* context, const std::set<std::string>& configurations)
 {
-    std::string moduleFilePath = MakeModuleFilePath(root, config, optLevel, name);
+    std::string moduleFilePath = MakeModuleFilePath(root, config, optLevel, name, configurations);
     Writer writer(moduleFilePath);
     writer.SetContext(context);
     Write(writer, context);
@@ -259,11 +259,11 @@ void Module::SetFile(otava::ast::File* astFile_) noexcept
     astFile.reset(astFile_);
 }
 
-void Module::LoadImplementationUnits(ModuleMapper& moduleMapper, const std::string& config, int optLevel)
+void Module::LoadImplementationUnits(ModuleMapper& moduleMapper, const std::string& config, int optLevel, const std::set<std::string>& configurations, Context* context)
 {
     for (const auto& implementationUnitName : implementationUnitNames)
     {
-        Module* implementationUnit = moduleMapper.GetModule(implementationUnitName, config, optLevel);
+        Module* implementationUnit = moduleMapper.GetModule(implementationUnitName, config, optLevel, configurations, context);
         AddImplementationUnit(implementationUnit);
     }
 }
@@ -377,7 +377,8 @@ void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
     }
 }
 
-void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config, int optLevel)
+void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config, int optLevel, const std::set<std::string>& configurations,
+    Context* context)
 {
     reader.SetSymbolTable(&symbolTable);
     symbolTable.SetSymbolMap(moduleMapper.GetSymbolMap());
@@ -404,14 +405,14 @@ void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std:
 #ifdef DEBUG_SYMBOL_IO
     std::cout << ">module '" << Name() << "' import" << "\n";
 #endif
-    Import(moduleMapper, config, optLevel);
+    Import(moduleMapper, config, optLevel, configurations, context);
 #ifdef DEBUG_SYMBOL_IO
     std::cout << "<module '" << Name() << "' import" << "\n";
 #endif
 #ifdef DEBUG_SYMBOL_IO
     std::cout << ">module '" << Name() << "' read maps" << "\n";
 #endif
-    symbolTable.ReadMaps(reader, moduleMapper.GetNodeMap());
+    symbolTable.ReadMaps(reader, moduleMapper.GetNodeMap(), context);
 #ifdef DEBUG_SYMBOL_IO
     std::cout << "<module '" << Name() << "' read maps" << "\n";
 #endif
@@ -485,11 +486,11 @@ std::string ModuleMapper::GetProjectFilePath(const std::string& moduleName) cons
     return std::string();
 }
 
-std::string ModuleMapper::GetModuleFilePath(const std::string& moduleName, const std::string& config, int optLevel) const
+std::string ModuleMapper::GetModuleFilePath(const std::string& moduleName, const std::string& config, int optLevel, const std::set<std::string>& configurations) const
 {
     for (const auto& root : roots)
     {
-        std::string moduleFilePath = MakeModuleFilePath(root, config, optLevel, moduleName);
+        std::string moduleFilePath = MakeModuleFilePath(root, config, optLevel, moduleName, configurations);
         if (util::FileExists(moduleFilePath))
         {
             return moduleFilePath;
@@ -498,7 +499,7 @@ std::string ModuleMapper::GetModuleFilePath(const std::string& moduleName, const
     return std::string();
 }
 
-Module* ModuleMapper::GetModule(const std::string& moduleName, const std::string& config, int optLevel)
+Module* ModuleMapper::GetModule(const std::string& moduleName, const std::string& config, int optLevel, const std::set<std::string>& configurations, Context* context)
 {
 #ifdef DEBUG_SYMBOL_IO
     std::cout << ">module mapper get module '" << moduleName << "'" << "\n";
@@ -513,10 +514,10 @@ Module* ModuleMapper::GetModule(const std::string& moduleName, const std::string
     {
         for (const auto& root : roots)
         {
-            std::string moduleFilePath = MakeModuleFilePath(root, config, optLevel, moduleName);
+            std::string moduleFilePath = MakeModuleFilePath(root, config, optLevel, moduleName, configurations);
             if (util::FileExists(moduleFilePath))
             {
-                return LoadModule(moduleName, moduleFilePath, config, optLevel);
+                return LoadModule(moduleName, moduleFilePath, config, optLevel, configurations, context);
             }
         }
         otava::ast::SetExceptionThrown();
@@ -524,7 +525,8 @@ Module* ModuleMapper::GetModule(const std::string& moduleName, const std::string
     }
 }
 
-Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::string& moduleFilePath, const std::string& config, int optLevel)
+Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::string& moduleFilePath, const std::string& config, int optLevel,
+    const std::set<std::string>& configurations, Context* context)
 {
 #ifdef DEBUG_SYMBOL_IO
     std::cout << ">module mapper load module '" << moduleName << "'" << "\n";
@@ -546,7 +548,7 @@ Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::strin
 #ifdef DEBUG_SYMBOL_IO
         std::cout << ">module mapper import '" << moduleName << "' <- '" << importedModuleName << "'" << "\n";
 #endif
-        Module* importedModule = GetModule(importedModuleName, config, optLevel);
+        Module* importedModule = GetModule(importedModuleName, config, optLevel, configurations, context);
         module->AddImportedModule(importedModule);
 #ifdef DEBUG_SYMBOL_IO
         std::cout << "<module mapper import '" << moduleName << "' <- '" << importedModuleName << "'" << "\n";
@@ -556,7 +558,7 @@ Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::strin
 #ifdef DEBUG_SYMBOL_IO
     std::cout << ">module mapper complete read '" << moduleName << "'" << "\n";
 #endif
-    module->CompleteRead(reader, *this, config, optLevel);
+    module->CompleteRead(reader, *this, config, optLevel, configurations, context);
 #ifdef DEBUG_SYMBOL_IO
     std::cout << "<module mapper complete read '" << moduleName << "'" << "\n";
 #endif

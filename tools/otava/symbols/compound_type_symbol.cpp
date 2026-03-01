@@ -69,7 +69,10 @@ void CompoundTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
         {
             note = ": note: requester module is " + requesterModule->Name();
         }
-        std::cout << "CompoundTypeSymbol::Resolve(): warning: type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
+        if (!context->GetFlag(ContextFlags::noWarnings))
+        {
+            std::cout << "CompoundTypeSymbol::Resolve(): warning: type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
+        }
     }
 }
 

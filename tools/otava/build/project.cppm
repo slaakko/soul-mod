@@ -10,8 +10,6 @@ import soul.lexer.file.map;
 import class_info_index;
 import otava.symbols;
 
-export namespace otava::build_project {}
-
 export namespace otava::build {
 
 struct Define
@@ -30,12 +28,12 @@ class Project;
 
 struct ProjectLess
 {
-    bool operator()(Project* left, Project* right) const;
+    bool operator()(Project* left, Project* right) const noexcept;
 };
 
-std::int16_t MakeProjectId(const std::string& projectName);
+std::int16_t MakeProjectId(const std::string& projectName) noexcept;
 
-class Project : public otava::symbols::Project
+class Project : public otava::symbols::SymbolsProject
 {
 public:
     Project(const std::string& filePath_, const std::string& name_);
@@ -44,7 +42,7 @@ public:
     inline const std::string& Name() const { return name; }
     inline const std::string& OutputFilePath() const { return outputFilePath; }
     void SetOutputFilePath(const std::string& outputFilePath_) { outputFilePath = outputFilePath_; }
-    std::int16_t Id() const;
+    std::int16_t Id() const noexcept;
     void AddInterfaceFilePath(const std::string& interfaceFilePath);
     inline const std::vector<std::string>& InterfaceFilePaths() const { return interfaceFilePaths; }
     void AddSourceFilePath(const std::string& sourceFilePath);
@@ -67,8 +65,9 @@ public:
     inline const std::vector<std::int32_t>& SourceFiles() const { return sourceFiles; }
     const std::string& GetModuleSourceFilePath(std::int32_t fileId) const;
     void InitModules();
-    void LoadModules(otava::symbols::ModuleMapper& moduleMapper, const std::string& config, int optLevel);
-    bool UpToDate(const std::string& config, int optLevel) const;
+    void LoadModules(otava::symbols::ModuleMapper& moduleMapper, const std::string& config, int optLevel, const std::set<std::string>& configurations, 
+        otava::symbols::Context* context);
+    bool UpToDate(const std::string& config, int optLevel, const std::set<std::string>& configurations) const;
     inline bool Scanned() const { return scanned; }
     inline void SetScanned() { scanned = true; }
     inline const std::vector<std::unique_ptr<otava::symbols::Module>>& Modules() const { return modules; }
@@ -76,7 +75,8 @@ public:
     inline const std::vector<Define>& Defines() const { return defines; }
     void AddDefine(const std::string& symbol, std::int64_t value);
     bool HasDefine(const std::string& symbol) const noexcept override;
-    void ResolveForwardDeclarationsAndAddDerivedClasses(otava::symbols::ModuleMapper& moduleMapper, const std::string& config, int optLevel);
+    void ResolveForwardDeclarationsAndAddDerivedClasses(otava::symbols::ModuleMapper& moduleMapper, const std::string& config, int optLevel, 
+        const std::set<std::string>& configurations, otava::symbols::Context* context);
     inline void SetTarget(Target target_) { target = target_; }
     inline Target GetTarget() const { return target; }
     inline info::class_index& Index() { return index; }

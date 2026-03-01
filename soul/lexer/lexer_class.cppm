@@ -110,7 +110,7 @@ public:
     using TokenType = soul::lexer::Token<Char, LexerBase<Char>>;
     using TokenLineType = soul::lexer::TokenLine<Char, LexerBase<Char>>;
     using VariableClassType = Machine::Variables;
-    using PPHook = void (*)(LexerType& lexer, TokenType& token);
+    using PPHook = void (*)(LexerType* lexer, TokenType* token);
 
     Lexer(const Char* start_, const Char* end_, const std::string& fileName_) :
         flags(LexerFlags::none),
@@ -512,7 +512,7 @@ public:
     {
         if (ppHook)
         {
-            ppHook(*this, token); 
+            ppHook(this, &token); 
         }
     }
     inline void PushState()

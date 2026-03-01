@@ -29,7 +29,8 @@ Symbol* ConceptGroupSymbol::GetSingleSymbol() noexcept
 {
     if (concepts.size() == 1)
     {
-        return concepts.front();
+        Symbol* front = concepts.front();
+        return front;
     }
     else
     {

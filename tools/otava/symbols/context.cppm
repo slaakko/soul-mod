@@ -74,13 +74,16 @@ enum class ContextFlags : std::int64_t
     skipInvokeChecking = static_cast<std::int64_t>(1) << 39,
     dontProcess = static_cast<std::int64_t>(1) << 40,
     makeChildFn = static_cast<std::int64_t>(1) << 41,
-    invoke= static_cast<std::int64_t>(1) << 42,
+    invoke = static_cast<std::int64_t>(1) << 42,
     tryCatch = static_cast<std::int64_t>(1) << 43,
     makeCompileUnitInitFn = static_cast<std::int64_t>(1) << 44,
     cast = static_cast<std::int64_t>(1) << 45,
     expected = static_cast<std::int64_t>(1) << 46,
     lookupOnlyFromMemberScope = static_cast<std::int64_t>(1) << 47,
-    setParentBlockIds = static_cast<std::int64_t>(1) << 48
+    setParentBlockIds = static_cast<std::int64_t>(1) << 48,
+    matchClassTemplateSpecializationConversion = static_cast<std::int64_t>(1) << 49,
+    noWarnings = static_cast<std::int64_t>(1) << 50,
+    sticky = noWarnings | expected
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right) noexcept
@@ -111,7 +114,7 @@ class AliasTypeSymbol;
 class TypeSymbol;
 class ClassTemplateSpecializationSymbol;
 class Emitter;
-class Project;
+class SymbolsProject;
 class StatementBinder;
 
 int GetOptLevel(int level, bool release) noexcept;
@@ -149,7 +152,6 @@ public:
     void SetFileName(const std::string& fileName_);
     void PushFlags();
     void PopFlags();
-    void ResetFlags() noexcept;
     void PushSetFlag(ContextFlags flag);
     void PushResetFlag(ContextFlags flag);
     inline void SetFlag(ContextFlags flag) noexcept { flags = flags | flag; }
@@ -223,8 +225,8 @@ public:
     void SetArgIndex(int argIndex_) noexcept { argIndex = argIndex_; }
     inline void SetRequesterModule(Module* requesterModule_) noexcept { requesterModule = requesterModule_;  }
     inline Module* GetRequesterModule() const noexcept { return requesterModule; }
-    Project* CurrentProject() const noexcept { return currentProject; }
-    inline void SetCurrentProject(Project* project) noexcept { currentProject = project; }
+    SymbolsProject* CurrentProject() const noexcept { return currentProject; }
+    void SetCurrentProject(SymbolsProject* project) noexcept { currentProject = project; }
     inline int NextTrySerial() noexcept { return trySerial++; }
     inline int NextInvokeSerial() noexcept { return invokeSerial++; }
     inline int NextCleanupSerial() noexcept { return cleanupSerial++; }
@@ -263,7 +265,7 @@ private:
     SymbolTable* symbolTable;
     TraceInfo* traceInfo;
     Emitter* emitter;
-    Project* currentProject;
+    SymbolsProject* currentProject;
     std::unique_ptr<BoundCompileUnitNode> boundCompileUnit;
     std::unique_ptr<BoundFunctionNode> boundFunction;
     std::stack<std::unique_ptr<BoundFunctionNode>> boundFunctionStack;

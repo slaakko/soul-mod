@@ -347,6 +347,10 @@ void TypeResolver::Visit(otava::ast::TypenameSpecifierNode& node)
 void TypeResolver::Visit(otava::ast::DeclTypeSpecifierNode& node)
 {
     std::unique_ptr<BoundExpressionNode> expr(BindExpression(node.Expression(), context));
+    if (!expr->GetType())
+    {
+        ThrowException("type for decltype specifier not resolved", node.GetSourcePos(), context);
+    }
     type = expr->GetType()->PlainType(context);
 }
 

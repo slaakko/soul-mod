@@ -1,0 +1,3 @@
+project bind_function;
+target=program;
+source <main.cpp>;

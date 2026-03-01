@@ -8,6 +8,7 @@ module otava.intermediate.main.parser;
 import otava.intermediate.lexer;
 import otava.intermediate.parser.rules;
 import otava.intermediate.parser;
+import otava.intermediate.error;
 import util;
 
 namespace otava::intermediate {
@@ -27,6 +28,7 @@ void Parse(const std::string& filePath, IntermediateContext& context, bool verbo
     }
     catch (const util::UnicodeException& ex)
     {
+        SetExceptionThrown();
         util::ThrowUnicodeException(std::string(ex.what()) + ", file=" + filePath);
     }
     auto lexer = otava::intermediate::lexer::MakeLexer(content.c_str(), content.c_str() + content.length(), filePath);

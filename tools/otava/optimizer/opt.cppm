@@ -12,3 +12,4 @@ export import otava.optimizer.inliner;
 export import otava.optimizer.locals;
 export import otava.optimizer.jumps;
 export import otava.optimizer.optimizing_code_generator;
+export import otava.optimizer.error;

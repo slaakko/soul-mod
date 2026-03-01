@@ -185,7 +185,10 @@ void ParameterSymbol::Resolve(SymbolTable& symbolTable, Context* context)
         {
             note = ": note: requester module is " + requesterModule->Name();
         }
-        std::cout << "ParameterSymbol::Resolve(): warning: type of parameter '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
+        if (!context->GetFlag(ContextFlags::noWarnings))
+        {
+            std::cout << "ParameterSymbol::Resolve(): warning: type of parameter '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
+        }
     }
     if (defaultValueNodeId != -1)
     {
@@ -847,7 +850,10 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
             {
                 note = ": note: requester module is " + requesterModule->Name();
             }
-            std::cout << "FunctionSymbol::Resolve(): warning: return type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
+            if (!context->GetFlag(ContextFlags::noWarnings))
+            {
+                std::cout << "FunctionSymbol::Resolve(): warning: return type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
+            }
         }
         if (ReturnsClass())
         {
@@ -867,7 +873,10 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
                 {
                     note = ": note: requester module is " + requesterModule->Name();
                 }
-                std::cout << "FunctionSymbol::Resolve(): warning: conversion parameter type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
+                if (!context->GetFlag(ContextFlags::noWarnings))
+                {
+                    std::cout << "FunctionSymbol::Resolve(): warning: conversion parameter type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
+                }
             }
         }
         if (conversionArgTypeId != util::nil_uuid())
@@ -881,7 +890,10 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
                 {
                     note = ": note: requester module is " + requesterModule->Name();
                 }
-                std::cout << "FunctionSymbol::Resolve(): warning: conversion argument type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
+                if (!context->GetFlag(ContextFlags::noWarnings))
+                {
+                    std::cout << "FunctionSymbol::Resolve(): warning: conversion argument type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
+                }
             }
         }
     }
@@ -901,7 +913,10 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
             {
                 note = ": note: requester module is " + requesterModule->Name();
             }
-            std::cout << "FunctionSymbol::Resolve(): warning: specialization type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
+            if (!context->GetFlag(ContextFlags::noWarnings))
+            {
+                std::cout << "FunctionSymbol::Resolve(): warning: specialization type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
+            }
         }
     }
 }

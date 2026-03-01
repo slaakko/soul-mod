@@ -9,7 +9,7 @@ import std;
 
 export namespace otava::symbols {
 
-class Project
+class SymbolsProject
 {
 public:
     virtual bool HasDefine(const std::string& symbol) const noexcept = 0;

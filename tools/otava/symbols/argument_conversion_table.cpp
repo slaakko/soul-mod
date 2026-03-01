@@ -77,6 +77,30 @@ FunctionSymbol* IdentityArgumentConversion::Get(TypeSymbol* paramType, TypeSymbo
     return nullptr;
 }
 
+class ClassTemplateSpecializationConversion : public ArgumentConversion
+{
+public:
+    FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
+        const soul::ast::SourcePos& sourcePos, Context* context) override;
+};
+
+FunctionSymbol* ClassTemplateSpecializationConversion::Get(
+    TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, 
+    const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (context->GetFlag(ContextFlags::matchClassTemplateSpecializationConversion))
+    {
+        context->PushResetFlag(ContextFlags::matchClassTemplateSpecializationConversion);
+        bool found = FindClassTemplateSpecializationMatch(argType, paramType, arg, functionMatch, sourcePos, context);
+        context->PopFlags();
+        if (found)
+        {
+            return new IdentityConversion(argType, context);
+        }
+    }
+    return nullptr;
+}
+
 class DerivedToBaseConversion : public FunctionSymbol
 {
 public:
@@ -140,15 +164,22 @@ FunctionSymbol* DerivedToBaseArgumentConversion::Get(TypeSymbol* paramType, Type
     FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     int distance = 0;
-    if ((paramType->PointerCount() == 1 && argType->PointerCount() == 1 || 
-        paramType->IsReferenceType() && paramType->PointerCount() == 0 && argType->IsReferenceType() && argType->PointerCount() == 0) && 
+    if (paramType->PointerCount() == 1 && argType->PointerCount() == 1 && argType->GetBaseType()->HasBaseClass(paramType->GetBaseType(), distance, context))
+    {
+        if (argType->IsReferenceType() && !paramType->IsReferenceType())
+        {
+            argumentMatch.preConversionFlags = OperationFlags::deref;
+        }
+        return new DerivedToBaseConversion(argType, paramType, distance, context);
+    }
+    else if (paramType->IsReferenceType() && paramType->PointerCount() == 0 && argType->IsReferenceType() && argType->PointerCount() == 0 && 
         argType->GetBaseType()->HasBaseClass(paramType->GetBaseType(), distance, context))
     {
         return new DerivedToBaseConversion(argType, paramType, distance, context);
     }
-    if (argType->GetBaseType()->HasBaseClass(paramType->GetBaseType(), distance, context))
+    else if (argType->GetBaseType()->HasBaseClass(paramType->GetBaseType(), distance, context))
     {
-        if (paramType->IsReferenceType())
+        if (paramType->IsReferenceType() && !argType->IsReferenceType())
         {
             argumentMatch.preConversionFlags = OperationFlags::addr;
         }
@@ -220,15 +251,32 @@ FunctionSymbol* BaseToDerivedArgumentConversion::Get(TypeSymbol* paramType, Type
     FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     int distance = 0;
-    if ((paramType->PointerCount() == 1 && argType->PointerCount() == 1 || 
-        paramType->IsReferenceType() && paramType->PointerCount() == 0 && 
-        argType->IsReferenceType() && argType->PointerCount() == 0) &&
+    if (paramType->PointerCount() == 1 && argType->PointerCount() == 1 && paramType->GetBaseType()->HasBaseClass(argType->GetBaseType(), distance, context))
+    {
+        if (argType->IsReferenceType() && !paramType->IsReferenceType())
+        {
+            argumentMatch.preConversionFlags = OperationFlags::deref;
+        }
+        distance += 100;
+        return new BaseToDerivedConversion(argType, paramType, distance, context);
+    }
+    else if (paramType->IsReferenceType() && paramType->PointerCount() == 0 && argType->IsReferenceType() && argType->PointerCount() == 0 &&
         paramType->GetBaseType()->HasBaseClass(argType->GetBaseType(), distance, context))
     {
         distance += 100;
         return new BaseToDerivedConversion(argType, paramType, distance, context);
     }
+    else if (paramType->GetBaseType()->HasBaseClass(argType->GetBaseType(), distance, context))
+    {
+        if (paramType->IsReferenceType() && !argType->IsReferenceType())
+        {
+            argumentMatch.preConversionFlags = OperationFlags::addr;
+        }
+        distance += 100;
+        return new BaseToDerivedConversion(argType, paramType, distance, context);
+    }
     return nullptr;
+
 }
 
 class DynamicPtrCast : public FunctionSymbol
@@ -718,9 +766,14 @@ FunctionSymbol* ArrayToPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSym
         addAddr = true;
         argType = argType->AddPointer(context);
     }
-    if (argType->RemovePointer(context)->IsArrayTypeSymbol())
+    TypeSymbol* at = argType;
+    if (at->IsPointerType())
     {
-        ArrayTypeSymbol* arrayType = static_cast<ArrayTypeSymbol*>(argType->RemovePointer(context));
+        at = at->RemovePointer(context);
+    }
+    if (at->IsArrayTypeSymbol())
+    {
+        ArrayTypeSymbol* arrayType = static_cast<ArrayTypeSymbol*>(at);
         TypeSymbol* elementType = arrayType->ElementType()->AddPointer(context);
         if (TypesEqual(paramType->RemoveConst(context), elementType, context))
         {
@@ -931,76 +984,100 @@ public:
         const soul::ast::SourcePos& sourcePos, Context* context) override;
 };
 
+struct ClassTemplateSpecializationConversionMatch
+{
+    ClassTemplateSpecializationConversionMatch(Context* context_, bool set_) : context(context_), set(set_)
+    {
+        if (set)
+        {
+            context->PushSetFlag(ContextFlags::matchClassTemplateSpecializationConversion);
+        }
+    }
+    ~ClassTemplateSpecializationConversionMatch()
+    {
+        if (set)
+        {
+            context->PopFlags();
+        }
+    }
+    Context* context;
+    bool set;
+};
+
 FunctionSymbol* FunctionToFunctionPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
     FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     if (paramType->IsFunctionPtrType() && argType->IsFunctionGroupTypeSymbol())
     {
-        FunctionTypeSymbol* functionType = static_cast<FunctionTypeSymbol*>(paramType->GetBaseType());
-        FunctionGroupTypeSymbol* functionGroupType = static_cast<FunctionGroupTypeSymbol*>(argType);
-        FunctionGroupSymbol* functionGroup = functionGroupType->FunctionGroup();
-        for (FunctionSymbol* functionSymbol : functionGroup->Functions())
+        for (int stage = 0; stage < 2; ++stage)
         {
-            int n = functionType->ParameterTypes().size();
-            if (functionSymbol->Parameters().size() == n)
+            ClassTemplateSpecializationConversionMatch match(context, stage == 1);
+            FunctionTypeSymbol* functionType = static_cast<FunctionTypeSymbol*>(paramType->GetBaseType());
+            FunctionGroupTypeSymbol* functionGroupType = static_cast<FunctionGroupTypeSymbol*>(argType);
+            FunctionGroupSymbol* functionGroup = functionGroupType->FunctionGroup();
+            for (FunctionSymbol* functionSymbol : functionGroup->Functions())
             {
-                bool found = true;
-                for (int i = 0; i < n; ++i)
+                int n = functionType->ParameterTypes().size();
+                if (functionSymbol->Parameters().size() == n)
                 {
-                    TypeSymbol* leftType = functionType->ParameterTypes()[i]->DirectType(context)->FinalType(sourcePos, context);;
-                    TypeSymbol* rightType = functionSymbol->Parameters()[i]->GetType()->DirectType(context)->FinalType(sourcePos, context);
-                    FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                        leftType, rightType, sourcePos, context);
-                    if (!conversion)
+                    bool found = true;
+                    for (int i = 0; i < n; ++i)
                     {
-                        found = false;
-                        break;
+                        TypeSymbol* leftType = functionType->ParameterTypes()[i]->DirectType(context)->FinalType(sourcePos, context);;
+                        TypeSymbol* rightType = functionSymbol->Parameters()[i]->GetType()->DirectType(context)->FinalType(sourcePos, context);
+                        FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                            leftType, rightType, sourcePos, context);
+                        if (!conversion)
+                        {
+                            found = false;
+                            break;
+                        }
                     }
-                }
-                if (found)
-                {
-                    TypeSymbol* leftType = functionType->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
-                    TypeSymbol* rightType = functionSymbol->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
-                    FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                        leftType, rightType, sourcePos, context);
-                    if (conversion)
+                    if (found)
                     {
-                        return new FunctionToFunctionPtrConversion(paramType, functionSymbol, 1 + conversion->ConversionDistance(), context);
+                        TypeSymbol* leftType = functionType->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
+                        TypeSymbol* rightType = functionSymbol->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
+                        FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                            leftType, rightType, sourcePos, context);
+                        if (conversion)
+                        {
+                            return new FunctionToFunctionPtrConversion(paramType, functionSymbol, 1 + conversion->ConversionDistance(), context);
+                        }
                     }
                 }
             }
-        }
-        for (FunctionSymbol* functionDefinitionSymbol : functionGroup->Definitions())
-        {
-            int n = functionType->ParameterTypes().size();
-            if (functionDefinitionSymbol->Parameters().size() == n)
+            for (FunctionSymbol* functionDefinitionSymbol : functionGroup->Definitions())
             {
-                bool found = true;
-                for (int i = 0; i < n; ++i)
+                int n = functionType->ParameterTypes().size();
+                if (functionDefinitionSymbol->Parameters().size() == n)
                 {
-                    TypeSymbol* leftType = functionType->ParameterTypes()[i]->DirectType(context)->FinalType(sourcePos, context);
-                    TypeSymbol* rightType = functionDefinitionSymbol->Parameters()[i]->GetType()->DirectType(context)->FinalType(sourcePos, context);
-                    FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                        leftType, rightType, sourcePos, context);
-                    if (!conversion)
+                    bool found = true;
+                    for (int i = 0; i < n; ++i)
                     {
-                        found = false;
-                        break;
-                    }
-                }
-                if (found)
-                {
-                    TypeSymbol* leftType = functionType->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
-                    TypeSymbol* rightType = functionDefinitionSymbol->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
-                    FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                        leftType, rightType, sourcePos, context);
-                    if (conversion)
-                    {
-                        if (functionDefinitionSymbol->IsTemplate())
+                        TypeSymbol* leftType = functionType->ParameterTypes()[i]->DirectType(context)->FinalType(sourcePos, context);
+                        TypeSymbol* rightType = functionDefinitionSymbol->Parameters()[i]->GetType()->DirectType(context)->FinalType(sourcePos, context);
+                        FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                            leftType, rightType, sourcePos, context);
+                        if (!conversion)
                         {
-                            functionDefinitionSymbol = InstantiateFunctionTemplate(functionDefinitionSymbol, functionMatch.templateParameterMap, sourcePos, context);
+                            found = false;
+                            break;
                         }
-                        return new FunctionToFunctionPtrConversion(paramType, functionDefinitionSymbol, 1 + conversion->ConversionDistance(), context);
+                    }
+                    if (found)
+                    {
+                        TypeSymbol* leftType = functionType->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
+                        TypeSymbol* rightType = functionDefinitionSymbol->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
+                        FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                            leftType, rightType, sourcePos, context);
+                        if (conversion)
+                        {
+                            if (functionDefinitionSymbol->IsTemplate())
+                            {
+                                functionDefinitionSymbol = InstantiateFunctionTemplate(functionDefinitionSymbol, functionMatch.templateParameterMap, sourcePos, context);
+                            }
+                            return new FunctionToFunctionPtrConversion(paramType, functionDefinitionSymbol, 1 + conversion->ConversionDistance(), context);
+                        }
                     }
                 }
             }
@@ -1071,6 +1148,7 @@ void AdjustDeletePtrConversionFn::GenerateCode(Emitter& emitter, std::vector<Bou
 ArgumentConversionTable::ArgumentConversionTable()
 {
     AddArgumentConversion(new IdentityArgumentConversion());
+    AddArgumentConversion(new ClassTemplateSpecializationConversion());
     AddArgumentConversion(new DerivedToBaseArgumentConversion());
     AddArgumentConversion(new BaseToDerivedArgumentConversion());
     AddArgumentConversion(new NullPtrToPtrArgumentConversion());

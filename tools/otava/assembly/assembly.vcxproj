@@ -154,6 +154,8 @@
     <ClCompile Include="data.cppm" />
     <ClCompile Include="declaration.cpp" />
     <ClCompile Include="declaration.cppm" />
+    <ClCompile Include="error.cpp" />
+    <ClCompile Include="error.cppm" />
     <ClCompile Include="expr.cpp" />
     <ClCompile Include="expr.cppm" />
     <ClCompile Include="file.cpp" />

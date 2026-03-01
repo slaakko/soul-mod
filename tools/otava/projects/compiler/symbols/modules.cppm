@@ -22,8 +22,9 @@ class Reader;
 class Visitor;
 class FunctionDefinitionSymbolSet;
 
-std::string MakeModuleDirPath(const std::string& root, const std::string& config, int optLevel);
-std::string MakeModuleFilePath(const std::string& root, const std::string& config, int optLevel, const std::string& moduleName);
+std::string MakeModuleDirPath(const std::string& root, const std::string& config, int optLevel, const std::set<std::string>& configurations);
+std::string MakeModuleFilePath(const std::string& root, const std::string& config, int optLevel, const std::string& moduleName,
+    const std::set<std::string>& configurations);
 
 class ModuleMapper;
 
@@ -52,15 +53,15 @@ public:
     inline const std::string& FilePath() const noexcept { return filePath; }
     inline const std::string& Name() const noexcept { return name; }
     void Accept(Visitor& visitor);
-    void Import(ModuleMapper& moduleMapper, const std::string& config, int optLevel);
-    void Import(Module* that, ModuleMapper& moduleMapper, const std::string& config, int optLevel);
+    void Import(ModuleMapper& moduleMapper, const std::string& config, int optLevel, const std::set<std::string>& configurations, Context* context);
+    void Import(Module* that, ModuleMapper& moduleMapper, const std::string& config, int optLevel, const std::set<std::string>& configurations, Context* context);
     void ResolveForwardDeclarations();
     void ResolveAllForwardDeclarations();
     void AddDerivedClasses();
-    void Write(const std::string& root, const std::string& config, int optLevel, Context* context);
+    void Write(const std::string& root, const std::string& config, int optLevel, Context* context, const std::set<std::string>& configurations);
     void Write(Writer& writer, Context* context);
     void ReadHeader(Reader& reader, ModuleMapper& moduleMapper);
-    void CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config, int optLevel);
+    void CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config, int optLevel, const std::set<std::string>& configurations, Context* context);
     void Init();
     inline std::int32_t FileId() const noexcept { return fileId; }
     inline void SetFileId(std::int32_t fileId_) noexcept { fileId = fileId_; }
@@ -87,7 +88,7 @@ public:
     void SetImplementationUnitNames(const std::vector<std::string>& names);
     inline const std::vector<Module*>& ImplementationUnits() const noexcept { return implementationUnits; }
     void AddImplementationUnit(Module* implementationUnit);
-    void LoadImplementationUnits(ModuleMapper& moduleMapper, const std::string& config, int optLevel);
+    void LoadImplementationUnits(ModuleMapper& moduleMapper, const std::string& config, int optLevel, const std::set<std::string>& configurations, Context* context);
     inline otava::ast::NodeIdFactory* GetNodeIdFactory() noexcept { return &nodeIdFactory; }
     void ToXml(const std::string& xmlFilePath) const;
 private:
@@ -118,10 +119,11 @@ class ModuleMapper
 public:
     ModuleMapper(bool expected);
     void AddModule(Module* module);
-    std::string GetModuleFilePath(const std::string& moduleName, const std::string& config, int optLevel) const;
+    std::string GetModuleFilePath(const std::string& moduleName, const std::string& config, int optLevel, const std::set<std::string>& configurations) const;
     std::string GetProjectFilePath(const std::string& moduleName) const;
-    Module* GetModule(const std::string& moduleName, const std::string& config, int optLevel);
-    Module* LoadModule(const std::string& moduleName, const std::string& moduleFilePath, const std::string& config, int optLevel);
+    Module* GetModule(const std::string& moduleName, const std::string& config, int optLevel, const std::set<std::string>& configurations, Context* context);
+    Module* LoadModule(const std::string& moduleName, const std::string& moduleFilePath, const std::string& config, int optLevel,
+        const std::set<std::string>& configurations, Context* context);
     void AddRoot(const std::string& root);
     inline otava::ast::NodeMap* GetNodeMap() noexcept { return &nodeMap; }
     inline SymbolMap* GetSymbolMap() noexcept { return &symbolMap; }

@@ -173,8 +173,8 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\soul\xml\xpath\soul.xml.xpath.lexer.classmap.rc" />
-    <ResourceCompile Include="..\build\otava.project_lexer.classmap.rc" />
-    <ResourceCompile Include="..\build\otava.solution_lexer.classmap.rc" />
+    <ResourceCompile Include="..\build\otava.build.project_lexer.classmap.rc" />
+    <ResourceCompile Include="..\build\otava.build.solution_lexer.classmap.rc" />
     <ResourceCompile Include="..\intermediate\otava.intermediate.lexer.classmap.rc" />
     <ResourceCompile Include="..\lexer\otava.lexer.classmap.rc" />
     <ResourceCompile Include="..\lexer\soul.cpp20.token.line.lexer.classmap.rc" />

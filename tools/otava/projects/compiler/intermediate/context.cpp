@@ -566,7 +566,7 @@ Instruction* IntermediateContext::CreateCall(Value* callee)
     }
     else
     {
-
+        SetExceptionThrown();
         throw std::runtime_error("invalid call");
     }
 }

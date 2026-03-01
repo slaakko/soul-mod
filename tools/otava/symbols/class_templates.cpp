@@ -184,7 +184,10 @@ void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable, Contex
                     {
                         note = ": note: requester module is " + requesterModule->Name();
                     }
-                    std::cout << "ClassTemplateSpecializationSymbol::Resolve(): warning: template argument not resolved" << note << "\n";
+                    if (!context->GetFlag(ContextFlags::noWarnings))
+                    {
+                        std::cout << "ClassTemplateSpecializationSymbol::Resolve(): warning: template argument not resolved" << note << "\n";
+                    }
                 }
             }
             else
@@ -215,7 +218,10 @@ void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable, Contex
         {
             note = ": note: requester module is " + requesterModule->Name();
         }
-        std::cout << "ClassTemplateSpecializationSymbol::Resolve(): warning: class template not resolved" << note << "\n";
+        if (!context->GetFlag(ContextFlags::noWarnings))
+        {
+            std::cout << "ClassTemplateSpecializationSymbol::Resolve(): warning: class template not resolved" << note << "\n";
+        }
     }
     SetParent(classTemplate->GetScope()->GetNamespaceScope()->GetSymbol());
 }

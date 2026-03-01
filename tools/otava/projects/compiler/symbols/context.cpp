@@ -184,11 +184,6 @@ void Context::PushFlags()
     flagStack.push(flags);
 }
 
-void Context::ResetFlags() noexcept
-{
-    flags = ContextFlags();
-}
-
 void Context::PopFlags()
 {
     flags = flagStack.top();

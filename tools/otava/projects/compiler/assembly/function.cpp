@@ -7,6 +7,7 @@ module otava.assembly.function;
 
 import otava.assembly.instruction;
 import otava.assembly.literal;
+import otava.assembly.error;
 
 namespace otava::assembly {
 
@@ -146,6 +147,7 @@ Macro* Function::GetMacro(const std::string& name) const
     }
     else
     {
+        SetExceptionThrown();
         throw std::runtime_error("macro '" + name + "' not found");
     }
 }

@@ -1,23 +1,22 @@
 // this file has been automatically generated from 'D:/work/soul-mod/tools/otava/build/solution.lexer' using soul lexer generator slg version 5.0.0
 
-module otava.solution_lexer;
+module otava.build.solution_lexer;
 
-using namespace otava::solution_token;
 
-namespace otava::solution_lexer {
+namespace otava::build::solution_lexer {
 
 soul::ast::common::TokenCollection* GetTokens()
 {
-    static soul::ast::common::TokenCollection tokens("otava.solution_lexer.tokens");
+    static soul::ast::common::TokenCollection tokens("otava.build.solution_lexer.tokens");
     if (!tokens.Initialized())
     {
         tokens.SetInitialized();
-        tokens.AddToken(new soul::ast::common::Token(SOLUTION, "SOLUTION", "'solution'"));
-        tokens.AddToken(new soul::ast::common::Token(ID, "ID", "identifier"));
-        tokens.AddToken(new soul::ast::common::Token(DOT, "DOT", "'.'"));
-        tokens.AddToken(new soul::ast::common::Token(SEMICOLON, "SEMICOLON", "';'"));
-        tokens.AddToken(new soul::ast::common::Token(PROJECT, "PROJECT", "'project'"));
-        tokens.AddToken(new soul::ast::common::Token(FILEPATH, "FILEPATH", "file path"));
+        tokens.AddToken(new soul::ast::common::Token(otava::build::solution_token::SOLUTION, "SOLUTION", "'solution'"));
+        tokens.AddToken(new soul::ast::common::Token(otava::build::solution_token::ID, "ID", "identifier"));
+        tokens.AddToken(new soul::ast::common::Token(otava::build::solution_token::DOT, "DOT", "'.'"));
+        tokens.AddToken(new soul::ast::common::Token(otava::build::solution_token::SEMICOLON, "SEMICOLON", "';'"));
+        tokens.AddToken(new soul::ast::common::Token(otava::build::solution_token::PROJECT, "PROJECT", "'project'"));
+        tokens.AddToken(new soul::ast::common::Token(otava::build::solution_token::FILEPATH, "FILEPATH", "file path"));
     }
     return &tokens;
 }
@@ -34,8 +33,8 @@ template<>
 soul::lexer::KeywordMap<char>* GetKeywords<char>()
 {
     static const soul::lexer::Keyword<char> keywords[] = {
-         { "solution", SOLUTION },
-         { "project", PROJECT },
+         { "solution", otava::build::solution_token::SOLUTION },
+         { "project", otava::build::solution_token::PROJECT },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char> keywordMap(keywords);
@@ -46,8 +45,8 @@ template<>
 soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
 {
     static const soul::lexer::Keyword<char8_t> keywords[] = {
-         { u8"solution", SOLUTION },
-         { u8"project", PROJECT },
+         { u8"solution", otava::build::solution_token::SOLUTION },
+         { u8"project", otava::build::solution_token::PROJECT },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char8_t> keywordMap(keywords);
@@ -58,8 +57,8 @@ template<>
 soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
 {
     static const soul::lexer::Keyword<char16_t> keywords[] = {
-         { u"solution", SOLUTION },
-         { u"project", PROJECT },
+         { u"solution", otava::build::solution_token::SOLUTION },
+         { u"project", otava::build::solution_token::PROJECT },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char16_t> keywordMap(keywords);
@@ -70,12 +69,12 @@ template<>
 soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
 {
     static const soul::lexer::Keyword<char32_t> keywords[] = {
-         { U"solution", SOLUTION },
-         { U"project", PROJECT },
+         { U"solution", otava::build::solution_token::SOLUTION },
+         { U"project", otava::build::solution_token::PROJECT },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char32_t> keywordMap(keywords);
     return &keywordMap;
 }
 
-} // namespace otava::solution_lexer
+} // namespace otava::build::solution_lexer

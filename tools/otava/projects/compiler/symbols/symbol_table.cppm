@@ -100,7 +100,7 @@ class SymbolTable
 {
 public:
     SymbolTable();
-    inline void SetModule(Module* module_) noexcept { module = module_; }
+    void SetModule(Module* module_) noexcept { module = module_; }
     inline Module* GetModule() const noexcept { return module; }
     inline NamespaceSymbol* GlobalNs() const noexcept { return globalNs.get(); }
     void Init();
@@ -110,7 +110,7 @@ public:
     void Resolve(Context* context);
     void Accept(Visitor& visitor);
     void WriteMaps(Writer& writer, Context* context);
-    void ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap);
+    void ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, Context* context);
     TypeSymbol* GetFundamentalTypeSymbol(FundamentalTypeKind kind);
     inline Symbol* GetTypenameConstraintSymbol() noexcept { return typenameConstraintSymbol; }
     inline void SetTypenameConstraintSymbol(Symbol* typenameConstraintSymbol_) noexcept { typenameConstraintSymbol = typenameConstraintSymbol_; }
@@ -186,8 +186,8 @@ public:
     Symbol* LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
     Symbol* LookupSymbol(Symbol* symbol);
     void ResolveForwardDeclarations();
-    void CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs,
-        int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context);
+    void CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName,
+        const std::vector<TypeSymbol*>& templateArgs, int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context);
     void MapNode(otava::ast::Node* node);
     void MapNode(otava::ast::Node* node, Symbol* symbol);
     void MapNode(otava::ast::Node* node, Symbol* symbol, MapKind kind);
@@ -239,7 +239,7 @@ public:
     inline const std::set<ClassTypeSymbol*>& Classes() const { return allClasses; }
     inline void SetNodeMap(otava::ast::NodeMap* nodeMap_) { nodeMap = nodeMap_; }
     inline otava::ast::NodeMap* GetNodeMap() { return nodeMap; }
-    inline void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
+    void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
     inline SymbolMap* GetSymbolMap() const { return symbolMap; }
     inline ConversionTable& GetConversionTable() { return *conversionTable; }
     inline const ConversionTable& GetConversionTable() const { return *conversionTable; }
@@ -263,9 +263,11 @@ public:
     void InitTemplateParameterIds();
     void InitCompoundTypeIds();
     void InitLevelIds();
+    void InitFunctionTypeId();
     const util::uuid& GetTemplateParameterId(int index) const;
     const util::uuid& GetCompoundTypeId(int index) const;
     const util::uuid& GetLevelId(int level) const;
+    const util::uuid& GetFunctionTypeId() const noexcept { return functionTypeId; }
 private:
     void CreateFundamentalTypes();
     void AddFundamentalType(FundamentalTypeKind kind);
@@ -360,6 +362,7 @@ private:
     std::vector<util::uuid> templateParameterIds;
     std::vector<util::uuid> compoundTypeIds;
     std::vector<util::uuid> levelIds;
+    util::uuid functionTypeId;
 };
 
 } // namespace otava::symbols

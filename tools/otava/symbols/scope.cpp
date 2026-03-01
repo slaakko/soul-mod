@@ -213,11 +213,13 @@ Symbol* Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind,
     {
         if ((flags & LookupFlags::dontResolveSingle) == LookupFlags::none)
         {
-            return symbols.front()->GetSingleSymbol();
+            Symbol* front = symbols.front();
+            return front->GetSingleSymbol();
         }
         else
         {
-            return symbols.front();
+            Symbol* front = symbols.front();
+            return front;
         }
     }
     else

@@ -316,7 +316,7 @@ class CodeGenerator : public otava::symbols::DefaultBoundTreeVisitor
 {
 public:
     CodeGenerator(otava::symbols::Context& context_, const std::string& config_, int optLevel_, bool verbose_, std::string& mainIrName_, 
-        int& mainFunctionParams_, bool globalMain, const std::vector<std::string>& compileUnitInitFnNames_);
+        int& mainFunctionParams_, bool globalMain, const std::vector<std::string>& compileUnitInitFnNames_, const std::set<std::string>& configurations_);
     void Reset();
     const std::string& GetAsmFileName() const { return asmFileName; }
     void Visit(otava::symbols::BoundEmptyStatementNode& node) override;
@@ -376,6 +376,7 @@ private:
     otava::symbols::Context& context;
     otava::symbols::Emitter* emitter;
     std::string config;
+    std::set<std::string> configurations;
     int optLevel;
     bool verbose;
     int line;
@@ -410,8 +411,8 @@ private:
 };
 
 CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::string& config_, int optLevel_, bool verbose_, std::string& mainIrName_, 
-    int& mainFunctionParams_, bool globalMain_, const std::vector<std::string>& compileUnitInitFnNames_) :
-    context(context_), emitter(context.GetEmitter()), config(config_), optLevel(optLevel_), verbose(verbose_), 
+    int& mainFunctionParams_, bool globalMain_, const std::vector<std::string>& compileUnitInitFnNames_, const std::set<std::string>& configurations_) :
+    context(context_), emitter(context.GetEmitter()), config(config_), configurations(configurations_), optLevel(optLevel_), verbose(verbose_),
     mainIrName(mainIrName_), mainFunctionParams(mainFunctionParams_),
     functionDefinition(nullptr), entryBlock(nullptr), trueBlock(nullptr), falseBlock(nullptr), defaultBlock(nullptr), breakBlock(nullptr), 
     breakBlockId(-1), continueBlock(nullptr), continueBlockId(-1), genJumpingBoolCode(false), lastInstructionWasRet(false), 
@@ -420,7 +421,7 @@ CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::strin
     emitLineNumbers(false)
 {
     std::string intermediateCodeFilePath;
-    if (config == "release")
+    if (configurations.find("release") != configurations.end())
     {
         intermediateCodeFilePath = util::GetFullPath(
             util::Path::Combine(
@@ -435,8 +436,8 @@ CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::strin
                 util::Path::GetFileName(context.FileName()) + ".i"));
     }
     emitter->SetFilePath(intermediateCodeFilePath);
-    std::filesystem::create_directories(util::Path::GetDirectoryName(intermediateCodeFilePath));
-    if (config == "release")
+    util::CreateDirectories(util::Path::GetDirectoryName(intermediateCodeFilePath));
+    if (configurations.find("release") != configurations.end())
     {
         optimizedIntermediateFilePath = util::GetFullPath(
             util::Path::Combine(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config), 
@@ -473,7 +474,7 @@ void CodeGenerator::Reset()
     boundFunction = nullptr;
     currentBlock = nullptr;
     line = 0;
-    emitLineNumbers = !context.ReleaseConfig() || context.CurrentProject() && context.CurrentProject()->HasDefine("TRACE");
+    emitLineNumbers = context.CurrentProject() && context.CurrentProject()->HasDefine("TRACE");
 }
 
 void CodeGenerator::StatementPrefix()
@@ -545,7 +546,9 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
                     otava::intermediate::FunctionType* functionType = static_cast<otava::intermediate::FunctionType*>(irType);
                     emitter->GetOrInsertFunction(functionSymbol->IrName(&context), functionType);
                     otava::intermediate::Value* functionValue = emitter->EmitSymbolValue(functionType, functionSymbol->IrName(&context));
-                    auto [succeeded, delta] = otava::symbols::Delta(cls, functionSymbol->ParentClassType(), *emitter, &context);
+                    std::pair<bool, std::int64_t> p = otava::symbols::Delta(cls, functionSymbol->ParentClassType(), *emitter, &context);
+                    bool succeeded = p.first;
+                    std::int64_t delta = p.second;
                     if (!succeeded)
                     {
                         otava::symbols::ThrowException("could not resolve delta for classes '" + util::ToUtf8(cls->FullName()) + "' and '" + 
@@ -770,7 +773,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
     otava::intermediate::Parse(emitter->FilePath(), intermediateContext, verbose);
     otava::intermediate::Verify(intermediateContext);
     std::string assemblyFilePath;
-    if (config == "release")
+    if (configurations.find("release") != configurations.end())
     {
         assemblyFilePath = util::GetFullPath(
             util::Path::Combine(
@@ -1081,13 +1084,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)
     ++currentBlockId;
     while (currentBlockId >= blockExits.size()) blockExits.push_back(std::unique_ptr<BlockExit>());
     blockExits[currentBlockId].reset(new BlockExit());
-    if (node.HasInvokeStatementsWithDestructor())
-    {
-        for (const auto& constructionStatement : node.InvokeStatementsWithDestructor())
-        {
-            blockExits[currentBlockId]->AddDestructorCall(static_cast<otava::symbols::BoundFunctionCallNode*>(constructionStatement->DestructorCall()->Clone()));
-        }
-    }
+    bool invokeStatementsWithDestructor = node.HasInvokeStatementsWithDestructor();
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
     int n = node.Statements().size();
@@ -1095,6 +1092,15 @@ void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)
     {
         otava::symbols::BoundStatementNode* statement = node.Statements()[i].get();
         statement->Accept(*this);
+        if (invokeStatementsWithDestructor)
+        {
+            int statementIndex = statement->StatementIndex();
+            std::vector<otava::symbols::BoundConstructionStatementNode*> statementsWithDtor = node.InvokeStatementsWithDestructor(statementIndex);
+            for (const auto* constructionStatement : statementsWithDtor)
+            {
+                blockExits[currentBlockId]->AddDestructorCall(static_cast<otava::symbols::BoundFunctionCallNode*>(constructionStatement->DestructorCall()->Clone()));
+            }
+        }
         prevWasTerminator = statement->EndsWithTerminator();
     }
     blockExits[currentBlockId]->CheckUnique(node.GetSourcePos(), &context);
@@ -1755,9 +1761,9 @@ void CodeGenerator::Visit(otava::symbols::BoundLabeledStatementNode& node)
 }
 
 std::string GenerateCode(otava::symbols::Context& context, const std::string& config, int optLevel, bool verbose, std::string& mainIrName, 
-    int& mainFunctionParams, bool globalMain, const std::vector<std::string>& compileUnitInitFnNames)
+    int& mainFunctionParams, bool globalMain, const std::vector<std::string>& compileUnitInitFnNames, const std::set<std::string>& configurations)
 {
-    CodeGenerator codeGenerator(context, config, optLevel, verbose, mainIrName, mainFunctionParams, globalMain, compileUnitInitFnNames);
+    CodeGenerator codeGenerator(context, config, optLevel, verbose, mainIrName, mainFunctionParams, globalMain, compileUnitInitFnNames, configurations);
     context.GetBoundCompileUnit()->Accept(codeGenerator);
     return codeGenerator.GetAsmFileName();
 }

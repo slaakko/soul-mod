@@ -1,23 +1,18 @@
 
 // this file has been automatically generated from 'D:/work/soul-mod/tools/otava/build/solution.parser' using soul parser generator spg version 5.0.0
 
-module otava.solution_parser;
+module otava.build.solution_parser;
 
 import util;
+import soul.ast.common;
 import soul.ast.spg;
 import otava.build_project;
-import otava.solution_token;
-import otava.solution_lexer;
-import otava.token_parser;
+import otava.build.solution_token;
+import otava.build.solution_lexer;
+import otava.build.token_parser;
 import otava.symbols;
 
-using namespace otava::build_project;
-using namespace otava::solution_token;
-using namespace otava::solution_lexer;
-using namespace otava::token_parser;
-using namespace otava::symbols;
-
-namespace otava::solution_parser {
+namespace otava::build::solution_parser {
 
 template<typename LexerT>
 std::unique_ptr<otava::build::Solution> SolutionParser<LexerT>::Parse(LexerT& lexer)
@@ -67,10 +62,10 @@ soul::parser::Match SolutionParser<LexerT>::SolutionFile(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "SolutionFile");
+        soul::lexer::WriteBeginRuleToLog(lexer, "SolutionFile");
     }
     #endif
-    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1917470441149038593);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8482496186954022913);
     std::unique_ptr<otava::build::Solution> sln = std::unique_ptr<otava::build::Solution>();
     std::unique_ptr<otava::build::Solution> solutionDeclaration;
     soul::parser::Match match(false);
@@ -87,7 +82,7 @@ soul::parser::Match SolutionParser<LexerT>::SolutionFile(LexerT& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     std::int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = SolutionParser<LexerT>::SolutionDeclaration(lexer);
+                    soul::parser::Match match = otava::build::solution_parser::SolutionParser<LexerT>::SolutionDeclaration(lexer);
                     solutionDeclaration.reset(static_cast<otava::build::Solution*>(match.value));
                     if (match.hit)
                     {
@@ -112,7 +107,7 @@ soul::parser::Match SolutionParser<LexerT>::SolutionFile(LexerT& lexer)
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
                                 {
-                                    soul::parser::Match match = SolutionParser<LexerT>::FilePath(lexer, sln.get());
+                                    soul::parser::Match match = otava::build::solution_parser::SolutionParser<LexerT>::FilePath(lexer, sln.get());
                                     *parentMatch6 = match;
                                 }
                                 if (match.hit)
@@ -167,10 +162,10 @@ soul::parser::Match SolutionParser<LexerT>::SolutionDeclaration(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "SolutionDeclaration");
+        soul::lexer::WriteBeginRuleToLog(lexer, "SolutionDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1917470441149038594);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8482496186954022914);
     std::unique_ptr<soul::parser::Value<std::string>> solutionName;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -186,7 +181,7 @@ soul::parser::Match SolutionParser<LexerT>::SolutionDeclaration(LexerT& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     soul::parser::Match match(false);
-                    if (*lexer == SOLUTION)
+                    if (*lexer == otava::build::solution_token::SOLUTION)
                     {
                         ++lexer;
                         match.hit = true;
@@ -198,7 +193,7 @@ soul::parser::Match SolutionParser<LexerT>::SolutionDeclaration(LexerT& lexer)
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch4 = &match;
                     {
-                        soul::parser::Match match = SolutionParser<LexerT>::QualifiedId(lexer);
+                        soul::parser::Match match = otava::build::solution_parser::SolutionParser<LexerT>::QualifiedId(lexer);
                         solutionName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                         *parentMatch4 = match;
                     }
@@ -212,7 +207,7 @@ soul::parser::Match SolutionParser<LexerT>::SolutionDeclaration(LexerT& lexer)
                 soul::parser::Match* parentMatch5 = &match;
                 {
                     soul::parser::Match match(false);
-                    if (*lexer == SEMICOLON)
+                    if (*lexer == otava::build::solution_token::SEMICOLON)
                     {
                         ++lexer;
                         match.hit = true;
@@ -257,10 +252,10 @@ soul::parser::Match SolutionParser<LexerT>::FilePath(LexerT& lexer, otava::build
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "FilePath");
+        soul::lexer::WriteBeginRuleToLog(lexer, "FilePath");
     }
     #endif
-    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1917470441149038595);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8482496186954022915);
     std::unique_ptr<soul::parser::Value<std::string>> projectFilePath;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -269,7 +264,7 @@ soul::parser::Match SolutionParser<LexerT>::FilePath(LexerT& lexer, otava::build
         soul::parser::Match* parentMatch1 = &match;
         {
             std::int64_t pos = lexer.GetPos();
-            soul::parser::Match match = SolutionParser<LexerT>::ProjectFilePath(lexer);
+            soul::parser::Match match = otava::build::solution_parser::SolutionParser<LexerT>::ProjectFilePath(lexer);
             projectFilePath.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
             if (match.hit)
             {
@@ -302,10 +297,10 @@ soul::parser::Match SolutionParser<LexerT>::ProjectFilePath(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ProjectFilePath");
+        soul::lexer::WriteBeginRuleToLog(lexer, "ProjectFilePath");
     }
     #endif
-    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1917470441149038596);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8482496186954022916);
     std::string filePath = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -321,7 +316,7 @@ soul::parser::Match SolutionParser<LexerT>::ProjectFilePath(LexerT& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     soul::parser::Match match(false);
-                    if (*lexer == PROJECT)
+                    if (*lexer == otava::build::solution_token::PROJECT)
                     {
                         ++lexer;
                         match.hit = true;
@@ -338,7 +333,7 @@ soul::parser::Match SolutionParser<LexerT>::ProjectFilePath(LexerT& lexer)
                         {
                             std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
-                            if (*lexer == FILEPATH)
+                            if (*lexer == otava::build::solution_token::FILEPATH)
                             {
                                 ++lexer;
                                 match.hit = true;
@@ -361,7 +356,7 @@ soul::parser::Match SolutionParser<LexerT>::ProjectFilePath(LexerT& lexer)
                 soul::parser::Match* parentMatch6 = &match;
                 {
                     soul::parser::Match match(false);
-                    if (*lexer == SEMICOLON)
+                    if (*lexer == otava::build::solution_token::SEMICOLON)
                     {
                         ++lexer;
                         match.hit = true;
@@ -406,10 +401,10 @@ soul::parser::Match SolutionParser<LexerT>::QualifiedId(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
+        soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
     }
     #endif
-    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1917470441149038597);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8482496186954022917);
     std::string str = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -426,7 +421,7 @@ soul::parser::Match SolutionParser<LexerT>::QualifiedId(LexerT& lexer)
                 {
                     std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match(false);
-                    if (*lexer == ID)
+                    if (*lexer == otava::build::solution_token::ID)
                     {
                         ++lexer;
                         match.hit = true;
@@ -458,7 +453,7 @@ soul::parser::Match SolutionParser<LexerT>::QualifiedId(LexerT& lexer)
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         soul::parser::Match match(false);
-                                        if (*lexer == DOT)
+                                        if (*lexer == otava::build::solution_token::DOT)
                                         {
                                             ++lexer;
                                             match.hit = true;
@@ -475,7 +470,7 @@ soul::parser::Match SolutionParser<LexerT>::QualifiedId(LexerT& lexer)
                                             {
                                                 std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match(false);
-                                                if (*lexer == ID)
+                                                if (*lexer == otava::build::solution_token::ID)
                                                 {
                                                     ++lexer;
                                                     match.hit = true;
@@ -535,6 +530,6 @@ soul::parser::Match SolutionParser<LexerT>::QualifiedId(LexerT& lexer)
     return match;
 }
 
-template struct SolutionParser<soul::lexer::Lexer<otava::solution_lexer::SolutionLexer<char32_t>, char32_t>>;
+template struct SolutionParser<soul::lexer::Lexer<otava::build::solution_lexer::SolutionLexer<char32_t>, char32_t>>;
 
-} // namespace otava::solution_parser
+} // namespace otava::build::solution_parser

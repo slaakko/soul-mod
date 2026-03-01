@@ -1,16 +1,14 @@
 
 // this file has been automatically generated from 'D:/work/soul-mod/tools/otava/build/solution.parser' using soul parser generator spg version 5.0.0
 
-export module otava.solution_parser;
+export module otava.build.solution_parser;
 
 import std;
 import soul.lexer;
 import soul.parser;
 import otava.build_solution;
 
-using namespace otava::build_solution;
-
-export namespace otava::solution_parser {
+export namespace otava::build::solution_parser {
 
 template<typename LexerT>
 struct SolutionParser
@@ -23,4 +21,4 @@ struct SolutionParser
     static soul::parser::Match QualifiedId(LexerT& lexer);
 };
 
-} // namespace otava::solution_parser
+} // namespace otava::build::solution_parser

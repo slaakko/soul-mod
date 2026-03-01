@@ -52,6 +52,7 @@ Symbol* SymbolMap::GetSymbol(Module* module, SymbolKind symbolKind, const util::
         {
             kindStr = "symbol kind is '" + SymbolKindToString(symbolKind) + "', ";
         }
+        otava::symbols::SetExceptionThrown();
         throw std::runtime_error("symbol id '" + util::ToString(symbolId) + "' not found: note: " + kindStr + "requesting module is '" + module->Name() + "'");
     }
 }

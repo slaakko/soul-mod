@@ -22,6 +22,7 @@ private:
 class IntermediateContext;
 
 bool ExceptionThrown();
+void SetExceptionThrown();
 [[noreturn]] void Error(const std::string& message, const soul::ast::Span& span, IntermediateContext* context);
 [[noreturn]] void Error(const std::string& message, const soul::ast::Span& span, IntermediateContext* context, const soul::ast::Span& refSpan);
 void Warning(const std::string& message, const soul::ast::Span& span, IntermediateContext* context);

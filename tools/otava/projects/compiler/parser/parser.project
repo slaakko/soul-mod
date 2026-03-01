@@ -18,6 +18,8 @@ interface <concept.parser.cppm>;
 source <concept.parser.cpp>;
 interface <declaration.parser.cppm>;
 source <declaration.parser.cpp>;
+interface <decl_specifier_seq.parser.cppm>;
+source <decl_specifier_seq.parser.cpp>;
 interface <enum.parser.cppm>;
 source <enum.parser.cpp>;
 interface <expression.parser.cppm>;

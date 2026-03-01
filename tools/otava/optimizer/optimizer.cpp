@@ -11,6 +11,7 @@ import otava.optimizer.identity_calls;
 import otava.optimizer.inliner;
 import otava.optimizer.locals;
 import otava.optimizer.jumps;
+import otava.optimizer.error;
 
 namespace otava::optimizer {
 
@@ -39,6 +40,7 @@ void Optimizer::SetOptimizations(const std::string& optLevel)
     }
     else
     {
+        SetExceptionThrown();
         throw std::runtime_error("invalid optimization level '" + optLevel + "'");
     }
 }

@@ -145,6 +145,8 @@
     <ClCompile Include="arithmetics.cppm" />
     <ClCompile Include="dead_code_elimination.cpp" />
     <ClCompile Include="dead_code_elimination.cppm" />
+    <ClCompile Include="error.cpp" />
+    <ClCompile Include="error.cppm" />
     <ClCompile Include="identity_calls.cpp" />
     <ClCompile Include="identity_calls.cppm" />
     <ClCompile Include="inliner.cpp" />

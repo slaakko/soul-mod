@@ -1,4 +1,4 @@
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/pp/pp.lexer' using soul lexer generator slg version 4.1.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/pp/pp.lexer' using soul lexer generator slg version 5.0.0
 
 export module otava.pp.lexer;
 
@@ -6,11 +6,8 @@ import std;
 import soul.lexer;
 import soul.ast.slg;
 import soul.ast.common;
+import util;
 import otava.token;
-
-using namespace soul;
-using namespace soul::lexer;
-using namespace otava::token;
 
 export namespace otava::pp::lexer {
 
@@ -21,6 +18,9 @@ struct PPLexer;
 
 template<typename Char>
 soul::lexer::Lexer<PPLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName);
+
+template<typename Char>
+soul::lexer::Lexer<PPLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);
 
 soul::ast::common::TokenCollection* GetTokens();
 
@@ -36,7 +36,7 @@ struct PPLexer
 
     static std::int32_t NextState(std::int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
     {
-        ClassMap<Char>* classmap = lexer.GetClassMap();
+        soul::lexer::ClassMap<Char>* classmap = lexer.GetClassMap();
         std::int32_t cls = classmap->GetClass(chr);
         switch (state)
         {
@@ -11972,344 +11972,344 @@ struct PPLexer
             {
                 lexer.Retract();
                 std::int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match);
-                if (kw == soul::lexer::INVALID_TOKEN) return ID;
+                if (kw == soul::lexer::INVALID_TOKEN) return otava::token::ID;
                 else return kw;
                 break;
             }
             case 2:
             {
                 lexer.Retract();
-                return INTEGER_LITERAL;
+                return otava::token::INTEGER_LITERAL;
                 break;
             }
             case 3:
             {
                 lexer.Retract();
-                return CHARACTER_LITERAL;
+                return otava::token::CHARACTER_LITERAL;
                 break;
             }
             case 4:
             {
                 lexer.Retract();
-                return STRING_LITERAL;
+                return otava::token::STRING_LITERAL;
                 break;
             }
             case 5:
             {
                 lexer.Retract();
-                return ANGLE_HEADER_NAME;
+                return otava::token::ANGLE_HEADER_NAME;
                 break;
             }
             case 6:
             {
                 lexer.Retract();
-                return QUOTE_HEADER_NAME;
+                return otava::token::QUOTE_HEADER_NAME;
                 break;
             }
             case 7:
             {
                 lexer.Retract();
-                return COLON_COLON;
+                return otava::token::COLON_COLON;
                 break;
             }
             case 8:
             {
                 lexer.Retract();
-                return COMMA;
+                return otava::token::COMMA;
                 break;
             }
             case 9:
             {
                 lexer.Retract();
-                return ASSIGN;
+                return otava::token::ASSIGN;
                 break;
             }
             case 10:
             {
                 lexer.Retract();
-                return MUL_ASSIGN;
+                return otava::token::MUL_ASSIGN;
                 break;
             }
             case 11:
             {
                 lexer.Retract();
-                return DIV_ASSIGN;
+                return otava::token::DIV_ASSIGN;
                 break;
             }
             case 12:
             {
                 lexer.Retract();
-                return REM_ASSIGN;
+                return otava::token::REM_ASSIGN;
                 break;
             }
             case 13:
             {
                 lexer.Retract();
-                return ADD_ASSIGN;
+                return otava::token::ADD_ASSIGN;
                 break;
             }
             case 14:
             {
                 lexer.Retract();
-                return SUB_ASSIGN;
+                return otava::token::SUB_ASSIGN;
                 break;
             }
             case 15:
             {
                 lexer.Retract();
-                return SHIFT_RIGHT_ASSIGN;
+                return otava::token::SHIFT_RIGHT_ASSIGN;
                 break;
             }
             case 16:
             {
                 lexer.Retract();
-                return SHIFT_LEFT_ASSIGN;
+                return otava::token::SHIFT_LEFT_ASSIGN;
                 break;
             }
             case 17:
             {
                 lexer.Retract();
-                return AND_ASSIGN;
+                return otava::token::AND_ASSIGN;
                 break;
             }
             case 18:
             {
                 lexer.Retract();
-                return XOR_ASSIGN;
+                return otava::token::XOR_ASSIGN;
                 break;
             }
             case 19:
             {
                 lexer.Retract();
-                return OR_ASSIGN;
+                return otava::token::OR_ASSIGN;
                 break;
             }
             case 20:
             {
                 lexer.Retract();
-                return QUEST;
+                return otava::token::QUEST;
                 break;
             }
             case 21:
             {
                 lexer.Retract();
-                return COLON;
+                return otava::token::COLON;
                 break;
             }
             case 22:
             {
                 lexer.Retract();
-                return OR_OR;
+                return otava::token::OR_OR;
                 break;
             }
             case 23:
             {
                 lexer.Retract();
-                return AMP_AMP;
+                return otava::token::AMP_AMP;
                 break;
             }
             case 24:
             {
                 lexer.Retract();
-                return OR;
+                return otava::token::OR;
                 break;
             }
             case 25:
             {
                 lexer.Retract();
-                return XOR;
+                return otava::token::XOR;
                 break;
             }
             case 26:
             {
                 lexer.Retract();
-                return AMP;
+                return otava::token::AMP;
                 break;
             }
             case 27:
             {
                 lexer.Retract();
-                return EQ;
+                return otava::token::EQ;
                 break;
             }
             case 28:
             {
                 lexer.Retract();
-                return NEQ;
+                return otava::token::NEQ;
                 break;
             }
             case 29:
             {
                 lexer.Retract();
-                return LEQ;
+                return otava::token::LEQ;
                 break;
             }
             case 30:
             {
                 lexer.Retract();
-                return GEQ;
+                return otava::token::GEQ;
                 break;
             }
             case 31:
             {
                 lexer.Retract();
-                return SPACE_SHIP;
+                return otava::token::SPACE_SHIP;
                 break;
             }
             case 32:
             {
                 lexer.Retract();
-                return LANGLE;
+                return otava::token::LANGLE;
                 break;
             }
             case 33:
             {
                 lexer.Retract();
-                return RANGLE;
+                return otava::token::RANGLE;
                 break;
             }
             case 34:
             {
                 lexer.Retract();
-                return SHIFT_LEFT;
+                return otava::token::SHIFT_LEFT;
                 break;
             }
             case 35:
             {
                 lexer.Retract();
-                return SHIFT_RIGHT;
+                return otava::token::SHIFT_RIGHT;
                 break;
             }
             case 36:
             {
                 lexer.Retract();
-                return PLUS;
+                return otava::token::PLUS;
                 break;
             }
             case 37:
             {
                 lexer.Retract();
-                return MINUS;
+                return otava::token::MINUS;
                 break;
             }
             case 38:
             {
                 lexer.Retract();
-                return STAR;
+                return otava::token::STAR;
                 break;
             }
             case 39:
             {
                 lexer.Retract();
-                return DIV;
+                return otava::token::DIV;
                 break;
             }
             case 40:
             {
                 lexer.Retract();
-                return MOD;
+                return otava::token::MOD;
                 break;
             }
             case 41:
             {
                 lexer.Retract();
-                return DOT_STAR;
+                return otava::token::DOT_STAR;
                 break;
             }
             case 42:
             {
                 lexer.Retract();
-                return ARROW_STAR;
+                return otava::token::ARROW_STAR;
                 break;
             }
             case 43:
             {
                 lexer.Retract();
-                return LPAREN;
+                return otava::token::LPAREN;
                 break;
             }
             case 44:
             {
                 lexer.Retract();
-                return RPAREN;
+                return otava::token::RPAREN;
                 break;
             }
             case 45:
             {
                 lexer.Retract();
-                return PLUS_PLUS;
+                return otava::token::PLUS_PLUS;
                 break;
             }
             case 46:
             {
                 lexer.Retract();
-                return MINUS_MINUS;
+                return otava::token::MINUS_MINUS;
                 break;
             }
             case 47:
             {
                 lexer.Retract();
-                return EXCLAMATION;
+                return otava::token::EXCLAMATION;
                 break;
             }
             case 48:
             {
                 lexer.Retract();
-                return TILDE;
+                return otava::token::TILDE;
                 break;
             }
             case 49:
             {
                 lexer.Retract();
-                return LBRACKET;
+                return otava::token::LBRACKET;
                 break;
             }
             case 50:
             {
                 lexer.Retract();
-                return RBRACKET;
+                return otava::token::RBRACKET;
                 break;
             }
             case 51:
             {
                 lexer.Retract();
-                return DOT;
+                return otava::token::DOT;
                 break;
             }
             case 52:
             {
                 lexer.Retract();
-                return ARROW;
+                return otava::token::ARROW;
                 break;
             }
             case 53:
             {
                 lexer.Retract();
-                return SEMICOLON;
+                return otava::token::SEMICOLON;
                 break;
             }
             case 54:
             {
                 lexer.Retract();
-                return ELLIPSIS;
+                return otava::token::ELLIPSIS;
                 break;
             }
             case 55:
             {
                 lexer.Retract();
-                return LBRACE;
+                return otava::token::LBRACE;
                 break;
             }
             case 56:
             {
                 lexer.Retract();
-                return RBRACE;
+                return otava::token::RBRACE;
                 break;
             }
             case 57:
             {
                 lexer.Retract();
-                return HASH;
+                return otava::token::HASH;
                 break;
             }
         }
@@ -12318,9 +12318,16 @@ struct PPLexer
 };
 
 template<typename Char>
-ClassMap<Char>* GetClassMap()
+soul::lexer::ClassMap<Char>* GetClassMap()
 {
-    static ClassMap<Char>* classmap = MakeClassMap<Char>("otava.pp.lexer.classmap");
+    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("otava.pp.lexer.classmap");
+    return classmap;
+}
+
+template<typename Char>
+soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)
+{
+    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "otava.pp.lexer.classmap", resourceFlags);
     return classmap;
 }
 
@@ -12345,6 +12352,17 @@ soul::lexer::Lexer<PPLexer<Char>, Char> MakeLexer(const Char* start, const Char*
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<PPLexer<Char>, Char>(start, end, fileName);
     lexer.SetClassMap(GetClassMap<Char>());
+    lexer.SetTokenCollection(GetTokens());
+    lexer.SetKeywordMap(GetKeywords<Char>());
+    return lexer;
+}
+
+template<typename Char>
+soul::lexer::Lexer<PPLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName)
+{
+    std::lock_guard<std::mutex> lock(MakeLexerMtx());
+    auto lexer = soul::lexer::Lexer<PPLexer<Char>, Char>(start, end, fileName);
+    lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags));
     lexer.SetTokenCollection(GetTokens());
     lexer.SetKeywordMap(GetKeywords<Char>());
     return lexer;

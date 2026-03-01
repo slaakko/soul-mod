@@ -54,11 +54,13 @@ Symbol* ClassGroupSymbol::GetSingleSymbol() noexcept
 {
     if (classes.size() == 1)
     {
-        return classes.front();
+        Symbol* front = classes.front();
+        return front;
     }
     else if (forwardDeclarations.size() == 1)
     {
-        return forwardDeclarations.front();
+        Symbol* front = forwardDeclarations.front();
+        return front;
     }
     else
     {

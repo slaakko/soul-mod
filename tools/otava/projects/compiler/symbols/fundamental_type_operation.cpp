@@ -505,7 +505,10 @@ void FundamentalTypeDefaultCtor::Resolve(SymbolTable& symbolTable, Context* cont
         {
             note = ": note: requester module is " + requesterModule->Name();
         }
-        std::cout << "FundamentalTypeDefaultCtor::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+        if (!context->GetFlag(ContextFlags::noWarnings))
+        {
+            std::cout << "FundamentalTypeDefaultCtor::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+        }
     }
 }
 
@@ -564,7 +567,10 @@ void FundamentalTypeCopyCtor::Resolve(SymbolTable& symbolTable, Context* context
         {
             note = ": note: requester module is " + requesterModule->Name();
         }
-        std::cout << "FundamentalTypeCopyCtor::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+        if (!context->GetFlag(ContextFlags::noWarnings))
+        {
+            std::cout << "FundamentalTypeCopyCtor::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+        }
     }
 }
 
@@ -620,7 +626,10 @@ void FundamentalTypeMoveCtor::Resolve(SymbolTable& symbolTable, Context* context
         {
             note = ": note: requester module is " + requesterModule->Name();
         }
-        std::cout << "FundamentalTypeMoveCtor::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+        if (!context->GetFlag(ContextFlags::noWarnings))
+        {
+            std::cout << "FundamentalTypeMoveCtor::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+        }
     }
 }
 
@@ -679,7 +688,10 @@ void FundamentalTypeCopyAssignment::Resolve(SymbolTable& symbolTable, Context* c
         {
             note = ": note: requester module is " + requesterModule->Name();
         }
-        std::cout << "FundamentalTypeCopyAssignment::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+        if (!context->GetFlag(ContextFlags::noWarnings))
+        {
+            std::cout << "FundamentalTypeCopyAssignment::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+        }
     }
 }
 
@@ -732,7 +744,10 @@ void FundamentalTypeMoveAssignment::Resolve(SymbolTable& symbolTable, Context* c
         {
             note = ": note: requester module is " + requesterModule->Name();
         }
-        std::cout << "FundamentalTypeMoveAssignment::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+        if (!context->GetFlag(ContextFlags::noWarnings))
+        {
+            std::cout << "FundamentalTypeMoveAssignment::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+        }
     }
 }
 

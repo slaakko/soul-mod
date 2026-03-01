@@ -375,7 +375,10 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
             {
                 note = ": note: requester module is " + requesterModule->Name();
             }
-            std::cout << "ClassTypeSymbol::Resolve(): warning: specialization type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+            if (!context->GetFlag(ContextFlags::noWarnings))
+            {
+                std::cout << "ClassTypeSymbol::Resolve(): warning: specialization type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+            }
         }
     }
     for (const auto& tid : objectLayoutIds)
@@ -393,7 +396,10 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
             {
                 note = ": note: requester module is " + requesterModule->Name();
             }
-            std::cout << "ClassTypeSymbol::Resolve(): warning: object layout type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+            if (!context->GetFlag(ContextFlags::noWarnings))
+            {
+                std::cout << "ClassTypeSymbol::Resolve(): warning: object layout type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
+            }
         }
     }
     for (const auto& fnIndexId : functionIdMap)

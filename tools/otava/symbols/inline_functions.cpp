@@ -62,7 +62,10 @@ FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::S
     }
     else
     {
-        std::cout << "warning: function '" << util::ToUtf8(fn->FullName()) + "' not inlined because node not found" << "\n";
+        if (!context->GetFlag(ContextFlags::noWarnings))
+        {
+            std::cout << "warning: function '" << util::ToUtf8(fn->FullName()) + "' not inlined because node not found" << "\n";
+        }
         return fn;
     }
     if (node->IsFunctionDefinitionNode())

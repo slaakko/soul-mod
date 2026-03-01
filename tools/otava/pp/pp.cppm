@@ -10,9 +10,6 @@ import soul.lexer;
 
 export namespace otava::pp {
 
-using Lexer = soul::lexer::Lexer<otava::lexer::OtavaLexer<char32_t>, char32_t>;
-using Token = Lexer::TokenType;
-
-void PreprocessPPLine(Lexer& lexer, Token& token);
+void PreprocessPPLine(soul::lexer::Lexer<otava::lexer::OtavaLexer<char32_t>, char32_t>* lexer, soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>* token);
 
 } // namespace soul::cpp20::pp
