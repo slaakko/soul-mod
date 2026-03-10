@@ -23,6 +23,7 @@ ConceptDefinitionNode::ConceptDefinitionNode(const soul::ast::SourcePos& sourceP
 Node* ConceptDefinitionNode::Clone() const
 {
     ConceptDefinitionNode* clone = new ConceptDefinitionNode(GetSourcePos(), conceptName->Clone(), assign->Clone(), constraintExpr->Clone(), semicolon->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -66,6 +67,7 @@ Node* RequiresExprNode::Clone() const
         clonedParams = params->Clone();
     }
     RequiresExprNode* clone = new RequiresExprNode(GetSourcePos(), clonedParams, body->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -101,6 +103,7 @@ Node* RequirementBodyNode::Clone() const
     }
     clone->SetLBracePos(lbPos);
     clone->SetRBracePos(rbPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -146,6 +149,7 @@ SimpleRequirementNode::SimpleRequirementNode(const soul::ast::SourcePos& sourceP
 Node* SimpleRequirementNode::Clone() const
 {
     SimpleRequirementNode* clone = new SimpleRequirementNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -171,6 +175,7 @@ Node* TypeRequirementNode::Clone() const
         clonedNns = nns->Clone();
     }
     TypeRequirementNode* clone = new TypeRequirementNode(GetSourcePos(), clonedNns, typeName->Clone(), semicolon->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -219,6 +224,7 @@ Node* CompoundRequirementNode::Clone() const
         clonedReturnTypeRequirement = returnTypeRequirement->Clone();
     }
     CompoundRequirementNode* clone = new CompoundRequirementNode(GetSourcePos(), expr->Clone(), clonedNoExcept, clonedReturnTypeRequirement, semicolon->Clone(), lbPos, rbPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -262,6 +268,7 @@ ReturnTypeRequirementNode::ReturnTypeRequirementNode(const soul::ast::SourcePos&
 Node* ReturnTypeRequirementNode::Clone() const
 {
     ReturnTypeRequirementNode* clone = new ReturnTypeRequirementNode(GetSourcePos(), Child()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -283,6 +290,7 @@ NestedRequirementNode::NestedRequirementNode(const soul::ast::SourcePos& sourceP
 Node* NestedRequirementNode::Clone() const
 {
     NestedRequirementNode* clone = new NestedRequirementNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -308,6 +316,7 @@ Node* TypeConstraintNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -356,6 +365,7 @@ RequiresClauseNode::RequiresClauseNode(const soul::ast::SourcePos& sourcePos_, N
 Node* RequiresClauseNode::Clone() const
 {
     RequiresClauseNode* clone = new RequiresClauseNode(GetSourcePos(), Child()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 

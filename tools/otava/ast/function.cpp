@@ -47,6 +47,7 @@ Node* FunctionDefinitionNode::Clone() const
     }
     FunctionDefinitionNode* clone = new FunctionDefinitionNode(GetSourcePos(), clonedAttributes, clonedDeclSpecifiers, declarator->Clone(), clonedSpecifiers, 
         functionBody->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -92,6 +93,7 @@ FunctionBodyNode::FunctionBodyNode(const soul::ast::SourcePos& sourcePos_, Node*
 Node* FunctionBodyNode::Clone() const
 {
     FunctionBodyNode* clone = new FunctionBodyNode(GetSourcePos(), Child()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -107,6 +109,7 @@ DefaultNode::DefaultNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node
 Node* DefaultNode::Clone() const
 {
     DefaultNode* clone = new DefaultNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -122,6 +125,7 @@ DeleteNode::DeleteNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(N
 Node* DeleteNode::Clone() const
 {
     DeleteNode* clone = new DeleteNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -143,6 +147,7 @@ DefaultedOrDeletedFunctionNode::DefaultedOrDeletedFunctionNode(const soul::ast::
 Node* DefaultedOrDeletedFunctionNode::Clone() const
 {
     DefaultedOrDeletedFunctionNode* clone = new DefaultedOrDeletedFunctionNode(GetSourcePos(), assign->Clone(), defaultOrDelete->Clone(), semicolon->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -186,6 +191,7 @@ Node* NoDeclSpecFunctionDeclarationNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     NoDeclSpecFunctionDeclarationNode* clone = new NoDeclSpecFunctionDeclarationNode(GetSourcePos(), clonedAttributes, declarator->Clone(), semicolon->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -217,6 +223,7 @@ OperatorNode::OperatorNode(const soul::ast::SourcePos& sourcePos_) noexcept : No
 Node* OperatorNode::Clone() const 
 {
     OperatorNode* clone = new OperatorNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -237,6 +244,7 @@ NewArrayOpNode::NewArrayOpNode(const soul::ast::SourcePos& sourcePos_, const sou
 Node* NewArrayOpNode::Clone() const
 {
     NewArrayOpNode* clone = new NewArrayOpNode(GetSourcePos(), lbPos, rbPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -267,6 +275,7 @@ NewOpNode::NewOpNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(Nod
 Node* NewOpNode::Clone() const
 {
     NewOpNode* clone = new NewOpNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -287,6 +296,7 @@ DeleteArrayOpNode::DeleteArrayOpNode(const soul::ast::SourcePos& sourcePos_, con
 Node* DeleteArrayOpNode::Clone() const
 {
     DeleteArrayOpNode* clone = new DeleteArrayOpNode(GetSourcePos(), lbPos, rbPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -316,6 +326,7 @@ DeleteOpNode::DeleteOpNode(const soul::ast::SourcePos& sourcePos_) noexcept : No
 Node* DeleteOpNode::Clone() const
 {
     DeleteOpNode* clone = new DeleteOpNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -331,6 +342,7 @@ CoAwaitOpNode::CoAwaitOpNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
 Node* CoAwaitOpNode::Clone() const
 {
     CoAwaitOpNode* clone = new CoAwaitOpNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -346,6 +358,7 @@ InvokeOpNode::InvokeOpNode(const soul::ast::SourcePos& sourcePos_) noexcept : No
 Node* InvokeOpNode::Clone() const
 {
     InvokeOpNode* clone = new InvokeOpNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -361,6 +374,7 @@ SubscriptOpNode::SubscriptOpNode(const soul::ast::SourcePos& sourcePos_) noexcep
 Node* SubscriptOpNode::Clone() const
 {
     SubscriptOpNode* clone = new SubscriptOpNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -381,12 +395,20 @@ OperatorFunctionIdNode::OperatorFunctionIdNode(const soul::ast::SourcePos& sourc
 Node* OperatorFunctionIdNode::Clone() const
 {
     OperatorFunctionIdNode* clone = new OperatorFunctionIdNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
 void OperatorFunctionIdNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+std::u32string OperatorFunctionIdNode::Str() const
+{
+    std::u32string str = Left()->Str();
+    str.append(1, ' ').append(Right()->Str());
+    return str;
 }
 
 ConversionFunctionIdNode::ConversionFunctionIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
@@ -402,12 +424,20 @@ ConversionFunctionIdNode::ConversionFunctionIdNode(const soul::ast::SourcePos& s
 Node* ConversionFunctionIdNode::Clone() const
 {
     ConversionFunctionIdNode* clone = new ConversionFunctionIdNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
 void ConversionFunctionIdNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+std::u32string ConversionFunctionIdNode::Str() const
+{
+    std::u32string str = Left()->Str();
+    str.append(1, ' ').append(Right()->Str()).append(U"()");
+    return str;
 }
 
 ConversionTypeIdNode::ConversionTypeIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::conversionTypeIdNode, sourcePos_)
@@ -427,6 +457,7 @@ Node* ConversionTypeIdNode::Clone() const
         clonedConversionDeclarator = conversionDeclarator->Clone();
     }
     ConversionTypeIdNode* clone = new ConversionTypeIdNode(GetSourcePos(), typeSpecifierSeq->Clone(), clonedConversionDeclarator);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -466,6 +497,7 @@ Node* ConversionDeclaratorNode::Clone() const
         clonedConversionDeclarator = conversionDeclarator->Clone();
     }
     ConversionDeclaratorNode* clone = new ConversionDeclaratorNode(GetSourcePos(), ptrOp->Clone(), clonedConversionDeclarator);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -499,6 +531,7 @@ DestructorIdNode::DestructorIdNode(const soul::ast::SourcePos& sourcePos_, Node*
 Node* DestructorIdNode::Clone() const
 {
     DestructorIdNode* clone = new DestructorIdNode(GetSourcePos(), Child()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -531,6 +564,7 @@ Node* ParameterNode::Clone() const
     {
         clone->SetInitializer(initializer->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -597,6 +631,7 @@ Node* ParameterListNode::Clone() const
     }
     clone->SetLParenPos(lpPos);
     clone->SetRParenPos(rpPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -626,6 +661,7 @@ NoexceptNode::NoexceptNode(const soul::ast::SourcePos& sourcePos_) noexcept : No
 Node* NoexceptNode::Clone() const
 {
     NoexceptNode* clone = new NoexceptNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -651,6 +687,7 @@ Node* FunctionTryBlockNode::Clone() const
         clonedCtorInitializer = ctorInitializer->Clone();
     }
     FunctionTryBlockNode* clone = new FunctionTryBlockNode(GetSourcePos(), clonedCtorInitializer, tryBlock->Clone(), handlers->Clone());
+    clone->SetId(Id());
     return clone;
 }
 

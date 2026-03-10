@@ -49,6 +49,7 @@ class BoundMemberExprNode;
 class BoundFunctionCallNode;
 class BoundEmptyFunctionCallNode;
 class BoundFunctionPtrCallNode;
+class BoundInvokeNode;
 class BoundExpressionSequenceNode;
 class BoundExpressionListNode;
 class BoundConjunctionNode;
@@ -67,7 +68,6 @@ class BoundGlobalVariableDefinitionNode;
 class BoundEmptyDestructorNode;
 class BoundFunctionValueNode;
 class BoundVariableAsVoidPtrNode;
-class BoundNamespaceExpression;
 class BoundOperatorFnNode;
 
 class BoundTreeVisitor
@@ -114,6 +114,7 @@ public:
     virtual void Visit(BoundFunctionCallNode& node) {}
     virtual void Visit(BoundEmptyFunctionCallNode& node) {}
     virtual void Visit(BoundFunctionPtrCallNode& node) {}
+    virtual void Visit(BoundInvokeNode& node) {}
     virtual void Visit(BoundExpressionSequenceNode& node) {}
     virtual void Visit(BoundExpressionListNode& node) {}
     virtual void Visit(BoundConjunctionNode& node) {}
@@ -132,7 +133,6 @@ public:
     virtual void Visit(BoundEmptyDestructorNode& node) {}
     virtual void Visit(BoundFunctionValueNode& node) {}
     virtual void Visit(BoundVariableAsVoidPtrNode& node) {}
-    virtual void Visit(BoundNamespaceExpression& node) {}
     virtual void Visit(BoundOperatorFnNode& node) {}
 };
 

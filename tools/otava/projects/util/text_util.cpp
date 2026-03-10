@@ -580,6 +580,8 @@ std::string Format(const std::string& s, int width, FormatWidth fw, FormatJustif
     return result;
 }
 
+/*
+
 std::string PlatformStringToUtf8(const std::string& platformString)
 {
     if (platformString.empty()) return std::string();
@@ -598,5 +600,6 @@ std::string Utf8StringToPlatformString(const std::string& utf8String)
     int result = ort_utf16_string_to_platform_string(utf16.c_str(), buf.get(), bufSize);
     return std::string(buf.get());
 }
+*/
 
 } // util

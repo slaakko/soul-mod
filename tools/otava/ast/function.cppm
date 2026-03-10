@@ -104,6 +104,7 @@ public:
     OperatorNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"operator"; }
 };
 
 class NewArrayOpNode : public CompoundNode
@@ -117,6 +118,7 @@ public:
     void Read(Reader& reader) override;
     inline const soul::ast::SourcePos& LBracketPos() const noexcept { return lbPos; }
     inline const soul::ast::SourcePos& RBracketPos() const noexcept { return rbPos; }
+    std::u32string Str() const override { return U"new[]"; }
 private:
     soul::ast::SourcePos lbPos;
     soul::ast::SourcePos rbPos;
@@ -128,6 +130,7 @@ public:
     NewOpNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"new"; }
 };
 
 class DeleteArrayOpNode : public CompoundNode
@@ -141,6 +144,7 @@ public:
     void Read(Reader& reader) override;
     inline const soul::ast::SourcePos& LBracketPos() const noexcept { return lbPos; }
     inline const soul::ast::SourcePos& RBracketPos() const noexcept { return rbPos; }
+    std::u32string Str() const override { return U"delete[]"; }
 private:
     soul::ast::SourcePos lbPos;
     soul::ast::SourcePos rbPos;
@@ -152,6 +156,7 @@ public:
     DeleteOpNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"delete"; }
 };
 
 class CoAwaitOpNode : public Node
@@ -160,6 +165,7 @@ public:
     CoAwaitOpNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"co_await"; }
 };
 
 class InvokeOpNode : public Node
@@ -168,6 +174,7 @@ public:
     InvokeOpNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"()"; }
 };
 
 class SubscriptOpNode : public Node
@@ -176,6 +183,7 @@ public:
     SubscriptOpNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"[]"; }
 };
 
 class OperatorFunctionIdNode : public BinaryNode
@@ -185,6 +193,7 @@ public:
     OperatorFunctionIdNode(const soul::ast::SourcePos& sourcePos_, Node* operatorKwNode_, Node* op_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override;
 };
 
 class ConversionFunctionIdNode : public BinaryNode
@@ -194,6 +203,7 @@ public:
     ConversionFunctionIdNode(const soul::ast::SourcePos& sourcePos_, Node* operatorKwNode_, Node* conversionTypeId_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override;
 };
 
 class ConversionTypeIdNode : public CompoundNode

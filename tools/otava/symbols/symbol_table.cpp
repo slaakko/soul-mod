@@ -1243,7 +1243,8 @@ void SymbolTable::RemoveNode(otava::ast::Node* node)
 
 void SymbolTable::RemoveSymbol(Symbol* symbol)
 {
-    if (ProjectReady() || soul::lexer::parsing_error_thrown || ExceptionThrown() || otava::ast::ExceptionThrown() || otava::intermediate::ExceptionThrown()) return;
+    if (ProjectReady() || soul::lexer::parsing_error_thrown || ExceptionThrown() || otava::ast::ExceptionThrown() || 
+        otava::intermediate::ExceptionThrown() || otava::optimizer::ExceptionThrown() || otava::assembly::ExceptionThrown()) return;
     otava::ast::Node* node = nullptr;
     auto it = symbolNodeMap.find(symbol);
     if (it != symbolNodeMap.end())

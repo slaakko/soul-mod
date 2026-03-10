@@ -23,6 +23,7 @@ IdentifierNode::IdentifierNode(const soul::ast::SourcePos& sourcePos_, const std
 Node* IdentifierNode::Clone() const
 {
     IdentifierNode* clone = new IdentifierNode(GetSourcePos(), str);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -50,6 +51,7 @@ UnnamedNode::UnnamedNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node
 Node* UnnamedNode::Clone() const
 {
     UnnamedNode* clone = new UnnamedNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -65,6 +67,7 @@ ColonColonNode::ColonColonNode(const soul::ast::SourcePos& sourcePos_) noexcept 
 Node* ColonColonNode::Clone() const
 {
     ColonColonNode* clone = new ColonColonNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -84,6 +87,7 @@ Node* NestedNameSpecifierNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -104,6 +108,7 @@ QualifiedIdNode::QualifiedIdNode(const soul::ast::SourcePos& sourcePos_, Node* n
 Node* QualifiedIdNode::Clone() const
 {
     QualifiedIdNode* clone = new QualifiedIdNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -123,6 +128,7 @@ Node* IdentifierListNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -142,6 +148,7 @@ ModuleNameNode::ModuleNameNode(const soul::ast::SourcePos& sourcePos_, const std
 Node* ModuleNameNode::Clone() const
 {
     ModuleNameNode* clone = new ModuleNameNode(GetSourcePos(), str);
+    clone->SetId(Id());
     return clone;
 }
 

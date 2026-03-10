@@ -229,7 +229,7 @@ DependentTypeSymbol::DependentTypeSymbol(otava::ast::Node* node_) : TypeSymbol(S
     if (node->IsTypenameSpecifierNode())
     {
         otava::ast::TypenameSpecifierNode* s = static_cast<otava::ast::TypenameSpecifierNode*>(node.get());
-        SetName(s->Id()->Str());
+        SetName(s->GetId()->Str());
     }
 }
 

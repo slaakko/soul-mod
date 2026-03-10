@@ -24,7 +24,7 @@ public:
     inline pointer get() const noexcept { return ptr; }
     inline explicit operator bool() const noexcept { return ptr != nullptr; }
     inline pointer release() noexcept { pointer p = ptr; ptr = nullptr; return p; }
-    inline void reset(pointer p) noexcept { if (ptr) delete ptr; ptr = p; }
+    void reset(pointer p) noexcept { if (ptr) delete ptr; ptr = p; }
     inline void reset() noexcept { if (ptr) delete ptr; ptr = nullptr; }
     unique_ptr(const unique_ptr&) = delete;
     unique_ptr& operator=(const unique_ptr&) = delete;

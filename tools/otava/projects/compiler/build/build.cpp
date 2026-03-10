@@ -261,8 +261,9 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     }
     std::set<std::string> configurations;
     ConfigureProject(project, config, (flags & BuildFlags::verbose) != BuildFlags::none, configurations);
-    std::string moduleDirPath = otava::symbols::MakeModuleDirPath(project->Root(), config, otava::symbols::GetOptLevel(optLevel,
-        configurations.find("release") != configurations.end()), configurations);
+    bool releaseCfg = configurations.find("release") != configurations.end();
+    int olevel = otava::symbols::GetOptLevel(optLevel, releaseCfg);
+    std::string moduleDirPath = otava::symbols::MakeModuleDirPath(project->Root(), config, olevel, configurations);
     util::uuid projectId = otava::symbols::MakeProjectId(project->Name());
     if ((flags & BuildFlags::seed) != BuildFlags::none)
     {
@@ -567,8 +568,9 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
             module->ToXml(xmlFilePath);
         }
         moduleMapper.AddModule(project->ReleaseModule(file));
+        bool verbose = (flags & BuildFlags::verbose) != BuildFlags::none;
         std::string asmFileName = otava::codegen::GenerateCode(
-            context, config, optLevel, (flags & BuildFlags::verbose) != BuildFlags::none,
+            context, config, optLevel, verbose,
             mainFunctionIrName, mainFunctionParams, false, std::vector<std::string>(), configurations);
         project->Index().import(module->GetSymbolTable()->ClassIndex());
         module->Write(project->Root(), config, optLevel, &context, configurations);
@@ -666,9 +668,9 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
             interfaceUnitModule->AddImplementationUnit(module);
             moduleMapper.AddModule(project->ReleaseModule(file));
         }
+        bool verbose = (flags & BuildFlags::verbose) != BuildFlags::none;
         std::string asmFileName = otava::codegen::GenerateCode(
-            context, config, optLevel, (flags & BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams,
-            false, std::vector<std::string>(), configurations);
+            context, config, optLevel, verbose, mainFunctionIrName, mainFunctionParams, false, std::vector<std::string>(), configurations);
         project->Index().import(module->GetSymbolTable()->ClassIndex());
         asmFileNames.push_back(asmFileName);
         otava::symbols::BoundFunctionNode* initFn = context.GetBoundCompileUnit()->GetCompileUnitInitializationFunction();
@@ -714,8 +716,9 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         otava::symbols::TraceBin traceBin;
         for (const auto& referencedProject : project->ReferencedProjects())
         {
-            std::string moduleDirPath = otava::symbols::MakeModuleDirPath(referencedProject->Root(), config,
-                otava::symbols::GetOptLevel(optLevel, configurations.find("release") != configurations.end()), configurations);
+            bool releaseCfg = configurations.find("release") != configurations.end();
+            int olevel = otava::symbols::GetOptLevel(optLevel, releaseCfg);
+            std::string moduleDirPath = otava::symbols::MakeModuleDirPath(referencedProject->Root(), config, olevel, configurations);
             referencedProject->ReadTraceInfo(moduleDirPath);
             if (referencedProject->HasDefine("TRACE"))
             {

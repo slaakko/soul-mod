@@ -22,6 +22,7 @@ Node* TypeSpecifierSequenceNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -47,6 +48,7 @@ Node* TypenameSpecifierNode::Clone() const
         clonedTemplateNode = templateNode->Clone();
     }
     TypenameSpecifierNode* clone = new TypenameSpecifierNode(GetSourcePos(), nns->Clone(), id->Clone(), clonedTemplateNode);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -88,6 +90,7 @@ Node* TypeIdNode::Clone() const
         clonedDeclarator = declarator->Clone();
     }
     TypeIdNode* clone = new TypeIdNode(GetSourcePos(), typeSpecifiers->Clone(), clonedDeclarator);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -110,6 +113,30 @@ void TypeIdNode::Read(Reader& reader)
     declarator.reset(reader.ReadNode());
 }
 
+std::u32string TypeIdNode::Str() const
+{
+    std::u32string str;
+    bool first = true;
+    if (typeSpecifiers->IsTypeSpecifierSequenceNode())
+    {
+        TypeSpecifierSequenceNode* sequence = static_cast<TypeSpecifierSequenceNode*>(typeSpecifiers.get());
+        for (const auto& typeSpecifier : sequence->Nodes())
+        {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                str.append(1, ' ');
+            }
+            str.append(typeSpecifier->Str());
+        }
+        str.append(declarator->Str());
+    }
+    return str;
+}
+
 DefiningTypeIdNode::DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::definingTypeIdNode, sourcePos_)
 {
 }
@@ -127,6 +154,7 @@ Node* DefiningTypeIdNode::Clone() const
         clonedDeclarator = abstractDeclarator->Clone();
     }
     DefiningTypeIdNode* clone = new DefiningTypeIdNode(GetSourcePos(), definingTypeSpecifiers->Clone(), clonedDeclarator);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -161,6 +189,7 @@ Node* DefiningTypeSpecifierSequenceNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -181,6 +210,7 @@ TrailingReturnTypeNode::TrailingReturnTypeNode(const soul::ast::SourcePos& sourc
 Node* TrailingReturnTypeNode::Clone() const
 {
     TrailingReturnTypeNode* clone = new TrailingReturnTypeNode(GetSourcePos(), Child()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -207,6 +237,7 @@ Node* ElaboratedTypeSpecifierNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     ElaboratedTypeSpecifierNode* clone = new ElaboratedTypeSpecifierNode(GetSourcePos(), classKey->Clone(), id->Clone(), clonedAttributes);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -244,6 +275,7 @@ DeclTypeSpecifierNode::DeclTypeSpecifierNode(const soul::ast::SourcePos& sourceP
 Node* DeclTypeSpecifierNode::Clone() const
 {
     DeclTypeSpecifierNode* clone = new DeclTypeSpecifierNode(GetSourcePos(), expr->Clone(), lpPos, rpPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -286,7 +318,9 @@ Node* PlaceholderTypeSpecifierNode::Clone() const
     {
         clonedTypeConstraint = typeConstraint->Clone();
     }
-    return new PlaceholderTypeSpecifierNode(GetSourcePos(), clonedTypeConstraint, dtPos, autoPos, lpPos, rpPos);
+    PlaceholderTypeSpecifierNode* clone = new PlaceholderTypeSpecifierNode(GetSourcePos(), clonedTypeConstraint, dtPos, autoPos, lpPos, rpPos);
+    clone->SetId(Id());
+    return clone;
 }
 
 void PlaceholderTypeSpecifierNode::Accept(Visitor& visitor)

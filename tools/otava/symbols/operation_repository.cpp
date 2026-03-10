@@ -917,7 +917,7 @@ CopyRefOperation::CopyRefOperation() : Operation(U"@constructor", 2)
 FunctionSymbol* CopyRefOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     TypeSymbol* arg0Type = args[0]->GetType();
-    if (arg0Type->PointerCount() != 1) return nullptr;
+    if (arg0Type->PointerCount() < 1) return nullptr;
     TypeSymbol* type = arg0Type->RemovePointer(context);
     if (!type->IsReferenceType()) return nullptr;
     TypeSymbol* argType = args[1]->GetType();

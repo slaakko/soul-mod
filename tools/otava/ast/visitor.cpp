@@ -689,7 +689,7 @@ void DefaultVisitor::Visit(UsingDirectiveNode& node)
     }
     node.Using()->Accept(*this);
     node.Namespace()->Accept(*this);
-    node.Id()->Accept(*this);
+    node.GetId()->Accept(*this);
     node.Semicolon()->Accept(*this);
     EndVisit(node);
 }
@@ -1587,7 +1587,7 @@ void DefaultVisitor::Visit(MemberExprNode& node)
     BeginVisit(node);
     node.Child()->Accept(*this);
     node.Op()->Accept(*this);
-    node.Id()->Accept(*this);
+    node.GetId()->Accept(*this);
     EndVisit(node);
 }
 
@@ -3008,7 +3008,7 @@ void DefaultVisitor::Visit(TypenameSpecifierNode& node)
     {
         node.TemplateNode()->Accept(*this);
     }
-    node.Id()->Accept(*this);
+    node.GetId()->Accept(*this);
     EndVisit(node);
 }
 
@@ -3055,7 +3055,7 @@ void DefaultVisitor::Visit(ElaboratedTypeSpecifierNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    node.Id()->Accept(*this);
+    node.GetId()->Accept(*this);
     EndVisit(node);
 }
 

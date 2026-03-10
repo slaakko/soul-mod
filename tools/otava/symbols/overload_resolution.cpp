@@ -260,7 +260,7 @@ BoundExpressionNode* MakeLvalueExpression(BoundExpressionNode* arg, const soul::
     BoundVariableNode* backingStore = nullptr;
     if (context->GetBoundFunction())
     {
-        backingStore = new BoundVariableNode(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->CreateTemporary(arg->GetType()), sourcePos);
+        backingStore = new BoundVariableNode(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->CreateTemporary(arg->GetType(), -1), sourcePos);
     }
     return new BoundTemporaryNode(arg, backingStore, sourcePos);
 }
@@ -343,7 +343,7 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& fu
             }
             else if (conversionFun->GetFunctionKind() == FunctionKind::constructor)
             {
-                VariableSymbol* temporary = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->CreateTemporary(conversionFun->ConversionParamType());
+                VariableSymbol* temporary = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->CreateTemporary(conversionFun->ConversionParamType(), -1);
                 BoundVariableNode* boundTemporary = new BoundVariableNode(temporary, sourcePos);
                 BoundFunctionCallNode* constructorCall = new BoundFunctionCallNode(conversionFun, sourcePos, nullptr);
                 BoundAddressOfNode* temporaryArg = new BoundAddressOfNode(boundTemporary, sourcePos, temporary->GetType()->AddPointer(context));

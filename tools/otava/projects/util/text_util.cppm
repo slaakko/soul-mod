@@ -63,8 +63,8 @@ std::string Format(const std::string& s, int width, FormatJustify justify);
 std::string Format(const std::string& s, int width, FormatWidth fw);
 std::string Format(const std::string& s, int width, FormatWidth fw, FormatJustify justify);
 std::string Format(const std::string& s, int width, FormatWidth fw, FormatJustify justify, char fillChar);
-std::string PlatformStringToUtf8(const std::string& platformString);
-std::string Utf8StringToPlatformString(const std::string& utf8String);
+//std::string PlatformStringToUtf8(const std::string& platformString);
+//std::string Utf8StringToPlatformString(const std::string& utf8String);
 
 template<typename StringT>
 std::vector<StringT> Split(const StringT& s, typename StringT::value_type c)

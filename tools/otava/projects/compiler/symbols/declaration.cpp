@@ -504,7 +504,7 @@ void DeclarationProcessor::Visit(otava::ast::EnumSpecifierNode& node)
 
 void DeclarationProcessor::Visit(otava::ast::ElaboratedTypeSpecifierNode& node)
 {
-    type = ResolveType(node.Id(), DeclarationFlags::none, context, TypeResolverFlags::dontThrow);
+    type = ResolveType(node.GetId(), DeclarationFlags::none, context, TypeResolverFlags::dontThrow);
 }
 
 void DeclarationProcessor::Visit(otava::ast::InitConditionNode& node)

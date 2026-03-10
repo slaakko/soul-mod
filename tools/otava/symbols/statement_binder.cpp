@@ -797,6 +797,10 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
     {
         ThrowException("could not bind expression", node.Condition()->GetSourcePos(), context);
     }
+    if (condition->GetType()->IsReferenceType())
+    {
+        condition = new BoundDereferenceNode(condition, node.GetSourcePos(), condition->GetType()->PlainType(context));
+    }
     boundSwitchStatement->SetCondition(condition);
     context->PopFlags();
     context->PushSwitchCondType(condition->GetType());
@@ -1563,7 +1567,8 @@ void StatementBinder::Visit(otava::ast::TryStatementNode& node)
     {
         std::u32string tryBlockReturnStmtText;
         tryBlockReturnStmtText.append(U"if (").append(ehReturnFromVar).append(U" == std::eh_return_from::try_block && ").
-            append(childControlResultVar).append(U" == std::child_control_result::ret) return ").append(tryFnSymbol->ResultVarExprStr(resultType)).append(U";");
+            append(childControlResultVar).append(U" == std::child_control_result::ret) return ").
+            append(tryFnSymbol->ResultVarExprStr(resultType)).append(U";");
         std::unique_ptr<otava::ast::Node> tryBlockReturnFromStmt = ParseStatement(tryBlockReturnStmtText, context);
         invokeOrtTryBlock->AddNode(tryBlockReturnFromStmt.release());
     }
@@ -1571,7 +1576,8 @@ void StatementBinder::Visit(otava::ast::TryStatementNode& node)
     {
         std::u32string handlerBlockReturnStmtText;
         handlerBlockReturnStmtText.append(U"if (").append(ehReturnFromVar).append(U" == std::eh_return_from::handler_block && ").
-            append(childControlResultVar).append(U" == std::child_control_result::ret) return ").append(handlerFnSymbol->ResultVarExprStr(resultType)).append(U";");
+            append(childControlResultVar).append(U" == std::child_control_result::ret) return ").
+            append(handlerFnSymbol->ResultVarExprStr(resultType)).append(U";");
         std::unique_ptr<otava::ast::Node> handlerBlockReturnStmt = ParseStatement(handlerBlockReturnStmtText, context);
         invokeOrtTryBlock->AddNode(handlerBlockReturnStmt.release());
     }
@@ -2213,10 +2219,6 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
 #ifdef DEBUG_FUNCTIONS
     std::cout << ">" << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
 #endif
-    if (functionDefinitionSymbol->IrName(context) == "mfn_ExpressionBinder_Visit_9021B4C9753EE34F6900EACC6EA203370A667156")
-    {
-        int x = 0;
-    }
     functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
     context->PushStatementBinder(&binder);
@@ -2237,17 +2239,11 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
     {
         CheckFunctionReturnPaths(functionDefinitionNode, context);
     }
-    bool generate = false;
     bool skipInvokeChecking = functionDefinitionSymbol->SkipInvokeChecking();
     bool containsStatics = functionDefinitionSymbol->ContainsStatics();
-    bool containsNodeWithNoSource = functionDefinitionSymbol->ContainsNodeWithNoSource();
-    if (!functionDefinitionSymbol->IsNoExcept() && !skipInvokeChecking && functionDefinitionSymbol->ContainsLocalVariableWithDestructor() &&
-        !containsStatics && !containsNodeWithNoSource)
+    if (!functionDefinitionSymbol->IsNoExcept() && !skipInvokeChecking && !containsStatics && functionDefinitionSymbol->ContainsLocalVariableWithDestructor())
     {
-        context->GetSymbolTable()->BeginScopeGeneric(functionDefinitionSymbol->GetScope(), context);
-        std::unique_ptr<BoundCompoundStatementNode> newBody = MakeInvokesAndCleanups(functionDefinitionSymbol, context->GetBoundFunction()->Body(), context);
-        context->GetBoundFunction()->SetBody(newBody.release());
-        context->GetSymbolTable()->EndScopeGeneric(context);
+        MakeInvokesAndCleanups(context->GetBoundFunction(), context);
     }
 #ifdef DEBUG_FUNCTIONS
     std::cout << "<" << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";

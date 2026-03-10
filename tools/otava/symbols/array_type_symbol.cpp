@@ -140,6 +140,7 @@ ArrayTypeDefaultCtor::ArrayTypeDefaultCtor(ArrayTypeSymbol* arrayType_, Context*
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
     AddParameter(thisParam, soul::ast::SourcePos(), context);
+    SetNoExcept();
 }
 
 void ArrayTypeDefaultCtor::Write(Writer& writer)
@@ -208,6 +209,7 @@ ArrayTypeCopyCtor::ArrayTypeCopyCtor(ArrayTypeSymbol* arrayType_, Context* conte
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddConst(context)->AddLValueRef(context));
     AddParameter(thatParam, soul::ast::SourcePos(), context);
+    SetNoExcept();
 }
 
 void ArrayTypeCopyCtor::Write(Writer& writer)
@@ -351,6 +353,7 @@ ArrayTypeCopyAssignment::ArrayTypeCopyAssignment(ArrayTypeSymbol* arrayType_, Co
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddConst(context)->AddLValueRef(context));
     AddParameter(thatParam, soul::ast::SourcePos(), context);
     SetReturnType(arrayType->AddLValueRef(context), context);
+    SetNoExcept();
 }
 
 void ArrayTypeCopyAssignment::Write(Writer& writer)

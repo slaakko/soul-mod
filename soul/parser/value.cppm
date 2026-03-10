@@ -12,7 +12,7 @@ export namespace soul::parser {
 template<class T>
 struct Value
 {
-    inline Value(const T& value_) : value(value_) {}
+    Value(const T& value_) : value(value_) {}
     T value;
 };
 

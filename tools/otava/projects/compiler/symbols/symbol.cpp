@@ -624,6 +624,7 @@ SymbolGroupKind Symbol::GetSymbolGroupKind() const noexcept
         return SymbolGroupKind::functionSymbolGroup;
     }
     case SymbolKind::variableGroupSymbol:
+    case SymbolKind::variableSymbol:
     case SymbolKind::parameterSymbol:
     {
         return SymbolGroupKind::variableSymbolGroup;

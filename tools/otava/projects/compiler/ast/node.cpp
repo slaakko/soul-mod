@@ -43,11 +43,11 @@ std::string NodeTypeStr(NodeType nodeType)
 {
     switch (nodeType)
     {
-        case NodeType::compound: return "compound";
-        case NodeType::unary: return "unary";
-        case NodeType::binary: return "binary";
-        case NodeType::sequence: return "sequence";
-        case NodeType::list: return "list";
+    case NodeType::compound: return "compound";
+    case NodeType::unary: return "unary";
+    case NodeType::binary: return "binary";
+    case NodeType::sequence: return "sequence";
+    case NodeType::list: return "list";
     }
     return "single";
 }
@@ -380,6 +380,7 @@ std::string NodeKindStr(NodeKind nodeKind)
         case NodeKind::alignmentSpecifierNode: return "alignmentSpecifierNode";
         case NodeKind::pragmaNode: return "pragmaNode";
         case NodeKind::boundStatementNode: return "boundStatementNode";
+        case NodeKind::opNewCall: return "opNewCall";
     }
     return "<node>";
 }
@@ -595,11 +596,14 @@ struct AbstractNodeFactory
 };
 
 template<typename T>
+concept NodeClass = std::derived_from<T, Node>;
+
+template<NodeClass C>
 struct NodeFactory : AbstractNodeFactory
 {
     Node* CreateNode(const soul::ast::SourcePos& sourcePos) override
     {
-        return new T(sourcePos);
+        return new C(sourcePos);
     }
 };
 
@@ -622,8 +626,7 @@ NodeFactoryCollection& NodeFactoryCollection::Instance()
 
 NodeFactoryCollection::NodeFactoryCollection()
 {
-    std::uint16_t nodeCount = static_cast<std::uint16_t>(NodeKind::max);
-    factories.resize(nodeCount);
+    factories.resize(static_cast<std::uint16_t>(NodeKind::max));
     // Attribute:
     Register(NodeKind::attributeSpecifierSequenceNode, new NodeFactory<AttributeSpecifierSequenceNode>());
     Register(NodeKind::attributeSpecifierNode, new NodeFactory<AttributeSpecifierNode>());
@@ -791,6 +794,7 @@ NodeFactoryCollection::NodeFactoryCollection()
     Register(NodeKind::sizeOfUnaryExprNode, new NodeFactory<SizeOfUnaryExprNode>());
     Register(NodeKind::alignOfExprNode, new NodeFactory<AlignOfExprNode>());
     Register(NodeKind::noexceptExprNode, new NodeFactory<NoexceptExprNode>());
+    Register(NodeKind::opNewCall, new NodeFactory<OpNewCall>());
     Register(NodeKind::newExprNode, new NodeFactory<NewExprNode>());
     Register(NodeKind::newPlacementNode, new NodeFactory<NewPlacementNode>());
     Register(NodeKind::parenNewTypeIdNode, new NodeFactory<ParenNewTypeIdNode>());

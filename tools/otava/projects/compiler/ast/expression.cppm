@@ -546,6 +546,16 @@ private:
     soul::ast::SourcePos rpPos;
 };
 
+class OpNewCall : public UnaryNode
+{
+public:
+    OpNewCall(const soul::ast::SourcePos& sourcePos_) noexcept;
+    OpNewCall(const soul::ast::SourcePos& sourcePos_, Node* sizeArg_) noexcept;
+    Node* Clone() const override;
+    void Accept(Visitor& visitor) override;
+    std::u32string Str() const override;
+};
+
 class NewExprNode : public UnaryNode
 {
 public:
@@ -733,7 +743,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* Op() const noexcept { return op.get(); }
-    inline Node* Id() const noexcept { return id.get(); }
+    inline Node* GetId() const noexcept { return id.get(); }
     std::u32string Str() const override;
 private:
     std::unique_ptr<Node> op;

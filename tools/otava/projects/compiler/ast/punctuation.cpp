@@ -16,6 +16,7 @@ SemicolonNode::SemicolonNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
 Node* SemicolonNode::Clone() const
 {
     SemicolonNode* clone = new SemicolonNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -31,6 +32,7 @@ CommaNode::CommaNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(Nod
 Node* CommaNode::Clone() const
 {
     CommaNode* clone = new CommaNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -46,6 +48,7 @@ QuestNode::QuestNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(Nod
 Node* QuestNode::Clone() const
 {
     QuestNode* clone = new QuestNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -61,6 +64,7 @@ ColonNode::ColonNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(Nod
 Node* ColonNode::Clone() const
 {
     ColonNode* clone = new ColonNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -76,6 +80,7 @@ EllipsisNode::EllipsisNode(const soul::ast::SourcePos& sourcePos_) noexcept : No
 Node* EllipsisNode::Clone() const
 {
     EllipsisNode* clone = new EllipsisNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -91,6 +96,7 @@ LParenNode::LParenNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(N
 Node* LParenNode::Clone() const
 {
     LParenNode* clone = new LParenNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -106,6 +112,7 @@ RParenNode::RParenNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(N
 Node* RParenNode::Clone() const
 {
     RParenNode* clone = new RParenNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -121,6 +128,7 @@ LBracketNode::LBracketNode(const soul::ast::SourcePos& sourcePos_) noexcept : No
 Node* LBracketNode::Clone() const
 {
     LBracketNode* clone = new LBracketNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -136,6 +144,7 @@ RBracketNode::RBracketNode(const soul::ast::SourcePos& sourcePos_) noexcept : No
 Node* RBracketNode::Clone() const
 {
     RBracketNode* clone = new RBracketNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -151,6 +160,7 @@ LBraceNode::LBraceNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(N
 Node* LBraceNode::Clone() const
 {
     LBraceNode* clone = new LBraceNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -166,6 +176,7 @@ RBraceNode::RBraceNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(N
 Node* RBraceNode::Clone() const
 {
     RBraceNode* clone = new RBraceNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 

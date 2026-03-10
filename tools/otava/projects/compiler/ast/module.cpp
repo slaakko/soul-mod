@@ -41,6 +41,7 @@ Node* ModuleDeclarationNode::Clone() const
     }
     ModuleDeclarationNode* clone = new ModuleDeclarationNode(GetSourcePos(), clonedExport, modle->Clone(), moduleName->Clone(), clonedModulePartition,
         clonedAttributes, semicolon->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -89,6 +90,7 @@ Node* ExportDeclarationNode::Clone() const
         clonedSubject = subject->Clone();
     }
     ExportDeclarationNode* clone = new ExportDeclarationNode(GetSourcePos(), exprt->Clone(), clonedSubject, lbPos, rbPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -122,6 +124,7 @@ ExportNode::ExportNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(N
 Node* ExportNode::Clone() const
 {
     ExportNode* clone = new ExportNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -137,6 +140,7 @@ ImportNode::ImportNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(N
 Node* ImportNode::Clone() const
 {
     ImportNode* clone = new ImportNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -162,6 +166,7 @@ Node* ImportDeclarationNode::Clone() const
         clonedAtributes = attributes->Clone();
     }
     ImportDeclarationNode* clone = new ImportDeclarationNode(GetSourcePos(), imprt->Clone(), subject->Clone(), clonedAtributes, semicolon->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -200,6 +205,7 @@ ModulePartitionNode::ModulePartitionNode(const soul::ast::SourcePos& sourcePos_,
 Node* ModulePartitionNode::Clone() const
 {
     ModulePartitionNode* clone = new ModulePartitionNode(GetSourcePos(), Child()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -215,6 +221,7 @@ ModuleNode::ModuleNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(N
 Node* ModuleNode::Clone() const
 {
     ModuleNode* clone = new ModuleNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -240,6 +247,7 @@ Node* GlobalModuleFragmentNode::Clone() const
         clonedDeclarations = declarations->Clone();
     }
     GlobalModuleFragmentNode* clone = new GlobalModuleFragmentNode(GetSourcePos(), modle->Clone(), semicolon->Clone(), clonedDeclarations);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -283,6 +291,7 @@ Node* PrivateModuleFragmentNode::Clone() const
     }
     PrivateModuleFragmentNode* clone = new PrivateModuleFragmentNode(GetSourcePos(), modle->Clone(), colon->Clone(), privat->Clone(),
         semicolon->Clone(), clonedDeclarations);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -322,6 +331,7 @@ AngleHeaderName::AngleHeaderName(const soul::ast::SourcePos& sourcePos_, const s
 Node* AngleHeaderName::Clone() const
 {
     AngleHeaderName* clone = new AngleHeaderName(GetSourcePos(), rep);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -353,6 +363,7 @@ QuoteHeaderName::QuoteHeaderName(const soul::ast::SourcePos& sourcePos_, const s
 Node* QuoteHeaderName::Clone() const
 {
     QuoteHeaderName* clone = new QuoteHeaderName(GetSourcePos(), rep);
+    clone->SetId(Id());
     return clone;
 }
 

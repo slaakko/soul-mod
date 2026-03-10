@@ -112,6 +112,7 @@ class OperationRepository;
 class FunctionDefinitionSymbol;
 class AliasTypeSymbol;
 class TypeSymbol;
+class VariableSymbol;
 class ClassTemplateSpecializationSymbol;
 class Emitter;
 class SymbolsProject;

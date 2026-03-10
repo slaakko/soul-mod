@@ -1,4 +1,5 @@
 // =================================
+// =================================
 // Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
@@ -129,7 +130,8 @@ public:
     virtual otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const;
     std::string IrName(Context* context) const override;
     const std::vector<VariableSymbol*>& LocalVariables() const noexcept { return  localVariables; }
-    VariableSymbol* CreateTemporary(TypeSymbol* type);
+    VariableSymbol* CreateTemporary(TypeSymbol* type, std::int64_t nodeId);
+    VariableSymbol* GetTemporary(std::int64_t nodeId) const noexcept;
     virtual bool IsConst() const noexcept;
     virtual bool IsVirtual() const noexcept;
     virtual bool IsPure() const noexcept;
@@ -186,6 +188,7 @@ private:
     std::unique_ptr<ParameterSymbol> returnValueParam;
     mutable std::vector<ParameterSymbol*> memFunParameters;
     std::vector<VariableSymbol*> localVariables;
+    std::map<std::int64_t, VariableSymbol*> temporaryMap;
     std::vector<TypeSymbol*> specialization;
     std::vector<util::uuid> specializationIds;
     std::int32_t nextTemporaryId;

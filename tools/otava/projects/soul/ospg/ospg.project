@@ -36,6 +36,8 @@ interface <parser_generator.cppm>;
 source <parser_generator.cpp>;
 interface <parsing_util.cppm>;
 source <parsing_util.cpp>;
+interface <spg_parsers_rules.cppm>;
+source <spg_parsers_rules.cpp>;
 interface <spg_file.parser.cppm>;
 source <spg_file.parser.cpp>;
 interface <token_parser.cppm>;

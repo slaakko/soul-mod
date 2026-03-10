@@ -29,6 +29,7 @@ Node* ClassSpecifierNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -82,6 +83,7 @@ Node* ClassHeadNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     ClassHeadNode* clone = new ClassHeadNode(GetSourcePos(), classKey->Clone(), classHeadName->Clone(), clonedClassVirtSpecifiers, clonedBaseClause, clonedAttributes);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -122,6 +124,7 @@ BaseClauseNode::BaseClauseNode(const soul::ast::SourcePos& sourcePos_, Node* bas
 Node* BaseClauseNode::Clone() const
 {
     BaseClauseNode* clone = new BaseClauseNode(GetSourcePos(), Child()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -141,6 +144,7 @@ Node* BaseSpecifierListNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -179,6 +183,7 @@ Node* BaseSpecifierNode::Clone() const
     }
     BaseSpecifierNode* clone = new BaseSpecifierNode(GetSourcePos(), classOrDeclType->Clone(), clonedAccessSpecifier, clonedVirtualSpecifier, 
         clonedAttributes, virtualFirst);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -219,6 +224,7 @@ BeginAccessGroupNode::BeginAccessGroupNode(const soul::ast::SourcePos& sourcePos
 Node* BeginAccessGroupNode::Clone() const
 {
     BeginAccessGroupNode* clone = new BeginAccessGroupNode(GetSourcePos(), Child()->Clone(), colonPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -268,6 +274,7 @@ Node* MemberDeclarationNode::Clone() const
         clonedMemberDeclarators = memberDeclarators->Clone();
     }
     MemberDeclarationNode* clone = new MemberDeclarationNode(GetSourcePos(), clonedAttributes, clonedDeclSpecifiers, clonedMemberDeclarators, semicolon->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -305,6 +312,7 @@ Node* MemberDeclaratorListNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -325,6 +333,7 @@ ConstructorNode::ConstructorNode(const soul::ast::SourcePos& sourcePos_, Node* c
 Node* ConstructorNode::Clone() const
 {
     ConstructorNode* clone = new ConstructorNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -358,6 +367,7 @@ void ConstructorInitializerNode::Read(Reader& reader)
 Node* ConstructorInitializerNode::Clone() const
 {
     ConstructorInitializerNode* clone = new ConstructorInitializerNode(GetSourcePos(), memberInitializerListNode->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -387,6 +397,7 @@ Node* MemberInitializerListNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -408,6 +419,7 @@ MemberInitializerNode::MemberInitializerNode(const soul::ast::SourcePos& sourceP
 Node* MemberInitializerNode::Clone() const
 {
     MemberInitializerNode* clone = new MemberInitializerNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -427,6 +439,7 @@ Node* VirtSpecifierSequenceNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -442,6 +455,7 @@ ClassNode::ClassNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(Nod
 Node* ClassNode::Clone() const
 {
     ClassNode* clone = new ClassNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -457,6 +471,7 @@ StructNode::StructNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(N
 Node* StructNode::Clone() const
 {
     StructNode* clone = new StructNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -472,6 +487,7 @@ UnionNode::UnionNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(Nod
 Node* UnionNode::Clone() const
 {
     UnionNode* clone = new UnionNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -487,6 +503,7 @@ PublicNode::PublicNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(N
 Node* PublicNode::Clone() const
 {
     PublicNode* clone = new PublicNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -502,6 +519,7 @@ ProtectedNode::ProtectedNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
 Node* ProtectedNode::Clone() const
 {
     ProtectedNode* clone = new ProtectedNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -517,6 +535,7 @@ PrivateNode::PrivateNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node
 Node* PrivateNode::Clone() const
 {
     PrivateNode* clone = new PrivateNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -532,6 +551,7 @@ VirtualNode::VirtualNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node
 Node* VirtualNode::Clone() const
 {
     VirtualNode* clone = new VirtualNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -547,6 +567,7 @@ OverrideNode::OverrideNode(const soul::ast::SourcePos& sourcePos_) noexcept : No
 Node* OverrideNode::Clone() const
 {
     OverrideNode* clone = new OverrideNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -562,6 +583,7 @@ FinalNode::FinalNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(Nod
 Node* FinalNode::Clone() const
 {
     FinalNode* clone = new FinalNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -582,6 +604,7 @@ PureSpecifierNode::PureSpecifierNode(const soul::ast::SourcePos& sourcePos_, con
 Node* PureSpecifierNode::Clone() const
 {
     PureSpecifierNode* clone = new PureSpecifierNode(GetSourcePos(), zeroPos);
+    clone->SetId(Id());
     return clone;
 }
 

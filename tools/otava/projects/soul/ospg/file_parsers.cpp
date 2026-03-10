@@ -10,9 +10,9 @@ import soul.lexer;
 import soul.lex.spg;
 import soul.spg.spg.file.parser;
 import soul.spg.parser.file.parser;
-//import soul.spg.parsers.rules;
+import soul.spg.parsers.rules;
 import soul.common.token.file.parser;
-//import common.parser.rules;
+import common.parser.rules;
 
 namespace soul::spg {
 
@@ -30,7 +30,7 @@ std::unique_ptr<soul::ast::spg::SpgFile> ParseSpgFile(const std::string& spgFile
     std::string spgFileContent = util::ReadFile(spgFilePath);
     std::u32string content = util::ToUtf32(spgFileContent);
     auto lexer = soul::lex::spg::MakeLexer(content.c_str(), content.c_str() + content.length(), spgFilePath);
-    //lexer.SetRuleNameMapPtr(soul::spg::parsers::rules::GetRuleNameMapPtr());
+    lexer.SetRuleNameMapPtr(soul::spg::parsers::rules::GetRuleNameMapPtr());
     lexer.SetFile(file);
     using LexerType = decltype(lexer);
     auto vars = static_cast<soul::lexer::Lexer<soul::lex::spg::SpgLexer<char32_t>, char32_t>::VariableClassType*>(lexer.GetVariables());
@@ -57,7 +57,7 @@ std::unique_ptr<soul::ast::spg::ParserFile> ParseParserFile(const std::string& p
     std::string parserFileContent = util::ReadFile(parserFilePath);
     std::u32string content = util::ToUtf32(parserFileContent);
     auto lexer = soul::lex::spg::MakeLexer(content.c_str(), content.c_str() + content.length(), parserFilePath);
-    //lexer.SetRuleNameMapPtr(soul::spg::parsers::rules::GetRuleNameMapPtr());
+    lexer.SetRuleNameMapPtr(soul::spg::parsers::rules::GetRuleNameMapPtr());
     lexer.SetFile(file);
     using LexerType = decltype(lexer);
     std::unique_ptr<soul::ast::spg::ParserFile> parserFile = soul::spg::parser::file::parser::ParserFileParser<LexerType>::Parse(lexer);
@@ -74,7 +74,7 @@ std::unique_ptr<soul::ast::common::TokenFile> ParseTokenFile(const std::string& 
     std::string tokenFileContent = util::ReadFile(tokenFilePath);
     std::u32string content = util::ToUtf32(tokenFileContent);
     auto lexer = soul::lex::spg::MakeLexer(content.c_str(), content.c_str() + content.length(), tokenFilePath);
-    //lexer.SetRuleNameMapPtr(::common::parser::rules::GetRuleNameMapPtr());
+    lexer.SetRuleNameMapPtr(::common::parser::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
     std::unique_ptr<soul::ast::common::TokenFile> tokenFile = soul::common::token::file::parser::TokenFileParser<LexerType>::Parse(lexer);
     if (external)

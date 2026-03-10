@@ -118,12 +118,12 @@ const char* nodeKindStr[] =
     "compoundRequirementNode", "returnTypeRequirementNode", "nestedRequirementNode", "typeConstraintNode", "requiresClauseNode",
     "attributeSpecifierSequenceNode", "attributeSpecifierNode", "attributeUsingPrefixNode", "attributeNode", "attributeScopedTokenNode", "attributeArgumentsNode", 
     "balancedTokenSequenceNode", "tokenNode",
-    "lparenNode", "rparenNode", "lbracketNode", "rbracketNode", "lbraceNode", "rbraceNode", "alignmentSpecifierNode", "pragmaNode", "boundStatementNode"
+    "lparenNode", "rparenNode", "lbracketNode", "rbracketNode", "lbraceNode", "rbraceNode", "alignmentSpecifierNode", "pragmaNode", "boundStatementNode", "opNewCall"
 };
 
 std::string NodeKindStr(NodeKind nodeKind)
 {
-    return nodeKindStr[static_cast<int>(nodeKind)];
+    return nodeKindStr[static_cast<int>(static_cast<std::uint16_t>(nodeKind))];
 }
 
 Node::Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : kind(kind_), sourcePos(sourcePos_), parent(nullptr), id(GetNextNodeId())
@@ -535,6 +535,7 @@ NodeFactoryCollection::NodeFactoryCollection()
     Register(NodeKind::sizeOfUnaryExprNode, new NodeFactory<SizeOfUnaryExprNode>());
     Register(NodeKind::alignOfExprNode, new NodeFactory<AlignOfExprNode>());
     Register(NodeKind::noexceptExprNode, new NodeFactory<NoexceptExprNode>());
+    Register(NodeKind::opNewCall, new NodeFactory<OpNewCall>());
     Register(NodeKind::newExprNode, new NodeFactory<NewExprNode>());
     Register(NodeKind::newPlacementNode, new NodeFactory<NewPlacementNode>());
     Register(NodeKind::parenNewTypeIdNode, new NodeFactory<ParenNewTypeIdNode>());
@@ -708,7 +709,7 @@ NodeFactoryCollection::NodeFactoryCollection()
 
 Node* NodeFactoryCollection::CreateNode(NodeKind nodeKind, const soul::ast::SourcePos& sourcePos)
 {
-    AbstractNodeFactory* factory = factories[static_cast<int>(nodeKind)].get();
+    AbstractNodeFactory* factory = factories[static_cast<std::uint16_t>(nodeKind)].get();
     if (factory)
     {
         return factory->CreateNode(sourcePos);
@@ -722,7 +723,7 @@ Node* NodeFactoryCollection::CreateNode(NodeKind nodeKind, const soul::ast::Sour
 
 void NodeFactoryCollection::Register(NodeKind kind, AbstractNodeFactory* factory)
 {
-    factories[static_cast<int>(kind)] = std::unique_ptr<AbstractNodeFactory>(factory);
+    factories[static_cast<std::uint16_t>(kind)] = std::unique_ptr<AbstractNodeFactory>(factory);
 }
 
 Node* CreateNode(NodeKind nodeKind, const soul::ast::SourcePos& sourcePos)

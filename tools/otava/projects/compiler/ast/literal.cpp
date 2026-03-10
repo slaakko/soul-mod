@@ -43,6 +43,7 @@ IntegerLiteralNode::IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_, s
 Node* IntegerLiteralNode::Clone() const
 {
     IntegerLiteralNode* clone = new IntegerLiteralNode(GetSourcePos(), value, suffix, base, Rep());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -80,6 +81,7 @@ FloatingLiteralNode::FloatingLiteralNode(const soul::ast::SourcePos& sourcePos_,
 Node* FloatingLiteralNode::Clone() const
 {
     FloatingLiteralNode* clone = new FloatingLiteralNode(GetSourcePos(), value, suffix, base, Rep());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -118,6 +120,7 @@ CharacterLiteralNode::CharacterLiteralNode(const soul::ast::SourcePos& sourcePos
 Node* CharacterLiteralNode::Clone() const
 {
     CharacterLiteralNode* clone = new CharacterLiteralNode(GetSourcePos(), value, encodingPrefix, Rep(), hasMultipleCharacters);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -165,6 +168,7 @@ StringLiteralNode::StringLiteralNode(NodeKind kind_, const soul::ast::SourcePos&
 Node* StringLiteralNode::Clone() const
 {
     StringLiteralNode* clone = new StringLiteralNode(GetSourcePos(), value, encodingPrefix, Rep());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -200,6 +204,7 @@ RawStringLiteralNode::RawStringLiteralNode(const soul::ast::SourcePos& sourcePos
 Node* RawStringLiteralNode::Clone() const
 {
     RawStringLiteralNode* clone = new RawStringLiteralNode(GetSourcePos(), GetValue(), EncodingPrefix(), delimSequence, Rep());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -232,6 +237,7 @@ BooleanLiteralNode::BooleanLiteralNode(const soul::ast::SourcePos& sourcePos_, b
 Node* BooleanLiteralNode::Clone() const
 {
     BooleanLiteralNode* clone = new BooleanLiteralNode(GetSourcePos(), value, Rep());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -264,6 +270,7 @@ NullPtrLiteralNode::NullPtrLiteralNode(const soul::ast::SourcePos& sourcePos_, c
 Node* NullPtrLiteralNode::Clone() const
 {
     NullPtrLiteralNode* clone = new NullPtrLiteralNode(GetSourcePos(), Rep());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -285,6 +292,7 @@ UserDefinedLiteraNode::UserDefinedLiteraNode(const soul::ast::SourcePos& sourceP
 Node* UserDefinedLiteraNode::Clone() const
 {
     UserDefinedLiteraNode* clone = new UserDefinedLiteraNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -305,6 +313,7 @@ LiteralOperatorIdNode::LiteralOperatorIdNode(const soul::ast::SourcePos& sourceP
 Node* LiteralOperatorIdNode::Clone() const
 {
     LiteralOperatorIdNode* clone = new LiteralOperatorIdNode(GetSourcePos(), Child()->Clone(), stringLitPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -329,11 +338,11 @@ std::u32string EncodingPrefixStr(EncodingPrefix encodingPrefix)
 {
     switch (encodingPrefix)
     {
-        case EncodingPrefix::none: return std::u32string();
-        case EncodingPrefix::u8: return std::u32string(U"u8");
-        case EncodingPrefix::u: return std::u32string(U"u");
-        case EncodingPrefix::U: return std::u32string(U"U");
-        case EncodingPrefix::L: return std::u32string(U"L");
+    case EncodingPrefix::none: return std::u32string();
+    case EncodingPrefix::u8: return std::u32string(U"u8");
+    case EncodingPrefix::u: return std::u32string(U"u");
+    case EncodingPrefix::U: return std::u32string(U"U");
+    case EncodingPrefix::L: return std::u32string(U"L");
     }
     return std::u32string();
 }
@@ -342,36 +351,36 @@ EncodingPrefix CommonEncodingPrefix(otava::ast::EncodingPrefix leftEncodingPrefi
 {
     switch (leftEncodingPrefix)
     {
+    case EncodingPrefix::none:
+    {
+        switch (rightEncodingPrefix)
+        {
         case EncodingPrefix::none:
         {
-            switch (rightEncodingPrefix)
-            {
-                case EncodingPrefix::none:
-                {
-                    return EncodingPrefix::none;
-                }
-                default:
-                {
-                    return rightEncodingPrefix;
-                }
-            }
-            break;
+            return EncodingPrefix::none;
         }
         default:
         {
-            switch (rightEncodingPrefix)
-            {
-                case EncodingPrefix::none:
-                {
-                    return leftEncodingPrefix;
-                }
-                default:
-                {
-                    return EncodingPrefix::u8;
-                }
-            }
-            break;
+            return rightEncodingPrefix;
         }
+        }
+        break;
+    }
+    default:
+    {
+        switch (rightEncodingPrefix)
+        {
+        case EncodingPrefix::none:
+        {
+            return leftEncodingPrefix;
+        }
+        default:
+        {
+            return EncodingPrefix::u8;
+        }
+        }
+        break;
+    }
     }
     return EncodingPrefix::u8;
 }

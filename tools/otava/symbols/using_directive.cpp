@@ -34,7 +34,7 @@ UsingDirectiveProcessor::UsingDirectiveProcessor(Context* context_) : context(co
 
 void UsingDirectiveProcessor::Visit(otava::ast::UsingDirectiveNode& node)
 {
-    node.Id()->Accept(*this);
+    node.GetId()->Accept(*this);
 }
 
 void UsingDirectiveProcessor::Visit(otava::ast::QualifiedIdNode& node)

@@ -87,7 +87,7 @@ enum class NodeKind : std::uint16_t
     attributeSpecifierSequenceNode, attributeSpecifierNode, attributeUsingPrefixNode, attributeNode, attributeScopedTokenNode,
     attributeArgumentsNode, balancedTokenSequenceNode, tokenNode,
     lparenNode, rparenNode, lbracketNode, rbracketNode, lbraceNode, rbraceNode, alignmentSpecifierNode,
-    pragmaNode, boundStatementNode,
+    pragmaNode, boundStatementNode, opNewCall,
     max
 };
 
@@ -100,6 +100,7 @@ public:
     virtual ~Node();
     virtual Node* Clone() const = 0;
     inline NodeKind Kind() const noexcept { return kind; }
+    inline std::int64_t Id() const noexcept { return id; }
     inline void SetId(std::int64_t id_) noexcept { id = id_; }
     virtual std::u32string Str() const { return std::u32string(); }
     virtual NodeType Type() const noexcept { return NodeType::single; }
@@ -137,6 +138,10 @@ public:
     inline bool IsInvokeExprNode() const noexcept { return kind == NodeKind::invokeExprNode; }
     inline bool IsMemberExprNode() const noexcept { return kind == NodeKind::memberExprNode; }
     inline bool IsBinaryExprNode() const noexcept { return kind == NodeKind::binaryExprNode; }
+    inline bool IsExpressionListNode() const noexcept { return kind == NodeKind::expressionListNode; }
+    inline bool IsNewInitializerNode() const noexcept { return kind == NodeKind::newInitializerNode; }
+    inline bool IsBracedInitListNode() const noexcept { return kind == NodeKind::bracedInitListNode; }
+    inline bool IsAssignmentInitializerNode() const noexcept { return kind == NodeKind::assignmentInitializerNode; }
     inline bool IsDefaultedOrDeletedFunctionNode() const noexcept { return kind == NodeKind::defaultedOrDeletedFunctionNode; }
     inline bool IsStringLiteralNode() const noexcept { return kind == NodeKind::stringLiteralNode; }
     inline bool IsFunctionDefinitionNode() const noexcept { return kind == NodeKind::functionDefinitionNode; }
@@ -154,6 +159,8 @@ public:
     inline bool IsLvalueRefNode() const noexcept { return kind == NodeKind::lvalueRefNode; }
     inline bool IsRvalueRefNode() const noexcept { return kind == NodeKind::rvalueRefNode; }
     inline bool IsPtrNode() const noexcept { return kind == NodeKind::ptrNode; }
+    inline bool IsTypeSpecifierSequenceNode() const { return kind == NodeKind::typeSpecifierSequenceNode; }
+    inline bool IsOpNewCall() const { return kind == NodeKind::opNewCall; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;

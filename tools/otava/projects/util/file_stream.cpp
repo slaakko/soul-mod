@@ -68,8 +68,7 @@ FileStream::FileStream(const std::string& filePath_, OpenMode openMode) : filePa
     {
         mode += "b";
     }
-    std::string nativeFilePath = Utf8StringToPlatformString(filePath);
-    file = std::fopen(nativeFilePath.c_str(), mode.c_str());
+    file = std::fopen(filePath.c_str(), mode.c_str());
     if (!file)
     {
         std::string msg("could not open file '");

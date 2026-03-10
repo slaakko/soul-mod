@@ -16,6 +16,7 @@ ConstNode::ConstNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(Nod
 Node* ConstNode::Clone() const
 {
     ConstNode* clone = new ConstNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -31,6 +32,7 @@ VolatileNode::VolatileNode(const soul::ast::SourcePos& sourcePos_) noexcept : No
 Node* VolatileNode::Clone() const
 {
     VolatileNode* clone = new VolatileNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -46,6 +48,7 @@ LvalueRefNode::LvalueRefNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
 Node* LvalueRefNode::Clone() const
 {
     LvalueRefNode* clone = new LvalueRefNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -61,6 +64,7 @@ RvalueRefNode::RvalueRefNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
 Node* RvalueRefNode::Clone() const
 {
     RvalueRefNode* clone = new RvalueRefNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -76,6 +80,7 @@ PtrNode::PtrNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKin
 Node* PtrNode::Clone() const
 {
     PtrNode* clone = new PtrNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -95,6 +100,7 @@ Node* CVQualifierSequenceNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 

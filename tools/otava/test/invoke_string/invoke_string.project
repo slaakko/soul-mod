@@ -1,0 +1,3 @@
+project invoke_string;
+target=program;
+source <main.cpp>;

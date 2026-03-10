@@ -144,7 +144,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline Node* Id() const noexcept { return id.get(); }
+    inline Node* GetId() const noexcept { return id.get(); }
     inline Node* Assign() const noexcept { return assign.get(); }
     inline Node* QualifiedNamespaceSpecifier() const noexcept { return qns.get(); }
     inline Node* Semicolon() const noexcept { return semicolon.get(); }
@@ -218,7 +218,7 @@ public:
     void Read(Reader& reader) override;
     inline Node* Using() const noexcept { return usng.get(); }
     inline Node* Namespace() const noexcept { return nskw.get(); }
-    inline Node* Id() const noexcept { return id.get(); }
+    inline Node* GetId() const noexcept { return id.get(); }
     inline Node* Semicolon() const noexcept { return semicolon.get(); }
     inline Node* Attributes() const noexcept { return attributes.get(); }
 private:

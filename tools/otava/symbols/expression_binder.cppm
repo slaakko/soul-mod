@@ -19,6 +19,7 @@ class Scope;
 class StatementBinder;
     
 otava::ast::Node* MakeTypeNameNodes(const soul::ast::SourcePos& sourcePos, const std::u32string& fullTypeName);
+std::pair<VariableSymbol*, int> GetParentTemporary(std::int64_t nodeId, Context* context);
 
 BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context);
 BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, bool booleanChild);

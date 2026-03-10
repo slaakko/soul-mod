@@ -23,6 +23,7 @@ Node* AttributeSpecifierSequenceNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -42,6 +43,7 @@ Node* AttributeSpecifierNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -91,6 +93,7 @@ AttributeUsingPrefixNode::AttributeUsingPrefixNode(const soul::ast::SourcePos& s
 Node* AttributeUsingPrefixNode::Clone() const
 {
     AttributeUsingPrefixNode* clone = new AttributeUsingPrefixNode(GetSourcePos(), Child()->Clone(), colonPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -123,6 +126,7 @@ AttributeNode::AttributeNode(const soul::ast::SourcePos& sourcePos_, Node* attri
 Node* AttributeNode::Clone() const
 {
     AttributeNode* clone = new AttributeNode(GetSourcePos(), attributeToken->Clone(), attributeArgs->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -157,6 +161,7 @@ AttributeScopedTokenNode::AttributeScopedTokenNode(const soul::ast::SourcePos& s
 Node* AttributeScopedTokenNode::Clone() const
 {
     AttributeScopedTokenNode* clone = new AttributeScopedTokenNode(GetSourcePos(), ns->Clone(), colonColon->Clone(), identifier->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -194,6 +199,7 @@ AttributeArgumentsNode::AttributeArgumentsNode(const soul::ast::SourcePos& sourc
 Node* AttributeArgumentsNode::Clone() const
 {
     AttributeArgumentsNode* clone = new AttributeArgumentsNode(GetSourcePos(), balancedTokenSequence->Clone(), lpPos, rpPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -229,6 +235,7 @@ Node* BalancedTokenSequenceNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -248,6 +255,7 @@ TokenNode::TokenNode(const soul::ast::SourcePos& sourcePos_, const std::u32strin
 Node* TokenNode::Clone() const
 {
     TokenNode* clone = new TokenNode(GetSourcePos(), str);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -286,6 +294,7 @@ Node* AlignmentSpecifierNode::Clone() const
         clonedEllipsis = ellipsis->Clone();
     }
     AlignmentSpecifierNode* clone = new AlignmentSpecifierNode(GetSourcePos(), alignment->Clone(), clonedEllipsis, lpPos, rpPos);
+    clone->SetId(Id());
     return clone;
 }
 

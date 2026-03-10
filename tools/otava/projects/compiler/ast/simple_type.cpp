@@ -16,6 +16,7 @@ CharNode::CharNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeK
 Node* CharNode::Clone() const
 {
     CharNode* clone = new CharNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -31,6 +32,7 @@ Char8Node::Char8Node(const soul::ast::SourcePos& sourcePos_) noexcept : Node(Nod
 Node* Char8Node::Clone() const
 {
     Char8Node* clone = new Char8Node(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -46,6 +48,7 @@ Char16Node::Char16Node(const soul::ast::SourcePos& sourcePos_) noexcept : Node(N
 Node* Char16Node::Clone() const
 {
     Char16Node* clone = new Char16Node(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -61,6 +64,7 @@ Char32Node::Char32Node(const soul::ast::SourcePos& sourcePos_) noexcept : Node(N
 Node* Char32Node::Clone() const
 {
     Char32Node* clone = new Char32Node(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -76,6 +80,7 @@ WCharNode::WCharNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(Nod
 Node* WCharNode::Clone() const
 {
     WCharNode* clone = new WCharNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -91,6 +96,7 @@ BoolNode::BoolNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeK
 Node* BoolNode::Clone() const
 {
     BoolNode* clone = new BoolNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -106,6 +112,7 @@ ShortNode::ShortNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(Nod
 Node* ShortNode::Clone() const
 {
     ShortNode* clone = new ShortNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -121,6 +128,7 @@ IntNode::IntNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKin
 Node* IntNode::Clone() const
 {
     IntNode* clone = new IntNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -136,6 +144,7 @@ LongNode::LongNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeK
 Node* LongNode::Clone() const
 {
     LongNode* clone = new LongNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -151,6 +160,7 @@ SignedNode::SignedNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(N
 Node* SignedNode::Clone() const
 {
     SignedNode* clone = new SignedNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -166,6 +176,7 @@ UnsignedNode::UnsignedNode(const soul::ast::SourcePos& sourcePos_) noexcept : No
 Node* UnsignedNode::Clone() const
 {
     UnsignedNode* clone = new UnsignedNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -181,6 +192,7 @@ FloatNode::FloatNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(Nod
 Node* FloatNode::Clone() const
 {
     FloatNode* clone = new FloatNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -196,6 +208,7 @@ DoubleNode::DoubleNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(N
 Node* DoubleNode::Clone() const
 {
     DoubleNode* clone = new DoubleNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -211,6 +224,7 @@ VoidNode::VoidNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeK
 Node* VoidNode::Clone() const
 {
     VoidNode* clone = new VoidNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 

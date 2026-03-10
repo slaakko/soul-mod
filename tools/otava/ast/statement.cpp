@@ -29,6 +29,7 @@ Node* LabeledStatementNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     LabeledStatementNode* clone = new LabeledStatementNode(GetSourcePos(), label->Clone(), stmt->Clone(), clonedAttributes, colonPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -73,6 +74,7 @@ Node* CaseStatementNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     CaseStatementNode* clone = new CaseStatementNode(GetSourcePos(), caseExpr->Clone(), stmt->Clone(), clonedAttributes, casePos, colonPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -119,6 +121,7 @@ Node* DefaultStatementNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     DefaultStatementNode* clone = new DefaultStatementNode(GetSourcePos(), stmt->Clone(), clonedAttributes, defaultPos, colonPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -179,6 +182,7 @@ Node* CompoundStatementNode::Clone() const
     clone->SetLBracePos(lbPos);
     clone->SetRBracePos(rbPos);
     clone->SetBlockId(blockId);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -221,7 +225,9 @@ SequenceStatementNode::SequenceStatementNode(const soul::ast::SourcePos& sourceP
 
 Node* SequenceStatementNode::Clone() const
 {
-    return new SequenceStatementNode(GetSourcePos(), firstStmt->Clone(), secondStmt->Clone());
+    SequenceStatementNode* clone = new SequenceStatementNode(GetSourcePos(), firstStmt->Clone(), secondStmt->Clone());
+    clone->SetId(Id());
+    return clone;
 }
 
 void SequenceStatementNode::Accept(Visitor& visitor)
@@ -270,6 +276,7 @@ Node* IfStatementNode::Clone() const
     IfStatementNode* clone = new IfStatementNode(GetSourcePos(), cond->Clone(), thenStmt->Clone(), clonedElseStmt, clonedAttributes,
         ifPos, lpPos, rpPos, constExprPos, elsePos);
     clone->SetBlockId(blockId);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -329,6 +336,7 @@ Node* SwitchStatementNode::Clone() const
     }
     SwitchStatementNode* clone = new SwitchStatementNode(GetSourcePos(), cond->Clone(), stmt->Clone(), clonedAttributes, switchPos, lpPos, rpPos);
     clone->SetBlockId(blockId);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -381,6 +389,7 @@ Node* WhileStatementNode::Clone() const
     }
     WhileStatementNode* clone = new WhileStatementNode(GetSourcePos(), cond->Clone(), stmt->Clone(), clonedAttributes, whilePos, lpPos, rpPos);
     clone->SetBlockId(blockId);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -432,6 +441,7 @@ Node* DoStatementNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     DoStatementNode* clone = new DoStatementNode(GetSourcePos(), stmt->Clone(), expr->Clone(), clonedAttributes, semicolon->Clone(), doPos, whilePos, lpPos, rpPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -495,6 +505,7 @@ Node* RangeForStatementNode::Clone() const
         forPos, lpPos, rpPos, colonPos);
     clone->SetBlockId(blockId);
     clone->SetRangeForId(rangeForId);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -558,6 +569,7 @@ Node* ForRangeDeclarationNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     ForRangeDeclarationNode* clone = new ForRangeDeclarationNode(GetSourcePos(), Left()->Clone(), Right()->Clone(), clonedAttributes);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -613,6 +625,7 @@ Node* StructuredBindingNode::Clone() const
     }
     StructuredBindingNode* clone = new StructuredBindingNode(GetSourcePos(), declSpecifiers->Clone(), clonedRefQualifier, identifiers->Clone(), clonedInitializer,
         clonedAttributes, clonedSemicolon, lbPos, rbPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -683,6 +696,7 @@ Node* ForStatementNode::Clone() const
     ForStatementNode* clone = new ForStatementNode(GetSourcePos(), initStmt->Clone(), clonedCond, clonedLoopExpr, stmt->Clone(), clonedAttributes, clonedSemicolon,
         forPos, lpPos, rpPos);
     clone->SetBlockId(blockId);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -738,6 +752,7 @@ Node* BreakStatementNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     BreakStatementNode* clone = new BreakStatementNode(GetSourcePos(), clonedAttributes, semicolon->Clone(), breakPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -780,6 +795,7 @@ Node* ContinueStatementNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     ContinueStatementNode* clone = new ContinueStatementNode(GetSourcePos(), clonedAttributes, semicolon->Clone(), continuePos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -832,6 +848,7 @@ Node* ReturnStatementNode::Clone() const
         clonedSemicolon = semicolon->Clone();
     }
     ReturnStatementNode* clone = new ReturnStatementNode(GetSourcePos(), clonedReturnValue, clonedAttributes, clonedSemicolon, returnPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -881,6 +898,7 @@ Node* CoReturnStatementNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     CoReturnStatementNode* clone = new CoReturnStatementNode(GetSourcePos(), clonedReturnValue, clonedAttributes, semicolon->Clone(), coReturnPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -930,6 +948,7 @@ Node* GotoStatementNode::Clone() const
         clonedSemicolon = semicolon->Clone();
     }
     GotoStatementNode* clone = new GotoStatementNode(GetSourcePos(), target->Clone(), clonedAttributes, clonedSemicolon, gotoPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -974,6 +993,7 @@ Node* TryStatementNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     TryStatementNode* clone = new TryStatementNode(GetSourcePos(), tryBlock->Clone(), handlers->Clone(), clonedAttributes, tryPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -1011,6 +1031,7 @@ Node* HandlerSequenceNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -1032,6 +1053,7 @@ HandlerNode::HandlerNode(const soul::ast::SourcePos& sourcePos_, Node* exception
 Node* HandlerNode::Clone() const
 {
     HandlerNode* clone = new HandlerNode(GetSourcePos(), exception->Clone(), catchBlock->Clone(), lpPos, rpPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -1091,6 +1113,7 @@ Node* ExceptionDeclarationNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     ExceptionDeclarationNode* clone = new ExceptionDeclarationNode(GetSourcePos(), clonedTypeSpecifiers, clonedDeclarator, clonedEllipsis, clonedAttributes);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -1144,6 +1167,7 @@ Node* ExpressionStatementNode::Clone() const
         clonedSemicolon = semicolon->Clone();
     }
     ExpressionStatementNode* clone = new ExpressionStatementNode(GetSourcePos(), clonedExpr, clonedAttributes, clonedSemicolon);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -1180,6 +1204,7 @@ DeclarationStatementNode::DeclarationStatementNode(const soul::ast::SourcePos& s
 Node* DeclarationStatementNode::Clone() const
 {
     DeclarationStatementNode* clone = new DeclarationStatementNode(GetSourcePos(), declaration->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -1217,6 +1242,7 @@ Node* InitConditionNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     InitConditionNode* clone = new InitConditionNode(GetSourcePos(), declSpecifiers->Clone(), declarator->Clone(), initializer->Clone(), clonedAttributes);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -1250,7 +1276,9 @@ BoundStatementNode::BoundStatementNode(void* boundStatementNode_, const soul::as
 
 Node* BoundStatementNode::Clone() const
 {
-    return new BoundStatementNode(boundStatementNode, GetSourcePos());
+    BoundStatementNode* clone = new BoundStatementNode(boundStatementNode, GetSourcePos());
+    clone->SetId(Id());
+    return clone;
 }
 
 void BoundStatementNode::Accept(Visitor& visitor) 

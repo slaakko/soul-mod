@@ -306,7 +306,7 @@ void TypeResolver::Visit(otava::ast::TypenameSpecifierNode& node)
         context->GetSymbolTable()->PushTopScopeIndex();
         BeginScope(node.NestedNameSpecifier(), context);
         createTypeSymbol = true;
-        node.Id()->Accept(*this);
+        node.GetId()->Accept(*this);
         createTypeSymbol = false;
         EndScope(context);
         context->GetSymbolTable()->PopTopScopeIndex();
@@ -336,7 +336,7 @@ void TypeResolver::Visit(otava::ast::TypenameSpecifierNode& node)
             context->GetSymbolTable()->PushTopScopeIndex();
             context->GetSymbolTable()->BeginScope(&instantiationScope);
             BeginScope(node.NestedNameSpecifier(), context);
-            node.Id()->Accept(*this);
+            node.GetId()->Accept(*this);
             EndScope(context);
             context->GetSymbolTable()->EndScope();
             context->GetSymbolTable()->PopTopScopeIndex();

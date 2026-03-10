@@ -1120,7 +1120,7 @@ void ClassResolver::Visit(otava::ast::TemplateIdNode& node)
 void ClassResolver::Visit(otava::ast::ElaboratedTypeSpecifierNode& node)
 {
     node.ClassKey()->Accept(*this);
-    name = node.Id()->Str();
+    name = node.GetId()->Str();
 }
 
 void ClassResolver::Visit(otava::ast::ClassNode& node)

@@ -5,9 +5,11 @@
 
 module otava.symbols.exception_handling;
 
+import otava.symbols.expr.parser;
 import otava.symbols.stmt.parser;
 import otava.symbols.block;
 import otava.symbols.context;
+import otava.symbols.expression.binder;
 import otava.symbols.statement.binder;
 import otava.symbols.variable.symbol;
 import otava.symbols.type.symbol;
@@ -25,6 +27,7 @@ import otava.symbols.exception;
 import otava.symbols.bound.tree.visitor;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.overload.resolution;
+import otava.symbols.type_compare;
 import otava.ast;
 import util;
 
@@ -34,47 +37,51 @@ CleanupBlock::CleanupBlock(Cleanup* cleanup_) : cleanup(cleanup_)
 {
 }
 
-void CleanupBlock::Add(BoundFunctionCallNode* destructorCall, Context* context)
+void CleanupBlock::Add(BoundExpressionNode* destructorCall, Context* context)
 {
-    BoundFunctionCallNode* clonedDestructorCall = static_cast<BoundFunctionCallNode*>(destructorCall->Clone());
-    if (!clonedDestructorCall->Args().empty())
+    BoundExpressionNode* clonedDestructorCall = static_cast<BoundExpressionNode*>(destructorCall->Clone());
+    if (clonedDestructorCall->IsBoundFunctionCallNode())
     {
-        BoundNode* firstArg = clonedDestructorCall->Args().front().get();
-        if (firstArg->IsBoundAddressOfNode())
+        BoundFunctionCallNode* clonedDtorCall = static_cast<BoundFunctionCallNode*>(clonedDestructorCall);
+        if (!clonedDtorCall->Args().empty())
         {
-            BoundAddressOfNode* boundAddrOfNode = static_cast<BoundAddressOfNode*>(firstArg);
-            if (boundAddrOfNode->Subject()->IsBoundVariableNode())
+            BoundNode* firstArg = clonedDtorCall->Args().front().get();
+            if (firstArg->IsBoundAddressOfNode())
             {
-                BoundVariableNode* boundVariable = static_cast<BoundVariableNode*>(boundAddrOfNode->Subject());
-                BoundParentVariableNode* boundParentVariable = new BoundParentVariableNode(boundVariable->GetVariable(), boundVariable->GetSourcePos());
-                boundAddrOfNode->ResetSubject(boundParentVariable);
+                BoundAddressOfNode* boundAddrOfNode = static_cast<BoundAddressOfNode*>(firstArg);
+                if (boundAddrOfNode->Subject()->IsBoundVariableNode())
+                {
+                    BoundVariableNode* boundVariable = static_cast<BoundVariableNode*>(boundAddrOfNode->Subject());
+                    BoundParentVariableNode* boundParentVariable = new BoundParentVariableNode(boundVariable->GetVariable(), boundVariable->GetSourcePos());
+                    boundAddrOfNode->SetSubject(boundParentVariable);
+                }
+                else
+                {
+                    ThrowException("bound variable node expected", clonedDestructorCall->GetSourcePos(), context);
+                }
             }
             else
             {
-                ThrowException("bound variable node expected", clonedDestructorCall->GetSourcePos(), context);
+                ThrowException("bound address-of node expected", clonedDestructorCall->GetSourcePos(), context);
             }
         }
         else
         {
-            ThrowException("bound address-of node expected", clonedDestructorCall->GetSourcePos(), context);
+            ThrowException("nonempty argument list expected", clonedDestructorCall->GetSourcePos(), context);
         }
     }
     else
     {
-        ThrowException("nonempty argument list expected", clonedDestructorCall->GetSourcePos(), context);
+        ThrowException("bound function call node expected", clonedDestructorCall->GetSourcePos(), context);
     }
-    destructorCalls.push_back(std::unique_ptr<BoundFunctionCallNode>(clonedDestructorCall));
+    destructorCalls.push_back(std::unique_ptr<BoundExpressionNode>(clonedDestructorCall));
     cleanup->SetChanged();
 }
 
-void CleanupBlock::Make(otava::ast::CompoundStatementNode* compoundStatement, bool skipLast)
+void CleanupBlock::Make(otava::ast::CompoundStatementNode* compoundStatement)
 {
     int n = destructorCalls.size();
     int end = n - 1;
-    if (skipLast)
-    {
-        --end;
-    }
     for (int i = end; i >= 0; --i)
     {
         BoundExpressionStatementNode* exprStmt = new BoundExpressionStatementNode(destructorCalls[i]->GetSourcePos());
@@ -109,24 +116,6 @@ bool Cleanup::IsEmpty() const noexcept
     return true;
 }
 
-bool Cleanup::ContainsOne() const noexcept
-{
-    int n = cleanupBlocks.size();
-    for (int i = 0; i < n; ++i)
-    {
-        CleanupBlock* cleanupBlock = cleanupBlocks[i].get();
-        if (i < n - 1)
-        {
-            if (!cleanupBlock->IsEmpty()) return false;
-        }
-        else
-        {
-            if (cleanupBlock->ContainsOne()) return true;
-        }
-    }
-    return false;
-}
-
 void Cleanup::PushCleanupBlock()
 {
     cleanupBlocks.push_back(std::unique_ptr<CleanupBlock>(new CleanupBlock(this)));
@@ -137,18 +126,13 @@ void Cleanup::PopCleanupBlock()
     cleanupBlocks.pop_back();
 }
 
-void Cleanup::Make(otava::ast::CompoundStatementNode* compoundStatement, bool skipLast)
+void Cleanup::Make(otava::ast::CompoundStatementNode* compoundStatement)
 {
     int n = cleanupBlocks.size();
     for (int i = n - 1; i >= 0; --i)
     {
         CleanupBlock* cleanupBlock = cleanupBlocks[i].get();;
-        bool skip = false;
-        if (i == n - 1)
-        {
-            skip = skipLast;
-        }
-        cleanupBlock->Make(compoundStatement, skip);
+        cleanupBlock->Make(compoundStatement);
     }
 }
 
@@ -165,50 +149,129 @@ soul::ast::SourcePos Cleanup::GetSourcePos() const
     return soul::ast::SourcePos();
 }
 
-Invoke::Invoke()
+struct NodeIdCollection
 {
-}
-
-void Invoke::Clear()
-{
-    statements.clear();
-}
-
-void Invoke::Add(BoundStatementNode* stmt)
-{
-    statements.push_back(std::unique_ptr<BoundStatementNode>(stmt));
-    if (stmt->ConstructsLocalVariableWithDestructor())
+    NodeIdCollection() noexcept;
+    std::vector<std::int64_t> invokeExprIds;
+    int invokeExprIndex;
+    std::vector<std::int64_t> binaryExprIds;
+    int binaryExprIndex;
+    std::vector<std::int64_t> unaryExprIds;
+    int unaryExprIndex;
+    inline bool empty() const noexcept
     {
-        statementsWithDestructor.push_back(std::unique_ptr<BoundConstructionStatementNode>(static_cast<BoundConstructionStatementNode*>(stmt->Clone())));
+        return invokeExprIds.empty() && binaryExprIds.empty() && unaryExprIds.empty();
     }
+};
+
+NodeIdCollection::NodeIdCollection() noexcept : invokeExprIndex(0), binaryExprIndex(0), unaryExprIndex(0)
+{
 }
 
-void Invoke::Make(otava::ast::CompoundStatementNode* compoundStatement, Context* context)
+class NodeIdGetter : public otava::ast::DefaultVisitor
 {
-    for (const auto& stmt : statements)
+public:
+    NodeIdGetter() noexcept;
+    void Visit(otava::ast::InvokeExprNode& node);
+    void Visit(otava::ast::BinaryExprNode& node);
+    void Visit(otava::ast::UnaryExprNode& node);
+    NodeIdCollection Ids() const { return std::move(nodeIds); }
+private:
+    NodeIdCollection nodeIds;
+};
+
+NodeIdGetter::NodeIdGetter() noexcept
+{
+}
+
+void NodeIdGetter::Visit(otava::ast::InvokeExprNode& node)
+{
+    nodeIds.invokeExprIds.push_back(node.Id());
+    DefaultVisitor::Visit(node);
+}
+
+void NodeIdGetter::Visit(otava::ast::BinaryExprNode& node)
+{
+    nodeIds.binaryExprIds.push_back(node.Id());
+    DefaultVisitor::Visit(node);
+}
+
+void NodeIdGetter::Visit(otava::ast::UnaryExprNode& node)
+{
+    nodeIds.unaryExprIds.push_back(node.Id());
+    DefaultVisitor::Visit(node);
+}
+
+NodeIdCollection GetNodeIds(otava::ast::Node* node) noexcept
+{
+    NodeIdGetter getter;
+    node->Accept(getter);
+    return getter.Ids();
+}
+
+class NodeIdSetter : public otava::ast::DefaultVisitor
+{
+public:
+    NodeIdSetter(NodeIdCollection&& ids_) noexcept;
+    void Visit(otava::ast::InvokeExprNode& node);
+    void Visit(otava::ast::BinaryExprNode& node);
+    void Visit(otava::ast::UnaryExprNode& node);
+private:
+    NodeIdCollection ids;
+};
+
+NodeIdSetter::NodeIdSetter(NodeIdCollection&& ids_) noexcept : ids(std::move(ids_))
+{
+}
+
+void NodeIdSetter::Visit(otava::ast::InvokeExprNode& node)
+{
+    if (ids.invokeExprIndex < ids.invokeExprIds.size())
     {
-        if (!stmt->Source())
-        {
-            ThrowException("statement source not set", stmt->GetSourcePos(), context);
-        }
-        otava::ast::Node* stmtNode = stmt->Source()->Clone();
-        compoundStatement->AddNode(stmtNode);
+        node.SetId(ids.invokeExprIds[ids.invokeExprIndex++]);
     }
-}
-
-soul::ast::SourcePos Invoke::GetSourcePos() const
-{
-    for (const auto& stmt : statements)
+    else
     {
-        soul::ast::SourcePos sourcePos = stmt->GetSourcePos();
-        if (sourcePos.IsValid()) return sourcePos;
+        throw std::runtime_error("failed to set id of invoke: invalid index");
     }
-    return soul::ast::SourcePos();
+    DefaultVisitor::Visit(node);
 }
 
-FunctionDefinitionSymbol* MakeInvokeFn(Invoke& invoke, Scope* parentFnScope, FunctionDefinitionSymbol* parentFn, Context* context)
+void NodeIdSetter::Visit(otava::ast::BinaryExprNode& node)
 {
-    soul::ast::SourcePos sourcePos = invoke.GetSourcePos();
+    if (ids.binaryExprIndex < ids.binaryExprIds.size())
+    {
+        node.SetId(ids.binaryExprIds[ids.binaryExprIndex++]);
+    }
+    else
+    {
+        throw std::runtime_error("failed to set id of binary expr: invalid index");
+    }
+    DefaultVisitor::Visit(node);
+}
+
+void NodeIdSetter::Visit(otava::ast::UnaryExprNode& node)
+{
+    if (ids.unaryExprIndex < ids.unaryExprIds.size())
+    {
+        node.SetId(ids.unaryExprIds[ids.unaryExprIndex++]);
+    }
+    else
+    {
+        throw std::runtime_error("failed to set id of unary expr: invalid index");
+    }
+    DefaultVisitor::Visit(node);
+}
+
+void SetNodeIds(NodeIdCollection&& ids, otava::ast::Node* node) noexcept
+{
+    NodeIdSetter setter(std::move(ids));
+    node->Accept(setter);
+}
+
+FunctionDefinitionSymbol* MakeInvokeFn(BoundFunctionCallNode* fnCall, Scope* parentFnScope, FunctionDefinitionSymbol* parentFn, Context* context)
+{
+    soul::ast::SourcePos sourcePos = fnCall->GetSourcePos();
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
     otava::ast::CompoundStatementNode* invokeBlock = new otava::ast::CompoundStatementNode(sourcePos);
@@ -216,7 +279,51 @@ FunctionDefinitionSymbol* MakeInvokeFn(Invoke& invoke, Scope* parentFnScope, Fun
     {
         invokeBlock->SetBlockId(parentFn->Blocks().front()->BlockId());
     }
-    invoke.Make(invokeBlock, context);
+    if (!fnCall->GetType() || fnCall->GetType()->IsVoidType())
+    {
+        std::unique_ptr<otava::ast::Node> expr;
+        expr.reset(fnCall->Source()->Clone());
+        otava::ast::ExpressionStatementNode* exprStmt = new otava::ast::ExpressionStatementNode(sourcePos, expr.release(), nullptr, nullptr);
+        invokeBlock->AddNode(exprStmt);
+    }
+    else
+    {
+        std::u32string declarationStatementStr;
+        otava::ast::Node* source = fnCall->Source();
+        std::u32string sourceStr;
+        if (source->IsAssignmentInitializerNode())
+        {
+            otava::ast::AssignmentInitNode* assignmentInitNode = static_cast<otava::ast::AssignmentInitNode*>(source);
+            sourceStr = assignmentInitNode->Child()->Str();
+        }
+        else
+        {
+            sourceStr = source->Str();
+        }
+        NodeIdCollection ids;
+        if (!source->IsOpNewCall())
+        {
+            ids = GetNodeIds(source);
+        }
+        declarationStatementStr.append(fnCall->GetType()->FullName()).append(1, ' ').append(context->ResultVarName()).append(U" = ").
+            append(sourceStr).append(1, ';');
+        std::unique_ptr<otava::ast::Node> stmt;
+        try
+        {
+            context->PushSetFlag(ContextFlags::dontProcess);
+            stmt = ParseStatement(declarationStatementStr, context);
+            if (!ids.empty())
+            {
+                SetNodeIds(std::move(ids), stmt.get());
+            }
+            context->PopFlags();
+        }
+        catch (const std::exception& ex)
+        {
+            ThrowException("error parsing dedclaration statement '" + util::ToUtf8(declarationStatementStr) + "': " + ex.what(), fnCall->GetSourcePos(), context);
+        }
+        invokeBlock->AddNode(stmt.release());
+    }
     otava::ast::DeclSpecifierSequenceNode* invokeDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
     invokeDeclSpecifiers->AddNode(new otava::ast::VoidNode(sourcePos));
     otava::ast::ParameterListNode* invokeParameters = new otava::ast::ParameterListNode(sourcePos);
@@ -260,12 +367,11 @@ FunctionDefinitionSymbol* MakeInvokeFn(Invoke& invoke, Scope* parentFnScope, Fun
     context->PopParentFn();
     invokeInstantiationScope.PopParentScope();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
-    invoke.Clear();
     invokeFnSymbol->SetFnDefNode(invokeFnNode.release());
     return invokeFnSymbol;
 }
 
-FunctionDefinitionSymbol* MakeCleanupFn(Cleanup& cleanup, bool skipLast, Scope* parentFnScope, FunctionDefinitionSymbol* parentFn, Context* context)
+FunctionDefinitionSymbol* MakeCleanupFn(Cleanup& cleanup, Scope* parentFnScope, FunctionDefinitionSymbol* parentFn, Context* context)
 {
     soul::ast::SourcePos sourcePos = cleanup.GetSourcePos();
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
@@ -275,7 +381,7 @@ FunctionDefinitionSymbol* MakeCleanupFn(Cleanup& cleanup, bool skipLast, Scope* 
     {
         cleanupBlock->SetBlockId(parentFn->Blocks().front()->BlockId());
     }
-    cleanup.Make(cleanupBlock, skipLast);
+    cleanup.Make(cleanupBlock);
     otava::ast::DeclSpecifierSequenceNode* cleanupDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
     cleanupDeclSpecifiers->AddNode(new otava::ast::VoidNode(sourcePos));
     otava::ast::ParameterListNode* cleanupParameters = new otava::ast::ParameterListNode(sourcePos);
@@ -319,6 +425,1493 @@ FunctionDefinitionSymbol* MakeCleanupFn(Cleanup& cleanup, bool skipLast, Scope* 
     cleanupFnSymbol->SetFnDefNode(cleanupFnNode.release());
     cleanup.ResetChanged();
     return cleanupFnSymbol;
+}
+
+class BoundNodeStack
+{
+public:
+    BoundNodeStack(Context* context_);
+    inline void Push(BoundNode* node)
+    {
+        s.push(node);
+    }
+    inline BoundNode* Pop()
+    {
+        if (s.empty())
+        {
+            ThrowException("bound node stack is empty", soul::ast::SourcePos(), context);
+        }
+        BoundNode* top = s.top();
+        s.pop();
+        return top;
+    }
+private:
+    Context* context;
+    std::stack<BoundNode*> s;
+};
+
+BoundNodeStack::BoundNodeStack(Context* context_) : context(context_)
+{
+}
+
+class InvokeAndCleanupGenerator : public DefaultBoundTreeVisitor
+{
+public:
+    InvokeAndCleanupGenerator(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_);
+    void Visit(BoundFunctionNode& boundFunction) override;
+    void Visit(BoundCtorInitializerNode& node) override;
+    void Visit(BoundDtorTerminatorNode& node) override;
+    void Visit(BoundEmptyStatementNode& node) override;
+    void Visit(BoundCompoundStatementNode& node) override;
+    void Visit(BoundIfStatementNode& node) override;
+    void Visit(BoundSwitchStatementNode& node) override;
+    void Visit(BoundCaseStatementNode& node) override;
+    void Visit(BoundDefaultStatementNode& node) override;
+    void Visit(BoundWhileStatementNode& node) override;
+    void Visit(BoundDoStatementNode& node) override;
+    void Visit(BoundForStatementNode& node) override;
+    void Visit(BoundSequenceStatementNode& node) override;
+    void Visit(BoundBreakStatementNode& node) override;
+    void Visit(BoundContinueStatementNode& node) override;
+    void Visit(BoundReturnStatementNode& node) override;
+    void Visit(BoundGotoStatementNode& node) override;
+    void Visit(BoundLabeledStatementNode& node) override;
+    void Visit(BoundConstructionStatementNode& node) override;
+    void Visit(BoundExpressionStatementNode& node) override;
+    void Visit(BoundSetVPtrStatementNode& node) override;
+    void Visit(BoundAliasDeclarationStatementNode& node) override;
+    void Visit(BoundValueExpressionNode& node) override;
+    void Visit(BoundLiteralNode& node) override;
+    void Visit(BoundStringLiteralNode& node) override;
+    void Visit(BoundVariableNode& node) override;
+    void Visit(BoundParentVariableNode& node) override;
+    void Visit(BoundParameterNode& node) override;
+    void Visit(BoundParentParameterNode& node) override;
+    void Visit(BoundEnumConstant& node) override;
+    void Visit(BoundFunctionGroupNode& node) override;
+    void Visit(BoundClassGroupNode& node) override;
+    void Visit(BoundAliasGroupNode& node) override;
+    void Visit(BoundTypeNode& node) override;
+    void Visit(BoundMemberExprNode& node) override;
+    void Visit(BoundFunctionCallNode& node) override;
+    void Visit(BoundEmptyFunctionCallNode& node) override;
+    void Visit(BoundFunctionPtrCallNode& node) override;
+    void Visit(BoundExpressionSequenceNode& node) override;
+    void Visit(BoundExpressionListNode& node) override;
+    void Visit(BoundConjunctionNode& node) override;
+    void Visit(BoundDisjunctionNode& node) override;
+    void Visit(BoundConditionalExprNode& node) override;
+    void Visit(BoundConversionNode& node) override;
+    void Visit(BoundAddressOfNode& node) override;
+    void Visit(BoundDereferenceNode& node) override;
+    void Visit(BoundRefToPtrNode& node) override;
+    void Visit(BoundPtrToRefNode& node) override;
+    void Visit(BoundDefaultInitNode& node) override;
+    void Visit(BoundTemporaryNode& node) override;
+    void Visit(BoundConstructTemporaryNode& node) override;
+    void Visit(BoundConstructExpressionNode& node) override;
+    void Visit(BoundGlobalVariableDefinitionNode& node) override;
+    void Visit(BoundEmptyDestructorNode& node) override;
+    void Visit(BoundFunctionValueNode& node) override;
+    void Visit(BoundVariableAsVoidPtrNode& node) override;
+    void Visit(BoundOperatorFnNode& node) override;
+    BoundInvokeNode* MakeInvokeAndCleanup(BoundFunctionCallNode* fnCall);
+private:
+    Context* context;
+    FunctionDefinitionSymbol* functionDefinitionSymbol;
+    BoundNodeStack s;
+    Cleanup cleanup;
+};
+
+InvokeAndCleanupGenerator::InvokeAndCleanupGenerator(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_) :
+    context(context_), functionDefinitionSymbol(functionDefinitionSymbol_), s(context)
+{
+}
+
+BoundInvokeNode* InvokeAndCleanupGenerator::MakeInvokeAndCleanup(BoundFunctionCallNode* fnCall)
+{
+    std::unique_ptr<BoundInvokeNode> boundInvoke(new BoundInvokeNode(fnCall->GetSourcePos(), fnCall->GetType()));
+    TypeSymbol* resultType = fnCall->GetType();
+    bool hasResult = resultType && !resultType->IsVoidType();
+    if (hasResult)
+    {
+        std::u32string resultVarName = context->NextResultVarName();
+        VariableSymbol* resultVar = context->GetSymbolTable()->AddVariable(resultVarName, fnCall->Source(), resultType, nullptr, nullptr, DeclarationFlags::none, context);
+        BoundVariableNode* boundResultVar = new BoundVariableNode(resultVar, fnCall->GetSourcePos());
+        boundInvoke->SetResult(boundResultVar);
+        context->PushResultVarName(resultVarName);
+    }
+    FunctionDefinitionSymbol* invokeFnSymbol = MakeInvokeFn(
+        fnCall, context->GetSymbolTable()->CurrentScope(), functionDefinitionSymbol, context);
+    FunctionDefinitionSymbol* cleanupFnSymbol = MakeCleanupFn(
+        cleanup, context->GetSymbolTable()->CurrentScope(), functionDefinitionSymbol, context);
+    std::u32string invokeCallText;
+    invokeCallText.append(U"ort_invoke(").append(invokeFnSymbol->Name()).
+        append(U", ").append(cleanupFnSymbol->Name()).append(U", ").
+        append(U"__intrinsic_get_frame_ptr()").append(U")");
+    std::unique_ptr<otava::ast::Node> invokeCallNode = ParseExpression(invokeCallText, context);
+    std::unique_ptr<BoundExpressionNode> invokeCall(BindExpression(invokeCallNode.get(), context));
+    boundInvoke->SetInvokeCall(invokeCall.release());
+    if (hasResult)
+    {
+        context->PopResultVarName();
+    }
+    context->IncInvokes();
+    return boundInvoke.release();
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundFunctionNode& boundFunction)
+{
+    if (boundFunction.CtorInitializer())
+    {
+        boundFunction.CtorInitializer()->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundCtorInitializerNode())
+        {
+            BoundCtorInitializerNode* in = static_cast<BoundCtorInitializerNode*>(n);
+            boundFunction.SetCtorInitializer(in);
+        }
+        else
+        {
+            ThrowException("constructor initializer node expected", n->GetSourcePos(), context);
+        }
+    }
+    if (boundFunction.DtorTerminator())
+    {
+        boundFunction.DtorTerminator()->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundDtorTerminatorNode())
+        {
+            BoundDtorTerminatorNode* dn = static_cast<BoundDtorTerminatorNode*>(n);
+            boundFunction.SetDtorTerminator(dn);
+        }
+        else
+        {
+            ThrowException("destructor terminator node expected", n->GetSourcePos(), context);
+        }
+    }
+    boundFunction.Body()->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundCompoundStatementNode())
+    {
+        BoundCompoundStatementNode* cn = static_cast<BoundCompoundStatementNode*>(n);
+        boundFunction.SetBody(cn);
+    }
+    else
+    {
+        ThrowException("compound statement node expected", n->GetSourcePos(), context);
+    }
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundCtorInitializerNode& node)
+{
+    BoundCtorInitializerNode* clone = new BoundCtorInitializerNode(node.GetSourcePos());
+    for (const auto& baseInitializer : node.BaseInitializers())
+    {
+        baseInitializer->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundExpressionNode())
+        {
+            BoundExpressionNode* fn = static_cast<BoundExpressionNode*>(n);
+            clone->AddBaseInitializer(fn);
+        }
+        else
+        {
+            ThrowException("function call node expected", n->GetSourcePos(), context);
+        }
+    }
+    for (const auto& statement : node.SetVPtrStatements())
+    {
+        statement->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundStatementNode())
+        {
+            BoundStatementNode* sn = static_cast<BoundStatementNode*>(n);
+            clone->AddSetVPtrStatement(sn);
+        }
+        else
+        {
+            ThrowException("statement node expected", n->GetSourcePos(), context);
+        }
+    }
+    for (const auto& memberInitializer : node.MemberInitializers())
+    {
+        memberInitializer->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundExpressionNode())
+        {
+            BoundExpressionNode* fn = static_cast<BoundExpressionNode*>(n);
+            clone->AddMemberInitializer(fn);
+        }
+        else
+        {
+            ThrowException("function call node expected", n->GetSourcePos(), context);
+        }
+    }
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundDtorTerminatorNode& node)
+{
+    BoundDtorTerminatorNode* clone = new BoundDtorTerminatorNode(node.GetSourcePos());
+    for (const auto& statement : node.SetVPtrStatements())
+    {
+        statement->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundStatementNode())
+        {
+            BoundStatementNode* sn = static_cast<BoundStatementNode*>(n);
+            clone->AddSetVPtrStatement(sn);
+        }
+        else
+        {
+            ThrowException("statement node expected", n->GetSourcePos(), context);
+        }
+    }
+    for (const auto& memberTerminator : node.MemberTerminators())
+    {
+        memberTerminator->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundExpressionNode())
+        {
+            BoundExpressionNode* fn = static_cast<BoundExpressionNode*>(n);
+            clone->AddMemberTerminator(fn);
+        }
+        else
+        {
+            ThrowException("function call node expected", n->GetSourcePos(), context);
+        }
+    }
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundEmptyStatementNode& node)
+{
+    BoundEmptyStatementNode* clone = new BoundEmptyStatementNode(node.GetSourcePos());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundCompoundStatementNode& node)
+{
+    int blockId = node.BlockId();
+    context->PushParentBlockId(blockId);
+    Scope* scope = nullptr;
+    if (blockId != -1)
+    {
+        Symbol* block = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->GetBlock(blockId);
+        if (block)
+        {
+            scope = block->GetScope();
+            if (scope)
+            {
+                context->GetSymbolTable()->BeginScopeGeneric(scope, context);
+            }
+        }
+    }
+    BoundCompoundStatementNode* clone = new BoundCompoundStatementNode(node.GetSourcePos());
+    cleanup.PushCleanupBlock();
+    for (const auto& statement : node.Statements())
+    {
+        statement->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundStatementNode())
+        {
+            BoundStatementNode* sn = static_cast<BoundStatementNode*>(n);
+            clone->AddStatement(sn);
+        }
+        else
+        {
+            ThrowException("statement node expected", n->GetSourcePos(), context);
+        }
+    }
+    cleanup.PopCleanupBlock();
+    if (scope)
+    {
+        context->GetSymbolTable()->EndScopeGeneric(context);
+    }
+    context->PopParentBlockId();
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundIfStatementNode& node)
+{
+    int blockId = node.BlockId();
+    context->PushParentBlockId(blockId);
+    Scope* scope = nullptr;
+    if (blockId != -1)
+    {
+        Symbol* block = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->GetBlock(blockId);
+        if (block)
+        {
+            scope = block->GetScope();
+            if (scope)
+            {
+                context->GetSymbolTable()->BeginScopeGeneric(scope, context);
+            }
+        }
+    }
+    BoundIfStatementNode* clone = new BoundIfStatementNode(node.GetSourcePos());
+    BoundExpressionNode* condition = node.GetCondition();
+    condition->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetCondition(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    BoundStatementNode* thenStatement = node.ThenStatement();
+    thenStatement->Accept(*this);
+    BoundNode* tn = s.Pop();
+    if (tn->IsBoundStatementNode())
+    {
+        BoundStatementNode* sn = static_cast<BoundStatementNode*>(tn);
+        clone->SetThenStatement(sn);
+    }
+    else
+    {
+        ThrowException("statement node expected", tn->GetSourcePos(), context);
+    }
+    BoundStatementNode* elseStatement = node.ElseStatement();
+    if (elseStatement)
+    {
+        elseStatement->Accept(*this);
+        BoundNode* en = s.Pop();
+        if (en->IsBoundStatementNode())
+        {
+            BoundStatementNode* sn = static_cast<BoundStatementNode*>(en);
+            clone->SetElseStatement(sn);
+        }
+        else
+        {
+            ThrowException("statement node expected", en->GetSourcePos(), context);
+        }
+    }
+    if (scope)
+    {
+        context->GetSymbolTable()->EndScopeGeneric(context);
+    }
+    context->PopParentBlockId();
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundSwitchStatementNode& node)
+{
+    int blockId = node.BlockId();
+    context->PushParentBlockId(blockId);
+    Scope* scope = nullptr;
+    if (blockId != -1)
+    {
+        Symbol* block = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->GetBlock(blockId);
+        if (block)
+        {
+            scope = block->GetScope();
+            if (scope)
+            {
+                context->GetSymbolTable()->BeginScopeGeneric(scope, context);
+            }
+        }
+    }
+    BoundSwitchStatementNode* clone = new BoundSwitchStatementNode(node.GetSourcePos());
+    BoundExpressionNode* condition = node.GetCondition();
+    condition->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetCondition(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    BoundStatementNode* statement = node.Statement();
+    statement->Accept(*this);
+    BoundNode* sn = s.Pop();
+    if (sn->IsBoundStatementNode())
+    {
+        BoundStatementNode* cs = static_cast<BoundStatementNode*>(sn);
+        clone->SetStatement(cs);
+    }
+    else
+    {
+        ThrowException("statement node expected", sn->GetSourcePos(), context);
+    }
+    if (scope)
+    {
+        context->GetSymbolTable()->EndScopeGeneric(context);
+    }
+    context->PopParentBlockId();
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundCaseStatementNode& node)
+{
+    BoundCaseStatementNode* clone = new BoundCaseStatementNode(node.GetSourcePos());
+    for (const auto& caseExpr : node.CaseExprs())
+    {
+        caseExpr->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundExpressionNode())
+        {
+            BoundExpressionNode* ce = static_cast<BoundExpressionNode*>(n);
+            clone->AddCaseExpr(ce);
+        }
+        else
+        {
+            ThrowException("expression node expected", n->GetSourcePos(), context);
+        }
+    }
+    BoundStatementNode* statement = node.Statement();
+    statement->Accept(*this);
+    BoundNode* sn = s.Pop();
+    if (sn->IsBoundStatementNode())
+    {
+        BoundStatementNode* cs = static_cast<BoundStatementNode*>(sn);
+        clone->SetStatement(cs);
+    }
+    else
+    {
+        ThrowException("statement node expected", sn->GetSourcePos(), context);
+    }
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundDefaultStatementNode& node)
+{
+    BoundDefaultStatementNode* clone = new BoundDefaultStatementNode(node.GetSourcePos());
+    BoundStatementNode* statement = node.Statement();
+    statement->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundStatementNode())
+    {
+        BoundStatementNode* cs = static_cast<BoundStatementNode*>(n);
+        clone->SetStatement(cs);
+    }
+    else
+    {
+        ThrowException("statement node expected", n->GetSourcePos(), context);
+    }
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundWhileStatementNode& node)
+{
+    int blockId = node.BlockId();
+    context->PushParentBlockId(blockId);
+    Scope* scope = nullptr;
+    if (blockId != -1)
+    {
+        Symbol* block = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->GetBlock(blockId);
+        if (block)
+        {
+            scope = block->GetScope();
+            if (scope)
+            {
+                context->GetSymbolTable()->BeginScopeGeneric(scope, context);
+            }
+        }
+    }
+    BoundWhileStatementNode* clone = new BoundWhileStatementNode(node.GetSourcePos());
+    BoundExpressionNode* condition = node.GetCondition();
+    condition->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* cn = static_cast<BoundExpressionNode*>(n);
+        clone->SetCondition(cn);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    BoundStatementNode* statement = node.Statement();
+    statement->Accept(*this);
+    BoundNode* sn = s.Pop();
+    if (sn->IsBoundStatementNode())
+    {
+        BoundStatementNode* cs = static_cast<BoundStatementNode*>(sn);
+        clone->SetStatement(cs);
+    }
+    else
+    {
+        ThrowException("statement node expected", sn->GetSourcePos(), context);
+    }
+    if (scope)
+    {
+        context->GetSymbolTable()->EndScopeGeneric(context);
+    }
+    context->PopParentBlockId();
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundDoStatementNode& node)
+{
+    BoundDoStatementNode* clone = new BoundDoStatementNode(node.GetSourcePos());
+    s.Push(clone);
+    BoundExpressionNode* expr = node.GetExpr();
+    expr->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetExpr(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    BoundStatementNode* statement = node.Statement();
+    statement->Accept(*this);
+    BoundNode* sn = s.Pop();
+    if (sn->IsBoundStatementNode())
+    {
+        BoundStatementNode* cs = static_cast<BoundStatementNode*>(sn);
+        clone->SetStatement(cs);
+    }
+    else
+    {
+        ThrowException("statement node expected", sn->GetSourcePos(), context);
+    }
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundForStatementNode& node)
+{
+    int blockId = node.BlockId();
+    context->PushParentBlockId(blockId);
+    Scope* scope = nullptr;
+    if (blockId != -1)
+    {
+        Symbol* block = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->GetBlock(blockId);
+        if (block)
+        {
+            scope = block->GetScope();
+            if (scope)
+            {
+                context->GetSymbolTable()->BeginScopeGeneric(scope, context);
+            }
+        }
+    }
+    BoundForStatementNode* clone = new BoundForStatementNode(node.GetSourcePos());
+    BoundStatementNode* initStatement = node.InitStatement();
+    if (initStatement)
+    {
+        initStatement->Accept(*this);
+        BoundNode* sn = s.Pop();
+        if (sn->IsBoundStatementNode())
+        {
+            BoundStatementNode* cs = static_cast<BoundStatementNode*>(sn);
+            clone->SetInitStatement(cs);
+        }
+        else
+        {
+            ThrowException("statement node expected", sn->GetSourcePos(), context);
+        }
+    }
+    BoundExpressionNode* condition = node.GetCondition();
+    if (condition)
+    {
+        condition->Accept(*this);
+        BoundNode* cn = s.Pop();
+        if (cn->IsBoundExpressionNode())
+        {
+            BoundExpressionNode* en = static_cast<BoundExpressionNode*>(cn);
+            clone->SetCondition(en);
+        }
+        else
+        {
+            ThrowException("expression node expected", cn->GetSourcePos(), context);
+        }
+    }
+    BoundExpressionNode* loopExpr = node.GetLoopExpr();
+    if (loopExpr)
+    {
+        loopExpr->Accept(*this);
+        BoundNode* ln = s.Pop();
+        if (ln->IsBoundExpressionNode())
+        {
+            BoundExpressionNode* en = static_cast<BoundExpressionNode*>(ln);
+            clone->SetLoopExpr(en);
+        }
+        else
+        {
+            ThrowException("expression node expected", ln->GetSourcePos(), context);
+        }
+    }
+    BoundStatementNode* statement = node.Statement();
+    statement->Accept(*this);
+    BoundNode* sn = s.Pop();
+    if (sn->IsBoundStatementNode())
+    {
+        BoundStatementNode* cs = static_cast<BoundStatementNode*>(sn);
+        clone->SetStatement(cs);
+    }
+    else
+    {
+        ThrowException("statement node expected", sn->GetSourcePos(), context);
+    }
+    if (scope)
+    {
+        context->GetSymbolTable()->EndScopeGeneric(context);
+    }
+    context->PopParentBlockId();
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundSequenceStatementNode& node)
+{
+    BoundSequenceStatementNode* clone = new BoundSequenceStatementNode(node.GetSourcePos());
+    BoundStatementNode* first = node.First();
+    first->Accept(*this);
+    BoundNode* fn = s.Pop();
+    if (fn->IsBoundStatementNode())
+    {
+        BoundStatementNode* cs = static_cast<BoundStatementNode*>(fn);
+        clone->SetFirst(cs);
+    }
+    else
+    {
+        ThrowException("statement node expected", fn->GetSourcePos(), context);
+    }
+    BoundStatementNode* second = node.Second();
+    second->Accept(*this);
+    BoundNode* sn = s.Pop();
+    if (sn->IsBoundStatementNode())
+    {
+        BoundStatementNode* cs = static_cast<BoundStatementNode*>(sn);
+        clone->SetSecond(cs);
+    }
+    else
+    {
+        ThrowException("statement node expected", sn->GetSourcePos(), context);
+    }
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundBreakStatementNode& node)
+{
+    BoundBreakStatementNode* clone = new BoundBreakStatementNode(node.GetSourcePos());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundContinueStatementNode& node)
+{
+    BoundContinueStatementNode* clone = new BoundContinueStatementNode(node.GetSourcePos());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundReturnStatementNode& node)
+{
+    BoundReturnStatementNode* clone = new BoundReturnStatementNode(node.GetSourcePos());
+    BoundExpressionNode* expr = node.GetExpr();
+    if (expr)
+    {
+        expr->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundExpressionNode())
+        {
+            BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+            clone->SetExpr(en);
+        }
+        else
+        {
+            ThrowException("expression node expected", n->GetSourcePos(), context);
+        }
+    }
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundGotoStatementNode& node)
+{
+    BoundGotoStatementNode* clone = new BoundGotoStatementNode(node.GetSourcePos());
+    clone->SetTarget(node.Target());
+    clone->SetLabeledStatement(node.GetLabeledStatement());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundLabeledStatementNode& node)
+{
+    BoundLabeledStatementNode* clone = new BoundLabeledStatementNode(node.GetSourcePos());
+    clone->SetLabel(node.Label());
+    BoundStatementNode* statement = node.Statement();
+    statement->Accept(*this);
+    BoundNode* sn = s.Pop();
+    if (sn->IsBoundStatementNode())
+    {
+        BoundStatementNode* cs = static_cast<BoundStatementNode*>(sn);
+        clone->SetStatement(cs);
+    }
+    else
+    {
+        ThrowException("statement node expected", sn->GetSourcePos(), context);
+    }
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundSetVPtrStatementNode& node)
+{
+    BoundSetVPtrStatementNode* clone = new BoundSetVPtrStatementNode(node.GetSourcePos());
+    node.ThisPtr()->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* tn = static_cast<BoundExpressionNode*>(n);
+        clone->SetThisPtr(tn);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    clone->SetForClass(node.GetClass());
+    clone->SetVPtrHolderClass(node.GetVPtrHolderClass());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundAliasDeclarationStatementNode& node)
+{
+    BoundAliasDeclarationStatementNode* clone = new BoundAliasDeclarationStatementNode(node.GetSourcePos());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundConstructionStatementNode& node)
+{
+    BoundConstructionStatementNode* clone = new BoundConstructionStatementNode(node.GetSourcePos());
+    BoundExpressionNode* ctorCall = node.ConstructorCall();
+    ctorCall->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* cn = static_cast<BoundExpressionNode*>(n);
+        clone->SetConstructorCall(cn);
+    }
+    else
+    {
+        ThrowException("function call node expected", n->GetSourcePos(), context);
+    }
+    BoundExpressionNode* dtorCall = node.DestructorCall();
+    if (dtorCall)
+    {
+        dtorCall->Accept(*this);
+        BoundNode* dn = s.Pop();
+        if (dn->IsBoundExpressionNode())
+        {
+            BoundExpressionNode* fn = static_cast<BoundExpressionNode*>(dn);
+            clone->SetDestructorCall(fn);
+        }
+        else
+        {
+            ThrowException("function call node expected", n->GetSourcePos(), context);
+        }
+        cleanup.CurrentCleanupBlock()->Add(dtorCall, context);
+    }
+    clone->SetVariable(node.Variable());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundExpressionStatementNode& node)
+{
+    BoundExpressionStatementNode* clone = new BoundExpressionStatementNode(node.GetSourcePos());
+    BoundExpressionNode* expr = node.GetExpr();
+    if (expr)
+    {
+        expr->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundExpressionNode())
+        {
+            BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+            clone->SetExpr(en);
+        }
+        else
+        {
+            ThrowException("expression node expected", n->GetSourcePos(), context);
+        }
+    }
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundValueExpressionNode& node)
+{
+    ThrowException("value expression node not supported", node.GetSourcePos(), context);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundLiteralNode& node)
+{
+    BoundExpressionNode* clone = node.Clone();
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundStringLiteralNode& node)
+{
+    BoundExpressionNode* clone = node.Clone();
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundVariableNode& node)
+{
+    BoundVariableNode* clone = new BoundVariableNode(node.GetVariable(), node.GetSourcePos());
+    if (node.ThisPtr())
+    {
+        node.ThisPtr()->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundExpressionNode())
+        {
+            BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+            clone->SetThisPtr(en);
+        }
+        else
+        {
+            ThrowException("expression node expected", n->GetSourcePos(), context);
+        }
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundParentVariableNode& node)
+{
+    BoundParentVariableNode* clone = new BoundParentVariableNode(node.GetVariable(), node.GetSourcePos());
+    clone->SetLevel(node.Level());
+    if (node.ThisPtr())
+    {
+        node.ThisPtr()->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundExpressionNode())
+        {
+            BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+            clone->SetThisPtr(en);
+        }
+        else
+        {
+            ThrowException("expression node expected", n->GetSourcePos(), context);
+        }
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundParameterNode& node)
+{
+    BoundParameterNode* clone = new BoundParameterNode(node.GetParameter(), node.GetSourcePos(), node.GetType());
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundParentParameterNode& node)
+{
+    BoundParentParameterNode* clone = new BoundParentParameterNode(node.GetParameter(), node.GetSourcePos(), node.GetType());
+    clone->SetLevel(node.Level());
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundEnumConstant& node)
+{
+    BoundExpressionNode* clone = node.Clone();
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundFunctionGroupNode& node)
+{
+    BoundExpressionNode* clone = node.Clone();
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundClassGroupNode& node)
+{
+    BoundExpressionNode* clone = node.Clone();
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundAliasGroupNode& node)
+{
+    BoundExpressionNode* clone = node.Clone();
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundTypeNode& node)
+{
+    BoundExpressionNode* clone = node.Clone();
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundMemberExprNode& node)
+{
+    BoundMemberExprNode* clone = new BoundMemberExprNode(node.GetSourcePos(), node.GetType());
+    BoundExpressionNode* subject = node.Subject();
+    subject->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetSubject(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    BoundExpressionNode* member = node.Member();
+    member->Accept(*this);
+    BoundNode* nm = s.Pop();
+    if (nm->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(nm);
+        clone->SetMember(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", nm->GetSourcePos(), context);
+    }
+    clone->SetOp(node.Op());
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundFunctionCallNode& node)
+{
+    if (node.MayThrow() && !cleanup.IsEmpty() && node.Source())
+    {
+        BoundInvokeNode* boundInvoke = MakeInvokeAndCleanup(&node);
+        s.Push(boundInvoke);
+    }
+    else
+    {
+        BoundFunctionCallNode* clone = new BoundFunctionCallNode(node.GetFunctionSymbol(), node.GetSourcePos(), node.GetType());
+        for (const auto& arg : node.Args())
+        {
+            arg->Accept(*this);
+            BoundNode* n = s.Pop();
+            if (n->IsBoundExpressionNode())
+            {
+                BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+                clone->AddArgument(en);
+            }
+            else
+            {
+                ThrowException("expression node expected", n->GetSourcePos(), context);
+            }
+        }
+        clone->SetFlags(node.Flags());
+        s.Push(clone);
+    }
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundEmptyFunctionCallNode& node)
+{
+    BoundExpressionNode* clone = node.Clone();
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundFunctionPtrCallNode& node)
+{
+    BoundFunctionPtrCallNode* clone = new BoundFunctionPtrCallNode(node.GetSourcePos(), node.GetType());
+    for (const auto& arg : node.Args())
+    {
+        arg->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundExpressionNode())
+        {
+            BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+            clone->AddArgument(en);
+        }
+        else
+        {
+            ThrowException("expression node expected", n->GetSourcePos(), context);
+        }
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundExpressionSequenceNode& node)
+{
+    BoundExpressionSequenceNode* clone = new BoundExpressionSequenceNode(node.GetSourcePos(), node.GetType());
+    BoundExpressionNode* left = node.Left();
+    left->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetLeft(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    BoundExpressionNode* right = node.Right();
+    right->Accept(*this);
+    BoundNode* rn = s.Pop();
+    if (rn->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(rn);
+        clone->SetRight(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", rn->GetSourcePos(), context);
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundExpressionListNode& node)
+{
+    BoundExpressionListNode* clone = new BoundExpressionListNode(node.GetSourcePos());
+    for (const auto& expr : node.Exprs())
+    {
+        expr->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundExpressionNode())
+        {
+            BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+            clone->AddExpression(en);
+        }
+        else
+        {
+            ThrowException("expression node expected", n->GetSourcePos(), context);
+        }
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundConjunctionNode& node)
+{
+    BoundConjunctionNode* clone = new BoundConjunctionNode(node.GetSourcePos(), node.GetType());
+    BoundExpressionNode* left = node.Left();
+    left->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetLeft(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    BoundExpressionNode* right = node.Right();
+    right->Accept(*this);
+    BoundNode* rn = s.Pop();
+    if (rn->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(rn);
+        clone->SetRight(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", rn->GetSourcePos(), context);
+    }
+    if (node.Temporary())
+    {
+        node.Temporary()->Accept(*this);
+        BoundNode* vn = s.Pop();
+        if (vn->IsBoundVariableNode())
+        {
+            BoundVariableNode* tn = static_cast<BoundVariableNode*>(vn);
+            clone->SetTemporary(tn);
+        }
+        else
+        {
+            ThrowException("variable node expected", vn->GetSourcePos(), context);
+        }
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundDisjunctionNode& node)
+{
+    BoundDisjunctionNode* clone = new BoundDisjunctionNode(node.GetSourcePos(), node.GetType());
+    BoundExpressionNode* left = node.Left();
+    left->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetLeft(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    BoundExpressionNode* right = node.Right();
+    right->Accept(*this);
+    BoundNode* rn = s.Pop();
+    if (rn->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(rn);
+        clone->SetRight(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", rn->GetSourcePos(), context);
+    }
+    if (node.Temporary())
+    {
+        node.Temporary()->Accept(*this);
+        BoundNode* vn = s.Pop();
+        if (vn->IsBoundVariableNode())
+        {
+            BoundVariableNode* tn = static_cast<BoundVariableNode*>(vn);
+            clone->SetTemporary(tn);
+        }
+        else
+        {
+            ThrowException("variable node expected", vn->GetSourcePos(), context);
+        }
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundConditionalExprNode& node)
+{
+    BoundConditionalExprNode* clone = new BoundConditionalExprNode(node.GetSourcePos(), node.GetType());
+    BoundExpressionNode* condition = node.GetCondition();
+    condition->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetCondition(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    BoundExpressionNode* thenExpr = node.GetThenExpr();
+    thenExpr->Accept(*this);
+    BoundNode* te = s.Pop();
+    if (te->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(te);
+        clone->SetThenExpr(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    BoundExpressionNode* elseExpr = node.GetElseExpr();
+    elseExpr->Accept(*this);
+    BoundNode* ee = s.Pop();
+    if (ee->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(ee);
+        clone->SetElseExpr(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", ee->GetSourcePos(), context);
+    }
+    BoundVariableNode* temporary = node.Temporary();
+    if (temporary)
+    {
+        temporary->Accept(*this);
+        BoundNode* tn = s.Pop();
+        if (tn->IsBoundVariableNode())
+        {
+            BoundVariableNode* vn = static_cast<BoundVariableNode*>(tn);
+            clone->SetTemporary(vn);
+        }
+        else
+        {
+            ThrowException("variable node expected", ee->GetSourcePos(), context);
+        }
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundConversionNode& node)
+{
+    BoundConversionNode* clone = new BoundConversionNode(node.ConversionFunction(), node.GetSourcePos());
+    BoundExpressionNode* subject = node.Subject();
+    subject->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetSubject(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundAddressOfNode& node)
+{
+    BoundAddressOfNode* clone = new BoundAddressOfNode(node.GetSourcePos(), node.GetType());
+    BoundExpressionNode* subject = node.Subject();
+    subject->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetSubject(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundDereferenceNode& node)
+{
+    BoundDereferenceNode* clone = new BoundDereferenceNode(node.GetSourcePos(), node.GetType());
+    BoundExpressionNode* subject = node.Subject();
+    subject->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetSubject(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    clone->SetKind(node.Kind());
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundRefToPtrNode& node)
+{
+    BoundRefToPtrNode* clone = new BoundRefToPtrNode(node.GetSourcePos(), node.GetType());
+    BoundExpressionNode* subject = node.Subject();
+    subject->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetSubject(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundPtrToRefNode& node)
+{
+    BoundPtrToRefNode* clone = new BoundPtrToRefNode(node.GetSourcePos(), node.GetType());
+    BoundExpressionNode* subject = node.Subject();
+    subject->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetSubject(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundDefaultInitNode& node)
+{
+    BoundDefaultInitNode* clone = new BoundDefaultInitNode(node.GetSourcePos(), node.GetType());
+    BoundExpressionNode* subject = node.Subject();
+    subject->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetSubject(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundTemporaryNode& node)
+{
+    BoundTemporaryNode* clone = new BoundTemporaryNode(node.GetSourcePos(), node.GetType());
+    BoundExpressionNode* rvalueExpr = node.RvalueExpr();
+    if (rvalueExpr)
+    {
+        rvalueExpr->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundExpressionNode())
+        {
+            BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+            clone->SetRvalueExpr(en);
+        }
+        else
+        {
+            ThrowException("expression node expected", n->GetSourcePos(), context);
+        }
+    }
+    BoundVariableNode* backingStore = node.BackingStore();
+    if (backingStore)
+    {
+        backingStore->Accept(*this);
+        BoundNode* n = s.Pop();
+        if (n->IsBoundVariableNode())
+        {
+            BoundVariableNode* vn = static_cast<BoundVariableNode*>(n);
+            clone->SetBackingStore(vn);
+        }
+        else
+        {
+            ThrowException("variable node expected", n->GetSourcePos(), context);
+        }
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundConstructTemporaryNode& node)
+{
+    BoundExpressionNode* temporary = node.Temporary();
+    temporary->Accept(*this);
+    BoundNode* nt = s.Pop();
+    VariableSymbol* temporaryVar = nullptr;
+    if (nt->IsBoundVariableNode())
+    {
+        BoundVariableNode* clonedTemporary = static_cast<BoundVariableNode*>(nt);
+        temporaryVar = clonedTemporary->GetVariable();
+    }
+    else if (nt->IsBoundAddressOfNode())
+    {
+        BoundAddressOfNode* an = static_cast<BoundAddressOfNode*>(nt);
+        if (an->Subject()->IsBoundVariableNode())
+        {
+            BoundVariableNode* clonedTemporary = static_cast<BoundVariableNode*>(an->Subject());
+            temporaryVar = clonedTemporary->GetVariable();
+        }
+    }
+    BoundExpressionNode* constructorCall = node.ConstructorCall();
+    constructorCall->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundInvokeNode())
+    {
+        BoundInvokeNode* invoke = static_cast<BoundInvokeNode*>(n);
+        if (invoke->Result() && invoke->GetType() && invoke->GetType()->IsClassTypeSymbol() && TypesEqual(invoke->GetType(), node.GetType(), context))
+        {
+            s.Push(n);
+            return;
+        }
+    }
+    BoundConstructTemporaryNode* clone = new BoundConstructTemporaryNode(node.GetSourcePos(), node.GetType());
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetConstructorCall(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    if (nt->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(nt);
+        clone->SetTemporary(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", nt->GetSourcePos(), context);
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundConstructExpressionNode& node)
+{
+    BoundConstructExpressionNode* clone = new BoundConstructExpressionNode(node.GetSourcePos(), node.GetType());
+    BoundExpressionNode* allocation = node.Allocation();
+    allocation->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetAllocation(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    BoundExpressionNode* constructObjectCall = node.ConstructObjectCall();
+    constructObjectCall->Accept(*this);
+    BoundNode* no = s.Pop();
+    if (no->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(no);
+        clone->SetConstructObjectCall(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", no->GetSourcePos(), context);
+    }
+    clone->SetHasPlacement(node.HasPlacement());
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundGlobalVariableDefinitionNode& node)
+{
+    BoundGlobalVariableDefinitionNode* clone = new BoundGlobalVariableDefinitionNode(node.GetGlobalVariable(), node.GetSourcePos());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundEmptyDestructorNode& node)
+{
+    BoundExpressionNode* clone = node.Clone();
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundFunctionValueNode& node)
+{
+    BoundExpressionNode* clone = node.Clone();
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundVariableAsVoidPtrNode& node)
+{
+    BoundVariableAsVoidPtrNode* clone = new BoundVariableAsVoidPtrNode(node.GetSourcePos(), node.GetType());
+    BoundExpressionNode* addrOfBoundVariable = node.AddrOfBoundVariable();
+    addrOfBoundVariable->Accept(*this);
+    BoundNode* n = s.Pop();
+    if (n->IsBoundExpressionNode())
+    {
+        BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        clone->SetAddrOfBoundVariable(en);
+    }
+    else
+    {
+        ThrowException("expression node expected", n->GetSourcePos(), context);
+    }
+    clone->SetFlags(node.Flags());
+    s.Push(clone);
+}
+
+void InvokeAndCleanupGenerator::Visit(BoundOperatorFnNode& node)
+{
+    BoundExpressionNode* clone = node.Clone();
+    s.Push(clone);
+}
+
+void MakeInvokesAndCleanups(BoundFunctionNode* boundFunction, Context* context)
+{
+    InvokeAndCleanupGenerator generator(context, boundFunction->GetFunctionDefinitionSymbol());
+    boundFunction->Accept(generator);
 }
 
 otava::ast::Node* MakeClonedRetValExprNode(otava::ast::Node* node, bool makeAddrOfNode)
@@ -368,632 +1961,6 @@ BoundStatementNode* ConvertReturnStatement(otava::ast::ReturnStatementNode* retu
         context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
         return boundReturnStatement;
     }
-}
-
-class InvokeAndCleanupGenerator : public DefaultBoundTreeVisitor
-{
-public:
-    InvokeAndCleanupGenerator(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_);
-    std::unique_ptr<BoundCompoundStatementNode> GetFunctionBody();
-    void Visit(BoundCompoundStatementNode& node) override;
-    void Visit(BoundIfStatementNode& node) override;
-    void Visit(BoundSwitchStatementNode& node) override;
-    void Visit(BoundCaseStatementNode& node) override;
-    void Visit(BoundDefaultStatementNode& node) override;
-    void Visit(BoundWhileStatementNode& node) override;
-    void Visit(BoundDoStatementNode& node) override;
-    void Visit(BoundForStatementNode& node) override;
-    void Visit(BoundSequenceStatementNode& node) override;
-    void Visit(BoundBreakStatementNode& node) override;
-    void Visit(BoundContinueStatementNode& node) override;
-    void Visit(BoundReturnStatementNode& node) override;
-    void Visit(BoundGotoStatementNode& node) override;
-    void Visit(BoundLabeledStatementNode& node) override;
-    void Visit(BoundConstructionStatementNode& node) override;
-    void Visit(BoundExpressionStatementNode& node) override;
-    void Visit(BoundSetVPtrStatementNode& node) override;
-    void Visit(BoundAliasDeclarationStatementNode& node) override;
-private:
-    void GenerateInvokeAndCleanup(bool skipLast);
-    BoundVariableNode* ConvertCondition(BoundExpressionNode* condition, const soul::ast::SourcePos& sourcePos);
-    void Emit(BoundStatementNode* stmt);
-    void AddCurrentInvokeToCurrentCompound();
-    Context* context;
-    FunctionDefinitionSymbol* functionDefinitionSymbol;
-    std::unique_ptr<BoundStatementNode> currentInvoke;
-    std::unique_ptr<BoundStatementNode> currentStatement;
-    Cleanup cleanup;
-    Invoke invoke;
-    BoundCompoundStatementNode* currentCompound;
-    std::vector<std::unique_ptr<BoundConstructionStatementNode>>* currentInvokeStatementsWithDestructor;
-};
-
-InvokeAndCleanupGenerator::InvokeAndCleanupGenerator(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_) :
-    context(context_), functionDefinitionSymbol(functionDefinitionSymbol_), currentStatement(), currentCompound(nullptr),
-    currentInvokeStatementsWithDestructor(nullptr)
-{
-}
-
-std::unique_ptr<BoundCompoundStatementNode> InvokeAndCleanupGenerator::GetFunctionBody()
-{
-    if (currentStatement->IsBoundCompoundStatementNode())
-    {
-        return std::unique_ptr<BoundCompoundStatementNode>(static_cast<BoundCompoundStatementNode*>(currentStatement.release()));
-    }
-    else
-    {
-        ThrowException("compound statement expected", currentStatement->GetSourcePos(), context);
-    }
-    return std::unique_ptr<BoundCompoundStatementNode>();
-}
-
-void InvokeAndCleanupGenerator::GenerateInvokeAndCleanup(bool skipLast)
-{
-    currentInvoke.reset();
-    if (skipLast && cleanup.ContainsOne()) return;
-    if (cleanup.IsEmpty()) return;
-    if (invoke.IsEmpty()) return;
-    bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
-    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
-    soul::ast::SourcePos sourcePos = invoke.GetSourcePos();
-    InstantiationScope invokeInstantiationScope(context->GetSymbolTable()->CurrentScope());
-    context->GetSymbolTable()->BeginScope(&invokeInstantiationScope);
-    context->PushResetFlag(~ContextFlags::sticky);
-    std::unique_ptr<BoundStatementNode> boundChildControlResultStatement;
-    std::unique_ptr<BoundStatementNode> boundVarDeclarationStatement;
-    TypeSymbol* resultType = functionDefinitionSymbol->NonChildFunctionResultType(context);
-    std::u32string childControlResultVarName = context->NextChildControlResultVarName();
-    std::u32string resultVarName = context->NextResultVarName();
-    context->PushChildControlResultVarName(childControlResultVarName);
-    context->PushResultVarName(resultVarName);
-    if (resultType)
-    {
-        std::u32string varDeclarationStatementText;
-        TypeSymbol* nonReferenceType = ConvertRefToPtrType(resultType, context);
-        varDeclarationStatementText.append(nonReferenceType->FullName()).append(1, ' ').append(resultVarName);
-        if (nonReferenceType->IsPointerType())
-        {
-            varDeclarationStatementText.append(U" = nullptr;");
-        }
-        else
-        {
-            varDeclarationStatementText.append(U";");
-        }
-        try
-        {
-            std::unique_ptr<otava::ast::Node> varDeclarationStmtNode = ParseStatement(varDeclarationStatementText, context);
-            boundVarDeclarationStatement.reset(BindStatement(varDeclarationStmtNode.get(), functionDefinitionSymbol, context));
-            boundVarDeclarationStatement->SetSource(varDeclarationStmtNode.release());
-        }
-        catch (const std::exception& ex)
-        {
-            if (nonReferenceType->IsClassTypeSymbol())
-            {
-                ThrowException("error generating exception handling invoke, possible reason: class '" + util::ToUtf8(resultType->FullName()) +
-                    "' not default constructible: " + ex.what());
-            }
-            else
-            {
-                throw;
-            }
-        }
-    }
-    std::u32string childControlResultStatementText;
-    childControlResultStatementText.append(U"std::child_control_result ").append(childControlResultVarName).append(U" = std::child_control_result::none;");
-    std::unique_ptr<otava::ast::Node> setChildControlResultStmtNode = ParseStatement(childControlResultStatementText, context);
-    boundChildControlResultStatement.reset(BindStatement(setChildControlResultStmtNode.get(), functionDefinitionSymbol, context));
-    boundChildControlResultStatement->SetSource(setChildControlResultStmtNode.release());
-    FunctionDefinitionSymbol* invokeFnSymbol = MakeInvokeFn(invoke, context->GetSymbolTable()->CurrentScope(), functionDefinitionSymbol, context);
-    FunctionDefinitionSymbol* cleanupFnSymbol = MakeCleanupFn(cleanup, skipLast, context->GetSymbolTable()->CurrentScope(), functionDefinitionSymbol, context);
-    std::u32string invokeStmtText;
-    invokeStmtText.append(U"ort_invoke(").append(invokeFnSymbol->Name()).append(U", ").append(cleanupFnSymbol->Name()).append(U", ").
-        append(U"__intrinsic_get_frame_ptr()").append(U");");
-    std::unique_ptr<otava::ast::Node> invokeStmtNode = ParseStatement(invokeStmtText, context);
-    std::unique_ptr<otava::ast::CompoundStatementNode> invokeBlock(new otava::ast::CompoundStatementNode(sourcePos));
-    invokeBlock->SetBlockId(context->NextBlockId());
-    invokeBlock->AddNode(new otava::ast::BoundStatementNode(boundChildControlResultStatement.release(), sourcePos));
-    if (resultType)
-    {
-        invokeBlock->AddNode(new otava::ast::BoundStatementNode(boundVarDeclarationStatement.release(), sourcePos));
-    }
-    invokeBlock->AddNode(invokeStmtNode.release());
-    if (invokeFnSymbol->GetFlag(FunctionSymbolFlags::containsReturnStatement))
-    {
-        std::u32string returnStatementText;
-        returnStatementText.append(U"if (").append(childControlResultVarName).append(U" == std::child_control_result::ret) return ").append(
-            invokeFnSymbol->ResultVarExprStr(resultType)).append(U";");
-        std::unique_ptr<otava::ast::Node> returnStmtNode = ParseStatement(returnStatementText, context);
-        context->PushSetFlag(ContextFlags::skipInvokeChecking);
-        BoundStatementNode* boundReturnStmt = BindStatement(returnStmtNode.get(), functionDefinitionSymbol, context);
-        boundReturnStmt->SetSource(returnStmtNode.release());
-        context->PopFlags();
-        invokeBlock->AddNode(new otava::ast::BoundStatementNode(boundReturnStmt, sourcePos));
-    }
-    if (functionDefinitionSymbol->ParentFn())
-    {
-        otava::ast::BinaryExprNode* binaryExpr = new otava::ast::BinaryExprNode(sourcePos,
-            new otava::ast::AssignNode(sourcePos),
-            new otava::ast::IdentifierNode(sourcePos, context->ResultVarName()),
-            new otava::ast::IdentifierNode(sourcePos, invokeFnSymbol->ResultVarExprStr(resultType)));
-        otava::ast::ExpressionStatementNode* exprStmt = new otava::ast::ExpressionStatementNode(sourcePos, binaryExpr, nullptr, nullptr);
-        BoundStatementNode* boundExpressionStatement = BindStatement(exprStmt, functionDefinitionSymbol, context);
-        boundExpressionStatement->SetSource(exprStmt);
-        otava::ast::BoundStatementNode* boundStmt = new otava::ast::BoundStatementNode(boundExpressionStatement, sourcePos);
-        invokeBlock->AddNode(boundStmt);
-    }
-    context->PopResultVarName();
-    context->PopChildControlResultVarName();
-    context->PopFlags();
-    Instantiator invokeInstantiator(context, &invokeInstantiationScope);
-    context->PushSetFlag(ContextFlags::saveDeclarations | ContextFlags::dontBind);
-    invokeBlock->Accept(invokeInstantiator);
-    context->PopFlags();
-    std::unique_ptr<BoundCompoundStatementNode> boundInvokeBlock(static_cast<BoundCompoundStatementNode*>(
-        BindStatement(invokeBlock.get(), functionDefinitionSymbol, context)));
-    if (invoke.HasStatementsWithDestructor())
-    {
-        boundInvokeBlock->SetInvokeStatementsWithDestructor(invoke.StatementsWithDestructor());
-    }
-    context->GetSymbolTable()->EndScope();
-    currentInvoke.reset(boundInvokeBlock.release());
-    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
-    context->IncInvokes();
-}
-
-BoundVariableNode* InvokeAndCleanupGenerator::ConvertCondition(BoundExpressionNode* condition, const soul::ast::SourcePos& sourcePos)
-{
-    bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
-    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
-    std::vector<TypeSymbol*> templateArgs;
-    TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::boolType);
-    VariableSymbol* localVariable = context->GetSymbolTable()->AddVariable(context->NextConditionVariableName(), nullptr, boolType, boolType,
-        nullptr, DeclarationFlags::none, context);
-    std::vector<std::unique_ptr<BoundExpressionNode>> arguments;
-    BoundVariableNode* boundVariable = new BoundVariableNode(localVariable, sourcePos);
-    arguments.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariable, sourcePos, boundVariable->GetType()->AddPointer(context))));
-    arguments.push_back(std::unique_ptr<BoundExpressionNode>(condition->Clone()));
-    std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(),
-        U"@constructor", templateArgs, arguments, sourcePos, context);
-    BoundConstructionStatementNode* boundConstructionStatement = new BoundConstructionStatementNode(sourcePos, constructorCall.release());
-    boundConstructionStatement->SetSource(new otava::ast::BoundStatementNode(boundConstructionStatement->Clone(), sourcePos));
-    boundConstructionStatement->SetVariable(localVariable);
-    functionDefinitionSymbol->AddLocalVariable(localVariable);
-    Emit(boundConstructionStatement);
-    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
-    return new BoundVariableNode(localVariable, sourcePos);
-}
-
-void InvokeAndCleanupGenerator::Emit(BoundStatementNode* stmt)
-{
-    currentInvoke.reset();
-    currentStatement.reset();
-    if (stmt->MayThrow() && !cleanup.IsEmpty())
-    {
-        if (cleanup.Changed())
-        {
-            GenerateInvokeAndCleanup(true);
-        }
-        invoke.Add(stmt);
-        if (stmt->ConstructsLocalVariableWithDestructor())
-        {
-            AddCurrentInvokeToCurrentCompound();
-            GenerateInvokeAndCleanup(false);
-        }
-    }
-    else
-    {
-        GenerateInvokeAndCleanup(false);
-        currentStatement.reset(stmt);
-    }
-    if (currentInvoke && currentStatement)
-    {
-        BoundSequenceStatementNode* sequence = new BoundSequenceStatementNode(stmt->GetSourcePos(), currentInvoke.release(), currentStatement.release());
-        currentStatement.reset(sequence);
-    }
-    else if (currentInvoke)
-    {
-        currentStatement.reset(currentInvoke.release());
-    }
-    else if (!currentStatement)
-    {
-        BoundEmptyStatementNode* empty = new BoundEmptyStatementNode(stmt->GetSourcePos());
-        currentStatement.reset(empty);
-    }
-}
-
-void InvokeAndCleanupGenerator::AddCurrentInvokeToCurrentCompound()
-{
-    if (currentInvoke)
-    {
-        if (currentInvoke->HasInvokeStatementsWithDestructor())
-        {
-            std::vector<std::unique_ptr<BoundConstructionStatementNode>> constructionStatements = currentInvoke->ReleaseInvokeStatementsWithDestructor();
-            for (auto& constructionStatementNode : constructionStatements)
-            {
-                constructionStatementNode->SetStatementIndex(currentCompound->NextStatementIndex());
-                currentInvokeStatementsWithDestructor->push_back(std::move(constructionStatementNode));
-            }
-        }
-        currentCompound->AddStatement(currentInvoke.release());
-    }
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundCompoundStatementNode& node)
-{
-    int blockId = node.BlockId();
-    context->PushParentBlockId(blockId);
-    Scope* scope = nullptr;
-    if (blockId != -1)
-    {
-        Symbol* block = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->GetBlock(blockId);
-        if (block)
-        {
-            scope = block->GetScope();
-            if (scope)
-            {
-                context->GetSymbolTable()->BeginScopeGeneric(scope, context);
-            }
-            else
-            {
-                int x = 0;
-            }
-        }
-        else
-        {
-            int x = 0;
-        }
-    }
-    BoundCompoundStatementNode* compound = new BoundCompoundStatementNode(node.GetSourcePos());
-    cleanup.PushCleanupBlock();
-    BoundCompoundStatementNode* prevCompound = currentCompound;
-    currentCompound = compound;
-    std::vector<std::unique_ptr<BoundConstructionStatementNode>> invokeStatementsWithDestructor;
-    std::vector<std::unique_ptr<BoundConstructionStatementNode>>* prevInvokeStatementsWithDestructor = currentInvokeStatementsWithDestructor;
-    currentInvokeStatementsWithDestructor = &invokeStatementsWithDestructor;
-    for (const auto& stmt : node.Statements())
-    {
-        stmt->Accept(*this);
-        if (currentStatement->HasInvokeStatementsWithDestructor())
-        {
-            std::vector<std::unique_ptr<BoundConstructionStatementNode>> constructionStatements = currentStatement->ReleaseInvokeStatementsWithDestructor();
-            for (auto& constructionStatementNode : constructionStatements)
-            {
-                constructionStatementNode->SetStatementIndex(compound->NextStatementIndex());
-                invokeStatementsWithDestructor.push_back(std::move(constructionStatementNode));
-            }
-        }
-        compound->AddStatement(currentStatement.release());
-    }
-    GenerateInvokeAndCleanup(false);
-    if (currentInvoke)
-    {
-        if (currentInvoke->HasInvokeStatementsWithDestructor())
-        {
-            std::vector<std::unique_ptr<BoundConstructionStatementNode>> currentInvokeStatementsWithDestructor = currentStatement->ReleaseInvokeStatementsWithDestructor();
-            for (auto& constructionStatementNode : currentInvokeStatementsWithDestructor)
-            {
-                constructionStatementNode->SetStatementIndex(compound->NextStatementIndex());
-                invokeStatementsWithDestructor.push_back(std::move(constructionStatementNode));
-            }
-        }
-        compound->AddStatement(currentInvoke.release());
-    }
-    cleanup.PopCleanupBlock();
-    if (scope)
-    {
-        context->GetSymbolTable()->EndScopeGeneric(context);
-    }
-    context->PopParentBlockId();
-    if (!invokeStatementsWithDestructor.empty())
-    {
-        compound->SetInvokeStatementsWithDestructor(std::move(invokeStatementsWithDestructor));
-    }
-    currentStatement.reset(compound);
-    currentCompound = prevCompound;
-    currentInvokeStatementsWithDestructor = prevInvokeStatementsWithDestructor;
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundIfStatementNode& node)
-{
-    GenerateInvokeAndCleanup(false);
-    AddCurrentInvokeToCurrentCompound();
-    int blockId = node.BlockId();
-    context->PushParentBlockId(blockId);
-    Scope* scope = nullptr;
-    if (blockId != -1)
-    {
-        Symbol* block = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->GetBlock(blockId);
-        if (block)
-        {
-            scope = block->GetScope();
-            if (scope)
-            {
-                context->GetSymbolTable()->BeginScopeGeneric(scope, context);
-            }
-            else
-            {
-                int x = 0;
-            }
-        }
-        else
-        {
-            int x = 0;
-        }
-    }
-    std::unique_ptr<BoundIfStatementNode> clone(static_cast<BoundIfStatementNode*>(node.Clone()));
-    if (clone->GetCondition()->MayThrow())
-    {
-        BoundVariableNode* boundLocalVariable = ConvertCondition(clone->GetCondition(), node.GetSourcePos());
-        clone->SetCondition(boundLocalVariable);
-    }
-    if (clone->ThenStatement()->ContainsLocalVariableWithDestructor())
-    {
-        node.ThenStatement()->Accept(*this);
-        clone->SetThenStatement(currentStatement.release());
-    }
-    if (clone->ElseStatement() && clone->ElseStatement()->ContainsLocalVariableWithDestructor())
-    {
-        node.ElseStatement()->Accept(*this);
-        clone->SetElseStatement(currentStatement.release());
-    }
-    Emit(clone.release());
-    if (scope)
-    {
-        context->GetSymbolTable()->EndScopeGeneric(context);
-    }
-    context->PopParentBlockId();
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundSwitchStatementNode& node)
-{
-    GenerateInvokeAndCleanup(false);
-    AddCurrentInvokeToCurrentCompound();
-    int blockId = node.BlockId();
-    context->PushParentBlockId(blockId);
-    Scope* scope = nullptr;
-    if (blockId != -1)
-    {
-        Symbol* block = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->GetBlock(blockId);
-        if (block)
-        {
-            scope = block->GetScope();
-            if (scope)
-            {
-                context->GetSymbolTable()->BeginScopeGeneric(scope, context);
-            }
-            else
-            {
-                int x = 0;
-            }
-        }
-        else
-        {
-            int x = 0;
-        }
-    }
-    std::unique_ptr<BoundSwitchStatementNode> clone(static_cast<BoundSwitchStatementNode*>(node.Clone()));
-    if (clone->GetCondition()->MayThrow())
-    {
-        BoundVariableNode* boundLocalVariable = ConvertCondition(clone->GetCondition(), node.GetSourcePos());
-        clone->SetCondition(boundLocalVariable);
-    }
-    if (clone->Statement()->ContainsLocalVariableWithDestructor())
-    {
-        node.Statement()->Accept(*this);
-        clone->SetStatement(currentStatement.release());
-    }
-    Emit(clone.release());
-    if (scope)
-    {
-        context->GetSymbolTable()->EndScopeGeneric(context);
-    }
-    context->PopParentBlockId();
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundCaseStatementNode& node)
-{
-    std::unique_ptr<BoundCaseStatementNode> clone(static_cast<BoundCaseStatementNode*>(node.Clone()));
-    if (clone->Statement()->ContainsLocalVariableWithDestructor())
-    {
-        node.Statement()->Accept(*this);
-        clone->SetStatement(currentStatement.release());
-    }
-    Emit(clone.release());
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundDefaultStatementNode& node)
-{
-    std::unique_ptr<BoundDefaultStatementNode> clone(static_cast<BoundDefaultStatementNode*>(node.Clone()));
-    if (clone->Statement()->ContainsLocalVariableWithDestructor())
-    {
-        node.Statement()->Accept(*this);
-        clone->SetStatement(currentStatement.release());
-    }
-    Emit(clone.release());
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundWhileStatementNode& node)
-{
-    GenerateInvokeAndCleanup(false);
-    AddCurrentInvokeToCurrentCompound();
-    int blockId = node.BlockId();
-    context->PushParentBlockId(blockId);
-    Scope* scope = nullptr;
-    if (blockId != -1)
-    {
-        Symbol* block = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->GetBlock(blockId);
-        if (block)
-        {
-            scope = block->GetScope();
-            if (scope)
-            {
-                context->GetSymbolTable()->BeginScopeGeneric(scope, context);
-            }
-            else
-            {
-                int x = 0;
-            }
-        }
-        else
-        {
-            int x = 0;
-        }
-    }
-    std::unique_ptr<BoundWhileStatementNode> clone(static_cast<BoundWhileStatementNode*>(node.Clone()));
-    if (clone->GetCondition()->MayThrow())
-    {
-        BoundVariableNode* boundLocalVariable = ConvertCondition(clone->GetCondition(), node.GetSourcePos());
-        clone->SetCondition(boundLocalVariable);
-    }
-    if (clone->Statement()->ContainsLocalVariableWithDestructor())
-    {
-        node.Statement()->Accept(*this);
-        clone->SetStatement(currentStatement.release());
-    }
-    Emit(clone.release());
-    if (scope)
-    {
-        context->GetSymbolTable()->EndScopeGeneric(context);
-    }
-    context->PopParentBlockId();
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundDoStatementNode& node)
-{
-    GenerateInvokeAndCleanup(false);
-    AddCurrentInvokeToCurrentCompound();
-    std::unique_ptr<BoundDoStatementNode> clone(static_cast<BoundDoStatementNode*>(node.Clone()));
-    if (clone->Statement()->ContainsLocalVariableWithDestructor())
-    {
-        node.Statement()->Accept(*this);
-        clone->SetStatement(currentStatement.release());
-    }
-    Emit(clone.release());
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundForStatementNode& node)
-{
-    GenerateInvokeAndCleanup(false);
-    AddCurrentInvokeToCurrentCompound();
-    int blockId = node.BlockId();
-    context->PushParentBlockId(blockId);
-    Scope* scope = nullptr;
-    if (blockId != -1)
-    {
-        Symbol* block = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->GetBlock(blockId);
-        if (block)
-        {
-            scope = block->GetScope();
-            if (scope)
-            {
-                context->GetSymbolTable()->BeginScopeGeneric(scope, context);
-            }
-            else
-            {
-                int x = 0;
-            }
-        }
-        else
-        {
-            int x = 0;
-        }
-    }
-    std::unique_ptr<BoundForStatementNode> clone(static_cast<BoundForStatementNode*>(node.Clone()));
-    if (clone->GetCondition()->MayThrow())
-    {
-        BoundVariableNode* boundLocalVariable = ConvertCondition(clone->GetCondition(), node.GetSourcePos());
-        clone->SetCondition(boundLocalVariable);
-    }
-    if (clone->Statement()->ContainsLocalVariableWithDestructor())
-    {
-        node.Statement()->Accept(*this);
-        clone->SetStatement(currentStatement.release());
-    }
-    Emit(clone.release());
-    if (scope)
-    {
-        context->GetSymbolTable()->EndScopeGeneric(context);
-    }
-    context->PopParentBlockId();
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundSequenceStatementNode& node)
-{
-    std::unique_ptr<BoundSequenceStatementNode> clone(static_cast<BoundSequenceStatementNode*>(node.Clone()));
-    if (node.First()->ContainsLocalVariableWithDestructor())
-    {
-        node.First()->Accept(*this);
-        clone->SetFirst(currentStatement.release());
-    }
-    if (node.Second()->ContainsLocalVariableWithDestructor())
-    {
-        node.Second()->Accept(*this);
-        clone->SetSecond(currentStatement.release());
-    }
-    Emit(clone.release());
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundBreakStatementNode& node)
-{
-    Emit(node.Clone());
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundContinueStatementNode& node)
-{
-    Emit(node.Clone());
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundReturnStatementNode& node)
-{
-    Emit(node.Clone());
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundGotoStatementNode& node)
-{
-    Emit(node.Clone());
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundLabeledStatementNode& node)
-{
-    std::unique_ptr<BoundLabeledStatementNode> clone(static_cast<BoundLabeledStatementNode*>(node.Clone()));
-    if (node.Statement()->ContainsLocalVariableWithDestructor())
-    {
-        node.Statement()->Accept(*this);
-        clone->SetStatement(currentStatement.release());
-    }
-    Emit(clone.release());
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundSetVPtrStatementNode& node)
-{
-    Emit(node.Clone());
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundAliasDeclarationStatementNode& node)
-{
-    Emit(node.Clone());
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundConstructionStatementNode& node)
-{
-    Emit(node.Clone());
-    if (node.DestructorCall())
-    {
-        cleanup.CurrentCleanupBlock()->Add(node.DestructorCall(), context);
-    }
-}
-
-void InvokeAndCleanupGenerator::Visit(BoundExpressionStatementNode& node)
-{
-    Emit(node.Clone());
-}
-
-std::unique_ptr<BoundCompoundStatementNode> MakeInvokesAndCleanups(FunctionDefinitionSymbol* functionDefinitionSymbol,
-    BoundCompoundStatementNode* functionNody, Context* context)
-{
-    InvokeAndCleanupGenerator generator(context, functionDefinitionSymbol);
-    functionNody->Accept(generator);
-    return generator.GetFunctionBody();
 }
 
 } // namespace otava::symbols

@@ -94,6 +94,7 @@ public:
     inline const soul::ast::SourcePos& RAnglePos() const noexcept { return raPos; }
     inline const std::vector<bool>& TemplateArgKinds() const noexcept { return templateArgKinds; }
     void SetTemplateArgKinds(const std::vector<bool>& templateArgKinds_);
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> templateName;
     soul::ast::SourcePos laPos;

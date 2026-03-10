@@ -28,6 +28,7 @@ Node* TranslationUnitNode::Clone() const
         clonedUnit = unit->Clone();
     }
     TranslationUnitNode* clone = new TranslationUnitNode(GetSourcePos(), clonedUnit);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -77,6 +78,7 @@ Node* ModuleUnitNode::Clone() const
         clonedPrivateModuleFragment = privateModuleFragment->Clone();
     }
     ModuleUnitNode* clone = new ModuleUnitNode(GetSourcePos(), clonedGlobalModuleFragment, moduleDeclaration->Clone(), clonedDeclarations, clonedPrivateModuleFragment);
+    clone->SetId(Id());
     return clone;
 }
 

@@ -1242,12 +1242,26 @@ std::u32string FunctionSymbol::NextTemporaryName()
     return U"@t" + util::ToUtf32(std::to_string(nextTemporaryId++));
 }
 
-VariableSymbol* FunctionSymbol::CreateTemporary(TypeSymbol* type)
+VariableSymbol* FunctionSymbol::CreateTemporary(TypeSymbol* type, std::int64_t nodeId)
 {
     VariableSymbol* temporary = new VariableSymbol(NextTemporaryName());
     temporary->SetDeclaredType(type);
     AddLocalVariable(temporary);
+    if (nodeId != -1)
+    {
+        temporaryMap[nodeId] = temporary;
+    }
     return temporary;
+}
+
+VariableSymbol* FunctionSymbol::GetTemporary(std::int64_t nodeId) const noexcept
+{
+    auto it = temporaryMap.find(nodeId);
+    if (it != temporaryMap.end())
+    {
+        return it->second;
+    }
+    return nullptr;
 }
 
 bool FunctionSymbol::IsStatic() const noexcept

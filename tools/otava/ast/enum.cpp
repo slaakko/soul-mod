@@ -27,6 +27,7 @@ Node* EnumSpecifierNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -73,6 +74,7 @@ Node* EnumHeadNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     EnumHeadNode* clone = new EnumHeadNode(GetSourcePos(), enumKey->Clone(), enumHeadName->Clone(), clonedEnumBase, clonedAttributes);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -110,6 +112,7 @@ EnumBaseNode::EnumBaseNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpe
 Node* EnumBaseNode::Clone() const
 {
     EnumBaseNode* clone = new EnumBaseNode(GetSourcePos(), Child()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -130,6 +133,7 @@ EnumClassNode::EnumClassNode(const soul::ast::SourcePos& sourcePos_, const soul:
 Node* EnumClassNode::Clone() const
 {
     EnumClassNode* clone = new EnumClassNode(GetSourcePos(), classPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -162,6 +166,7 @@ EnumStructNode::EnumStructNode(const soul::ast::SourcePos& sourcePos_, const sou
 Node* EnumStructNode::Clone() const
 {
     EnumStructNode* clone = new EnumStructNode(GetSourcePos(), structPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -189,6 +194,7 @@ EnumNode::EnumNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeK
 Node* EnumNode::Clone() const
 {
     EnumNode* clone = new EnumNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -215,6 +221,7 @@ Node* EnumeratorDefinitionNode::Clone() const
         clonedValue = value->Clone();
     }
     EnumeratorDefinitionNode* clone = new EnumeratorDefinitionNode(GetSourcePos(), enumerator->Clone(), clonedValue, assignPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -256,6 +263,7 @@ Node* EnumeratorNode::Clone() const
         clonedAttributes = attributes->Clone();
     }
     EnumeratorNode* clone = new EnumeratorNode(GetSourcePos(), identifier->Clone(), clonedAttributes);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -291,6 +299,7 @@ ElaboratedEnumSpecifierNode::ElaboratedEnumSpecifierNode(const soul::ast::Source
 Node* ElaboratedEnumSpecifierNode::Clone() const
 {
     ElaboratedEnumSpecifierNode* clone = new ElaboratedEnumSpecifierNode(GetSourcePos(), Child()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -324,6 +333,7 @@ Node* OpaqueEnumDeclarationNode::Clone() const
     }
     OpaqueEnumDeclarationNode* clone = new OpaqueEnumDeclarationNode(GetSourcePos(), enumKey->Clone(), enumHeadName->Clone(), clonedEnumBase, clonedAttributes, 
         semicolon->Clone());
+    clone->SetId(Id());
     return clone;
 }
 

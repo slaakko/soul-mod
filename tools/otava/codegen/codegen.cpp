@@ -260,20 +260,19 @@ public:
     BlockExit();
     bool IsEmpty() const { return destructorCalls.empty(); }
     int Size() const { return destructorCalls.size(); }
-    void AddDestructorCall(otava::symbols::BoundFunctionCallNode* destructorCall);
+    void AddDestructorCall(otava::symbols::BoundExpressionNode* destructorCall);
     void Execute(otava::symbols::Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context, bool reset);
-    void CheckUnique(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const;
 private:
-    std::vector<std::unique_ptr<otava::symbols::BoundFunctionCallNode>> destructorCalls;
+    std::vector<std::unique_ptr<otava::symbols::BoundExpressionNode>> destructorCalls;
 };
 
 BlockExit::BlockExit()
 {
 }
 
-void BlockExit::AddDestructorCall(otava::symbols::BoundFunctionCallNode* destructorCall)
+void BlockExit::AddDestructorCall(otava::symbols::BoundExpressionNode* destructorCall)
 {
-    destructorCalls.push_back(std::unique_ptr<otava::symbols::BoundFunctionCallNode>(destructorCall));
+    destructorCalls.push_back(std::unique_ptr<otava::symbols::BoundExpressionNode>(destructorCall));
 }
 
 void BlockExit::Execute(otava::symbols::Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context, bool reset)
@@ -281,34 +280,8 @@ void BlockExit::Execute(otava::symbols::Emitter& emitter, const soul::ast::Sourc
     int n = destructorCalls.size();
     for (int i = n - 1; i >= 0; --i)
     {
-        otava::symbols::BoundFunctionCallNode* destructorCall = destructorCalls[i].get();
+        otava::symbols::BoundExpressionNode* destructorCall = destructorCalls[i].get();
         destructorCall->Load(emitter, otava::symbols::OperationFlags::none, sourcePos, context);
-    }
-}
-
-void BlockExit::CheckUnique(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const
-{
-    std::set<otava::symbols::VariableSymbol*> variables;
-    for (const auto& destructorCall : destructorCalls)
-    {
-        if (!destructorCall->Args().empty())
-        {
-            otava::symbols::BoundExpressionNode* boundExprNode = destructorCall->Args().front().get();
-            if (boundExprNode->IsBoundAddressOfNode())
-            {
-                otava::symbols::BoundAddressOfNode* addrOfNode = static_cast<otava::symbols::BoundAddressOfNode*>(boundExprNode);
-                if (addrOfNode->Subject()->IsBoundVariableNode())
-                {
-                    otava::symbols::BoundVariableNode* boundVariableNode = static_cast<otava::symbols::BoundVariableNode*>(addrOfNode->Subject());
-                    otava::symbols::VariableSymbol* variable = boundVariableNode->GetVariable();
-                    if (variables.find(variable) != variables.end())
-                    {
-                        otava::symbols::ThrowException("block exit not unique", sourcePos, context);
-                    }
-                    variables.insert(variable);
-                }
-            }
-        }
     }
 }
 
@@ -348,6 +321,7 @@ public:
     void Visit(otava::symbols::BoundMemberExprNode& node) override;
     void Visit(otava::symbols::BoundFunctionCallNode& node) override;
     void Visit(otava::symbols::BoundFunctionPtrCallNode& node) override;
+    void Visit(otava::symbols::BoundInvokeNode& node) override;
     void Visit(otava::symbols::BoundExpressionSequenceNode& node) override;
     void Visit(otava::symbols::BoundConversionNode& node) override;
     void Visit(otava::symbols::BoundAddressOfNode& node) override;
@@ -1084,7 +1058,6 @@ void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)
     ++currentBlockId;
     while (currentBlockId >= blockExits.size()) blockExits.push_back(std::unique_ptr<BlockExit>());
     blockExits[currentBlockId].reset(new BlockExit());
-    bool invokeStatementsWithDestructor = node.HasInvokeStatementsWithDestructor();
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
     int n = node.Statements().size();
@@ -1092,18 +1065,8 @@ void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)
     {
         otava::symbols::BoundStatementNode* statement = node.Statements()[i].get();
         statement->Accept(*this);
-        if (invokeStatementsWithDestructor)
-        {
-            int statementIndex = statement->StatementIndex();
-            std::vector<otava::symbols::BoundConstructionStatementNode*> statementsWithDtor = node.InvokeStatementsWithDestructor(statementIndex);
-            for (const auto* constructionStatement : statementsWithDtor)
-            {
-                blockExits[currentBlockId]->AddDestructorCall(static_cast<otava::symbols::BoundFunctionCallNode*>(constructionStatement->DestructorCall()->Clone()));
-            }
-        }
         prevWasTerminator = statement->EndsWithTerminator();
     }
-    blockExits[currentBlockId]->CheckUnique(node.GetSourcePos(), &context);
     if (!prevWasTerminator && !blockExits[currentBlockId]->IsEmpty())
     {
         ExitBlocks(currentBlockId, currentBlockId, node.GetSourcePos());
@@ -1610,6 +1573,13 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionCallNode& node)
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundFunctionPtrCallNode& node)
+{
+    SetCurrentLineNumber(node.GetSourcePos());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    GenJumpingBoolCode();
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundInvokeNode& node)
 {
     SetCurrentLineNumber(node.GetSourcePos());
     node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);

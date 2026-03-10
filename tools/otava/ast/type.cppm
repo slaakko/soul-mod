@@ -28,7 +28,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* NestedNameSpecifier() const noexcept { return nns.get(); }
-    inline Node* Id() const noexcept { return id.get(); }
+    inline Node* GetId() const noexcept { return id.get(); }
     inline Node* TemplateNode() const noexcept { return templateNode.get(); }
 private:
     std::unique_ptr<Node> nns;
@@ -47,6 +47,7 @@ public:
     void Read(Reader& reader) override;
     inline Node* TypeSpecifiers() const noexcept { return typeSpecifiers.get(); }
     inline Node* Declarator() const noexcept { return declarator.get(); }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> typeSpecifiers;
     std::unique_ptr<Node> declarator;
@@ -95,7 +96,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* ClassKey() const noexcept { return classKey.get(); }
-    inline Node* Id() const noexcept { return id.get(); }
+    inline Node* GetId() const noexcept { return id.get(); }
     inline Node* Attributes() const noexcept { return attributes.get(); }
 private:
     std::unique_ptr<Node> classKey;

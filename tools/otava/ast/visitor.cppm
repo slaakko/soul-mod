@@ -175,6 +175,7 @@ class SizeOfPackExprNode;
 class SizeOfUnaryExprNode;
 class AlignOfExprNode;
 class NoexceptExprNode;
+class OpNewCall;
 class NewExprNode;
 class NewPlacementNode;
 class ParenNewTypeIdNode;
@@ -538,6 +539,7 @@ public:
     virtual void Visit(SizeOfUnaryExprNode& node) {}
     virtual void Visit(AlignOfExprNode& node) {}
     virtual void Visit(NoexceptExprNode& node) {}
+    virtual void Visit(OpNewCall& node) {}
     virtual void Visit(NewExprNode& node) {}
     virtual void Visit(NewPlacementNode& node) {}
     virtual void Visit(ParenNewTypeIdNode& node) {}

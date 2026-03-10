@@ -24,6 +24,7 @@ TemplateDeclarationNode::TemplateDeclarationNode(const soul::ast::SourcePos& sou
 Node* TemplateDeclarationNode::Clone() const
 {
     TemplateDeclarationNode* clone = new TemplateDeclarationNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -57,6 +58,7 @@ Node* TemplateHeadNode::Clone() const
     {
         clone->SetRequiresClause(requiresClause->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -92,6 +94,7 @@ Node* TemplateParameterListNode::Clone() const
     }
     clone->SetLAnglePos(laPos);
     clone->SetRAnglePos(raPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -149,6 +152,7 @@ Node* TypeParameterNode::Clone() const
     }
     TypeParameterNode* clone = new TypeParameterNode(GetSourcePos(), typeConstraint->Clone(), identifier->Clone(), clonedAssign, clonedTypeId, 
         clonedEllipsis, clonedTemplateHead);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -195,6 +199,7 @@ Node* TemplateIdNode::Clone() const
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetId(Id());
     return clone;
 }
 
@@ -224,6 +229,15 @@ void TemplateIdNode::SetTemplateArgKinds(const std::vector<bool>& templateArgKin
     templateArgKinds = templateArgKinds_;
 }
 
+std::u32string TemplateIdNode::Str() const
+{
+    std::u32string str = templateName->Str();
+    str.append(1, '<');
+    str.append(ListNode::Str());
+    str.append(1, '>');
+    return str;
+}
+
 TypenameNode::TypenameNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::typenameNode, sourcePos_)
 {
 }
@@ -231,6 +245,7 @@ TypenameNode::TypenameNode(const soul::ast::SourcePos& sourcePos_) noexcept : No
 Node* TypenameNode::Clone() const
 {
     TypenameNode* clone = new TypenameNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -259,6 +274,7 @@ Node* DeductionGuideNode::Clone() const
     }
     DeductionGuideNode* clone = new DeductionGuideNode(GetSourcePos(), templateName->Clone(), params->Clone(), arrow->Clone(), templateId->Clone(), clonedExplicitSpecifier,
         semicolon->Clone(), lpPos, rpPos);
+    clone->SetId(Id());
     return clone;
 }
 
@@ -310,6 +326,7 @@ Node* ExplicitInstantiationNode::Clone() const
         clonedExtrn = extrn->Clone();
     }
     ExplicitInstantiationNode* clone = new ExplicitInstantiationNode(GetSourcePos(), clonedExtrn, tmp->Clone(), declaration->Clone());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -341,6 +358,7 @@ TemplateNode::TemplateNode(const soul::ast::SourcePos& sourcePos_) noexcept : No
 Node* TemplateNode::Clone() const
 {
     TemplateNode* clone = new TemplateNode(GetSourcePos());
+    clone->SetId(Id());
     return clone;
 }
 
@@ -362,6 +380,7 @@ ExplicitSpecializationNode::ExplicitSpecializationNode(const soul::ast::SourcePo
 Node* ExplicitSpecializationNode::Clone() const
 {
     ExplicitSpecializationNode* clone = new ExplicitSpecializationNode(GetSourcePos(), tmp->Clone(), templateHeadNode->Clone(), declaration->Clone(), laPos, raPos);
+    clone->SetId(Id());
     return clone;
 }
 

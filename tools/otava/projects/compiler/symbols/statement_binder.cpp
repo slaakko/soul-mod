@@ -796,6 +796,10 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
     {
         ThrowException("could not bind expression", node.Condition()->GetSourcePos(), context);
     }
+    if (condition->GetType()->IsReferenceType())
+    {
+        condition = new BoundDereferenceNode(condition, node.GetSourcePos(), condition->GetType()->PlainType(context));
+    }
     boundSwitchStatement->SetCondition(condition);
     context->PopFlags();
     context->PushSwitchCondType(condition->GetType());
@@ -2238,10 +2242,7 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
     if (!functionDefinitionSymbol->IsNoExcept() && !skipInvokeChecking && functionDefinitionSymbol->ContainsLocalVariableWithDestructor() &&
         !containsStatics && !containsNodeWithNoSource)
     {
-        context->GetSymbolTable()->BeginScopeGeneric(functionDefinitionSymbol->GetScope(), context);
-        std::unique_ptr<BoundCompoundStatementNode> newBody = MakeInvokesAndCleanups(functionDefinitionSymbol, context->GetBoundFunction()->Body(), context);
-        context->GetBoundFunction()->SetBody(newBody.release());
-        context->GetSymbolTable()->EndScopeGeneric(context);
+        MakeInvokesAndCleanups(context->GetBoundFunction(), context);
     }
 #ifdef DEBUG_FUNCTIONS
     std::cout << "<" << util::ToUtf8(functionDefinitionSymbol->FullName()) << "\n";
