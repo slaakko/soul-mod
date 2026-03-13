@@ -30,6 +30,11 @@ void ios_base::unsetf(ios_base::fmtflags f)
     fl = fmtflags(int(fl) & ~int(f));
 }
 
+void ios_base::init() noexcept
+{
+    flags(ios_base::fmtflags::dec);
+}
+
 ios_base& dec(std::ios_base& strm)
 {
     strm.unsetf(std::ios_base::basefield);

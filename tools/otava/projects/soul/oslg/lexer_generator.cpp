@@ -757,7 +757,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.WriteLine("std::lock_guard<std::mutex> lock(MakeLexerMtx());");
     interfaceFormatter.WriteLine("auto lexer = soul::lexer::Lexer<" + lexer->Name() + "<Char>, Char>(start, end, fileName);");
     interfaceFormatter.WriteLine("lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags));");
-    interfaceFormatter.WriteLine("lexer.SetTokenCollection(GetTokens());");
+    //interfaceFormatter.WriteLine("lexer.SetTokenCollection(GetTokens());");
     interfaceFormatter.WriteLine("lexer.SetKeywordMap(GetKeywords<Char>());");
     interfaceFormatter.WriteLine("return lexer;");
     interfaceFormatter.DecIndent();

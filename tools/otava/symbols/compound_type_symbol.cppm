@@ -45,6 +45,7 @@ public:
     bool IsBasicStringCharType(Context* context) noexcept override { return PointerCount() == 0 && PlainType(context)->IsBasicStringCharType(context); }
     bool IsBasicStringChar16Type(Context* context) noexcept override { return PointerCount() == 0 && PlainType(context)->IsBasicStringChar16Type(context); }
     bool IsBasicStringChar32Type(Context* context) noexcept override { return PointerCount() == 0 && PlainType(context)->IsBasicStringChar32Type(context); }
+    NamespaceSymbol* ParentNamespace() const noexcept override;
 private:
     TypeSymbol* baseType;
     Derivations derivations;

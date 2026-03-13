@@ -149,126 +149,6 @@ soul::ast::SourcePos Cleanup::GetSourcePos() const
     return soul::ast::SourcePos();
 }
 
-struct NodeIdCollection
-{
-    NodeIdCollection() noexcept;
-    std::vector<std::int64_t> invokeExprIds;
-    int invokeExprIndex;
-    std::vector<std::int64_t> binaryExprIds;
-    int binaryExprIndex;
-    std::vector<std::int64_t> unaryExprIds;
-    int unaryExprIndex;
-    inline bool empty() const noexcept
-    {
-        return invokeExprIds.empty() && binaryExprIds.empty() && unaryExprIds.empty();
-    }
-};
-
-NodeIdCollection::NodeIdCollection() noexcept : invokeExprIndex(0), binaryExprIndex(0), unaryExprIndex(0)
-{
-}
-
-class NodeIdGetter : public otava::ast::DefaultVisitor
-{
-public:
-    NodeIdGetter() noexcept;
-    void Visit(otava::ast::InvokeExprNode& node);
-    void Visit(otava::ast::BinaryExprNode& node);
-    void Visit(otava::ast::UnaryExprNode& node);
-    NodeIdCollection Ids() const { return std::move(nodeIds); }
-private:
-    NodeIdCollection nodeIds;
-};
-
-NodeIdGetter::NodeIdGetter() noexcept
-{
-}
-
-void NodeIdGetter::Visit(otava::ast::InvokeExprNode& node)
-{
-    nodeIds.invokeExprIds.push_back(node.Id());
-    DefaultVisitor::Visit(node);
-}
-
-void NodeIdGetter::Visit(otava::ast::BinaryExprNode& node)
-{
-    nodeIds.binaryExprIds.push_back(node.Id());
-    DefaultVisitor::Visit(node);
-}
-
-void NodeIdGetter::Visit(otava::ast::UnaryExprNode& node)
-{
-    nodeIds.unaryExprIds.push_back(node.Id());
-    DefaultVisitor::Visit(node);
-}
-
-NodeIdCollection GetNodeIds(otava::ast::Node* node) noexcept
-{
-    NodeIdGetter getter;
-    node->Accept(getter);
-    return getter.Ids();
-}
-
-class NodeIdSetter : public otava::ast::DefaultVisitor
-{
-public:
-    NodeIdSetter(NodeIdCollection&& ids_) noexcept;
-    void Visit(otava::ast::InvokeExprNode& node);
-    void Visit(otava::ast::BinaryExprNode& node);
-    void Visit(otava::ast::UnaryExprNode& node);
-private:
-    NodeIdCollection ids;
-};
-
-NodeIdSetter::NodeIdSetter(NodeIdCollection&& ids_) noexcept : ids(std::move(ids_))
-{
-}
-
-void NodeIdSetter::Visit(otava::ast::InvokeExprNode& node)
-{
-    if (ids.invokeExprIndex < ids.invokeExprIds.size())
-    {
-        node.SetId(ids.invokeExprIds[ids.invokeExprIndex++]);
-    }
-    else
-    {
-        throw std::runtime_error("failed to set id of invoke: invalid index");
-    }
-    DefaultVisitor::Visit(node);
-}
-
-void NodeIdSetter::Visit(otava::ast::BinaryExprNode& node)
-{
-    if (ids.binaryExprIndex < ids.binaryExprIds.size())
-    {
-        node.SetId(ids.binaryExprIds[ids.binaryExprIndex++]);
-    }
-    else
-    {
-        throw std::runtime_error("failed to set id of binary expr: invalid index");
-    }
-    DefaultVisitor::Visit(node);
-}
-
-void NodeIdSetter::Visit(otava::ast::UnaryExprNode& node)
-{
-    if (ids.unaryExprIndex < ids.unaryExprIds.size())
-    {
-        node.SetId(ids.unaryExprIds[ids.unaryExprIndex++]);
-    }
-    else
-    {
-        throw std::runtime_error("failed to set id of unary expr: invalid index");
-    }
-    DefaultVisitor::Visit(node);
-}
-
-void SetNodeIds(NodeIdCollection&& ids, otava::ast::Node* node) noexcept
-{
-    NodeIdSetter setter(std::move(ids));
-    node->Accept(setter);
-}
-
 FunctionDefinitionSymbol* MakeInvokeFn(BoundFunctionCallNode* fnCall, Scope* parentFnScope, FunctionDefinitionSymbol* parentFn, Context* context)
 {
     soul::ast::SourcePos sourcePos = fnCall->GetSourcePos();
@@ -288,41 +168,9 @@ FunctionDefinitionSymbol* MakeInvokeFn(BoundFunctionCallNode* fnCall, Scope* par
     }
     else
     {
-        std::u32string declarationStatementStr;
-        otava::ast::Node* source = fnCall->Source();
-        std::u32string sourceStr;
-        if (source->IsAssignmentInitializerNode())
-        {
-            otava::ast::AssignmentInitNode* assignmentInitNode = static_cast<otava::ast::AssignmentInitNode*>(source);
-            sourceStr = assignmentInitNode->Child()->Str();
-        }
-        else
-        {
-            sourceStr = source->Str();
-        }
-        NodeIdCollection ids;
-        if (!source->IsOpNewCall())
-        {
-            ids = GetNodeIds(source);
-        }
-        declarationStatementStr.append(fnCall->GetType()->FullName()).append(1, ' ').append(context->ResultVarName()).append(U" = ").
-            append(sourceStr).append(1, ';');
-        std::unique_ptr<otava::ast::Node> stmt;
-        try
-        {
-            context->PushSetFlag(ContextFlags::dontProcess);
-            stmt = ParseStatement(declarationStatementStr, context);
-            if (!ids.empty())
-            {
-                SetNodeIds(std::move(ids), stmt.get());
-            }
-            context->PopFlags();
-        }
-        catch (const std::exception& ex)
-        {
-            ThrowException("error parsing dedclaration statement '" + util::ToUtf8(declarationStatementStr) + "': " + ex.what(), fnCall->GetSourcePos(), context);
-        }
-        invokeBlock->AddNode(stmt.release());
+        std::unique_ptr<otava::ast::DeclarationStatementNode> declarationStatement = DeclarationToAst(
+            fnCall->GetType(), context->ResultVarName(), fnCall->Source()->Clone(), sourcePos);
+        invokeBlock->AddNode(declarationStatement.release());
     }
     otava::ast::DeclSpecifierSequenceNode* invokeDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
     invokeDeclSpecifiers->AddNode(new otava::ast::VoidNode(sourcePos));
@@ -1944,11 +1792,8 @@ BoundStatementNode* ConvertReturnStatement(otava::ast::ReturnStatementNode* retu
         setChildControlResultStmtText.append(U" = std::child_control_result::ret;");
         std::unique_ptr<otava::ast::Node> setChildControlResultStmt = ParseStatement(setChildControlResultStmtText, context);
         BoundStatementNode* boundExpressionStatement = BindStatement(exprStatementNode, functionDefinitionSymbol, context);
-        boundExpressionStatement->SetSource(exprStatementNode);
         BoundStatementNode* boundSetChildControlResultStatement = BindStatement(setChildControlResultStmt.get(), functionDefinitionSymbol, context);
-        boundSetChildControlResultStatement->SetSource(setChildControlResultStmt.release());
         BoundReturnStatementNode* boundReturnStatement = new BoundReturnStatementNode(returnStatement->GetSourcePos());
-        boundReturnStatement->SetSource(returnStatement->Clone());
         BoundSequenceStatementNode* boundSequenceStatement = new BoundSequenceStatementNode(returnStatement->GetSourcePos(), new BoundSequenceStatementNode(
             returnStatement->GetSourcePos(), boundExpressionStatement, boundSetChildControlResultStatement), boundReturnStatement);
         context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
@@ -1957,7 +1802,6 @@ BoundStatementNode* ConvertReturnStatement(otava::ast::ReturnStatementNode* retu
     else
     {
         BoundReturnStatementNode* boundReturnStatement = new BoundReturnStatementNode(returnStatement->GetSourcePos());
-        boundReturnStatement->SetSource(returnStatement->Clone());
         context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
         return boundReturnStatement;
     }

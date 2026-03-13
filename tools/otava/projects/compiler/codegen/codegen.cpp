@@ -671,7 +671,6 @@ void CodeGenerator::GenerateGlobalInitializationFunction()
     std::unique_ptr<otava::symbols::BoundFunctionNode> boundFunction(new otava::symbols::BoundFunctionNode(globalInit, soul::ast::SourcePos()));
     context.PushBoundFunction(boundFunction.release());
     std::unique_ptr<otava::symbols::BoundStatementNode> setBadAllocStmt(otava::symbols::BindStatement(setBadAllocStmtNode.get(), nullptr, &context));
-    setBadAllocStmt->SetSource(setBadAllocStmtNode.release());
     std::unique_ptr<otava::symbols::BoundCompoundStatementNode> compoundStmt(new otava::symbols::BoundCompoundStatementNode(soul::ast::SourcePos()));
     compoundStmt->AddStatement(setBadAllocStmt.release());
     context.PushSetFlag(otava::symbols::ContextFlags::makeCompileUnitInitFn);
@@ -680,7 +679,6 @@ void CodeGenerator::GenerateGlobalInitializationFunction()
     {
         std::unique_ptr<otava::ast::Node> callInitFunctionNode = otava::symbols::ParseStatement(util::ToUtf32(compileUnitInitFnNames[i]) + U"();", &context);
         std::unique_ptr<otava::symbols::BoundStatementNode> initFnCall(otava::symbols::BindStatement(callInitFunctionNode.get(), globalInit, &context));
-        initFnCall->SetSource(callInitFunctionNode.release());
         compoundStmt->AddStatement(initFnCall.release());
     }
     context.PopFlags();
@@ -920,7 +918,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
                 }
                 else
                 {
-                    otava::symbols::PrintWarning("type of local variable '" + util::ToUtf8(localVariable->Name()) + "' not set", node.GetSourcePos(), &context);
+                    //otava::symbols::PrintWarning("type of local variable '" + util::ToUtf8(localVariable->Name()) + "' not set", node.GetSourcePos(), &context);
                 }
             }
             parentFn = parentFn->ParentFn();
@@ -968,7 +966,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         }
         else
         {
-            otava::symbols::PrintWarning("type of local variable '" + util::ToUtf8(localVariable->Name()) + "' not set", node.GetSourcePos(), &context);
+            //tava::symbols::PrintWarning("type of local variable '" + util::ToUtf8(localVariable->Name()) + "' not set", node.GetSourcePos(), &context);
         }
     }
     for (int i = 0; i < np; ++i)

@@ -1,3 +1,0 @@
-project otava.project_spg;
-tokens <project.token>;
-parser <project.parser>;

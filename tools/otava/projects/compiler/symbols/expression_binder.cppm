@@ -25,4 +25,6 @@ BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, bo
 BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, SymbolGroupKind symbolGroups, Scope*& scope);
 void InitExpressionBinder();
 
+bool MultiplicativeRightIdOperandNotFound(otava::ast::Node* op, otava::ast::Node* rightOperand, const soul::ast::SourcePos& sourcePos, Context* context);
+
 } // namespace otava::symbols

@@ -2901,5 +2901,17 @@ void InitExpressionBinder()
     OperatorGroupNameMap::Instance().Init();
 }
 
+bool MultiplicativeRightIdOperandNotFound(otava::ast::Node* op, otava::ast::Node* rightOperand, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (!op->IsMulNode()) return false;
+    if (!rightOperand->IsInvokeExprNode()) return false;
+    otava::ast::InvokeExprNode* rightinvoke = static_cast<otava::ast::InvokeExprNode*>(rightOperand);
+    if (!rightinvoke->Subject()->IsIdentifierNode()) return false;
+    otava::ast::IdentifierNode* id = static_cast<otava::ast::IdentifierNode*>(rightinvoke->Subject());
+    Symbol* symbol = context->GetSymbolTable()->CurrentScope()->Lookup(id->Str(), SymbolGroupKind::all, ScopeLookup::allScopes, sourcePos, context, LookupFlags::none);
+    if (!symbol) return true;
+    return false;
+}
+
 } // namespace otava::symbols
 

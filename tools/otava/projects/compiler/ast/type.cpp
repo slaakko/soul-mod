@@ -31,6 +31,25 @@ void TypeSpecifierSequenceNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+std::u32string TypeSpecifierSequenceNode::Str() const
+{
+    std::u32string str;
+    bool first = true;
+    for (const auto& typeSpecifier : Nodes())
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            str.append(1, ' ');
+        }
+        str.append(typeSpecifier->Str());
+    }
+    return str;
+}
+
 TypenameSpecifierNode::TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::typenameSpecifierNode, sourcePos_)
 {
 }
@@ -115,25 +134,8 @@ void TypeIdNode::Read(Reader& reader)
 
 std::u32string TypeIdNode::Str() const
 {
-    std::u32string str;
-    bool first = true;
-    if (typeSpecifiers->IsTypeSpecifierSequenceNode())
-    {
-        TypeSpecifierSequenceNode* sequence = static_cast<TypeSpecifierSequenceNode*>(typeSpecifiers.get());
-        for (const auto& typeSpecifier : sequence->Nodes())
-        {
-            if (first)
-            {
-                first = false;
-            }
-            else
-            {
-                str.append(1, ' ');
-            }
-            str.append(typeSpecifier->Str());
-        }
-        str.append(declarator->Str());
-    }
+    std::u32string str = typeSpecifiers->Str();
+    str.append(declarator->Str());
     return str;
 }
 

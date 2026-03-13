@@ -62,4 +62,6 @@ private:
 
 TypeSymbol* GetFundamentalType(DeclarationFlags fundamentalTypeFlags, const soul::ast::SourcePos& sourcePos, Context* context);
 
+void MakeFundamentaTypeSequence(FundamentalTypeSymbol* fundamentalType, const soul::ast::SourcePos& sourcePos, otava::ast::SequenceNode* sequence);
+
 } // namespace otava::symbols

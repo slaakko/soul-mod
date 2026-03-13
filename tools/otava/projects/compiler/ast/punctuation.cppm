@@ -25,7 +25,7 @@ public:
     CommaNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
-    std::u32string Str() const override { return U","; }
+    std::u32string Str() const override { return U", "; }
 };
 
 class QuestNode : public Node

@@ -24,6 +24,7 @@ public:
     void flags(fmtflags f) noexcept;
     void setf(fmtflags f) noexcept;
     void unsetf(fmtflags f) noexcept;
+    void init() noexcept;
 private:
     fmtflags fl;
 };

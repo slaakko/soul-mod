@@ -649,10 +649,6 @@ void BoundEmptyStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundEmptyStatementNode::Clone() const
 {
     BoundEmptyStatementNode* clone = new BoundEmptyStatementNode(GetSourcePos());
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 
@@ -673,10 +669,6 @@ BoundStatementNode* BoundCompoundStatementNode::Clone() const
     for (int i = 0; i < n; ++i)
     {
         clone->AddStatement(statements[i]->Clone());
-    }
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
     }
     return clone;
 }
@@ -740,10 +732,6 @@ BoundStatementNode* BoundIfStatementNode::Clone() const
     { 
         clone->SetElseStatement(elseStatement->Clone());
     }
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 
@@ -792,10 +780,6 @@ BoundStatementNode* BoundSwitchStatementNode::Clone() const
     BoundSwitchStatementNode* clone = new BoundSwitchStatementNode(GetSourcePos());
     clone->SetCondition(condition->Clone());
     clone->SetStatement(statement->Clone());
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 
@@ -840,10 +824,6 @@ BoundStatementNode* BoundCaseStatementNode::Clone() const
         clone->AddCaseExpr(caseExpr->Clone());
     }
     clone->SetStatement(stmt->Clone());
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 
@@ -886,10 +866,6 @@ BoundStatementNode* BoundDefaultStatementNode::Clone() const
 {
     BoundDefaultStatementNode* clone = new BoundDefaultStatementNode(GetSourcePos());
     clone->SetStatement(stmt->Clone());
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 
@@ -923,10 +899,6 @@ BoundStatementNode* BoundWhileStatementNode::Clone() const
     BoundWhileStatementNode* clone = new BoundWhileStatementNode(GetSourcePos());
     clone->SetCondition(condition->Clone());
     clone->SetStatement(statement->Clone());
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 
@@ -967,10 +939,6 @@ BoundStatementNode* BoundDoStatementNode::Clone() const
     BoundDoStatementNode* clone = new BoundDoStatementNode(GetSourcePos());
     clone->SetExpr(expr->Clone());
     clone->SetStatement(statement->Clone());
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 
@@ -1022,10 +990,6 @@ BoundStatementNode* BoundForStatementNode::Clone() const
         clone->SetLoopExpr(loopExpr->Clone());
     }
     clone->SetStatement(statement->Clone());
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 
@@ -1083,10 +1047,6 @@ void BoundSequenceStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundSequenceStatementNode::Clone() const
 {
     BoundSequenceStatementNode* clone = new BoundSequenceStatementNode(GetSourcePos(), first->Clone(), second->Clone());
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 
@@ -1117,10 +1077,6 @@ void BoundBreakStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundBreakStatementNode::Clone() const
 {
     BoundBreakStatementNode* clone = new BoundBreakStatementNode(GetSourcePos());
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 
@@ -1137,10 +1093,6 @@ void BoundContinueStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundContinueStatementNode::Clone() const
 {
     BoundContinueStatementNode* clone = new BoundContinueStatementNode(GetSourcePos());
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 
@@ -1160,10 +1112,6 @@ BoundStatementNode* BoundReturnStatementNode::Clone() const
     if (expr)
     {
         clone->SetExpr(expr->Clone());
-    }
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
     }
     return clone;
 }
@@ -1203,10 +1151,6 @@ void BoundLabeledStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundLabeledStatementNode::Clone() const
 {
     BoundLabeledStatementNode* clone = new BoundLabeledStatementNode(GetSourcePos(), label, stmt->Clone());
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 
@@ -1242,10 +1186,6 @@ void BoundGotoStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundGotoStatementNode::Clone() const
 {
     BoundGotoStatementNode* clone = new BoundGotoStatementNode(GetSourcePos(), target);
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 
@@ -1277,10 +1217,6 @@ BoundStatementNode* BoundConstructionStatementNode::Clone() const
         clone->SetDestructorCall(static_cast<BoundExpressionNode*>(destructorCall->Clone()));
     }
     clone->SetVariable(variable);
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 
@@ -1317,10 +1253,6 @@ BoundStatementNode* BoundExpressionStatementNode::Clone() const
     if (expr)
     {
         clone->SetExpr(expr->Clone());
-    }
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
     }
     return clone;
 }
@@ -1366,10 +1298,6 @@ void BoundSetVPtrStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundSetVPtrStatementNode::Clone() const
 {
     BoundSetVPtrStatementNode* clone = new BoundSetVPtrStatementNode(thisPtr->Clone(), forClass, vptrHolderClass, GetSourcePos());
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 
@@ -1386,10 +1314,6 @@ void BoundAliasDeclarationStatementNode::Accept(BoundTreeVisitor& visitor)
 BoundStatementNode* BoundAliasDeclarationStatementNode::Clone() const
 {
     BoundAliasDeclarationStatementNode* clone = new BoundAliasDeclarationStatementNode(GetSourcePos());
-    if (Source())
-    {
-        clone->SetSource(Source()->Clone());
-    }
     return clone;
 }
 

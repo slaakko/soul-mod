@@ -14,6 +14,9 @@ import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.visitor;
 import otava.intermediate.types;
+import otava.ast.simple.type;
+import otava.ast.type;
+import otava.ast.identifier;
 
 namespace otava::symbols {
 
@@ -306,6 +309,141 @@ TypeSymbol* GetFundamentalType(DeclarationFlags fundamentalTypeFlags, const soul
     else
     {
         ThrowException("invalid combination of fundamental type specifiers", sourcePos, context);
+    }
+}
+
+void MakeFundamentaTypeSequence(FundamentalTypeSymbol* fundamentalType, const soul::ast::SourcePos& sourcePos, otava::ast::SequenceNode* sequence)
+{
+    switch (fundamentalType->GetFundamentalTypeKind())
+    {
+        case FundamentalTypeKind::boolType:
+        {
+            sequence->AddNode(new otava::ast::BoolNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::charType:
+        {
+            sequence->AddNode(new otava::ast::CharNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::signedCharType:
+        {
+            sequence->AddNode(new otava::ast::SignedNode(sourcePos));
+            sequence->AddNode(new otava::ast::CharNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::unsignedCharType:
+        {
+            sequence->AddNode(new otava::ast::UnsignedNode(sourcePos));
+            sequence->AddNode(new otava::ast::CharNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::char8Type:
+        {
+            sequence->AddNode(new otava::ast::Char8Node(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::char16Type:
+        {
+            sequence->AddNode(new otava::ast::Char16Node(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::char32Type:
+        {
+            sequence->AddNode(new otava::ast::Char32Node(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::wcharType:
+        {
+            sequence->AddNode(new otava::ast::WCharNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::shortIntType:
+        {
+            sequence->AddNode(new otava::ast::ShortNode(sourcePos));
+            sequence->AddNode(new otava::ast::IntNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::unsignedShortIntType:
+        {
+            sequence->AddNode(new otava::ast::UnsignedNode(sourcePos));
+            sequence->AddNode(new otava::ast::ShortNode(sourcePos));
+            sequence->AddNode(new otava::ast::IntNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::intType:
+        {
+            sequence->AddNode(new otava::ast::IntNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::unsignedIntType:
+        {
+            sequence->AddNode(new otava::ast::UnsignedNode(sourcePos));
+            sequence->AddNode(new otava::ast::IntNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::longIntType:
+        {
+            sequence->AddNode(new otava::ast::LongNode(sourcePos));
+            sequence->AddNode(new otava::ast::IntNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::unsignedLongIntType:
+        {
+            sequence->AddNode(new otava::ast::UnsignedNode(sourcePos));
+            sequence->AddNode(new otava::ast::LongNode(sourcePos));
+            sequence->AddNode(new otava::ast::IntNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::longLongIntType:
+        {
+            sequence->AddNode(new otava::ast::LongNode(sourcePos));
+            sequence->AddNode(new otava::ast::LongNode(sourcePos));
+            sequence->AddNode(new otava::ast::IntNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::unsignedLongLongIntType:
+        {
+            sequence->AddNode(new otava::ast::UnsignedNode(sourcePos));
+            sequence->AddNode(new otava::ast::LongNode(sourcePos));
+            sequence->AddNode(new otava::ast::LongNode(sourcePos));
+            sequence->AddNode(new otava::ast::IntNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::floatType:
+        {
+            sequence->AddNode(new otava::ast::FloatNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::doubleType:
+        {
+            sequence->AddNode(new otava::ast::DoubleNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::longDoubleType:
+        {
+            sequence->AddNode(new otava::ast::LongNode(sourcePos));
+            sequence->AddNode(new otava::ast::DoubleNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::voidType:
+        {
+            sequence->AddNode(new otava::ast::VoidNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::autoType:
+        {
+            sequence->AddNode(new otava::ast::PlaceholderTypeSpecifierNode(sourcePos));
+            break;
+        }
+        case FundamentalTypeKind::nullPtrType:
+        {
+            otava::ast::NestedNameSpecifierNode* nns = new otava::ast::NestedNameSpecifierNode(sourcePos);
+            nns->AddNode(new otava::ast::IdentifierNode(sourcePos, U"std"));
+            nns->AddNode(new otava::ast::ColonColonNode(sourcePos));
+            sequence->AddNode(new otava::ast::QualifiedIdNode(sourcePos, nns, new otava::ast::IdentifierNode(sourcePos, U"nullptr_t")));
+            break;
+        }
     }
 }
 

@@ -1,0 +1,3 @@
+project star_decl;
+target=program;
+source <main.cpp>;

@@ -107,6 +107,7 @@ class TokenCollection : public Collection
 {
 public:
     TokenCollection(const std::string& name_);
+    ~TokenCollection();
     inline bool Initialized() const noexcept { return initialized; }
     inline void SetInitialized() noexcept { initialized = true; }
     void AddToken(Token* token);

@@ -127,6 +127,25 @@ std::string Token::FullCppId() const
 TokenCollection::TokenCollection(const std::string& name_) :
     Collection(CollectionKind::tokenCollection, name_), initialized(false), id(std::hash<std::string>()(Name()) & 0x7FFFFFFF)
 {
+#ifdef DEBUG_TOKENS
+    std::cout << "TOKEN_COLLECTION=" << Name() << "\n";
+#endif
+}
+
+TokenCollection::~TokenCollection()
+{
+#ifdef DEBUG_TOKENS
+    std::cout << "~TOKEN_COLLECTION=" << Name() << "\n";
+    void* data = tokens.data();
+    std::cout << "TOKEN_COLLECTION_DATA=" << std::hex << static_cast<std::uint64_t>(data) << "\n";
+    int n = tokens.size();
+    for (int i = 0; i < n; ++i)
+    {
+        Token* token = tokens[i].get();
+        std::cout << "~TOKEN=" << i << ":" << token->Name() << "\n";
+        tokens[i].reset();
+    }
+#endif
 }
 
 void TokenCollection::AddToken(Token* token)
@@ -137,7 +156,14 @@ void TokenCollection::AddToken(Token* token)
         std::int64_t tokenId = (std::int64_t(Id()) << 32) | (std::int64_t(tokens.size()) + 1);
         token->SetId(tokenId);
     }
+#ifdef DEBUG_TOKENS
+    std::cout << "TOKEN=" << tokens.size() << ":" << token->Name() << "\n";
+#endif
     tokens.push_back(std::unique_ptr<Token>(token));
+#ifdef DEBUG_TOKENS
+    void* data = tokens.data();
+    std::cout << "TOKEN_COLLECTION_DATA=" << std::hex << static_cast<std::uint64_t>(data) << "\n";
+#endif
     tokenMap[token->Id()] = token;
     token->SetCollection(this);
 }

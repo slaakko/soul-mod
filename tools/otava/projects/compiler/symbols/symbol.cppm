@@ -204,7 +204,7 @@ public:
     inline void SetParent(Symbol* parent_) noexcept { parent = parent_; }
     FunctionSymbol* ParentFunction() const noexcept;
     virtual ClassTypeSymbol* ParentClassType() const noexcept;
-    NamespaceSymbol* ParentNamespace() const noexcept;
+    virtual NamespaceSymbol* ParentNamespace() const noexcept;
     std::string DocName() const;
     bool CanInstall() const noexcept;
     bool IsTypeSymbol() const noexcept;

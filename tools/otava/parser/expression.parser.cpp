@@ -23,6 +23,7 @@ import otava.parser.identifier;
 import otava.parser.declaration;
 import otava.parser.punctuation;
 import otava.parser.token;
+import otava.symbols.expression.binder;
 
 namespace otava::parser::expression {
 
@@ -2968,6 +2969,7 @@ soul::parser::Match ExpressionParser<LexerT>::MultiplicativeExpression(LexerT& l
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4756117359045902357);
     std::unique_ptr<otava::ast::Node> expr = std::unique_ptr<otava::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    bool notFound = bool();
     std::unique_ptr<otava::ast::Node> left;
     std::unique_ptr<otava::ast::Node> op;
     std::unique_ptr<otava::ast::Node> right;
@@ -2975,6 +2977,7 @@ soul::parser::Match ExpressionParser<LexerT>::MultiplicativeExpression(LexerT& l
     soul::parser::Match* parentMatch0 = &match;
     {
         std::int64_t pos = lexer.GetPos();
+        bool pass = true;
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -3027,11 +3030,24 @@ soul::parser::Match ExpressionParser<LexerT>::MultiplicativeExpression(LexerT& l
                                             soul::parser::Match* parentMatch9 = &match;
                                             {
                                                 std::int64_t pos = lexer.GetPos();
+                                                bool pass = true;
                                                 soul::parser::Match match = otava::parser::expression::ExpressionParser<LexerT>::PmExpression(lexer, context);
                                                 right.reset(static_cast<otava::ast::Node*>(match.value));
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new otava::ast::BinaryExprNode(sourcePos, op.release(), expr.release(), right.release()));
+                                                    if (otava::symbols::MultiplicativeRightIdOperandNotFound(op.get(), right.get(), sourcePos, context))
+                                                    {
+                                                        notFound = true;
+                                                        pass = false;
+                                                    }
+                                                    else
+                                                    {
+                                                        expr.reset(new otava::ast::BinaryExprNode(sourcePos, op.release(), expr.release(), right.release()));
+                                                    }
+                                                }
+                                                if (match.hit && !pass)
+                                                {
+                                                    match = soul::parser::Match(false);
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -3061,12 +3077,23 @@ soul::parser::Match ExpressionParser<LexerT>::MultiplicativeExpression(LexerT& l
         }
         if (match.hit)
         {
+            if (notFound)
             {
-                #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MultiplicativeExpression");
-                #endif
-                return soul::parser::Match(true, expr.release());
+                pass = false;
             }
+            else
+            {
+                {
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MultiplicativeExpression");
+                    #endif
+                    return soul::parser::Match(true, expr.release());
+                }
+            }
+        }
+        if (match.hit && !pass)
+        {
+            match = soul::parser::Match(false);
         }
         *parentMatch0 = match;
     }

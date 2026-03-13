@@ -2,6 +2,12 @@
     <configuration name='debug'>
         <define symbol='DEBUG'/>
     </configuration>
+	<configuration name='dbg' base='debug'>>
+		<define symbol='NOWARN'/>
+		<define symbol='DEBUG_FUNCTIONS'/>
+		<define symbol='DEBUG_SYMBOL_IO'/>
+		<define symbol='DEBUG_TOKENS'/>
+	</configuration>
     <configuration name='release'>
         <define symbol='RELEASE'/>
     </configuration>

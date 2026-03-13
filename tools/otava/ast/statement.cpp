@@ -1192,6 +1192,13 @@ void ExpressionStatementNode::Read(Reader& reader)
     semicolon.reset(reader.ReadNode());
 }
 
+std::u32string ExpressionStatementNode::Str() const
+{
+    std::u32string str = expr->Str();
+    str.append(1, ';');
+    return str;
+}
+
 DeclarationStatementNode::DeclarationStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::declarationStatementNode, sourcePos_)
 {
 }
@@ -1223,6 +1230,12 @@ void DeclarationStatementNode::Read(Reader& reader)
 {
     CompoundNode::Read(reader);
     declaration.reset(reader.ReadNode());
+}
+
+std::u32string DeclarationStatementNode::Str() const
+{
+    std::u32string str = declaration->Str();
+    return str;
 }
 
 InitConditionNode::InitConditionNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::initConditionNode, sourcePos_)

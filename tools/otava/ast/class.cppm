@@ -152,7 +152,7 @@ class ConstructorInitializerNode : public CompoundNode
 public:
     ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* memberInitializerList_) noexcept;
-    inline Node* MemberInitializerListNode() const noexcept { return memberInitializerListNode.get(); }
+    inline Node* GetMemberInitializerListNode() const noexcept { return memberInitializerListNode.get(); }
     void SetMemberInitializerListNode(Node* memberInitializerListNode_) noexcept;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;

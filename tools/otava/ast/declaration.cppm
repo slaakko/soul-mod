@@ -28,9 +28,12 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* DeclarationSpecifiers() const noexcept { return declarationSpecifiers.get(); }
+    inline void SetDeclarationSpecifiers(Node* declarationSpecifiers_) noexcept { declarationSpecifiers.reset(declarationSpecifiers_); }
     inline Node* InitDeclaratorList() const noexcept { return initDeclaratorList.get(); }
+    inline void SetInitDeclaratorList(Node* initDeclaratorList_) noexcept { initDeclaratorList.reset(initDeclaratorList_); }
     inline Node* Attributes() const noexcept { return attributes.get(); }
     inline Node* Semicolon() const noexcept { return semicolon.get(); }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> declarationSpecifiers;
     std::unique_ptr<Node> initDeclaratorList;
@@ -179,6 +182,7 @@ public:
     UsingNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"using"; }
 };
 
 class UsingDeclaratorListNode : public ListNode
@@ -329,6 +333,7 @@ public:
     InitDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* declarator_, Node* init_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override;
 };
 
 class TrailingFunctionDeclaratorNode : public CompoundNode
@@ -361,6 +366,7 @@ public:
     inline Node* Declarator() const noexcept { return declarator.get(); }
     inline const soul::ast::SourcePos& LParenPos() const noexcept { return lpPos; }
     inline const soul::ast::SourcePos& RParenPos() const noexcept { return rpPos; }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> declarator;
     soul::ast::SourcePos lpPos;
@@ -381,6 +387,7 @@ public:
     DeclSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override;
 };
 
 class FriendNode : public Node

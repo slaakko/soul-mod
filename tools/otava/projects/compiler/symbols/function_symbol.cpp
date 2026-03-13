@@ -744,6 +744,9 @@ void FunctionSymbol::SetReturnValueParam(ParameterSymbol* returnValueParam_) noe
 
 void FunctionSymbol::Write(Writer& writer)
 {
+#ifdef DEBUG_FUNCTIONS
+    std::cout << ">write fn=" << util::ToUtf8(FullName()) << "\n";
+#endif
     ContainerSymbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(kind));
     writer.GetBinaryStreamWriter().Write(static_cast<std::uint16_t>(qualifiers));
@@ -796,6 +799,9 @@ void FunctionSymbol::Write(Writer& writer)
     {
         writer.GetBinaryStreamWriter().Write(specialization[i]->Id());
     }
+#ifdef DEBUG_FUNCTIONS
+    std::cout << "<write fn=" << util::ToUtf8(FullName()) << "\n";
+#endif
 }
 
 void FunctionSymbol::Read(Reader& reader)

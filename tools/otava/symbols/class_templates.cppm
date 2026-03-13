@@ -66,6 +66,7 @@ public:
     { 
         return classTemplate->Name() == U"basic_string" && templateArguments.size() == 1 && templateArguments.front()->IsChar32TypeSymbol(); 
     }
+    NamespaceSymbol* ParentNamespace() const noexcept override;
 private:
     ClassTypeSymbol* classTemplate;
     std::vector<Symbol*> templateArguments;

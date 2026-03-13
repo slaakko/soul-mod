@@ -182,4 +182,7 @@ private:
 
 TypeSymbol* ConvertRefToPtrType(TypeSymbol* type, Context* context);
 
+std::unique_ptr<otava::ast::DeclarationStatementNode> DeclarationToAst(TypeSymbol* type, const std::u32string& variableName, otava::ast::Node* initializer, 
+    const soul::ast::SourcePos& sourcePos);
+
 } // namespace otava::symbols

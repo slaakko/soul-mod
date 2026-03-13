@@ -135,6 +135,7 @@ public:
     inline bool IsTemplateIdNode() const noexcept { return kind == NodeKind::templateIdNode; }
     inline bool IsArrowNode() const noexcept { return kind == NodeKind::arrowNode; }
     inline bool IsDotNode() const noexcept { return kind == NodeKind::dotNode; }
+    inline bool IsMulNode() const noexcept { return kind == NodeKind::mulNode; }
     inline bool IsInvokeExprNode() const noexcept { return kind == NodeKind::invokeExprNode; }
     inline bool IsMemberExprNode() const noexcept { return kind == NodeKind::memberExprNode; }
     inline bool IsBinaryExprNode() const noexcept { return kind == NodeKind::binaryExprNode; }
@@ -151,6 +152,7 @@ public:
     inline bool IsBoundStatementNode() const noexcept { return kind == NodeKind::boundStatementNode; }
     inline bool IsInitDeclaratorNode() const noexcept { return kind == NodeKind::initDeclaratorNode; }
     inline bool IsAliasDeclarationNode() const noexcept { return kind == NodeKind::aliasDeclarationNode; }
+    inline bool IsInitDeclaratorListNode() const noexcept { return kind == NodeKind::initDeclaratorListNode; }
     inline bool IsLBraceNode() const noexcept { return kind == NodeKind::lbraceNode; }
     inline bool IsRBraceNode() const noexcept { return kind == NodeKind::rbraceNode; }
     inline bool IsFunctionDeclaratorNode() const noexcept { return kind == NodeKind::functionDeclaratorNode; }
@@ -161,6 +163,7 @@ public:
     inline bool IsPtrNode() const noexcept { return kind == NodeKind::ptrNode; }
     inline bool IsTypeSpecifierSequenceNode() const { return kind == NodeKind::typeSpecifierSequenceNode; }
     inline bool IsOpNewCall() const { return kind == NodeKind::opNewCall; }
+    inline bool IsPtrDeclaratorNode() const noexcept { return kind == NodeKind::ptrDeclaratorNode; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;

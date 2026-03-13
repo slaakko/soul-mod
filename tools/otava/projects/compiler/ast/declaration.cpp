@@ -92,6 +92,30 @@ void SimpleDeclarationNode::Read(Reader& reader)
     semicolon.reset(reader.ReadNode());
 }
 
+std::u32string SimpleDeclarationNode::Str() const
+{
+    std::u32string str = declarationSpecifiers->Str();
+    if (initDeclaratorList->IsInitDeclaratorListNode())
+    {
+        InitDeclaratorListNode* il = static_cast<InitDeclaratorListNode*>(initDeclaratorList.get());
+        if (il->Count() > 0)
+        {
+            Node* n = il->Nodes()[0];
+            if (n->IsInitDeclaratorNode())
+            {
+                InitDeclaratorNode* in = static_cast<InitDeclaratorNode*>(n);
+                if (!in->Left()->IsPtrDeclaratorNode())
+                {
+                    str.append(1, ' ');
+                }
+            }
+        }
+    }
+    str.append(initDeclaratorList->Str());
+    str.append(1, ';');
+    return str;
+}
+
 AsmDeclarationNode::AsmDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::asmDeclarationNode, sourcePos_)
 {
 }
@@ -721,6 +745,20 @@ void InitDeclaratorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+std::u32string InitDeclaratorNode::Str() const
+{
+    std::u32string str = Left()->Str();
+    if (Right()->IsAssignmentInitializerNode())
+    {
+        str.append(Right()->Str());
+    }
+    else
+    {
+        str.append(U" = ").append(Right()->Str());
+    }
+    return str;
+}
+
 TrailingFunctionDeclaratorNode::TrailingFunctionDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept :
     CompoundNode(NodeKind::trailingFunctionDeclaratorNode, sourcePos_)
 {
@@ -799,6 +837,13 @@ void ParenthesizedDeclaratorNode::Read(Reader& reader)
     rpPos = reader.ReadSourcePos();
 }
 
+std::u32string ParenthesizedDeclaratorNode::Str() const
+{
+    std::u32string str(1, '(');
+    str.append(declarator->Str()).append(1, ')');
+    return str;
+}
+
 AbstractDeclaratorNode::AbstractDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::abstractDeclaratorNode, sourcePos_)
 {
 }
@@ -834,6 +879,25 @@ Node* DeclSpecifierSequenceNode::Clone() const
 void DeclSpecifierSequenceNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+std::u32string DeclSpecifierSequenceNode::Str() const
+{
+    std::u32string str;
+    bool first = true;
+    for (const auto& n : Nodes())
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            str.append(1, ' ');
+        }
+        str.append(n->Str());
+    }
+    return str;
 }
 
 FriendNode::FriendNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::friendNode, sourcePos_)
@@ -1120,11 +1184,11 @@ std::u32string PtrDeclaratorNode::Str() const
     for (int i = 0; i < n; ++i)
     {
         Node* node = Nodes()[i];
-        s.append(node->Str());
-        if (node->IsConstNode() || node->IsLvalueRefNode() || node->IsRvalueRefNode() || node->IsPtrNode())
+        if (node->IsIdentifierNode())
         {
             s.append(1, ' ');
         }
+        s.append(node->Str());
     }
     return s;
 }

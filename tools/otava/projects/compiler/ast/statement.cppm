@@ -536,6 +536,7 @@ public:
     inline Node* Expression() const noexcept { return expr.get(); }
     inline Node* Attributes() const noexcept { return attributes.get(); }
     inline Node* Semicolon() const noexcept { return semicolon.get(); }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> expr;
     std::unique_ptr<Node> attributes;
@@ -552,6 +553,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* Declaration() const noexcept { return declaration.get(); }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> declaration;
 };

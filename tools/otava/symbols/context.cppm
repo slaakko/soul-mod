@@ -236,6 +236,7 @@ public:
     inline int NextEhReturnFromSerial() noexcept { return ehReturnFromSerial++; }
     inline int NextChildControlResultSerial() noexcept { return childControlResultSerial++; }
     inline int NextConditionVariableSerial() noexcept { return conditionVariableSerial++; }
+    inline int NextStreamInitVarSerial() noexcept { return streamInitVarSerial++; }
     void PushStatementBinder(StatementBinder* statementBinder_);
     void PopStatementBinder();
     inline StatementBinder* GetStatementBinder() const noexcept { return statementBinder; }
@@ -250,6 +251,7 @@ public:
     std::u32string NextEhReturnFromVarName();
     std::u32string NextChildControlResultVarName();
     std::u32string NextConditionVariableName();
+    std::u32string NextStreamInitVarName();
     inline int NextBlockId() noexcept { return nextBlockId++; }
     inline int CurrentBlockId() const noexcept { return currentBlockId; }
     void PushBlockId(int blockId);
@@ -312,6 +314,7 @@ private:
     int ehReturnFromSerial;
     int childControlResultSerial;
     int conditionVariableSerial;
+    int streamInitVarSerial;
     Module* requesterModule;
     std::vector<StatementBinder*> statementBinders;
     StatementBinder* statementBinder;

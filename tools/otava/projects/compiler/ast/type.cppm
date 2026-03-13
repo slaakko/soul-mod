@@ -17,6 +17,7 @@ public:
     TypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override;
 };
 
 class TypenameSpecifierNode : public CompoundNode

@@ -24,6 +24,7 @@ export module otava.parser.expression;
 [implementation]import otava.parser.declaration;
 [implementation]import otava.parser.punctuation;
 [implementation]import otava.parser.token;
+[implementation]import otava.symbols.expression.binder;
 
 parser ExpressionParser
 {
@@ -308,18 +309,36 @@ parser ExpressionParser
         |   MINUS{ return new otava::ast::MinusNode(lexer.GetSourcePos(pos)); }
         ;
 
-    MultiplicativeExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos) : 
+    MultiplicativeExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos, var bool notFound) : 
         otava::ast::Node*
         ::= 
         (
             PmExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); }
             (
                 MultiplicativeOp:op 
-                PmExpression(context):right{ expr.reset(new otava::ast::BinaryExprNode(sourcePos, op, expr.release(), right)); }
+                PmExpression(context):right
+                { 
+                    if (otava::symbols::MultiplicativeRightIdOperandNotFound(op.get(), right.get(), sourcePos, context))
+                    {
+                        notFound = true;
+                        pass = false;
+                    }
+                    else
+                    {
+                        expr.reset(new otava::ast::BinaryExprNode(sourcePos, op, expr.release(), right)); 
+                    }
+                }
             )*
         )
         {
-            return expr.release();
+            if (notFound)
+            {
+                pass = false;
+            }
+            else
+            {
+                return expr.release();
+            }
         }
         ;
 

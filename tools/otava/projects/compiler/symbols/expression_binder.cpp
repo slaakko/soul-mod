@@ -65,28 +65,6 @@ std::pair<VariableSymbol*, int> GetParentTemporary(std::int64_t nodeId, Context*
 {
     std::pair<VariableSymbol*, int> p;
     int level = 0;
-    StatementBinder* statementBinder = context->GetStatementBinder();
-    if (statementBinder)
-    {
-        FunctionDefinitionSymbol* fnDefSymbol = statementBinder->GetFunctionDefinitionSymbol();
-        if (fnDefSymbol)
-        {
-            while (fnDefSymbol)
-            {
-                VariableSymbol* temporary = fnDefSymbol->GetTemporary(nodeId);
-                if (temporary)
-                {
-                    return std::make_pair(temporary, level);
-                }
-                else
-                {
-                    fnDefSymbol = fnDefSymbol->ParentFn();
-                    ++level;
-                }
-            }
-        }
-    }
-    level = 0;
     StatementBinder* parentStatementBinder = context->GetParentStatementBinder();
     if (parentStatementBinder)
     {
@@ -2125,7 +2103,7 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
         {
             groupName = GetGroupName(subject.get(), context);
         }
-        if (groupName == U"ParseStringLiteralOrCharSet")
+        if (groupName == U"MakeMessage")
         {
             int x = 0;
         }
@@ -2921,6 +2899,18 @@ BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, bo
 void InitExpressionBinder()
 {
     OperatorGroupNameMap::Instance().Init();
+}
+
+bool MultiplicativeRightIdOperandNotFound(otava::ast::Node* op, otava::ast::Node* rightOperand, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (!op->IsMulNode()) return false;
+    if (!rightOperand->IsInvokeExprNode()) return false;
+    otava::ast::InvokeExprNode* rightinvoke = static_cast<otava::ast::InvokeExprNode*>(rightOperand);
+    if (!rightinvoke->Subject()->IsIdentifierNode()) return false;
+    otava::ast::IdentifierNode* id = static_cast<otava::ast::IdentifierNode*>(rightinvoke->Subject());
+    Symbol* symbol = context->GetSymbolTable()->CurrentScope()->Lookup(id->Str(), SymbolGroupKind::all, ScopeLookup::allScopes, sourcePos, context, LookupFlags::none);
+    if (!symbol) return true;
+    return false;
 }
 
 } // namespace otava::symbols

@@ -388,4 +388,243 @@ TypeSymbol* ConvertRefToPtrType(TypeSymbol* type, Context* context)
     return type;
 }
 
+std::pair<std::unique_ptr<otava::ast::Node>, std::unique_ptr<otava::ast::Node>> TypeToAst(TypeSymbol* type, const soul::ast::SourcePos& sourcePos)
+{
+    std::unique_ptr<otava::ast::Node> node;
+    std::unique_ptr<otava::ast::Node> declarator;
+    if (type->GetBaseType()->IsFundamentalTypeSymbol())
+    {
+        FundamentalTypeSymbol* fundamentalType = static_cast<FundamentalTypeSymbol*>(type->GetBaseType());
+        std::unique_ptr<otava::ast::TypeSpecifierSequenceNode> typeSpecifiers(new otava::ast::TypeSpecifierSequenceNode(sourcePos));
+        if (type->IsConstType())
+        {
+            typeSpecifiers->AddNode(new otava::ast::ConstNode(sourcePos));
+        }
+        MakeFundamentaTypeSequence(fundamentalType, sourcePos, typeSpecifiers.get());
+        node.reset(typeSpecifiers.release());
+    }
+    else if (type->GetBaseType()->IsEnumeratedTypeSymbol())
+    {
+        node.reset(new otava::ast::IdentifierNode(sourcePos, type->GetBaseType()->Name()));
+    }
+    else if (type->GetBaseType()->IsClassTemplateSpecializationSymbol())
+    {
+        ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(type->GetBaseType());
+        node.reset(new otava::ast::TemplateIdNode(sourcePos, new otava::ast::IdentifierNode(sourcePos, specialization->ClassTemplate()->Name())));
+        bool first = true;
+        for (auto* templateArg : specialization->TemplateArguments())
+        {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                node->AddNode(new otava::ast::CommaNode(sourcePos));
+            }
+            if (templateArg->IsTypeSymbol())
+            {
+                TypeSymbol* templateArgType = static_cast<TypeSymbol*>(templateArg);
+                std::pair<std::unique_ptr<otava::ast::Node>, std::unique_ptr<otava::ast::Node>> nodeDeclarator = TypeToAst(templateArgType, sourcePos);
+                std::unique_ptr<otava::ast::Node> argNode = std::move(nodeDeclarator.first);
+                std::unique_ptr<otava::ast::Node> argDeclarator = std::move(nodeDeclarator.second);
+                std::unique_ptr<otava::ast::TypeSpecifierSequenceNode> typeSpecifiers;
+                if (argNode->IsTypeSpecifierSequenceNode())
+                {
+                    typeSpecifiers.reset(static_cast<otava::ast::TypeSpecifierSequenceNode*>(argNode.release()));
+                }
+                else
+                {
+                    typeSpecifiers.reset(new otava::ast::TypeSpecifierSequenceNode(sourcePos));
+                    if (templateArgType->IsConstType())
+                    {
+                        typeSpecifiers->AddNode(new otava::ast::ConstNode(sourcePos));
+                    }
+                    typeSpecifiers->AddNode(argNode.release());
+                }
+                std::unique_ptr<otava::ast::TypeIdNode> typeIdNode(new otava::ast::TypeIdNode(sourcePos, typeSpecifiers.release(), argDeclarator.release()));
+                node->AddNode(typeIdNode.release());
+            }
+        }
+    }
+    else if (type->GetBaseType()->IsClassTypeSymbol())
+    {
+        node.reset(new otava::ast::IdentifierNode(sourcePos, type->GetBaseType()->Name()));
+    }
+    NamespaceSymbol* ns = type->ParentNamespace();
+    if (ns)
+    {
+        std::unique_ptr<otava::ast::NestedNameSpecifierNode> nns(new otava::ast::NestedNameSpecifierNode(sourcePos));
+        std::u32string nsFullName = ns->FullName();
+        if (!nsFullName.empty())
+        {
+            std::vector<std::u32string> components = util::Split(nsFullName, std::u32string(U"::"));
+            bool first = true;
+            for (const auto& component : components)
+            {
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    nns->AddNode(new otava::ast::ColonColonNode(sourcePos));
+                }
+                nns->AddNode(new otava::ast::IdentifierNode(sourcePos, component));
+            }
+            nns->AddNode(new otava::ast::ColonColonNode(sourcePos));
+            otava::ast::QualifiedIdNode* qid = new otava::ast::QualifiedIdNode(sourcePos, nns.release(), node.release());
+            node.reset(qid);
+        }
+    }
+    declarator.reset(new otava::ast::AbstractDeclaratorNode(sourcePos));
+    if (type->IsPointerType() || type->IsReferenceType())
+    {
+        declarator.reset(new otava::ast::PtrDeclaratorNode(sourcePos));
+        int n = type->PointerCount();
+        for (int i = 0; i < n; ++i)
+        {
+            declarator->AddNode(new otava::ast::PtrNode(sourcePos));
+        }
+        if (type->IsLValueRefType())
+        {
+            declarator->AddNode(new otava::ast::LvalueRefNode(sourcePos));
+        }
+        else if (type->IsRValueRefType())
+        {
+            declarator->AddNode(new otava::ast::RvalueRefNode(sourcePos));
+        }
+        declarator->AddNode(new otava::ast::AbstractDeclaratorNode(sourcePos));
+    }
+    return std::make_pair(std::move(node), std::move(declarator));
+}
+
+std::unique_ptr<otava::ast::SimpleDeclarationNode> DeclarationToSimpleDeclarationAst(TypeSymbol* type, const std::u32string& variableName, otava::ast::Node* initializer,
+    const soul::ast::SourcePos& sourcePos)
+{
+    std::unique_ptr<otava::ast::SimpleDeclarationNode> node(new otava::ast::SimpleDeclarationNode(sourcePos));
+    std::unique_ptr<otava::ast::DeclSpecifierSequenceNode> sequence(new otava::ast::DeclSpecifierSequenceNode(sourcePos));
+    if (type->IsConstType())
+    {
+        sequence->AddNode(new otava::ast::ConstNode(sourcePos));
+    }
+    std::unique_ptr<otava::ast::Node> name;
+    if (type->GetBaseType()->IsFundamentalTypeSymbol())
+    {
+        FundamentalTypeSymbol* fundamentalType = static_cast<FundamentalTypeSymbol*>(type->GetBaseType());
+        MakeFundamentaTypeSequence(fundamentalType, sourcePos, sequence.get());
+    }
+    else if (type->GetBaseType()->IsEnumeratedTypeSymbol())
+    {
+        name.reset(new otava::ast::IdentifierNode(sourcePos, type->GetBaseType()->Name()));
+    }
+    else if (type->GetBaseType()->IsClassTemplateSpecializationSymbol())
+    {
+        ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(type->GetBaseType());
+        name.reset(new otava::ast::TemplateIdNode(sourcePos, new otava::ast::IdentifierNode(sourcePos, specialization->ClassTemplate()->Name())));
+        bool first = true;
+        for (auto* templateArg : specialization->TemplateArguments())
+        {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                name->AddNode(new otava::ast::CommaNode(sourcePos));
+            }
+            if (templateArg->IsTypeSymbol())
+            {
+                TypeSymbol* templateArgType = static_cast<TypeSymbol*>(templateArg);
+                std::pair<std::unique_ptr<otava::ast::Node>, std::unique_ptr<otava::ast::Node>> nodeDeclarator = TypeToAst(templateArgType, sourcePos);
+                std::unique_ptr<otava::ast::Node> argNode = std::move(nodeDeclarator.first);
+                std::unique_ptr<otava::ast::Node> argDeclarator = std::move(nodeDeclarator.second);
+                std::unique_ptr<otava::ast::TypeSpecifierSequenceNode> typeSpecifiers;
+                if (argNode->IsTypeSpecifierSequenceNode())
+                {
+                    typeSpecifiers.reset(static_cast<otava::ast::TypeSpecifierSequenceNode*>(argNode.release()));
+                }
+                else
+                {
+                    typeSpecifiers.reset(new otava::ast::TypeSpecifierSequenceNode(sourcePos));
+                    if (templateArgType->IsConstType())
+                    {
+                        typeSpecifiers->AddNode(new otava::ast::ConstNode(sourcePos));
+                    }
+                    typeSpecifiers->AddNode(argNode.release());
+                }
+                std::unique_ptr<otava::ast::TypeIdNode> typeIdNode(new otava::ast::TypeIdNode(sourcePos, typeSpecifiers.release(), argDeclarator.release()));
+                name->AddNode(typeIdNode.release());
+            }
+        }
+    }
+    else if (type->GetBaseType()->IsClassTypeSymbol())
+    {
+        name.reset(new otava::ast::IdentifierNode(sourcePos, type->GetBaseType()->Name()));
+    }
+    NamespaceSymbol* ns = type->ParentNamespace();
+    if (ns)
+    {
+        std::unique_ptr<otava::ast::NestedNameSpecifierNode> nns(new otava::ast::NestedNameSpecifierNode(sourcePos));
+        std::u32string nsFullName = ns->FullName();
+        if (!nsFullName.empty())
+        {
+            std::vector<std::u32string> components = util::Split(nsFullName, std::u32string(U"::"));
+            bool first = true;
+            for (const auto& component : components)
+            {
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    nns->AddNode(new otava::ast::ColonColonNode(sourcePos));
+                }
+                nns->AddNode(new otava::ast::IdentifierNode(sourcePos, component));
+            }
+            nns->AddNode(new otava::ast::ColonColonNode(sourcePos));
+            otava::ast::QualifiedIdNode* qid = new otava::ast::QualifiedIdNode(sourcePos, nns.release(), name.release());
+            sequence->AddNode(qid);
+        }
+    }
+    node->SetDeclarationSpecifiers(sequence.release());
+    std::unique_ptr<otava::ast::InitDeclaratorListNode> initDeclarators(new otava::ast::InitDeclaratorListNode(sourcePos));
+    std::unique_ptr<otava::ast::Node> declarator;
+    if (type->IsReferenceType() || type->IsPointerType())
+    {
+        declarator.reset(new otava::ast::PtrDeclaratorNode(sourcePos));
+        int n = type->PointerCount();
+        for (int i = 0; i < n; ++i)
+        {
+            declarator->AddNode(new otava::ast::PtrNode(sourcePos));
+        }
+        if (type->IsLValueRefType())
+        {
+            declarator->AddNode(new otava::ast::LvalueRefNode(sourcePos));
+        }
+        else if (type->IsRValueRefType())
+        {
+            declarator->AddNode(new otava::ast::RvalueRefNode(sourcePos));
+        }
+        declarator->AddNode(new otava::ast::IdentifierNode(sourcePos, variableName));
+    }
+    else
+    {
+        declarator.reset(new otava::ast::IdentifierNode(sourcePos, variableName));
+    }
+    std::unique_ptr<otava::ast::InitDeclaratorNode> initDeclarator(new otava::ast::InitDeclaratorNode(sourcePos, declarator.release(), initializer));
+    initDeclarators->AddNode(initDeclarator.release());
+    node->SetInitDeclaratorList(initDeclarators.release());
+    return node;
+}
+
+std::unique_ptr<otava::ast::DeclarationStatementNode> DeclarationToAst(TypeSymbol* type, const std::u32string& variableName, otava::ast::Node* initializer,
+    const soul::ast::SourcePos& sourcePos)
+{
+    std::unique_ptr<otava::ast::SimpleDeclarationNode> simpleDeclarationNode = DeclarationToSimpleDeclarationAst(type, variableName, initializer, sourcePos);
+    std::unique_ptr<otava::ast::DeclarationStatementNode> statementNode(new otava::ast::DeclarationStatementNode(sourcePos, simpleDeclarationNode.release()));
+    return statementNode;
+}
+
 } // namespace otava::symbols

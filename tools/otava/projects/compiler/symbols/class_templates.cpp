@@ -344,6 +344,11 @@ bool ClassTemplateSpecializationSymbol::ContainsVirtualFunctionSpecialization(Fu
     return false;
 }
 
+NamespaceSymbol* ClassTemplateSpecializationSymbol::ParentNamespace() const noexcept
+{
+    return classTemplate->ParentNamespace();
+}
+
 util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, int level,
     const soul::ast::SourcePos& sourcePos, Context* context) noexcept
 {

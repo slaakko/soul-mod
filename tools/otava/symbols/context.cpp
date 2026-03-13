@@ -82,6 +82,7 @@ Context::Context() :
     ehReturnFromSerial(0),
     childControlResultSerial(0),
     conditionVariableSerial(0),
+    streamInitVarSerial(0),
     statementBinder(nullptr),
     nextBlockId(0),
     currentBlockId(-1),
@@ -474,6 +475,12 @@ std::u32string Context::NextConditionVariableName()
 {
     std::u32string conditionVariableName = U"__condition" + util::ToUtf32(std::to_string(NextConditionVariableSerial()));
     return conditionVariableName;
+}
+
+std::u32string Context::NextStreamInitVarName()
+{
+    std::u32string streamInitVariableName = U"__sentry" + util::ToUtf32(std::to_string(NextStreamInitVarSerial()));
+    return streamInitVariableName;
 }
 
 void Context::PushBlockId(int blockId)

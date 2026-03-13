@@ -10,6 +10,8 @@ import soul.ast.source.pos;
 import otava.symbols.namespaces;
 import otava.symbols.type.symbol;
 import otava.symbols.declaration;
+import otava.ast.node;
+import otava.ast.declaration;
 
 export namespace otava::symbols {
 
@@ -61,5 +63,7 @@ private:
 };
 
 TypeSymbol* GetFundamentalType(DeclarationFlags fundamentalTypeFlags, const soul::ast::SourcePos& sourcePos, Context* context);
+
+void MakeFundamentaTypeSequence(FundamentalTypeSymbol* fundamentalType, const soul::ast::SourcePos& sourcePos, otava::ast::SequenceNode* sequence);
 
 } // namespace otava::symbols

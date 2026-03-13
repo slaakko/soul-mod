@@ -266,6 +266,11 @@ bool CompoundTypeSymbol::IsTemplateParameterInstantiation(Context* context, std:
     return false;
 }
 
+NamespaceSymbol* CompoundTypeSymbol::ParentNamespace() const noexcept
+{
+    return baseType->ParentNamespace();
+}
+
 std::u32string MakeCompoundTypeName(TypeSymbol* baseType, Derivations derivations)
 {
     std::u32string name;

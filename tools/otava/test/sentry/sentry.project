@@ -1,0 +1,3 @@
+project sentry;
+target=program;
+source <main.cpp>;
