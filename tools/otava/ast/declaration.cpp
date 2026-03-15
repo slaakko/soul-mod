@@ -665,6 +665,14 @@ void AliasDeclarationNode::Read(Reader& reader)
     semicolon.reset(reader.ReadNode());
 }
 
+std::u32string AliasDeclarationNode::Str() const
+{
+    std::u32string str = usng->Str();
+    str.append(1, ' ').append(identifier->Str());
+    str.append(U" = ").append(definingTypeId->Str()).append(1, ';');
+    return str;
+}
+
 EmptyDeclarationNode::EmptyDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::emptyDeclarationNode, sourcePos_)
 {
 }
@@ -1259,6 +1267,13 @@ void ArrayDeclaratorNode::Read(Reader& reader)
     rbPos = reader.ReadSourcePos();
 }
 
+std::u32string ArrayDeclaratorNode::Str() const
+{
+    std::u32string str = Child()->Str();
+    str.append(1, '[').append(dimension->Str()).append(1, ']');
+    return str;
+}
+
 FunctionDeclaratorNode::FunctionDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
     UnaryNode(NodeKind::functionDeclaratorNode, sourcePos_, nullptr)
 {
@@ -1291,6 +1306,13 @@ void FunctionDeclaratorNode::Read(Reader& reader)
 {
     UnaryNode::Read(reader);
     params.reset(reader.ReadNode());
+}
+
+std::u32string FunctionDeclaratorNode::Str() const
+{
+    std::u32string str = Child()->Str();
+    str.append(1, '(').append(params->Str()).append(1, ')');
+    return str;
 }
 
 PrefixNode::PrefixNode(const soul::ast::SourcePos& sourcePos_) noexcept : 

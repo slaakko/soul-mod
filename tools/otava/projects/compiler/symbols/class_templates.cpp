@@ -722,6 +722,11 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
         ThrowException("otava.symbols.templates: error instantiating specialization '" +
             util::ToUtf8(specialization->FullName()) + "': " + std::string(ex.what()), sourcePos, context);
     }
+    catch (const Exception& ex)
+    {
+        ThrowException("otava.symbols.templates: error instantiating specialization '" +
+            util::ToUtf8(specialization->FullName()) + "': " + ex.Message(), sourcePos, context);
+    }    
     context->GetSymbolTable()->EndScope();
     context->GetSymbolTable()->EndScope();
     specialization->GetScope()->ClearParentScopes();
@@ -990,6 +995,11 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                     ThrowException("otava.symbols.class_templates: error instantiating specialization '" + specializationName +
                         "': " + std::string(ex.what()), node->GetSourcePos(), sourcePos, context);
                 }
+                catch (const Exception& ex)
+                {
+                    ThrowException("otava.symbols.class_templates: error instantiating specialization '" + specializationName +
+                        "': " + ex.Message(), node->GetSourcePos(), sourcePos, context);
+                }
                 context->GetSymbolTable()->EndScope();
                 context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
                 if (prevParseMemberFunction)
@@ -1102,6 +1112,11 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                 {
                     ThrowException("otava.symbols.class_templates: error instantiating specialization '" + specializationName +
                         "': " + std::string(ex.what()), node->GetSourcePos(), sourcePos, context);
+                }
+                catch (const Exception& ex)
+                {
+                    ThrowException("otava.symbols.class_templates: error instantiating specialization '" + specializationName +
+                        "': " + ex.Message(), node->GetSourcePos(), sourcePos, context);
                 }
                 context->GetSymbolTable()->EndScope();
                 context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);

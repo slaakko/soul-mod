@@ -618,6 +618,24 @@ void ParameterNode::SetInitializer(Node* initializer_) noexcept
     initializer.reset(initializer_);
 }
 
+std::u32string ParameterNode::Str() const
+{
+    std::u32string str = declSpecifiers->Str();
+    if (declarator)
+    {
+        str.append(1, ' ').append(declarator->Str());
+    }
+    if (assign)
+    {
+        str.append(1, ' ').append(assign->Str()).append(1, ' ');
+    }
+    if (initializer)
+    {
+        str.append(initializer->Str());
+    }
+    return str;
+}
+
 ParameterListNode::ParameterListNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::parameterListNode, sourcePos_)
 {
 }

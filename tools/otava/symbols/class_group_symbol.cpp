@@ -50,7 +50,7 @@ void ClassGroupSymbol::AddClass(ClassTypeSymbol* classTypeSymbol)
     }
 }
 
-Symbol* ClassGroupSymbol::GetSingleSymbol() noexcept
+Symbol* ClassGroupSymbol::GetSingleSymbol(Context* contex) noexcept
 {
     if (classes.size() == 1)
     {

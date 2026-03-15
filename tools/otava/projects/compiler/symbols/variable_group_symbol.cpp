@@ -32,7 +32,7 @@ bool VariableGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noe
     return false;
 }
 
-Symbol* VariableGroupSymbol::GetSingleSymbol() noexcept
+Symbol* VariableGroupSymbol::GetSingleSymbol(Context* context) noexcept
 {
     if (variables.size() == 1)
     {

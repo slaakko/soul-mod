@@ -25,7 +25,7 @@ void ConceptGroupSymbol::AddConcept(ConceptSymbol* conceptSymbol)
     }
 }
 
-Symbol* ConceptGroupSymbol::GetSingleSymbol() noexcept
+Symbol* ConceptGroupSymbol::GetSingleSymbol(Context* contex) noexcept
 {
     if (concepts.size() == 1)
     {

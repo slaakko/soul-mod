@@ -32,7 +32,7 @@ bool EnumGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcep
     return false;
 }
 
-Symbol* EnumGroupSymbol::GetSingleSymbol() noexcept
+Symbol* EnumGroupSymbol::GetSingleSymbol(Context* context) noexcept
 {
     if (enumType)
     {

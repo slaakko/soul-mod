@@ -265,6 +265,7 @@ public:
     void SetAssign(Node* assign_) noexcept;
     inline Node* Initializer() const noexcept { return initializer.get(); }
     void SetInitializer(Node* initializer_) noexcept;
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> attributes;
     std::unique_ptr<Node> declSpecifiers;

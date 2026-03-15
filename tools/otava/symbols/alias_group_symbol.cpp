@@ -33,7 +33,7 @@ bool AliasGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexce
     return false;
 }
 
-Symbol* AliasGroupSymbol::GetSingleSymbol() noexcept
+Symbol* AliasGroupSymbol::GetSingleSymbol(Context* contex) noexcept
 {
     if (aliasTypeSymbols.size() == 1)
     {

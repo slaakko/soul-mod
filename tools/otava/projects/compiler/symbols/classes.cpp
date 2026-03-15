@@ -1357,6 +1357,10 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
     {
         ThrowException("error parsing inline member function body: " + std::string(ex.what()), node.GetSourcePos(), context);
     }
+    catch (const Exception& ex)
+    {
+        ThrowException("error parsing inline member function body: " + ex.Message(), node.GetSourcePos(), context);
+    }
 }
 
 void ParseInlineMemberFunctions(otava::ast::Node* classSpecifierNode, ClassTypeSymbol* classTypeSymbol, otava::symbols::Context* context)
@@ -1421,7 +1425,7 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
             }
             return destructorFn;
         }
-        destructorFn = destructorGroup->GetSingleSymbol();
+        destructorFn = destructorGroup->GetSingleSymbol(context);
         if (destructorFn && destructorFn != destructorGroup)
         {
             if (destructorFn->IsFunctionSymbol())

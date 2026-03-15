@@ -120,6 +120,17 @@ FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::S
                 "': " + std::string(ex.what()), node->GetSourcePos(), context);
             return fn;
         }
+        catch (const Exception& ex)
+        {
+            std::string inlineFunctionFullName;
+            if (inlineFn)
+            {
+                inlineFunctionFullName = util::ToUtf8(inlineFn->FullName());
+            }
+            PrintWarning("failed to instantiating inline function '" + inlineFunctionFullName +
+                "': " + ex.Message(), node->GetSourcePos(), context);
+            return fn;
+        }
         context->GetSymbolTable()->EndScope();
         //instantiationScope.PopParentScope();
         instantiationScope.PopParentScope();

@@ -65,6 +65,7 @@ public:
     void Read(Reader& reader) override;
     inline Node* DefiningTypeSpecifiers() const noexcept { return definingTypeSpecifiers.get(); }
     inline Node* AbstractDeclarator() const noexcept { return abstractDeclarator.get(); }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> definingTypeSpecifiers;
     std::unique_ptr<Node> abstractDeclarator;
@@ -76,6 +77,7 @@ public:
     DefiningTypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override;
 };
 
 class TrailingReturnTypeNode : public UnaryNode
@@ -99,6 +101,7 @@ public:
     inline Node* ClassKey() const noexcept { return classKey.get(); }
     inline Node* GetId() const noexcept { return id.get(); }
     inline Node* Attributes() const noexcept { return attributes.get(); }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> classKey;
     std::unique_ptr<Node> id;

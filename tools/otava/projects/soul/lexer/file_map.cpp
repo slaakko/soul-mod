@@ -44,17 +44,17 @@ void FileMap::AddFileContent(std::int32_t fileId, std::u32string&& fileContent, 
     fileContentsMap[fileId] = std::make_pair(std::move(fileContent), std::move(lineStartIndeces));
 }
 
-bool FileMap::HasFileContent(std::int32_t fileId) noexcept
+bool FileMap::HasFileContent(std::int32_t fileId)
 {
     return fileContentsMap.find(fileId) != fileContentsMap.end();
 }
 
-const std::pair<std::u32string, std::vector<int>>& FileMap::GetFileContent(std::int32_t fileId)
+const std::u32string& FileMap::GetFileContent(std::int32_t fileId)
 {
     auto it = fileContentsMap.find(fileId);
     if (it != fileContentsMap.end())
     {
-        return it->second;
+        return it->second.first;
     }
     else
     {
@@ -85,7 +85,6 @@ std::vector<int> ComputeLineStartIndeces(const std::u32string& content)
 
 void FileMap::ReadFile(std::int32_t fileId)
 {
-    std::lock_guard<std::recursive_mutex> lock(mtx);
     std::string filePath = GetFilePath(fileId);
     if (filePath.empty()) return;
     std::string fileContent = util::ReadFile(filePath);
@@ -104,21 +103,21 @@ void FileMap::ReadFile(std::int32_t fileId)
 
 std::u32string FileMap::GetFileLine(std::int32_t fileId, int line)
 {
-    std::lock_guard<std::recursive_mutex> lock(mtx);
     if (fileId == -1) return std::u32string();
     if (!HasFileContent(fileId))
     {
         ReadFile(fileId);
     }
-    const std::pair<std::u32string, std::vector<int>>& contents = GetFileContent(fileId);
-    if (line < 1 || line >= contents.second.size()) return std::u32string();
-    std::u32string::size_type lineStart = contents.second[line];
+    const std::vector<int>* indexes = LineStartIndeces(fileId);
+    if (!indexes) return std::u32string();
+    if (line < 1 || line >= indexes->size()) return std::u32string();
+    std::u32string::size_type lineStart = (*indexes)[line];
     std::u32string::size_type lineLength = std::u32string::npos;
-    if (line < contents.second.size() - 1)
+    if (line < indexes->size() - 1)
     {
-        lineLength = contents.second[line + 1] - lineStart;
+        lineLength = (*indexes)[line + 1] - lineStart;
     }
-    std::u32string lineStr = contents.first.substr(lineStart, lineLength);
+    std::u32string lineStr = GetFileContent(fileId).substr(lineStart, lineLength);
     int n = lineStr.length();
     int i = n - 1;
     while (i >= 0)
@@ -135,7 +134,6 @@ std::u32string FileMap::GetFileLine(std::int32_t fileId, int line)
 
 const std::vector<int>* FileMap::LineStartIndeces(std::int32_t fileId)
 {
-    std::lock_guard<std::recursive_mutex> lock(mtx);
     auto it = fileContentsMap.find(fileId);
     if (it != fileContentsMap.end())
     {
@@ -149,12 +147,12 @@ const std::vector<int>* FileMap::LineStartIndeces(std::int32_t fileId)
 
 FileMap* globalFileMap = nullptr;
 
-FileMap* GetGlobalFileMap() noexcept
+FileMap* GetGlobalFileMap()
 {
     return globalFileMap;
 }
 
-void SetGlobalFileMap(FileMap* fileMap) noexcept
+void SetGlobalFileMap(FileMap* fileMap)
 {
     globalFileMap = fileMap;
 }

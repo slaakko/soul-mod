@@ -17,6 +17,7 @@ export import std.chrono;
 export import std.chrono.clock;
 export import std.chrono.duration;
 export import std.chrono.time_point;
+export import std.container.hash_table;
 export import std.container.list;
 export import std.container.map;
 export import std.container.rb_tree;

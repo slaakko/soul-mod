@@ -9,11 +9,11 @@ template<typename T>
 string to_string_signed(T x)
 {
     string s;
-    T u = static_cast<T>(0);
-    bool neg = x < static_cast<T>(0);
+    std::uint64_t u = static_cast<std::uint64_t>(0);
+    bool neg = static_cast<std::int64_t>(x) < static_cast<std::int64_t>(0);
     if (neg)
     {
-        u = -x;
+        u = -static_cast<std::int64_t>(x);
     }
     else
     {
@@ -21,9 +21,9 @@ string to_string_signed(T x)
     }
     do
     {
-        s.append(1, static_cast<char>(static_cast<uint8_t>('0') + static_cast<uint8_t>(u % static_cast<T>(10))));
-        u /= static_cast<T>(10);
-    } while (u != static_cast<T>(0));
+        s.append(1, static_cast<char>(static_cast<uint8_t>('0') + static_cast<uint8_t>(u % static_cast<std::uint64_t>(10))));
+        u /= static_cast<std::uint64_t>(10);
+    } while (u != static_cast<std::uint64_t>(0));
     if (neg)
     {
         s.append(1, '-');

@@ -454,7 +454,8 @@ ModuleMapper::ModuleMapper(bool expected)
     }
     else
     {
-        roots.push_back(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools"), "otava"), "std")));
+        roots.push_back(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(util::Path::Combine(
+            util::SoulRoot(), "tools"), "otava"), "ooc"), "std")));
     }
 }
 

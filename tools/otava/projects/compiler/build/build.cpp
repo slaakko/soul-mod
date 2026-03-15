@@ -200,7 +200,7 @@ void ModuleDependencyVisitor::Visit(otava::ast::ModuleNameNode& node)
 
 void ScanDependencies(Project* project, std::int32_t fileId, bool implementationUnit, std::string& interfaceUnitName)
 {
-    std::string filePath = project->GetFileMap().GetFilePath(fileId);
+    std::string filePath = project->GetFileMap()->GetFilePath(fileId);
     std::string fileName = util::Path::GetFileNameWithoutExtension(filePath);
     std::string fileContent = util::ReadFile(filePath);
     std::u32string content = util::ToUtf32(fileContent);
@@ -216,14 +216,14 @@ void ScanDependencies(Project* project, std::int32_t fileId, bool implementation
     }
     using LexerType = decltype(lxr);
     std::unique_ptr<otava::ast::Node> node = otava::parser::module_dependency::ModuleDependencyParser<LexerType>::Parse(lxr, &context);
-    project->GetFileMap().AddFileContent(fileId, std::move(content), lxr.GetLineStartIndeces());
+    project->GetFileMap()->AddFileContent(fileId, std::move(content), lxr.GetLineStartIndeces());
     ModuleDependencyVisitor visitor(fileId, project, fileName, implementationUnit);
     node->Accept(visitor);
     project->SetModule(fileId, visitor.GetModule());
     interfaceUnitName = visitor.InterfaceUnitName();
 }
 
-void ReadFilesFile(const std::string& projectFilesPath, soul::lexer::FileMap& fileMap)
+void ReadFilesFile(const std::string& projectFilesPath, soul::lexer::FileMap* fileMap)
 {
     util::FileStream filesFile(projectFilesPath, util::OpenMode::read | util::OpenMode::binary);
     util::BufferedStream filesBufStream(filesFile);
@@ -233,7 +233,7 @@ void ReadFilesFile(const std::string& projectFilesPath, soul::lexer::FileMap& fi
     {
         std::int32_t fileId = filesReader.ReadInt();
         std::string filePath = filesReader.ReadUtf8String();
-        fileMap.MapFile(filePath, fileId);
+        fileMap->MapFile(filePath, fileId);
     }
 }
 
@@ -332,7 +332,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
             else
             {
                 libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::Path::Combine(
-                    util::Path::Combine(util::SoulRoot(), "tools/otava/std"), config),
+                    util::Path::Combine(util::SoulRoot(), "tools/otava/ooc/std"), config),
                     std::to_string(otava::symbols::GetOptLevel(optLevel, true)))));
             }
             libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::SoulRoot(), "tools/otava/lib")));
@@ -346,7 +346,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
             }
             else
             {
-                libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools/otava/std"), config)));
+                libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools/otava/ooc/std"), config)));
             }
             libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::SoulRoot(), "tools/otava/lib")));
         }
@@ -366,7 +366,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         project->SetScanned();
         for (std::int32_t file : project->InterfaceFiles())
         {
-            const std::string& filePath = project->GetFileMap().GetFilePath(file);
+            std::string filePath = project->GetFileMap()->GetFilePath(file);
             std::string interfaceUnitName;
             ScanDependencies(project, file, false, interfaceUnitName);
             otava::symbols::Module* interfaceModule = project->GetModule(file);
@@ -376,7 +376,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         }
         for (std::int32_t file : project->SourceFiles())
         {
-            const std::string& filePath = project->GetFileMap().GetFilePath(file);
+            std::string filePath = project->GetFileMap()->GetFilePath(file);
             std::string interfaceUnitName;
             ScanDependencies(project, file, true, interfaceUnitName);
             otava::symbols::Module* implementationModule = project->GetModule(file);
@@ -423,7 +423,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
             outputFilePath.append(".lib");
         }
         projectReference->SetOutputFilePath(outputFilePath);
-        projectReference->SetFileMap(&project->GetFileMap());
+        projectReference->SetFileMap(project->GetFileMap());
         project->AddReferencedProject(projectReference.release());
     }
     if ((flags & BuildFlags::rebuild) == BuildFlags::none)
@@ -465,14 +465,15 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     }
     std::vector<std::pair<std::int32_t, std::string>> files;
     std::vector<std::int32_t> topologicalOrder = MakeTopologicalOrder(project->InterfaceFiles(), project);
+    soul::lexer::FileMap* fileMap = project->GetFileMap();
     for (std::int32_t file : topologicalOrder)
     {
-        const std::string& filePath = project->GetFileMap().GetFilePath(file);
+        std::string filePath = fileMap->GetFilePath(file);
         std::cout << "> " << filePath << "\n";
         files.push_back(std::make_pair(file, filePath));
-        const auto& fileContent = project->GetFileMap().GetFileContent(file).first;
         soul::lexer::Lexer<otava::lexer::OtavaLexer<char32_t>, char32_t> lxr = otava::lexer::MakeLexer(
-            fileContent.c_str(), fileContent.c_str() + fileContent.length(), filePath);
+            fileMap->GetFileContent(file).c_str(),
+            fileMap->GetFileContent(file).c_str() + fileMap->GetFileContent(file).length(), filePath);
         lxr.SetPPHook(otava::pp::PreprocessPPLine);
         otava::pp::state::State* state = otava::pp::state::LexerStateMap::Instance().GetState(&lxr);
         for (const auto& define : project->Defines())
@@ -510,7 +511,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
             context.SetFlag(otava::symbols::ContextFlags::noWarnings);
         }
         context.SetOptLevel(optLevel);
-        context.SetFileMap(&project->GetFileMap());
+        context.SetFileMap(project->GetFileMap());
         context.SetInstantiationQueue(&instantiationQueue);
         context.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
         std::string compileUnitId = "compile_unit_" + util::GetSha1MessageDigest(filePath);
@@ -597,12 +598,12 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     {
         std::string interfaceUnitName;
         ScanDependencies(project, file, true, interfaceUnitName);
-        const std::string& filePath = project->GetFileMap().GetFilePath(file);
+        std::string filePath = fileMap->GetFilePath(file);
         std::cout << "> " << filePath << "\n";
         files.push_back(std::make_pair(file, filePath));
-        const auto& fileContent = project->GetFileMap().GetFileContent(file).first;
         soul::lexer::Lexer<otava::lexer::OtavaLexer<char32_t>, char32_t> lxr = otava::lexer::MakeLexer(
-            fileContent.c_str(), fileContent.c_str() + fileContent.length(), filePath);
+            fileMap->GetFileContent(file).c_str(),
+            fileMap->GetFileContent(file).c_str() + fileMap->GetFileContent(file).length(), filePath);
         lxr.SetPPHook(otava::pp::PreprocessPPLine);
         otava::pp::state::State* state = otava::pp::state::LexerStateMap::Instance().GetState(&lxr);
         for (const auto& define : project->Defines())
@@ -632,7 +633,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
             context.SetFlag(otava::symbols::ContextFlags::noWarnings);
         }
         context.SetOptLevel(optLevel);
-        context.SetFileMap(&project->GetFileMap());
+        context.SetFileMap(project->GetFileMap());
         context.SetInstantiationQueue(&instantiationQueue);
         context.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
         std::string compileUnitId = "compile_unit_" + util::GetSha1MessageDigest(filePath);

@@ -33,7 +33,7 @@ bool AliasGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexce
     return false;
 }
 
-Symbol* AliasGroupSymbol::GetSingleSymbol() noexcept
+Symbol* AliasGroupSymbol::GetSingleSymbol(Context* context) noexcept
 {
     if (aliasTypeSymbols.size() == 1)
     {
@@ -42,6 +42,12 @@ Symbol* AliasGroupSymbol::GetSingleSymbol() noexcept
     }
     else
     {
+        std::cout << util::ToUtf8(Name()) << ": ALIASTYPES=(";
+        for (auto* a : aliasTypeSymbols)
+        {
+            std::cout << " " << util::ToUtf8(a->DirectType(context)->FinalType(GetSourcePos(), context)->FullName());
+        }
+        std::cout << ")\n";
         return this;
     }
 }

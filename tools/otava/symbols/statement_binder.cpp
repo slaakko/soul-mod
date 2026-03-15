@@ -1655,9 +1655,10 @@ void StatementBinder::Visit(otava::ast::ExceptionDeclarationNode& node)
     if (type)
     {
         TypeSymbol* plainType = type->PlainType(context);
+        TypeSymbol* baseType = type->GetBaseType();
         std::uint64_t ext1;
         std::uint64_t ext2;
-        util::UuidToInts(plainType->Id(), ext1, ext2);
+        util::UuidToInts(baseType->Id(), ext1, ext2);
         std::u32string beginCatchStr;
         beginCatchStr.append(U"ort_begin_catch(").append(util::ToUtf32(std::to_string(ext1)).append(U"ull, ").append(
             util::ToUtf32(std::to_string(ext2)).append(U"ull)")));

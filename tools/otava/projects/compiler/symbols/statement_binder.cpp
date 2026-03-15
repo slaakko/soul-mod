@@ -1378,6 +1378,12 @@ void GenerateInitStreamCall(BoundExpressionNode* expr, StatementBinder* statemen
         w.SetWarning();
         PrintWarning(w, context);
     }
+    catch (const Exception& ex)
+    {
+        Exception w("could not generate stream initialization call: " + ex.Message(), sourcePos, context);
+        w.SetWarning();
+        PrintWarning(w, context);
+    }
 }
 
 void StatementBinder::Visit(otava::ast::ExpressionStatementNode& node)
@@ -1654,9 +1660,10 @@ void StatementBinder::Visit(otava::ast::ExceptionDeclarationNode& node)
     if (type)
     {
         TypeSymbol* plainType = type->PlainType(context);
+        TypeSymbol* baseType = type->GetBaseType();
         std::uint64_t ext1;
         std::uint64_t ext2;
-        util::UuidToInts(plainType->Id(), ext1, ext2);
+        util::UuidToInts(baseType->Id(), ext1, ext2);
         std::u32string beginCatchStr;
         beginCatchStr.append(U"ort_begin_catch(").append(util::ToUtf32(std::to_string(ext1)).append(U"ull, ").append(
             util::ToUtf32(std::to_string(ext2)).append(U"ull)")));
@@ -1668,6 +1675,10 @@ void StatementBinder::Visit(otava::ast::ExceptionDeclarationNode& node)
         catch (const std::exception& ex)
         {
             ThrowException(std::string("error parsing begin catch string: ") + ex.what(), node.GetSourcePos(), context);
+        }
+        catch (const Exception& ex)
+        {
+            ThrowException("error parsing begin catch string: " + ex.Message(), node.GetSourcePos(), context);
         }
         std::unique_ptr<otava::ast::CompoundStatementNode> completeCatchBlock(new otava::ast::CompoundStatementNode(node.GetSourcePos()));
         completeCatchBlock->SetBlockId(context->NextBlockId());

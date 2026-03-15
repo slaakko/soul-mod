@@ -292,6 +292,7 @@ public:
     inline Node* DefiningTypeId() const noexcept { return definingTypeId.get(); }
     inline Node* Attributes() const noexcept { return attributes.get(); }
     inline Node* Semicolon() const noexcept { return semicolon.get(); }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> usng;
     std::unique_ptr<Node> identifier;
@@ -545,6 +546,7 @@ public:
     inline Node* Dimension() const noexcept { return dimension.get(); }
     inline const soul::ast::SourcePos& LBracketPos() const noexcept { return lbPos; }
     inline const soul::ast::SourcePos& RBracketPos() const noexcept { return rbPos; }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> dimension;
     soul::ast::SourcePos lbPos;
@@ -561,6 +563,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* Params() const noexcept { return params.get(); }
+    std::u32string Str() const override;
 private:
     std::unique_ptr<Node> params;
 };

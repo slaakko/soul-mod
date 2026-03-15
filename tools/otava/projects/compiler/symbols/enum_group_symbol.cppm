@@ -20,7 +20,7 @@ public:
     std::string SymbolKindStr() const override { return "enum group symbol"; }
     std::string SymbolDocKindStr() const override { return "enum_group"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
-    Symbol* GetSingleSymbol() noexcept override;
+    Symbol* GetSingleSymbol(Context* context) noexcept override;
     inline EnumeratedTypeSymbol* GetEnumType() const noexcept { return enumType; }
     inline void SetEnumType(EnumeratedTypeSymbol* enumType_) noexcept { enumType = enumType_; }
     inline ForwardEnumDeclarationSymbol* GetForwardDeclaration() const noexcept { return forwardDeclaration; }

@@ -378,4 +378,9 @@ int main(int argc, const char** argv)
         std::cerr << ex.what() << std::endl;
         return 1;
     }
+    catch (const otava::symbols::Exception& ex)
+    {
+        std::cerr << ex.Message() << std::endl;
+        return 1;
+    }
 }

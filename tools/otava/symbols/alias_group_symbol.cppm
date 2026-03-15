@@ -19,7 +19,7 @@ public:
     std::string SymbolKindStr() const override { return "alias group symbol"; }
     std::string SymbolDocKindStr() const override { return "alias_group"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
-    Symbol* GetSingleSymbol() noexcept override;
+    Symbol* GetSingleSymbol(Context* contex) noexcept override;
     void AddAliasTypeSymbol(AliasTypeSymbol* aliasTypeSymbol, Context* context);
     AliasTypeSymbol* GetAliasTypeSymbol(int arity) const noexcept;
     inline const std::vector<AliasTypeSymbol*>& AliasTypeSymbols() const noexcept { return aliasTypeSymbols; }

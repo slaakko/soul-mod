@@ -14,7 +14,7 @@ export namespace otava::symbols {
 bool ExceptionThrown();
 void SetExceptionThrown();
 
-class Exception : public std::runtime_error
+class Exception 
 {
 public:
     Exception();
@@ -25,7 +25,9 @@ public:
     Exception(const std::string& title, const std::string& message_, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos, otava::symbols::Context* context);
     inline void SetWarning() noexcept { warning = true; }
     inline bool Warning() const noexcept { return warning; }
+    inline const std::string& Message() const noexcept { return message; }
 private:
+    std::string message;
     bool warning;
 };
 

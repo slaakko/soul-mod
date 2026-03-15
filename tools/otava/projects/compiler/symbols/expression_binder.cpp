@@ -654,7 +654,7 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
     }
     else
     {
-        Exception ex(std::string(ex1.what()) + "\n" + std::string(ex2.what()));
+        Exception ex(ex1.Message() + "\n" + ex2.Message());
         ThrowException(ex);
     }
     if (node)
@@ -748,7 +748,7 @@ void ExpressionBinder::BindUnaryOp(otava::ast::NodeKind op, const soul::ast::Sou
     }
     if (!functionCall)
     {
-        Exception ex(std::string(ex1.what()) + "\n" + std::string(ex2.what()));
+        Exception ex(ex1.Message() + "\n" + ex2.Message());
         ThrowException(ex);
     }
     if (node)
@@ -1226,7 +1226,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
         if (symbol && symbol->IsVariableGroupSymbol() && !lookupOnlyFromMemberScope)
         {
             VariableGroupSymbol* variableGroup = static_cast<VariableGroupSymbol*>(symbol);
-            Symbol* sym = variableGroup->GetSingleSymbol();
+            Symbol* sym = variableGroup->GetSingleSymbol(context);
             if (sym && sym->IsVariableSymbol())
             {
                 VariableSymbol* variable = static_cast<VariableSymbol*>(sym);
@@ -1417,7 +1417,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
         case SymbolKind::variableGroupSymbol:
         {
             VariableGroupSymbol* variableGroup = static_cast<VariableGroupSymbol*>(symbol);
-            Symbol* sym = variableGroup->GetSingleSymbol();
+            Symbol* sym = variableGroup->GetSingleSymbol(context);
             if (sym && sym->IsVariableSymbol())
             {
                 VariableSymbol* variable = static_cast<VariableSymbol*>(sym);
@@ -1458,7 +1458,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
         case SymbolKind::classGroupSymbol:
         {
             ClassGroupSymbol* classGroup = static_cast<ClassGroupSymbol*>(symbol);
-            Symbol* sym = classGroup->GetSingleSymbol();
+            Symbol* sym = classGroup->GetSingleSymbol(context);
             if (sym && sym->IsClassTypeSymbol())
             {
                 ClassTypeSymbol* cls = static_cast<ClassTypeSymbol*>(sym);
@@ -1485,7 +1485,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
         case SymbolKind::aliasGroupSymbol:
         {
             AliasGroupSymbol* aliasGroup = static_cast<AliasGroupSymbol*>(symbol);
-            Symbol* sym = aliasGroup->GetSingleSymbol();
+            Symbol* sym = aliasGroup->GetSingleSymbol(context);
             if (sym && sym->IsAliasTypeSymbol())
             {
                 AliasTypeSymbol* aliasType = static_cast<AliasTypeSymbol*>(sym);
@@ -2160,7 +2160,7 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
         }
         if (!functionCall)
         {
-            Exception ex(std::string(ex1.what()) + "\n" + std::string(ex2.what()));
+            Exception ex(ex1.Message() + "\n" + ex2.Message());
             ThrowException(ex);
         }
         functionCall->SetSource(node.Clone());
@@ -2631,7 +2631,7 @@ void ExpressionBinder::Visit(otava::ast::ThrowExprNode& node)
             std::unique_ptr<otava::symbols::BoundExpressionNode> expr(BindExpression(node.Child(), context));
             std::uint64_t ext1 = 0;
             std::uint64_t ext2 = 0;
-            util::UuidToInts(expr->GetType()->Id(), ext1, ext2);
+            util::UuidToInts(expr->GetType()->GetBaseType()->Id(), ext1, ext2);
             std::u32string throwExprStr;
             throwExprStr.append(U"ort_throw((ort_is_bad_alloc(").append(util::ToUtf32(std::to_string(ext1)).append(U"ull, ").
                 append(util::ToUtf32(std::to_string(ext2)).append(U"ull) ? ort_get_bad_alloc() : ")));
@@ -2663,6 +2663,10 @@ void ExpressionBinder::Visit(otava::ast::ThrowExprNode& node)
     catch (const std::exception& ex)
     {
         ThrowException(std::string("error parsing throw expression: ") + ex.what(), node.GetSourcePos(), context);
+    }
+    catch (const Exception& ex)
+    {
+        ThrowException("error parsing throw expression: " + ex.Message(), node.GetSourcePos(), context);
     }
 }
 

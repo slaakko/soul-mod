@@ -152,6 +152,11 @@ void ProcessAliasDeclaration(otava::ast::Node* aliasDeclarationNode, Context* co
     aliasDeclarationNode->Accept(processor);
     otava::ast::Node* idNode = processor.GetIdNode();
     TypeSymbol* type = processor.GetType();
+    if (idNode->Str() == U"at_exit_fn")
+    {
+        std::cout << "at_exit_fn: " << SymbolKindToString(type->GetBaseType()->Kind()) << " : " << util::ToUtf8(type->FullName()) << "\n";
+        ort_debug_break();
+    }
     if (instantiate)
     {
         if (!aliasType->ReferredType())

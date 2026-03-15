@@ -193,7 +193,7 @@ public:
     virtual void Accept(Visitor& visitor) = 0;
     virtual bool IsExportSymbol(Context* context) const noexcept { return IsProject(); }
     virtual bool IsExportMapSymbol(Context* context) const noexcept { return IsExportSymbol(context); }
-    virtual Symbol* GetSingleSymbol() noexcept { return this; }
+    virtual Symbol* GetSingleSymbol(Context* context) noexcept { return this; }
     virtual std::string SymbolDocKindStr() const = 0;
     virtual bool IsCharTypeSymbol() const noexcept { return false; }
     virtual bool IsChar8TypeSymbol() const noexcept { return false; }

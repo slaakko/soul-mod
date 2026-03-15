@@ -129,7 +129,7 @@ public:
     void SetProcessTrailingQualifiers(bool processTrailingQualifiers_) { processTrailingQualifiers = processTrailingQualifiers_; }
     Declaration GetDeclaration() { return std::move(declaration); }
     void Visit(otava::ast::FunctionDeclaratorNode& node) override;
-    void Visit(otava::ast::ParenthesizedDeclaratorNode& node);
+    void Visit(otava::ast::ParenthesizedDeclaratorNode& node) override;
     void Visit(otava::ast::TrailingQualifiersNode& node) override;
     void Visit(otava::ast::InitDeclaratorNode& node) override;
     void Visit(otava::ast::ParameterListNode& node) override;

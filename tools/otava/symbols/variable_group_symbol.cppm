@@ -19,7 +19,7 @@ public:
     std::string SymbolKindStr() const override { return "variable group symbol"; }
     std::string SymbolDocKindStr() const override { return "variable_group"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
-    Symbol* GetSingleSymbol() noexcept override;
+    Symbol* GetSingleSymbol(Context* contex) noexcept override;
     void AddVariable(VariableSymbol* variableSymbol);
     VariableSymbol* GetVariable(int arity) const noexcept;
     inline const std::vector<VariableSymbol*>& Variables() const noexcept { return variables; }

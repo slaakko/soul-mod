@@ -179,6 +179,13 @@ void DefiningTypeIdNode::Read(Reader& reader)
     abstractDeclarator.reset(reader.ReadNode());
 }
 
+std::u32string DefiningTypeIdNode::Str() const
+{
+    std::u32string str = definingTypeSpecifiers->Str();
+    str.append(abstractDeclarator->Str());
+    return str;
+}
+
 DefiningTypeSpecifierSequenceNode::DefiningTypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept :
     SequenceNode(NodeKind::definingTypeSpecifierSequenceNode, sourcePos_)
 {
@@ -198,6 +205,25 @@ Node* DefiningTypeSpecifierSequenceNode::Clone() const
 void DefiningTypeSpecifierSequenceNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+std::u32string DefiningTypeSpecifierSequenceNode::Str() const
+{
+    std::u32string str;
+    bool first = true;
+    for (const auto& typeSpecifier : Nodes())
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            str.append(1, ' ');
+        }
+        str.append(typeSpecifier->Str());
+    }
+    return str;
 }
 
 TrailingReturnTypeNode::TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::trailingReturnTypeNode, sourcePos_, nullptr)
@@ -262,6 +288,13 @@ void ElaboratedTypeSpecifierNode::Read(Reader& reader)
     classKey.reset(reader.ReadNode());
     id.reset(reader.ReadNode());
     attributes.reset(reader.ReadNode());
+}
+
+std::u32string ElaboratedTypeSpecifierNode::Str() const
+{
+    std::u32string str = classKey->Str();
+    str.append(id->Str());
+    return str;
 }
 
 DeclTypeSpecifierNode::DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::declTypeSpecifierNode, sourcePos_)

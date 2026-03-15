@@ -36,7 +36,7 @@ bool FunctionGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noe
     return false;
 }
 
-Symbol* FunctionGroupSymbol::GetSingleSymbol() noexcept
+Symbol* FunctionGroupSymbol::GetSingleSymbol(Context* context) noexcept
 {
     if (functions.size() == 1)
     {

@@ -1,13 +1,17 @@
 import std;
 
+class Foo
+{
+public:
+    Foo() : abc("abc") {}
+    const std::string& Str() const { return abc; }
+private:
+    std::string abc;
+};
+
 int main()
 {
-    std::map<int, std::string> m;
-    m[1] = "foo";
-    auto it = m.find(1);
-    if (it != m.end())
-    {
-        const std::string& s = it->second;
-        std::cout << s << "\n";
-    }
+    std::unique_ptr<Foo> foo(new Foo());
+    const std::string& str = foo->Str();
+    std::cout << str << "\n";
 }

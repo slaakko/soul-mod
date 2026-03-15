@@ -1,4 +1,4 @@
-// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/compiler/pp/pp.lexer' using soul lexer generator oslg version 5.0.0
+// this file has been automatically generated from 'D:/work/test_soul/tools/otava/projects/compiler/pp/pp.lexer' using soul lexer generator oslg version 5.0.0
 
 export module otava.pp.lexer;
 
@@ -12352,7 +12352,6 @@ soul::lexer::Lexer<PPLexer<Char>, Char> MakeLexer(const Char* start, const Char*
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<PPLexer<Char>, Char>(start, end, fileName);
     lexer.SetClassMap(GetClassMap<Char>());
-    lexer.SetTokenCollection(GetTokens());
     lexer.SetKeywordMap(GetKeywords<Char>());
     return lexer;
 }
@@ -12363,7 +12362,6 @@ soul::lexer::Lexer<PPLexer<Char>, Char> MakeLexer(const std::string& moduleFileN
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<PPLexer<Char>, Char>(start, end, fileName);
     lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags));
-    lexer.SetTokenCollection(GetTokens());
     lexer.SetKeywordMap(GetKeywords<Char>());
     return lexer;
 }

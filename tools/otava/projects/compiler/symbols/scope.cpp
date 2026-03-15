@@ -214,7 +214,7 @@ Symbol* Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind,
         if ((flags & LookupFlags::dontResolveSingle) == LookupFlags::none)
         {
             Symbol* front = symbols.front();
-            return front->GetSingleSymbol();
+            return front->GetSingleSymbol(context);
         }
         else
         {

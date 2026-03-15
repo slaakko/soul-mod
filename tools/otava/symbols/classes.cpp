@@ -1419,7 +1419,7 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
             }
             return destructorFn;
         }
-        destructorFn = destructorGroup->GetSingleSymbol();
+        destructorFn = destructorGroup->GetSingleSymbol(context);
         if (destructorFn && destructorFn != destructorGroup)
         {
             if (destructorFn->IsFunctionSymbol())
