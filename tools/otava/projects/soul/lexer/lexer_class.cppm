@@ -576,12 +576,12 @@ public:
         farthestRuleContext = lexerState.farthestRuleContext;
         SetPos(lexerState.currentPos);
     }
-    inline void Skip(bool skip_) noexcept
+    void Skip(bool skip_) noexcept override
     {
         skip = skip_;
         current = tokens.end();
     }
-    inline bool Skipping() const noexcept
+    bool Skipping() const noexcept override
     {
         return skip;
     }

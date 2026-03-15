@@ -555,7 +555,7 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
             baseClass->InitVTab(vtab, context, sourcePos, false);
         }
     }
-    std::vector<FunctionSymbol*> virtualFunctions;
+    std::vector<FunctionSymbol*> fns;
     for (FunctionSymbol* function : memberFunctions)
     {
         FunctionSymbol* fn = function;
@@ -568,10 +568,10 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
                 fn = declaration;
             }
         }
-        if ((fn->IsVirtual() || fn->IsDestructor()) && !fn->IsTrivialDestructor())
+        if (!fn->IsTrivialDestructor())
         {
             bool found = false;
-            for (FunctionSymbol* existing : virtualFunctions)
+            for (FunctionSymbol* existing : fns)
             {
                 if (FunctionMatches(fn, existing, context))
                 {
@@ -585,14 +585,14 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
             }
             if (!found)
             {
-                virtualFunctions.push_back(fn);
+                fns.push_back(fn);
             }
         }
     }
-    int n = virtualFunctions.size();
+    int n = fns.size();
     for (int i = 0; i < n; ++i)
     {
-        FunctionSymbol* f = virtualFunctions[i];
+        FunctionSymbol* f = fns[i];
         bool found = false;
         int m = vtab.size();
         for (int j = 0; j < m; ++j)
@@ -600,6 +600,11 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
             FunctionSymbol* v = vtab[j];
             if (Overrides(f, v, context))
             {
+                if (v->IsFinal())
+                {
+                    ThrowException("function (" + util::ToUtf8(f->FullName()) + ") cannot override a final function (" + 
+                        util::ToUtf8(v->FullName()) + ")", sourcePos, context);
+                }
                 if (!f->IsOverride() && !f->IsFinal() && !f->IsDestructor())
                 {
                     ThrowException("overriding function should be declared with override or final specifier: (" + 
@@ -632,16 +637,19 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
         }
         if (!found)
         {
-            if (f->IsOverride())
+            if (f->IsOverride() || f->IsFinal())
             {
                 ThrowException("no suitable function to override ('" + util::ToUtf8(f->FullName()) + "')", sourcePos, context);
             }
-            f->SetVTabIndex(m);
-            if (f->Group())
+            else if (f->IsVirtual() || f->IsPure())
             {
-                f->Group()->SetVTabIndex(f, m, context);
+                f->SetVTabIndex(m);
+                if (f->Group())
+                {
+                    f->Group()->SetVTabIndex(f, m, context);
+                }
+                vtab.push_back(f);
             }
-            vtab.push_back(f);
         }
     }
 }

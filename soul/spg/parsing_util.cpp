@@ -43,7 +43,7 @@ class NonterminalCountingVisitor : public soul::ast::cpp::DefaultVisitor
 {
 public:
     NonterminalCountingVisitor(std::vector<NonterminalInfo>& nonterminalInfos_) : nonterminalInfos(nonterminalInfos_) {}
-    void Visit(soul::ast::cpp::IdExprNode& node);
+    void Visit(soul::ast::cpp::IdExprNode& node) override;
 private:
     std::vector<NonterminalInfo>& nonterminalInfos;
 };

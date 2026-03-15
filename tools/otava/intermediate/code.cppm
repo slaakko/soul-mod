@@ -23,7 +23,7 @@ class RegValue : public Value
 public:
     RegValue(const soul::ast::Span& span_, Type* type_, std::int32_t reg_) noexcept;
     ~RegValue();
-    Value* Clone(CloneContext& cloneContext) const;
+    Value* Clone(CloneContext& cloneContext) const override;
     inline std::int32_t Reg() const noexcept { return reg; }
     inline void SetReg(std::int32_t reg_) noexcept { reg = reg_; }
     inline void SetInst(Instruction* inst_) noexcept { inst = inst_; }
@@ -750,7 +750,7 @@ public:
     inline bool IsChildFn() const noexcept { return GetFlag(FunctionFlags::child); }
     void SetAsChildFn() noexcept { SetFlag(FunctionFlags::child); }
     inline int Arity() const noexcept { return type->Arity(); }
-    void Accept(Visitor& visitor);
+    void Accept(Visitor& visitor) override;
     Function* Clone() const;
     void VisitBasicBlocks(Visitor& visitor);
     Code* Parent() const noexcept;

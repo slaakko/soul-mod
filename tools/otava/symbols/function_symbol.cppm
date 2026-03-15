@@ -300,7 +300,7 @@ class CompileUnitInitFn : public FunctionSymbol
 public:
     CompileUnitInitFn(const std::u32string& name_);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
 };
 
 } // namespace otava::symbols

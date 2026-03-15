@@ -19,7 +19,7 @@ public:
     virtual void InsertBefore(Node* newChild, Node* refChild);
     virtual std::unique_ptr<Node> RemoveChild(Node* child);
     virtual std::unique_ptr<Node> ReplaceChild(Node* newChild, Node* oldChild);
-    bool HasChildNodes() const noexcept { return firstChild != nullptr; }
+    bool HasChildNodes() const noexcept override { return firstChild != nullptr; }
     inline Node* FirstChild() const noexcept { return firstChild; }
     inline Node* LastChild() const noexcept { return lastChild; }
     void Accept(Visitor& visitor) override;

@@ -554,12 +554,12 @@ public:
         farthestRuleContext = state.farthestRuleContext;
         SetPos(state.currentPos);
     }
-    inline void Skip(bool skip_) noexcept
+    void Skip(bool skip_) noexcept override
     {
         skip = skip_;
         current = tokens.end();
     }
-    inline bool Skipping() const noexcept
+    bool Skipping() const noexcept override
     {
         return skip;
     }

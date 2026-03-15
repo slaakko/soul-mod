@@ -20,7 +20,7 @@ public:
     inline const std::string& Data() const { return data; }
     inline std::string& Data() { return data; }
     std::expected<bool, int> Write(util::CodeFormatter& formatter) override;
-    bool ValueContainsNewLine() const final;
+    bool ValueContainsNewLine() const override;
 private:
     std::string data;
 };

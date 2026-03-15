@@ -20,7 +20,7 @@ public:
     inline const std::string& Data() const noexcept { return data; }
     inline std::string& Data() noexcept { return data; }
     void Write(util::CodeFormatter& formatter) override;
-    bool ValueContainsNewLine() const noexcept;
+    bool ValueContainsNewLine() const noexcept override;
 private:
     std::string data;
 };

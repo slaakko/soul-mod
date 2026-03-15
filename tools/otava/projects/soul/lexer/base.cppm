@@ -59,8 +59,8 @@ public:
     virtual void BeginRecordedParse(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair) = 0;
     virtual void EndRecordedParse() = 0;
     virtual void PreprocessCurrentToken() = 0;
-    virtual void Skip(bool skip_) = 0;
-    virtual bool Skipping() const = 0;
+    virtual void Skip(bool skip_) noexcept = 0;
+    virtual bool Skipping() const noexcept = 0;
     virtual void SetLog(ParsingLog* log) noexcept = 0;
 };
 

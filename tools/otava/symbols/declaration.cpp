@@ -291,7 +291,7 @@ public:
     void Visit(otava::ast::ExceptionDeclarationNode& node) override;
     void Visit(otava::ast::ClassSpecifierNode& node) override;
     void Visit(otava::ast::EnumSpecifierNode& node) override;
-    void Visit(otava::ast::ElaboratedTypeSpecifierNode & override);
+    void Visit(otava::ast::ElaboratedTypeSpecifierNode& node) override;
     void Visit(otava::ast::InitConditionNode& node) override;
     TypeSymbol* ResolveBaseType(otava::ast::Node* node);
     void Visit(otava::ast::CharNode& node) override;

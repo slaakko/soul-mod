@@ -37,7 +37,7 @@ public:
     void Ifdef(const std::string& symbol);
     void Ifndef(const std::string& symbol);
     void Else();
-    void  Endif();
+    void Endif();
     void Define(const std::string& symbol, std::int64_t value);
     void Undef(const std::string& symbol);
     bool Defined(const std::string& symbol) const;

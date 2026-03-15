@@ -136,7 +136,7 @@ public:
     void Visit(NamespaceSymbol& symbol) override;
     void Visit(SymbolTable& symbolTable) override;
     void Visit(AliasTypeSymbol& symbol) override;
-    void Visit(AliasTypeTemplateSpecializationSymbol& symbol);
+    void Visit(AliasTypeTemplateSpecializationSymbol& symbol) override;
     void Visit(BlockSymbol& symbol) override;
     void Visit(ClassTypeSymbol& symbol) override;
     void Visit(EnumeratedTypeSymbol& symbol) override;

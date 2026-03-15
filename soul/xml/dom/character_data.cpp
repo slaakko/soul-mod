@@ -55,7 +55,7 @@ void CharacterData::Write(util::CodeFormatter& formatter)
     formatter.Write(XmlCharDataEscape(data));
 }
 
-bool CharacterData::ValueContainsNewLine() const noexcept
+bool CharacterData::ValueContainsNewLine() const noexcept 
 {
     return data.find('\n') != std::string::npos;
 }

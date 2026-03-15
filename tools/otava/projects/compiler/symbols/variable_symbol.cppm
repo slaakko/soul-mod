@@ -42,7 +42,7 @@ public:
     bool IsStatic() const noexcept;
     inline std::int32_t LayoutIndex() const noexcept { return layoutIndex; }
     inline void SetLayoutIndex(std::int32_t layoutIndex_) noexcept { layoutIndex = layoutIndex_; }
-    std::string IrName(Context* context) const;
+    std::string IrName(Context* context) const override;
     inline std::int32_t Index() const noexcept { return index; }
     inline void SetIndex(std::int32_t index_) noexcept { index = index_; }
     inline VariableSymbol* Final() noexcept { if (global) return global; else return this; }
