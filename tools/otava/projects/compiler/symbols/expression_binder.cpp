@@ -411,6 +411,7 @@ void FirstArgResolver::Visit(BoundPtrToRefNode& node)
 void FirstArgResolver::Visit(BoundConstructTemporaryNode& node)
 {
     node.Temporary()->Accept(*this);
+    firstArg = new BoundExpressionSequenceNode(node.GetSourcePos(), node.Clone(), firstArg);
 }
 
 BoundExpressionNode* GetFirstArg(BoundNode* node, Context* context)

@@ -246,31 +246,56 @@ void parse_hexadecimal(T& x, const string& s, size_t* idx)
     {
         switch (state)
         {
-        case 0:
-        {
-            if (!std::isspace(c))
+            case 0:
             {
-                if (c == '+')
+                if (!std::isspace(c))
                 {
-                    state = 1;
+                    if (c == '+')
+                    {
+                        state = 1;
+                    }
+                    else if (c == '-')
+                    {
+                        negative = true;
+                        state = 1;
+                    }
+                    else if (c >= '0' && c <= '9')
+                    {
+                        x = c - '0';
+                        state = 1;
+                    }
+                    else if (c >= 'a' && c <= 'f')
+                    {
+                        x = 10 + c - 'a';
+                    }
+                    else if (c >= 'A' && c <= 'F')
+                    {
+                        x = 10 + c - 'A';
+                    }
+                    else
+                    {
+                        if (idx)
+                        {
+                            *idx = index;
+                        }
+                        return;
+                    }
                 }
-                else if (c == '-')
+                break;
+            }
+            case 1:
+            {
+                if (c >= '0' && c <= '9')
                 {
-                    negative = true;
-                    state = 1;
-                }
-                else if (c >= '0' && c <= '9')
-                {
-                    x = c - '0';
-                    state = 1;
+                    x = 16 * x + c - '0';
                 }
                 else if (c >= 'a' && c <= 'f')
                 {
-                    x = 10 + c - 'a';
+                    x = 16 * x + 10 + c - 'a';
                 }
                 else if (c >= 'A' && c <= 'F')
                 {
-                    x = 10 + c - 'A';
+                    x = 16 * x + 10 + c - 'A';
                 }
                 else
                 {
@@ -278,39 +303,14 @@ void parse_hexadecimal(T& x, const string& s, size_t* idx)
                     {
                         *idx = index;
                     }
+                    if (negative)
+                    {
+                        x = -x;
+                    }
                     return;
                 }
+                break;
             }
-            break;
-        }
-        case 1:
-        {
-            if (c >= '0' && c <= '9')
-            {
-                x = 16 * x + c - '0';
-            }
-            else if (c >= 'a' && c <= 'f')
-            {
-                x = 16 * x + 10 + c - 'a';
-            }
-            else if (c >= 'A' && c <= 'F')
-            {
-                x = 16 * x + 10 + c - 'A';
-            }
-            else
-            {
-                if (idx)
-                {
-                    *idx = index;
-                }
-                if (negative)
-                {
-                    x = -x;
-                }
-                return;
-            }
-            break;
-        }
         }
         ++index;
     }

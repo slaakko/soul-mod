@@ -45,30 +45,30 @@ std::int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind) no
 {
     switch (specialFunctionKind)
     {
-    case SpecialFunctionKind::defaultCtor:
-    {
-        return defaultCtorIndex;
-    }
-    case SpecialFunctionKind::copyCtor:
-    {
-        return copyCtorIndex;
-    }
-    case SpecialFunctionKind::moveCtor:
-    {
-        return moveCtorIndex;
-    }
-    case SpecialFunctionKind::copyAssignment:
-    {
-        return copyAssignmentIndex;
-    }
-    case SpecialFunctionKind::moveAssignment:
-    {
-        return moveAssignmentIndex;
-    }
-    case SpecialFunctionKind::dtor:
-    {
-        return destructorIndex;
-    }
+        case SpecialFunctionKind::defaultCtor:
+        {
+            return defaultCtorIndex;
+        }
+        case SpecialFunctionKind::copyCtor:
+        {
+            return copyCtorIndex;
+        }
+        case SpecialFunctionKind::moveCtor:
+        {
+            return moveCtorIndex;
+        }
+        case SpecialFunctionKind::copyAssignment:
+        {
+            return copyAssignmentIndex;
+        }
+        case SpecialFunctionKind::moveAssignment:
+        {
+            return moveAssignmentIndex;
+        }
+        case SpecialFunctionKind::dtor:
+        {
+            return destructorIndex;
+        }
     }
     return 0;
 }

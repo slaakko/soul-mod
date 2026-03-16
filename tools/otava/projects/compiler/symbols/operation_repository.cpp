@@ -1204,6 +1204,7 @@ FunctionSymbol* ClassCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundExp
     FunctionSymbol* copyCtor = classType->GetFunctionByIndex(copyCtorIndex);
     if (copyCtor)
     {
+        std::cout << "COPYCTOR FOUND: " << "COPYCTOR=" << std::hex << static_cast<std::uint64_t>(static_cast<void*>(copyCtor)) << "\n";
         return copyCtor;
     }
     TypeSymbol* ct = classType;

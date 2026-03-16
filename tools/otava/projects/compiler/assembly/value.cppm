@@ -9,6 +9,8 @@ import std;
 
 export namespace otava::assembly {
 
+const int maxSplitCount = 16;
+
 enum class ValueKind
 {
     integerLiteral, floatLiteral, doubleLiteral, stringLiteral, symbol, macro, reg, binaryExpr, content, sizePrefix
@@ -30,7 +32,7 @@ public:
     inline const std::string& Name() const noexcept { return name; }
     void SetName(const std::string& name_);
     virtual std::string ToString() const { return Name(); }
-    inline int Length() const noexcept { return ToString().length(); }
+    int Length() const noexcept;
     virtual bool CanSplit() const noexcept { return false; }
     virtual Value* Split(int length) { return nullptr; }
     virtual bool IsEmpty() const noexcept { return false; }

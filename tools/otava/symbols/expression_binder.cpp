@@ -411,6 +411,7 @@ void FirstArgResolver::Visit(BoundPtrToRefNode& node)
 void FirstArgResolver::Visit(BoundConstructTemporaryNode& node)
 {
     node.Temporary()->Accept(*this);
+    firstArg = new BoundExpressionSequenceNode(node.GetSourcePos(), node.Clone(), firstArg);
 }
 
 BoundExpressionNode* GetFirstArg(BoundNode* node, Context* context)
@@ -2033,10 +2034,6 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
             return;
         }
         std::u32string gn = GetGroupName(subject.get(), context);
-        if (gn == U"ParseStringLiteralOrCharSet")
-        {
-            int x = 0;
-        }
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         if (subject->IsBoundTypeNode())
         {

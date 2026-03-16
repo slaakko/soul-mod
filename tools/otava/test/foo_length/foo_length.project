@@ -1,0 +1,4 @@
+project foo_length;
+target=program;
+source <main.cpp>;
+

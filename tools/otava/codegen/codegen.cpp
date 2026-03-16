@@ -966,7 +966,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         }
         else
         {
-            //tava::symbols::PrintWarning("type of local variable '" + util::ToUtf8(localVariable->Name()) + "' not set", node.GetSourcePos(), &context);
+            //otava::symbols::PrintWarning("type of local variable '" + util::ToUtf8(localVariable->Name()) + "' not set", node.GetSourcePos(), &context);
         }
     }
     for (int i = 0; i < np; ++i)

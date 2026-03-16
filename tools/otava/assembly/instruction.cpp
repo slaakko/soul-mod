@@ -134,15 +134,17 @@ int Instruction::Length() const noexcept
     if (!label.empty())
     {
         std::string c = ":";
-        length = util::Format(label + c, 8, util::FormatWidth::min, util::FormatJustify::left).length();
+        std::string f = util::Format(label + c, 8, util::FormatWidth::min, util::FormatJustify::left);
+        length += f.length();
     }
     else
     {
         length += 8;
     }
-    length += util::Format(OpCodeStr(opCode), 16).length();
+    std::string f = util::Format(OpCodeStr(opCode), 16);
+    length += f.length();
     bool first = true;
-    for (auto& operand : operands)
+    for (const auto* operand : operands)
     {
         if (first)
         {

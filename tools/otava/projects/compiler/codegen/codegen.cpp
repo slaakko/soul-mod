@@ -966,7 +966,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         }
         else
         {
-            //tava::symbols::PrintWarning("type of local variable '" + util::ToUtf8(localVariable->Name()) + "' not set", node.GetSourcePos(), &context);
+            //otava::symbols::PrintWarning("type of local variable '" + util::ToUtf8(localVariable->Name()) + "' not set", node.GetSourcePos(), &context);
         }
     }
     for (int i = 0; i < np; ++i)
@@ -976,6 +976,8 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         if (parameter->GetType()->IsClassTypeSymbol())
         {
             otava::symbols::ClassTypeSymbol* classTypeSymbol = static_cast<otava::symbols::ClassTypeSymbol*>(parameter->GetType());
+            std::cout << "CLASS=" << util::ToUtf8(classTypeSymbol->FullName()) << 
+                ", COPYCTOR=" << std::hex << static_cast<std::uint64_t>(static_cast<void*>(classTypeSymbol->CopyCtor())) << "\n";
             if (classTypeSymbol->CopyCtor())
             {
                 otava::intermediate::FunctionType* copyCtorType = static_cast<otava::intermediate::FunctionType*>(classTypeSymbol->CopyCtor()->IrType(

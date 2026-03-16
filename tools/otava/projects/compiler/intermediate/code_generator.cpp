@@ -2732,7 +2732,8 @@ void CodeGenerator::EmitDataValue(std::unique_ptr<otava::assembly::Value>&& data
         dataInstruction->SetLabel(label);
         label.clear();
     }
-    while (dataInstruction->Length() + dataValue->Length() > otava::assembly::maxAssemblyLineLength && dataValue->CanSplit())
+    int splitCount = 0;
+    while (splitCount < otava::assembly::maxSplitCount && dataInstruction->Length() + dataValue->Length() > otava::assembly::maxAssemblyLineLength && dataValue->CanSplit())
     {
         std::unique_ptr<otava::assembly::Value> next(dataValue->Split(otava::assembly::maxAssemblyLineLength - dataInstruction->Length()));
         dataInstruction->AddOperand(dataValue.release());
@@ -2740,6 +2741,7 @@ void CodeGenerator::EmitDataValue(std::unique_ptr<otava::assembly::Value>&& data
         dataInstruction.reset(new otava::assembly::Instruction(dataOpCode));
         dataInstruction->SetNoColon();
         dataValue.reset(next.release());
+        ++splitCount;
     }
     dataInstruction->AddOperand(dataValue.release());
     data->AddInstruction(std::move(dataInstruction));
