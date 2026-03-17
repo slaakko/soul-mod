@@ -120,6 +120,7 @@ source <operation_repository.cpp>;
 interface <overload_resolution.cppm>;
 source <overload_resolution.cpp>;
 interface <project.cppm>;
+source <project.cpp>;
 interface <reader.cppm>;
 source <reader.cpp>;
 interface <scope.cppm>;

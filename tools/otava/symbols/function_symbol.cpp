@@ -482,6 +482,11 @@ void FunctionSymbol::SetOverride() noexcept
     qualifiers = qualifiers | FunctionQualifiers::isOverride;
 }
 
+void FunctionSymbol::SetFinal() noexcept
+{
+    qualifiers = qualifiers | FunctionQualifiers::isFinal;
+}
+
 void FunctionSymbol::SetNoExcept() noexcept
 {
     qualifiers = qualifiers | FunctionQualifiers::isNoexcept;
@@ -992,6 +997,7 @@ void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<B
     {
         ThrowException("class type expected", sourcePos, context);
     }
+    classType->MakeVTab(context, sourcePos);
     std::vector<ClassTypeSymbol*> vptrHolderClasses = classType->VPtrHolderClasses();
     if (vptrHolderClasses.empty())
     {
@@ -1508,6 +1514,24 @@ void FunctionDefinitionSymbol::SetNoExcept() noexcept
         declaration->SetNoExcept();
     }
     FunctionSymbol::SetNoExcept();
+}
+
+void FunctionDefinitionSymbol::SetOverride() noexcept
+{
+    if (declaration)
+    {
+        declaration->SetOverride();
+    }
+    FunctionSymbol::SetOverride();
+}
+
+void FunctionDefinitionSymbol::SetFinal() noexcept
+{
+    if (declaration)
+    {
+        declaration->SetFinal();
+    }
+    FunctionSymbol::SetFinal();
 }
 
 std::int32_t FunctionDefinitionSymbol::VTabIndex() const noexcept

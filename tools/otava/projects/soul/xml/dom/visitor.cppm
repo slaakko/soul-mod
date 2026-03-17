@@ -20,6 +20,7 @@ class ProcessingInstruction;
 class Visitor
 {
 public:
+    virtual ~Visitor();
     virtual void BeginVisit(Document& document) {}
     virtual void EndVisit(Document& document) {}
     virtual void BeginVisit(Element& element) {}

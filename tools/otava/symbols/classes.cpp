@@ -890,13 +890,15 @@ void ClassTypeSymbol::GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Co
     VariableSymbol* classTempVar = new VariableSymbol(U"@class_temp");
     classTempVar->SetDeclaredType(this);
     tempVars.push_back(std::unique_ptr<Symbol>(classTempVar));
-    args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(new BoundVariableNode(classTempVar, sourcePos), sourcePos, classTempVar->GetType()->AddPointer(context))));
+    args.push_back(std::unique_ptr<BoundExpressionNode>(
+        new BoundAddressOfNode(new BoundVariableNode(classTempVar, sourcePos), sourcePos, classTempVar->GetType()->AddPointer(context))));
     VariableSymbol* constLvalueRefTempVar = new VariableSymbol(U"@const_lvalue_ref_temp");
     constLvalueRefTempVar->SetDeclaredType(this->AddConst(context)->AddLValueRef(context));
     tempVars.push_back(std::unique_ptr<Symbol>(constLvalueRefTempVar));
     args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundVariableNode(constLvalueRefTempVar, sourcePos)));
     std::vector<TypeSymbol*> templateArgs;
-    std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, args, sourcePos, context);
+    std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverloadThrow(
+        context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, args, sourcePos, context);
     copyCtor = functionCall->GetFunctionSymbol();
 }
 

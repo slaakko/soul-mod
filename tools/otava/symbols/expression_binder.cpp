@@ -2586,7 +2586,7 @@ void ExpressionBinder::Visit(otava::ast::DeletePtrNode& node)
     std::unique_ptr<BoundFunctionCallNode> dtorCall = ResolveOverloadThrow(
         context->GetSymbolTable()->CurrentScope(), U"@destructor", templateArgs, dtorArgs, node.GetSourcePos(), context);
     std::vector<std::unique_ptr<BoundExpressionNode>> opDeleteArgs;
-    if (dtorCall->GetFunctionSymbol()->IsVirtual())
+    if (dtorCall->GetFunctionSymbol()->IsVirtual() || dtorCall->GetFunctionSymbol()->IsOverride() || dtorCall->GetFunctionSymbol()->IsFinal())
     {
         dtorCall->SetFlag(BoundExpressionFlags::virtualCall);
         TypeSymbol* thisPtrBaseType = ptr->GetType()->GetBaseType();

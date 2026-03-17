@@ -1,5 +1,4 @@
 // =================================
-// =================================
 // Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
@@ -138,7 +137,8 @@ public:
     void SetVirtual() noexcept;
     virtual bool IsOverride() const noexcept;
     virtual bool IsFinal() const noexcept;
-    void SetOverride() noexcept;
+    virtual void SetOverride() noexcept;
+    virtual void SetFinal() noexcept;
     virtual bool IsNoExcept() const noexcept;
     virtual void SetNoExcept() noexcept;
     bool ContainsLocalVariableWithDestructor() const noexcept { return GetFlag(FunctionSymbolFlags::containsLocalVariableWithDestructor); }
@@ -233,6 +233,8 @@ public:
     bool IsFinal() const noexcept override;
     bool IsNoExcept() const noexcept override;
     void SetNoExcept() noexcept override;
+    void SetOverride() noexcept override;
+    void SetFinal() noexcept override;
     std::int32_t VTabIndex() const noexcept override;
     bool IsStatic() const noexcept override;
     bool IsExplicit() const noexcept override;

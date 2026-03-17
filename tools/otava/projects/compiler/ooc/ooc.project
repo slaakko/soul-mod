@@ -28,3 +28,4 @@ resource <../build/otava.build.solution_lexer.classmap.rc>;
 resource <../lexer/otava.lexer.classmap.rc>;
 resource <../intermediate/otava.intermediate.lexer.classmap.rc>;
 resource <../../soul/xml/xpath/soul.xml.xpath.lexer.classmap.rc>;
+resource <../pp/otava.pp.lexer.classmap.rc>;

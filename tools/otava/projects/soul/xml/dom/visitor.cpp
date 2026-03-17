@@ -3,16 +3,12 @@
 // Distributed under the MIT license
 // =================================
 
-module otava.intermediate.visitor;
+module soul.xml.visitor;
 
-namespace otava::intermediate {
-
-Visitor::Visitor(IntermediateContext* context_) : context(context_)
-{
-}
+namespace soul::xml {
 
 Visitor::~Visitor()
 {
 }
 
-} // otava::intermediate
+} // namespace soul::xml

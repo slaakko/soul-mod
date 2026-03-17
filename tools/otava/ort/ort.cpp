@@ -115,8 +115,8 @@ const char* ort_get_cwd(char* buf, int bufSize)
 void* current_exception = nullptr;
 std::uint64_t currentExceptionTypeIdHigh = 0;
 std::uint64_t currentExceptionTypeIdLow = 0;
-bool debugMemory = false;
 
+bool debugMemory = false;
 void ort_debug_memory()
 {
     debugMemory = true;
@@ -131,6 +131,8 @@ void* ort_malloc(std::int64_t size)
     }
     return block;
 }
+
+void* free_ptr = nullptr;
 
 void ort_free(void* ptr)
 {

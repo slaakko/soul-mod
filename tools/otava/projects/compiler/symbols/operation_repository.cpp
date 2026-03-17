@@ -30,21 +30,6 @@ import util.sha1;
 
 namespace otava::symbols {
 
-bool debug = false;
-
-void SetDebug()
-{
-    debug = true;
-}
-
-void Debug()
-{
-    if (debug)
-    {
-        ort_debug_break();
-    }
-}
-
 class PointerDefaultCtor : public FunctionSymbol
 {
 public:
@@ -1204,7 +1189,6 @@ FunctionSymbol* ClassCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundExp
     FunctionSymbol* copyCtor = classType->GetFunctionByIndex(copyCtorIndex);
     if (copyCtor)
     {
-        std::cout << "COPYCTOR FOUND: " << "COPYCTOR=" << std::hex << static_cast<std::uint64_t>(static_cast<void*>(copyCtor)) << "\n";
         return copyCtor;
     }
     TypeSymbol* ct = classType;
@@ -2076,7 +2060,6 @@ void OperationRepository::AddOperation(Operation* operation)
 FunctionSymbol* OperationRepository::GetOperation(const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    Debug();
     auto it = groupMap.find(groupName);
     if (it != groupMap.cend())
     {

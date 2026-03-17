@@ -2420,6 +2420,10 @@ void UsingDirectiveNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+Visitor::~Visitor()
+{
+}
+
 void DefaultVisitor::Visit(ExprListNode& node)
 {
     for (const auto& expr : node.Exprs())

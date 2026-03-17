@@ -12,6 +12,7 @@ export namespace otava::symbols {
 class SymbolsProject
 {
 public:
+    virtual ~SymbolsProject();
     virtual bool HasDefine(const std::string& symbol) const noexcept = 0;
 };
 

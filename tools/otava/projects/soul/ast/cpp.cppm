@@ -939,6 +939,7 @@ private:
 class Visitor
 {
 public:
+    virtual ~Visitor();
     virtual void Visit(ExprListNode& node) {}
     virtual void Visit(ThisNode& node) {}
     virtual void Visit(IdExprNode& node) {}

@@ -998,6 +998,7 @@ void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<B
     {
         ThrowException("class type expected", sourcePos, context);
     }
+    classType->MakeVTab(context, sourcePos);
     std::vector<ClassTypeSymbol*> vptrHolderClasses = classType->VPtrHolderClasses();
     if (vptrHolderClasses.empty())
     {

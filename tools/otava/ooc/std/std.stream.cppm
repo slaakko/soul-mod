@@ -2,7 +2,6 @@ export module std.stream;
 
 import std.type.fundamental;
 import std.basic_string;
-import std.utf;
 import std.atexit;
 
 export namespace std {
@@ -97,14 +96,6 @@ public:
     {
     }
 };
-
-template<typename CharT>
-basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, char c)
-{
-    basic_string<CharT> str(1, c);
-    s.write(to_utf8(str));
-    return s;
-}
 
 template<typename CharT>
 basic_ostream<CharT>& operator<<(basic_ostream<CharT>& s, int x)

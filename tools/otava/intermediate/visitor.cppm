@@ -83,6 +83,7 @@ class Visitor
 {
 public:
     Visitor(IntermediateContext* context_);
+    virtual ~Visitor();
     IntermediateContext* GetContext() const { return context; }
     virtual void Visit(StructureType& structureType) {}
     virtual void Visit(FwdDeclaredStructureType& fwdDeclareStructureType) {}

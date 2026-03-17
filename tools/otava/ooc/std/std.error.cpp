@@ -1,10 +1,10 @@
-module std.error; 
+module std.error;
 
 namespace std {
 
 extern "C" void destroy_str(const char* str);
 
-error_code::error_code() : val(0), msg(nullptr) 
+error_code::error_code() : val(0), msg(nullptr)
 {
 }
 
@@ -31,7 +31,7 @@ void error_code::clear()
 }
 
 string error_code::message() const
-{ 
+{
     if (msg)
     {
         return std::string(msg);

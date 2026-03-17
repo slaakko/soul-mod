@@ -37,3 +37,4 @@ source <processing_instruction.cpp>;
 interface <text.cppm>;
 source <text.cpp>;
 interface <visitor.cppm>;
+source <visitor.cpp>;

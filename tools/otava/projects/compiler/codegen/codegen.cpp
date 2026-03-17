@@ -976,8 +976,6 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         if (parameter->GetType()->IsClassTypeSymbol())
         {
             otava::symbols::ClassTypeSymbol* classTypeSymbol = static_cast<otava::symbols::ClassTypeSymbol*>(parameter->GetType());
-            std::cout << "CLASS=" << util::ToUtf8(classTypeSymbol->FullName()) << 
-                ", COPYCTOR=" << std::hex << static_cast<std::uint64_t>(static_cast<void*>(classTypeSymbol->CopyCtor())) << "\n";
             if (classTypeSymbol->CopyCtor())
             {
                 otava::intermediate::FunctionType* copyCtorType = static_cast<otava::intermediate::FunctionType*>(classTypeSymbol->CopyCtor()->IrType(
