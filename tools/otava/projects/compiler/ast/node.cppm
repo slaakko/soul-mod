@@ -164,6 +164,7 @@ public:
     inline bool IsOpNewCall() const noexcept { return kind == NodeKind::opNewCall; }
     inline bool IsInitDeclaratorListNode() const noexcept { return kind == NodeKind::initDeclaratorListNode; }
     inline bool IsPtrDeclaratorNode() const noexcept { return kind == NodeKind::ptrDeclaratorNode; }
+    inline bool IsSimpleDeclarationNode() const noexcept { return kind == NodeKind::simpleDeclarationNode; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;

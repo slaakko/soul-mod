@@ -163,8 +163,15 @@ FunctionDefinitionSymbol* MakeInvokeFn(BoundFunctionCallNode* fnCall, Scope* par
     {
         std::unique_ptr<otava::ast::Node> expr;
         expr.reset(fnCall->Source()->Clone());
-        otava::ast::ExpressionStatementNode* exprStmt = new otava::ast::ExpressionStatementNode(sourcePos, expr.release(), nullptr, nullptr);
-        invokeBlock->AddNode(exprStmt);
+        if (expr->IsSimpleDeclarationNode())
+        {
+            invokeBlock->AddNode(expr.release());
+        }
+        else
+        {
+            otava::ast::ExpressionStatementNode* exprStmt = new otava::ast::ExpressionStatementNode(sourcePos, expr.release(), nullptr, nullptr);
+            invokeBlock->AddNode(exprStmt);
+        }
     }
     else
     {
@@ -1227,6 +1234,12 @@ void InvokeAndCleanupGenerator::Visit(BoundFunctionCallNode& node)
     }
     else
     {
+        if (node.MayThrow() && !cleanup.IsEmpty() && !node.Source())
+        {
+            std::cout << "NODE SOURCE NULL: " << util::ToUtf8(node.GetFunctionSymbol()->FullName()) << "\n";
+            context->IncUnresolvedInvokes();
+            int x = 0;
+        }
         BoundFunctionCallNode* clone = new BoundFunctionCallNode(node.GetFunctionSymbol(), node.GetSourcePos(), node.GetType());
         for (const auto& arg : node.Args())
         {
@@ -1647,6 +1660,14 @@ void InvokeAndCleanupGenerator::Visit(BoundConstructTemporaryNode& node)
         }
     }
     BoundExpressionNode* constructorCall = node.ConstructorCall();
+    if (constructorCall->IsBoundFunctionCallNode())
+    {
+        BoundFunctionCallNode* fc = static_cast<BoundFunctionCallNode*>(constructorCall);
+        if (fc->GetFunctionSymbol()->FullName() == U"std::basic_string<char>::basic_string(const char*)")
+        {
+            int x = 0;
+        }
+    }
     constructorCall->Accept(*this);
     BoundNode* n = s.Pop();
     if (n->IsBoundInvokeNode())

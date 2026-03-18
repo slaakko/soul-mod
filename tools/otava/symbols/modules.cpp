@@ -354,8 +354,6 @@ void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
         otava::ast::SetExceptionThrown();
         throw std::runtime_error("circular module interface unit dependency for module '" + name + "' detected");
     }
-    std::cout << "reading module " << Name() << " from " << filePath << "\n";
-    __debugbreak();
     reading = true;
     kind = static_cast<ModuleKind>(reader.GetBinaryStreamReader().ReadSByte());
     name = reader.GetBinaryStreamReader().ReadUtf8String();

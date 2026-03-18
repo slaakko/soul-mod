@@ -1,0 +1,1561 @@
+****************************************
+* Otava C++ Compiler version 5.0.0
+****************************************
+> D:/work/soul-mod/tools/otava/projects/compiler/compiler.solution
+> building solution 'otava.compiler'...
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> project 'util' is up-to-date
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> project 'soul.ast' is up-to-date
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> project 'soul.lexer' is up-to-date
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> project 'soul.parser' is up-to-date
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> project 'soul.xml.dom' is up-to-date
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> project 'soul.token' is up-to-date
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> project 'soul.lex' is up-to-date
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> project 'soul.common' is up-to-date
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> project 'soul.xml.processor' is up-to-date
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> project 'soul.xml.xml_parser' is up-to-date
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> project 'soul.xml.dom_parser' is up-to-date
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> project 'soul.xml.xpath' is up-to-date
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'otava.assembly'...
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/value.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/value.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/value.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/assembly/value.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/otava.assembly.value.module
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/reg.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/reg.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/reg.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/assembly/reg.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/otava.assembly.reg.module
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/expr.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/expr.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/expr.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/assembly/expr.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/otava.assembly.expr.module
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/context.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/context.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/context.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/assembly/context.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/otava.assembly.context.module
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/declaration.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/declaration.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/declaration.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/assembly/declaration.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/otava.assembly.declaration.module
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/instruction.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/instruction.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/instruction.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/assembly/instruction.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/otava.assembly.instruction.module
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/data.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/data.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/data.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/assembly/data.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/otava.assembly.data.module
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/error.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/error.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/error.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/assembly/error.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/otava.assembly.error.module
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/macro.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/macro.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/macro.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/assembly/macro.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/otava.assembly.macro.module
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/function.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/function.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/function.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/assembly/function.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/otava.assembly.function.module
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/file.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/file.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/file.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/assembly/file.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/otava.assembly.file.module
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/literal.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/literal.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/literal.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/assembly/literal.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/otava.assembly.literal.module
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/assembly/symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/otava.assembly.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/assembly.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/assembly.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/assembly.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/assembly/assembly.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/otava.assembly.module
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/context.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/context.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/context.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/data.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/data.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/data.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/declaration.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/declaration.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/declaration.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/error.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/error.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/error.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/expr.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/expr.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/expr.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/file.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/file.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/file.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/function.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/function.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/function.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/instruction.cpp
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/assembly/instruction.cpp', line 413:
+        length += f.length();
+        ^
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/assembly/instruction.cpp', line 420:
+    length += f.length();
+    ^
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/instruction.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/instruction.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/literal.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/literal.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/literal.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/macro.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/macro.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/macro.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/reg.cpp
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/assembly/reg.cpp', line 521:
+    localRegisterCount = localRegisterPool.size();
+    ^
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/assembly/reg.cpp', line 522:
+    localXMMRegisterCount = localXMMRegisterPool.size();
+    ^
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/assembly/reg.cpp', line 547:
+    localRegisterCount = localRegisterPool.size();
+    ^
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/reg.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/reg.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/symbol.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/symbol.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/symbol.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/value.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/value.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/value.cpp.asm
+1097 functions compiled
+44 invokes generated
+0 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/compiler/assembly/debug/otava.assembly.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling value.cppm.asm...
+  Assembling reg.cppm.asm...
+  Assembling expr.cppm.asm...
+  Assembling context.cppm.asm...
+  Assembling declaration.cppm.asm...
+  Assembling instruction.cppm.asm...
+  Assembling data.cppm.asm...
+  Assembling error.cppm.asm...
+  Assembling macro.cppm.asm...
+  Assembling function.cppm.asm...
+  Assembling file.cppm.asm...
+  Assembling literal.cppm.asm...
+  Assembling symbol.cppm.asm...
+  Assembling assembly.cppm.asm...
+  Assembling context.cpp.asm...
+  Assembling data.cpp.asm...
+  Assembling declaration.cpp.asm...
+  Assembling error.cpp.asm...
+  Assembling expr.cpp.asm...
+  Assembling file.cpp.asm...
+  Assembling function.cpp.asm...
+  Assembling instruction.cpp.asm...
+  Assembling literal.cpp.asm...
+  Assembling macro.cpp.asm...
+  Assembling reg.cpp.asm...
+  Assembling symbol.cpp.asm...
+  Assembling value.cpp.asm...
+  otava.assembly.vcxproj -> D:\work\soul-mod\tools\otava\projects\compiler\assembly\debug\otava.assembly.lib
+
+project 'otava.assembly' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'otava.intermediate'...
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/types.cppm
+warning: implicit conversion from 'int' to 'signed char', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/types.cppm', line 66:
+        return MakePointerTypeId(baseTypeId, pointerCount);
+               ^
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/types.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/types.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/types.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.types.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/data.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/data.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/data.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/data.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.data.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/code.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/code.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/code.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/code.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.code.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/visitor.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/visitor.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/visitor.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/visitor.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.visitor.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/code_generator.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/code_generator.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/code_generator.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/code_generator.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.code_generator.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/compile_unit.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/compile_unit.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/compile_unit.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/compile_unit.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.compile_unit.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/metadata.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/metadata.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/metadata.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/metadata.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.metadata.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/context.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/context.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/context.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/context.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.context.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/error.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/error.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/error.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/error.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.error.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/intermediate.token.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate.token.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate.token.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/intermediate.token.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.token.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/intermediate.lexer.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate.lexer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate.lexer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/intermediate.lexer.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.lexer.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/location.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/location.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/location.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/location.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.location.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/intermediate.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/intermediate.parser.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.parser.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/intermediate_rules.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate_rules.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate_rules.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/intermediate_rules.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.parser.rules.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/reference_resolver.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/reference_resolver.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/reference_resolver.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/reference_resolver.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.reference_resolver.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/register_allocator.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/register_allocator.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/register_allocator.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/register_allocator.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.register_allocator.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/parser.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/parser.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.main.parser.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/verify.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/verify.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/verify.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/verify.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.verify.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/util.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/util.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/util.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/util.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.util.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/intermediate.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/intermediate.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/linear_scan_register_allocator.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/linear_scan_register_allocator.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/linear_scan_register_allocator.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/intermediate/linear_scan_register_allocator.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.linear_scan_register_allocator.module
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/code.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/code.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/code.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/code_generator.cpp
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+warning: implicit conversion from 'bool' to 'long long int', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/code_generator.cpp', line 566:
+            inst->AddOperand(assemblyContext->MakeIntegerLiteral(v->GetValue(), 1));
+                             ^
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/code_generator.cpp', line 3228:
+    Value* zero = context->GetByteValue(0u);
+                  ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/code_generator.cpp', line 3263:
+    Value* zero = context->GetByteValue(0u);
+                  ^
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/code_generator.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/code_generator.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/compile_unit.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/compile_unit.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/compile_unit.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/context.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/context.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/context.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/data.cpp
+NODE SOURCE NULL: otava::intermediate::StringValue::StringValue(const soul::ast::Span&, const std::string&)
+NODE SOURCE NULL: otava::intermediate::ClsIdValue::ClsIdValue(const soul::ast::Span&, otava::intermediate::Type*, const std::string&)
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/data.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/data.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/error.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/error.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/error.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/intermediate.lexer.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate.lexer.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate.lexer.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/intermediate.parser.cpp
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<otava::intermediate::TypeRef>::Value(const otava::intermediate::TypeRef&)
+warning: implicit conversion from 'int' to 'signed char', file 'D:/work/soul-mod/tools/otava/projects/soul/lexer/token_parser.cppm', line 31:
+    value = 0;
+    ^
+warning: implicit conversion from 'int' to 'signed char', file 'D:/work/soul-mod/tools/otava/projects/soul/lexer/token_parser.cppm', line 69:
+                value = 10 * value + static_cast<Value>(ch) - static_cast<Value>('0');
+                ^
+warning: implicit conversion from 'int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/soul/lexer/token_parser.cppm', line 101:
+    value = 0;
+    ^
+warning: implicit conversion from 'int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/soul/lexer/token_parser.cppm', line 133:
+                value = 10 * value + static_cast<Value>(ch) - static_cast<Value>('0');
+                ^
+warning: implicit conversion from 'int' to 'short int', file 'D:/work/soul-mod/tools/otava/projects/soul/lexer/token_parser.cppm', line 31:
+    value = 0;
+    ^
+warning: implicit conversion from 'int' to 'short int', file 'D:/work/soul-mod/tools/otava/projects/soul/lexer/token_parser.cppm', line 69:
+                value = 10 * value + static_cast<Value>(ch) - static_cast<Value>('0');
+                ^
+warning: implicit conversion from 'int' to 'unsigned short int', file 'D:/work/soul-mod/tools/otava/projects/soul/lexer/token_parser.cppm', line 101:
+    value = 0;
+    ^
+warning: implicit conversion from 'int' to 'unsigned short int', file 'D:/work/soul-mod/tools/otava/projects/soul/lexer/token_parser.cppm', line 133:
+                value = 10 * value + static_cast<Value>(ch) - static_cast<Value>('0');
+                ^
+warning: implicit conversion from 'double' to 'float', file 'D:/work/soul-mod/tools/otava/projects/soul/lexer/token_parser.cppm', line 215:
+    value = 0.0;
+    ^
+NODE SOURCE NULL: soul::parser::Value<char>::Value(const char&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<otava::intermediate::BlockValue>::Value(const otava::intermediate::BlockValue&)
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate.parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/intermediate_rules.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate_rules.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/intermediate_rules.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/linear_scan_register_allocator.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/linear_scan_register_allocator.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/linear_scan_register_allocator.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/location.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/location.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/location.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/metadata.cpp
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/metadata.cpp', line 121:
+    return AddMetadataStruct(soul::ast::Span(), metadataNodes.size());
+           ^
+NODE SOURCE NULL: otava::intermediate::MetadataString::MetadataString(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/metadata.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/metadata.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/parser.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/reference_resolver.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/reference_resolver.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/reference_resolver.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/register_allocator.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/register_allocator.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/register_allocator.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/types.cpp
+warning: implicit conversion from 'int' to 'signed char', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/types.cpp', line 102:
+        return context->GetTypes().MakePointerType(Span(), GetBaseTypeId(pointerType->Id()), GetPointerCount(pointerType->Id()) + 1, context);
+               ^
+warning: implicit conversion from 'int' to 'signed char', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/types.cpp', line 106:
+        return context->GetTypes().MakePointerType(Span(), Id(), 1, context);
+               ^
+warning: implicit conversion from 'int' to 'signed char', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/types.cpp', line 232:
+    return context.GetSByteValue(0);
+           ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/types.cpp', line 241:
+    return context.GetByteValue(0u);
+           ^
+warning: implicit conversion from 'int' to 'short int', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/types.cpp', line 250:
+    return context.GetShortValue(0);
+           ^
+warning: implicit conversion from 'unsigned int' to 'unsigned short int', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/types.cpp', line 259:
+    return context.GetUShortValue(0u);
+           ^
+warning: implicit conversion from 'int' to 'signed char', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/types.cpp', line 720:
+    sbyteType.SetDefaultValue(context->GetSByteValue(0));
+                              ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/types.cpp', line 721:
+    byteType.SetDefaultValue(context->GetByteValue(0u));
+                             ^
+warning: implicit conversion from 'int' to 'short int', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/types.cpp', line 722:
+    shortType.SetDefaultValue(context->GetShortValue(0));
+                              ^
+warning: implicit conversion from 'unsigned int' to 'unsigned short int', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/types.cpp', line 723:
+    ushortType.SetDefaultValue(context->GetUShortValue(0u));
+                               ^
+warning: implicit conversion from 'int' to 'signed char', file 'D:/work/soul-mod/tools/otava/projects/compiler/intermediate/types.cpp', line 820:
+        type = new PointerType(span, MakePointerTypeId(baseTypeId, pointerCount), pointerCount, MakePointerTypeId(baseTypeId, pointerCount - 1));
+                                                                                                ^
+NODE SOURCE NULL: otava::intermediate::StructureType::StructureType(const soul::ast::Span&, int, const std::vector<otava::intermediate::TypeRef>&)
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/types.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/types.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/util.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/util.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/util.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/verify.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/verify.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/verify.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/visitor.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/visitor.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/visitor.cpp.asm
+9409 functions compiled
+851 invokes generated
+30 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/compiler/intermediate/debug/otava.intermediate.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling types.cppm.asm...
+  Assembling data.cppm.asm...
+  Assembling code.cppm.asm...
+  Assembling visitor.cppm.asm...
+  Assembling code_generator.cppm.asm...
+  Assembling compile_unit.cppm.asm...
+  Assembling metadata.cppm.asm...
+  Assembling context.cppm.asm...
+  Assembling error.cppm.asm...
+  Assembling intermediate.token.cppm.asm...
+  Assembling intermediate.lexer.cppm.asm...
+  Assembling location.cppm.asm...
+  Assembling intermediate.parser.cppm.asm...
+  Assembling intermediate_rules.cppm.asm...
+  Assembling reference_resolver.cppm.asm...
+  Assembling register_allocator.cppm.asm...
+  Assembling parser.cppm.asm...
+  Assembling verify.cppm.asm...
+  Assembling util.cppm.asm...
+  Assembling intermediate.cppm.asm...
+  Assembling linear_scan_register_allocator.cppm.asm...
+  Assembling code.cpp.asm...
+  Assembling code_generator.cpp.asm...
+  Assembling compile_unit.cpp.asm...
+  Assembling context.cpp.asm...
+  Assembling data.cpp.asm...
+  Assembling error.cpp.asm...
+  Assembling intermediate.lexer.cpp.asm...
+  Assembling intermediate.parser.cpp.asm...
+  Assembling intermediate_rules.cpp.asm...
+  Assembling linear_scan_register_allocator.cpp.asm...
+  Assembling location.cpp.asm...
+  Assembling metadata.cpp.asm...
+  Assembling parser.cpp.asm...
+  Assembling reference_resolver.cpp.asm...
+  Assembling register_allocator.cpp.asm...
+  Assembling types.cpp.asm...
+  Assembling util.cpp.asm...
+  Assembling verify.cpp.asm...
+  Assembling visitor.cpp.asm...
+  otava.intermediate.vcxproj -> D:\work\soul-mod\tools\otava\projects\compiler\intermediate\debug\otava.intermediate.lib
+
+project 'otava.intermediate' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'otava.optimizer'...
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/arithmetics.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/arithmetics.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/arithmetics.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/optimizer/arithmetics.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/otava.optimizer.arithmetics.module
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/dead_code_elimination.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/dead_code_elimination.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/dead_code_elimination.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/optimizer/dead_code_elimination.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/otava.optimizer.dead_code_elimination.module
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/error.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/error.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/error.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/optimizer/error.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/otava.optimizer.error.module
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/identity_calls.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/identity_calls.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/identity_calls.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/optimizer/identity_calls.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/otava.optimizer.identity_calls.module
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/inliner.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/inliner.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/inliner.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/optimizer/inliner.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/otava.optimizer.inliner.module
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/jump_table_switch.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/jump_table_switch.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/jump_table_switch.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/optimizer/jump_table_switch.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/otava.optimizer.jump_table_switch.module
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/jumps.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/jumps.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/jumps.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/optimizer/jumps.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/otava.optimizer.jumps.module
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/locals.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/locals.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/locals.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/optimizer/locals.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/otava.optimizer.locals.module
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/optimizer.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/optimizer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/optimizer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/optimizer/optimizer.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/otava.optimizer.module
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/optimizing_code_generator.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/optimizing_code_generator.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/optimizing_code_generator.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/optimizer/optimizing_code_generator.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/otava.optimizer.optimizing_code_generator.module
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/opt.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/opt.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/opt.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/optimizer/opt.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/otava.opt.module
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/arithmetics.cpp
+warning: implicit conversion from 'bool' to 'char', file 'D:/work/soul-mod/tools/otava/projects/compiler/optimizer/arithmetics.cpp', line 1231:
+        otava::intermediate::Value* value = context->GetBoolValue(boolLeft->GetValue() < boolRight->GetValue());
+                                                                  ^
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/arithmetics.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/arithmetics.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/dead_code_elimination.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/dead_code_elimination.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/dead_code_elimination.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/error.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/error.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/error.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/identity_calls.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/identity_calls.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/identity_calls.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/inliner.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/inliner.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/inliner.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/jump_table_switch.cpp
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+NODE SOURCE NULL: otava::assembly::Instruction::Instruction(otava::assembly::OpCode)
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/jump_table_switch.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/jump_table_switch.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/jumps.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/jumps.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/jumps.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/locals.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/locals.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/locals.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/optimizer.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/optimizer.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/optimizer.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/optimizing_code_generator.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/optimizing_code_generator.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/optimizing_code_generator.cpp.asm
+934 functions compiled
+87 invokes generated
+11 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/compiler/optimizer/debug/otava.optimizer.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling arithmetics.cppm.asm...
+  Assembling dead_code_elimination.cppm.asm...
+  Assembling error.cppm.asm...
+  Assembling identity_calls.cppm.asm...
+  Assembling inliner.cppm.asm...
+  Assembling jump_table_switch.cppm.asm...
+  Assembling jumps.cppm.asm...
+  Assembling locals.cppm.asm...
+  Assembling optimizer.cppm.asm...
+  Assembling optimizing_code_generator.cppm.asm...
+  Assembling opt.cppm.asm...
+  Assembling arithmetics.cpp.asm...
+  Assembling dead_code_elimination.cpp.asm...
+  Assembling error.cpp.asm...
+  Assembling identity_calls.cpp.asm...
+  Assembling inliner.cpp.asm...
+  Assembling jump_table_switch.cpp.asm...
+  Assembling jumps.cpp.asm...
+  Assembling locals.cpp.asm...
+  Assembling optimizer.cpp.asm...
+  Assembling optimizing_code_generator.cpp.asm...
+  otava.optimizer.vcxproj -> D:\work\soul-mod\tools\otava\projects\compiler\optimizer\debug\otava.optimizer.lib
+
+project 'otava.optimizer' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'otava.lexer'...
+> D:/work/soul-mod/tools/otava/projects/compiler/lexer/otava.token.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/lexer/debug/otava.token.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/lexer/debug/otava.token.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/lexer/otava.token.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/lexer/debug/otava.token.module
+> D:/work/soul-mod/tools/otava/projects/compiler/lexer/otava.lexer.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/lexer/debug/otava.lexer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/lexer/debug/otava.lexer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/lexer/otava.lexer.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/lexer/debug/otava.lexer.module
+> D:/work/soul-mod/tools/otava/projects/compiler/lexer/otava.token.line.lexer.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/lexer/debug/otava.token.line.lexer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/lexer/debug/otava.token.line.lexer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/lexer/otava.token.line.lexer.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/lexer/debug/soul.cpp20.token.line.lexer.module
+> D:/work/soul-mod/tools/otava/projects/compiler/lexer/otava.lexer.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/lexer/debug/otava.lexer.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/lexer/debug/otava.lexer.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/lexer/otava.token.line.lexer.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/lexer/debug/otava.token.line.lexer.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/lexer/debug/otava.token.line.lexer.cpp.asm
+646 functions compiled
+0 invokes generated
+0 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/compiler/lexer/debug/otava.lexer.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling otava.token.cppm.asm...
+  Assembling otava.lexer.cppm.asm...
+  Assembling otava.token.line.lexer.cppm.asm...
+  Assembling otava.lexer.cpp.asm...
+  Assembling otava.token.line.lexer.cpp.asm...
+  otava.lexer.vcxproj -> D:\work\soul-mod\tools\otava\projects\compiler\lexer\debug\otava.lexer.lib
+
+project 'otava.lexer' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'otava.ast'...
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/node_list.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/node_list.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/node_list.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/node_list.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.node.list.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/node.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/node.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/node.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/node.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.node.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/attribute.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/attribute.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/attribute.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/attribute.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.attribute.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/class.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/class.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/class.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/class.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.classes.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/concept.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/concept.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/concept.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/concept.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.concepts.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/declaration.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/declaration.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/declaration.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/declaration.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.declaration.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/enum.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/enum.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/enum.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/enum.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.enums.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/error.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/error.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/error.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/error.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.error.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/expression.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/expression.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/expression.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/expression.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.expression.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/file.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/file.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/file.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/file.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.file.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/function.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/function.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/function.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/function.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.function.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/identifier.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/identifier.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/identifier.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/identifier.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.identifier.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/lambda.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/lambda.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/lambda.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/lambda.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.lambda.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/literal.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/literal.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/literal.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/literal.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.literal.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/module.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/module.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/module.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/module.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.modules.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/node_map.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/node_map.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/node_map.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/node_map.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.node.map.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/output.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/output.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/output.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/output.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.output.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/punctuation.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/punctuation.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/punctuation.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/punctuation.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.punctuation.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/qualifier.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/qualifier.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/qualifier.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/qualifier.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.qualifier.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/reader.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/reader.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/reader.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/reader.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.reader.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/simple_type.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/simple_type.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/simple_type.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/simple_type.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.simple.type.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/visitor.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/visitor.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/visitor.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/visitor.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.visitor.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/source_code_printer_visitor.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/source_code_printer_visitor.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/source_code_printer_visitor.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/source_code_printer_visitor.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.source.code.printer.visitor.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/statement.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/statement.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/statement.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/statement.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.statement.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/template.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/template.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/template.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/template.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.templates.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/translation_unit.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/translation_unit.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/translation_unit.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/translation_unit.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.translation.unit.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/type.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/type.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/type.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/type.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.type.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/util.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/util.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/util.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/util.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.util.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/writer.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/writer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/writer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/writer.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.writer.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/xml.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/xml.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/xml.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/xml.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.xml.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/xml_generator_visitor.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/xml_generator_visitor.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/xml_generator_visitor.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/xml_generator_visitor.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.xml.generator.visitor.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/ast.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/ast.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/ast.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/ast/ast.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.module
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/attribute.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/attribute.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/attribute.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/class.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/class.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/class.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/concept.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/concept.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/concept.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/declaration.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/declaration.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/declaration.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/enum.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/enum.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/enum.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/error.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/error.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/error.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/expression.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/expression.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/expression.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/file.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/file.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/file.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/function.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/function.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/function.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/identifier.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/identifier.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/identifier.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/lambda.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/lambda.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/lambda.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/literal.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/literal.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/literal.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/module.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/module.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/module.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/node.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/node.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/node.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/node_map.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/node_map.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/node_map.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/output.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/output.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/output.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/punctuation.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/punctuation.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/punctuation.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/qualifier.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/qualifier.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/qualifier.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/reader.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/reader.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/reader.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/simple_type.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/simple_type.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/simple_type.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/source_code_printer_visitor.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/source_code_printer_visitor.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/source_code_printer_visitor.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/statement.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/statement.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/statement.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/template.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/template.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/template.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/translation_unit.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/translation_unit.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/translation_unit.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/type.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/type.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/type.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/util.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/util.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/util.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/visitor.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/visitor.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/visitor.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/writer.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/writer.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/writer.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/xml.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/xml.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/xml.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/xml_generator_visitor.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/xml_generator_visitor.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/xml_generator_visitor.cpp.asm
+8501 functions compiled
+120 invokes generated
+0 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/compiler/ast/debug/otava.ast.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling node_list.cppm.asm...
+  Assembling node.cppm.asm...
+  Assembling attribute.cppm.asm...
+  Assembling class.cppm.asm...
+  Assembling concept.cppm.asm...
+  Assembling declaration.cppm.asm...
+  Assembling enum.cppm.asm...
+  Assembling error.cppm.asm...
+  Assembling expression.cppm.asm...
+  Assembling file.cppm.asm...
+  Assembling function.cppm.asm...
+  Assembling identifier.cppm.asm...
+  Assembling lambda.cppm.asm...
+  Assembling literal.cppm.asm...
+  Assembling module.cppm.asm...
+  Assembling node_map.cppm.asm...
+  Assembling output.cppm.asm...
+  Assembling punctuation.cppm.asm...
+  Assembling qualifier.cppm.asm...
+  Assembling reader.cppm.asm...
+  Assembling simple_type.cppm.asm...
+  Assembling visitor.cppm.asm...
+  Assembling source_code_printer_visitor.cppm.asm...
+  Assembling statement.cppm.asm...
+  Assembling template.cppm.asm...
+  Assembling translation_unit.cppm.asm...
+  Assembling type.cppm.asm...
+  Assembling util.cppm.asm...
+  Assembling writer.cppm.asm...
+  Assembling xml.cppm.asm...
+  Assembling xml_generator_visitor.cppm.asm...
+  Assembling ast.cppm.asm...
+  Assembling attribute.cpp.asm...
+  Assembling class.cpp.asm...
+  Assembling concept.cpp.asm...
+  Assembling declaration.cpp.asm...
+  Assembling enum.cpp.asm...
+  Assembling error.cpp.asm...
+  Assembling expression.cpp.asm...
+  Assembling file.cpp.asm...
+  Assembling function.cpp.asm...
+  Assembling identifier.cpp.asm...
+  Assembling lambda.cpp.asm...
+  Assembling literal.cpp.asm...
+  Assembling module.cpp.asm...
+  Assembling node.cpp.asm...
+  Assembling node_map.cpp.asm...
+  Assembling output.cpp.asm...
+  Assembling punctuation.cpp.asm...
+  Assembling qualifier.cpp.asm...
+  Assembling reader.cpp.asm...
+  Assembling simple_type.cpp.asm...
+  Assembling source_code_printer_visitor.cpp.asm...
+  Assembling statement.cpp.asm...
+  Assembling template.cpp.asm...
+  Assembling translation_unit.cpp.asm...
+  Assembling type.cpp.asm...
+  Assembling util.cpp.asm...
+  Assembling visitor.cpp.asm...
+  Assembling writer.cpp.asm...
+  Assembling xml.cpp.asm...
+  Assembling xml_generator_visitor.cpp.asm...
+  otava.ast.vcxproj -> D:\work\soul-mod\tools\otava\projects\compiler\ast\debug\otava.ast.lib
+
+project 'otava.ast' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'otava.symbols'...
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/lookup.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/lookup.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/lookup.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/lookup.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.lookup.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/scope.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/scope.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/scope.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/scope.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.scope.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/alias_group_symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/alias_group_symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/alias_group_symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/alias_group_symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.alias.group.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/container_symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/container_symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/container_symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/container_symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.container.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/derivations.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/derivations.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/derivations.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/derivations.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.derivations.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/template_param_compare.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/template_param_compare.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/template_param_compare.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/template_param_compare.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.template_param_compare.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/type_symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/type_symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/type_symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/type_symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.type.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/alias_type_symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/alias_type_symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/alias_type_symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/alias_type_symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.alias.type.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/alias_type_templates.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/alias_type_templates.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/alias_type_templates.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/alias_type_templates.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.alias.type.templates.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_kind.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_kind.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_kind.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_kind.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.function.kind.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_type_symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_type_symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_type_symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_type_symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.function.type.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/ir_value_stack.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/ir_value_stack.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/ir_value_stack.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/ir_value_stack.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.ir_value_stack.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/emitter.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/emitter.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/emitter.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/emitter.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.emitter.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/classes.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/classes.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/classes.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/classes.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.classes.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/templates.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/templates.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/templates.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/templates.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.templates.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/class_templates.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/class_templates.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/class_templates.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/class_templates.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.class_templates.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/inline_functions.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/inline_functions.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/inline_functions.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/inline_functions.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.inline_functions.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/bound_tree.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/bound_tree.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/bound_tree.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/bound_tree.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.bound.tree.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.function.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/argument_conversion_table.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/argument_conversion_table.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/argument_conversion_table.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/argument_conversion_table.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.argument.conversion.table.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/array_type_compare.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/array_type_compare.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/array_type_compare.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/array_type_compare.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.array.type.compare.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/array_type_symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/array_type_symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/array_type_symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/array_type_symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.array.type.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/block.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/block.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/block.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/block.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.block.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/bound_tree_visitor.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/bound_tree_visitor.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/bound_tree_visitor.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/bound_tree_visitor.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.bound.tree.visitor.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/class_group_symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/class_group_symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/class_group_symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/class_group_symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.class_group.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/class_info.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/class_info.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/class_info.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/class_info.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.class_info_index.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/compound_type_symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/compound_type_symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/compound_type_symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/compound_type_symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.compound.type.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/concepts.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/concepts.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/concepts.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/concepts.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.concepts.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/concept_group_symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/concept_group_symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/concept_group_symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/concept_group_symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.concept_group.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/exception_handling.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/exception_handling.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/exception_handling.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/exception_handling.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.exception_handling.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/instantiation_queue.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/instantiation_queue.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/instantiation_queue.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/instantiation_queue.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.instantiation_queue.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_definition_symbol_set.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_definition_symbol_set.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_definition_symbol_set.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_definition_symbol_set.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.function_definition_symbol_set.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/trace.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/trace.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/trace.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/trace.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.trace.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/declarator.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/declarator.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/declarator.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/declarator.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.declarator.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/declaration.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/declaration.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/declaration.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/declaration.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.declaration.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/operation_repository.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/operation_repository.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/operation_repository.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/operation_repository.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.operation.repository.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_templates.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_templates.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_templates.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_templates.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.function.templates.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/context.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/context.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/context.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/context.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.context.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/control_xml_generator.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/control_xml_generator.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/control_xml_generator.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/control_xml_generator.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.control.xml.generator.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/conversion_table.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/conversion_table.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/conversion_table.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/conversion_table.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.conversion.table.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/decl_specifier_seq_parser.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/decl_specifier_seq_parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/decl_specifier_seq_parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/decl_specifier_seq_parser.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.decl_specifier_seq.parser.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/enum_group_symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/enum_group_symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/enum_group_symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/enum_group_symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.enum_group.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/enums.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/enums.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/enums.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/enums.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.enums.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/evaluator.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/evaluator.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/evaluator.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/evaluator.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.evaluator.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/exception.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/exception.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/exception.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/exception.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.exception.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/expr_parser.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/expr_parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/expr_parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/expr_parser.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.expr.parser.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/expression_binder.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/expression_binder.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/expression_binder.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/expression_binder.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.expression.binder.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/friends.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/friends.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/friends.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/friends.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.friends.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_group_symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_group_symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_group_symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_group_symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.function.group.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_return_path_checker.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_return_path_checker.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_return_path_checker.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_return_path_checker.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.function_return_path_checker.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_type_compare.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_type_compare.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_type_compare.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_type_compare.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.function.type.compare.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/specialization_compare.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/specialization_compare.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/specialization_compare.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/specialization_compare.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.specialization.compare.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/type_compare.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/type_compare.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/type_compare.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/type_compare.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.type_compare.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/namespace.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/namespace.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/namespace.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/namespace.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.namespaces.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/fundamental_type_symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/fundamental_type_symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.fundamental.type.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/symbol_table.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbol_table.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbol_table.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/symbol_table.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.symbol.table.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/writer.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/writer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/writer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/writer.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.writer.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/reader.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/reader.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/reader.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/reader.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.reader.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/fundamental_type_conversion.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_conversion.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_conversion.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/fundamental_type_conversion.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.fundamental.type.conversion.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/fundamental_type_conversion_init.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_conversion_init.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_conversion_init.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/fundamental_type_conversion_init.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.fundamental.type.conversion.init.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/fundamental_type_operation.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_operation.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_operation.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/fundamental_type_operation.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.fundamental.type.operation.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/init.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/init.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/init.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/init.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.init.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/instantiator.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/instantiator.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/instantiator.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/instantiator.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.instantiator.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/intrinsics.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/intrinsics.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/intrinsics.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/intrinsics.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.intrinsics.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/value.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/value.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/value.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/value.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.value.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/symbol_map.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbol_map.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbol_map.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/symbol_map.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.symbol_map.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/modules.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/modules.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/modules.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/modules.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.modules.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/overload_resolution.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/overload_resolution.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/overload_resolution.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/overload_resolution.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.overload.resolution.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/project.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/project.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/project.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/project.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.project.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/scope_resolver.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/scope_resolver.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/scope_resolver.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/scope_resolver.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.scope.resolver.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/statement_binder.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/statement_binder.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/statement_binder.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/statement_binder.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.statement.binder.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/stmt_parser.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/stmt_parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/stmt_parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/stmt_parser.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.stmt.parser.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/symbol_factory.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbol_factory.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbol_factory.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/symbol_factory.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.symbol.factory.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/type_resolver.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/type_resolver.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/type_resolver.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/type_resolver.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.type.resolver.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/using_declaration.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/using_declaration.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/using_declaration.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/using_declaration.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.using_declaration.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/using_directive.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/using_directive.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/using_directive.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/using_directive.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.using_directive.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/variable_group_symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/variable_group_symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/variable_group_symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/variable_group_symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.variable.group.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/variable_symbol.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/variable_symbol.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/variable_symbol.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/variable_symbol.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.variable.symbol.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/visitor.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/visitor.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/visitor.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/visitor.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.visitor.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/symbols.cppm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbols.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbols.cppm.asm
+D:/work/soul-mod/tools/otava/projects/compiler/symbols/symbols.cppm -> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/otava.symbols.module
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/alias_group_symbol.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/alias_group_symbol.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/alias_group_symbol.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/alias_type_symbol.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/alias_type_symbol.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/alias_type_symbol.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/alias_type_templates.cpp
+warning: implicit conversion from 'long long int' to 'unsigned int', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/alias_type_templates.cpp', line 44:
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(templateArguments.size());
+    ^
+NODE SOURCE NULL: otava::symbols::BoundTemplateParameterSymbol::BoundTemplateParameterSymbol(const std::u32string&)
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/alias_type_templates.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/alias_type_templates.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/argument_conversion_table.cpp
+NODE SOURCE NULL: otava::symbols::ArrayToPtrConversion::ArrayToPtrConversion(otava::symbols::ArrayTypeSymbol*, otava::symbols::Context*)
+NODE SOURCE NULL: otava::symbols::ArrayToPtrConversion::ArrayToPtrConversion(otava::symbols::ArrayTypeSymbol*, otava::symbols::Context*)
+NODE SOURCE NULL: otava::symbols::ArrayToPtrConversion::ArrayToPtrConversion(otava::symbols::ArrayTypeSymbol*, otava::symbols::Context*)
+NODE SOURCE NULL: otava::symbols::FunctionToFunctionPtrConversion::FunctionToFunctionPtrConversion(otava::symbols::TypeSymbol*, otava::symbols::FunctionSymbol*, int, otava::symbols::Context*)
+NODE SOURCE NULL: otava::symbols::FunctionToFunctionPtrConversion::FunctionToFunctionPtrConversion(otava::symbols::TypeSymbol*, otava::symbols::FunctionSymbol*, int, otava::symbols::Context*)
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/argument_conversion_table.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/argument_conversion_table.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/array_type_compare.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/array_type_compare.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/array_type_compare.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/array_type_symbol.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/array_type_symbol.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/array_type_symbol.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/block.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/block.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/block.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/bound_tree.cpp
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/bound_tree.cpp', line 381:
+        node->SetIndex(boundNodes.size());
+        ^
+warning: implicit conversion from 'int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/bound_tree.cpp', line 3037:
+            subject->Load(emitter, SetDerefCount(kind, GetDerefCount(flags) + 1), sourcePos, context);
+                                   ^
+warning: implicit conversion from 'int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/bound_tree.cpp', line 3051:
+        subject->Store(emitter, SetDerefCount(OperationFlags::deref | (flags & OperationFlags::setPtr), GetDerefCount(flags) + 1), sourcePos, context);
+                                ^
+warning: implicit conversion from 'int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/bound_tree.cpp', line 3245:
+        backingStore->Load(emitter, SetDerefCount(OperationFlags::deref, GetDerefCount(flags) + 1), sourcePos, context);
+                                    ^
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/bound_tree.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/bound_tree.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/bound_tree_visitor.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/bound_tree_visitor.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/bound_tree_visitor.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/classes.cpp
+warning: implicit conversion from 'long long int' to 'unsigned int', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/classes.cpp', line 276:
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(objectLayout.size());
+    ^
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/classes.cpp', line 467:
+            SetVPtrIndex(objectLayout.size());
+            ^
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/classes.cpp', line 469:
+            SetDeltaIndex(objectLayout.size());
+            ^
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/classes.cpp', line 515:
+    vtabSize = vtab.size();
+    ^
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/classes.cpp', line 764:
+            memberVariable->SetIndex(memberVariables.size());
+            ^
+NODE SOURCE NULL: otava::symbols::VariableSymbol::VariableSymbol(const std::u32string&)
+NODE SOURCE NULL: otava::symbols::VariableSymbol::VariableSymbol(const std::u32string&)
+NODE SOURCE NULL: otava::symbols::FunctionSymbol::FunctionSymbol(const std::u32string&)
+NODE SOURCE NULL: otava::symbols::FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string&)
+NODE SOURCE NULL: otava::symbols::BoundDtorTerminatorNode::BoundDtorTerminatorNode(const soul::ast::SourcePos&)
+NODE SOURCE NULL: otava::symbols::BoundFunctionNode::BoundFunctionNode(otava::symbols::FunctionDefinitionSymbol*, const soul::ast::SourcePos&)
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/classes.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/classes.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/class_group_symbol.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/class_group_symbol.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/class_group_symbol.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/class_info.cpp
+NODE SOURCE NULL: info::class_index::class_index()
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/class_info.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/class_info.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/class_templates.cpp
+warning: implicit conversion from 'long long int' to 'unsigned int', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/class_templates.cpp', line 107:
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(templateArguments.size());
+    ^
+warning: implicit conversion from 'long long int' to 'unsigned int', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/class_templates.cpp', line 129:
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(instantiatedVirtualFunctionSpecializations.size());
+    ^
+NODE SOURCE NULL: otava::symbols::BoundTemplateParameterSymbol::BoundTemplateParameterSymbol(const std::u32string&)
+NODE SOURCE NULL: otava::symbols::BoundTemplateParameterSymbol::BoundTemplateParameterSymbol(const std::u32string&)
+NODE SOURCE NULL: otava::symbols::BoundTemplateParameterSymbol::BoundTemplateParameterSymbol(const std::u32string&)
+NODE SOURCE NULL: otava::symbols::BoundTemplateParameterSymbol::BoundTemplateParameterSymbol(const std::u32string&)
+NODE SOURCE NULL: otava::symbols::BoundTemplateParameterSymbol::BoundTemplateParameterSymbol(const std::u32string&)
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/class_templates.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/class_templates.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/compound_type_symbol.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/compound_type_symbol.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/compound_type_symbol.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/concepts.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/concepts.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/concepts.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/concept_group_symbol.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/concept_group_symbol.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/concept_group_symbol.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/container_symbol.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/container_symbol.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/container_symbol.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/context.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/context.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/context.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/control_xml_generator.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/control_xml_generator.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/control_xml_generator.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/conversion_table.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/conversion_table.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/conversion_table.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/decl_specifier_seq_parser.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/decl_specifier_seq_parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/decl_specifier_seq_parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/declaration.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: otava::symbols::BoundFunctionNode::BoundFunctionNode(otava::symbols::FunctionDefinitionSymbol*, const soul::ast::SourcePos&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/declaration.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/declaration.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/declarator.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/declarator.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/declarator.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/derivations.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/derivations.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/derivations.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/emitter.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/emitter.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/emitter.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/enum_group_symbol.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/enum_group_symbol.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/enum_group_symbol.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/enums.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/enums.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/enums.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/evaluator.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/evaluator.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/evaluator.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/exception.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/exception.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/exception.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/exception_handling.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/exception_handling.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/exception_handling.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/expr_parser.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/expr_parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/expr_parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/expression_binder.cpp
+NODE SOURCE NULL: std::basic_string<char32_t>::basic_string(const std::basic_string<char32_t>&)
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/util/text_util.cppm', line 101:
+            start = i + subString.length();
+            ^
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/util/text_util.cppm', line 102:
+            i += subString.length() - 1;
+            ^
+NODE SOURCE NULL: otava::symbols::IntegerValue::IntegerValue(long long int, const std::u32string&, otava::symbols::TypeSymbol*)
+NODE SOURCE NULL: otava::symbols::IntegerValue::IntegerValue(long long int, const std::u32string&, otava::symbols::TypeSymbol*)
+NODE SOURCE NULL: otava::ast::IntegerLiteralNode::IntegerLiteralNode(const soul::ast::SourcePos&, unsigned long long int, otava::ast::Suffix, otava::ast::Base, const std::u32string&)
+NODE SOURCE NULL: otava::ast::IntegerLiteralNode::IntegerLiteralNode(const soul::ast::SourcePos&, unsigned long long int, otava::ast::Suffix, otava::ast::Base, const std::u32string&)
+NODE SOURCE NULL: otava::ast::IntegerLiteralNode::IntegerLiteralNode(const soul::ast::SourcePos&, unsigned long long int, otava::ast::Suffix, otava::ast::Base, const std::u32string&)
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/expression_binder.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/expression_binder.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/friends.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/friends.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/friends.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_definition_symbol_set.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_definition_symbol_set.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_definition_symbol_set.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_group_symbol.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_group_symbol.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_group_symbol.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_kind.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_kind.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_kind.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_return_path_checker.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_return_path_checker.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_return_path_checker.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_symbol.cpp
+NODE SOURCE NULL: otava::symbols::ParameterSymbol::ParameterSymbol(const std::u32string&, otava::symbols::TypeSymbol*)
+NODE SOURCE NULL: std::basic_string<char>::basic_string(const std::basic_string<char>&)
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_symbol.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_symbol.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_templates.cpp
+NODE SOURCE NULL: otava::symbols::BoundTemplateParameterSymbol::BoundTemplateParameterSymbol(const std::u32string&)
+NODE SOURCE NULL: otava::symbols::BoundTemplateParameterSymbol::BoundTemplateParameterSymbol(const std::u32string&)
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_templates.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_templates.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_type_compare.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_type_compare.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_type_compare.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_type_symbol.cpp
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/function_type_symbol.cpp', line 32:
+    ptrIndex = name.length();
+    ^
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_type_symbol.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/function_type_symbol.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/fundamental_type_conversion.cpp
+NODE SOURCE NULL: otava::symbols::BoundValueExpressionNode::BoundValueExpressionNode(otava::intermediate::Value*, otava::symbols::TypeSymbol*)
+NODE SOURCE NULL: otava::symbols::BoundValueExpressionNode::BoundValueExpressionNode(otava::intermediate::Value*, otava::symbols::TypeSymbol*)
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_conversion.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_conversion.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/fundamental_type_conversion_init.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_conversion_init.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_conversion_init.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/fundamental_type_operation.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_operation.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_operation.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/fundamental_type_symbol.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_symbol.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/fundamental_type_symbol.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/init.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/init.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/init.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/inline_functions.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/inline_functions.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/inline_functions.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/instantiation_queue.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/instantiation_queue.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/instantiation_queue.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/instantiator.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/instantiator.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/instantiator.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/intrinsics.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/intrinsics.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/intrinsics.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/modules.cpp
+NODE SOURCE NULL: otava::ast::File::File()
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: otava::symbols::Module::Module(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/modules.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/modules.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/namespace.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/namespace.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/namespace.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/operation_repository.cpp
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/operation_repository.cpp', line 1994:
+    auto it = arityOperationsMap.find(args.size());
+              ^
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/operation_repository.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/operation_repository.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/overload_resolution.cpp
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/overload_resolution.cpp', line 1301:
+        context->GetSymbolTable()->CollectViableFunctions(scopeLookups, groupName, templateArgs, args.size(), viableFunctions, context);
+        ^
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/overload_resolution.cpp', line 1301:
+        context->GetSymbolTable()->CollectViableFunctions(scopeLookups, groupName, templateArgs, args.size(), viableFunctions, context);
+        ^
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/overload_resolution.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/overload_resolution.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/project.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/project.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/project.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/reader.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/reader.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/reader.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/scope.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/scope.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/scope.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/scope_resolver.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/scope_resolver.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/scope_resolver.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/specialization_compare.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/specialization_compare.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/specialization_compare.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/statement_binder.cpp
+NODE SOURCE NULL: otava::ast::BooleanLiteralNode::BooleanLiteralNode(const soul::ast::SourcePos&, bool, const std::u32string&)
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/statement_binder.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/statement_binder.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/stmt_parser.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/stmt_parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/stmt_parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/symbol.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbol.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbol.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/symbol_factory.cpp
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbol_factory.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbol_factory.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/symbol_map.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbol_map.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/compiler/symbols/debug/symbol_map.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/compiler/symbols/symbol_table.cpp
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/compiler/symbols/symbol_table.cpp', line 174:
+    topScopeIndex = scopeStack.size() - 1;
+    ^

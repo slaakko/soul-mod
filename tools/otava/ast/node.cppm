@@ -164,6 +164,7 @@ public:
     inline bool IsTypeSpecifierSequenceNode() const { return kind == NodeKind::typeSpecifierSequenceNode; }
     inline bool IsOpNewCall() const { return kind == NodeKind::opNewCall; }
     inline bool IsPtrDeclaratorNode() const noexcept { return kind == NodeKind::ptrDeclaratorNode; }
+    inline bool IsSimpleDeclarationNode() const noexcept { return kind == NodeKind::simpleDeclarationNode; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;

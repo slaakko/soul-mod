@@ -1817,6 +1817,7 @@ void StatementBinder::Visit(otava::ast::SimpleDeclarationNode& node)
                 std::vector<TypeSymbol*> templateArgs;
                 std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(),
                     U"@constructor", templateArgs, arguments, node.GetSourcePos(), context);
+                constructorCall->SetSource(node.Clone());
                 BoundConstructionStatementNode* boundConstructionStatement = nullptr;
                 otava::symbols::ClassTypeSymbol* cls = nullptr;
                 BoundExpressionNode* firstArg = nullptr;

@@ -99,11 +99,11 @@ path::path() : handle(fs_path_default_ctor())
 {
 }
 
-path::path(void* handle_) : handle(handle_) 
+path::path(void* handle_) noexcept : handle(handle_)
 {
 }
 
-bool path::valid() const
+bool path::valid() const noexcept
 { 
     return handle != nullptr; 
 }
@@ -112,7 +112,7 @@ path::path(const path& p) : handle(fs_path_copy_ctor(p.handle))
 {
 }
 
-path::path(path&& that) : handle(that.handle)
+path::path(path&& that) noexcept : handle(that.handle)
 {
     that.handle = nullptr;
 }
@@ -140,7 +140,7 @@ path& path::operator=(const path& p)
     return *this;
 }
 
-path& path::operator=(path&& p)
+path& path::operator=(path&& p) noexcept
 {
     std::swap(handle, p.handle);
     return *this;
@@ -190,7 +190,7 @@ path& path::operator+=(path::value_type x)
     return *this;
 }
 
-void path::clear()
+void path::clear() noexcept
 {
     fs_path_clear(handle);
 }
@@ -315,62 +315,62 @@ path path::extension() const
     return path(fs_path_extension(handle));
 }
 
-bool path::empty() const
+bool path::empty() const noexcept
 {
     return fs_path_empty(handle);
 }
 
-bool path::has_root_name() const
+bool path::has_root_name() const noexcept
 {
     return fs_path_has_root_name(handle);
 }
 
-bool path::has_root_directory() const
+bool path::has_root_directory() const noexcept
 {
     return fs_path_has_root_directory(handle);
 }
 
-bool path::has_root_path() const
+bool path::has_root_path() const noexcept
 {
     return fs_path_has_root_path(handle);
 }
 
-bool path::has_relative_path() const
+bool path::has_relative_path() const noexcept
 {
     return fs_path_has_relative_path(handle);
 }
 
-bool path::has_parent_path() const
+bool path::has_parent_path() const noexcept
 {
     return fs_path_has_parent_path(handle);
 }
 
-bool path::has_filename() const
+bool path::has_filename() const noexcept
 {
     return fs_path_has_filename(handle);
 }
 
-bool path::has_stem() const
+bool path::has_stem() const noexcept
 {
     return fs_path_has_stem(handle);
 }
 
-bool path::has_extension() const
+bool path::has_extension() const noexcept
 {
     return fs_path_has_extension(handle);
 }
 
-bool path::is_absolute() const
+bool path::is_absolute() const noexcept
 {
     return fs_path_is_absolute(handle);
 }
 
-bool path::is_relative() const
+bool path::is_relative() const noexcept
 {
     return fs_path_is_relative(handle);
 }
 
-bool operator==(const path& lhs, const path& rhs)
+bool operator==(const path& lhs, const path& rhs) noexcept
 {
     return fs_path_equal(lhs.get_handle(), rhs.get_handle());
 }
@@ -488,12 +488,12 @@ bool equivalent(const path& p1, const path& p2, std::error_code& ec)
     return retval;
 }
 
-bool exists(const path& p)
+bool exists(const path& p) noexcept
 {
     return fs_exists(p.handle);
 }
 
-bool exists(const path& p, std::error_code& ec)
+bool exists(const path& p, std::error_code& ec) noexcept
 {
     int error = 0;
     char* msg = nullptr;
@@ -503,12 +503,12 @@ bool exists(const path& p, std::error_code& ec)
     return retval;
 }
 
-uint64_t file_size(const path& p)
+uint64_t file_size(const path& p) noexcept
 {
     return fs_file_size(p.handle);
 }
 
-uint64_t file_size(const path& p, std::error_code& ec)
+uint64_t file_size(const path& p, std::error_code& ec) noexcept
 {
     int error = 0;
     char* msg = nullptr;
@@ -518,12 +518,12 @@ uint64_t file_size(const path& p, std::error_code& ec)
     return retval;
 }
 
-bool is_block_file(const path& p)
+bool is_block_file(const path& p) noexcept
 {
     return fs_is_block_file(p.handle);
 }
 
-bool is_block_file(const path& p, std::error_code& ec)
+bool is_block_file(const path& p, std::error_code& ec) noexcept
 {
     int error = 0;
     char* msg = nullptr;
@@ -533,12 +533,12 @@ bool is_block_file(const path& p, std::error_code& ec)
     return retval;
 }
 
-bool is_character_file(const path& p)
+bool is_character_file(const path& p) noexcept
 {
     return fs_is_character_file(p.handle);
 }
 
-bool is_character_file(const path& p, std::error_code& ec)
+bool is_character_file(const path& p, std::error_code& ec) noexcept
 {
     int error = 0;
     char* msg = nullptr;
@@ -548,12 +548,12 @@ bool is_character_file(const path& p, std::error_code& ec)
     return retval;
 }
 
-bool is_directory(const path& p)
+bool is_directory(const path& p) noexcept
 {
     return fs_is_directory(p.handle);
 }
 
-bool is_directory(const path& p, std::error_code& ec)
+bool is_directory(const path& p, std::error_code& ec) noexcept
 {
     int error = 0;
     char* msg = nullptr;
@@ -563,12 +563,12 @@ bool is_directory(const path& p, std::error_code& ec)
     return retval;
 }
 
-bool is_empty(const path& p)
+bool is_empty(const path& p) noexcept
 {
     return fs_is_empty(p.handle);
 }
 
-bool is_empty(const path& p, std::error_code& ec)
+bool is_empty(const path& p, std::error_code& ec) noexcept
 {
     int error = 0;
     char* msg = nullptr;
@@ -578,12 +578,12 @@ bool is_empty(const path& p, std::error_code& ec)
     return retval;
 }
 
-bool is_fifo(const path& p)
+bool is_fifo(const path& p) noexcept
 {
     return fs_is_fifo(p.handle);
 }
 
-bool is_fifo(const path& p, std::error_code& ec)
+bool is_fifo(const path& p, std::error_code& ec) noexcept
 {
     int error = 0;
     char* msg = nullptr;
@@ -593,12 +593,12 @@ bool is_fifo(const path& p, std::error_code& ec)
     return retval;
 }
 
-bool is_other(const path& p)
+bool is_other(const path& p) noexcept
 {
     return fs_is_other(p.handle);
 }
 
-bool is_other(const path& p, std::error_code& ec)
+bool is_other(const path& p, std::error_code& ec) noexcept
 {
     int error = 0;
     char* msg = nullptr;
@@ -608,12 +608,12 @@ bool is_other(const path& p, std::error_code& ec)
     return retval;
 }
 
-bool is_regular_file(const path& p)
+bool is_regular_file(const path& p) noexcept
 {
     return fs_is_regular_file(p.handle);
 }
 
-bool is_regular_file(const path& p, std::error_code& ec)
+bool is_regular_file(const path& p, std::error_code& ec) noexcept
 {
     int error = 0;
     char* msg = nullptr;
@@ -623,12 +623,12 @@ bool is_regular_file(const path& p, std::error_code& ec)
     return retval;
 }
 
-bool is_socket(const path& p)
+bool is_socket(const path& p) noexcept
 {
     return fs_is_socket(p.handle);
 }
 
-bool is_socket(const path& p, std::error_code& ec)
+bool is_socket(const path& p, std::error_code& ec) noexcept
 {
     int error = 0;
     char* msg = nullptr;
@@ -638,12 +638,12 @@ bool is_socket(const path& p, std::error_code& ec)
     return retval;
 }
 
-bool is_symlink(const path& p)
+bool is_symlink(const path& p) noexcept
 {
     return fs_is_symlink(p.handle);
 }
 
-bool is_symlink(const path& p, std::error_code& ec)
+bool is_symlink(const path& p, std::error_code& ec) noexcept
 {
     int error = 0;
     char* msg = nullptr;
@@ -700,12 +700,12 @@ path relative(const path& p, const path& base, std::error_code& ec)
     return pth;
 }
 
-bool remove(const path& p)
+bool remove(const path& p) noexcept
 {
     return fs_remove(p.handle);
 }
 
-bool remove(const path& p, std::error_code& ec) 
+bool remove(const path& p, std::error_code& ec)  noexcept
 {
     int error = 0;
     char* msg = nullptr;

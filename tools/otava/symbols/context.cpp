@@ -71,6 +71,7 @@ Context::Context() :
     functionCallsInlined(0),
     functionsInlined(0),
     invokes(0),
+    unresolvedInvokes(0),
     emitter(nullptr),
     argIndex(0),
     boundFunctionSerial(0),

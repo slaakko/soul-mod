@@ -1808,6 +1808,7 @@ void StatementBinder::Visit(otava::ast::SimpleDeclarationNode& node)
                 std::vector<TypeSymbol*> templateArgs;
                 std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), 
                     U"@constructor", templateArgs, arguments, node.GetSourcePos(), context);
+                constructorCall->SetSource(node.Clone());
                 BoundConstructionStatementNode* boundConstructionStatement = nullptr;
                 otava::symbols::ClassTypeSymbol* cls = nullptr;
                 BoundExpressionNode* firstArg = nullptr;
@@ -2245,6 +2246,10 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
     StatementBinder binder(context, functionDefinitionSymbol);
     context->PushStatementBinder(&binder);
     GenerateEnterFunctionCode(functionDefinitionNode, functionDefinitionSymbol, context);
+    if (functionDefinitionSymbol->FullName() == U"util::operator<<(util::CodeFormatter&, const char*)")
+    {
+        int x = 0;
+    }
     functionDefinitionNode->Accept(binder);
     functionDefinitionSymbol = binder.GetFunctionDefinitionSymbol();
     bool hasNoReturnAttribute = false;

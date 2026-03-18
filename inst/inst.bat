@@ -17,4 +17,4 @@ soul_inst -v ..\soul\xml\serialization\*.classmap.compressed ..\rc
 soul_inst -v ..\soul\xml\serialization\*.classmap.rc ..\rc
 soul_inst -v ..\tools\otava\projects\soul\oslg\release\2\oslg.exe ..\bin
 soul_inst -v ..\tools\otava\projects\soul\ospg\release\2\ospg.exe ..\bin
-soul_inst -v ..\tools\otava\projects\compiler\ooc\release\2\ooc.exe ..\bin
+soul_inst -v ..\tools\otava\projects\compiler\ooc\debug\ooc.exe ..\bin

@@ -312,6 +312,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
     int functionCallsInlined = 0;
     int importIndex = 0;
     int invokes = 0;
+    int unresolvedInvokes = 0;
     moduleMapper.SetFunctionDefinitionSymbolSet(project->GetFunctionDefinitionSymbolSet());
     std::string libraryDirs;
     std::string mainFunctionIrName;
@@ -587,6 +588,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         }
         totalFunctionsCompiled += context.TotalFunctionsCompiled();
         invokes += context.Invokes();
+        unresolvedInvokes += context.UnresolvedInvokes();
         if (context.ReleaseConfig() && otava::optimizer::HasOptimization(otava::optimizer::Optimizations::inlining))
         {
             inliningEnabled = true;
@@ -681,6 +683,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
         }
         totalFunctionsCompiled += context.TotalFunctionsCompiled();
         invokes += context.Invokes();
+        unresolvedInvokes += context.UnresolvedInvokes();
         if (context.ReleaseConfig() && otava::optimizer::HasOptimization(otava::optimizer::Optimizations::inlining))
         {
             inliningEnabled = true;
@@ -762,6 +765,7 @@ void BuildSequentially(Project* project, const std::string& config, int optLevel
             std::cout << functionCallsInlined << " function calls inlined in " << functionsInlined << " functions\n";
         }
         std::cout << invokes << " invokes generated\n";
+        std::cout << unresolvedInvokes << " invokes unresolved\n";
     }
     MakeProjectFile(project, projectFilePath, asmFileNames, cppFileNames, resourceFileNames,
         libraryDirs, project->ReferencedProjects(), config, optLevel, classIndexFilePath, traceBinPath, projectTarget, (flags& BuildFlags::verbose) != BuildFlags::none,

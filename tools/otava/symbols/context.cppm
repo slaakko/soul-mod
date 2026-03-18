@@ -219,7 +219,10 @@ public:
     inline void SetFunctionsInlined(int functionsInlined_) noexcept { functionsInlined = functionsInlined_; }
     inline int Invokes() const noexcept { return invokes; }
     inline void IncInvokes() noexcept { ++invokes; }
+    inline int UnresolvedInvokes() noexcept { return unresolvedInvokes; }
+    inline void IncUnresolvedInvokes() noexcept { ++unresolvedInvokes; }
     inline void SetInvokes(int invokes_) noexcept { invokes = invokes_; }
+    inline void SetUnresolvedInvokes(int unresolvedInvokes_) { unresolvedInvokes = unresolvedInvokes_; }
     inline Emitter* GetEmitter() noexcept { return emitter; }
     inline void SetEmitter(Emitter* emitter_) noexcept { emitter = emitter_; }
     inline int ArgIndex() const noexcept { return argIndex; }
@@ -304,6 +307,7 @@ private:
     int functionCallsInlined;
     int functionsInlined;
     int invokes;
+    int unresolvedInvokes;
     int argIndex;
     int boundFunctionSerial;
     int trySerial;

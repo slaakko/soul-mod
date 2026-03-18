@@ -761,9 +761,16 @@ bool fs_is_symlink_error(void* p, int* error, char** msg)
 
 std::int64_t fs_last_write_time(void* p)
 {
-    auto time = std::filesystem::last_write_time(*static_cast<std::filesystem::path*>(p));
-    std::int64_t nsecs = std::chrono::duration_cast<std::chrono::nanoseconds>(time.time_since_epoch()).count();
-    return nsecs;
+    try
+    {
+        auto time = std::filesystem::last_write_time(*static_cast<std::filesystem::path*>(p));
+        std::int64_t nsecs = std::chrono::duration_cast<std::chrono::nanoseconds>(time.time_since_epoch()).count();
+        return nsecs;
+    }
+    catch (...)
+    {
+        return -1;
+    }
 }
 
 std::int64_t fs_last_write_time_error(void* p, int* error, char** msg)
@@ -784,7 +791,14 @@ std::int64_t fs_last_write_time_error(void* p, int* error, char** msg)
 
 void* fs_relative(void* p)
 {
-    return new std::filesystem::path(std::filesystem::relative(*static_cast<std::filesystem::path*>(p)));
+    try
+    {
+        return new std::filesystem::path(std::filesystem::relative(*static_cast<std::filesystem::path*>(p)));
+    }
+    catch (...)
+    {
+        return nullptr;
+    }
 }
 
 void* fs_relative_error(void* p, int* error, char** msg)
@@ -804,7 +818,14 @@ void* fs_relative_error(void* p, int* error, char** msg)
 
 void* fs_relative_base(void* p, void* base)
 {
-    return new std::filesystem::path(std::filesystem::relative(*static_cast<std::filesystem::path*>(p), *static_cast<std::filesystem::path*>(base)));
+    try
+    {
+        return new std::filesystem::path(std::filesystem::relative(*static_cast<std::filesystem::path*>(p), *static_cast<std::filesystem::path*>(base)));
+    }
+    catch (...)
+    {
+        return nullptr;
+    }
 }
 
 void* fs_relative_base_error(void* p, void* base, int* error, char** msg)
@@ -824,7 +845,14 @@ void* fs_relative_base_error(void* p, void* base, int* error, char** msg)
 
 bool fs_remove(void* p)
 {
-    return std::filesystem::remove(*static_cast<std::filesystem::path*>(p));
+    try
+    {
+        return std::filesystem::remove(*static_cast<std::filesystem::path*>(p));
+    }
+    catch (...)
+    {
+        return false;
+    }
 }
 
 bool fs_remove_error(void* p, int* error, char** msg)
@@ -844,7 +872,14 @@ bool fs_remove_error(void* p, int* error, char** msg)
 
 std::uint64_t fs_remove_all(void* p)
 {
-    return std::filesystem::remove_all(*static_cast<std::filesystem::path*>(p));
+    try
+    {
+        return std::filesystem::remove_all(*static_cast<std::filesystem::path*>(p));
+    }
+    catch (...)
+    {
+        return -1;
+    }
 }
 
 std::uint64_t fs_remove_all_error(void* p, int* error, char** msg)
@@ -864,7 +899,13 @@ std::uint64_t fs_remove_all_error(void* p, int* error, char** msg)
 
 void fs_rename(void* from, void* to)
 {
-    std::filesystem::rename(*static_cast<std::filesystem::path*>(from), *static_cast<std::filesystem::path*>(to));
+    try
+    {
+        std::filesystem::rename(*static_cast<std::filesystem::path*>(from), *static_cast<std::filesystem::path*>(to));
+    }
+    catch (...)
+    {
+    }
 }
 
 void fs_rename_error(void* from, void* to, int* error, char** msg)
@@ -883,7 +924,13 @@ void fs_rename_error(void* from, void* to, int* error, char** msg)
 
 void fs_resize_file(void* p, std::uint64_t size)
 {
-    std::filesystem::resize_file(*static_cast<std::filesystem::path*>(p), size);
+    try
+    {
+        std::filesystem::resize_file(*static_cast<std::filesystem::path*>(p), size);
+    }
+    catch (...)
+    {
+    }
 }
 
 void fs_resize_file_error(void* p, std::uint64_t size, int* error, char** msg)

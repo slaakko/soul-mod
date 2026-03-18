@@ -1,0 +1,2160 @@
+****************************************
+* Otava C++ Compiler version 5.0.0
+****************************************
+> D:/work/soul-mod/tools/otava/projects/soul/soul.solution
+> building solution 'soul'...
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'util'...
+> D:/work/soul-mod/tools/otava/projects/util/align.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/align.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/align.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/align.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.align.module
+> D:/work/soul-mod/tools/otava/projects/util/binary_resource_ptr.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/binary_resource_ptr.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/binary_resource_ptr.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/binary_resource_ptr.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.binary.resource.ptr.module
+> D:/work/soul-mod/tools/otava/projects/util/stream.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/stream.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/stream.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/stream.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.stream.module
+> D:/work/soul-mod/tools/otava/projects/util/uuid.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/uuid.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/uuid.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/uuid.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.uuid.module
+> D:/work/soul-mod/tools/otava/projects/util/binary_stream_reader.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/binary_stream_reader.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/binary_stream_reader.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/binary_stream_reader.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.binary.stream.reader.module
+> D:/work/soul-mod/tools/otava/projects/util/binary_stream_writer.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/binary_stream_writer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/binary_stream_writer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/binary_stream_writer.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.binary.stream.writer.module
+> D:/work/soul-mod/tools/otava/projects/util/buffered_stream.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/buffered_stream.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/buffered_stream.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/buffered_stream.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.buffered.stream.module
+> D:/work/soul-mod/tools/otava/projects/util/code_formatter.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/code_formatter.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/code_formatter.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/code_formatter.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.code.formatter.module
+> D:/work/soul-mod/tools/otava/projects/util/compression.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/compression.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/compression.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/compression.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.compression.module
+> D:/work/soul-mod/tools/otava/projects/util/component.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/component.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/component.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/component.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.component.module
+> D:/work/soul-mod/tools/otava/projects/util/deflate_stream.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/deflate_stream.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/deflate_stream.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/deflate_stream.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.deflate.stream.module
+> D:/work/soul-mod/tools/otava/projects/util/fiber.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/fiber.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/fiber.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/fiber.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.fiber.module
+> D:/work/soul-mod/tools/otava/projects/util/file_stream.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/file_stream.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/file_stream.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/file_stream.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.file.stream.module
+> D:/work/soul-mod/tools/otava/projects/util/intrusive_list.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/intrusive_list.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/intrusive_list.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/intrusive_list.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.intrusive.list.module
+> D:/work/soul-mod/tools/otava/projects/util/time.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/time.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/time.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/time.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.time.module
+> D:/work/soul-mod/tools/otava/projects/util/memory_reader.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/memory_reader.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/memory_reader.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/memory_reader.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.memory.reader.module
+> D:/work/soul-mod/tools/otava/projects/util/memory_stream.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/memory_stream.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/memory_stream.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/memory_stream.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.memory.stream.module
+> D:/work/soul-mod/tools/otava/projects/util/memory_writer.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/memory_writer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/memory_writer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/memory_writer.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.memory.writer.module
+> D:/work/soul-mod/tools/otava/projects/util/path.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/path.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/path.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/path.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.path.module
+> D:/work/soul-mod/tools/otava/projects/util/process.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/process.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/process.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/process.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.process.module
+> D:/work/soul-mod/tools/otava/projects/util/rand.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/rand.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/rand.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/rand.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.rand.module
+> D:/work/soul-mod/tools/otava/projects/util/sha1.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/sha1.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/sha1.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/sha1.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.sha1.module
+> D:/work/soul-mod/tools/otava/projects/util/system.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/system.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/system.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/system.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.system.module
+> D:/work/soul-mod/tools/otava/projects/util/text_util.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/text_util.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/text_util.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/text_util.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.text.util.module
+> D:/work/soul-mod/tools/otava/projects/util/unicode.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/unicode.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/unicode.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/unicode.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.unicode.module
+> D:/work/soul-mod/tools/otava/projects/util/util.cppm
+> D:/work/soul-mod/tools/otava/projects/util/debug/util.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/util.cppm.asm
+D:/work/soul-mod/tools/otava/projects/util/util.cppm -> D:/work/soul-mod/tools/otava/projects/util/debug/util.module
+> D:/work/soul-mod/tools/otava/projects/util/binary_resource_ptr.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/util/debug/binary_resource_ptr.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/binary_resource_ptr.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/binary_stream_reader.cpp
+> D:/work/soul-mod/tools/otava/projects/util/debug/binary_stream_reader.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/binary_stream_reader.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/binary_stream_writer.cpp
+> D:/work/soul-mod/tools/otava/projects/util/debug/binary_stream_writer.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/binary_stream_writer.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/buffered_stream.cpp
+> D:/work/soul-mod/tools/otava/projects/util/debug/buffered_stream.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/buffered_stream.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/code_formatter.cpp
+> D:/work/soul-mod/tools/otava/projects/util/debug/code_formatter.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/code_formatter.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/component.cpp
+> D:/work/soul-mod/tools/otava/projects/util/debug/component.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/component.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/deflate_stream.cpp
+> D:/work/soul-mod/tools/otava/projects/util/debug/deflate_stream.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/deflate_stream.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/fiber.cpp
+> D:/work/soul-mod/tools/otava/projects/util/debug/fiber.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/fiber.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/file_stream.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+warning: implicit conversion from 'long long int' to 'long int', file 'D:/work/soul-mod/tools/otava/projects/util/file_stream.cpp', line 184:
+    int result = std::fseek(file, pos, seekOrigin);
+                 ^
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/util/debug/file_stream.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/file_stream.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/memory_reader.cpp
+> D:/work/soul-mod/tools/otava/projects/util/debug/memory_reader.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/memory_reader.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/memory_stream.cpp
+> D:/work/soul-mod/tools/otava/projects/util/debug/memory_stream.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/memory_stream.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/memory_writer.cpp
+> D:/work/soul-mod/tools/otava/projects/util/debug/memory_writer.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/memory_writer.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/path.cpp
+NODE SOURCE NULL: util::InvalidPathException::InvalidPathException(const std::string&)
+NODE SOURCE NULL: std::basic_string<char>::basic_string(const char*)
+> D:/work/soul-mod/tools/otava/projects/util/debug/path.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/path.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/process.cpp
+> D:/work/soul-mod/tools/otava/projects/util/debug/process.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/process.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/rand.cpp
+> D:/work/soul-mod/tools/otava/projects/util/debug/rand.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/rand.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/sha1.cpp
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/sha1.cpp', line 29:
+    byteIndex = 0u;
+    ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/sha1.cpp', line 46:
+    ProcessByte(0x80u);
+    ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/sha1.cpp', line 51:
+            ProcessByte(0u);
+            ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/sha1.cpp', line 55:
+            ProcessByte(0u);
+            ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/sha1.cpp', line 62:
+            ProcessByte(0u);
+            ^
+> D:/work/soul-mod/tools/otava/projects/util/debug/sha1.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/sha1.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/stream.cpp
+> D:/work/soul-mod/tools/otava/projects/util/debug/stream.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/stream.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/system.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/util/debug/system.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/system.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/text_util.cpp
+warning: implicit conversion from 'int' to 'char', file 'D:/work/soul-mod/tools/otava/projects/util/text_util.cpp', line 375:
+        result.append(1, std::toupper(s[i]));
+        ^
+warning: implicit conversion from 'int' to 'char', file 'D:/work/soul-mod/tools/otava/projects/util/text_util.cpp', line 375:
+        result.append(1, std::toupper(s[i]));
+        ^
+warning: implicit conversion from 'int' to 'char', file 'D:/work/soul-mod/tools/otava/projects/util/text_util.cpp', line 387:
+        result.append(1, std::tolower(s[i]));
+        ^
+warning: implicit conversion from 'int' to 'char', file 'D:/work/soul-mod/tools/otava/projects/util/text_util.cpp', line 387:
+        result.append(1, std::tolower(s[i]));
+        ^
+warning: implicit conversion from 'int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/text_util.cpp', line 435:
+    s.append(1, HexNibble(x >> 4)).append(1, HexNibble(x & 0x0F));
+                ^
+warning: implicit conversion from 'int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/text_util.cpp', line 435:
+    s.append(1, HexNibble(x >> 4)).append(1, HexNibble(x & 0x0F));
+                                             ^
+warning: implicit conversion from 'int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/text_util.cpp', line 435:
+    s.append(1, HexNibble(x >> 4)).append(1, HexNibble(x & 0x0F));
+                ^
+warning: implicit conversion from 'int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/text_util.cpp', line 435:
+    s.append(1, HexNibble(x >> 4)).append(1, HexNibble(x & 0x0F));
+                                             ^
+warning: implicit conversion from 'int' to 'char', file 'D:/work/soul-mod/tools/otava/projects/util/text_util.cpp', line 492:
+        str.append(1, ('0' + digit));
+        ^
+warning: implicit conversion from 'int' to 'char', file 'D:/work/soul-mod/tools/otava/projects/util/text_util.cpp', line 492:
+        str.append(1, ('0' + digit));
+        ^
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+> D:/work/soul-mod/tools/otava/projects/util/debug/text_util.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/text_util.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/time.cpp
+> D:/work/soul-mod/tools/otava/projects/util/debug/time.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/time.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/unicode_conversion.cpp
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_conversion.cpp', line 57:
+                b1 = b1 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_conversion.cpp', line 65:
+                b0 = b0 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_conversion.cpp', line 89:
+                b2 = b2 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_conversion.cpp', line 101:
+                b1 = b1 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_conversion.cpp', line 109:
+                b0 = b0 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_conversion.cpp', line 133:
+                b3 = b3 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_conversion.cpp', line 145:
+                b2 = b2 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_conversion.cpp', line 157:
+                b1 = b1 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_conversion.cpp', line 165:
+                b0 = b0 >> 1u;
+                ^
+> D:/work/soul-mod/tools/otava/projects/util/debug/unicode_conversion.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/unicode_conversion.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/unicode.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::CharacterInfoPage::CharacterInfoPage()
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+NODE SOURCE NULL: util::ExtendedCharacterInfoPage::ExtendedCharacterInfoPage()
+NODE SOURCE NULL: util::UnicodeException::UnicodeException(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/util/debug/unicode.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/unicode.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/unicode_engine.cpp
+warning: implicit conversion from 'int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_engine.cpp', line 12:
+    bytes[0] = 0;
+    ^
+warning: implicit conversion from 'int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_engine.cpp', line 13:
+    bytes[1] = 0;
+    ^
+warning: implicit conversion from 'int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_engine.cpp', line 14:
+    bytes[2] = 0;
+    ^
+warning: implicit conversion from 'int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_engine.cpp', line 15:
+    bytes[3] = 0;
+    ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_engine.cpp', line 64:
+                b1 = b1 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_engine.cpp', line 72:
+                b0 = b0 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_engine.cpp', line 99:
+                b2 = b2 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_engine.cpp', line 111:
+                b1 = b1 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_engine.cpp', line 119:
+                b0 = b0 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_engine.cpp', line 152:
+                b3 = b3 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_engine.cpp', line 164:
+                b2 = b2 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_engine.cpp', line 176:
+                b1 = b1 >> 1u;
+                ^
+warning: implicit conversion from 'unsigned int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/unicode_engine.cpp', line 184:
+                b0 = b0 >> 1u;
+                ^
+> D:/work/soul-mod/tools/otava/projects/util/debug/unicode_engine.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/unicode_engine.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/util/uuid.cpp
+warning: implicit conversion from 'int' to 'unsigned char', file 'D:/work/soul-mod/tools/otava/projects/util/uuid.cpp', line 16:
+        byte = 0;
+        ^
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/util/debug/uuid.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/util/debug/uuid.cpp.asm
+3912 functions compiled
+404 invokes generated
+53 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/util/debug/util.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling align.cppm.asm...
+  Assembling binary_resource_ptr.cppm.asm...
+  Assembling stream.cppm.asm...
+  Assembling uuid.cppm.asm...
+  Assembling binary_stream_reader.cppm.asm...
+  Assembling binary_stream_writer.cppm.asm...
+  Assembling buffered_stream.cppm.asm...
+  Assembling code_formatter.cppm.asm...
+  Assembling compression.cppm.asm...
+  Assembling component.cppm.asm...
+  Assembling deflate_stream.cppm.asm...
+  Assembling fiber.cppm.asm...
+  Assembling file_stream.cppm.asm...
+  Assembling intrusive_list.cppm.asm...
+  Assembling time.cppm.asm...
+  Assembling memory_reader.cppm.asm...
+  Assembling memory_stream.cppm.asm...
+  Assembling memory_writer.cppm.asm...
+  Assembling path.cppm.asm...
+  Assembling process.cppm.asm...
+  Assembling rand.cppm.asm...
+  Assembling sha1.cppm.asm...
+  Assembling system.cppm.asm...
+  Assembling text_util.cppm.asm...
+  Assembling unicode.cppm.asm...
+  Assembling util.cppm.asm...
+  Assembling binary_resource_ptr.cpp.asm...
+  Assembling binary_stream_reader.cpp.asm...
+  Assembling binary_stream_writer.cpp.asm...
+  Assembling buffered_stream.cpp.asm...
+  Assembling code_formatter.cpp.asm...
+  Assembling component.cpp.asm...
+  Assembling deflate_stream.cpp.asm...
+  Assembling fiber.cpp.asm...
+  Assembling file_stream.cpp.asm...
+  Assembling memory_reader.cpp.asm...
+  Assembling memory_stream.cpp.asm...
+  Assembling memory_writer.cpp.asm...
+  Assembling path.cpp.asm...
+  Assembling process.cpp.asm...
+  Assembling rand.cpp.asm...
+  Assembling sha1.cpp.asm...
+  Assembling stream.cpp.asm...
+  Assembling system.cpp.asm...
+  Assembling text_util.cpp.asm...
+  Assembling time.cpp.asm...
+  Assembling unicode_conversion.cpp.asm...
+  Assembling unicode.cpp.asm...
+  Assembling unicode_engine.cpp.asm...
+  Assembling uuid.cpp.asm...
+  util.vcxproj -> D:\work\soul-mod\tools\otava\projects\util\debug\util.lib
+
+project 'util' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'soul.token'...
+> D:/work/soul-mod/tools/otava/projects/soul/token/soul.cpp.op.token.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/token/debug/soul.cpp.op.token.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/token/debug/soul.cpp.op.token.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/token/soul.cpp.op.token.cppm -> D:/work/soul-mod/tools/otava/projects/soul/token/debug/soul.cpp.op.token.module
+> D:/work/soul-mod/tools/otava/projects/soul/token/soul.cpp.token.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/token/debug/soul.cpp.token.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/token/debug/soul.cpp.token.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/token/soul.cpp.token.cppm -> D:/work/soul-mod/tools/otava/projects/soul/token/debug/soul.cpp.token.module
+> D:/work/soul-mod/tools/otava/projects/soul/token/soul.punctuation.token.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/token/debug/soul.punctuation.token.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/token/debug/soul.punctuation.token.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/token/soul.punctuation.token.cppm -> D:/work/soul-mod/tools/otava/projects/soul/token/debug/soul.punctuation.token.module
+> D:/work/soul-mod/tools/otava/projects/soul/token/soul.tool.token.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/token/debug/soul.tool.token.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/token/debug/soul.tool.token.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/token/soul.tool.token.cppm -> D:/work/soul-mod/tools/otava/projects/soul/token/debug/soul.tool.token.module
+> D:/work/soul-mod/tools/otava/projects/soul/token/token.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/token/debug/token.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/token/debug/token.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/token/token.cppm -> D:/work/soul-mod/tools/otava/projects/soul/token/debug/soul.token.module
+0 functions compiled
+0 invokes generated
+0 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/token/debug/soul.token.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling soul.cpp.op.token.cppm.asm...
+  Assembling soul.cpp.token.cppm.asm...
+  Assembling soul.punctuation.token.cppm.asm...
+  Assembling soul.tool.token.cppm.asm...
+  Assembling token.cppm.asm...
+  soul.token.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\token\debug\soul.token.lib
+
+project 'soul.token' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'soul.parser'...
+> D:/work/soul-mod/tools/otava/projects/soul/parser/match.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/parser/debug/match.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/parser/debug/match.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/parser/match.cppm -> D:/work/soul-mod/tools/otava/projects/soul/parser/debug/soul.parser.match.module
+> D:/work/soul-mod/tools/otava/projects/soul/parser/value.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/parser/debug/value.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/parser/debug/value.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/parser/value.cppm -> D:/work/soul-mod/tools/otava/projects/soul/parser/debug/soul.parser.value.module
+> D:/work/soul-mod/tools/otava/projects/soul/parser/parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/parser/debug/parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/parser/debug/parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/parser/parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/parser/debug/soul.parser.module
+3 functions compiled
+0 invokes generated
+0 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/parser/debug/soul.parser.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling match.cppm.asm...
+  Assembling value.cppm.asm...
+  Assembling parser.cppm.asm...
+  soul.parser.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\parser\debug\soul.parser.lib
+
+project 'soul.parser' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'soul.ast'...
+> D:/work/soul-mod/tools/otava/projects/soul/ast/common.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/common.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/common.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ast/common.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/soul.ast.common.module
+> D:/work/soul-mod/tools/otava/projects/soul/ast/source_pos.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/source_pos.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/source_pos.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ast/source_pos.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/soul.ast.source.pos.module
+> D:/work/soul-mod/tools/otava/projects/soul/ast/cpp.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/cpp.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/cpp.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ast/cpp.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/soul.ast.cpp.module
+> D:/work/soul-mod/tools/otava/projects/soul/ast/lexer_pos_pair.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/lexer_pos_pair.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/lexer_pos_pair.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ast/lexer_pos_pair.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/soul.ast.lexer.pos.pair.module
+> D:/work/soul-mod/tools/otava/projects/soul/ast/slg.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/slg.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/slg.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ast/slg.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/soul.ast.slg.module
+> D:/work/soul-mod/tools/otava/projects/soul/ast/re.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/re.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/re.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ast/re.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/soul.ast.re.module
+> D:/work/soul-mod/tools/otava/projects/soul/ast/span.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/span.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/span.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ast/span.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/soul.ast.span.module
+> D:/work/soul-mod/tools/otava/projects/soul/ast/spg.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/spg.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/spg.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ast/spg.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/soul.ast.spg.module
+> D:/work/soul-mod/tools/otava/projects/soul/ast/ast.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/ast.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/ast.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ast/ast.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/soul.ast.module
+> D:/work/soul-mod/tools/otava/projects/soul/ast/common.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/common.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/common.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ast/cpp.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/cpp.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/cpp.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ast/re.cpp
+NODE SOURCE NULL: soul::ast::re::Class::Class(int)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: soul::ast::re::DfaState::DfaState(int, const std::vector<int>&)
+NODE SOURCE NULL: soul::ast::re::Range::Range(char32_t, char32_t)
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/re.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/re.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ast/source_pos.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/source_pos.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/source_pos.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ast/slg.cpp
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/soul/ast/slg.cpp', line 118:
+    rule->SetIndex(rules.size());
+    ^
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/soul/ast/slg.cpp', line 282:
+    expression->SetIndex(expressions.size());
+    ^
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/slg.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/slg.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ast/span.cpp
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/soul/ast/span.cpp', line 38:
+            line = lineStarts.size();
+            ^
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/span.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/span.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ast/spg.cpp
+warning: implicit conversion from 'long long int' to 'int', file 'D:/work/soul-mod/tools/otava/projects/soul/ast/spg.cpp', line 978:
+    rule->SetIndex(rules.size());
+    ^
+> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/spg.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/spg.cpp.asm
+4633 functions compiled
+203 invokes generated
+5 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/ast/debug/soul.ast.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling common.cppm.asm...
+  Assembling source_pos.cppm.asm...
+  Assembling cpp.cppm.asm...
+  Assembling lexer_pos_pair.cppm.asm...
+  Assembling slg.cppm.asm...
+  Assembling re.cppm.asm...
+  Assembling span.cppm.asm...
+  Assembling spg.cppm.asm...
+  Assembling ast.cppm.asm...
+  Assembling common.cpp.asm...
+  Assembling cpp.cpp.asm...
+  Assembling re.cpp.asm...
+  Assembling source_pos.cpp.asm...
+  Assembling slg.cpp.asm...
+  Assembling span.cpp.asm...
+  Assembling spg.cpp.asm...
+  soul.ast.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\ast\debug\soul.ast.lib
+
+project 'soul.ast' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'soul.lexer'...
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/lexeme.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/lexeme.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/lexeme.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/lexeme.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.lexeme.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/token_parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/token_parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/token_parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/token_parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.token.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/token.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/token.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/token.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/token.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.token.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/keyword.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/keyword.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/keyword.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/keyword.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.keyword.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/classmap.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/classmap.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/classmap.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/classmap.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.classmap.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/variables.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/variables.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/variables.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/variables.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.variables.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/parsing_log.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/parsing_log.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/parsing_log.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/parsing_log.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.parsing.log.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/base.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/base.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/base.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/base.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.base.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/file_map.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/file_map.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/file_map.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/file_map.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.file.map.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/error.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/error.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/error.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/error.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.error.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/lexer_class.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/lexer_class.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/lexer_class.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/lexer_class.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.cls.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/lexing_util.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/lexing_util.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/lexing_util.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/lexing_util.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.lexing.util.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/test_lexer.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/test_lexer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/test_lexer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/test_lexer.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.test.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/trivial_lexer.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/trivial_lexer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/trivial_lexer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/trivial_lexer.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.trivial.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/xml_parsing_log.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/xml_parsing_log.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/xml_parsing_log.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/xml_parsing_log.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.xml.parsing.log.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/lexer.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/lexer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/lexer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lexer/lexer.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.module
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/error.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/error.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/error.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/file_map.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/file_map.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/file_map.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/parsing_log.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/parsing_log.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/parsing_log.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/variables.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/variables.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/variables.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/xml_parsing_log.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/xml_parsing_log.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/xml_parsing_log.cpp.asm
+437 functions compiled
+23 invokes generated
+0 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/lexer/debug/soul.lexer.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling lexeme.cppm.asm...
+  Assembling token_parser.cppm.asm...
+  Assembling token.cppm.asm...
+  Assembling keyword.cppm.asm...
+  Assembling classmap.cppm.asm...
+  Assembling variables.cppm.asm...
+  Assembling parsing_log.cppm.asm...
+  Assembling base.cppm.asm...
+  Assembling file_map.cppm.asm...
+  Assembling error.cppm.asm...
+  Assembling lexer_class.cppm.asm...
+  Assembling lexing_util.cppm.asm...
+  Assembling test_lexer.cppm.asm...
+  Assembling trivial_lexer.cppm.asm...
+  Assembling xml_parsing_log.cppm.asm...
+  Assembling lexer.cppm.asm...
+  Assembling error.cpp.asm...
+  Assembling file_map.cpp.asm...
+  Assembling parsing_log.cpp.asm...
+  Assembling variables.cpp.asm...
+  Assembling xml_parsing_log.cpp.asm...
+  soul.lexer.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\lexer\debug\soul.lexer.lib
+
+project 'soul.lexer' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'soul.lex'...
+> D:/work/soul-mod/tools/otava/projects/soul/lex/re.lexer.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/re.lexer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/re.lexer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lex/re.lexer.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/soul.lex.re.module
+> D:/work/soul-mod/tools/otava/projects/soul/lex/slg.lexer.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/slg.lexer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/slg.lexer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lex/slg.lexer.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/soul.lex.slg.module
+> D:/work/soul-mod/tools/otava/projects/soul/lex/spg.lexer.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/spg.lexer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/spg.lexer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/lex/spg.lexer.cppm -> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/soul.lex.spg.module
+> D:/work/soul-mod/tools/otava/projects/soul/lex/re.lexer.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/re.lexer.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/re.lexer.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/lex/slg.lexer.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/slg.lexer.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/slg.lexer.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/lex/spg.lexer.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/spg.lexer.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/spg.lexer.cpp.asm
+969 functions compiled
+0 invokes generated
+0 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/lex/debug/soul.lex.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling re.lexer.cppm.asm...
+  Assembling slg.lexer.cppm.asm...
+  Assembling spg.lexer.cppm.asm...
+  Assembling re.lexer.cpp.asm...
+  Assembling slg.lexer.cpp.asm...
+  Assembling spg.lexer.cpp.asm...
+  soul.lex.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\lex\debug\soul.lex.lib
+
+project 'soul.lex' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'soul.re'...
+> D:/work/soul-mod/tools/otava/projects/soul/re/re.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/re/debug/re.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/re/debug/re.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/re/re.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/re/debug/soul.re.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/re/token_parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/re/debug/token_parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/re/debug/token_parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/re/token_parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/re/debug/soul.re.token.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/re/re.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/re/debug/re.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/re/debug/re.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/re/re.cppm -> D:/work/soul-mod/tools/otava/projects/soul/re/debug/soul.re.module
+> D:/work/soul-mod/tools/otava/projects/soul/re/re.parser.cpp
+NODE SOURCE NULL: soul::parser::Value<soul::ast::re::Nfa>::Value(const soul::ast::re::Nfa&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::re::Nfa>::Value(const soul::ast::re::Nfa&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::re::Nfa>::Value(const soul::ast::re::Nfa&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::re::Nfa>::Value(const soul::ast::re::Nfa&)
+NODE SOURCE NULL: soul::lexer::ParsingException::ParsingException(const std::string&, const std::string&, const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::re::Nfa>::Value(const soul::ast::re::Nfa&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+> D:/work/soul-mod/tools/otava/projects/soul/re/debug/re.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/re/debug/re.parser.cpp.asm
+530 functions compiled
+110 invokes generated
+21 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/re/debug/soul.re.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling re.parser.cppm.asm...
+  Assembling token_parser.cppm.asm...
+  Assembling re.cppm.asm...
+  Assembling re.parser.cpp.asm...
+  soul.re.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\re\debug\soul.re.lib
+
+project 'soul.re' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'soul.cpp'...
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/identifier.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/identifier.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/identifier.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/cpp/identifier.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/soul.cpp.identifier.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/declaration.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/declaration.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/declaration.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/cpp/declaration.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/soul.cpp.declaration.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/declarator.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/declarator.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/declarator.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/cpp/declarator.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/soul.cpp.declarator.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/expression.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/expression.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/expression.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/cpp/expression.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/soul.cpp.expression.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/literal.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/literal.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/literal.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/cpp/literal.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/soul.cpp.literal.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/statement.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/statement.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/statement.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/cpp/statement.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/soul.cpp.statement.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/cpp.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/cpp.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/cpp.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/cpp/cpp.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/soul.cpp.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/declaration.parser.cpp
+NODE SOURCE NULL: soul::ast::cpp::StorageClassSpecifierNode::StorageClassSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::StorageClassSpecifierNode::StorageClassSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::StorageClassSpecifierNode::StorageClassSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::StorageClassSpecifierNode::StorageClassSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::StorageClassSpecifierNode::StorageClassSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeNameNode::TypeNameNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypedefNode::TypedefNode(const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::ast::cpp::ConstNode::ConstNode(const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::ast::cpp::VolatileNode::VolatileNode(const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::ast::cpp::NamespaceAliasNode::NamespaceAliasNode(const soul::ast::SourcePos&, const std::string&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::UsingDeclarationNode::UsingDeclarationNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::UsingDirectiveNode::UsingDirectiveNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::StorageClassSpecifierNode::StorageClassSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::StorageClassSpecifierNode::StorageClassSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::StorageClassSpecifierNode::StorageClassSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::StorageClassSpecifierNode::StorageClassSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::StorageClassSpecifierNode::StorageClassSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeSpecifierNode::TypeSpecifierNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypeNameNode::TypeNameNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::TypedefNode::TypedefNode(const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::ast::cpp::ConstNode::ConstNode(const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::ast::cpp::VolatileNode::VolatileNode(const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::ast::cpp::NamespaceAliasNode::NamespaceAliasNode(const soul::ast::SourcePos&, const std::string&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::UsingDeclarationNode::UsingDeclarationNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::UsingDirectiveNode::UsingDirectiveNode(const soul::ast::SourcePos&, const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/declaration.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/declaration.parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/declarator.parser.cpp
+NODE SOURCE NULL: soul::ast::cpp::InitDeclaratorNode::InitDeclaratorNode(const soul::ast::SourcePos&, const std::string&, soul::ast::cpp::InitializerNode*)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::ast::cpp::InitDeclaratorNode::InitDeclaratorNode(const soul::ast::SourcePos&, const std::string&, soul::ast::cpp::InitializerNode*)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/declarator.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/declarator.parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/expression.parser.cpp
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::lexer::ParsingException::ParsingException(const std::string&, const std::string&, const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::ast::cpp::IdExprNode::IdExprNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::IdExprNode::IdExprNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::IdExprNode::IdExprNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::lexer::ParsingException::ParsingException(const std::string&, const std::string&, const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::cpp::Operator>::Value(const soul::ast::cpp::Operator&)
+NODE SOURCE NULL: soul::ast::cpp::IdExprNode::IdExprNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::IdExprNode::IdExprNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::IdExprNode::IdExprNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/expression.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/expression.parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/identifier.parser.cpp
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/identifier.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/identifier.parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/literal.parser.cpp
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/literal.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/literal.parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/statement.parser.cpp
+NODE SOURCE NULL: soul::lexer::ParsingException::ParsingException(const std::string&, const std::string&, const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::ast::cpp::LabeledStatementNode::LabeledStatementNode(const soul::ast::SourcePos&, const std::string&, soul::ast::cpp::StatementNode*)
+NODE SOURCE NULL: soul::lexer::ParsingException::ParsingException(const std::string&, const std::string&, const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::ast::cpp::LabeledStatementNode::LabeledStatementNode(const soul::ast::SourcePos&, const std::string&, soul::ast::cpp::StatementNode*)
+> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/statement.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/statement.parser.cpp.asm
+5557 functions compiled
+1772 invokes generated
+254 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/cpp/debug/soul.cpp.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling identifier.parser.cppm.asm...
+  Assembling declaration.parser.cppm.asm...
+  Assembling declarator.parser.cppm.asm...
+  Assembling expression.parser.cppm.asm...
+  Assembling literal.parser.cppm.asm...
+  Assembling statement.parser.cppm.asm...
+  Assembling cpp.parser.cppm.asm...
+  Assembling declaration.parser.cpp.asm...
+  Assembling declarator.parser.cpp.asm...
+  Assembling expression.parser.cpp.asm...
+  Assembling identifier.parser.cpp.asm...
+  Assembling literal.parser.cpp.asm...
+  Assembling statement.parser.cpp.asm...
+  soul.cpp.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\cpp\debug\soul.cpp.lib
+
+project 'soul.cpp' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'soul.common'...
+> D:/work/soul-mod/tools/otava/projects/soul/common/common.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/common/debug/common.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/common/debug/common.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/common/common.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/common/debug/soul.common.common.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/common/token_file.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/common/debug/token_file.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/common/debug/token_file.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/common/token_file.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/common/debug/soul.common.token.file.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/common/token_parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/common/debug/token_parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/common/debug/token_parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/common/token_parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/common/debug/soul.common.token.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/common/common.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/common/debug/common.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/common/debug/common.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/common/common.cppm -> D:/work/soul-mod/tools/otava/projects/soul/common/debug/soul.common.module
+> D:/work/soul-mod/tools/otava/projects/soul/common/common_parser_rules.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/common/debug/common_parser_rules.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/common/debug/common_parser_rules.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/common/common_parser_rules.cppm -> D:/work/soul-mod/tools/otava/projects/soul/common/debug/common.parser.rules.module
+> D:/work/soul-mod/tools/otava/projects/soul/common/common.parser.cpp
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::ast::common::ExportModule::ExportModule(const std::string&)
+NODE SOURCE NULL: soul::ast::common::Import::Import(const std::string&, soul::ast::common::ImportPrefix)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::common::ImportPrefix>::Value(const soul::ast::common::ImportPrefix&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::common::ImportPrefix>::Value(const soul::ast::common::ImportPrefix&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::common::ImportPrefix>::Value(const soul::ast::common::ImportPrefix&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::common::ImportPrefix>::Value(const soul::ast::common::ImportPrefix&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::ast::common::ExportModule::ExportModule(const std::string&)
+NODE SOURCE NULL: soul::ast::common::Import::Import(const std::string&, soul::ast::common::ImportPrefix)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::common::ImportPrefix>::Value(const soul::ast::common::ImportPrefix&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::common::ImportPrefix>::Value(const soul::ast::common::ImportPrefix&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::common::ImportPrefix>::Value(const soul::ast::common::ImportPrefix&)
+NODE SOURCE NULL: soul::parser::Value<soul::ast::common::ImportPrefix>::Value(const soul::ast::common::ImportPrefix&)
+> D:/work/soul-mod/tools/otava/projects/soul/common/debug/common.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/common/debug/common.parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/common/common_parser_rules.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/common/debug/common_parser_rules.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/common/debug/common_parser_rules.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/common/token_file.parser.cpp
+NODE SOURCE NULL: soul::ast::common::TokenFile::TokenFile(const std::string&)
+NODE SOURCE NULL: soul::ast::common::TokenCollection::TokenCollection(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: soul::ast::common::Token::Token(const std::string&, const std::string&)
+NODE SOURCE NULL: soul::ast::common::TokenFile::TokenFile(const std::string&)
+NODE SOURCE NULL: soul::ast::common::TokenCollection::TokenCollection(const std::string&)
+NODE SOURCE NULL: soul::ast::common::Token::Token(const std::string&, const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/common/debug/token_file.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/common/debug/token_file.parser.cpp.asm
+1131 functions compiled
+211 invokes generated
+28 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/common/debug/soul.common.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling common.parser.cppm.asm...
+  Assembling token_file.parser.cppm.asm...
+  Assembling token_parser.cppm.asm...
+  Assembling common.cppm.asm...
+  Assembling common_parser_rules.cppm.asm...
+  Assembling common.parser.cpp.asm...
+  Assembling common_parser_rules.cpp.asm...
+  Assembling token_file.parser.cpp.asm...
+  soul.common.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\common\debug\soul.common.lib
+
+project 'soul.common' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'oslg'...
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/classmap.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/classmap.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/classmap.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/oslg/classmap.cppm -> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/soul.slg.classmap.module
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/code_modifier.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/code_modifier.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/code_modifier.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/oslg/code_modifier.cppm -> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/soul.slg.code.modifier.module
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/expression_file.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/expression_file.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/expression_file.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/oslg/expression_file.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/soul.slg.expression.file.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/file_parsers.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/file_parsers.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/file_parsers.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/oslg/file_parsers.cppm -> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/soul.slg.file.parsers.module
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/keyword_file.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/keyword_file.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/keyword_file.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/oslg/keyword_file.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/soul.slg.keyword.file.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/lexer_generator.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/lexer_generator.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/lexer_generator.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/oslg/lexer_generator.cppm -> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/soul.slg.lexer.generator.module
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/lexer_file.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/lexer_file.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/lexer_file.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/oslg/lexer_file.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/soul.slg.lexer.file.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/regular_expression_parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/regular_expression_parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/regular_expression_parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/oslg/regular_expression_parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/soul.slg.regular.expression.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/slg_parsers_rules.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/slg_parsers_rules.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/slg_parsers_rules.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/oslg/slg_parsers_rules.cppm -> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/soul.slg.parsers.rules.module
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/slg_file.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/slg_file.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/slg_file.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/oslg/slg_file.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/soul.slg.slg.file.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/token_generator.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/token_generator.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/token_generator.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/oslg/token_generator.cppm -> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/soul.slg.token.generator.module
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/classmap.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/classmap.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/classmap.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/code_modifier.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/code_modifier.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/code_modifier.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/expression_file.parser.cpp
+NODE SOURCE NULL: soul::lexer::ParsingException::ParsingException(const std::string&, const std::string&, const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::ast::slg::ExpressionFile::ExpressionFile(const std::string&)
+NODE SOURCE NULL: soul::ast::slg::ExpressionCollection::ExpressionCollection(const std::string&)
+NODE SOURCE NULL: soul::ast::slg::Expression::Expression(const std::string&, const std::string&, int)
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/expression_file.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/expression_file.parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/file_parsers.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/file_parsers.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/file_parsers.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/keyword_file.parser.cpp
+NODE SOURCE NULL: soul::ast::slg::KeywordFile::KeywordFile(const std::string&)
+NODE SOURCE NULL: soul::ast::slg::KeywordCollection::KeywordCollection(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: soul::ast::slg::Keyword::Keyword(const soul::ast::SourcePos&, const std::string&, const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/keyword_file.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/keyword_file.parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/lexer_generator.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: soul::ast::re::Class::Class(int)
+NODE SOURCE NULL: soul::ast::re::Class::Class(int)
+NODE SOURCE NULL: soul::ast::re::Class::Class(int)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: soul::ast::re::Class::Class(int)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: soul::ast::cpp::InitDeclaratorNode::InitDeclaratorNode(const soul::ast::SourcePos&, const std::string&, soul::ast::cpp::InitializerNode*)
+NODE SOURCE NULL: soul::ast::cpp::IdExprNode::IdExprNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/lexer_generator.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/lexer_generator.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/lexer_file.parser.cpp
+NODE SOURCE NULL: soul::ast::slg::LexerFile::LexerFile(const std::string&)
+NODE SOURCE NULL: soul::ast::slg::Lexer::Lexer(const std::string&)
+NODE SOURCE NULL: soul::ast::slg::Rule::Rule(const std::string&, soul::ast::cpp::CompoundStatementNode*, int, int)
+NODE SOURCE NULL: soul::ast::slg::Variable::Variable(soul::ast::cpp::TypeIdNode*, const std::string&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/lexer_file.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/lexer_file.parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/regular_expression_parser.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/regular_expression_parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/regular_expression_parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/slg_parsers_rules.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/slg_parsers_rules.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/slg_parsers_rules.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/slg_file.parser.cpp
+NODE SOURCE NULL: soul::ast::slg::SlgFile::SlgFile(const std::string&, const std::string&)
+NODE SOURCE NULL: soul::ast::slg::TokenFileDeclaration::TokenFileDeclaration(const std::string&, bool)
+NODE SOURCE NULL: soul::ast::slg::KeywordFileDeclaration::KeywordFileDeclaration(const std::string&)
+NODE SOURCE NULL: soul::ast::slg::ExpressionFileDeclaration::ExpressionFileDeclaration(const std::string&)
+NODE SOURCE NULL: soul::ast::slg::LexerFileDeclaration::LexerFileDeclaration(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/slg_file.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/slg_file.parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/token_generator.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/token_generator.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/token_generator.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/main.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/main.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/main.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/__main__.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/__main__.cpp.asm
+3934 functions compiled
+724 invokes generated
+43 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/oslg/debug/oslg.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling classmap.cppm.asm...
+  Assembling code_modifier.cppm.asm...
+  Assembling expression_file.parser.cppm.asm...
+  Assembling file_parsers.cppm.asm...
+  Assembling keyword_file.parser.cppm.asm...
+  Assembling lexer_generator.cppm.asm...
+  Assembling lexer_file.parser.cppm.asm...
+  Assembling regular_expression_parser.cppm.asm...
+  Assembling slg_parsers_rules.cppm.asm...
+  Assembling slg_file.parser.cppm.asm...
+  Assembling token_generator.cppm.asm...
+  Assembling classmap.cpp.asm...
+  Assembling code_modifier.cpp.asm...
+  Assembling expression_file.parser.cpp.asm...
+  Assembling file_parsers.cpp.asm...
+  Assembling keyword_file.parser.cpp.asm...
+  Assembling lexer_generator.cpp.asm...
+  Assembling lexer_file.parser.cpp.asm...
+  Assembling regular_expression_parser.cpp.asm...
+  Assembling slg_parsers_rules.cpp.asm...
+  Assembling slg_file.parser.cpp.asm...
+  Assembling token_generator.cpp.asm...
+  Assembling main.cpp.asm...
+  Assembling __main__.cpp.asm...
+  __main__.cpp
+  oslg.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\oslg\debug\oslg.exe
+
+project 'oslg' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'soul.xml.dom'...
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/axis.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/axis.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/axis.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/axis.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.axis.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/node.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/node.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/node.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/node.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.node.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/attribute_node.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/attribute_node.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/attribute_node.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/attribute_node.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.attribute.node.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/character_data.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/character_data.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/character_data.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/character_data.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.character.data.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/text.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/text.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/text.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/text.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.text.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/cdata_section.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/cdata_section.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/cdata_section.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/cdata_section.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.cdata.section.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/comment.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/comment.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/comment.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/comment.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.comment.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/parent_node.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/parent_node.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/parent_node.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/parent_node.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.parent.node.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/element.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/element.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/element.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/element.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.element.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/document.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/document.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/document.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/document.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.document.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/document_fragment.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/document_fragment.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/document_fragment.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/document_fragment.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.document.fragment.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/entity_reference.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/entity_reference.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/entity_reference.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/entity_reference.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.entity.reference.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/processing_instruction.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/processing_instruction.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/processing_instruction.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/processing_instruction.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.processing.instruction.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/error.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/error.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/error.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/error.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.error.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/index.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/index.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/index.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/index.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.index.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/node_operation.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/node_operation.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/node_operation.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/node_operation.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.node.operation.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/visitor.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/visitor.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/visitor.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/visitor.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.visitor.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/dom.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/dom.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/dom.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom/dom.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.dom.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/attribute_node.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/attribute_node.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/attribute_node.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/axis.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/axis.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/axis.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/cdata_section.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/cdata_section.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/cdata_section.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/character_data.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/character_data.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/character_data.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/comment.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/comment.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/comment.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/document.cpp
+NODE SOURCE NULL: soul::xml::XmlException::XmlException(const std::string&, const soul::ast::SourcePos&)
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/document.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/document.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/document_fragment.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/document_fragment.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/document_fragment.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/element.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/element.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/element.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/entity_reference.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/entity_reference.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/entity_reference.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/error.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/error.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/error.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/index.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/index.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/index.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/node.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/node.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/node.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/node_operation.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/node_operation.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/node_operation.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/parent_node.cpp
+NODE SOURCE NULL: soul::xml::XmlException::XmlException(const std::string&, const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::xml::XmlException::XmlException(const std::string&, const soul::ast::SourcePos&)
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/parent_node.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/parent_node.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/processing_instruction.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/processing_instruction.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/processing_instruction.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/text.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/text.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/text.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/visitor.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/visitor.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/visitor.cpp.asm
+957 functions compiled
+60 invokes generated
+3 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom/debug/soul.xml.dom.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling axis.cppm.asm...
+  Assembling node.cppm.asm...
+  Assembling attribute_node.cppm.asm...
+  Assembling character_data.cppm.asm...
+  Assembling text.cppm.asm...
+  Assembling cdata_section.cppm.asm...
+  Assembling comment.cppm.asm...
+  Assembling parent_node.cppm.asm...
+  Assembling element.cppm.asm...
+  Assembling document.cppm.asm...
+  Assembling document_fragment.cppm.asm...
+  Assembling entity_reference.cppm.asm...
+  Assembling processing_instruction.cppm.asm...
+  Assembling error.cppm.asm...
+  Assembling index.cppm.asm...
+  Assembling node_operation.cppm.asm...
+  Assembling visitor.cppm.asm...
+  Assembling dom.cppm.asm...
+  Assembling attribute_node.cpp.asm...
+  Assembling axis.cpp.asm...
+  Assembling cdata_section.cpp.asm...
+  Assembling character_data.cpp.asm...
+  Assembling comment.cpp.asm...
+  Assembling document.cpp.asm...
+  Assembling document_fragment.cpp.asm...
+  Assembling element.cpp.asm...
+  Assembling entity_reference.cpp.asm...
+  Assembling error.cpp.asm...
+  Assembling index.cpp.asm...
+  Assembling node.cpp.asm...
+  Assembling node_operation.cpp.asm...
+  Assembling parent_node.cpp.asm...
+  Assembling processing_instruction.cpp.asm...
+  Assembling text.cpp.asm...
+  Assembling visitor.cpp.asm...
+  soul.xml.dom.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\xml\dom\debug\soul.xml.dom.lib
+
+project 'soul.xml.dom' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'ospg'...
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/array_generator.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/array_generator.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/array_generator.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/array_generator.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.array.generator.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/code_generator.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/code_generator.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/code_generator.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/code_generator.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.code.generator.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/nonterminal_info.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/nonterminal_info.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/nonterminal_info.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/nonterminal_info.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.nonterminal.info.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/code_generator_visitor.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/code_generator_visitor.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/code_generator_visitor.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/code_generator_visitor.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.code.generator.visitor.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/code_modifier.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/code_modifier.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/code_modifier.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/code_modifier.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.code.modifier.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/error.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/error.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/error.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/error.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.error.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/file_parsers.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/file_parsers.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/file_parsers.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/file_parsers.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.file.parsers.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/first_set_computer.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/first_set_computer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/first_set_computer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/first_set_computer.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.first.set.computer.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/linking.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/linking.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/linking.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/linking.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.linking.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/optimizer.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/optimizer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/optimizer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/optimizer.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.optimizer.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/parser_file.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/parser_file.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/parser_file.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/parser_file.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.parser.file.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/parser_generator.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/parser_generator.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/parser_generator.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/parser_generator.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.parser.generator.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/parsing_util.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/parsing_util.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/parsing_util.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/parsing_util.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.parsing.util.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/spg_parsers_rules.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/spg_parsers_rules.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/spg_parsers_rules.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/spg_parsers_rules.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.parsers.rules.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/spg_file.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/spg_file.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/spg_file.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/spg_file.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.spg.file.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/token_parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/token_parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/token_parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/token_parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.token.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/xml_printer.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/xml_printer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/xml_printer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/ospg/xml_printer.cppm -> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/soul.spg.xml.printer.module
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/array_generator.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/array_generator.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/array_generator.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/code_generator.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/code_generator.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/code_generator.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/code_generator_visitor.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/code_generator_visitor.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/code_generator_visitor.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/code_modifier.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::IdExprNode::IdExprNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::IdExprNode::IdExprNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::LiteralNode::LiteralNode(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/code_modifier.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/code_modifier.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/error.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/error.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/error.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/file_parsers.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/file_parsers.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/file_parsers.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/first_set_computer.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/first_set_computer.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/first_set_computer.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/linking.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/linking.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/linking.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/main.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/main.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/main.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/nonterminal_info.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/nonterminal_info.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/nonterminal_info.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/optimizer.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/optimizer.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/optimizer.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/parser_file.parser.cpp
+NODE SOURCE NULL: soul::ast::spg::ParserFile::ParserFile(const std::string&)
+NODE SOURCE NULL: soul::ast::spg::GrammarParser::GrammarParser(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::spg::RuleParser::RuleParser(const soul::ast::SourcePos&, const std::string&)
+NODE SOURCE NULL: soul::ast::spg::Variable::Variable(const soul::ast::SourcePos&, soul::ast::cpp::TypeIdNode*, const std::string&)
+NODE SOURCE NULL: soul::ast::spg::Parameter::Parameter(const soul::ast::SourcePos&, soul::ast::cpp::TypeIdNode*, const std::string&)
+NODE SOURCE NULL: soul::ast::cpp::ExprListNode::ExprListNode(const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::ast::spg::NonterminalParser::NonterminalParser(const soul::ast::SourcePos&, const std::string&, const std::string&, soul::ast::cpp::ExprListNode*)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::ast::spg::CharSet::CharSet()
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: soul::ast::spg::StringParser::StringParser(const soul::ast::SourcePos&, const std::u32string&)
+NODE SOURCE NULL: soul::ast::spg::TokenParser::TokenParser(const soul::ast::SourcePos&, const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/parser_file.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/parser_file.parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/parser_generator.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/parser_generator.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/parser_generator.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/parsing_util.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/parsing_util.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/parsing_util.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/spg_parsers_rules.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/spg_parsers_rules.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/spg_parsers_rules.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/spg_file.parser.cpp
+NODE SOURCE NULL: soul::ast::spg::SpgFile::SpgFile(const std::string&, const std::string&)
+NODE SOURCE NULL: soul::ast::spg::ParserFileDeclaration::ParserFileDeclaration(const soul::ast::SourcePos&, const std::string&, bool)
+NODE SOURCE NULL: soul::ast::spg::TokenFileDeclaration::TokenFileDeclaration(const soul::ast::SourcePos&, const std::string&, bool)
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/spg_file.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/spg_file.parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/xml_printer.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/xml_printer.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/xml_printer.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/__main__.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/__main__.cpp.asm
+3275 functions compiled
+533 invokes generated
+38 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/ospg/debug/ospg.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling array_generator.cppm.asm...
+  Assembling code_generator.cppm.asm...
+  Assembling nonterminal_info.cppm.asm...
+  Assembling code_generator_visitor.cppm.asm...
+  Assembling code_modifier.cppm.asm...
+  Assembling error.cppm.asm...
+  Assembling file_parsers.cppm.asm...
+  Assembling first_set_computer.cppm.asm...
+  Assembling linking.cppm.asm...
+  Assembling optimizer.cppm.asm...
+  Assembling parser_file.parser.cppm.asm...
+  Assembling parser_generator.cppm.asm...
+  Assembling parsing_util.cppm.asm...
+  Assembling spg_parsers_rules.cppm.asm...
+  Assembling spg_file.parser.cppm.asm...
+  Assembling token_parser.cppm.asm...
+  Assembling xml_printer.cppm.asm...
+  Assembling array_generator.cpp.asm...
+  Assembling code_generator.cpp.asm...
+  Assembling code_generator_visitor.cpp.asm...
+  Assembling code_modifier.cpp.asm...
+  Assembling error.cpp.asm...
+  Assembling file_parsers.cpp.asm...
+  Assembling first_set_computer.cpp.asm...
+  Assembling linking.cpp.asm...
+  Assembling main.cpp.asm...
+  Assembling nonterminal_info.cpp.asm...
+  Assembling optimizer.cpp.asm...
+  Assembling parser_file.parser.cpp.asm...
+  Assembling parser_generator.cpp.asm...
+  Assembling parsing_util.cpp.asm...
+  Assembling spg_parsers_rules.cpp.asm...
+  Assembling spg_file.parser.cpp.asm...
+  Assembling xml_printer.cpp.asm...
+  Assembling __main__.cpp.asm...
+  __main__.cpp
+  ospg.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\ospg\debug\ospg.exe
+
+project 'ospg' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'soul.xml.processor'...
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/attribute.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/attribute.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/attribute.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/processor/attribute.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/soul.xml.processor.attribute.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/content_handler.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/content_handler.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/content_handler.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/processor/content_handler.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/soul.xml.content.handler.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/entity.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/entity.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/entity.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/processor/entity.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/soul.xml.processor.entity.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/xml_processor.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/xml_processor.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/xml_processor.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/processor/xml_processor.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/soul.xml.xml_processor.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/processor.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/processor.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/processor.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/processor/processor.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/soul.xml.processor.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/attribute.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/attribute.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/attribute.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/content_handler.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/content_handler.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/content_handler.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/entity.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/entity.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/entity.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/xml_processor.cpp
+NODE SOURCE NULL: soul::xml::XmlException::XmlException(const std::string&, const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::xml::XmlException::XmlException(const std::string&, const soul::ast::SourcePos&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: soul::xml::XmlException::XmlException(const std::string&, const soul::ast::SourcePos&)
+> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/xml_processor.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/xml_processor.cpp.asm
+630 functions compiled
+44 invokes generated
+5 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/processor/debug/soul.xml.processor.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling attribute.cppm.asm...
+  Assembling content_handler.cppm.asm...
+  Assembling entity.cppm.asm...
+  Assembling xml_processor.cppm.asm...
+  Assembling processor.cppm.asm...
+  Assembling attribute.cpp.asm...
+  Assembling content_handler.cpp.asm...
+  Assembling entity.cpp.asm...
+  Assembling xml_processor.cpp.asm...
+  soul.xml.processor.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\xml\processor\debug\soul.xml.processor.lib
+
+project 'soul.xml.processor' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'soul.xml.xml_parser'...
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/xml_document.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/xml_document.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/xml_document.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/xml_document.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/soul.xml.document.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/xml_parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/xml_parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/xml_parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/xml_parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/soul.xml.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/xml_parser_rules.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/xml_parser_rules.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/xml_parser_rules.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/xml_parser_rules.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/soul.xml.parser.rules.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/xml_document.parser.cpp
+NODE SOURCE NULL: soul::parser::Value<bool>::Value(const bool&)
+NODE SOURCE NULL: soul::parser::Value<bool>::Value(const bool&)
+NODE SOURCE NULL: soul::parser::Value<bool>::Value(const bool&)
+NODE SOURCE NULL: soul::parser::Value<bool>::Value(const bool&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<int>::Value(const int&)
+NODE SOURCE NULL: soul::parser::Value<char32_t>::Value(const char32_t&)
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/xml_document.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/xml_document.parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/xml_parser.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/xml_parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/xml_parser.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/xml_parser_rules.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/xml_parser_rules.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/xml_parser_rules.cpp.asm
+1555 functions compiled
+448 invokes generated
+17 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser/debug/soul.xml.xml_parser.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling xml_document.parser.cppm.asm...
+  Assembling xml_parser.cppm.asm...
+  Assembling xml_parser_rules.cppm.asm...
+  Assembling xml_document.parser.cpp.asm...
+  Assembling xml_parser.cpp.asm...
+  Assembling xml_parser_rules.cpp.asm...
+  soul.xml.xml_parser.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\xml\xml_parser\debug\soul.xml.xml_parser.lib
+
+project 'soul.xml.xml_parser' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'soul.xml.dom_parser'...
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/dom_parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/debug/dom_parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/debug/dom_parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/dom_parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/debug/soul.xml.dom.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/document_handler.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/debug/document_handler.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/debug/document_handler.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/document_handler.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/debug/soul.xml.document.handler.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/document_handler.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/debug/document_handler.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/debug/document_handler.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/dom_parser.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/debug/dom_parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/debug/dom_parser.cpp.asm
+183 functions compiled
+6 invokes generated
+0 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/dom_parser/debug/soul.xml.dom_parser.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling dom_parser.cppm.asm...
+  Assembling document_handler.cppm.asm...
+  Assembling document_handler.cpp.asm...
+  Assembling dom_parser.cpp.asm...
+  soul.xml.dom_parser.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\xml\dom_parser\debug\soul.xml.dom_parser.lib
+
+project 'soul.xml.dom_parser' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'soul.xml.xpath'...
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/context.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/context.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/context.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/context.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/soul.xml.xpath.context.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/object.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/object.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/object.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/object.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/soul.xml.xpath.object.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/expr.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/expr.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/expr.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/expr.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/soul.xml.xpath.expr.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/parse.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/parse.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/parse.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/parse.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/soul.xml.xpath.parse.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/evaluate.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/evaluate.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/evaluate.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/evaluate.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/soul.xml.xpath.evaluate.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/function.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/function.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/function.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/function.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/soul.xml.xpath.function.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/parser_rules.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/parser_rules.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/parser_rules.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/parser_rules.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/soul.xml.xpath.parser.rules.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/token_parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/token_parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/token_parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/token_parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/soul.xml.xpath.token.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/xpath.token.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/xpath.token.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/xpath.token.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/xpath.token.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/soul.xml.xpath.token.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/xpath.lexer.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/xpath.lexer.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/xpath.lexer.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/xpath.lexer.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/soul.xml.xpath.lexer.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/xpath.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/xpath.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/xpath.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/xpath.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/soul.xml.xpath.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/xpath.parser.cppm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/xpath.parser.cppm.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/xpath.parser.cppm.asm
+D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/xpath.parser.cppm -> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/soul.xml.xpath.parser.module
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/context.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/context.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/context.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/parse.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/parse.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/parse.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/evaluate.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/evaluate.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/evaluate.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/expr.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: soul::xml::xpath::NodeSet::NodeSet()
+NODE SOURCE NULL: soul::xml::xpath::NodeSet::NodeSet()
+NODE SOURCE NULL: soul::xml::xpath::NodeSet::NodeSet()
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: soul::xml::xpath::NodeSet::NodeSet()
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/expr.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/expr.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/function.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/function.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/function.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/object.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/object.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/object.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/parser_rules.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/parser_rules.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/parser_rules.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/xpath.lexer.cpp
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/xpath.lexer.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/xpath.lexer.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/xpath.parser.cpp
+NODE SOURCE NULL: soul::lexer::ParsingException::ParsingException(const std::string&, const std::string&, const soul::ast::SourcePos&)
+NODE SOURCE NULL: soul::xml::xpath::expr::LocationStepExpr::LocationStepExpr(soul::xml::Axis, soul::xml::xpath::expr::NodeTest*)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::Axis>::Value(const soul::xml::Axis&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: soul::xml::xpath::expr::Literal::Literal(const std::string&)
+NODE SOURCE NULL: soul::xml::xpath::expr::Literal::Literal(const std::string&)
+NODE SOURCE NULL: soul::xml::xpath::expr::PrefixNodeTest::PrefixNodeTest(const std::string&)
+NODE SOURCE NULL: soul::xml::xpath::expr::NameNodeTest::NameNodeTest(const std::string&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::xml::xpath::expr::LocationStepExpr::LocationStepExpr(soul::xml::Axis, soul::xml::xpath::expr::NodeTest*)
+NODE SOURCE NULL: soul::xml::xpath::expr::LocationStepExpr::LocationStepExpr(soul::xml::Axis, soul::xml::xpath::expr::NodeTest*)
+NODE SOURCE NULL: soul::xml::xpath::expr::FunctionCall::FunctionCall(const std::string&)
+NODE SOURCE NULL: soul::parser::Value<std::basic_string<char>>::Value(const std::basic_string<char>&)
+NODE SOURCE NULL: soul::xml::xpath::expr::VariableReference::VariableReference(const std::string&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::xpath::expr::Operator>::Value(const soul::xml::xpath::expr::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::xpath::expr::Operator>::Value(const soul::xml::xpath::expr::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::xpath::expr::Operator>::Value(const soul::xml::xpath::expr::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::xpath::expr::Operator>::Value(const soul::xml::xpath::expr::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::xpath::expr::Operator>::Value(const soul::xml::xpath::expr::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::xpath::expr::Operator>::Value(const soul::xml::xpath::expr::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::xpath::expr::Operator>::Value(const soul::xml::xpath::expr::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::xpath::expr::Operator>::Value(const soul::xml::xpath::expr::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::xpath::expr::Operator>::Value(const soul::xml::xpath::expr::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::xpath::expr::Operator>::Value(const soul::xml::xpath::expr::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::xpath::expr::Operator>::Value(const soul::xml::xpath::expr::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::xpath::expr::Operator>::Value(const soul::xml::xpath::expr::Operator&)
+NODE SOURCE NULL: soul::parser::Value<soul::xml::xpath::expr::Operator>::Value(const soul::xml::xpath::expr::Operator&)
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/xpath.parser.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/xpath.parser.cpp.asm
+2579 functions compiled
+435 invokes generated
+62 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath/debug/soul.xml.xpath.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling context.cppm.asm...
+  Assembling object.cppm.asm...
+  Assembling expr.cppm.asm...
+  Assembling parse.cppm.asm...
+  Assembling evaluate.cppm.asm...
+  Assembling function.cppm.asm...
+  Assembling parser_rules.cppm.asm...
+  Assembling token_parser.cppm.asm...
+  Assembling xpath.token.cppm.asm...
+  Assembling xpath.lexer.cppm.asm...
+  Assembling xpath.cppm.asm...
+  Assembling xpath.parser.cppm.asm...
+  Assembling context.cpp.asm...
+  Assembling parse.cpp.asm...
+  Assembling evaluate.cpp.asm...
+  Assembling expr.cpp.asm...
+  Assembling function.cpp.asm...
+  Assembling object.cpp.asm...
+  Assembling parser_rules.cpp.asm...
+  Assembling xpath.lexer.cpp.asm...
+  Assembling xpath.parser.cpp.asm...
+  soul.xml.xpath.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\xml\xpath\debug\soul.xml.xpath.lib
+
+project 'soul.xml.xpath' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'xml_parser_test'...
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser_test/main.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser_test/debug/main.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser_test/debug/main.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser_test/debug/__main__.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser_test/debug/__main__.cpp.asm
+126 functions compiled
+18 invokes generated
+3 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xml_parser_test/debug/xml_parser_test.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling main.cpp.asm...
+  Assembling __main__.cpp.asm...
+  __main__.cpp
+  xml_parser_test.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\xml\xml_parser_test\debug\xml_parser_test.exe
+
+project 'xml_parser_test' built successfully
+> using configuration 'debug' from 'D:/work/soul-mod/tools/otava/config/config.xml'
+> building project 'xpath_test'...
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath_test/main.cpp
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const std::string&)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+NODE SOURCE NULL: std::runtime_error::runtime_error(const char*)
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath_test/debug/main.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath_test/debug/main.cpp.asm
+> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath_test/debug/__main__.cpp.i
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath_test/debug/__main__.cpp.asm
+92 functions compiled
+17 invokes generated
+4 invokes unresolved
+==> D:/work/soul-mod/tools/otava/projects/soul/xml/xpath_test/debug/xpath_test.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.25
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Assembling main.cpp.asm...
+  Assembling __main__.cpp.asm...
+  __main__.cpp
+  xpath_test.vcxproj -> D:\work\soul-mod\tools\otava\projects\soul\xml\xpath_test\debug\xpath_test.exe
+
+project 'xpath_test' built successfully
+solution 'soul' built successfully

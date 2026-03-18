@@ -2034,6 +2034,14 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
             return;
         }
         std::u32string gn = GetGroupName(subject.get(), context);
+        if (gn == U"Write" && subject->IsBoundMemberExprNode())
+        {
+            BoundMemberExprNode* me = static_cast<BoundMemberExprNode*>(subject.get());
+            if (me->Subject()->GetType()->Name() == U"CodeFormatter&")
+            {
+                int x = 0;
+            }
+        }
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         if (subject->IsBoundTypeNode())
         {

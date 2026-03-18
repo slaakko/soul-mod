@@ -4,6 +4,7 @@
     </configuration>
 	<configuration name='dbg' base='debug'>
 		<define symbol='NOWARN'/>
+		<define symbol='DEBUG_SYMBOL_IO'/>
 	</configuration>
     <configuration name='release'>
         <define symbol='RELEASE'/>
