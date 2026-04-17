@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.optimizer.dead_code_elimination;
 
 namespace otava::optimizer {

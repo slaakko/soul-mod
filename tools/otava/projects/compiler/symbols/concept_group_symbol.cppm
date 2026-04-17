@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.concept_group.symbol;
 
 import std;
@@ -19,7 +14,7 @@ public:
     ConceptGroupSymbol(const std::u32string& name_);
     std::string SymbolKindStr() const override { return "concept group symbol"; }
     std::string SymbolDocKindStr() const override { return "concept_group"; }
-    Symbol* GetSingleSymbol(Context* context) noexcept override;
+    Symbol* GetSingleSymbol(Context* contex) noexcept override;
     void AddConcept(ConceptSymbol* conceptSymbol);
     inline const std::vector<ConceptSymbol*>& Concepts() const noexcept { return concepts; }
     void Accept(Visitor& visitor) override;

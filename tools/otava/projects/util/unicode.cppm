@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module util.unicode;
 
 import std;
@@ -25,8 +20,10 @@ public:
     UnicodeException(const std::string& message_);
 };
 
-void ThrowInvalidUtf8Sequence();
 void ThrowUnicodeException(const std::string& message_);
+void ThrowInvalidUtf8Sequence();
+void ThrowInvalidUtf16Sequence();
+void ThrowInvalidUtf32CodePoint();
 
 std::u32string ToUtf32(const std::string& utf8Str);
 std::u32string ToUtf32(const std::u16string& utf16Str);

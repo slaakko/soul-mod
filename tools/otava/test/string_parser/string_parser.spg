@@ -1,0 +1,3 @@
+project string_parser.parser;
+tokens <string_parser.token>;
+parser <string_parser.parser>;

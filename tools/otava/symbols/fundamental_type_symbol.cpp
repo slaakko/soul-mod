@@ -294,6 +294,7 @@ otava::intermediate::Type* FundamentalTypeSymbol::IrType(Emitter& emitter, const
         default:
         {
             ThrowException("unsupported fundamental type", sourcePos, context);
+            return nullptr;
         }
     }
     return nullptr;
@@ -309,6 +310,7 @@ TypeSymbol* GetFundamentalType(DeclarationFlags fundamentalTypeFlags, const soul
     else
     {
         ThrowException("invalid combination of fundamental type specifiers", sourcePos, context);
+        return nullptr;
     }
 }
 

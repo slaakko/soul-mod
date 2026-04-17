@@ -842,7 +842,9 @@
          </choice>
         </group>
        </sequence>
-       <nonterminal first="{ELLIPSIS}" ruleName="Ellipsis"/>
+       <action first="{ELLIPSIS}">
+        <nonterminal first="{ELLIPSIS}" ruleName="Ellipsis"/>
+       </action>
       </choice>
      </group>
     </action>

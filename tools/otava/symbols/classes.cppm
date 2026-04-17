@@ -44,6 +44,10 @@ class TemplateDeclarationSymbol;
 class TemplateParameterSymbol;
 class BoundCompileUnitNode;
 class BoundFunctionNode;
+class BoundExpressionNode;
+class BoundConstructTemporaryNode;
+class BoundConstructExpressionNode;
+class BoundFunctionCallNode;
 
 enum class ClassKind : std::uint8_t
 {
@@ -190,7 +194,7 @@ class ForwardClassDeclarationSymbol : public TypeSymbol
 public:
     ForwardClassDeclarationSymbol(const std::u32string& name_);
     int Arity() noexcept;
-    util::uuid IrId(Context* context) const noexcept override;
+    util::uuid IrId(const soul::ast::SourcePos& sourcedPos, Context* context) const override;
     inline ClassKind GetClassKind() const noexcept { return classKind; }
     inline void SetClassKind(ClassKind classKind_) noexcept { classKind = classKind_; }
     inline TypeSymbol* Specialization() const noexcept { return specialization; }
@@ -227,6 +231,9 @@ std::vector<ClassTypeSymbol*> ResolveBaseClasses(otava::ast::Node* node, Context
 void ParseInlineMemberFunctions(otava::ast::Node* classSpecifierNode, ClassTypeSymbol* classTypeSymbol, otava::symbols::Context* context);
 Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 void GenerateDestructors(BoundCompileUnitNode* compileUnit, otava::symbols::Context* context);
+BoundFunctionCallNode* MakeDestructorCall(ClassTypeSymbol* cls, BoundExpressionNode* arg, FunctionDefinitionSymbol* destructor,
+    const soul::ast::SourcePos& sourcePos, Context* context);
+void CheckGenerateTemporaryDestructorCall(BoundConstructTemporaryNode* constructTemporary, BoundExpressionNode* arg, Context* context);
 void ThrowMemberDeclarationParsingError(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 void ThrowStatementParsingError(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 

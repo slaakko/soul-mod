@@ -18418,7 +18418,6 @@ soul::lexer::Lexer<OtavaTokenLineLexer<Char>, Char> MakeLexer(const Char* start,
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<OtavaTokenLineLexer<Char>, Char>(start, end, fileName);
     lexer.SetClassMap(GetClassMap<Char>());
-    lexer.SetTokenCollection(GetTokens());
     lexer.SetKeywordMap(GetKeywords<Char>());
     return lexer;
 }
@@ -18429,7 +18428,6 @@ soul::lexer::Lexer<OtavaTokenLineLexer<Char>, Char> MakeLexer(const std::string&
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<OtavaTokenLineLexer<Char>, Char>(start, end, fileName);
     lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags));
-    lexer.SetTokenCollection(GetTokens());
     lexer.SetKeywordMap(GetKeywords<Char>());
     return lexer;
 }

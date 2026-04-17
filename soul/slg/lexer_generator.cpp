@@ -768,8 +768,8 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.WriteLine("soul::lexer::ClassMap<Char>* GetClassMap()");
     interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    interfaceFormatter.WriteLine("static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(\"" + moduleName + ".classmap\");");
-    interfaceFormatter.WriteLine("return classmap;");
+    interfaceFormatter.WriteLine("static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>(\"" + moduleName + ".classmap\"));");
+    interfaceFormatter.WriteLine("return classmap.get();");
     interfaceFormatter.DecIndent();
     interfaceFormatter.WriteLine("}");
     interfaceFormatter.WriteLine();
@@ -777,8 +777,9 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.WriteLine("soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)");
     interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    interfaceFormatter.WriteLine("static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, \"" + moduleName + ".classmap\", resourceFlags);");
-    interfaceFormatter.WriteLine("return classmap;");
+    interfaceFormatter.WriteLine("static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>(moduleFileName, \"" + moduleName + 
+        ".classmap\", resourceFlags));");
+    interfaceFormatter.WriteLine("return classmap.get();");
     interfaceFormatter.DecIndent();
     interfaceFormatter.WriteLine("}");
     interfaceFormatter.WriteLine();

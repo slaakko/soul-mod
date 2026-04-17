@@ -1,0 +1,135 @@
+debug:
+
+@0:     mov             rsi, rcx
+        mov             rdi, rdx
+        mov             qword ptr [rbp+0000000000000008H], rsi
+        mov             qword ptr [rbp+0000000000000010H], rdi
+        mov             rsi, qword ptr [rbp+0000000000000008H]
+        mov             al, 00000080H
+        mov             dil, al
+        mov             dl, dil
+        mov             rcx, rsi
+        call            mfn_Sha1_ProcessByte_C6B0E824A3F5A964787C3130F70D20EECB9E8627
+        mov             rsi, qword ptr [rbp+0000000000000008H]
+        mov             rbx, 0000000000000058H
+        lea             rcx, qword ptr [rsi]
+        lea             rdi, qword ptr [rbx+rcx]
+        mov             sil, byte ptr [rdi]
+        movzx           edi, sil
+        mov             ecx, 00000038H
+        cmp             ecx, edi
+        setc            sil
+        or              sil, sil
+        jnz             @1
+        jmp             @3
+
+@10:    mov             rsi, qword ptr [rbp+0000000000000008H]
+        mov             al, 00000000H
+        mov             dil, al
+        mov             dl, dil
+        mov             rcx, rsi
+        call            mfn_Sha1_ProcessByte_C6B0E824A3F5A964787C3130F70D20EECB9E8627
+        jmp             @12
+@11:    jmp             @2
+@12:    mov             rsi, qword ptr [rbp+0000000000000008H]
+        mov             rbx, 0000000000000058H
+        lea             rcx, qword ptr [rsi]
+        lea             rdi, qword ptr [rbx+rcx]
+        mov             sil, byte ptr [rdi]
+        movzx           edi, sil
+        mov             edx, 00000038H
+        cmp             edi, edx
+        setc            sil
+        or              sil, sil
+        jnz             @10
+        jmp             @11
+
+release 1:
+
+@0:     mov             rsi, rcx
+        mov             rdi, rdx
+        mov             qword ptr [rbp+0000000000000008H], rsi
+        mov             qword ptr [rbp+0000000000000010H], rdi
+        mov             rsi, qword ptr [rbp+0000000000000008H]
+        mov             al, 00000080H
+        mov             dil, al
+        mov             dl, dil
+        mov             rcx, rsi
+        call            mfn_Sha1_ProcessByte_C6B0E824A3F5A964787C3130F70D20EECB9E8627
+        mov             rsi, qword ptr [rbp+0000000000000008H]
+        mov             rbx, 0000000000000058H
+        lea             rcx, qword ptr [rsi]
+        lea             rdi, qword ptr [rbx+rcx]
+        mov             sil, byte ptr [rdi]
+        movzx           edi, sil
+        mov             ecx, 00000038H
+        cmp             ecx, edi
+        setc            sil
+        or              sil, sil
+        jz              @3
+@1:     jmp             @6
+
+@10:    mov             rsi, qword ptr [rbp+0000000000000008H]
+        xor             al, al
+        mov             dil, al
+        mov             dl, dil
+        mov             rcx, rsi
+        call            mfn_Sha1_ProcessByte_C6B0E824A3F5A964787C3130F70D20EECB9E8627
+        jmp             @12
+@11:    jmp             @2
+@12:    mov             rsi, qword ptr [rbp+0000000000000008H]
+        mov             rbx, 0000000000000058H
+        lea             rcx, qword ptr [rsi]
+        lea             rdi, qword ptr [rbx+rcx]
+        mov             sil, byte ptr [rdi]
+        movzx           edi, sil
+        mov             edx, 00000038H
+        cmp             edi, edx
+        setc            sil
+        or              sil, sil
+        jnz             @10
+        jmp             @11
+
+release 2:
+
+@0:     mov             rsi, rcx
+        mov             rdi, rdx
+        mov             qword ptr [rbp+0000000000000008H], rsi
+        mov             qword ptr [rbp+0000000000000010H], rdi
+        mov             rsi, qword ptr [rbp+0000000000000008H]
+        mov             al, 00000080H
+        mov             dil, al
+        mov             qword ptr [rbp+00000000000000C8H], rsi
+        mov             byte ptr [rbp+00000000000000D0H], dil
+        mov             rsi, qword ptr [rbp+0000000000000008H]
+        mov             rbx, 0000000000000058H
+        lea             rcx, qword ptr [rsi]
+        lea             rdi, qword ptr [rbx+rcx]
+        mov             sil, byte ptr [rdi]
+        movzx           edi, sil
+        mov             ecx, 00000038H
+        cmp             ecx, edi
+        setc            sil
+        or              sil, sil
+        jz              @3
+@1:     jmp             @6
+
+@10:    mov             rsi, qword ptr [rbp+0000000000000008H]
+        xor             al, al
+        mov             dil, al
+        mov             qword ptr [rbp+0000000000000178H], rsi
+        mov             byte ptr [rbp+0000000000000180H], dil
+        jmp             @12
+@11:    jmp             @2
+@12:    mov             rsi, qword ptr [rbp+0000000000000008H]
+        mov             rbx, 0000000000000058H
+        lea             rcx, qword ptr [rsi]
+        lea             rdi, qword ptr [rbx+rcx]
+        mov             sil, byte ptr [rdi]
+        movzx           edi, sil
+        mov             edx, 00000038H
+        cmp             edi, edx
+        setc            sil
+        or              sil, sil
+        jnz             @10
+        jmp             @11

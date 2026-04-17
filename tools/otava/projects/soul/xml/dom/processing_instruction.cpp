@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module soul.xml.processing.instruction;
 
 import soul.xml.visitor;

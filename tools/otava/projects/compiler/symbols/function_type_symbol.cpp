@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.function.type.symbol;
 
 import otava.symbols.symbol.table;
@@ -48,16 +43,16 @@ void FunctionTypeSymbol::MakeName()
     SetName(name);
 }
 
-util::uuid FunctionTypeSymbol::IrId(Context* context) const noexcept
+util::uuid FunctionTypeSymbol::IrId(const soul::ast::SourcePos& sourcePos, Context* context) const
 {
     util::uuid id = context->GetSymbolTable()->GetFunctionTypeId();
-    util::uuid returnTypeId = returnType->IrId(context);
+    util::uuid returnTypeId = returnType->IrId(sourcePos, context);
     util::Xor(id, returnTypeId);
     int n = parameterTypes.size();
     for (int i = 0; i < n; ++i)
     {
         TypeSymbol* parameterType = parameterTypes[i];
-        util::uuid paramTypeIrId = parameterType->IrId(context);
+        util::uuid paramTypeIrId = parameterType->IrId(sourcePos, context);
         util::Rotate(paramTypeIrId, (i + 1) & (util::uuid::static_size() - 1));
         util::Xor(id, paramTypeIrId);
     }
@@ -100,14 +95,14 @@ void FunctionTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
     returnType = symbolTable.GetType(returnTypeId);
     if (!returnType)
     {
-        std::string note;
-        Module* requesterModule = context->GetRequesterModule();
-        if (requesterModule)
-        {
-            note = ": note: requester module is " + requesterModule->Name();
-        }
         if (!context->GetFlag(ContextFlags::noWarnings))
         {
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
             std::cout << "FunctionTypeSymbol::Resolve(): warning: return type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
         }
     }
@@ -120,14 +115,14 @@ void FunctionTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
         }
         else
         {
-            std::string note;
-            Module* requesterModule = context->GetRequesterModule();
-            if (requesterModule)
-            {
-                note = ": note: requester module is " + requesterModule->Name();
-            }
             if (!context->GetFlag(ContextFlags::noWarnings))
             {
+                std::string note;
+                Module* requesterModule = context->GetRequesterModule();
+                if (requesterModule)
+                {
+                    note = ": note: requester module is " + requesterModule->Name();
+                }
                 std::cout << "FunctionTypeSymbol::Resolve(): warning: parameter type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
             }
         }
@@ -141,7 +136,7 @@ void FunctionTypeSymbol::Accept(Visitor& visitor)
 
 otava::intermediate::Type* FunctionTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    util::uuid irId = IrId(context);
+    util::uuid irId = IrId(sourcePos, context);
     otava::intermediate::Type* type = emitter.GetType(irId);
     if (!type)
     {

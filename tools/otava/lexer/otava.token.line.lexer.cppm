@@ -1,6 +1,6 @@
 // this file has been automatically generated from 'D:/work/soul-mod/tools/otava/lexer/otava.token.line.lexer' using soul lexer generator slg version 5.0.0
 
-export module soul.cpp20.token.line.lexer;
+export module otava.token.line.lexer;
 
 import std;
 import soul.lexer;
@@ -9,7 +9,7 @@ import soul.ast.common;
 import util;
 import otava.token;
 
-export namespace soul::cpp20::token::line::lexer {
+export namespace otava::token::line::lexer {
 
 std::mutex& MakeLexerMtx();
 
@@ -18386,14 +18386,14 @@ struct OtavaTokenLineLexer
 template<typename Char>
 soul::lexer::ClassMap<Char>* GetClassMap()
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("soul.cpp20.token.line.lexer.classmap");
+    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("otava.token.line.lexer.classmap");
     return classmap;
 }
 
 template<typename Char>
 soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "soul.cpp20.token.line.lexer.classmap", resourceFlags);
+    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "otava.token.line.lexer.classmap", resourceFlags);
     return classmap;
 }
 
@@ -18434,4 +18434,4 @@ soul::lexer::Lexer<OtavaTokenLineLexer<Char>, Char> MakeLexer(const std::string&
     return lexer;
 }
 
-} // namespace soul::cpp20::token::line::lexer
+} // namespace otava::token::line::lexer

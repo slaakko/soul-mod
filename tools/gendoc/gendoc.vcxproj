@@ -118,8 +118,8 @@
       <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnableModules>true</EnableModules>
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
+      <BuildStlModules>true</BuildStlModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,8 +138,8 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnableModules>true</EnableModules>
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
+      <BuildStlModules>true</BuildStlModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,36 +151,41 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="class_diagram.cpp" />
-    <ClCompile Include="class_diagram.ixx" />
+    <ClCompile Include="class_diagram.cppm" />
     <ClCompile Include="class_html_generator.cpp" />
-    <ClCompile Include="class_html_generator.ixx" />
+    <ClCompile Include="class_html_generator.cppm" />
     <ClCompile Include="enum_html_generator.cpp" />
-    <ClCompile Include="enum_html_generator.ixx" />
+    <ClCompile Include="enum_html_generator.cppm" />
     <ClCompile Include="file_html_generator.cpp" />
-    <ClCompile Include="file_html_gererator.ixx" />
+    <ClCompile Include="file_html_gererator.cppm" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="module_html_generastor.ixx" />
+    <ClCompile Include="module_html_generator.cppm" />
     <ClCompile Include="module_html_generator.cpp" />
     <ClCompile Include="namespace_html_generator.cpp" />
-    <ClCompile Include="namespace_html_generator.ixx" />
+    <ClCompile Include="namespace_html_generator.cppm" />
     <ClCompile Include="namespace_symbols.cpp" />
-    <ClCompile Include="namespace_symbols.ixx" />
+    <ClCompile Include="namespace_symbols.cppm" />
     <ClCompile Include="project.cpp" />
-    <ClCompile Include="project.ixx" />
+    <ClCompile Include="project.cppm" />
+    <ClCompile Include="project_html_generator.cpp" />
+    <ClCompile Include="project_html_generator.cppm" />
     <ClCompile Include="style.cpp" />
-    <ClCompile Include="style.ixx" />
-    <ClCompile Include="type_element_generator.ixx" />
+    <ClCompile Include="style.cppm" />
+    <ClCompile Include="type_element_generator.cppm" />
     <ClCompile Include="type_element_generator.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\soul\cpp20\lexer\lexer.vcxproj">
-      <Project>{d11d6f6d-d91c-45ad-b9ea-20cf4a64c061}</Project>
+    <ProjectReference Include="..\..\soul\ast\ast.vcxproj">
+      <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\soul\cpp20\project\project.vcxproj">
-      <Project>{9faf9c96-091f-4413-adc5-a9873d78b68d}</Project>
+    <ProjectReference Include="..\..\soul\lexer\lexer.vcxproj">
+      <Project>{19e63f3e-0845-442b-b894-aed66b30662d}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\soul\cpp20\symbols\symbols.vcxproj">
-      <Project>{936f4a64-4818-450a-b5d3-b285476f8488}</Project>
+    <ProjectReference Include="..\..\soul\parser\parser.vcxproj">
+      <Project>{e4328f76-bce3-454b-be03-63b78a11170a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\soul\token\token.vcxproj">
+      <Project>{9a60acdf-1b45-4184-9d82-86fe5ed2d708}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\soul\xml\dom\dom.vcxproj">
       <Project>{c7d66fce-6e85-4f03-9c35-200f53f37800}</Project>
@@ -194,13 +199,31 @@
     <ProjectReference Include="..\..\util\util.vcxproj">
       <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\otava\ast\ast.vcxproj">
+      <Project>{66f070ac-324d-4b4a-b3f3-d8f48ea46179}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\otava\build\build.vcxproj">
+      <Project>{633d5849-cd60-4c05-805c-d6b7e5fef3a7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\otava\lexer\lexer.vcxproj">
+      <Project>{7d0afedf-e9e8-425a-a9db-d5ab1ceb543a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\otava\parser\parser.vcxproj">
+      <Project>{213b329d-1699-400f-9d94-90af03657db4}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\otava\symbols\symbols.vcxproj">
+      <Project>{4d558c80-ab5b-4c16-bd9c-7e2911c6af7a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\otava\token\token.vcxproj">
+      <Project>{efa877c4-dd94-46c7-867f-cca2ac2a663e}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\..\soul\cpp20\lexer\soul.cpp20.lexer.classmap.rc" />
-    <ResourceCompile Include="..\..\soul\cpp20\lexer\soul.cpp20.token.line.lexer.classmap.rc" />
-    <ResourceCompile Include="..\..\soul\cpp20\project\soul.cpp20.proj.lexer.classmap.rc" />
-    <ResourceCompile Include="..\..\soul\cpp20\project\soul.cpp20.sln.lexer.classmap.rc" />
     <ResourceCompile Include="..\..\soul\xml\xpath\soul.xml.xpath.lexer.classmap.rc" />
+    <ResourceCompile Include="..\otava\build\otava.build.project_lexer.classmap.rc" />
+    <ResourceCompile Include="..\otava\lexer\otava.lexer.classmap.rc" />
+    <ResourceCompile Include="..\otava\lexer\otava.token.line.lexer.classmap.rc" />
+    <ResourceCompile Include="..\otava\pp\otava.pp.lexer.classmap.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -5,13 +5,13 @@
 
 module gendoc.file_html_generator;
 
-import soul.cpp20.lexer.line_tokenizer;
-import soul.cpp20.token;
-import soul.cpp20.symbols;
-import soul.cpp20.ast;
+import otava.lexer.line_tokenizer;
+import otava.token;
+import otava.symbols;
+import otava.ast;
 import soul.xml.dom;
 import util;
-import std.filesystem;
+import std;
 
 namespace gendoc {
 
@@ -81,12 +81,12 @@ std::vector<std::string> ReadLines(const std::string& sourceFilePath)
     return SplitIntoLines(fileContent);
 }
 
-class FileHtmlGenerator : public soul::cpp20::ast::DefaultVisitor
+class FileHtmlGenerator : public otava::ast::DefaultVisitor
 {
 public:
-    FileHtmlGenerator(soul::cpp20::symbols::Module* module_, soul::cpp20::ast::File* file_, const std::string& moduleDir_);
-    void BeginVisit(soul::cpp20::ast::Node& node) override;
-    void EndVisit(soul::cpp20::ast::Node& node) override;
+    FileHtmlGenerator(otava::symbols::Module* module_, otava::ast::File* file_, const std::string& moduleDir_);
+    void BeginVisit(otava::ast::Node& node) override;
+    void EndVisit(otava::ast::Node& node) override;
     void VisitIdentifier(const std::u32string& id, const soul::ast::SourcePos& sourcePos) override;
     void VisitKeyword(const std::string& keyword, const soul::ast::SourcePos& sourcePos) override;
     void VisitOperator(const std::string& symbol, const soul::ast::SourcePos& sourcePos) override;
@@ -98,8 +98,8 @@ private:
     void Advance(const soul::ast::SourcePos& sourcePos);
     void GenerateLine(int lineNumber);
     void AddLineNumberField(int lineNumber);
-    soul::cpp20::symbols::Module* module;
-    soul::cpp20::ast::File* file;
+    otava::symbols::Module* module;
+    otava::ast::File* file;
     std::string moduleDir;
     std::string filePath;
     soul::xml::Document doc;
@@ -115,8 +115,9 @@ private:
     int lineNumberFieldLength;
 };
 
-FileHtmlGenerator::FileHtmlGenerator(soul::cpp20::symbols::Module* module_, soul::cpp20::ast::File* file_, const std::string& moduleDir_) : 
-    module(module_), file(file_), moduleDir(moduleDir_), currentLine(1), currentColumn(1), atBeginningOfLine(true), inBlockComment(false), nextLineToGenerate(1), lineNumberFieldLength(0)
+FileHtmlGenerator::FileHtmlGenerator(otava::symbols::Module* module_, otava::ast::File* file_, const std::string& moduleDir_) :
+    module(module_), file(file_), moduleDir(moduleDir_), currentLine(1), currentColumn(1), atBeginningOfLine(true), 
+    inBlockComment(false), nextLineToGenerate(1), lineNumberFieldLength(0)
 {
     filePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(moduleDir, "file"), util::Path::GetFileName(file->filePath) + ".html"));
     std::filesystem::create_directories(util::Path::GetDirectoryName(filePath));
@@ -206,10 +207,10 @@ void FileHtmlGenerator::GenerateLine(int lineNumber)
     AddLineNumberField(currentLine);
     const std::string& line = lines[lineNumber - 1];
     std::u32string lineContent;
-    std::vector<soul::cpp20::lexer::Token> tokens = soul::cpp20::lexer::TokenizeLine(line, lineContent);
+    std::vector<otava::lexer::Token> tokens = otava::lexer::TokenizeLine(line, lineContent, true);
     for (const auto& token : tokens)
     {
-        if (inBlockComment && token.id != soul::cpp20::token::BLOCK_COMMENT_END)
+        if (inBlockComment && token.id != otava::token::BLOCK_COMMENT_END)
         {
             soul::xml::Element* spanElement = soul::xml::MakeElement("span");
             spanElement->SetAttribute("class", "comment");
@@ -219,7 +220,7 @@ void FileHtmlGenerator::GenerateLine(int lineNumber)
         }
         switch (token.id)
         {
-            case soul::cpp20::token::KEYWORD:
+            case otava::token::KEYWORD:
             {
                 soul::xml::Element* spanElement = soul::xml::MakeElement("span");
                 spanElement->SetAttribute("class", "keyword");
@@ -227,7 +228,7 @@ void FileHtmlGenerator::GenerateLine(int lineNumber)
                 currentElement->AppendChild(spanElement);
                 break;
             }
-            case soul::cpp20::token::ID:
+            case otava::token::ID:
             {
                 soul::xml::Element* spanElement = soul::xml::MakeElement("span");
                 spanElement->SetAttribute("class", "identifier");
@@ -235,10 +236,10 @@ void FileHtmlGenerator::GenerateLine(int lineNumber)
                 currentElement->AppendChild(spanElement);
                 break;
             }
-            case soul::cpp20::token::FLOATING_LITERAL:
-            case soul::cpp20::token::INTEGER_LITERAL:
-            case soul::cpp20::token::CHARACTER_LITERAL:
-            case soul::cpp20::token::STRING_LITERAL:
+            case otava::token::FLOATING_LITERAL:
+            case otava::token::INTEGER_LITERAL:
+            case otava::token::CHARACTER_LITERAL:
+            case otava::token::STRING_LITERAL:
             {
                 soul::xml::Element* spanElement = soul::xml::MakeElement("span");
                 spanElement->SetAttribute("class", "literal");
@@ -246,7 +247,7 @@ void FileHtmlGenerator::GenerateLine(int lineNumber)
                 currentElement->AppendChild(spanElement);
                 break;
             }
-            case soul::cpp20::token::WS:
+            case otava::token::WS:
             {
                 int n = static_cast<int>(token.match.end - token.match.begin);
                 for (int i = 0; i < n; ++i)
@@ -256,7 +257,7 @@ void FileHtmlGenerator::GenerateLine(int lineNumber)
                 }
                 break;
             }
-            case soul::cpp20::token::LINE_COMMENT:
+            case otava::token::LINE_COMMENT:
             {
                 soul::xml::Element* spanElement = soul::xml::MakeElement("span");
                 spanElement->SetAttribute("class", "comment");
@@ -264,7 +265,7 @@ void FileHtmlGenerator::GenerateLine(int lineNumber)
                 currentElement->AppendChild(spanElement);
                 break;
             }
-            case soul::cpp20::token::BLOCK_COMMENT_START:
+            case otava::token::BLOCK_COMMENT_START:
             {
                 soul::xml::Element* spanElement = soul::xml::MakeElement("span");
                 spanElement->SetAttribute("class", "comment");
@@ -273,7 +274,7 @@ void FileHtmlGenerator::GenerateLine(int lineNumber)
                 inBlockComment = true;
                 break;
             }
-            case soul::cpp20::token::BLOCK_COMMENT_END:
+            case otava::token::BLOCK_COMMENT_END:
             {
                 soul::xml::Element* spanElement = soul::xml::MakeElement("span");
                 spanElement->SetAttribute("class", "comment");
@@ -282,7 +283,7 @@ void FileHtmlGenerator::GenerateLine(int lineNumber)
                 inBlockComment = false;
                 break;
             }
-            case soul::cpp20::token::PP_LINE:
+            case otava::token::PP_LINE:
             {
                 soul::xml::Element* spanElement = soul::xml::MakeElement("span");
                 spanElement->SetAttribute("class", "pp");
@@ -290,7 +291,7 @@ void FileHtmlGenerator::GenerateLine(int lineNumber)
                 currentElement->AppendChild(spanElement);
                 break;
             }
-            case soul::cpp20::token::OTHER:
+            case otava::token::OTHER:
             {
                 soul::xml::Element* spanElement = soul::xml::MakeElement("span");
                 spanElement->SetAttribute("class", "other");
@@ -302,13 +303,13 @@ void FileHtmlGenerator::GenerateLine(int lineNumber)
     }
 }
 
-void FileHtmlGenerator::BeginVisit(soul::cpp20::ast::Node& node)
+void FileHtmlGenerator::BeginVisit(otava::ast::Node& node)
 {
     Advance(node.GetSourcePos());
     nextLineToGenerate = node.GetSourcePos().line + 1;
 }
 
-void FileHtmlGenerator::EndVisit(soul::cpp20::ast::Node& node)
+void FileHtmlGenerator::EndVisit(otava::ast::Node& node)
 {
 }
 
@@ -402,20 +403,25 @@ void FileHtmlGenerator::VisitHeaderName(const std::u32string& rep, const soul::a
 void FileHtmlGenerator::WriteDoc()
 {
     std::ofstream file(filePath);
+    if (!file)
+    {
+        otava::symbols::SetExceptionThrown();
+        throw std::runtime_error("could not create file '" + filePath + "'");
+    }
     util::CodeFormatter formatter(file);
     formatter.SetIndentSize(1);
     doc.Write(formatter);
 }
 
-void GenerateFileHtml(soul::cpp20::symbols::Module* module, const std::string& moduleDir)
+void GenerateFileHtml(otava::symbols::Module* module, const std::string& moduleDir)
 {
-    soul::cpp20::ast::File* interfaceFile = module->GetFile();
+    otava::ast::File* interfaceFile = module->GetFile();
     FileHtmlGenerator generator(module, interfaceFile, moduleDir);
     interfaceFile->content->Accept(generator);
     generator.WriteDoc();
     for (const auto& implementationUnit : module->ImplementationUnits())
     {
-        soul::cpp20::ast::File* implementationFile = implementationUnit->GetFile();
+        otava::ast::File* implementationFile = implementationUnit->GetFile();
         FileHtmlGenerator generator(implementationUnit, implementationFile, moduleDir);
         implementationFile->content->Accept(generator);
         generator.WriteDoc();

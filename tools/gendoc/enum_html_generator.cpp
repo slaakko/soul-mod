@@ -6,30 +6,29 @@
 module gendoc.enum_html_generator;
 
 import util;
-import soul.cpp20.symbols;
 import soul.xml.dom;
 
 namespace gendoc {
 
-class EnumHtmlGenerator : public soul::cpp20::symbols::DefaultVisitor
+class EnumHtmlGenerator : public otava::symbols::DefaultVisitor
 {
 public:
-    EnumHtmlGenerator(const std::string& modulePath_, soul::cpp20::symbols::Module* module_);
-    void Visit(soul::cpp20::symbols::EnumeratedTypeSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::EnumConstantSymbol& symbol) override;
+    EnumHtmlGenerator(const std::string& modulePath_, otava::symbols::Module* module_);
+    void Visit(otava::symbols::EnumeratedTypeSymbol& symbol) override;
+    void Visit(otava::symbols::EnumConstantSymbol& symbol) override;
     void WriteDoc();
 private:
     void GenerateEnumConstantTable();
     std::string modulePath;
-    soul::cpp20::symbols::Module* module;
+    otava::symbols::Module* module;
     std::string filePath;
     soul::xml::Document doc;
     soul::xml::Element* bodyElement;
     soul::xml::Element* currentElement;
-    std::vector<soul::cpp20::symbols::EnumConstantSymbol*> enumConstants;
+    std::vector<otava::symbols::EnumConstantSymbol*> enumConstants;
 };
 
-EnumHtmlGenerator::EnumHtmlGenerator(const std::string& modulePath_, soul::cpp20::symbols::Module* module_) : 
+EnumHtmlGenerator::EnumHtmlGenerator(const std::string& modulePath_, otava::symbols::Module* module_) :
     modulePath(modulePath_),
     module(module_),
     bodyElement(nullptr),
@@ -37,7 +36,7 @@ EnumHtmlGenerator::EnumHtmlGenerator(const std::string& modulePath_, soul::cpp20
 {
 }
 
-void EnumHtmlGenerator::Visit(soul::cpp20::symbols::EnumeratedTypeSymbol& symbol)
+void EnumHtmlGenerator::Visit(otava::symbols::EnumeratedTypeSymbol& symbol)
 {
     filePath = util::GetFullPath(util::Path::Combine(modulePath, symbol.DocName() + ".html"));
     soul::xml::Element* htmlElement = soul::xml::MakeElement("html");
@@ -69,7 +68,7 @@ void EnumHtmlGenerator::Visit(soul::cpp20::symbols::EnumeratedTypeSymbol& symbol
     DefaultVisitor::Visit(symbol);
 }
 
-void EnumHtmlGenerator::Visit(soul::cpp20::symbols::EnumConstantSymbol& symbol)
+void EnumHtmlGenerator::Visit(otava::symbols::EnumConstantSymbol& symbol)
 {
     enumConstants.push_back(&symbol);
 }
@@ -101,9 +100,12 @@ void EnumHtmlGenerator::GenerateEnumConstantTable()
         tdElement->AppendChild(enumNameText);
         soul::xml::Element* tdValueElement = soul::xml::MakeElement("td");
         trEnumConstantElement->AppendChild(tdValueElement);
-        std::string valueStr = util::ToUtf8(enumConstant->GetValue()->ToString());
-        soul::xml::Text* valueText = soul::xml::MakeText(valueStr);
-        tdValueElement->AppendChild(valueText);
+        if (enumConstant->GetValue())
+        {
+            std::string valueStr = util::ToUtf8(enumConstant->GetValue()->ToString());
+            soul::xml::Text* valueText = soul::xml::MakeText(valueStr);
+            tdValueElement->AppendChild(valueText);
+        }
     }
 }
 
@@ -111,12 +113,17 @@ void EnumHtmlGenerator::WriteDoc()
 {
     GenerateEnumConstantTable();
     std::ofstream file(filePath);
+    if (!file)
+    {
+        otava::symbols::SetExceptionThrown();
+        throw std::runtime_error("could not create file '" + filePath + "'");
+    }
     util::CodeFormatter formatter(file);
     formatter.SetIndentSize(1);
     doc.Write(formatter);
 }
 
-void GenerateEnumHtml(const std::string& modulePath, soul::cpp20::symbols::Module* module, soul::cpp20::symbols::EnumeratedTypeSymbol* enumTypeSymbol)
+void GenerateEnumHtml(const std::string& modulePath, otava::symbols::Module* module, otava::symbols::EnumeratedTypeSymbol* enumTypeSymbol)
 {
     EnumHtmlGenerator generator(modulePath, module);
     enumTypeSymbol->Accept(generator);

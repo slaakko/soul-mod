@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.scope;
 
 import otava.symbols.symbol;
@@ -239,8 +234,8 @@ Symbol* Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind,
             errorMessage.append(util::ToUtf8(symbol->FullName()));
         }
         ThrowException(errorMessage, sourcePos, context);
+        return nullptr;
     }
-    return nullptr;
 }
 
 Scope* Scope::GroupScope() noexcept

@@ -265,6 +265,7 @@ private:
 };
 
 void MakeNodeFactoryCollection();
+NodeIdFactory* GetNodeIdFactory() noexcept;
 void SetNodeIdFactory(NodeIdFactory* factory) noexcept;
 Node* CreateNode(NodeKind nodeKind, const soul::ast::SourcePos& sourcePos);
 std::int64_t GetNextNodeId() noexcept;

@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.ast.node;
 
 import std;
@@ -266,6 +261,7 @@ private:
 
 void MakeNodeFactoryCollection();
 void SetNodeIdFactory(NodeIdFactory* factory) noexcept;
+NodeIdFactory* GetNodeIdFactory();
 Node* CreateNode(NodeKind nodeKind, const soul::ast::SourcePos& sourcePos);
 std::int64_t GetNextNodeId() noexcept;
 

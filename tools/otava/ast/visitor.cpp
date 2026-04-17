@@ -933,6 +933,7 @@ void DefaultVisitor::Visit(TrailingAttributesNode& node)
 void DefaultVisitor::Visit(NoexceptSpecifierNode& node)
 {
     BeginVisit(node);
+    VisitKeyword("noexcept", node.GetSourcePos());
     if (node.ConstantExpr())
     {
         VisitOperator("(", node.LParenPos());
@@ -947,6 +948,14 @@ void DefaultVisitor::Visit(ThrowSpecifierNode& node)
     BeginVisit(node);
     VisitOperator("(", node.LParenPos());
     VisitOperator("}", node.RParenPos());
+    EndVisit(node);
+}
+
+void DefaultVisitor::Visit(ThrowExprNode& node)
+{
+    BeginVisit(node);
+    VisitKeyword("throw", node.GetSourcePos());
+    VisitUnaryNode(node);
     EndVisit(node);
 }
 

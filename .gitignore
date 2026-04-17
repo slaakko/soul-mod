@@ -34,8 +34,6 @@ bootstrap
 lib
 trace
 repository
-dbg
-rel
 debug
 release
 Debug

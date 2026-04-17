@@ -5,8 +5,6 @@
 
 module gendoc.namespace_symbols;
 
-import soul.cpp20.symbols;
-
 namespace gendoc {
 
 NamespaceSymbols::NamespaceSymbols(const std::string& namespaceName_) : namespaceName(namespaceName_)

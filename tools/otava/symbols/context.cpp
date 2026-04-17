@@ -47,6 +47,7 @@ RangeForBlockIds::RangeForBlockIds() : compoundBlockId(-1), forActionStatementId
 Context::Context() : 
     symbolTable(nullptr), 
     lexer(nullptr), 
+    requesterModule(nullptr),
     traceInfo(nullptr),
     currentProject(nullptr),
     flags(ContextFlags::none), 
@@ -88,7 +89,10 @@ Context::Context() :
     nextBlockId(0),
     currentBlockId(-1),
     parentFn(nullptr),
-    parentBlockId(-1)
+    parentBlockId(-1),
+    parentStatementIndex(-1),
+    debugOutputStream(nullptr),
+    nodeId(-1)
 {
 }
 
@@ -179,6 +183,20 @@ std::string Context::FileName() const
     {
         return fileName;
     }
+}
+
+int Context::Line() const
+{
+    if (lexer)
+    {
+        return lexer->Line();
+    }
+    return 0;
+}
+
+void Context::SetFunction(const std::u32string& function_)
+{
+    function = function_;
 }
 
 void Context::PushFlags() 
@@ -520,9 +538,63 @@ void Context::PopParentBlockId()
     parentBlockIdStack.pop();
 }
 
+void Context::PushParentStatementIndex(int parentStatementIndex_)
+{
+    parentStatementIndexStack.push(parentStatementIndex);
+    parentStatementIndex = parentStatementIndex_;
+}
+
+void Context::PopParentStatementIndex()
+{
+    parentStatementIndex = parentStatementIndexStack.top();
+    parentStatementIndexStack.pop();
+}
+
 RangeForBlockIds& Context::GetRangeForBlockIds(const util::uuid& rangeForId)
 {
     return rangeForBlockIdMap[rangeForId];
+}
+
+void Context::SetDebugFn(const std::u32string& debugFn_)
+{
+    debugFn = debugFn_;
+}
+
+void Context::PushNodeId(std::int64_t nodeId_)
+{
+    nodeIdStack.push(nodeId);
+    nodeId = nodeId_;
+}
+
+void Context::PopNodeId()
+{
+    nodeId = nodeIdStack.top();
+    nodeIdStack.pop();
+}
+
+void PrintDebugMessage(Context* context, const std::string& message)
+{
+    if (context->GetFlag(ContextFlags::debug))
+    {
+        std::ostream* s = context->DebugOutputStream();
+        if (!s)
+        {
+            s = &std::cout;
+        }
+        *s << message << "\n";
+    }
+}
+
+Context* currentContext = nullptr;
+
+Context* CurrentContext()
+{
+    return currentContext;
+}
+
+void SetCurrentContext(Context* context)
+{
+    currentContext = context;
 }
 
 } // namespace otava::symbols

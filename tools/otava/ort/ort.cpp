@@ -112,15 +112,14 @@ const char* ort_get_cwd(char* buf, int bufSize)
     return wd;
 }
 
-void* current_exception = nullptr;
-std::uint64_t currentExceptionTypeIdHigh = 0;
-std::uint64_t currentExceptionTypeIdLow = 0;
-
 bool debugMemory = false;
+
 void ort_debug_memory()
 {
     debugMemory = true;
 }
+
+std::string outFilePath;
 
 void* ort_malloc(std::int64_t size)
 {
@@ -132,13 +131,91 @@ void* ort_malloc(std::int64_t size)
     return block;
 }
 
-void* free_ptr = nullptr;
+void* ort_debug_operator_new(void* block, const char* function, const char* sourceFilePath, int line)
+{
+    ort::memory::set_info(block, function, sourceFilePath, line);
+    return block;
+}
+
+void ort_preprocess_args(int argc, const char** argv, int* pargc, const char*** pargv)
+{
+    std::vector<std::string> args;
+    for (int i = 0; i < argc; ++i)
+    {
+        std::string arg = argv[i];
+        if (i > 0)
+        {
+            if (arg.starts_with("--"))
+            {
+                if (arg.find('=') != std::string::npos)
+                {
+                    std::vector<std::string> components = util::Split(arg, '=');
+                    if (components.size() == 2)
+                    {
+                        if (components[0] == "--ort-break")
+                        {
+                            int serial = std::stoi(components[1]);
+                            ort::memory::set_allocation_serial(serial);
+                            continue;
+                        }
+                        else if (components[0] == "--ort-out")
+                        {
+                            outFilePath = components[1];
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+        args.push_back(arg);
+    }
+    int n = args.size();
+    int m = (n + 1) * sizeof(char*);
+    int size = m;
+    for (int i = 0; i < n; ++i)
+    {
+        size += args[i].length() + 1;
+    }
+    void* block = operator new(size);
+    const char** v = static_cast<const char**>(block);
+    char* p = static_cast<char*>(block);
+    p += m;
+    for (int i = 0; i < n; ++i)
+    {
+#pragma warning(disable : 4996)
+        std::strcpy(p, args[i].c_str());
+#pragma warning(default : 4996)
+        v[i] = p;
+        p += args[i].length() + 1;
+    }
+    v[n] = nullptr;
+    *pargc = n;
+    *pargv = v;
+}
+
+void ort_print_memory_leaks()
+{
+    std::ostream* s = nullptr;
+    std::ofstream out;
+    if (!outFilePath.empty())
+    {
+        out.open(outFilePath);
+        s = &out;
+        std::cout << "memory leaks written to file '" + outFilePath + "'" << "\n";
+    }
+    else
+    {
+        s = &std::cout;
+    }
+    ort::memory::print_leaks(s);
+}
 
 void ort_free(void* ptr)
 {
     if (debugMemory)
     {
-        ort::memory::free(ptr);
+        bool do_free = ort::memory::free(ptr);
+        if (!do_free) return;
     }
     std::free(ptr);
 }

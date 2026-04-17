@@ -827,6 +827,7 @@ public:
     void Visit(TrailingAttributesNode& node) override;
     void Visit(NoexceptSpecifierNode& node) override;
     void Visit(ThrowSpecifierNode& node) override;
+    void Visit(ThrowExprNode& node) override;
     // Enum:
     void Visit(EnumSpecifierNode& node) override;
     void Visit(EnumHeadNode& node) override;

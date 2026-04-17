@@ -21,7 +21,7 @@ import otava.symbols.symbol.table;
 
 namespace otava::symbols {
 
-NamespaceSymbol::NamespaceSymbol(const std::u32string& name_) : ContainerSymbol(SymbolKind::namespaceSymbol, name_)
+NamespaceSymbol::NamespaceSymbol(const std::u32string& name_) : ContainerSymbol(SymbolKind::namespaceSymbol, name_), symbolTable(nullptr)
 {
     GetScope()->SetKind(ScopeKind::namespaceScope);
 }
@@ -123,6 +123,18 @@ bool NamespaceSymbol::ContainsSymbols() const noexcept
         if (!symbol->IsNamespaceSymbol()) return true;
     }
     return false;
+}
+
+SymbolTable* NamespaceSymbol::GetSymbolTable() noexcept
+{
+    if (symbolTable)
+    {
+        return symbolTable;
+    }
+    else
+    {
+        return Parent()->GetSymbolTable();
+    }
 }
 
 class NamespaceCreator : public otava::ast::DefaultVisitor

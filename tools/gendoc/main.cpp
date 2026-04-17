@@ -3,18 +3,38 @@
 // Distributed under the MIT license
 // =================================
 
-import gendoc.project;
-import std.core;
+import std;
 import util;
+import gendoc.project;
+import otava.symbols;
+import otava.symbols.init;
+import otava.symbols.expr.parser;
+import otava.symbols.stmt.parser;
+import otava.symbols.decl_specifier_seq.parser;
+import otava.parser.recorded.parse;
+import otava.expr.parser;
+import otava.stmt.parser;
+import otava.decl_specifier_seq.parser;
 
 std::string Version()
 {
-    return "4.1.0";
+    return "5.0.0";
 }
 
 void PrintHelp()
 {
-
+    std::cout << "gendoc reference documentation generator version " << Version() << "\n";
+    std::cout << "usage: gendoc [options] [paths]" << "\n";
+    std::cout << "options:\n";
+    std::cout << "--verbose | -v" << "\n";
+    std::cout << "  Be verbose." << "\n";
+    std::cout << "--force | -f" << "\n";
+    std::cout << "  Rebuild although up to date." << "\n";
+    std::cout << "--help | -h" << "\n";
+    std::cout << "  Print help and exit." << "\n";
+    std::cout << "paths:\n";
+    std::cout << "  If no paths are given and current directory contains 'gendoc.xml' file, process it." << "\n";
+    std::cout << "  If paths to gendoc.xml's are given, process them in order." << "\n";
 }
 
 int main(int argc, const char** argv)
@@ -22,6 +42,11 @@ int main(int argc, const char** argv)
     try
     {
         util::Init();
+        otava::symbols::Init();
+        otava::parser::recorded::parse::Init();
+        otava::symbols::SetExprParser(otava::parser::ParseExpression);
+        otava::symbols::SetStmtParser(otava::parser::ParseStatement);
+        otava::symbols::SetDeclarationSpecifierSequenceParser(otava::parser::ParseDeclarationSpecifierSequence);
         bool verbose = false;
         bool force = false;
         bool multithreaded = false;

@@ -1,0 +1,33 @@
+export module fruits.parser;
+
+[interface]import fruits;
+[implementation]import fruits.lexer;
+[implementation]import fruits.token;
+
+parser FruitParser
+{
+    lexer fruits::lexer::FruitLexer<char32_t>;
+
+    main;
+
+    FruitList(std::vector<std::unique_ptr<fruits::fruit>>* fruitList)
+        ::= 
+        (
+            LPAREN 
+            (
+                Fruit:first{ fruitList->push_back(std::unique_ptr<fruits::fruit>(first)); } 
+                (
+                    COMMA
+                    Fruit:next{ fruitList->push_back(std::unique_ptr<fruits::fruit>(next)); }
+                )*
+            )?
+            RPAREN
+        )
+        ;
+
+    Fruit() : fruits::fruit*
+        ::= APPLE{ return new apple(); }
+        |   ORANGE{ return new orange(); }
+        |   BANANA{ return new banana(); }
+        ;
+}

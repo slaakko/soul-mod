@@ -88,7 +88,7 @@ private:
     int pointerCount;
     bool typeResolved;
     bool createTypeSymbol;
-    BoundExpressionNode* size;
+    std::unique_ptr<BoundExpressionNode> size;
     soul::ast::SourcePos sourcePos;
 };
 
@@ -101,7 +101,7 @@ TypeResolver::TypeResolver(Context* context_, const soul::ast::SourcePos& source
     pointerCount(0), 
     typeResolved(false), 
     createTypeSymbol(false),
-    size(nullptr),
+    size(),
     sourcePos(sourcePos_)
 {
 }

@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.intermediate.linear_scan_register_allocator;
 
 import otava.intermediate.code;

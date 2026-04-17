@@ -121,7 +121,7 @@ struct FundamentalTypeConversion : public FunctionSymbol
     {
         FunctionSymbol::Read(reader);
         distance = reader.GetBinaryStreamReader().ReadInt();
-        conversionKind = static_cast<ConversionKind>(static_cast<std::int32_t>(reader.GetBinaryStreamReader().ReadByte()));
+        conversionKind = static_cast<ConversionKind>(reader.GetBinaryStreamReader().ReadByte());
         reader.GetBinaryStreamReader().ReadUuid(paramTypeId);
         reader.GetBinaryStreamReader().ReadUuid(argTypeId);
     }

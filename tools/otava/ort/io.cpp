@@ -65,7 +65,6 @@ void io_table::clear()
 
 void ort_io_init()
 {
-
 }
 
 void ort_io_done()

@@ -4,7 +4,7 @@ reference <../../util/util.project>;
 reference <../../soul/ast/ast.project>;
 reference <../../soul/lexer/lexer.project>;
 reference <../../soul/parser/parser.project>;
-reference <../../soul/xml/dom/soul.xml.dom.project>;
+reference <../../soul/xml/dom/dom.project>;
 reference <../assembly/assembly.project>;
 reference <../intermediate/intermediate.project>;
 reference <../optimizer/optimizer.project>;

@@ -8,20 +8,19 @@ module gendoc.class_html_generator;
 import gendoc.type_element_generator;
 import gendoc.class_diagram;
 import util;
-import soul.cpp20.symbols;
 import soul.xml.dom;
 
 namespace gendoc {
 
-class ClassHtmlGenerator : public soul::cpp20::symbols::DefaultVisitor
+class ClassHtmlGenerator : public otava::symbols::DefaultVisitor
 {
 public:
-    ClassHtmlGenerator(const std::string& modulePath_, soul::cpp20::symbols::Module* module_);
-    void Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::EnumeratedTypeSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::AliasTypeSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::FunctionSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::VariableSymbol& symbol) override;
+    ClassHtmlGenerator(const std::string& modulePath_, otava::symbols::Module* module_);
+    void Visit(otava::symbols::ClassTypeSymbol& symbol) override;
+    void Visit(otava::symbols::EnumeratedTypeSymbol& symbol) override;
+    void Visit(otava::symbols::AliasTypeSymbol& symbol) override;
+    void Visit(otava::symbols::FunctionSymbol& symbol) override;
+    void Visit(otava::symbols::VariableSymbol& symbol) override;
     void GenerateClassSection();
     void GenerateEnumerationSection();
     void GenerateTypeAliasSection();
@@ -29,22 +28,22 @@ public:
     void GenerateVariableSection();
     void WriteDoc();
 private:
-    soul::cpp20::symbols::ClassTypeSymbol* currentClass;
+    otava::symbols::ClassTypeSymbol* currentClass;
     std::string modulePath;
-    soul::cpp20::symbols::Module* module;
+    otava::symbols::Module* module;
     std::string filePath;
     soul::xml::Document doc;
     soul::xml::Element* bodyElement;
     soul::xml::Element* currentElement;
     bool innerClass;
-    std::vector<soul::cpp20::symbols::AliasTypeSymbol*> typeAliases;
-    std::vector<soul::cpp20::symbols::ClassTypeSymbol*> classes;
-    std::vector<soul::cpp20::symbols::EnumeratedTypeSymbol*> enumerations;
-    std::vector<soul::cpp20::symbols::FunctionSymbol*> functions;
-    std::vector<soul::cpp20::symbols::VariableSymbol*> variables;
+    std::vector<otava::symbols::AliasTypeSymbol*> typeAliases;
+    std::vector<otava::symbols::ClassTypeSymbol*> classes;
+    std::vector<otava::symbols::EnumeratedTypeSymbol*> enumerations;
+    std::vector<otava::symbols::FunctionSymbol*> functions;
+    std::vector<otava::symbols::VariableSymbol*> variables;
 };
 
-ClassHtmlGenerator::ClassHtmlGenerator(const std::string& modulePath_, soul::cpp20::symbols::Module* module_) : 
+ClassHtmlGenerator::ClassHtmlGenerator(const std::string& modulePath_, otava::symbols::Module* module_) :
     currentClass(nullptr),
     modulePath(modulePath_), 
     module(module_),
@@ -54,7 +53,7 @@ ClassHtmlGenerator::ClassHtmlGenerator(const std::string& modulePath_, soul::cpp
 {
 }
 
-void ClassHtmlGenerator::Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol)
+void ClassHtmlGenerator::Visit(otava::symbols::ClassTypeSymbol& symbol)
 {
     if (innerClass)
     {
@@ -77,17 +76,17 @@ void ClassHtmlGenerator::Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol)
         std::string title = util::ToUtf8(symbol.Name());
         switch (symbol.GetClassKind())
         {
-            case soul::cpp20::symbols::ClassKind::class_:
+            case otava::symbols::ClassKind::class_:
             {
                 title.append(" Class");
                 break;
             }
-            case soul::cpp20::symbols::ClassKind::struct_:
+            case otava::symbols::ClassKind::struct_:
             {
                 title.append(" Struct");
                 break;
             }
-            case soul::cpp20::symbols::ClassKind::union_:
+            case otava::symbols::ClassKind::union_:
             {
                 title.append(" Union");
                 break;
@@ -134,7 +133,7 @@ void ClassHtmlGenerator::Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol)
             bodyElement->AppendChild(divElement);
         }
         htmlElement->AppendChild(bodyElement);
-        soul::cpp20::symbols::TemplateDeclarationSymbol* templateDeclaration = symbol.ParentTemplateDeclaration();
+        otava::symbols::TemplateDeclarationSymbol* templateDeclaration = symbol.ParentTemplateDeclaration();
         if (templateDeclaration)
         {
             soul::xml::Element* h2Element = soul::xml::MakeElement("h2");
@@ -179,22 +178,22 @@ void ClassHtmlGenerator::Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol)
     }
 }
 
-void ClassHtmlGenerator::Visit(soul::cpp20::symbols::EnumeratedTypeSymbol& symbol)
+void ClassHtmlGenerator::Visit(otava::symbols::EnumeratedTypeSymbol& symbol)
 {
     enumerations.push_back(&symbol);
 }
 
-void ClassHtmlGenerator::Visit(soul::cpp20::symbols::AliasTypeSymbol& symbol)
+void ClassHtmlGenerator::Visit(otava::symbols::AliasTypeSymbol& symbol)
 {
     typeAliases.push_back(&symbol);
 }
 
-void ClassHtmlGenerator::Visit(soul::cpp20::symbols::FunctionSymbol& symbol)
+void ClassHtmlGenerator::Visit(otava::symbols::FunctionSymbol& symbol)
 {
     functions.push_back(&symbol);
 }
 
-void ClassHtmlGenerator::Visit(soul::cpp20::symbols::VariableSymbol& symbol)
+void ClassHtmlGenerator::Visit(otava::symbols::VariableSymbol& symbol)
 {
     variables.push_back(&symbol);
 }
@@ -202,7 +201,7 @@ void ClassHtmlGenerator::Visit(soul::cpp20::symbols::VariableSymbol& symbol)
 void ClassHtmlGenerator::GenerateTypeAliasSection()
 {
     if (typeAliases.empty()) return;
-    std::sort(typeAliases.begin(), typeAliases.end(), soul::cpp20::symbols::AliasTypeLess());
+    std::sort(typeAliases.begin(), typeAliases.end(), otava::symbols::AliasTypeLess());
     soul::xml::Element* h2Element = soul::xml::MakeElement("h2");
     bodyElement->AppendChild(h2Element);
     soul::xml::Text* h2Text = soul::xml::MakeText("Type Aliases");
@@ -239,7 +238,7 @@ void ClassHtmlGenerator::GenerateTypeAliasSection()
 void ClassHtmlGenerator::GenerateClassSection()
 {
     if (classes.empty()) return;
-    std::sort(classes.begin(), classes.end(), soul::cpp20::symbols::ClassLess());
+    std::sort(classes.begin(), classes.end(), otava::symbols::ClassLess());
     soul::xml::Element* h2Element = soul::xml::MakeElement("h2");
     bodyElement->AppendChild(h2Element);
     soul::xml::Text* h2Text = soul::xml::MakeText("Classes");
@@ -266,7 +265,7 @@ void ClassHtmlGenerator::GenerateClassSection()
         soul::xml::Element* spanSpecifiersElement = soul::xml::MakeElement("span");
         spanSpecifiersElement->SetAttribute("class", "specifier");
         tdSpecifiersElement->AppendChild(spanSpecifiersElement);
-        std::string accessStr = soul::cpp20::symbols::AccessStr(cls->GetAccess());
+        std::string accessStr = otava::symbols::AccessStr(cls->GetAccess());
         if (!accessStr.empty())
         {
             soul::xml::Text* accessText = soul::xml::MakeText(accessStr);
@@ -285,7 +284,7 @@ void ClassHtmlGenerator::GenerateClassSection()
 void ClassHtmlGenerator::GenerateEnumerationSection()
 {
     if (enumerations.empty()) return;
-    std::sort(enumerations.begin(), enumerations.end(), soul::cpp20::symbols::EnumTypeLess());
+    std::sort(enumerations.begin(), enumerations.end(), otava::symbols::EnumTypeLessFunctor());
     soul::xml::Element* h2Element = soul::xml::MakeElement("h2");
     bodyElement->AppendChild(h2Element);
     soul::xml::Text* h2Text = soul::xml::MakeText("Enumerated Types");
@@ -312,7 +311,7 @@ void ClassHtmlGenerator::GenerateEnumerationSection()
         spanSpecifiersElement->SetAttribute("class", "specifier");
         tdSpecifiersElement->AppendChild(spanSpecifiersElement);
         trEnumElement->AppendChild(tdSpecifiersElement);
-        std::string accessStr = soul::cpp20::symbols::AccessStr(enumType->GetAccess());
+        std::string accessStr = otava::symbols::AccessStr(enumType->GetAccess());
         if (!accessStr.empty())
         {
             soul::xml::Text* accessText = soul::xml::MakeText(accessStr);
@@ -331,7 +330,7 @@ void ClassHtmlGenerator::GenerateEnumerationSection()
 void ClassHtmlGenerator::GenerateFunctionSection()
 {
     if (functions.empty()) return;
-    std::sort(functions.begin(), functions.end(), soul::cpp20::symbols::FunctionLess());
+    std::sort(functions.begin(), functions.end(), otava::symbols::FunctionLess());
     soul::xml::Element* h2Element = soul::xml::MakeElement("h2");
     bodyElement->AppendChild(h2Element);
     soul::xml::Text* h2Text = soul::xml::MakeText("Member Functions");
@@ -355,6 +354,7 @@ void ClassHtmlGenerator::GenerateFunctionSection()
     thFunctionElement->AppendChild(thFunctionText);
     for (const auto& function : functions)
     {
+        if (function->IsTrivialDestructor() || function->Name() == U"@destructor") continue;
         soul::xml::Element* trElement = soul::xml::MakeElement("tr");
         tableElement->AppendChild(trElement);
         soul::xml::Element* tdSpecifiersElement = soul::xml::MakeElement("td");
@@ -363,14 +363,14 @@ void ClassHtmlGenerator::GenerateFunctionSection()
         tdSpecifiersElement->AppendChild(spanSpecifierElement);
         spanSpecifierElement->SetAttribute("class", "specifier");
         spanSpecifierElement->SetAttribute("xml:space", "preserve");
-        std::string accessStr = soul::cpp20::symbols::AccessStr(function->GetAccess());
+        std::string accessStr = otava::symbols::AccessStr(function->GetAccess());
         if (!accessStr.empty())
         {
             soul::xml::Text* accessText = soul::xml::MakeText(accessStr);
             spanSpecifierElement->AppendChild(accessText);
         }
-        soul::cpp20::symbols::DeclarationFlags flags = function->GetDeclarationFlags();
-        std::string specifierStr = soul::cpp20::symbols::DeclarationFlagStr(flags);
+        otava::symbols::DeclarationFlags flags = function->GetDeclarationFlags();
+        std::string specifierStr = otava::symbols::DeclarationFlagStr(flags);
         if (!specifierStr.empty())
         {
             if (!accessStr.empty())
@@ -410,7 +410,7 @@ void ClassHtmlGenerator::GenerateFunctionSection()
                 soul::xml::Text* commaText = soul::xml::MakeText(", ");
                 spanElement->AppendChild(commaText);
             }
-            soul::cpp20::symbols::TypeSymbol* parameterType = parameter->GetType();
+            otava::symbols::TypeSymbol* parameterType = parameter->GetType();
             soul::xml::Element* typeElement = GenerateTypeXmlElement(module, currentClass, parameterType);
             spanElement->AppendChild(typeElement);
             if (!parameter->Name().empty())
@@ -420,12 +420,13 @@ void ClassHtmlGenerator::GenerateFunctionSection()
             }
             if (parameter->DefaultValue())
             {
-                AddValue(spanElement, parameter->DefaultValue(), module, currentClass);
+                otava::symbols::TypeSymbol* charPtrType = otava::symbols::CurrentContext()->GetSymbolTable()->MakeConstCharPtrType(otava::symbols::CurrentContext());
+                AddValue(spanElement, new otava::symbols::StringValue(util::ToUtf8(parameter->DefaultValue()->Str()), charPtrType), module, currentClass);
             }
         }
         soul::xml::Text* rparenText = soul::xml::MakeText(")");
         spanElement->AppendChild(rparenText);
-        std::string qualifierStr = soul::cpp20::symbols::MakeFunctionQualifierStr(function->Qualifiers());
+        std::string qualifierStr = otava::symbols::MakeFunctionQualifierStr(function->Qualifiers());
         if (!qualifierStr.empty())
         {
             soul::xml::Element* spanQualifierElement = soul::xml::MakeElement("span");
@@ -434,6 +435,14 @@ void ClassHtmlGenerator::GenerateFunctionSection()
             spanQualifierElement->AppendChild(qualifierText);
             spanElement->AppendChild(spanQualifierElement);
         }
+        if (function->IsNoExcept())
+        {
+            soul::xml::Element* spanNoexceptElement = soul::xml::MakeElement("span");
+            spanNoexceptElement->SetAttribute("class", "specifier");
+            soul::xml::Text* noexceptText = soul::xml::MakeText(" noexcept");
+            spanNoexceptElement->AppendChild(noexceptText);
+            spanElement->AppendChild(spanNoexceptElement);
+        }
         tdFunctionElement->AppendChild(spanElement);
     }
 }
@@ -441,7 +450,7 @@ void ClassHtmlGenerator::GenerateFunctionSection()
 void ClassHtmlGenerator::GenerateVariableSection()
 {
     if (variables.empty()) return;
-    std::sort(variables.begin(), variables.end(), soul::cpp20::symbols::VariableLess());
+    std::sort(variables.begin(), variables.end(), otava::symbols::VariableLess());
     soul::xml::Element* h2Element = soul::xml::MakeElement("h2");
     bodyElement->AppendChild(h2Element);
     soul::xml::Text* h2Text = soul::xml::MakeText("Member Variables");
@@ -477,14 +486,14 @@ void ClassHtmlGenerator::GenerateVariableSection()
         tdSpecifiersElement->AppendChild(spanSpecifierElement);
         spanSpecifierElement->SetAttribute("class", "specifier");
         spanSpecifierElement->SetAttribute("xml:space", "preserve");
-        std::string accessStr = soul::cpp20::symbols::AccessStr(variable->GetAccess());
+        std::string accessStr = otava::symbols::AccessStr(variable->GetAccess());
         if (!accessStr.empty())
         {
             soul::xml::Text* accessText = soul::xml::MakeText(accessStr);
             spanSpecifierElement->AppendChild(accessText);
         }
-        soul::cpp20::symbols::DeclarationFlags flags = variable->GetDeclarationFlags();
-        std::string specifierStr = soul::cpp20::symbols::DeclarationFlagStr(flags);
+        otava::symbols::DeclarationFlags flags = variable->GetDeclarationFlags();
+        std::string specifierStr = otava::symbols::DeclarationFlagStr(flags);
         if (!specifierStr.empty())
         {
             if (!accessStr.empty())
@@ -520,12 +529,17 @@ void ClassHtmlGenerator::WriteDoc()
     GenerateFunctionSection();
     GenerateVariableSection();
     std::ofstream file(filePath);
+    if (!file)
+    {
+        otava::symbols::SetExceptionThrown();
+        throw std::runtime_error("could not create file '" + filePath + "'");
+    }
     util::CodeFormatter formatter(file);
     formatter.SetIndentSize(1);
     doc.Write(formatter);
 }
 
-void GenerateClassHtml(const std::string& modulePath, soul::cpp20::symbols::Module* module, soul::cpp20::symbols::ClassTypeSymbol* classTypeSymbol)
+void GenerateClassHtml(const std::string& modulePath, otava::symbols::Module* module, otava::symbols::ClassTypeSymbol* classTypeSymbol)
 {
     ClassHtmlGenerator generator(modulePath, module);
     classTypeSymbol->Accept(generator);

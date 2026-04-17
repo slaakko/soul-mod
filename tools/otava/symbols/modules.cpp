@@ -29,12 +29,12 @@ std::string MakeModuleDirPath(const std::string& root, const std::string& config
 {
     if (configurations.find("release") != configurations.end())
     {
-        return util::GetFullPath(util::Path::Combine(util::Path::Combine(root, config),
+        return util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(root, "bin"), config),
             std::to_string(otava::symbols::GetOptLevel(optLevel, true))));
     }
     else
     {
-        return util::GetFullPath(util::Path::Combine(root, config));
+        return util::GetFullPath(util::Path::Combine(util::Path::Combine(root, "bin"), config));
     }
 }
 
@@ -42,12 +42,12 @@ std::string MakeModuleFilePath(const std::string& root, const std::string& confi
 {
     if (configurations.find("release") != configurations.end())
     {
-        return util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(root, config), 
+        return util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(util::Path::Combine(root, "bin"), config),
             std::to_string(otava::symbols::GetOptLevel(optLevel, true))), moduleName + ".module"));
     }
     else
     {
-        return util::GetFullPath(util::Path::Combine(util::Path::Combine(root, config), moduleName + ".module"));
+        return util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(root, "bin"), config), moduleName + ".module"));
     }
 }
 
@@ -63,6 +63,11 @@ bool ModuleLess::operator()(Module* left, Module* right) const noexcept
     return left->Id() < right->Id();
 }
 
+bool ModuleNameLess::operator()(Module* left, Module* right) const noexcept
+{
+    return left->Name() < right->Name();
+}
+
 util::uuid MakeProjectId(const std::string& projectName) noexcept
 {
     std::uint64_t hashCode = std::hash<std::string>()(projectName);
@@ -72,7 +77,7 @@ util::uuid MakeProjectId(const std::string& projectName) noexcept
 }
 
 Module::Module(const std::string& name_) : 
-    kind(ModuleKind::interfaceModule), name(name_), symbolTable(), evaluationContext(symbolTable), fileId(-1), index(-1), importIndex(-1), reading(false)
+    kind(ModuleKind::interfaceModule), name(name_), symbolTable(), evaluationContext(symbolTable), fileId(-1), index(-1), importIndex(-1), reading(false), main(false)
 {
     symbolTable.SetModule(this);
 }
@@ -318,6 +323,7 @@ void Module::AddDependsOnModule(Module* dependsOnModule)
 void Module::Write(Writer& writer, Context* context)
 {
     writer.GetBinaryStreamWriter().Write(static_cast<std::int8_t>(kind));
+    writer.GetBinaryStreamWriter().Write(main);
     writer.GetBinaryStreamWriter().Write(name);
     writer.GetBinaryStreamWriter().Write(filePath);
     writer.GetBinaryStreamWriter().Write(projectId);
@@ -356,6 +362,7 @@ void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
     }
     reading = true;
     kind = static_cast<ModuleKind>(reader.GetBinaryStreamReader().ReadSByte());
+    main = reader.GetBinaryStreamReader().ReadBool();
     name = reader.GetBinaryStreamReader().ReadUtf8String();
     filePath = reader.GetBinaryStreamReader().ReadUtf8String();
     reader.GetBinaryStreamReader().ReadUuid(projectId);
@@ -380,6 +387,8 @@ void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
 void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config, int optLevel, const std::set<std::string>& configurations, 
     Context* context)
 {
+    Context* prevReaderContext = reader.GetContext();
+    reader.SetContext(context);
     reader.SetSymbolTable(&symbolTable);
     symbolTable.SetSymbolMap(moduleMapper.GetSymbolMap());
     reader.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
@@ -387,7 +396,7 @@ void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std:
 #ifdef DEBUG_SYMBOL_IO
     std::cout << ">module '" << Name() << "' read symbol table" << "\n";
 #endif
-    symbolTable.Read(reader);
+    symbolTable.Read(reader, context);
 #ifdef DEBUG_SYMBOL_IO
     std::cout << "<module '" << Name() << "' read symbol table" << "\n";
 #endif
@@ -419,14 +428,14 @@ void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std:
 #ifdef DEBUG_SYMBOL_IO
     std::cout << ">module '" << Name() << "' resolve symbols" << "\n";
 #endif
-    symbolTable.Resolve(reader.GetContext());
+    symbolTable.Resolve(context);
 #ifdef DEBUG_SYMBOL_IO
     std::cout << "<module '" << Name() << "' resolve symbols" << "\n";
 #endif
 #ifdef DEBUG_SYMBOL_IO
     std::cout << ">module '" << Name() << "' resolve evaluation context" << "\n";
 #endif
-    evaluationContext.Resolve(symbolTable, reader.GetContext());
+    evaluationContext.Resolve(symbolTable, context);
 #ifdef DEBUG_SYMBOL_IO
     std::cout << "<module '" << Name() << "' resolve evaluation context" << "\n";
 #endif
@@ -437,6 +446,7 @@ void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std:
 #ifdef DEBUG_SYMBOL_IO
     std::cout << "<module '" << Name() << "' import after resolve" << "\n";
 #endif
+    reader.SetContext(prevReaderContext);
     reading = false;
 }
 
@@ -531,6 +541,8 @@ Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::strin
 #ifdef DEBUG_SYMBOL_IO
     std::cout << ">module mapper load module '" << moduleName << "'" << "\n";
 #endif
+    FunctionDefinitionSymbolSet* prevSymbolSet = context->GetFunctionDefinitionSymbolSet();
+    context->SetFunctionDefinitionSymbolSet(functionDefinitionSymbolSet);
     Reader reader(moduleFilePath);
     std::unique_ptr<Module> module(new Module(moduleName));
     module->SetFilePath(moduleFilePath);
@@ -566,6 +578,7 @@ Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::strin
 #ifdef DEBUG_SYMBOL_IO
     std::cout << ">module mapper load module '" << moduleName << "'" << "\n";
 #endif
+    context->SetFunctionDefinitionSymbolSet(prevSymbolSet);
     return modulePtr;
 }
 

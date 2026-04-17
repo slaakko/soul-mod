@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'D:/work/soul-mod/soul/slg/keyword_file.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/soul/oslg/keyword_file.parser' using soul parser generator ospg version 5.0.0
 
 module soul.slg.keyword.file.parser;
 
@@ -20,23 +20,23 @@ template<typename LexerT>
 std::unique_ptr<soul::ast::slg::KeywordFile> KeywordFileParser<LexerT>::Parse(LexerT& lexer)
 {
     std::unique_ptr<soul::ast::slg::KeywordFile> value;
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
     {
         lexer.Log()->WriteBeginRule("parse");
         lexer.Log()->IncIndent();
     }
-#endif
+    #endif
     ++lexer;
     soul::parser::Match match = KeywordFileParser<LexerT>::KeywordFile(lexer);
     value.reset(static_cast<soul::ast::slg::KeywordFile*>(match.value));
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
     {
         lexer.Log()->DecIndent();
         lexer.Log()->WriteEndRule("parse");
     }
-#endif
+    #endif
     if (match.hit)
     {
         if (*lexer == soul::lexer::END_TOKEN)
@@ -58,7 +58,7 @@ std::unique_ptr<soul::ast::slg::KeywordFile> KeywordFileParser<LexerT>::Parse(Le
 template<typename LexerT>
 soul::parser::Match KeywordFileParser<LexerT>::KeywordFile(LexerT& lexer)
 {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
@@ -66,7 +66,7 @@ soul::parser::Match KeywordFileParser<LexerT>::KeywordFile(LexerT& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "KeywordFile");
     }
-#endif
+    #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8613845327771860993);
     std::unique_ptr<soul::ast::slg::KeywordFile> keywordFile = std::unique_ptr<soul::ast::slg::KeywordFile>();
     std::unique_ptr<soul::ast::slg::KeywordCollection> keywordCollection = std::unique_ptr<soul::ast::slg::KeywordCollection>();
@@ -306,21 +306,21 @@ soul::parser::Match KeywordFileParser<LexerT>::KeywordFile(LexerT& lexer)
         {
             keywordFile->SetKeywordCollection(keywordCollection.release());
             {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "KeywordFile");
-#endif
+                #endif
                 return soul::parser::Match(true, keywordFile.release());
             }
         }
         *parentMatch0 = match;
     }
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)
     {
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "KeywordFile");
         else soul::lexer::WriteFailureToLog(lexer, "KeywordFile");
     }
-#endif
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -331,7 +331,7 @@ soul::parser::Match KeywordFileParser<LexerT>::KeywordFile(LexerT& lexer)
 template<typename LexerT>
 soul::parser::Match KeywordFileParser<LexerT>::Imports(LexerT& lexer, soul::ast::slg::KeywordFile* keywordFile)
 {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
@@ -339,7 +339,7 @@ soul::parser::Match KeywordFileParser<LexerT>::Imports(LexerT& lexer, soul::ast:
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Imports");
     }
-#endif
+    #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8613845327771860994);
     std::unique_ptr<soul::ast::common::Import> imp;
     soul::parser::Match match(true);
@@ -378,13 +378,13 @@ soul::parser::Match KeywordFileParser<LexerT>::Imports(LexerT& lexer, soul::ast:
             }
         }
     }
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)
     {
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Imports");
         else soul::lexer::WriteFailureToLog(lexer, "Imports");
     }
-#endif
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -395,7 +395,7 @@ soul::parser::Match KeywordFileParser<LexerT>::Imports(LexerT& lexer, soul::ast:
 template<typename LexerT>
 soul::parser::Match KeywordFileParser<LexerT>::Keyword(LexerT& lexer)
 {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
@@ -403,7 +403,7 @@ soul::parser::Match KeywordFileParser<LexerT>::Keyword(LexerT& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Keyword");
     }
-#endif
+    #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8613845327771860995);
     std::string str = std::string();
     std::string tokenName = std::string();
@@ -525,21 +525,21 @@ soul::parser::Match KeywordFileParser<LexerT>::Keyword(LexerT& lexer)
         if (match.hit)
         {
             {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Keyword");
-#endif
+                #endif
                 return soul::parser::Match(true, new soul::ast::slg::Keyword(lexer.GetSourcePos(pos), str, tokenName));
             }
         }
         *parentMatch0 = match;
     }
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)
     {
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Keyword");
         else soul::lexer::WriteFailureToLog(lexer, "Keyword");
     }
-#endif
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

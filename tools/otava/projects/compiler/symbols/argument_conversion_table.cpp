@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.argument.conversion.table;
 
 import otava.symbols.context;
@@ -144,11 +139,12 @@ void DerivedToBaseConversion::GenerateCode(Emitter& emitter, std::vector<BoundEx
         ThrowException("class pointer types expected", sourcePos, context);
     }
     std::pair<bool, std::int64_t> p = Delta(derivedClassType, baseClassType, emitter, context);
-    if (!p.first)
+    bool success = p.first;
+    std::int64_t delta = p.second;
+    if (!success)
     {
         ThrowException("classes have no inheritance relationship", sourcePos, context);
     }
-    std::int64_t delta = p.second;
     otava::intermediate::Value* classPtr = emitter.Stack().Pop();
     otava::intermediate::Value* deltaValue = emitter.EmitLong(delta);
     emitter.Stack().Push(emitter.EmitClassPtrConversion(classPtr, deltaValue, baseTypePtr->IrType(emitter, sourcePos, context), true));
@@ -232,11 +228,12 @@ void BaseToDerivedConversion::GenerateCode(Emitter& emitter, std::vector<BoundEx
         ThrowException("class pointer types expected", sourcePos, context);
     }
     std::pair<bool, std::int64_t> p = Delta(baseClassType, derivedClassType, emitter, context);
-    if (!p.first)
+    bool success = p.first;
+    std::int64_t delta = p.second;
+    if (!success)
     {
         ThrowException("classes have no inheritance relationship", sourcePos, context);
     }
-    std::int64_t delta = p.second;
     otava::intermediate::Value* classPtr = emitter.Stack().Pop();
     otava::intermediate::Value* deltaValue = emitter.EmitLong(delta);
     emitter.Stack().Push(emitter.EmitClassPtrConversion(classPtr, deltaValue, derivedTypePtr->IrType(emitter, sourcePos, context), true));
@@ -278,6 +275,7 @@ FunctionSymbol* BaseToDerivedArgumentConversion::Get(TypeSymbol* paramType, Type
         return new BaseToDerivedConversion(argType, paramType, distance, context);
     }
     return nullptr;
+
 }
 
 class DynamicPtrCast : public FunctionSymbol
@@ -332,11 +330,12 @@ void DynamicPtrCast::GenerateCode(Emitter& emitter, std::vector<BoundExpressionN
     emitter.EmitBranch(test, trueBlock, falseBlock);
     emitter.SetCurrentBasicBlock(trueBlock);
     std::pair<bool, std::int64_t> p = Delta(baseClassType, derivedClassType, emitter, context);
-    if (!p.first)
+    bool success = p.first;
+    std::int64_t delta = p.second;
+    if (!success)
     {
         ThrowException("classes have no inheritance relationship", sourcePos, context);
     }
-    std::int64_t delta = p.second;
     otava::intermediate::Value* deltaValue = emitter.EmitLong(delta);
     otava::intermediate::Type* derivedClassIrType = derivedClassType->IrType(emitter, sourcePos, context)->AddPointer(emitter.GetIntermediateContext());
     otava::intermediate::Value* ptr = emitter.EmitClassPtrConversion(value, deltaValue, derivedClassIrType, false);

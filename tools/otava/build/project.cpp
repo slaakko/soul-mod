@@ -130,7 +130,10 @@ void Project::LoadModules(otava::symbols::ModuleMapper& moduleMapper, const std:
         if (module)
         {
             moduleMap[module->Name()] = module.get();
-            moduleNames.push_back(module->Name());
+            if (std::find(moduleNames.begin(), moduleNames.end(), module->Name()) == moduleNames.end())
+            {
+                moduleNames.push_back(module->Name());
+            }
         }
     }
     for (const auto& module : modules)
@@ -187,6 +190,13 @@ void Project::SetModule(std::int32_t fileId, otava::symbols::Module* module)
     module->SetIndex(modules.size());
     modules.push_back(std::unique_ptr<otava::symbols::Module>(module));
     fileIdModuleMap[fileId] = module;
+    if (module->Kind() == otava::symbols::ModuleKind::interfaceModule)
+    {
+        if (std::find(moduleNames.begin(), moduleNames.end(), module->Name()) == moduleNames.end())
+        {
+            moduleNames.push_back(module->Name());
+        }
+    }
 }
 
 otava::symbols::Module* Project::GetModule(const std::string& moduleName) const
@@ -283,7 +293,7 @@ bool Project::UpToDate(const std::string& config, int optLevel, const std::set<s
     for (const auto& sourceFileName : sourceFilePaths)
     {
         std::string sourceFilePath = util::Path::Combine(util::Path::GetDirectoryName(FilePath()), sourceFileName);
-        if (!util::FileExists(sourceFilePath) || 
+        if (!util::FileExists(sourceFilePath) ||
             util::LastWriteTime(outputFilePath) < util::LastWriteTime(sourceFilePath))
         {
             return false;

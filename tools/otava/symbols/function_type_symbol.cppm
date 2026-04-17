@@ -16,7 +16,7 @@ public:
     FunctionTypeSymbol();
     FunctionTypeSymbol(const std::u32string& name_);
     bool IsFunctionType() const noexcept override { return true; }
-    util::uuid IrId(Context* context) const noexcept override;
+    util::uuid IrId(const soul::ast::SourcePos& sourcePos, Context* context) const override;
     void MakeName();
     std::string SymbolKindStr() const override { return "function type symbol"; }
     std::string SymbolDocKindStr() const override { return "function_type"; }

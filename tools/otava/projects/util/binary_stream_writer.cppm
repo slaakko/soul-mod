@@ -1,9 +1,5 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module util.binary.stream.writer;
+
 import std;
 import util.stream;
 import util.uuid;

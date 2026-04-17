@@ -63,12 +63,12 @@ void IdentityConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpress
 class IdentityArgumentConversion : public ArgumentConversion
 {
 public:
-    FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, 
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+    FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, 
+        ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context) override;
 };
 
-FunctionSymbol* IdentityArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, 
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+FunctionSymbol* IdentityArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, 
+    ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     if (TypesEqual(argType->PlainType(context), paramType->PlainType(context), context))
     {
@@ -80,12 +80,12 @@ FunctionSymbol* IdentityArgumentConversion::Get(TypeSymbol* paramType, TypeSymbo
 class ClassTemplateSpecializationConversion : public ArgumentConversion
 {
 public:
-    FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+    FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, 
+        ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context) override;
 };
 
 FunctionSymbol* ClassTemplateSpecializationConversion::Get(
-    TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, 
+    TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
     if (context->GetFlag(ContextFlags::matchClassTemplateSpecializationConversion))
@@ -143,7 +143,9 @@ void DerivedToBaseConversion::GenerateCode(Emitter& emitter, std::vector<BoundEx
     {
         ThrowException("class pointer types expected", sourcePos, context);
     }
-    auto [success, delta] = Delta(derivedClassType, baseClassType, emitter, context);
+    std::pair<bool, std::int64_t> p = Delta(derivedClassType, baseClassType, emitter, context);
+    bool success = p.first;
+    std::int64_t delta = p.second;
     if (!success)
     {
         ThrowException("classes have no inheritance relationship", sourcePos, context);
@@ -160,8 +162,8 @@ public:
         const soul::ast::SourcePos& sourcePos, Context* context) override;
 };
 
-FunctionSymbol* DerivedToBaseArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, 
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+FunctionSymbol* DerivedToBaseArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, 
+    ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     int distance = 0;
     if (paramType->PointerCount() == 1 && argType->PointerCount() == 1 && argType->GetBaseType()->HasBaseClass(paramType->GetBaseType(), distance, context))
@@ -230,7 +232,9 @@ void BaseToDerivedConversion::GenerateCode(Emitter& emitter, std::vector<BoundEx
     {
         ThrowException("class pointer types expected", sourcePos, context);
     }
-    auto [success, delta] = Delta(baseClassType, derivedClassType, emitter, context);
+    std::pair<bool, std::int64_t> p = Delta(baseClassType, derivedClassType, emitter, context);
+    bool success = p.first;
+    std::int64_t delta = p.second;
     if (!success)
     {
         ThrowException("classes have no inheritance relationship", sourcePos, context);
@@ -330,7 +334,9 @@ void DynamicPtrCast::GenerateCode(Emitter& emitter, std::vector<BoundExpressionN
     otava::intermediate::BasicBlock* nextBlock = emitter.CreateBasicBlock();
     emitter.EmitBranch(test, trueBlock, falseBlock);
     emitter.SetCurrentBasicBlock(trueBlock);
-    auto [success, delta] = Delta(baseClassType, derivedClassType, emitter, context);
+    std::pair<bool, std::int64_t> p = Delta(baseClassType, derivedClassType, emitter, context);
+    bool success = p.first;
+    std::int64_t delta = p.second;
     if (!success)
     {
         ThrowException("classes have no inheritance relationship", sourcePos, context);

@@ -1,0 +1,3 @@
+project invoke_temporary;
+target=program;
+source <main.cpp>;

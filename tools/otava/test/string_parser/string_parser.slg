@@ -1,0 +1,4 @@
+project string_parser.lexer;
+tokens <string_parser.token>;
+expressions <string_parser.expr>;
+lexer <string_parser.lexer>;

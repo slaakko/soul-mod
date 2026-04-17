@@ -64,6 +64,7 @@ class BoundDefaultInitNode;
 class BoundTemporaryNode;
 class BoundConstructExpressionNode;
 class BoundConstructTemporaryNode;
+class BoundDestructTemporariesNode;
 class BoundGlobalVariableDefinitionNode;
 class BoundEmptyDestructorNode;
 class BoundFunctionValueNode;
@@ -128,6 +129,7 @@ public:
     virtual void Visit(BoundDefaultInitNode& node) {}
     virtual void Visit(BoundTemporaryNode& node) {}
     virtual void Visit(BoundConstructTemporaryNode& node) {}
+    virtual void Visit(BoundDestructTemporariesNode& node) {}
     virtual void Visit(BoundConstructExpressionNode& node) {}
     virtual void Visit(BoundGlobalVariableDefinitionNode& node) {}
     virtual void Visit(BoundEmptyDestructorNode& node) {}

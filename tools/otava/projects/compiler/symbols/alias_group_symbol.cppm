@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.alias.group.symbol;
 
 import std;
@@ -19,7 +14,7 @@ public:
     std::string SymbolKindStr() const override { return "alias group symbol"; }
     std::string SymbolDocKindStr() const override { return "alias_group"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
-    Symbol* GetSingleSymbol(Context* context) noexcept override;
+    Symbol* GetSingleSymbol(Context* contex) noexcept override;
     void AddAliasTypeSymbol(AliasTypeSymbol* aliasTypeSymbol, Context* context);
     AliasTypeSymbol* GetAliasTypeSymbol(int arity) const noexcept;
     inline const std::vector<AliasTypeSymbol*>& AliasTypeSymbols() const noexcept { return aliasTypeSymbols; }

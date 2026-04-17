@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.alias.type.templates;
 
 import otava.symbols.alias.type.symbol;

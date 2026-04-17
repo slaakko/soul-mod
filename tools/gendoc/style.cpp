@@ -5,8 +5,9 @@
 
 module gendoc.style;
 
+import otava.symbols.exception;
 import util;
-import std.filesystem;
+import std;
 
 namespace gendoc {
 
@@ -16,6 +17,11 @@ void MakeStyleFile(const std::string& rootDir)
     std::filesystem::create_directories(styleDir);
     std::string styleFilePath = util::Path::Combine(styleDir, "style.css");
     std::ofstream styleFile(styleFilePath);
+    if (!styleFile)
+    {
+        otava::symbols::SetExceptionThrown();
+        throw std::runtime_error("could not create file '" + styleFilePath + "'");
+    }
     util::CodeFormatter formatter(styleFile);
     formatter.WriteLine("body");
     formatter.WriteLine("{");

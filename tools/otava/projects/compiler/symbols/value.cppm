@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.value;
 
 import std;
@@ -21,8 +16,10 @@ class TypeSymbol;
 
 enum class ValueKind : std::int32_t
 {
-    none, boolValue, integerValue, floatingValue, nullPtrValue, stringValue, charValue, symbolValue, invokeValue, arrayValue
+    none, boolValue, integerValue, floatingValue, nullPtrValue, stringValue, charValue, symbolValue, invokeValue, arrayValue, structureValue
 };
+
+std::string ValueKindStr(ValueKind kind);
 
 ValueKind CommonValueKind(ValueKind left, ValueKind right) noexcept;
 
@@ -53,6 +50,7 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     inline TypeSymbol* GetType() const noexcept { return type; }
     virtual Value* Clone() const = 0;
+    virtual std::string Val() const = 0;
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -84,6 +82,7 @@ public:
     void Accept(Visitor& visitor) override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     Value* Clone() const override { return new BoolValue(value, Rep(), GetType()); }
+    std::string Val() const override { return value ? "true" : "false"; }
 private:
     bool value;
 };
@@ -104,6 +103,7 @@ public:
     void Accept(Visitor& visitor) override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     Value* Clone() const override { return new IntegerValue(value, Rep(), GetType()); }
+    std::string Val() const override { return std::to_string(value); }
 private:
     std::int64_t value;
 };
@@ -124,6 +124,7 @@ public:
     void Accept(Visitor& visitor) override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     Value* Clone() const override { return new FloatingValue(value, Rep(), GetType()); }
+    std::string Val() const override { return std::to_string(value); }
 private:
     double value;
 };
@@ -141,6 +142,7 @@ public:
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
     Value* Clone() const override { return new NullPtrValue(GetType()); }
+    std::string Val() const override { return "nullptr"; }
 };
 
 class StringValue : public Value
@@ -158,6 +160,7 @@ public:
     void Accept(Visitor& visitor) override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     Value* Clone() const override { return new StringValue(value, GetType()); }
+    std::string Val() const override { return value; }
 private:
     std::string value;
 };
@@ -177,6 +180,7 @@ public:
     void Accept(Visitor& visitor) override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     Value* Clone() const override { return new CharValue(value, GetType()); }
+    std::string Val() const override { return util::ToUtf8(std::u32string(1, value)); }
 private:
     char32_t value;
 };
@@ -199,6 +203,7 @@ public:
     std::u32string ToString() const override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     Value* Clone() const override { return new SymbolValue(symbol); }
+    std::string Val() const override { return util::ToUtf8(symbol->Name()); }
 private:
     Symbol* symbol;
     util::uuid symbolId;
@@ -221,6 +226,7 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     std::u32string ToString() const override;
     Value* Clone() const override { return new InvokeValue(subject->Clone()); }
+    std::string Val() const override { return subject->Val(); }
 private:
     Value* subject;
     util::uuid subjectId;
@@ -240,6 +246,7 @@ public:
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     Value* Clone() const override;
+    std::string Val() const override { return "<array>"; }
 private:
     std::vector<Value*> elementValues;
 };
@@ -258,6 +265,7 @@ public:
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     Value* Clone() const override;
+    std::string Val() const override { return "<structure>"; }
 private:
     std::vector<Value*> fieldValues;
 };

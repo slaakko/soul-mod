@@ -7,10 +7,6 @@ module gendoc.class_diagram;
 
 import util.code.formatter;
 import soul.lexer.xml.parsing.log;
-import soul.cpp20.symbols.classes;
-import soul.cpp20.symbols.specialization;
-import soul.cpp20.symbols.symbol.table;
-import soul.cpp20.symbols.modules;
 import util.unicode;
 import util.path;
 import util.code.formatter;
@@ -399,31 +395,40 @@ void DiagramClass::Write(util::CodeFormatter& formatter)
     formatter.Write(" }");
 }
 
-std::string MakeLink(soul::cpp20::symbols::ClassTypeSymbol* cls)
+std::string MakeLink(otava::symbols::ClassTypeSymbol* cls)
 {
-    soul::cpp20::symbols::Module* module = cls->GetModule();
-    return "../" + module->Name() + "/" + cls->DocName() + ".html";
+    otava::symbols::Module* module = cls->GetModule();
+    if (module)
+    {
+        return "../" + module->Name() + "/" + cls->DocName() + ".html";
+    }
+    else
+    {
+        otava::symbols::SetExceptionThrown();
+        throw std::runtime_error("module not found");
+    }
 }
 
-std::vector<soul::cpp20::symbols::ClassTypeSymbol*> GetDerivedClasses(soul::cpp20::symbols::ClassTypeSymbol* cls)
+std::vector<otava::symbols::ClassTypeSymbol*> GetDerivedClasses(otava::symbols::ClassTypeSymbol* cls)
 {
-    std::vector<soul::cpp20::symbols::ClassTypeSymbol*> derivedClasses;
+    std::vector<otava::symbols::ClassTypeSymbol*> derivedClasses;
     for (const auto& derivedClass : cls->DerivedClasses())
     {
-        soul::cpp20::symbols::TypeSymbol* type = derivedClass;
-        if (type->IsSpecializationSymbol())
+        otava::symbols::TypeSymbol* type = derivedClass;
+        if (type->IsClassTemplateSpecializationSymbol())
         {
-            type = static_cast<soul::cpp20::symbols::SpecializationSymbol*>(type)->ClassTemplate();
+            type = static_cast<otava::symbols::ClassTemplateSpecializationSymbol*>(type)->ClassTemplate();
         }
         if (type && type->IsClassTypeSymbol())
         {
-            derivedClasses.push_back(static_cast<soul::cpp20::symbols::ClassTypeSymbol*>(type));
+            derivedClasses.push_back(static_cast<otava::symbols::ClassTypeSymbol*>(type));
         }
     }
     return derivedClasses;
 }
 
-void MakeDiagramClasses(std::vector<std::unique_ptr<DiagramClass>>& classes, soul::cpp20::symbols::SymbolTable* topLevelSymbolTable, soul::cpp20::symbols::ClassTypeSymbol* cls, int& depth, int& level)
+void MakeDiagramClasses(std::vector<std::unique_ptr<DiagramClass>>& classes, otava::symbols::SymbolTable* topLevelSymbolTable, 
+    otava::symbols::ClassTypeSymbol* cls, int& depth, int& level)
 {
     int numBaseClasses = 0;
     if (!cls->BaseClasses().empty())
@@ -432,41 +437,43 @@ void MakeDiagramClasses(std::vector<std::unique_ptr<DiagramClass>>& classes, sou
         --level;
         for (int i = 0; i < cls->BaseClasses().size(); ++i)
         {
-            soul::cpp20::symbols::TypeSymbol* baseClass = cls->BaseClasses()[i];
-            if (baseClass->IsSpecializationSymbol())
+            otava::symbols::TypeSymbol* baseClass = cls->BaseClasses()[i];
+            if (baseClass->IsClassTemplateSpecializationSymbol())
             {
-                baseClass = static_cast<soul::cpp20::symbols::SpecializationSymbol*>(baseClass)->ClassTemplate();
+                baseClass = static_cast<otava::symbols::ClassTemplateSpecializationSymbol*>(baseClass)->ClassTemplate();
             }
             if (baseClass && baseClass->IsClassTypeSymbol())
             {
-                MakeDiagramClasses(classes, topLevelSymbolTable, static_cast<soul::cpp20::symbols::ClassTypeSymbol*>(baseClass), depth, level);
+                MakeDiagramClasses(classes, topLevelSymbolTable, static_cast<otava::symbols::ClassTypeSymbol*>(baseClass), depth, level);
                 ++numBaseClasses;
             }
         }
         ++level;
     }
-    std::vector<soul::cpp20::symbols::ClassTypeSymbol*> derivedClasses = GetDerivedClasses(cls);
+    std::vector<otava::symbols::ClassTypeSymbol*> derivedClasses = GetDerivedClasses(cls);
     int numDerivedClasses = derivedClasses.size();
     if (level == 0)
     {
         if (numBaseClasses > 0 || numDerivedClasses > 0)
         {
             std::string link = MakeLink(cls);
-            classes.push_back(std::unique_ptr<DiagramClass>(new DiagramClass(util::ToUtf8(cls->FullName()), classes.size(), level, true, numDerivedClasses > 0, link)));
+            classes.push_back(std::unique_ptr<DiagramClass>(
+                new DiagramClass(util::ToUtf8(cls->FullName()), classes.size(), level, true, numDerivedClasses > 0, link)));
             if (numDerivedClasses > 0)
             {
                 ++level;
                 for (int i = 0; i < numDerivedClasses; ++i)
                 {
-                    soul::cpp20::symbols::ClassTypeSymbol* derivedClass = derivedClasses[i];
+                    otava::symbols::ClassTypeSymbol* derivedClass = derivedClasses[i];
                     std::string link = MakeLink(derivedClass);
                     bool hasDerivedClasses = false;
-                    std::vector<soul::cpp20::symbols::ClassTypeSymbol*> descendantClasses = GetDerivedClasses(derivedClass);
+                    std::vector<otava::symbols::ClassTypeSymbol*> descendantClasses = GetDerivedClasses(derivedClass);
                     if (!descendantClasses.empty())
                     {
                         hasDerivedClasses = true;
                     }
-                    classes.push_back(std::unique_ptr<DiagramClass>(new DiagramClass(util::ToUtf8(derivedClass->FullName()), classes.size(), level, false, hasDerivedClasses, link)));
+                    classes.push_back(std::unique_ptr<DiagramClass>(
+                        new DiagramClass(util::ToUtf8(derivedClass->FullName()), classes.size(), level, false, hasDerivedClasses, link)));
                 }
             }
         }
@@ -488,7 +495,7 @@ struct ByLevelAndIndex
     }
 };
 
-bool GenerateClassDiagramFile(const std::string& modulePath, soul::cpp20::symbols::ClassTypeSymbol* cls, std::string& diagramFileName)
+bool GenerateClassDiagramFile(const std::string& modulePath, otava::symbols::ClassTypeSymbol* cls, std::string& diagramFileName)
 {
     int depth = 0;
     int level = 0;
@@ -506,6 +513,11 @@ bool GenerateClassDiagramFile(const std::string& modulePath, soul::cpp20::symbol
     diagramFileName = "class_diagram_" + cls->DocName() + ".js";
     std::string diagramFilePath = util::Path::Combine(modulePath, diagramFileName);
     std::ofstream diagramFile(diagramFilePath);
+    if (!diagramFile)
+    {
+        otava::symbols::SetExceptionThrown();
+        throw std::runtime_error("could not create file '" + diagramFilePath + "'");
+    }
     util::CodeFormatter formatter(diagramFile);
     GenerateClassDiagramCode(formatter);
     formatter.WriteLine("function drawClassDiagram() {");

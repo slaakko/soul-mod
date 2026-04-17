@@ -766,6 +766,11 @@ std::int64_t NodeIdFactory::GetNextNodeId() noexcept
 
 thread_local NodeIdFactory* nodeIdFactory = nullptr;
 
+NodeIdFactory* GetNodeIdFactory() noexcept
+{
+    return nodeIdFactory;
+}
+
 void SetNodeIdFactory(NodeIdFactory* factory) noexcept
 {
     nodeIdFactory = factory;

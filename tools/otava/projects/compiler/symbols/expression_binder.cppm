@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.expression.binder;
 
 import std;
@@ -19,10 +14,11 @@ class Scope;
 class StatementBinder;
 
 otava::ast::Node* MakeTypeNameNodes(const soul::ast::SourcePos& sourcePos, const std::u32string& fullTypeName);
+std::pair<VariableSymbol*, int> GetParentTemporary(std::int64_t nodeId, Context* context);
 
-BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context);
-BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, bool booleanChild);
-BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, SymbolGroupKind symbolGroups, Scope*& scope);
+std::unique_ptr<BoundExpressionNode> BindExpression(otava::ast::Node* node, Context* context);
+std::unique_ptr<BoundExpressionNode> BindExpression(otava::ast::Node* node, Context* context, bool booleanChild);
+std::unique_ptr<BoundExpressionNode> BindExpression(otava::ast::Node* node, Context* context, SymbolGroupKind symbolGroups, Scope*& scope);
 void InitExpressionBinder();
 
 bool MultiplicativeRightIdOperandNotFound(otava::ast::Node* op, otava::ast::Node* rightOperand, const soul::ast::SourcePos& sourcePos, Context* context);

@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 expressions soul.tool.expr
 {
     ws = "[\n\r\t ]";

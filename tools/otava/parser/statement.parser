@@ -581,7 +581,7 @@ parser StatementParser
                 (   Declarator(context):decl{ declarator.reset(decl); }
                 |   (AbstractDeclarator(context):abstractDeclarator{ declarator.reset(abstractDeclarator); })?
                 )
-            |   Ellipsis:ellipsis
+            |   Ellipsis:ellipsis{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
             )
             {
                 return new otava::ast::ExceptionDeclarationNode(sourcePos, typeSpecifiers, declarator.release(), ellipsis, attributes);

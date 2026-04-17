@@ -1,0 +1,25 @@
+export module string_parser.parser;
+
+[implementation]import string_parser.lexer;
+[implementation]import string_parser.token;
+
+parser str_parser
+{
+	lexer string_parser::string_lexer<char32_t>;
+	
+	main;
+	
+	names(var std::vector<std::string> nms) : std::vector<std::string>
+		::= 
+		(
+			LPAREN name:first{ nms.push_back(first); }(COMMA name:next{ nms.push_back(next); })* RPAREN
+		)
+		{
+			return nms;
+		}
+		;
+		
+	name : std::string
+		::= NAME{ return util::ToUtf8(lexer.GetToken(pos).ToString()); }
+		;
+}

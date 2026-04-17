@@ -17245,15 +17245,15 @@ struct SlgLexer
 template<typename Char>
 soul::lexer::ClassMap<Char>* GetClassMap()
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("soul.lex.slg.classmap");
-    return classmap;
+    static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>("soul.lex.slg.classmap"));
+    return classmap.get();
 }
 
 template<typename Char>
 soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "soul.lex.slg.classmap", resourceFlags);
-    return classmap;
+    static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>(moduleFileName, "soul.lex.slg.classmap", resourceFlags));
+    return classmap.get();
 }
 
 template<typename Char>

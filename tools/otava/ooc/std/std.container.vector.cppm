@@ -43,7 +43,7 @@ void constructive_move_backward(T* to, T* from, ssize_t count)
 }
 
 template<typename T>
-void destroy(T* elements, ssize_t count)
+void destruct(T* elements, ssize_t count)
 {
     for (ssize_t i = 0; i < count; ++i)
     {
@@ -99,7 +99,7 @@ public:
     }
     ~vector()
     {
-        destroy();
+        destruct();
     }
     vector& operator=(const vector& that)
     {
@@ -378,18 +378,18 @@ public:
     }
     inline void clear() noexcept
     {
-        destroy();
+        destruct();
     }
     void print()
     {
         std::cout << "sz=" << sz << ", res=" << res << "\n";
     }
 private:
-    void destroy() noexcept
+    void destruct() noexcept
     {
         if (sz > 0)
         {
-            destroy(elements, sz);
+            destruct(elements, sz);
             sz = 0;
         }
         if (res > 0)
@@ -408,7 +408,7 @@ private:
         {
             constructive_move(new_elements, elements, sz);
             size_type save_sz = sz;
-            destroy();
+            destruct();
             sz = save_sz;
         }
         elements = new_elements;

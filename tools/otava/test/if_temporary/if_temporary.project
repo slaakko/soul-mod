@@ -1,0 +1,3 @@
+project if_temporary;
+target=program;
+source <main.cpp>;

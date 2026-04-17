@@ -239,6 +239,7 @@ Symbol* Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind,
             errorMessage.append(util::ToUtf8(symbol->FullName()));
         }
         ThrowException(errorMessage, sourcePos, context);
+        return nullptr;
     }
 }
 
@@ -300,6 +301,7 @@ std::unique_ptr<Symbol> Scope::RemoveSymbol(Symbol* symbol)
 {
     otava::ast::SetExceptionThrown();
     throw std::runtime_error("could not remove symbol");
+    return nullptr;
 }
 
 void Scope::AddParentScope(Scope* parentScope_)
@@ -338,31 +340,37 @@ void Scope::AddUsingDirective(NamespaceSymbol* ns, const soul::ast::SourcePos& s
 ClassGroupSymbol* Scope::GetOrInsertClassGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     ThrowException("cannot add class group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    return nullptr;
 }
 
 FunctionGroupSymbol* Scope::GetOrInsertFunctionGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     ThrowException("cannot add function group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    return nullptr;
 }
 
 ConceptGroupSymbol* Scope::GetOrInsertConceptGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    ThrowException("cannot add concept group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add concept group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context); 
+    return nullptr;
 }
 
 VariableGroupSymbol* Scope::GetOrInsertVariableGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     ThrowException("cannot add variable group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    return nullptr;
 }
 
 AliasGroupSymbol* Scope::GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     ThrowException("cannot add alias group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    return nullptr;
 }
 
 EnumGroupSymbol* Scope::GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     ThrowException("cannot add enum group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    return nullptr;
 }
 
 ContainerScope::ContainerScope() noexcept : Scope(), parentScopes(), usingDeclarationScope(nullptr), containerSymbol(nullptr), parentScopePushed(false)

@@ -78,7 +78,7 @@ void ArrayTypeSymbol::Accept(Visitor& visitor)
 
 otava::intermediate::Type* ArrayTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    util::uuid irId = IrId(context);
+    util::uuid irId = IrId(sourcePos, context);
     otava::intermediate::Type* type = emitter.GetType(irId);
     if (!type)
     {

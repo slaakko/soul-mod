@@ -23,7 +23,7 @@ class ClassTemplateSpecializationSymbol : public ClassTypeSymbol
 public:
     ClassTemplateSpecializationSymbol(const std::u32string& name_);
     ClassTemplateSpecializationSymbol(const util::uuid& id_, const std::u32string& name_);
-    util::uuid IrId(Context* context) const noexcept override;
+    util::uuid IrId(const soul::ast::SourcePos& sourcePos, Context* context) const override;
     inline bool Instantiated() const noexcept { return instantiated; }
     inline void SetInstantiated() noexcept { instantiated = true; }
     std::string SymbolKindStr() const override { return "specialization symbol"; }
@@ -80,10 +80,10 @@ private:
 };
 
 util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, 
-    const soul::ast::SourcePos& sourcePos, Context* context) noexcept;
+    const soul::ast::SourcePos& sourcePos, Context* context);
 
 util::uuid MakeClassTemplateSpecializationSymbolIrId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments,
-    const soul::ast::SourcePos& sourcePos, Context* context) noexcept;
+    const soul::ast::SourcePos& sourcePos, Context* context);
 
 struct MemFunKey
 {

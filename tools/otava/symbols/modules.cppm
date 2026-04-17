@@ -33,6 +33,11 @@ struct ModuleLess
     bool operator()(Module* left, Module* right) const noexcept;
 };
 
+struct ModuleNameLess
+{
+    bool operator()(Module* left, Module* right) const noexcept;
+};
+
 enum class ModuleKind : std::int8_t
 {
     interfaceModule, implementationModule,
@@ -45,6 +50,8 @@ class Module
 public:
     Module(const std::string& name_);
     ~Module();
+    inline void SetMain() noexcept { main = true; }
+    inline bool IsMain() const noexcept { return main; }
     void SetProjectId(const util::uuid& projectId_) noexcept;
     const util::uuid& GetProjectId() const noexcept { return projectId; }
     void SetKind(ModuleKind kind_) noexcept { kind = kind_; }
@@ -112,6 +119,7 @@ private:
     std::set<Module*, ModuleLess> importSet;
     bool reading;
     otava::ast::NodeIdFactory nodeIdFactory;
+    bool main;
 };
 
 class ModuleMapper

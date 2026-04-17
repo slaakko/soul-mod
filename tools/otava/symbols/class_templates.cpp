@@ -94,9 +94,9 @@ std::string ClassTemplateSpecializationSymbol::IrName(Context* context) const
     return fullIrName;
 }
 
-util::uuid ClassTemplateSpecializationSymbol::IrId(Context* context) const noexcept
+util::uuid ClassTemplateSpecializationSymbol::IrId(const soul::ast::SourcePos& sourcePos, Context* context) const 
 {
-    return MakeClassTemplateSpecializationSymbolIrId(classTemplate, templateArguments, context->GetSourcePos(), context);
+    return MakeClassTemplateSpecializationSymbolIrId(classTemplate, templateArguments, sourcePos, context);
 }
 
 void ClassTemplateSpecializationSymbol::Write(Writer& writer)
@@ -178,14 +178,14 @@ void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable, Contex
                 }
                 else
                 {
-                    std::string note;
-                    Module* requesterModule = context->GetRequesterModule();
-                    if (requesterModule)
-                    {
-                        note = ": note: requester module is " + requesterModule->Name();
-                    }
                     if (!context->GetFlag(ContextFlags::noWarnings))
                     {
+                        std::string note;
+                        Module* requesterModule = context->GetRequesterModule();
+                        if (requesterModule)
+                        {
+                            note = ": note: requester module is " + requesterModule->Name();
+                        }
                         std::cout << "ClassTemplateSpecializationSymbol::Resolve(): warning: template argument not resolved" << note << "\n";
                     }
                 }
@@ -212,14 +212,14 @@ void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable, Contex
     }
     else
     {
-        std::string note;
-        Module* requesterModule = context->GetRequesterModule();
-        if (requesterModule)
-        {
-            note = ": note: requester module is " + requesterModule->Name();
-        }
         if (!context->GetFlag(ContextFlags::noWarnings))
         {
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
             std::cout << "ClassTemplateSpecializationSymbol::Resolve(): warning: class template not resolved" << note << "\n";
         }
     }
@@ -350,7 +350,7 @@ NamespaceSymbol* ClassTemplateSpecializationSymbol::ParentNamespace() const noex
 }
 
 util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, int level, 
-    const soul::ast::SourcePos& sourcePos, Context* context) noexcept
+    const soul::ast::SourcePos& sourcePos, Context* context) 
 {
     util::uuid id = classTemplate->Id();
     int n = static_cast<int>(templateArguments.size());
@@ -376,14 +376,14 @@ util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplat
 }
 
 util::uuid MakeClassTemplateSpecializationSymbolIrId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, int level,
-    const soul::ast::SourcePos& sourcePos, Context* context) noexcept
+    const soul::ast::SourcePos& sourcePos, Context* context) 
 {
-    util::uuid id = classTemplate->IrId(context);
+    util::uuid id = classTemplate->IrId(sourcePos, context);
     int n = static_cast<int>(templateArguments.size());
     for (int i = 0; i < n; ++i)
     {
         Symbol* arg = templateArguments[i];
-        util::uuid argId = arg->IrId(context);
+        util::uuid argId = arg->IrId(sourcePos, context);
         if (arg->IsClassTemplateSpecializationSymbol())
         {
             ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(arg);
@@ -397,13 +397,13 @@ util::uuid MakeClassTemplateSpecializationSymbolIrId(ClassTypeSymbol* classTempl
 }
 
 util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments,
-    const soul::ast::SourcePos& sourcePos, Context* context) noexcept
+    const soul::ast::SourcePos& sourcePos, Context* context) 
 {
     return MakeClassTemplateSpecializationSymbolId(classTemplate, templateArguments, 0, sourcePos, context);
 }
 
 util::uuid MakeClassTemplateSpecializationSymbolIrId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments,
-    const soul::ast::SourcePos& sourcePos, Context* context) noexcept
+    const soul::ast::SourcePos& sourcePos, Context* context) 
 {
     return MakeClassTemplateSpecializationSymbolIrId(classTemplate, templateArguments, 0, sourcePos, context);
 }

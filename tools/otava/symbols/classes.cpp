@@ -12,6 +12,7 @@ import otava.symbols.emitter;
 import otava.symbols.exception;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.modules;
+import otava.symbols.project;
 import otava.symbols.symbol.table;
 import otava.symbols.symbol_map;
 import otava.symbols.templates;
@@ -369,14 +370,14 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
         specialization = symbolTable.GetType(specializationId);
         if (!specialization)
         {
-            std::string note;
-            Module* requesterModule = context->GetRequesterModule();
-            if (requesterModule)
-            {
-                note = ": note: requester module is " + requesterModule->Name();
-            }
             if (!context->GetFlag(ContextFlags::noWarnings))
             {
+                std::string note;
+                Module* requesterModule = context->GetRequesterModule();
+                if (requesterModule)
+                {
+                    note = ": note: requester module is " + requesterModule->Name();
+                }
                 std::cout << "ClassTypeSymbol::Resolve(): warning: specialization type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
             }
         }
@@ -390,14 +391,14 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
         }
         else
         {
-            std::string note;
-            Module* requesterModule = context->GetRequesterModule();
-            if (requesterModule)
-            {
-                note = ": note: requester module is " + requesterModule->Name();
-            }
             if (!context->GetFlag(ContextFlags::noWarnings))
             {
+                std::string note;
+                Module* requesterModule = context->GetRequesterModule();
+                if (requesterModule)
+                {
+                    note = ": note: requester module is " + requesterModule->Name();
+                }
                 std::cout << "ClassTypeSymbol::Resolve(): warning: object layout type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
             }
         }
@@ -784,7 +785,7 @@ void ClassTypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
 
 otava::intermediate::Type* ClassTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    util::uuid irId = IrId(context);
+    util::uuid irId = IrId(sourcePos, context);
     otava::intermediate::Type* irType = emitter.GetType(irId);
     if (!irType)
     {
@@ -908,7 +909,9 @@ std::pair<bool, std::int64_t> ClassTypeSymbol::Delta(ClassTypeSymbol* base, Emit
     std::int64_t delta = 0;
     for (ClassTypeSymbol* bc : BaseClasses())
     {
-        auto [bcfound, bcdelta] = bc->Delta(base, emitter, context);
+        std::pair<bool, std::int64_t> p = bc->Delta(base, emitter, context);
+        bool bcfound = p.first;
+        std::int64_t bcdelta = p.second;
         if (bcfound) return std::make_pair(true, delta + bcdelta);
         otava::intermediate::Type* bctype = bc->IrType(emitter, soul::ast::SourcePos(), context);
         std::int64_t bcsize = bctype->Size();
@@ -1022,11 +1025,11 @@ int ForwardClassDeclarationSymbol::Arity() noexcept
     }
 }
 
-util::uuid ForwardClassDeclarationSymbol::IrId(Context* context) const noexcept
+util::uuid ForwardClassDeclarationSymbol::IrId(const soul::ast::SourcePos& sourcePos, Context* context) const 
 {
     if (classTypeSymbol)
     {
-        return classTypeSymbol->IrId(context);
+        return classTypeSymbol->IrId(sourcePos, context);
     }
     else
     {
@@ -1411,9 +1414,33 @@ void TrivialClassDtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressio
 {
 }
 
+void MakeObjectLayouts(ClassTypeSymbol* classTypeSymbol, Context* context, const soul::ast::SourcePos& sourcePos)
+{
+    for (auto* baseClass : classTypeSymbol->BaseClasses())
+    {
+        MakeObjectLayouts(baseClass, context, sourcePos);
+    }
+    if (!classTypeSymbol->ObjectLayoutComputed())
+    {
+        classTypeSymbol->MakeObjectLayout(sourcePos, context);
+    }
+}
+
+void InitVTabs(ClassTypeSymbol* classTypeSymbol, Context* context, const soul::ast::SourcePos& sourcePos)
+{
+    for (auto* baseClass : classTypeSymbol->BaseClasses())
+    {
+        InitVTabs(baseClass, context, sourcePos);
+    }
+    if (!classTypeSymbol->VTabInitialized())
+    {
+        classTypeSymbol->MakeVTab(context, sourcePos);
+    }
+}
+
 Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    Symbol* dtorFunctionGroupSymbol = classTypeSymbol->GetScope()->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, 
+    Symbol* dtorFunctionGroupSymbol = classTypeSymbol->GetScope()->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope,
         sourcePos, context, LookupFlags::dontResolveSingle);
     Symbol* destructorFn = nullptr;
     if (dtorFunctionGroupSymbol && dtorFunctionGroupSymbol->IsFunctionGroupSymbol())
@@ -1425,6 +1452,17 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
             if (destructorFn->IsFunctionSymbol())
             {
                 FunctionSymbol* dtor = static_cast<FunctionSymbol*>(destructorFn);
+                if (classTypeSymbol->IsPolymorphic())
+                {
+                    if (classTypeSymbol->HasPolymorphicBaseClass())
+                    {
+                        dtor->SetOverride();
+                    }
+                    else
+                    {
+                        dtor->SetVirtual();
+                    }
+                }
                 dtor->SetNoExcept();
             }
             return destructorFn;
@@ -1435,6 +1473,17 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
             if (destructorFn->IsFunctionSymbol())
             {
                 FunctionSymbol* dtor = static_cast<FunctionSymbol*>(destructorFn);
+                if (classTypeSymbol->IsPolymorphic())
+                {
+                    if (classTypeSymbol->HasPolymorphicBaseClass())
+                    {
+                        dtor->SetOverride();
+                    }
+                    else
+                    {
+                        dtor->SetVirtual();
+                    }
+                }
                 dtor->SetNoExcept();
             }
             return destructorFn;
@@ -1472,6 +1521,17 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
                 if (destructorFn->IsFunctionSymbol())
                 {
                     FunctionSymbol* dtor = static_cast<FunctionSymbol*>(destructorFn);
+                    if (classTypeSymbol->IsPolymorphic())
+                    {
+                        if (classTypeSymbol->HasPolymorphicBaseClass())
+                        {
+                            dtor->SetOverride();
+                        }
+                        else
+                        {
+                            dtor->SetVirtual();
+                        }
+                    }
                     dtor->SetNoExcept();
                 }
                 return destructorFn;
@@ -1514,7 +1574,23 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
         if (memberVar->GetType()->IsClassTypeSymbol())
         {
             ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(memberVar->GetType());
-            GenerateDestructor(classType, sourcePos, context);
+            Symbol* destructorFn = GenerateDestructor(classType, sourcePos, context);
+            if (destructorFn->IsFunctionSymbol())
+            {
+                FunctionSymbol* dtor = static_cast<FunctionSymbol*>(destructorFn);
+                if (classType->IsPolymorphic())
+                {
+                    if (classType->HasPolymorphicBaseClass())
+                    {
+                        dtor->SetOverride();
+                    }
+                    else
+                    {
+                        dtor->SetVirtual();
+                    }
+                }
+                dtor->SetNoExcept();
+            }
         }
         BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVar, sourcePos);
         ParameterSymbol* thisParam = destructorDefinitionSymbol->ThisParam(context);
@@ -1527,6 +1603,11 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
             context->GetSymbolTable()->CurrentScope(), U"@destructor", templateArgs, args, sourcePos, context, ex);
         if (boundFunctionCall)
         {
+            if (boundFunctionCall->GetFunctionSymbol()->IsVirtual() || boundFunctionCall->GetFunctionSymbol()->IsOverride() ||
+                boundFunctionCall->GetFunctionSymbol()->IsFinal())
+            {
+                boundFunctionCall->SetFlag(BoundExpressionFlags::virtualCall);
+            }
             if (!boundFunctionCall->GetFunctionSymbol()->GetFlag(FunctionSymbolFlags::trivialDestructor))
             {
                 hasNonTrivialDestructor = true;
@@ -1544,7 +1625,7 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
             baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
         if (conversion)
         {
-            GenerateDestructor(baseClass, sourcePos, context);
+            Symbol* destructorFn = GenerateDestructor(baseClass, sourcePos, context);
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
             Exception ex;
             std::vector<TypeSymbol*> templateArgs;
@@ -1580,6 +1661,8 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
     functionGroup->AddFunctionDefinition(destructorDefinitionSymbol.get(), context);
     classTypeSymbol->AddSymbol(destructorDefinitionSymbol.release(), sourcePos, context);
     BoundCompoundStatementNode* body = new BoundCompoundStatementNode(sourcePos);
+    MakeObjectLayouts(classTypeSymbol, context, sourcePos);
+    InitVTabs(classTypeSymbol, context, sourcePos);
     if (classTypeSymbol->IsPolymorphic())
     {
         if (classTypeSymbol->HasPolymorphicBaseClass())
@@ -1589,10 +1672,6 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
         else
         {
             destructor->SetVirtual();
-        }
-        if (!classTypeSymbol->ObjectLayoutComputed())
-        {
-            classTypeSymbol->MakeObjectLayout(sourcePos, context);
         }
         std::vector<ClassTypeSymbol*> vptrHolderClasses = classTypeSymbol->VPtrHolderClasses();
         if (vptrHolderClasses.empty())
@@ -1645,11 +1724,72 @@ void GenerateDestructors(BoundCompileUnitNode* boundCompileUnit, Context* contex
     }
 }
 
+BoundFunctionCallNode* MakeDestructorCall(ClassTypeSymbol* cls, BoundExpressionNode* arg, FunctionDefinitionSymbol* destructor,
+    const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    Symbol* dtorSymbol = nullptr;
+    if (destructor)
+    {
+        dtorSymbol = destructor;
+    }
+    else
+    {
+        dtorSymbol = GenerateDestructor(cls, sourcePos, context);
+    }
+    if (dtorSymbol && (dtorSymbol->IsFunctionSymbol() || dtorSymbol->IsExplicitlyInstantiatedFunctionDefinitionSymbol()))
+    {
+        FunctionSymbol* dtorFunctionSymbol = static_cast<FunctionSymbol*>(dtorSymbol);
+        if (dtorFunctionSymbol->GetFlag(FunctionSymbolFlags::trivialDestructor))
+        {
+            return nullptr;
+        }
+        std::unique_ptr<BoundFunctionCallNode> destructorCall(new BoundFunctionCallNode(dtorFunctionSymbol, sourcePos, cls));
+        destructorCall->AddArgument(arg->Clone());
+        return destructorCall.release();
+    }
+    return nullptr;
+}
+
+void CheckGenerateTemporaryDestructorCall(BoundConstructTemporaryNode* constructTemporary, BoundExpressionNode* arg, Context* context)
+{
+    if (!arg)
+    {
+        std::cout << "NO TEMPORARY ARG!" << "\n";
+        return;
+    }
+    BoundExpressionNode* temporary = constructTemporary->Temporary();
+    if (temporary->IsBoundAddressOfNode())
+    {
+        BoundAddressOfNode* addrOf = static_cast<BoundAddressOfNode*>(temporary);
+        temporary = addrOf->Subject();
+    }
+    if (!temporary->GetType()->IsClassTypeSymbol()) return;
+    ClassTypeSymbol* cls = static_cast<ClassTypeSymbol*>(temporary->GetType());
+    BoundFunctionCallNode* destructorCall = MakeDestructorCall(cls, arg, nullptr, constructTemporary->GetSourcePos(), context);
+    if (!destructorCall) return;
+    if (context->CurrentProject()->HasDefine("PRINT_TEMPORARIES"))
+    {
+        if (context->GetFlag(ContextFlags::invoke))
+        {
+            std::cout << "INVOKE TEMPORARY:" << util::ToUtf8(arg->GetType()->FullName()) << "\n";
+        }
+        else
+        {
+            std::cout << "TEMPORARY:" << util::ToUtf8(arg->GetType()->FullName()) << "\n";
+        }
+    }
+    context->GetBoundFunction()->AddTemporaryDestructorCall(destructorCall);
+}
+
 std::pair<bool, std::int64_t> Delta(ClassTypeSymbol* left, ClassTypeSymbol* right, Emitter& emitter, Context* context) noexcept
 {
-    auto [found, delta] = left->Delta(right, emitter, context);
+    std::pair<bool, std::int64_t> p = left->Delta(right, emitter, context);
+    bool found = p.first;
+    std::int64_t delta = p.second;
     if (found) return std::make_pair(true, delta);
-    auto [rfound, rdelta] = right->Delta(left, emitter, context);
+    std::pair<bool, std::int64_t> r = right->Delta(left, emitter, context);
+    bool rfound = r.first;
+    std::int64_t rdelta = r.second;
     if (rfound) return std::make_pair(true, -rdelta);
     return std::make_pair(false, static_cast<std::int64_t>(0));
 }

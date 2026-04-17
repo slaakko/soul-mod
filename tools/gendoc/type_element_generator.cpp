@@ -5,14 +5,14 @@
 
 module gendoc.type_element_generator;
 
-import std.core;
-import soul.cpp20.symbols;
+import std;
+import otava.symbols;
 import soul.xml.dom;
 import util;
 
 namespace gendoc {
 
-std::string MakeNsText(soul::cpp20::symbols::NamespaceSymbol* ns)
+std::string MakeNsText(otava::symbols::NamespaceSymbol* ns)
 {
     if (ns->Name().empty())
     {
@@ -24,12 +24,12 @@ std::string MakeNsText(soul::cpp20::symbols::NamespaceSymbol* ns)
     }
 }
 
-void AddValue(soul::xml::Element* containerElement, soul::cpp20::symbols::Value* value, soul::cpp20::symbols::Module* module, soul::cpp20::symbols::Symbol* containerSymbol)
+void AddValue(soul::xml::Element* containerElement, otava::symbols::Value* value, otava::symbols::Module* module, otava::symbols::Symbol* containerSymbol)
 {
     if (value->IsSymbolValue())
     {
-        soul::cpp20::symbols::SymbolValue* symbolValue = static_cast<soul::cpp20::symbols::SymbolValue*>(value);
-        soul::cpp20::symbols::Symbol* symbol = symbolValue->GetSymbol();
+        otava::symbols::SymbolValue* symbolValue = static_cast<otava::symbols::SymbolValue*>(value);
+        otava::symbols::Symbol* symbol = symbolValue->GetSymbol();
         soul::xml::Element* linkElement = soul::xml::MakeElement("a");
         std::string href;
         if (!module && !containerSymbol)
@@ -57,33 +57,33 @@ void AddValue(soul::xml::Element* containerElement, soul::cpp20::symbols::Value*
     }
 }
 
-class TypeElementGenerator : public soul::cpp20::symbols::DefaultVisitor
+class TypeElementGenerator : public otava::symbols::DefaultVisitor
 {
 public:
-    TypeElementGenerator(soul::cpp20::symbols::Module* module_, soul::cpp20::symbols::Symbol* containerSymbol_);
+    TypeElementGenerator(otava::symbols::Module* module_, otava::symbols::Symbol* containerSymbol_);
     soul::xml::Element* GetElement() { return element.release(); }
-    void Visit(soul::cpp20::symbols::NamespaceSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::ConceptSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::AliasTypeSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::ClassGroupSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::EnumeratedTypeSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::ForwardClassDeclarationSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::CompoundTypeSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::FundamentalTypeSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::TemplateParameterSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::SpecializationSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::NestedTypeSymbol& symbol) override;
-    void Visit(soul::cpp20::symbols::FunctionTypeSymbol& symbol) override;
-    void CompleteBaseType(soul::cpp20::symbols::Symbol* symbol);
+    void Visit(otava::symbols::NamespaceSymbol& symbol) override;
+    void Visit(otava::symbols::ConceptSymbol& symbol) override;
+    void Visit(otava::symbols::AliasTypeSymbol& symbol) override;
+    void Visit(otava::symbols::ClassGroupSymbol& symbol) override;
+    void Visit(otava::symbols::ClassTypeSymbol& symbol) override;
+    void Visit(otava::symbols::EnumeratedTypeSymbol& symbol) override;
+    void Visit(otava::symbols::ForwardClassDeclarationSymbol& symbol) override;
+    void Visit(otava::symbols::CompoundTypeSymbol& symbol) override;
+    void Visit(otava::symbols::FundamentalTypeSymbol& symbol) override;
+    void Visit(otava::symbols::TemplateParameterSymbol& symbol) override;
+    void Visit(otava::symbols::ClassTemplateSpecializationSymbol& symbol) override;
+    void Visit(otava::symbols::NestedTypeSymbol& symbol) override;
+    void Visit(otava::symbols::FunctionTypeSymbol& symbol) override;
+    void CompleteBaseType(otava::symbols::Symbol* symbol);
 private:
-    soul::cpp20::symbols::Module* module;
-    soul::cpp20::symbols::Symbol* containerSymbol;
+    otava::symbols::Module* module;
+    otava::symbols::Symbol* containerSymbol;
     std::unique_ptr<soul::xml::Element> element;
     bool baseTypeIncomplete;
 };
 
-TypeElementGenerator::TypeElementGenerator(soul::cpp20::symbols::Module* module_, soul::cpp20::symbols::Symbol* containerSymbol_) : 
+TypeElementGenerator::TypeElementGenerator(otava::symbols::Module* module_, otava::symbols::Symbol* containerSymbol_) :
     module(module_), 
     containerSymbol(containerSymbol_),
     element(soul::xml::MakeElement("span")),
@@ -93,20 +93,20 @@ TypeElementGenerator::TypeElementGenerator(soul::cpp20::symbols::Module* module_
     element->SetAttribute("class", "type");
 }
 
-void TypeElementGenerator::Visit(soul::cpp20::symbols::NamespaceSymbol& symbol)
+void TypeElementGenerator::Visit(otava::symbols::NamespaceSymbol& symbol)
 {
     soul::xml::Element* linkElement = soul::xml::MakeElement("a");
     linkElement->SetAttribute("href", "../../namespace/" + symbol.DocName() + "/index.html");
 }
 
-void TypeElementGenerator::Visit(soul::cpp20::symbols::ConceptSymbol& symbol)
+void TypeElementGenerator::Visit(otava::symbols::ConceptSymbol& symbol)
 {
     // todo
 }
 
-void TypeElementGenerator::Visit(soul::cpp20::symbols::AliasTypeSymbol& symbol)
+void TypeElementGenerator::Visit(otava::symbols::AliasTypeSymbol& symbol)
 {
-    soul::cpp20::symbols::Symbol* parent = symbol.Parent();
+    otava::symbols::Symbol* parent = symbol.Parent();
     soul::xml::Element* linkElement = soul::xml::MakeElement("a");
     std::string href;
     if (!module && !containerSymbol)
@@ -136,7 +136,7 @@ void TypeElementGenerator::Visit(soul::cpp20::symbols::AliasTypeSymbol& symbol)
     element->AppendChild(linkElement);
 }
 
-void TypeElementGenerator::Visit(soul::cpp20::symbols::ClassGroupSymbol& symbol)
+void TypeElementGenerator::Visit(otava::symbols::ClassGroupSymbol& symbol)
 {
     if (symbol.Classes().size() == 1)
     {
@@ -148,7 +148,7 @@ void TypeElementGenerator::Visit(soul::cpp20::symbols::ClassGroupSymbol& symbol)
     }
 }
 
-void TypeElementGenerator::Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol)
+void TypeElementGenerator::Visit(otava::symbols::ClassTypeSymbol& symbol)
 {
     soul::xml::Element* linkElement = soul::xml::MakeElement("a");
     std::string href;
@@ -179,7 +179,7 @@ void TypeElementGenerator::Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol)
     element->AppendChild(linkElement);
 }
 
-void TypeElementGenerator::Visit(soul::cpp20::symbols::EnumeratedTypeSymbol& symbol)
+void TypeElementGenerator::Visit(otava::symbols::EnumeratedTypeSymbol& symbol)
 {
     soul::xml::Element* linkElement = soul::xml::MakeElement("a");
     std::string href;
@@ -210,9 +210,9 @@ void TypeElementGenerator::Visit(soul::cpp20::symbols::EnumeratedTypeSymbol& sym
     element->AppendChild(linkElement);
 }
 
-void TypeElementGenerator::Visit(soul::cpp20::symbols::ForwardClassDeclarationSymbol& symbol)
+void TypeElementGenerator::Visit(otava::symbols::ForwardClassDeclarationSymbol& symbol)
 {
-    soul::cpp20::symbols::ClassTypeSymbol* classTypeSymbol = symbol.GetClassTypeSymbol();
+    otava::symbols::ClassTypeSymbol* classTypeSymbol = symbol.GetClassTypeSymbol();
     if (classTypeSymbol)
     {
         classTypeSymbol->Accept(*this);
@@ -232,29 +232,33 @@ void TypeElementGenerator::Visit(soul::cpp20::symbols::ForwardClassDeclarationSy
     }
 }
 
-void TypeElementGenerator::Visit(soul::cpp20::symbols::CompoundTypeSymbol& symbol)
+void TypeElementGenerator::Visit(otava::symbols::CompoundTypeSymbol& symbol)
 {
-    if (soul::cpp20::symbols::HasDerivation(symbol.GetDerivations(), soul::cpp20::symbols::Derivation::constDerivation))
+    if (otava::symbols::HasDerivation(symbol.GetDerivations(), otava::symbols::Derivations::constDerivation))
     {
         element->AppendChild(soul::xml::MakeText("const "));
     }
-    if (soul::cpp20::symbols::HasDerivation(symbol.GetDerivations(), soul::cpp20::symbols::Derivation::volatileDerivation))
+    if (otava::symbols::HasDerivation(symbol.GetDerivations(), otava::symbols::Derivations::volatileDerivation))
     {
         element->AppendChild(soul::xml::MakeText("volatile "));
     }
+    if (!symbol.BaseType())
+    {
+        return; // TODO
+    }
     symbol.BaseType()->Accept(*this);
-    int pointerCount = soul::cpp20::symbols::PointerCount(symbol.GetDerivations());
+    int pointerCount = otava::symbols::PointerCount(symbol.GetDerivations());
     if (pointerCount > 0)
     {
         std::string pointerText;
         pointerText.append(pointerCount, '*');
         element->AppendChild(soul::xml::MakeText(pointerText));
     }
-    if (soul::cpp20::symbols::HasDerivation(symbol.GetDerivations(), soul::cpp20::symbols::Derivation::lvalueRefDerivation))
+    if (otava::symbols::HasDerivation(symbol.GetDerivations(), otava::symbols::Derivations::lvalueRefDerivation))
     {
         element->AppendChild(soul::xml::MakeText("&"));
     }
-    else if (soul::cpp20::symbols::HasDerivation(symbol.GetDerivations(), soul::cpp20::symbols::Derivation::rvalueRefDerivation))
+    else if (otava::symbols::HasDerivation(symbol.GetDerivations(), otava::symbols::Derivations::rvalueRefDerivation))
     {
         element->AppendChild(soul::xml::MakeText("&&"));
     }
@@ -265,21 +269,21 @@ void TypeElementGenerator::Visit(soul::cpp20::symbols::CompoundTypeSymbol& symbo
     }
 }
 
-void TypeElementGenerator::Visit(soul::cpp20::symbols::FundamentalTypeSymbol& symbol)
+void TypeElementGenerator::Visit(otava::symbols::FundamentalTypeSymbol& symbol)
 {
     std::string typeText = util::ToUtf8(symbol.Name());
     soul::xml::Text* text = soul::xml::MakeText(typeText);
     element->AppendChild(text);
 }
 
-void TypeElementGenerator::Visit(soul::cpp20::symbols::TemplateParameterSymbol& symbol)
+void TypeElementGenerator::Visit(otava::symbols::TemplateParameterSymbol& symbol)
 {
     std::string typeText = util::ToUtf8(symbol.Name());
     soul::xml::Text* text = soul::xml::MakeText(typeText);
     element->AppendChild(text);
 }
 
-void TypeElementGenerator::Visit(soul::cpp20::symbols::SpecializationSymbol& symbol)
+void TypeElementGenerator::Visit(otava::symbols::ClassTemplateSpecializationSymbol& symbol)
 {
     soul::xml::Element* classTemplateElement = GenerateTypeXmlElement(module, containerSymbol, symbol.ClassTemplate());
     element->AppendChild(classTemplateElement);
@@ -304,11 +308,11 @@ void TypeElementGenerator::Visit(soul::cpp20::symbols::SpecializationSymbol& sym
     element->AppendChild(rangleText);
 }
 
-void TypeElementGenerator::Visit(soul::cpp20::symbols::NestedTypeSymbol& symbol)
+void TypeElementGenerator::Visit(otava::symbols::NestedTypeSymbol& symbol)
 {
     std::string str;
-    soul::cpp20::symbols::Symbol* templateParameterSymbol = nullptr;
-    soul::cpp20::symbols::Symbol* parentSymbol = symbol.Parent();
+    otava::symbols::Symbol* templateParameterSymbol = nullptr;
+    otava::symbols::Symbol* parentSymbol = symbol.Parent();
     while (parentSymbol)
     {
         if (parentSymbol->IsTemplateParameterSymbol())
@@ -330,7 +334,7 @@ void TypeElementGenerator::Visit(soul::cpp20::symbols::NestedTypeSymbol& symbol)
     element->AppendChild(text);
 }
 
-void TypeElementGenerator::Visit(soul::cpp20::symbols::FunctionTypeSymbol& symbol)
+void TypeElementGenerator::Visit(otava::symbols::FunctionTypeSymbol& symbol)
 {
     soul::xml::Element* returnTypeElement = GenerateTypeXmlElement(module, containerSymbol, symbol.ReturnType());
     element->AppendChild(returnTypeElement);
@@ -338,11 +342,11 @@ void TypeElementGenerator::Visit(soul::cpp20::symbols::FunctionTypeSymbol& symbo
     baseTypeIncomplete = true;
 }
 
-void TypeElementGenerator::CompleteBaseType(soul::cpp20::symbols::Symbol* symbol)
+void TypeElementGenerator::CompleteBaseType(otava::symbols::Symbol* symbol)
 {
     if (symbol->IsFunctionTypeSymbol())
     {
-        soul::cpp20::symbols::FunctionTypeSymbol* functionTypeSymbol = static_cast<soul::cpp20::symbols::FunctionTypeSymbol*>(symbol);
+        otava::symbols::FunctionTypeSymbol* functionTypeSymbol = static_cast<otava::symbols::FunctionTypeSymbol*>(symbol);
         element->AppendChild(soul::xml::MakeText(")("));
         bool first = true;
         for (const auto& parameterType : functionTypeSymbol->ParameterTypes())
@@ -363,7 +367,7 @@ void TypeElementGenerator::CompleteBaseType(soul::cpp20::symbols::Symbol* symbol
     }
 }
 
-soul::xml::Element* GenerateTypeXmlElement(soul::cpp20::symbols::Module* module, soul::cpp20::symbols::Symbol* containerSymbol, soul::cpp20::symbols::Symbol* symbol)
+soul::xml::Element* GenerateTypeXmlElement(otava::symbols::Module* module, otava::symbols::Symbol* containerSymbol, otava::symbols::Symbol* symbol)
 {
     TypeElementGenerator generator(module, containerSymbol);
     symbol->Accept(generator);

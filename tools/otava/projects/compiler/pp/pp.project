@@ -5,7 +5,7 @@ reference <../../soul/ast/ast.project>;
 reference <../../soul/lexer/lexer.project>;
 reference <../../soul/parser/parser.project>;
 reference <../../soul/token/token.project>;
-reference <../../soul/xml/dom/soul.xml.dom.project>;
+reference <../../soul/xml/dom/dom.project>;
 reference <../ast/ast.project>;
 reference <../lexer/lexer.project>;
 interface <pp.cppm>;

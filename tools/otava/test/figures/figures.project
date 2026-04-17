@@ -1,0 +1,3 @@
+project figures;
+target=program;
+source <main.cpp>;

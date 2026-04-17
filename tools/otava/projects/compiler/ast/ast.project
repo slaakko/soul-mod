@@ -3,7 +3,7 @@ target=library;
 reference <../../util/util.project>;
 reference <../../soul/ast/ast.project>;
 reference <../../soul/lexer/lexer.project>;
-reference <../../soul/xml/dom/soul.xml.dom.project>;
+reference <../../soul/xml/dom/dom.project>;
 interface <ast.cppm>;
 interface <attribute.cppm>;
 source <attribute.cpp>;

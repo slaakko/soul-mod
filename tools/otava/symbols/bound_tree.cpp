@@ -244,7 +244,8 @@ bool BoundNodeLess::operator()(const std::unique_ptr<BoundNode>& left, const std
     return left->Index() < right->Index();
 }
 
-BoundNode::BoundNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : kind(kind_), index(-1), sourcePos(sourcePos_), source(nullptr)
+BoundNode::BoundNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : 
+    kind(kind_), index(-1), sourcePos(sourcePos_), source(nullptr), temporaryDestructorCallsObtained(false)
 {
 }
 
@@ -253,8 +254,16 @@ BoundNode::~BoundNode()
 }
 
 BoundExpressionNode::BoundExpressionNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundNode(kind_, sourcePos_), flags(BoundExpressionFlags::none), type(type_)
+    BoundNode(kind_, sourcePos_), flags(BoundExpressionFlags::none), type(type_), destructTemporariesNode(nullptr)
 {
+}
+
+BoundExpressionNode::~BoundExpressionNode()
+{
+    if (destructTemporariesNode)
+    {
+        delete destructTemporariesNode;
+    }
 }
 
 void BoundExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -265,6 +274,17 @@ void BoundExpressionNode::Load(Emitter& emitter, OperationFlags flags, const sou
 void BoundExpressionNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     ThrowException("STORE not implemented for " + BoundNodeKindStr(Kind()), sourcePos, context);
+}
+
+void BoundExpressionNode::SetDestructTemporariesNode(BoundDestructTemporariesNode* destructTemporariesNode_) noexcept
+{
+    destructTemporariesNode = destructTemporariesNode_;
+}
+
+void BoundExpressionNode::DestructTemporaries(Emitter& emitter, Context* context)
+{
+    if (!destructTemporariesNode) return;
+    destructTemporariesNode->Load(emitter, OperationFlags::none, GetSourcePos(), context);
 }
 
 Scope* BoundExpressionNode::GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const
@@ -430,6 +450,7 @@ void BoundCompileUnitNode::AddDynamicInitialization(BoundExpressionNode* dynamic
     if (!compileUnitInitializationFunction)
     {
         FunctionDefinitionSymbol* compileUnitInitializationFunctionSymbol = new FunctionDefinitionSymbol(U"__dynamic_init__" + util::ToUtf32(id));
+        compileUnitInitializationFunctionSymbol->SetGenerated();
         context->GetSymbolTable()->GlobalNs()->AddSymbol(compileUnitInitializationFunctionSymbol, sourcePos, context);
         compileUnitInitializationFunction = new BoundFunctionNode(compileUnitInitializationFunctionSymbol, sourcePos);
         compileUnitInitializationFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
@@ -603,9 +624,27 @@ void BoundFunctionNode::SetBoundSetLineStatement(BoundStatementNode* boundSetLin
     boundSetLineStatement.reset(boundSetLineStatement_); 
 }
 
-BoundStatementNode::BoundStatementNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundNode(kind_, sourcePos_), parent(nullptr), generated(false), postfix(false), statementIndex(-1)
+void BoundFunctionNode::AddTemporaryDestructorCall(BoundFunctionCallNode* temporaryDestructorCall)
 {
+    temporaryDestructorCalls.push_back(std::unique_ptr<BoundFunctionCallNode>(temporaryDestructorCall));
+}
+
+std::vector<std::unique_ptr<BoundFunctionCallNode>> BoundFunctionNode::GetTemporaryDestructorCalls()
+{
+    return std::move(temporaryDestructorCalls);
+}
+
+BoundStatementNode::BoundStatementNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept :
+    BoundNode(kind_, sourcePos_), parent(nullptr), generated(false), postfix(false), statementIndex(-1), destructTemporariesNode(nullptr)
+{
+}
+
+BoundStatementNode::~BoundStatementNode()
+{
+    if (destructTemporariesNode)
+    {
+        delete destructTemporariesNode;
+    }
 }
 
 bool BoundStatementNode::IsConditionalStatementInBlock(BoundCompoundStatementNode* block) const noexcept
@@ -635,6 +674,17 @@ BoundCompoundStatementNode* BoundStatementNode::Block() noexcept
     {
         return nullptr;
     }
+}
+
+void BoundStatementNode::SetDestructTemporariesNode(BoundDestructTemporariesNode* destructTemporariesNode_) noexcept
+{
+    destructTemporariesNode = destructTemporariesNode_;
+}
+
+void BoundStatementNode::DestructTemporaries(Emitter& emitter, Context* context)
+{
+    if (!destructTemporariesNode) return;
+    destructTemporariesNode->Load(emitter, OperationFlags::none, GetSourcePos(), context);
 }
 
 BoundEmptyStatementNode::BoundEmptyStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : BoundStatementNode(BoundNodeKind::boundEmptyStatementNode, sourcePos_)
@@ -688,6 +738,18 @@ void BoundCompoundStatementNode::AddStatement(BoundStatementNode* statement)
 {
     statement->SetParent(this);
     statement->SetStatementIndex(NextStatementIndex());
+    if (statement->IsBoundSequenceStatementNode())
+    {
+        BoundSequenceStatementNode* s = static_cast<BoundSequenceStatementNode*>(statement);
+        if (s->First()->StatementIndex() == -1)
+        {
+            s->First()->SetStatementIndex(s->StatementIndex());
+        }
+        if (s->Second()->StatementIndex() == -1)
+        {
+            s->Second()->SetStatementIndex(s->StatementIndex());
+        }
+    }
     statements.push_back(std::unique_ptr<BoundStatementNode>(statement));
 }
 
@@ -1339,6 +1401,7 @@ void BoundLiteralNode::Load(Emitter& emitter, OperationFlags flags, const soul::
     {
         emitter.Stack().Push(value->IrValue(emitter, sourcePos, context));
     }
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundLiteralNode::Clone() const
@@ -1369,6 +1432,7 @@ void BoundStringLiteralNode::Load(Emitter& emitter, OperationFlags flags, const 
         irValue = value->IrValue(emitter, sourcePos, context);
     }
     emitter.Stack().Push(irValue);
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundStringLiteralNode::Clone() const
@@ -1504,6 +1568,7 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
             emitter.Stack().Push(emitter.EmitLoad(ptr));
         }
     }
+    DestructTemporaries(emitter, context);
 }
 
 void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -1604,6 +1669,7 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
             emitter.EmitStore(value, ptr);
         }
     }
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundVariableNode::Clone() const
@@ -1711,6 +1777,7 @@ void BoundParentVariableNode::Load(Emitter& emitter, OperationFlags flags, const
     {
         ThrowException("bound parent variable cannot be global", sourcePos, context);
     }
+    DestructTemporaries(emitter, context);
 }
 
 void BoundParentVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -1780,6 +1847,7 @@ void BoundParentVariableNode::Store(Emitter& emitter, OperationFlags flags, cons
     {
         ThrowException("bound parent variable cannot be global", sourcePos, context);
     }
+    DestructTemporaries(emitter, context);
 }
 
 bool BoundParentVariableNode::IsBoundParentLocalVariable() const noexcept
@@ -1847,6 +1915,7 @@ void BoundParameterNode::Load(Emitter& emitter, OperationFlags flags, const soul
     {
         emitter.Stack().Push(emitter.EmitLoad(static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, sourcePos, context))));
     }
+    DestructTemporaries(emitter, context);
 }
 
 void BoundParameterNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -1879,6 +1948,7 @@ void BoundParameterNode::Store(Emitter& emitter, OperationFlags flags, const sou
         }
         emitter.EmitStore(value, ptr);
     }
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundParameterNode::Clone() const
@@ -1923,6 +1993,7 @@ void BoundParentParameterNode::Load(Emitter& emitter, OperationFlags flags, cons
     {
         emitter.Stack().Push(emitter.EmitLoad(static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, sourcePos, context))));
     }
+    DestructTemporaries(emitter, context);
 }
 
 void BoundParentParameterNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -1955,6 +2026,7 @@ void BoundParentParameterNode::Store(Emitter& emitter, OperationFlags flags, con
         }
         emitter.EmitStore(value, ptr);
     }
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundParentParameterNode::Clone() const
@@ -1992,6 +2064,7 @@ void BoundEnumConstant::Load(Emitter& emitter, OperationFlags flags, const soul:
     {
         emitter.Stack().Push(enumConstant->GetValue()->IrValue(emitter, sourcePos, context));
     }
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundEnumConstant::Clone() const
@@ -2018,6 +2091,7 @@ void BoundFunctionGroupNode::Accept(BoundTreeVisitor& visitor)
 void BoundFunctionGroupNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     emitter.Stack().Push(nullptr);
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundFunctionGroupNode::Clone() const
@@ -2053,6 +2127,7 @@ void BoundClassGroupNode::Accept(BoundTreeVisitor& visitor)
 void BoundClassGroupNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     emitter.Stack().Push(nullptr);
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundClassGroupNode::Clone() const
@@ -2088,6 +2163,7 @@ void BoundAliasGroupNode::Accept(BoundTreeVisitor& visitor)
 void BoundAliasGroupNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     emitter.Stack().Push(nullptr);
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundAliasGroupNode::Clone() const
@@ -2213,6 +2289,7 @@ void BoundFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const s
         }
         emitter.Stack().Push(value);
     }
+    DestructTemporaries(emitter, context);
 }
 
 void BoundFunctionCallNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -2258,6 +2335,7 @@ void BoundFunctionCallNode::Store(Emitter& emitter, OperationFlags flags, const 
             emitter.EmitStore(emitter.EmitLoad(value), ptr);
         }
     }
+    DestructTemporaries(emitter, context);
 }
 
 bool BoundFunctionCallNode::IsLvalueExpression() const noexcept
@@ -2343,6 +2421,7 @@ void BoundEmptyFunctionCallNode::Accept(BoundTreeVisitor& visitor)
 
 void BoundEmptyFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundEmptyFunctionCallNode::Clone() const
@@ -2392,6 +2471,7 @@ void BoundFunctionPtrCallNode::Load(Emitter& emitter, OperationFlags flags, cons
     }
     otava::intermediate::Value* value = emitter.EmitCall(callee, irArgs);
     emitter.Stack().Push(value);
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundFunctionPtrCallNode::Clone() const
@@ -2459,6 +2539,7 @@ void BoundInvokeNode::Load(Emitter& emitter, OperationFlags flags, const soul::a
     {
         result->Load(emitter, flags, sourcePos, context);
     }
+    DestructTemporaries(emitter, context);
 }
 
 void BoundInvokeNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -2495,6 +2576,7 @@ void BoundInvokeNode::Store(Emitter& emitter, OperationFlags flags, const soul::
             emitter.EmitStore(emitter.EmitLoad(value), ptr);
         }
     }
+    DestructTemporaries(emitter, context);
 }
 
 
@@ -2544,6 +2626,7 @@ void BoundExpressionSequenceNode::Load(Emitter& emitter, OperationFlags flags, c
         emitter.Stack().Pop();
     }
     right->Load(emitter, flags, sourcePos, context);
+    DestructTemporaries(emitter, context);
 }
 
 void BoundExpressionSequenceNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -2554,6 +2637,7 @@ void BoundExpressionSequenceNode::Store(Emitter& emitter, OperationFlags flags, 
         emitter.Stack().Pop();
     }
     right->Store(emitter, flags, sourcePos, context);
+    DestructTemporaries(emitter, context);
 }
 
 bool BoundExpressionSequenceNode::HasValue() const noexcept
@@ -2652,6 +2736,7 @@ void BoundConjunctionNode::Load(Emitter& emitter, OperationFlags flags, const so
     temporary->Load(emitter, OperationFlags::addr, sourcePos, context);
     otava::intermediate::Value* temp = emitter.Stack().Pop();
     left->Load(emitter, OperationFlags::none, sourcePos, context);
+    left->DestructTemporaries(emitter, context);
     otava::intermediate::Value* leftValue = emitter.Stack().Pop();
     otava::intermediate::BasicBlock* trueBlock = emitter.CreateBasicBlock();
     otava::intermediate::BasicBlock* rightBlock = emitter.CreateBasicBlock();
@@ -2660,6 +2745,7 @@ void BoundConjunctionNode::Load(Emitter& emitter, OperationFlags flags, const so
     emitter.EmitBranch(leftValue, rightBlock, falseBlock);
     emitter.SetCurrentBasicBlock(rightBlock);
     right->Load(emitter, OperationFlags::none, sourcePos, context);
+    right->DestructTemporaries(emitter, context);
     otava::intermediate::Value* rightValue = emitter.Stack().Pop();
     emitter.EmitBranch(rightValue, trueBlock, falseBlock);
     emitter.SetCurrentBasicBlock(trueBlock);
@@ -2671,6 +2757,7 @@ void BoundConjunctionNode::Load(Emitter& emitter, OperationFlags flags, const so
     emitter.SetCurrentBasicBlock(nextBlock);
     otava::intermediate::Value* value = emitter.EmitLoad(temp);
     emitter.Stack().Push(value);
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundConjunctionNode::Clone() const
@@ -2755,6 +2842,7 @@ void BoundDisjunctionNode::Load(Emitter& emitter, OperationFlags flags, const so
     emitter.SetCurrentBasicBlock(nextBlock);
     otava::intermediate::Value* value = emitter.EmitLoad(temp);
     emitter.Stack().Push(value);
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundDisjunctionNode::Clone() const
@@ -2825,17 +2913,20 @@ void BoundConditionalExprNode::Load(Emitter& emitter, OperationFlags flags, cons
     emitter.EmitBranch(cond, trueBlock, falseBlock);
     emitter.SetCurrentBasicBlock(trueBlock);
     thenExpr->Load(emitter, flags, sourcePos, context);
+    thenExpr->DestructTemporaries(emitter, context);
     otava::intermediate::Value* left = emitter.Stack().Pop();
     emitter.EmitStore(left, temp);
     emitter.EmitJump(nextBlock);
     emitter.SetCurrentBasicBlock(falseBlock);
     elseExpr->Load(emitter, flags, sourcePos, context);
+    elseExpr->DestructTemporaries(emitter, context);
     otava::intermediate::Value* right = emitter.Stack().Pop();
     emitter.EmitStore(right, temp);
     emitter.EmitJump(nextBlock);
     emitter.SetCurrentBasicBlock(nextBlock);
     otava::intermediate::Value* value = emitter.EmitLoad(temp);
     emitter.Stack().Push(value);
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundConditionalExprNode::Clone() const
@@ -2899,12 +2990,14 @@ void BoundConversionNode::Load(Emitter& emitter, OperationFlags flags, const sou
         }
         emitter.Stack().Push(value);
     }
+    DestructTemporaries(emitter, context);
 }
 
 void BoundConversionNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     Load(emitter, flags, sourcePos, context);
     subject->Store(emitter, flags, sourcePos, context);
+    DestructTemporaries(emitter, context);
 }
 
 bool BoundConversionNode::IsLvalueExpression() const noexcept
@@ -2965,6 +3058,7 @@ void BoundAddressOfNode::Load(Emitter& emitter, OperationFlags flags, const soul
         BoundDereferenceNode* derefExpr = static_cast<BoundDereferenceNode*>(subject.get());
         derefExpr->Subject()->Load(emitter, flags, sourcePos, context);
     }
+    DestructTemporaries(emitter, context);
 }
 
 void BoundAddressOfNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) 
@@ -2978,6 +3072,7 @@ void BoundAddressOfNode::Store(Emitter& emitter, OperationFlags flags, const sou
         BoundDereferenceNode* derefExpr = static_cast<BoundDereferenceNode*>(subject.get());
         derefExpr->Subject()->Store(emitter, flags, sourcePos, context);
     }
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundAddressOfNode::Clone() const
@@ -3041,6 +3136,7 @@ void BoundDereferenceNode::Load(Emitter& emitter, OperationFlags flags, const so
         BoundAddressOfNode* addressOfExpr = static_cast<BoundAddressOfNode*>(subject.get());
         addressOfExpr->Subject()->Load(emitter, flags, sourcePos, context);
     }
+    DestructTemporaries(emitter, context);
 }
 
 void BoundDereferenceNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -3054,6 +3150,7 @@ void BoundDereferenceNode::Store(Emitter& emitter, OperationFlags flags, const s
         BoundAddressOfNode* addressOfExpr = static_cast<BoundAddressOfNode*>(subject.get());
         addressOfExpr->Subject()->Store(emitter, flags, sourcePos, context);
     }
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundDereferenceNode::Clone() const
@@ -3097,11 +3194,13 @@ bool BoundRefToPtrNode::MayThrow() const noexcept
 void BoundRefToPtrNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     subject->Load(emitter, flags, sourcePos, context);
+    DestructTemporaries(emitter, context);
 }
 
 void BoundRefToPtrNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     subject->Store(emitter, flags, sourcePos, context);
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundRefToPtrNode::Clone() const
@@ -3156,11 +3255,13 @@ bool BoundPtrToRefNode::MayThrow() const noexcept
 void BoundPtrToRefNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     subject->Load(emitter, flags, sourcePos, context);
+    DestructTemporaries(emitter, context);
 }
 
 void BoundPtrToRefNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     subject->Store(emitter, flags, sourcePos, context);
+    DestructTemporaries(emitter, context);
 }
 
 void BoundPtrToRefNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
@@ -3193,11 +3294,13 @@ bool BoundDefaultInitNode::MayThrow() const noexcept
 void BoundDefaultInitNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     subject->Load(emitter, flags | OperationFlags::defaultInit, sourcePos, context);
+    DestructTemporaries(emitter, context);
 }
 
 void BoundDefaultInitNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     subject->Store(emitter, flags | OperationFlags::defaultInit, sourcePos, context);
+    DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundDefaultInitNode::Clone() const
@@ -3247,11 +3350,13 @@ void BoundTemporaryNode::Load(Emitter& emitter, OperationFlags flags, const soul
     {
         backingStore->Load(emitter, OperationFlags::none, sourcePos, context);
     }
+    DestructTemporaries(emitter, context);
 }
 
 void BoundTemporaryNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     backingStore->Store(emitter, OperationFlags::none, sourcePos, context);
+    DestructTemporaries(emitter, context);
 }
 
 void BoundTemporaryNode::Accept(BoundTreeVisitor& visitor)
@@ -3299,11 +3404,13 @@ void BoundConstructTemporaryNode::Load(Emitter& emitter, OperationFlags flags, c
 {
     constructorCall->Load(emitter, OperationFlags::defaultInit, sourcePos, context);
     temporary->Load(emitter, flags, sourcePos, context);
+    DestructTemporaries(emitter, context);
 }
 
 void BoundConstructTemporaryNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     temporary->Store(emitter, flags, sourcePos, context);
+    DestructTemporaries(emitter, context);
 }
 
 void BoundConstructTemporaryNode::Accept(BoundTreeVisitor& visitor) 
@@ -3336,13 +3443,52 @@ void BoundConstructTemporaryNode::ModifyTypes(const soul::ast::SourcePos& source
     temporary->ModifyTypes(sourcePos, context);
 }
 
+BoundDestructTemporariesNode::BoundDestructTemporariesNode(const soul::ast::SourcePos& sourcePos_,
+    std::vector<std::unique_ptr<BoundFunctionCallNode>>&& temporaryDestructorCalls_) :
+    BoundExpressionNode(BoundNodeKind::boundDestructTemporariesNode, sourcePos_, nullptr),
+    temporaryDestructorCalls(std::move(temporaryDestructorCalls_))
+{
+}
+
+void BoundDestructTemporariesNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    for (const auto& call : temporaryDestructorCalls)
+    {
+        call->Load(emitter, flags, sourcePos, context);
+    }
+}
+
+void BoundDestructTemporariesNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+BoundExpressionNode* BoundDestructTemporariesNode::Clone() const
+{
+    std::vector<std::unique_ptr<BoundFunctionCallNode>> clonedTemporaryDestructorCalls;
+    for (const auto& temporaryDestructorCall : temporaryDestructorCalls)
+    {
+        clonedTemporaryDestructorCalls.push_back(std::unique_ptr<BoundFunctionCallNode>(static_cast<BoundFunctionCallNode*>(temporaryDestructorCall->Clone())));
+    }
+    BoundDestructTemporariesNode* clone = new BoundDestructTemporariesNode(GetSourcePos(), std::move(clonedTemporaryDestructorCalls));
+    return clone;
+}
+
+void BoundDestructTemporariesNode::Merge(BoundDestructTemporariesNode* that)
+{
+    for (const auto& temporaryDestructorCall : that->temporaryDestructorCalls)
+    {
+        temporaryDestructorCalls.push_back(std::unique_ptr<BoundFunctionCallNode>(static_cast<BoundFunctionCallNode*>(temporaryDestructorCall->Clone())));
+    }
+}
+
 BoundConstructExpressionNode::BoundConstructExpressionNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept : 
     BoundExpressionNode(BoundNodeKind::boundConstructExpressionNode, sourcePos_, type_), allocation(), constructObjectCall(), hasPlacement(false)
 {
 }
 
-BoundConstructExpressionNode::BoundConstructExpressionNode(BoundExpressionNode* allocation_, BoundExpressionNode* constructObjectCall_, TypeSymbol* type_, 
-    bool hasPlacement_, const soul::ast::SourcePos& sourcePos_) noexcept :
+BoundConstructExpressionNode::BoundConstructExpressionNode(BoundExpressionNode* allocation_, BoundExpressionNode* constructObjectCall_, 
+    TypeSymbol* type_, bool hasPlacement_, const soul::ast::SourcePos& sourcePos_) noexcept :
     BoundExpressionNode(BoundNodeKind::boundConstructExpressionNode, sourcePos_, type_), allocation(allocation_), constructObjectCall(constructObjectCall_),
     hasPlacement(hasPlacement_)
 {
@@ -3352,6 +3498,7 @@ void BoundConstructExpressionNode::Load(Emitter& emitter, OperationFlags flags, 
 {
     allocation->Load(emitter, flags | OperationFlags::dup, sourcePos, context);
     constructObjectCall->Load(emitter, flags | OperationFlags::storeDeref | OperationFlags::defaultInit, sourcePos, context);
+    DestructTemporaries(emitter, context);
 }
 
 void BoundConstructExpressionNode::Accept(BoundTreeVisitor& visitor)
@@ -3417,6 +3564,7 @@ BoundExpressionNode* BoundEmptyDestructorNode::Clone() const
 
 void BoundEmptyDestructorNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    DestructTemporaries(emitter, context);
 }
 
 BoundFunctionValueNode::BoundFunctionValueNode(FunctionSymbol* function_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
@@ -3447,6 +3595,7 @@ void BoundFunctionValueNode::Load(Emitter& emitter, OperationFlags flags, const 
     otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
     otava::intermediate::Value* functionValueAsVoidPtr = emitter.EmitBitcast(functionValue, voidPtrIrType);
     emitter.Stack().Push(functionValueAsVoidPtr);
+    DestructTemporaries(emitter, context);
 }
 
 BoundVariableAsVoidPtrNode::BoundVariableAsVoidPtrNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept : 
@@ -3482,6 +3631,7 @@ void BoundVariableAsVoidPtrNode::Load(Emitter& emitter, OperationFlags flags, co
     otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
     otava::intermediate::Value* variableAsVoidPtr = emitter.EmitBitcast(variableValue, voidPtrIrType);
     emitter.Stack().Push(variableAsVoidPtr);
+    DestructTemporaries(emitter, context);
 }
 
 void BoundVariableAsVoidPtrNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)

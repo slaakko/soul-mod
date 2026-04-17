@@ -1,0 +1,3 @@
+project sha1rel;
+reference <../../projects/util/util.project>;
+source <main.cpp>;

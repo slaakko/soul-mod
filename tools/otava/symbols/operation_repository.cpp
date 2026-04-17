@@ -1010,7 +1010,8 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
         classType->MakeObjectLayout(sourcePos, context);
     }
     std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classDefaultCtor, sourcePos));
-    boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos)); 
+    BoundCompoundStatementNode* body = new BoundCompoundStatementNode(sourcePos);
+    boundFunction->SetBody(body); 
     context->PushBoundFunction(boundFunction.release());
     bool setNoExcept = true;
     int nb = classType->BaseClasses().size();
@@ -1214,7 +1215,8 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
         classType->MakeObjectLayout(sourcePos, context);
     }
     std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classCopyCtor, sourcePos));
-    boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
+    BoundCompoundStatementNode* body = new BoundCompoundStatementNode(sourcePos);
+    boundFunction->SetBody(body);
     context->PushBoundFunction(boundFunction.release());
     bool setNoExcept = true;
     int nb = classType->BaseClasses().size();
@@ -1426,7 +1428,8 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
         classType->MakeObjectLayout(sourcePos, context);
     }
     std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classMoveCtor, sourcePos));
-    boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
+    BoundCompoundStatementNode* body = new BoundCompoundStatementNode(sourcePos);
+    boundFunction->SetBody(body);
     context->PushBoundFunction(boundFunction.release());
     int nb = classType->BaseClasses().size();
     for (int i = 0; i < nb; ++i)
@@ -1629,7 +1632,8 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
 {
     ClassTypeSymbol* classType = classCopyAssignment->ClassType();
     std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classCopyAssignment, sourcePos));
-    boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
+    BoundCompoundStatementNode* body = new BoundCompoundStatementNode(sourcePos);
+    boundFunction->SetBody(body);
     context->PushBoundFunction(boundFunction.release());
     bool setNoExcept = true;
     int nb = classType->BaseClasses().size();
@@ -1701,8 +1705,8 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
     BoundReturnStatementNode* returnStatement = new BoundReturnStatementNode(sourcePos);
     otava::ast::ThisNode* thisNode = new otava::ast::ThisNode(sourcePos);
     otava::ast::UnaryExprNode derefNode(sourcePos, new otava::ast::DerefNode(sourcePos), thisNode);
-    BoundExpressionNode* derefThisExpr = BindExpression(&derefNode, context);
-    returnStatement->SetExpr(derefThisExpr, sourcePos, context);
+    std::unique_ptr<BoundExpressionNode> derefThisExpr = BindExpression(&derefNode, context);
+    returnStatement->SetExpr(derefThisExpr.release(), sourcePos, context);
     context->GetBoundFunction()->Body()->AddStatement(returnStatement);
     if (!context->GetFlag(ContextFlags::leaveBoundFunction))
     {
@@ -1807,7 +1811,8 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
 {
     ClassTypeSymbol* classType = classMoveAssignment->ClassType();
     std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classMoveAssignment, sourcePos));
-    boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
+    BoundCompoundStatementNode* body = new BoundCompoundStatementNode(sourcePos);
+    boundFunction->SetBody(body);
     context->PushBoundFunction(boundFunction.release());
     int nb = classType->BaseClasses().size();
     for (int i = 0; i < nb; ++i)
@@ -1868,8 +1873,8 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
     BoundReturnStatementNode* returnStatement = new BoundReturnStatementNode(sourcePos);
     otava::ast::ThisNode* thisNode = new otava::ast::ThisNode(sourcePos);
     otava::ast::UnaryExprNode derefNode(sourcePos, new otava::ast::DerefNode(sourcePos), thisNode);
-    BoundExpressionNode* derefThisExpr = BindExpression(&derefNode, context);
-    returnStatement->SetExpr(derefThisExpr, sourcePos, context);
+    std::unique_ptr<BoundExpressionNode> derefThisExpr = BindExpression(&derefNode, context);
+    returnStatement->SetExpr(derefThisExpr.release(), sourcePos, context);
     context->GetBoundFunction()->Body()->AddStatement(returnStatement);
     if (!context->GetFlag(ContextFlags::leaveBoundFunction))
     {

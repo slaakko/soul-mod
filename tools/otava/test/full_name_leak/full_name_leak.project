@@ -1,0 +1,3 @@
+project full_name_leak;
+target=program;
+source <main.cpp>;

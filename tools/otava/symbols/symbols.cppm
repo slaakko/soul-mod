@@ -28,6 +28,7 @@ export import otava.symbols.function.kind;
 export import otava.symbols.function.symbol;
 export import otava.symbols.function.templates;
 export import otava.symbols.function_return_path_checker;
+export import otava.symbols.function.type.symbol;
 export import otava.symbols.fundamental.type.symbol;
 export import otava.symbols.modules;
 export import otava.symbols.namespaces;

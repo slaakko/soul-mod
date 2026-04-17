@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module util.sha1;
 
 import util.text.util;
@@ -28,6 +23,18 @@ void Sha1::Reset() noexcept
     digest[4] = 0xC3D2E1F0u;
     byteIndex = 0u;
     bitCount = 0u;
+}
+
+void Sha1::Process(std::uint8_t x) noexcept
+{
+    ProcessByte(x);
+    bitCount = bitCount + 8u;
+}
+
+void Sha1::Process(void* buf, int count) noexcept
+{
+    std::uint8_t* b = static_cast<std::uint8_t*>(buf);
+    Process(b, b + count);
 }
 
 void Sha1::Process(void* begin, void* end) noexcept
@@ -76,6 +83,16 @@ std::string Sha1::GetDigest()
     s.append(ToHexString(digest[3]));
     s.append(ToHexString(digest[4]));
     return s;
+}
+
+void Sha1::ProcessByte(std::uint8_t x) noexcept
+{
+    block[byteIndex++] = x;
+    if (byteIndex == 64u)
+    {
+        byteIndex = static_cast<std::uint8_t>(0u);
+        ProcessBlock();
+    }
 }
 
 void Sha1::ProcessBlock() noexcept

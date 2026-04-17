@@ -1,0 +1,18 @@
+types
+{
+}
+
+data
+{
+        int variable_tokenSetID_59FA1FD43661A9468BBD29EB22E58BC2745C0D08 = int 1780422457
+        long variable_LPAREN_5575F55A70B940DAC6771A14B061FE2039DCF476 = long 7646856225878966273
+        long variable_RPAREN_5522AFEF919F573C31188D8BC8B0C32C519FCC31 = long 7646856225878966274
+        long variable_COMMA_2B941173E84B2FD7C69F5A7952EA98CB0F5B8E65 = long 7646856225878966275
+        long variable_NAME_2D16018286F2650851FB31E884EDC024C6C5AE55 = long 7646856225878966276
+}
+
+
+metadata
+{
+        !0 = {nodeType: 0, sourceFileName: "D:/work/soul-mod/tools/otava/test/string_parser/string_parser.token.cppm"}
+}

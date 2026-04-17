@@ -1,4 +1,4 @@
-// this file has been automatically generated from 'D:/work/soul-mod/soul/lex/re.lexer' using soul lexer generator slg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/soul/lex/re.lexer' using soul lexer generator oslg version 5.0.0
 
 module soul.lex.re;
 
@@ -155,7 +155,7 @@ template<>
 soul::lexer::KeywordMap<char>* GetKeywords<char>()
 {
     static const soul::lexer::Keyword<char> keywords[] = {
-            { nullptr, -1 }
+         { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char> keywordMap(keywords);
     return &keywordMap;
@@ -165,7 +165,7 @@ template<>
 soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
 {
     static const soul::lexer::Keyword<char8_t> keywords[] = {
-            { nullptr, -1 }
+         { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char8_t> keywordMap(keywords);
     return &keywordMap;
@@ -175,7 +175,7 @@ template<>
 soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
 {
     static const soul::lexer::Keyword<char16_t> keywords[] = {
-            { nullptr, -1 }
+         { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char16_t> keywordMap(keywords);
     return &keywordMap;
@@ -185,7 +185,7 @@ template<>
 soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
 {
     static const soul::lexer::Keyword<char32_t> keywords[] = {
-            { nullptr, -1 }
+         { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char32_t> keywordMap(keywords);
     return &keywordMap;

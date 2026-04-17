@@ -13,6 +13,7 @@ import otava.symbols.symbol.table;
 import otava.symbols.classes;
 import otava.symbols.context;
 import otava.symbols.modules;
+import otava.symbols.exception;
 import util;
 
 namespace otava::symbols {
@@ -63,14 +64,14 @@ void CompoundTypeSymbol::Resolve(SymbolTable& symbolTable, Context* context)
     baseType = symbolTable.GetType(baseTypeId);
     if (!baseType)
     {
-        std::string note;
-        Module* requesterModule = context->GetRequesterModule();
-        if (requesterModule)
-        {
-            note = ": note: requester module is " + requesterModule->Name();
-        }
         if (!context->GetFlag(ContextFlags::noWarnings))
         {
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
             std::cout << "CompoundTypeSymbol::Resolve(): warning: type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
         }
     }
@@ -208,10 +209,14 @@ std::u32string CompoundTypeSymbol::FullName() const
 
 otava::intermediate::Type* CompoundTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    util::uuid irId = IrId(context);
+    util::uuid irId = IrId(sourcePos, context);
     otava::intermediate::Type* type = emitter.GetType(irId);
     if (!type)
     {
+        if (!baseType)
+        {
+            ThrowException("cannot obtain base type for type '" + util::ToUtf8(Name()) + "' because it is incomplete at this point", sourcePos, context);
+        }
         type = baseType->IrType(emitter, sourcePos, context);
         int pointerCount = otava::symbols::PointerCount(derivations);
         for (int i = 0; i < pointerCount; ++i)
@@ -322,9 +327,13 @@ std::u32string MakeCompoundTypeName(TypeSymbol* baseType, Derivations derivation
     return name;
 }
 
-util::uuid CompoundTypeSymbol::IrId(Context* context) const noexcept
+util::uuid CompoundTypeSymbol::IrId(const soul::ast::SourcePos& sourcePos, Context* context) const 
 {
-    util::uuid irId = baseType->IrId(context);
+    if (!baseType)
+    {
+        ThrowException("cannot obtain base type for type '" + util::ToUtf8(Name()) + "' because it is incomplete at this point", sourcePos, context);
+    }
+    util::uuid irId = baseType->IrId(sourcePos, context);
     util::uuid derivationsId = context->GetSymbolTable()->GetCompoundTypeId(static_cast<std::uint8_t>(derivations));
     util::Xor(irId, derivationsId);
     return irId;

@@ -271,7 +271,7 @@ public:
     {
         std::fputs(s, file);
     }
-    void open(const char* filename, std::ios_base::openmode mode)
+    void open(const char* filename, std::ios_base::openmode mode = std::ios_base::out)
     {
         if (mode == std::ios_base::out)
         {

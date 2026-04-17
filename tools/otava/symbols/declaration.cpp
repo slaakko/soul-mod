@@ -873,7 +873,7 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* function
                             std::unique_ptr<BoundExpressionNode> variableInitializer(nullptr);
                             if (declaration.initializer)
                             {
-                                variableInitializer.reset(BindExpression(declaration.initializer, context));
+                                variableInitializer = BindExpression(declaration.initializer, context);
                             }
                             if (!variable->IsExtern())
                             {

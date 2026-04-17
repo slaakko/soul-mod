@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module util.unicode;
 
 import std;
@@ -13,14 +8,24 @@ UnicodeException::UnicodeException(const std::string& message_) : std::runtime_e
 {
 }
 
-void ThrowUnicodeException(const std::string& message_)
+void ThrowUnicodeException(const std::string& message)
 {
-    throw UnicodeException(message_);
+    throw UnicodeException(message);
 }
 
 void ThrowInvalidUtf8Sequence()
 {
     throw UnicodeException("invalid UTF-8 sequence");
+}
+
+void ThrowInvalidUtf16Sequence()
+{
+    throw UnicodeException("invalid UTF-16 sequence");
+}
+
+void ThrowInvalidUtf32CodePoint()
+{
+    throw UnicodeException("invalid UTF-32 code point");
 }
 
 std::u32string ToUtf32(const std::string& utf8Str)
@@ -195,7 +200,7 @@ std::u32string ToUtf32(const std::u16string& utf16Str)
         {
             if (static_cast<std::uint16_t>(w1) < 0xD800u || static_cast<std::uint16_t>(w1) > 0xDBFFu)
             {
-                ThrowUnicodeException("invalid UTF-16 sequence");
+                ThrowInvalidUtf16Sequence();
             }
             if (remaining > 0)
             {
@@ -203,7 +208,7 @@ std::u32string ToUtf32(const std::u16string& utf16Str)
                 --remaining;
                 if (static_cast<std::uint16_t>(w2) < 0xDC00u || static_cast<std::uint16_t>(w2) > 0xDFFFu)
                 {
-                    ThrowUnicodeException("invalid UTF-16 sequence");
+                    ThrowInvalidUtf16Sequence();
                 }
                 else
                 {
@@ -214,7 +219,7 @@ std::u32string ToUtf32(const std::u16string& utf16Str)
             }
             else
             {
-                ThrowUnicodeException("invalid UTF-16 sequence");
+                ThrowInvalidUtf16Sequence();
             }
         }
     }
@@ -228,13 +233,13 @@ std::u16string ToUtf16(const std::u32string& utf32Str)
     {
         if (static_cast<std::uint32_t>(u) > 0x10FFFFu)
         {
-            ThrowUnicodeException("invalid UTF-32 code point");
+            ThrowInvalidUtf32CodePoint();
         }
         if (static_cast<std::uint32_t>(u) < 0x10000u)
         {
             if (static_cast<std::uint32_t>(u) >= 0xD800 && static_cast<std::uint32_t>(u) <= 0xDFFF)
             {
-                ThrowUnicodeException("invalid UTF-32 code point (reserved for UTF-16)");
+                ThrowInvalidUtf32CodePoint();
             }
             char16_t x = static_cast<char16_t>(u);
             result.append(1, x);
@@ -351,7 +356,7 @@ std::string ToUtf8(const std::u32string& utf32Str)
         }
         else
         {
-            ThrowUnicodeException("invalid UTF-32 code point");
+            ThrowInvalidUtf32CodePoint();
         }
     }
     return result;

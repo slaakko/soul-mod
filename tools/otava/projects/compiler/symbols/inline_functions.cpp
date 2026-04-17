@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.inline_functions;
 
 import otava.symbols.context;
@@ -118,17 +113,6 @@ FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::S
             }
             PrintWarning("failed to instantiating inline function '" + inlineFunctionFullName +
                 "': " + std::string(ex.what()), node->GetSourcePos(), context);
-            return fn;
-        }
-        catch (const Exception& ex)
-        {
-            std::string inlineFunctionFullName;
-            if (inlineFn)
-            {
-                inlineFunctionFullName = util::ToUtf8(inlineFn->FullName());
-            }
-            PrintWarning("failed to instantiating inline function '" + inlineFunctionFullName +
-                "': " + ex.Message(), node->GetSourcePos(), context);
             return fn;
         }
         context->GetSymbolTable()->EndScope();

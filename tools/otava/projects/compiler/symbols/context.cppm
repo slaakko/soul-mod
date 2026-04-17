@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.context;
 
 import std;
@@ -84,6 +79,11 @@ enum class ContextFlags : std::int64_t
     setParentBlockIds = static_cast<std::int64_t>(1) << 48,
     matchClassTemplateSpecializationConversion = static_cast<std::int64_t>(1) << 49,
     noWarnings = static_cast<std::int64_t>(1) << 50,
+    debug = static_cast<std::int64_t>(1) << 51,
+    debugMemory = static_cast<std::int64_t>(1) << 52,
+    acquireTemporaryDestructorCalls = static_cast<std::int64_t>(1) << 53,
+    gendoc = static_cast<std::int64_t>(1) << 54,
+    skipMapIo = static_cast<std::int64_t>(1) << 55,
     sticky = noWarnings | expected
 };
 
@@ -113,6 +113,7 @@ class OperationRepository;
 class FunctionDefinitionSymbol;
 class AliasTypeSymbol;
 class TypeSymbol;
+class VariableSymbol;
 class ClassTemplateSpecializationSymbol;
 class Emitter;
 class SymbolsProject;
@@ -151,6 +152,9 @@ public:
     EvaluationContext* GetEvaluationContext() noexcept;
     std::string FileName() const;
     void SetFileName(const std::string& fileName_);
+    int Line() const;
+    inline const std::u32string& Function() const noexcept { return function; }
+    void SetFunction(const std::u32string& function_);
     void PushFlags();
     void PopFlags();
     void PushSetFlag(ContextFlags flag);
@@ -219,7 +223,10 @@ public:
     inline void SetFunctionsInlined(int functionsInlined_) noexcept { functionsInlined = functionsInlined_; }
     inline int Invokes() const noexcept { return invokes; }
     inline void IncInvokes() noexcept { ++invokes; }
+    inline int UnresolvedInvokes() noexcept { return unresolvedInvokes; }
+    inline void IncUnresolvedInvokes() noexcept { ++unresolvedInvokes; }
     inline void SetInvokes(int invokes_) noexcept { invokes = invokes_; }
+    inline void SetUnresolvedInvokes(int unresolvedInvokes_) { unresolvedInvokes = unresolvedInvokes_; }
     inline Emitter* GetEmitter() noexcept { return emitter; }
     inline void SetEmitter(Emitter* emitter_) noexcept { emitter = emitter_; }
     inline int ArgIndex() const noexcept { return argIndex; }
@@ -236,6 +243,7 @@ public:
     inline int NextEhReturnFromSerial() noexcept { return ehReturnFromSerial++; }
     inline int NextChildControlResultSerial() noexcept { return childControlResultSerial++; }
     inline int NextConditionVariableSerial() noexcept { return conditionVariableSerial++; }
+    inline int NextStreamInitVarSerial() noexcept { return streamInitVarSerial++; }
     void PushStatementBinder(StatementBinder* statementBinder_);
     void PopStatementBinder();
     inline StatementBinder* GetStatementBinder() const noexcept { return statementBinder; }
@@ -250,6 +258,7 @@ public:
     std::u32string NextEhReturnFromVarName();
     std::u32string NextChildControlResultVarName();
     std::u32string NextConditionVariableName();
+    std::u32string NextStreamInitVarName();
     inline int NextBlockId() noexcept { return nextBlockId++; }
     inline int CurrentBlockId() const noexcept { return currentBlockId; }
     void PushBlockId(int blockId);
@@ -260,7 +269,17 @@ public:
     inline int ParentBlockId() const noexcept { return parentBlockId; }
     void PushParentBlockId(int blockId);
     void PopParentBlockId();
+    inline int ParentStatementIndex() const noexcept { return parentStatementIndex; }
+    void PushParentStatementIndex(int parentStatementIndex_);
+    void PopParentStatementIndex();
     RangeForBlockIds& GetRangeForBlockIds(const util::uuid& rangeForId);
+    const std::u32string& DebugFn() const { return debugFn; }
+    void SetDebugFn(const std::u32string& debugFn_);
+    inline void SetDebugOutputStream(std::ostream* s) noexcept { debugOutputStream = s; }
+    inline std::ostream* DebugOutputStream() const noexcept { return debugOutputStream; }
+    inline std::int64_t NodeId() const noexcept { return nodeId; }
+    void PushNodeId(std::int64_t nodeId_);
+    void PopNodeId();
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -302,6 +321,7 @@ private:
     int functionCallsInlined;
     int functionsInlined;
     int invokes;
+    int unresolvedInvokes;
     int argIndex;
     int boundFunctionSerial;
     int trySerial;
@@ -312,6 +332,7 @@ private:
     int ehReturnFromSerial;
     int childControlResultSerial;
     int conditionVariableSerial;
+    int streamInitVarSerial;
     Module* requesterModule;
     std::vector<StatementBinder*> statementBinders;
     StatementBinder* statementBinder;
@@ -326,7 +347,19 @@ private:
     std::stack<FunctionDefinitionSymbol*> parentFnStack;
     std::stack<int> parentBlockIdStack;
     int parentBlockId;
+    std::stack<int> parentStatementIndexStack;
+    int parentStatementIndex;
     std::map<util::uuid, RangeForBlockIds> rangeForBlockIdMap;
+    std::u32string debugFn;
+    std::ostream* debugOutputStream;
+    std::u32string function;
+    std::int64_t nodeId;
+    std::stack<std::int64_t> nodeIdStack;
 };
+
+void PrintDebugMessage(Context* context, const std::string& message);
+
+Context* CurrentContext();
+void SetCurrentContext(Context* context);
 
 } // namespace otava::symbols

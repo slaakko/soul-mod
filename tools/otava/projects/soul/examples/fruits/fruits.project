@@ -1,0 +1,16 @@
+project fruits;
+target=program;
+reference <../../../util/util.project>;
+reference <../../ast/ast.project>;
+reference <../../lexer/lexer.project>;
+reference <../../parser/parser.project>;
+interface <fruits.cppm>;
+interface <fruits.token.cppm>;
+interface <fruits.lexer.cppm>;
+source <fruits.lexer.cpp>;
+interface <fruits.parser.cppm>;
+source <fruits.parser.cpp>;
+interface <fruits_rules.cppm>;
+source <fruits_rules.cpp>;
+source <main.cpp>;
+resource <fruits.lexer.classmap.rc>;

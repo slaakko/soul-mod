@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols;
 
 export import otava.symbols.alias.group.symbol;
@@ -23,7 +18,7 @@ export import otava.symbols.concepts;
 export import otava.symbols.concept_group.symbol;
 export import otava.symbols.container.symbol;
 export import otava.symbols.context;
-export import otava.symbols.control.xml.generator;
+export import otava.symbols.bound.node.xml.generator;
 export import otava.symbols.conversion.table;
 export import otava.symbols.declaration;
 export import otava.symbols.declarator;

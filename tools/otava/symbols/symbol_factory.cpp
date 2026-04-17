@@ -104,11 +104,13 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         {
             otava::ast::SetExceptionThrown();
             throw std::runtime_error("not implemented");
+            return nullptr;
         }
         case SymbolKind::nullPtrTypeSymbol:
         {
             otava::ast::SetExceptionThrown();
             throw std::runtime_error("not implemented");
+            return nullptr;
         }
         case SymbolKind::aliasTypeSymbol:
         {
@@ -194,6 +196,7 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         {
             otava::ast::SetExceptionThrown();
             throw std::runtime_error("not implemented");
+            return nullptr;
         }
         case SymbolKind::variableSymbol:
         {

@@ -3,7 +3,7 @@
 // Distributed under the MIT license
 // =================================
 
-export module soul.cpp20.token.line.lexer;
+export module otava.token.line.lexer;
 
 import otava.token;
 import otava.keyword;

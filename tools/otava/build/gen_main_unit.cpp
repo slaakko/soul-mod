@@ -51,6 +51,7 @@ std::string GenerateMainWrapper(otava::symbols::Context* context, int numParams)
 *           __global_init__();
 *           @retval = main(argc, argv);
 *           std::run_at_exits();
+*           __global_done__();
 *           return @retval;
 *   }
 */
@@ -85,6 +86,11 @@ std::string GenerateMainWrapper(otava::symbols::Context* context, int numParams)
     otava::ast::ExpressionStatementNode* runAtExitsStmt = new otava::ast::ExpressionStatementNode(soul::ast::SourcePos(), runAtExitsFnCall, nullptr,
         new otava::ast::SemicolonNode(soul::ast::SourcePos()));
     body->AddNode(runAtExitsStmt);
+    otava::ast::IdentifierNode* globalDoneFn = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"__global_done__");
+    otava::ast::InvokeExprNode* globalDoneFnCall = new otava::ast::InvokeExprNode(soul::ast::SourcePos(), globalDoneFn);
+    otava::ast::ExpressionStatementNode* globalDoneStmt = new otava::ast::ExpressionStatementNode(soul::ast::SourcePos(), globalDoneFnCall, nullptr,
+        new otava::ast::SemicolonNode(soul::ast::SourcePos()));
+    body->AddNode(globalDoneStmt);
     otava::ast::IdentifierNode* retValVarId = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"@retval");
     otava::ast::ReturnStatementNode* returnRetValStmt = new otava::ast::ReturnStatementNode(soul::ast::SourcePos(), retValVarId, nullptr, nullptr, soul::ast::SourcePos());
     body->AddNode(returnRetValStmt);
@@ -140,6 +146,7 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
 {
     otava::symbols::Module* std = moduleMapper.GetModule("std", config, optLevel, configurations, parentContext);
     otava::symbols::Module main("main");
+    main.SetMain();
     main.Import(std, moduleMapper, config, optLevel, configurations, parentContext);
     std::unique_ptr<otava::symbols::SymbolTable> symbolTable(new otava::symbols::SymbolTable());
     symbolTable->SetModule(&main);
@@ -150,15 +157,19 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     context.SetCurrentProject(project);
     context.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
     context.SetSymbolTable(symbolTable.get());
+    if (project->HasDefine("DEBUG_MEMORY"))
+    {
+        context.SetFlag(otava::symbols::ContextFlags::debugMemory);
+    }
     if (configurations.find("release") != configurations.end())
     {
-        std::string fp = util::GetFullPath(util::Path::Combine(util::Path::GetDirectoryName(util::Path::GetDirectoryName(util::Path::GetDirectoryName(mainFilePath))), 
-            util::Path::GetFileName(mainFilePath)));
+        std::string fp = util::GetFullPath(util::Path::Combine(util::Path::GetDirectoryName(util::Path::GetDirectoryName(
+            util::Path::GetDirectoryName(util::Path::GetDirectoryName(mainFilePath)))), util::Path::GetFileName(mainFilePath)));
         context.SetFileName(fp);
     }
     else
     {
-        std::string fp = util::GetFullPath(util::Path::Combine(util::Path::GetDirectoryName(util::Path::GetDirectoryName(mainFilePath)),
+        std::string fp = util::GetFullPath(util::Path::Combine(util::Path::GetDirectoryName(util::Path::GetDirectoryName(util::Path::GetDirectoryName(mainFilePath))),
             util::Path::GetFileName(mainFilePath)));
         context.SetFileName(fp);
     }
@@ -166,6 +177,11 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     otava::symbols::FunctionSymbol* globalInitFn = context.GetSymbolTable()->AddFunction(U"__global_init__", std::vector<otava::symbols::TypeSymbol*>(), nullptr, 
         otava::symbols::FunctionKind::function, otava::symbols::FunctionQualifiers::none, otava::symbols::DeclarationFlags::none, &context);
     globalInitFn->SetLinkage(otava::symbols::Linkage::c_linkage);
+    globalInitFn->SetGenerated();
+    otava::symbols::FunctionSymbol* globalDoneFn = context.GetSymbolTable()->AddFunction(U"__global_done__", std::vector<otava::symbols::TypeSymbol*>(), nullptr,
+        otava::symbols::FunctionKind::function, otava::symbols::FunctionQualifiers::none, otava::symbols::DeclarationFlags::none, &context);
+    globalDoneFn->SetLinkage(otava::symbols::Linkage::c_linkage);
+    globalDoneFn->SetGenerated();
     otava::symbols::FunctionSymbol* mainFn = context.GetSymbolTable()->AddFunction(U"main", std::vector<otava::symbols::TypeSymbol*>(), nullptr,
         otava::symbols::FunctionKind::function, otava::symbols::FunctionQualifiers::none, otava::symbols::DeclarationFlags::none, &context);
     otava::symbols::TypeSymbol* intType = context.GetSymbolTable()->GetFundamentalTypeSymbol(otava::symbols::FundamentalTypeKind::intType);
@@ -192,6 +208,12 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     util::CodeFormatter formatter(mainFile);
     formatter.WriteLine("extern \"C\" void ort_init();");
     formatter.WriteLine("extern \"C\" void ort_done();");
+    formatter.WriteLine("extern \"C\" void ort_preprocess_args(int argc, const char** argv, int* pargc, const char*** pargv);");
+    if (context.GetFlag(otava::symbols::ContextFlags::debugMemory))
+    {
+        formatter.WriteLine("extern \"C\" void ort_debug_memory();");
+        formatter.WriteLine("extern \"C\" void ort_print_memory_leaks();");
+    }
     formatter.WriteLine("extern \"C\" int " + mainWrapperIrName + "(int argc, const char** argv); ");
     formatter.WriteLine();
     formatter.WriteLine("int main(int argc, const char** argv)");
@@ -200,8 +222,19 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     if (numParams == 0 || numParams == 2)
     {
         formatter.WriteLine("ort_init();");
-        formatter.WriteLine("int retVal = " + mainWrapperIrName + "(argc, argv);");
+        if (context.GetFlag(otava::symbols::ContextFlags::debugMemory))
+        {
+            formatter.WriteLine("ort_debug_memory();");
+        }
+        formatter.WriteLine("int pargc;");
+        formatter.WriteLine("const char** pargv;");
+        formatter.WriteLine("ort_preprocess_args(argc, argv, &pargc, &pargv);");
+        formatter.WriteLine("int retVal = " + mainWrapperIrName + "(pargc, pargv);");
         formatter.WriteLine("ort_done();");
+        if (context.GetFlag(otava::symbols::ContextFlags::debugMemory))
+        {
+            formatter.WriteLine("ort_print_memory_leaks();");
+        }
     }
     else
     {

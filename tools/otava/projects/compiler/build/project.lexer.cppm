@@ -1,4 +1,4 @@
-// this file has been automatically generated from 'D:/work/test_soul/tools/otava/projects/compiler/build/project.lexer' using soul lexer generator oslg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/compiler/build/project.lexer' using soul lexer generator oslg version 5.0.0
 
 export module otava.build.project_lexer;
 
@@ -1727,15 +1727,15 @@ struct ProjectLexer
 template<typename Char>
 soul::lexer::ClassMap<Char>* GetClassMap()
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("otava.build.project_lexer.classmap");
-    return classmap;
+    static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>("otava.build.project_lexer.classmap"));
+    return classmap.get();
 }
 
 template<typename Char>
 soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "otava.build.project_lexer.classmap", resourceFlags);
-    return classmap;
+    static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>(moduleFileName, "otava.build.project_lexer.classmap", resourceFlags));
+    return classmap.get();
 }
 
 template<typename Char>

@@ -129,7 +129,7 @@ public:
     virtual otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const;
     std::string IrName(Context* context) const override;
     const std::vector<VariableSymbol*>& LocalVariables() const noexcept { return  localVariables; }
-    VariableSymbol* CreateTemporary(TypeSymbol* type, std::int64_t nodeId);
+    VariableSymbol* CreateTemporary(TypeSymbol* type, std::int64_t nodeId, Context* context);
     VariableSymbol* GetTemporary(std::int64_t nodeId) const noexcept;
     virtual bool IsConst() const noexcept;
     virtual bool IsVirtual() const noexcept;
@@ -174,6 +174,7 @@ public:
     inline const std::string& CompileUnitId() const noexcept { return compileUnitId; }
     void SetTemplateArgs(const std::vector<TypeSymbol*>& templateArgs_);
     soul::xml::Element* ToXml() const override;
+    void PrintLocals();
 private:
     mutable bool memFunParamsConstructed;
     FunctionKind kind;

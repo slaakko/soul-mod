@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.namespaces;
 
 import otava.ast;
@@ -20,7 +15,7 @@ import otava.symbols.symbol.table;
 
 namespace otava::symbols {
 
-NamespaceSymbol::NamespaceSymbol(const std::u32string& name_) : ContainerSymbol(SymbolKind::namespaceSymbol, name_)
+NamespaceSymbol::NamespaceSymbol(const std::u32string& name_) : ContainerSymbol(SymbolKind::namespaceSymbol, name_), symbolTable(nullptr)
 {
     GetScope()->SetKind(ScopeKind::namespaceScope);
 }
@@ -29,7 +24,7 @@ bool NamespaceSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcep
 {
     switch (scopeKind)
     {
-        case ScopeKind::namespaceScope: return true;
+    case ScopeKind::namespaceScope: return true;
     }
     return false;
 }
@@ -62,43 +57,43 @@ void NamespaceSymbol::Import(NamespaceSymbol* that, Context* context)
             Symbol* installSymbol = symbol.get();
             switch (symbol->Kind())
             {
-                case SymbolKind::functionDefinitionSymbol:
-                {
-                    FunctionDefinitionSymbolSet* functionDefinitionSymbolSet = context->GetFunctionDefinitionSymbolSet();
-                    FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(installSymbol);
-                    functionDefinitionSymbolSet->AddFunctionDefinitionSymbol(functionDefinition);
-                    break;
-                }
-                case SymbolKind::conceptGroupSymbol:
-                {
-                    installSymbol = currentScope->GetOrInsertConceptGroup(symbol->Name(), soul::ast::SourcePos(), context);
-                    break;
-                }
-                case SymbolKind::classGroupSymbol:
-                {
-                    installSymbol = currentScope->GetOrInsertClassGroup(symbol->Name(), soul::ast::SourcePos(), context);
-                    break;
-                }
-                case SymbolKind::aliasGroupSymbol:
-                {
-                    installSymbol = currentScope->GetOrInsertAliasGroup(symbol->Name(), soul::ast::SourcePos(), context);
-                    break;
-                }
-                case SymbolKind::functionGroupSymbol:
-                {
-                    installSymbol = currentScope->GetOrInsertFunctionGroup(symbol->Name(), soul::ast::SourcePos(), context);
-                    break;
-                }
-                case SymbolKind::variableGroupSymbol:
-                {
-                    installSymbol = currentScope->GetOrInsertVariableGroup(symbol->Name(), soul::ast::SourcePos(), context);
-                    break;
-                }
-                case SymbolKind::enumGroupSymbol:
-                {
-                    installSymbol = currentScope->GetOrInsertEnumGroup(symbol->Name(), soul::ast::SourcePos(), context);
-                    break;
-                }
+            case SymbolKind::functionDefinitionSymbol:
+            {
+                FunctionDefinitionSymbolSet* functionDefinitionSymbolSet = context->GetFunctionDefinitionSymbolSet();
+                FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(installSymbol);
+                functionDefinitionSymbolSet->AddFunctionDefinitionSymbol(functionDefinition);
+                break;
+            }
+            case SymbolKind::conceptGroupSymbol:
+            {
+                installSymbol = currentScope->GetOrInsertConceptGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                break;
+            }
+            case SymbolKind::classGroupSymbol:
+            {
+                installSymbol = currentScope->GetOrInsertClassGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                break;
+            }
+            case SymbolKind::aliasGroupSymbol:
+            {
+                installSymbol = currentScope->GetOrInsertAliasGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                break;
+            }
+            case SymbolKind::functionGroupSymbol:
+            {
+                installSymbol = currentScope->GetOrInsertFunctionGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                break;
+            }
+            case SymbolKind::variableGroupSymbol:
+            {
+                installSymbol = currentScope->GetOrInsertVariableGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                break;
+            }
+            case SymbolKind::enumGroupSymbol:
+            {
+                installSymbol = currentScope->GetOrInsertEnumGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                break;
+            }
             }
             if (installSymbol->CanInstall())
             {
@@ -122,6 +117,18 @@ bool NamespaceSymbol::ContainsSymbols() const noexcept
         if (!symbol->IsNamespaceSymbol()) return true;
     }
     return false;
+}
+
+SymbolTable* NamespaceSymbol::GetSymbolTable() noexcept
+{
+    if (symbolTable)
+    {
+        return symbolTable;
+    }
+    else
+    {
+        return Parent()->GetSymbolTable();
+    }
 }
 
 class NamespaceCreator : public otava::ast::DefaultVisitor

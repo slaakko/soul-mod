@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 import soul.ast.spg;
 import soul.spg.file.parsers;
 import soul.lexer.file.map;

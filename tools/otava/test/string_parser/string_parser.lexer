@@ -1,0 +1,17 @@
+export module string_parser.lexer;
+
+import string_parser.token;
+import string_parser.expr;
+
+lexer string_lexer
+{
+    rules
+    {
+		"{ws}+" {}
+        "{name}" { return NAME; }
+		"," { return COMMA; }
+		"\(" { return LPAREN; }
+		"\)" { return RPAREN; }
+	}
+}
+		

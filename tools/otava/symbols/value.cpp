@@ -24,6 +24,24 @@ import otava.ast.error;
 
 namespace otava::symbols {
 
+std::string ValueKindStr(ValueKind kind)
+{
+    switch (kind)
+    {
+        case ValueKind::boolValue: return "boolValue";  
+        case ValueKind::integerValue: return "integerValue";
+        case ValueKind::floatingValue: return "floatingValue";
+        case ValueKind::nullPtrValue: return "nullPtrValue";
+        case ValueKind::stringValue: return "stringValue";
+        case ValueKind::charValue: return "charValue";
+        case ValueKind::symbolValue: return "symbolValue";
+        case ValueKind::invokeValue: return "invokeValue";
+        case ValueKind::arrayValue: return "arrayValue";
+        case ValueKind::structureValue: return "structureValue";
+    }
+    return "<value>";
+}
+
 ValueKind CommonValueKind(ValueKind left, ValueKind right) noexcept
 {
     switch (left)
@@ -105,14 +123,14 @@ void Value::Resolve(SymbolTable& symbolTable, Context* context)
         type = symbolTable.GetType(typeId);
         if (!type)
         {
-            std::string note;
-            Module* requesterModule = context->GetRequesterModule();
-            if (requesterModule)
-            {
-                note = ": note: requester module is " + requesterModule->Name();
-            }
             if (!context->GetFlag(ContextFlags::noWarnings))
             {
+                std::string note;
+                Module* requesterModule = context->GetRequesterModule();
+                if (requesterModule)
+                {
+                    note = ": note: requester module is " + requesterModule->Name();
+                }
                 std::cout << "Value::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
             }
         }
@@ -366,11 +384,11 @@ otava::intermediate::Value* NullPtrValue::IrValue(Emitter& emitter, const soul::
     return GetType()->IrType(emitter, sourcePos, context)->DefaultValue();
 }
 
-StringValue::StringValue(TypeSymbol* type_) : Value(SymbolKind::stringValueSymbol, U"", type_), value()
+StringValue::StringValue(TypeSymbol* type_) : Value(SymbolKind::stringValueSymbol, std::u32string(), type_), value()
 {
 }
 
-StringValue::StringValue(const std::string& value_, TypeSymbol* type_) : Value(SymbolKind::stringValueSymbol, U"", type_), value(value_)
+StringValue::StringValue(const std::string& value_, TypeSymbol* type_) : Value(SymbolKind::stringValueSymbol, std::u32string(), type_), value(value_)
 {
 }
 
@@ -423,11 +441,11 @@ otava::intermediate::Value* StringValue::IrValue(Emitter& emitter, const soul::a
     return nullptr;
 }
 
-CharValue::CharValue(TypeSymbol* type_) : Value(SymbolKind::charValueSymbol, U"", type_), value()
+CharValue::CharValue(TypeSymbol* type_) : Value(SymbolKind::charValueSymbol, std::u32string(), type_), value()
 {
 }
 
-CharValue::CharValue(char32_t value_, TypeSymbol* type_) : Value(SymbolKind::charValueSymbol, U"", type_), value(value_)
+CharValue::CharValue(char32_t value_, TypeSymbol* type_) : Value(SymbolKind::charValueSymbol, std::u32string(), type_), value(value_)
 {
 }
 
@@ -914,6 +932,9 @@ void EvaluationContext::AddValue(Value* value)
 
 void EvaluationContext::Write(Writer& writer, Context* context)
 {
+    bool skip = context->GetFlag(ContextFlags::skipMapIo);
+    writer.GetBinaryStreamWriter().Write(skip);
+    if (skip) return;
     trueValue.Write(writer);
     falseValue.Write(writer);
     nullPtrValue.Write(writer);
@@ -936,6 +957,8 @@ void EvaluationContext::Write(Writer& writer, Context* context)
 
 void EvaluationContext::Read(Reader& reader)
 {
+    bool skip = reader.GetBinaryStreamReader().ReadBool();
+    if (skip) return;
     readingEvaluationContext = true;
     trueValue.Read(reader);
     falseValue.Read(reader);
@@ -1006,3 +1029,4 @@ void EvaluationContext::Resolve(SymbolTable& symbolTable, Context* context)
 }
 
 } // namespace otava::symbols
+

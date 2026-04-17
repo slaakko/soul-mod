@@ -661,8 +661,10 @@ soul::parser::Match DeclaratorParser<LexerT>::DeclaratorId(LexerT& lexer)
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 264249250160836613);
-    std::unique_ptr<soul::ast::cpp::IdExprNode> idExpr;
-    std::unique_ptr<soul::ast::cpp::TypeNameNode> typeName;
+    std::unique_ptr<soul::ast::cpp::IdExprNode> idExpr = std::unique_ptr<soul::ast::cpp::IdExprNode>();
+    std::unique_ptr<soul::ast::cpp::TypeNameNode> typeName = std::unique_ptr<soul::ast::cpp::TypeNameNode>();
+    std::unique_ptr<soul::ast::cpp::IdExprNode> ie;
+    std::unique_ptr<soul::ast::cpp::TypeNameNode> tn;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -672,14 +674,15 @@ soul::parser::Match DeclaratorParser<LexerT>::DeclaratorId(LexerT& lexer)
         {
             std::int64_t pos = lexer.GetPos();
             soul::parser::Match match = soul::cpp::expression::parser::ExpressionParser<LexerT>::IdExpression(lexer);
-            idExpr.reset(static_cast<soul::ast::cpp::IdExprNode*>(match.value));
+            ie.reset(static_cast<soul::ast::cpp::IdExprNode*>(match.value));
             if (match.hit)
             {
+                idExpr.reset(ie.release());
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DeclaratorId");
                     #endif
-                    return soul::parser::Match(true, new soul::parser::Value<std::string>(idExpr.release()->ToString()));
+                    return soul::parser::Match(true, new soul::parser::Value<std::string>(idExpr->ToString()));
                 }
             }
             *parentMatch1 = match;
@@ -696,14 +699,15 @@ soul::parser::Match DeclaratorParser<LexerT>::DeclaratorId(LexerT& lexer)
                 {
                     std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = soul::cpp::declaration::parser::DeclarationParser<LexerT>::TypeName(lexer);
-                    typeName.reset(static_cast<soul::ast::cpp::TypeNameNode*>(match.value));
+                    tn.reset(static_cast<soul::ast::cpp::TypeNameNode*>(match.value));
                     if (match.hit)
                     {
+                        typeName.reset(tn.release());
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DeclaratorId");
                             #endif
-                            return soul::parser::Match(true, new soul::parser::Value<std::string>(typeName.release()->ToString()));
+                            return soul::parser::Match(true, new soul::parser::Value<std::string>(typeName->ToString()));
                         }
                     }
                     *parentMatch3 = match;

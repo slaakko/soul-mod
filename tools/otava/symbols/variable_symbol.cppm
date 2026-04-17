@@ -49,6 +49,10 @@ public:
     inline int Level() const noexcept { return level; }
     inline bool FoundFromParent() const noexcept { return foundFromParent; }
     inline void SetFoundFromParent() noexcept { foundFromParent = true; }
+    inline std::int64_t NodeId() const noexcept { return nodeId; }
+    inline void SetNodeId(std::int64_t nodeId_) noexcept { nodeId = nodeId_; }
+    inline bool IsTemporary() const noexcept { return temporary; }
+    inline void SetTemporary() noexcept { temporary = true; }
 private:
     TypeSymbol* declaredType;
     util::uuid declaredTypeId;
@@ -61,6 +65,8 @@ private:
     VariableSymbol* global;
     int level;
     bool foundFromParent;
+    std::int64_t nodeId;
+    bool temporary;
 };
 
 struct VariableLess

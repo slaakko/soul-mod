@@ -2,17 +2,18 @@
     <configuration name='debug'>
         <define symbol='DEBUG'/>
     </configuration>
-	<configuration name='dbg' base='debug'>
+	<configuration name='memdbg' base='debug'>
+		<define symbol='DEBUG_MEMORY'/>
 		<define symbol='NOWARN'/>
-		<define symbol='DEBUG_SYMBOL_IO'/>
+	</configuration>
+    <configuration name='trace' base='debug'>
+        <define symbol='TRACE'/>
+    </configuration>
+	<configuration name='gendoc' base='debug'>
+		<define symbol='GENDOC'/>
+		<define symbol='NOWARN'/>
 	</configuration>
     <configuration name='release'>
         <define symbol='RELEASE'/>
-    </configuration>
-    <configuration name='rel' base='release'>
-        <define symbol='NOWARN'/>
-    </configuration>
-    <configuration name='trace' base='debug'>
-        <define symbol='TRACE'/>
     </configuration>
 </configurations>

@@ -1,0 +1,5 @@
+project fruits.slg;
+tokens <fruits.token>;
+keywords <fruits.keyword>;
+expressions <fruits.expr>;
+lexer <fruits.lexer>;

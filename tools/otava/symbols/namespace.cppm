@@ -21,6 +21,10 @@ public:
     void Import(NamespaceSymbol* that, Context* context);
     void Accept(Visitor& visitor) override;
     bool ContainsSymbols() const noexcept;
+    inline void SetSymbolTable(SymbolTable* symbolTable_) noexcept { symbolTable = symbolTable_; }
+    SymbolTable* GetSymbolTable() noexcept override;
+private:
+    SymbolTable* symbolTable;
 };
 
 void BeginNamespace(otava::ast::Node* node, Context* context);

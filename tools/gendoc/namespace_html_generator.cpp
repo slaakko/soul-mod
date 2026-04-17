@@ -6,23 +6,21 @@
 module gendoc.namespace_html_generator;
 
 import gendoc.type_element_generator;
-import soul.cpp20.symbols;
 import soul.xml.dom;
 import util;
-import std.filesystem;
 
 namespace gendoc {
 
 void GenerateConceptSection(soul::xml::Element* bodyElement, NamespaceSymbols* symbols)
 {
     if (symbols->concepts.empty()) return;
-    std::sort(symbols->concepts.begin(), symbols->concepts.end(), soul::cpp20::symbols::ConceptLess());
+    std::sort(symbols->concepts.begin(), symbols->concepts.end(), otava::symbols::ConceptLess());
 }
 
 void GenerateClassSection(soul::xml::Element* bodyElement, NamespaceSymbols* symbols)
 {
     if (symbols->classes.empty()) return;
-    std::sort(symbols->classes.begin(), symbols->classes.end(), soul::cpp20::symbols::ClassLess());
+    std::sort(symbols->classes.begin(), symbols->classes.end(), otava::symbols::ClassLess());
     soul::xml::Element* h2Element = soul::xml::MakeElement("h2");
     bodyElement->AppendChild(h2Element);
     soul::xml::Text* h2Text = soul::xml::MakeText("Classes");
@@ -38,7 +36,12 @@ void GenerateClassSection(soul::xml::Element* bodyElement, NamespaceSymbols* sym
     thClassElement->AppendChild(thClassText);
     for (const auto& cls : symbols->classes)
     {
-        soul::cpp20::symbols::Module* module = cls->GetModule();
+        otava::symbols::Module* module = cls->GetModule();
+        if (!module)
+        {
+            otava::symbols::SetExceptionThrown();
+            throw std::runtime_error("module not found");
+        }
         std::string moduleName = module->Name();
         soul::xml::Element* trClassElement = soul::xml::MakeElement("tr");
         tableElement->AppendChild(trClassElement);
@@ -55,7 +58,7 @@ void GenerateClassSection(soul::xml::Element* bodyElement, NamespaceSymbols* sym
 void GenerateEnumerationSection(soul::xml::Element* bodyElement, NamespaceSymbols* symbols)
 {
     if (symbols->enumerations.empty()) return;
-    std::sort(symbols->enumerations.begin(), symbols->enumerations.end(), soul::cpp20::symbols::EnumTypeLess());
+    std::sort(symbols->enumerations.begin(), symbols->enumerations.end(), otava::symbols::EnumTypeLessFunctor());
     soul::xml::Element* h2Element = soul::xml::MakeElement("h2");
     bodyElement->AppendChild(h2Element);
     soul::xml::Text* h2Text = soul::xml::MakeText("Enumerated Types");
@@ -71,7 +74,12 @@ void GenerateEnumerationSection(soul::xml::Element* bodyElement, NamespaceSymbol
     thEnumElement->AppendChild(thEnumText);
     for (const auto& enumType : symbols->enumerations)
     {
-        soul::cpp20::symbols::Module* module = enumType->GetModule();
+        otava::symbols::Module* module = enumType->GetModule();
+        if (!module)
+        {
+            otava::symbols::SetExceptionThrown();
+            throw std::runtime_error("module not found");
+        }
         std::string moduleName = module->Name();
         soul::xml::Element* trEnumElement = soul::xml::MakeElement("tr");
         tableElement->AppendChild(trEnumElement);
@@ -88,7 +96,7 @@ void GenerateEnumerationSection(soul::xml::Element* bodyElement, NamespaceSymbol
 void GenerateTypeAliasSection(soul::xml::Element* bodyElement, NamespaceSymbols* symbols)
 {
     if (symbols->typeAliases.empty()) return;
-    std::sort(symbols->typeAliases.begin(), symbols->typeAliases.end(), soul::cpp20::symbols::AliasTypeLess());
+    std::sort(symbols->typeAliases.begin(), symbols->typeAliases.end(), otava::symbols::AliasTypeLess());
     soul::xml::Element* h2Element = soul::xml::MakeElement("h2");
     bodyElement->AppendChild(h2Element);
     soul::xml::Text* h2Text = soul::xml::MakeText("Type Aliases");
@@ -125,7 +133,7 @@ void GenerateTypeAliasSection(soul::xml::Element* bodyElement, NamespaceSymbols*
 void GenerateFunctionSection(soul::xml::Element* bodyElement, NamespaceSymbols* symbols)
 {
     if (symbols->functions.empty()) return;
-    std::sort(symbols->functions.begin(), symbols->functions.end(), soul::cpp20::symbols::FunctionLess());
+    std::sort(symbols->functions.begin(), symbols->functions.end(), otava::symbols::FunctionLess());
     soul::xml::Element* h2Element = soul::xml::MakeElement("h2");
     bodyElement->AppendChild(h2Element);
     soul::xml::Text* h2Text = soul::xml::MakeText("Functions");
@@ -149,7 +157,12 @@ void GenerateFunctionSection(soul::xml::Element* bodyElement, NamespaceSymbols* 
     thFunctionElement->AppendChild(thFunctionText);
     for (const auto& function : symbols->functions)
     {
-        soul::cpp20::symbols::Module* module = function->GetModule();
+        otava::symbols::Module* module = function->GetModule();
+        if (!module)
+        {
+            otava::symbols::SetExceptionThrown();
+            throw std::runtime_error("module not found");
+        }
         std::string moduleName = module->Name();
         soul::xml::Element* trElement = soul::xml::MakeElement("tr");
         tableElement->AppendChild(trElement);
@@ -159,8 +172,8 @@ void GenerateFunctionSection(soul::xml::Element* bodyElement, NamespaceSymbols* 
         tdSpecifiersElement->AppendChild(spanSpecifierElement);
         spanSpecifierElement->SetAttribute("class", "specifier");
         spanSpecifierElement->SetAttribute("xml:space", "preserve");
-        soul::cpp20::symbols::DeclarationFlags flags = function->GetDeclarationFlags();
-        std::string specifierStr = soul::cpp20::symbols::DeclarationFlagStr(flags);
+        otava::symbols::DeclarationFlags flags = function->GetDeclarationFlags();
+        std::string specifierStr = otava::symbols::DeclarationFlagStr(flags);
         if (!specifierStr.empty())
         {
             soul::xml::Text* specifierText = soul::xml::MakeText(specifierStr);
@@ -196,7 +209,7 @@ void GenerateFunctionSection(soul::xml::Element* bodyElement, NamespaceSymbols* 
                 soul::xml::Text* commaText = soul::xml::MakeText(", ");
                 spanElement->AppendChild(commaText);
             }
-            soul::cpp20::symbols::TypeSymbol* parameterType = parameter->GetType();
+            otava::symbols::TypeSymbol* parameterType = parameter->GetType();
             soul::xml::Element* typeElement = GenerateTypeXmlElement(nullptr, nullptr, parameterType);
             spanElement->AppendChild(typeElement);
             if (!parameter->Name().empty())
@@ -206,14 +219,15 @@ void GenerateFunctionSection(soul::xml::Element* bodyElement, NamespaceSymbols* 
             }
             if (parameter->DefaultValue())
             {
-                AddValue(spanElement, parameter->DefaultValue(), nullptr, nullptr);
-                soul::xml::Text* defaultValueText = soul::xml::MakeText(" = " + util::ToUtf8(parameter->DefaultValue()->ToString()));
+                otava::symbols::TypeSymbol* charPtrType = otava::symbols::CurrentContext()->GetSymbolTable()->MakeConstCharPtrType(otava::symbols::CurrentContext());
+                AddValue(spanElement, new otava::symbols::StringValue(util::ToUtf8(parameter->DefaultValue()->Str()), charPtrType), nullptr, nullptr);
+                soul::xml::Text* defaultValueText = soul::xml::MakeText(" = " + util::ToUtf8(parameter->DefaultValue()->Str()));
                 spanElement->AppendChild(defaultValueText);
             }
         }
         soul::xml::Text* rparenText = soul::xml::MakeText(")");
         spanElement->AppendChild(rparenText);
-        std::string qualifierStr = soul::cpp20::symbols::MakeFunctionQualifierStr(function->Qualifiers());
+        std::string qualifierStr = otava::symbols::MakeFunctionQualifierStr(function->Qualifiers());
         if (!qualifierStr.empty())
         {
             soul::xml::Element* spanQualifierElement = soul::xml::MakeElement("span");
@@ -229,7 +243,7 @@ void GenerateFunctionSection(soul::xml::Element* bodyElement, NamespaceSymbols* 
 void GenerateVariableSection(soul::xml::Element* bodyElement, NamespaceSymbols* symbols)
 {
     if (symbols->variables.empty()) return;
-    std::sort(symbols->variables.begin(), symbols->variables.end(), soul::cpp20::symbols::VariableLess());
+    std::sort(symbols->variables.begin(), symbols->variables.end(), otava::symbols::VariableLess());
     soul::xml::Element* h2Element = soul::xml::MakeElement("h2");
     bodyElement->AppendChild(h2Element);
     soul::xml::Text* h2Text = soul::xml::MakeText("Variables");
@@ -265,8 +279,8 @@ void GenerateVariableSection(soul::xml::Element* bodyElement, NamespaceSymbols* 
         tdSpecifiersElement->AppendChild(spanSpecifierElement);
         spanSpecifierElement->SetAttribute("class", "specifier");
         spanSpecifierElement->SetAttribute("xml:space", "preserve");
-        soul::cpp20::symbols::DeclarationFlags flags = variable->GetDeclarationFlags();
-        std::string specifierStr = soul::cpp20::symbols::DeclarationFlagStr(flags);
+        otava::symbols::DeclarationFlags flags = variable->GetDeclarationFlags();
+        std::string specifierStr = otava::symbols::DeclarationFlagStr(flags);
         if (!specifierStr.empty())
         {
             soul::xml::Text* specifierText = soul::xml::MakeText(specifierStr);
@@ -296,6 +310,11 @@ void GenerateNamespaceHtml(const std::string& rootDir, const std::string& nsDocN
     std::filesystem::create_directories(nsDirPath);
     std::string nsFilePath = util::Path::Combine(nsDirPath, "index.html");
     std::ofstream nsFile(nsFilePath);
+    if (!nsFile)
+    {
+        otava::symbols::SetExceptionThrown();
+        throw std::runtime_error("could not create file '" + nsFilePath + "'");
+    }
     util::CodeFormatter formatter(nsFile);
     formatter.SetIndentSize(1);
     soul::xml::Element* htmlElement = soul::xml::MakeElement("html");
@@ -307,7 +326,7 @@ void GenerateNamespaceHtml(const std::string& rootDir, const std::string& nsDocN
     metaElement->SetAttribute("charset", "utf-8");
     headElement->AppendChild(metaElement);
     soul::xml::Element* titleElement = soul::xml::MakeElement("title");
-    std::string title = symbols->namespaceName + " Namespace";
+    std::string title = symbols->namespaceName + " namespace";
     soul::xml::Text* titleText = soul::xml::MakeText(title);
     titleElement->AppendChild(titleText);
     headElement->AppendChild(titleElement);

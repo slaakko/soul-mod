@@ -30,6 +30,7 @@ export namespace otava::symbols {
 const int maxTemplateParameters = 16;
 const int numCompoundTypeIds = 256;
 const int maxLevels = 16;
+const int maxArguments = 16;
 
 enum class MapKind : std::int32_t
 {
@@ -104,7 +105,7 @@ public:
     void Init();
     void Import(const SymbolTable& that, FunctionDefinitionSymbolSet* functionDefinitionSymbolSet);
     void Write(Writer& writer, Context* context);
-    void Read(Reader& reader);
+    void Read(Reader& reader, Context* context);
     void Resolve(Context* context);
     void Accept(Visitor& visitor);
     void WriteMaps(Writer& writer, Context* context);
@@ -262,10 +263,12 @@ public:
     void InitCompoundTypeIds();
     void InitLevelIds();
     void InitFunctionTypeId();
+    void InitArgumentsIds();
     const util::uuid& GetTemplateParameterId(int index) const;
     const util::uuid& GetCompoundTypeId(int index) const;
     const util::uuid& GetLevelId(int level) const;
     const util::uuid& GetFunctionTypeId() const noexcept { return functionTypeId; }
+    std::int64_t GetArgumentId(int index) const noexcept;
 private:
     void CreateFundamentalTypes();
     void AddFundamentalType(FundamentalTypeKind kind);
@@ -361,6 +364,7 @@ private:
     std::vector<util::uuid> compoundTypeIds;
     std::vector<util::uuid> levelIds;
     util::uuid functionTypeId;
+    std::vector<std::int64_t> argumentIds;
 };
 
 } // namespace otava::symbols

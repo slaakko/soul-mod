@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.symbol;
 
 import std;
@@ -161,10 +156,12 @@ public:
     Symbol(SymbolKind kind_, const std::u32string& name_);
     Symbol(SymbolKind kind_, const util::uuid& id_, const std::u32string& name_);
     virtual ~Symbol();
+    virtual SymbolTable* GetSymbolTable() noexcept;
+    Module* GetModule() noexcept;
     inline SymbolKind Kind() const noexcept { return kind; }
     inline const util::uuid& Id() const noexcept { return id; }
     void SetId(const util::uuid& id_) noexcept { id = id_; }
-    virtual util::uuid IrId(Context* context) const noexcept { return id; }
+    virtual util::uuid IrId(const soul::ast::SourcePos& sourcePos, Context* context) const { return id; }
     inline const std::u32string& Name() const noexcept { return name; }
     void SetName(const std::u32string& name_);
     inline Access GetAccess() const noexcept { return access; }
@@ -193,7 +190,7 @@ public:
     virtual void Accept(Visitor& visitor) = 0;
     virtual bool IsExportSymbol(Context* context) const noexcept { return IsProject(); }
     virtual bool IsExportMapSymbol(Context* context) const noexcept { return IsExportSymbol(context); }
-    virtual Symbol* GetSingleSymbol(Context* context) noexcept { return this; }
+    virtual Symbol* GetSingleSymbol(Context* contex) noexcept { return this; }
     virtual std::string SymbolDocKindStr() const = 0;
     virtual bool IsCharTypeSymbol() const noexcept { return false; }
     virtual bool IsChar8TypeSymbol() const noexcept { return false; }

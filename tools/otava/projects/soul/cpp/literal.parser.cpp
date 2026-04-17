@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'D:/work/soul-mod/soul/cpp/literal.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/soul/cpp/literal.parser' using soul parser generator ospg version 5.0.0
 
 module soul.cpp.literal.parser;
 
@@ -18,7 +18,7 @@ namespace soul::cpp::literal::parser {
 template<typename LexerT>
 soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer)
 {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
@@ -26,223 +26,223 @@ soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
     }
-#endif
+    #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5808325801866690561);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     switch (*lexer)
     {
-    case soul::cpp::token::INTEGER_LITERAL:
-    {
-        soul::parser::Match match(false);
-        soul::parser::Match* parentMatch1 = &match;
+        case soul::cpp::token::INTEGER_LITERAL:
         {
-            std::int64_t pos = lexer.GetPos();
             soul::parser::Match match(false);
-            if (*lexer == soul::cpp::token::INTEGER_LITERAL)
+            soul::parser::Match* parentMatch1 = &match;
             {
-                ++lexer;
-                match.hit = true;
+                std::int64_t pos = lexer.GetPos();
+                soul::parser::Match match(false);
+                if (*lexer == soul::cpp::token::INTEGER_LITERAL)
+                {
+                    ++lexer;
+                    match.hit = true;
+                }
+                if (match.hit)
+                {
+                    {
+                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
+                        #endif
+                        return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
+                    }
+                }
+                *parentMatch1 = match;
             }
             if (match.hit)
             {
-                {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
-                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-#endif
-                    return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
-                }
+                *parentMatch0 = match;
             }
-            *parentMatch1 = match;
+            break;
         }
-        if (match.hit)
+        case soul::cpp::token::FLOATING_LITERAL:
         {
-            *parentMatch0 = match;
-        }
-        break;
-    }
-    case soul::cpp::token::FLOATING_LITERAL:
-    {
-        soul::parser::Match match(false);
-        soul::parser::Match* parentMatch2 = &match;
-        {
-            std::int64_t pos = lexer.GetPos();
             soul::parser::Match match(false);
-            if (*lexer == soul::cpp::token::FLOATING_LITERAL)
+            soul::parser::Match* parentMatch2 = &match;
             {
-                ++lexer;
-                match.hit = true;
+                std::int64_t pos = lexer.GetPos();
+                soul::parser::Match match(false);
+                if (*lexer == soul::cpp::token::FLOATING_LITERAL)
+                {
+                    ++lexer;
+                    match.hit = true;
+                }
+                if (match.hit)
+                {
+                    {
+                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
+                        #endif
+                        return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
+                    }
+                }
+                *parentMatch2 = match;
             }
             if (match.hit)
             {
-                {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
-                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-#endif
-                    return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
-                }
+                *parentMatch0 = match;
             }
-            *parentMatch2 = match;
+            break;
         }
-        if (match.hit)
+        case soul::cpp::token::CHAR_LITERAL:
         {
-            *parentMatch0 = match;
-        }
-        break;
-    }
-    case soul::cpp::token::CHAR_LITERAL:
-    {
-        soul::parser::Match match(false);
-        soul::parser::Match* parentMatch3 = &match;
-        {
-            std::int64_t pos = lexer.GetPos();
             soul::parser::Match match(false);
-            if (*lexer == soul::cpp::token::CHAR_LITERAL)
+            soul::parser::Match* parentMatch3 = &match;
             {
-                ++lexer;
-                match.hit = true;
+                std::int64_t pos = lexer.GetPos();
+                soul::parser::Match match(false);
+                if (*lexer == soul::cpp::token::CHAR_LITERAL)
+                {
+                    ++lexer;
+                    match.hit = true;
+                }
+                if (match.hit)
+                {
+                    {
+                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
+                        #endif
+                        return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
+                    }
+                }
+                *parentMatch3 = match;
             }
             if (match.hit)
             {
-                {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
-                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-#endif
-                    return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
-                }
+                *parentMatch0 = match;
             }
-            *parentMatch3 = match;
+            break;
         }
-        if (match.hit)
+        case soul::cpp::token::STRING_LITERAL:
         {
-            *parentMatch0 = match;
-        }
-        break;
-    }
-    case soul::cpp::token::STRING_LITERAL:
-    {
-        soul::parser::Match match(false);
-        soul::parser::Match* parentMatch4 = &match;
-        {
-            std::int64_t pos = lexer.GetPos();
             soul::parser::Match match(false);
-            if (*lexer == soul::cpp::token::STRING_LITERAL)
+            soul::parser::Match* parentMatch4 = &match;
             {
-                ++lexer;
-                match.hit = true;
+                std::int64_t pos = lexer.GetPos();
+                soul::parser::Match match(false);
+                if (*lexer == soul::cpp::token::STRING_LITERAL)
+                {
+                    ++lexer;
+                    match.hit = true;
+                }
+                if (match.hit)
+                {
+                    {
+                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
+                        #endif
+                        return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
+                    }
+                }
+                *parentMatch4 = match;
             }
             if (match.hit)
             {
-                {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
-                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-#endif
-                    return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
-                }
+                *parentMatch0 = match;
             }
-            *parentMatch4 = match;
+            break;
         }
-        if (match.hit)
+        case soul::cpp::token::TRUE:
         {
-            *parentMatch0 = match;
-        }
-        break;
-    }
-    case soul::cpp::token::TRUE:
-    {
-        soul::parser::Match match(false);
-        soul::parser::Match* parentMatch5 = &match;
-        {
-            std::int64_t pos = lexer.GetPos();
             soul::parser::Match match(false);
-            if (*lexer == soul::cpp::token::TRUE)
+            soul::parser::Match* parentMatch5 = &match;
             {
-                ++lexer;
-                match.hit = true;
+                std::int64_t pos = lexer.GetPos();
+                soul::parser::Match match(false);
+                if (*lexer == soul::cpp::token::TRUE)
+                {
+                    ++lexer;
+                    match.hit = true;
+                }
+                if (match.hit)
+                {
+                    {
+                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
+                        #endif
+                        return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
+                    }
+                }
+                *parentMatch5 = match;
             }
             if (match.hit)
             {
-                {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
-                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-#endif
-                    return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
-                }
+                *parentMatch0 = match;
             }
-            *parentMatch5 = match;
+            break;
         }
-        if (match.hit)
+        case soul::cpp::token::FALSE:
         {
-            *parentMatch0 = match;
-        }
-        break;
-    }
-    case soul::cpp::token::FALSE:
-    {
-        soul::parser::Match match(false);
-        soul::parser::Match* parentMatch6 = &match;
-        {
-            std::int64_t pos = lexer.GetPos();
             soul::parser::Match match(false);
-            if (*lexer == soul::cpp::token::FALSE)
+            soul::parser::Match* parentMatch6 = &match;
             {
-                ++lexer;
-                match.hit = true;
+                std::int64_t pos = lexer.GetPos();
+                soul::parser::Match match(false);
+                if (*lexer == soul::cpp::token::FALSE)
+                {
+                    ++lexer;
+                    match.hit = true;
+                }
+                if (match.hit)
+                {
+                    {
+                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
+                        #endif
+                        return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
+                    }
+                }
+                *parentMatch6 = match;
             }
             if (match.hit)
             {
-                {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
-                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-#endif
-                    return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
-                }
+                *parentMatch0 = match;
             }
-            *parentMatch6 = match;
+            break;
         }
-        if (match.hit)
+        case soul::cpp::token::NULLPTR:
         {
-            *parentMatch0 = match;
-        }
-        break;
-    }
-    case soul::cpp::token::NULLPTR:
-    {
-        soul::parser::Match match(false);
-        soul::parser::Match* parentMatch7 = &match;
-        {
-            std::int64_t pos = lexer.GetPos();
             soul::parser::Match match(false);
-            if (*lexer == soul::cpp::token::NULLPTR)
+            soul::parser::Match* parentMatch7 = &match;
             {
-                ++lexer;
-                match.hit = true;
+                std::int64_t pos = lexer.GetPos();
+                soul::parser::Match match(false);
+                if (*lexer == soul::cpp::token::NULLPTR)
+                {
+                    ++lexer;
+                    match.hit = true;
+                }
+                if (match.hit)
+                {
+                    {
+                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
+                        #endif
+                        return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
+                    }
+                }
+                *parentMatch7 = match;
             }
             if (match.hit)
             {
-                {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
-                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-#endif
-                    return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
-                }
+                *parentMatch0 = match;
             }
-            *parentMatch7 = match;
+            break;
         }
-        if (match.hit)
-        {
-            *parentMatch0 = match;
-        }
-        break;
     }
-    }
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)
     {
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
         else soul::lexer::WriteFailureToLog(lexer, "Literal");
     }
-#endif
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

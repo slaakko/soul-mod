@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'D:/work/soul-mod/soul/common/token_file.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/soul/common/token_file.parser' using soul parser generator ospg version 5.0.0
 
 module soul.common.token.file.parser;
 
@@ -21,23 +21,23 @@ template<typename LexerT>
 std::unique_ptr<soul::ast::common::TokenFile> TokenFileParser<LexerT>::Parse(LexerT& lexer)
 {
     std::unique_ptr<soul::ast::common::TokenFile> value;
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
     {
         lexer.Log()->WriteBeginRule("parse");
         lexer.Log()->IncIndent();
     }
-#endif
+    #endif
     ++lexer;
     soul::parser::Match match = TokenFileParser<LexerT>::TokenFile(lexer);
     value.reset(static_cast<soul::ast::common::TokenFile*>(match.value));
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
     {
         lexer.Log()->DecIndent();
         lexer.Log()->WriteEndRule("parse");
     }
-#endif
+    #endif
     if (match.hit)
     {
         if (*lexer == soul::lexer::END_TOKEN)
@@ -59,7 +59,7 @@ std::unique_ptr<soul::ast::common::TokenFile> TokenFileParser<LexerT>::Parse(Lex
 template<typename LexerT>
 soul::parser::Match TokenFileParser<LexerT>::TokenFile(LexerT& lexer)
 {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
@@ -67,7 +67,7 @@ soul::parser::Match TokenFileParser<LexerT>::TokenFile(LexerT& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "TokenFile");
     }
-#endif
+    #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8614059994532282369);
     std::unique_ptr<soul::ast::common::TokenFile> tokenFile = std::unique_ptr<soul::ast::common::TokenFile>();
     std::unique_ptr<soul::ast::common::TokenCollection> tokenCollection = std::unique_ptr<soul::ast::common::TokenCollection>();
@@ -277,21 +277,21 @@ soul::parser::Match TokenFileParser<LexerT>::TokenFile(LexerT& lexer)
         {
             tokenFile->SetTokenCollection(tokenCollection.release());
             {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TokenFile");
-#endif
+                #endif
                 return soul::parser::Match(true, tokenFile.release());
             }
         }
         *parentMatch0 = match;
     }
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)
     {
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TokenFile");
         else soul::lexer::WriteFailureToLog(lexer, "TokenFile");
     }
-#endif
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -302,7 +302,7 @@ soul::parser::Match TokenFileParser<LexerT>::TokenFile(LexerT& lexer)
 template<typename LexerT>
 soul::parser::Match TokenFileParser<LexerT>::Token(LexerT& lexer)
 {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
@@ -310,7 +310,7 @@ soul::parser::Match TokenFileParser<LexerT>::Token(LexerT& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Token");
     }
-#endif
+    #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8614059994532282370);
     std::string name = std::string();
     std::string info = std::string();
@@ -432,21 +432,21 @@ soul::parser::Match TokenFileParser<LexerT>::Token(LexerT& lexer)
         if (match.hit)
         {
             {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Token");
-#endif
+                #endif
                 return soul::parser::Match(true, new soul::ast::common::Token(name, info));
             }
         }
         *parentMatch0 = match;
     }
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)
     {
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Token");
         else soul::lexer::WriteFailureToLog(lexer, "Token");
     }
-#endif
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

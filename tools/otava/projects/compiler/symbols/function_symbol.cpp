@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.function.symbol;
 
 import otava.symbols.modules;
@@ -179,14 +174,14 @@ void ParameterSymbol::Resolve(SymbolTable& symbolTable, Context* context)
     type = symbolTable.GetType(typeId);
     if (!type)
     {
-        std::string note;
-        Module* requesterModule = context->GetRequesterModule();
-        if (requesterModule)
-        {
-            note = ": note: requester module is " + requesterModule->Name();
-        }
         if (!context->GetFlag(ContextFlags::noWarnings))
         {
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
             std::cout << "ParameterSymbol::Resolve(): warning: type of parameter '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
         }
     }
@@ -482,6 +477,11 @@ void FunctionSymbol::SetOverride() noexcept
     qualifiers = qualifiers | FunctionQualifiers::isOverride;
 }
 
+void FunctionSymbol::SetFinal() noexcept
+{
+    qualifiers = qualifiers | FunctionQualifiers::isFinal;
+}
+
 void FunctionSymbol::SetNoExcept() noexcept
 {
     qualifiers = qualifiers | FunctionQualifiers::isNoexcept;
@@ -744,9 +744,6 @@ void FunctionSymbol::SetReturnValueParam(ParameterSymbol* returnValueParam_) noe
 
 void FunctionSymbol::Write(Writer& writer)
 {
-#ifdef DEBUG_FUNCTIONS
-    std::cout << ">write fn=" << util::ToUtf8(FullName()) << "\n";
-#endif
     ContainerSymbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(kind));
     writer.GetBinaryStreamWriter().Write(static_cast<std::uint16_t>(qualifiers));
@@ -799,9 +796,6 @@ void FunctionSymbol::Write(Writer& writer)
     {
         writer.GetBinaryStreamWriter().Write(specialization[i]->Id());
     }
-#ifdef DEBUG_FUNCTIONS
-    std::cout << "<write fn=" << util::ToUtf8(FullName()) << "\n";
-#endif
 }
 
 void FunctionSymbol::Read(Reader& reader)
@@ -850,14 +844,14 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
         returnType = symbolTable.GetType(returnTypeId);
         if (!returnType)
         {
-            std::string note;
-            Module* requesterModule = context->GetRequesterModule();
-            if (requesterModule)
-            {
-                note = ": note: requester module is " + requesterModule->Name();
-            }
             if (!context->GetFlag(ContextFlags::noWarnings))
             {
+                std::string note;
+                Module* requesterModule = context->GetRequesterModule();
+                if (requesterModule)
+                {
+                    note = ": note: requester module is " + requesterModule->Name();
+                }
                 std::cout << "FunctionSymbol::Resolve(): warning: return type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
             }
         }
@@ -873,14 +867,14 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
             conversionParamType = symbolTable.GetType(conversionParamTypeId);
             if (!conversionParamType)
             {
-                std::string note;
-                Module* requesterModule = context->GetRequesterModule();
-                if (requesterModule)
-                {
-                    note = ": note: requester module is " + requesterModule->Name();
-                }
                 if (!context->GetFlag(ContextFlags::noWarnings))
                 {
+                    std::string note;
+                    Module* requesterModule = context->GetRequesterModule();
+                    if (requesterModule)
+                    {
+                        note = ": note: requester module is " + requesterModule->Name();
+                    }
                     std::cout << "FunctionSymbol::Resolve(): warning: conversion parameter type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
                 }
             }
@@ -890,14 +884,14 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
             conversionArgType = symbolTable.GetType(conversionArgTypeId);
             if (!conversionArgType)
             {
-                std::string note;
-                Module* requesterModule = context->GetRequesterModule();
-                if (requesterModule)
-                {
-                    note = ": note: requester module is " + requesterModule->Name();
-                }
                 if (!context->GetFlag(ContextFlags::noWarnings))
                 {
+                    std::string note;
+                    Module* requesterModule = context->GetRequesterModule();
+                    if (requesterModule)
+                    {
+                        note = ": note: requester module is " + requesterModule->Name();
+                    }
                     std::cout << "FunctionSymbol::Resolve(): warning: conversion argument type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
                 }
             }
@@ -913,14 +907,14 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable, Context* context)
         }
         else
         {
-            std::string note;
-            Module* requesterModule = context->GetRequesterModule();
-            if (requesterModule)
-            {
-                note = ": note: requester module is " + requesterModule->Name();
-            }
             if (!context->GetFlag(ContextFlags::noWarnings))
             {
+                std::string note;
+                Module* requesterModule = context->GetRequesterModule();
+                if (requesterModule)
+                {
+                    note = ": note: requester module is " + requesterModule->Name();
+                }
                 std::cout << "FunctionSymbol::Resolve(): warning: specialization type of '" + util::ToUtf8(Name()) + "' not resolved" << note << "\n";
             }
         }
@@ -1065,7 +1059,7 @@ FunctionTypeSymbol* FunctionSymbol::GetFunctionType(otava::symbols::Context* con
 
 otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const
 {
-    util::uuid irId = IrId(context);
+    util::uuid irId = IrId(sourcePos, context);
     otava::intermediate::Type* type = emitter.GetType(irId);
     if (!type)
     {
@@ -1249,14 +1243,20 @@ std::u32string FunctionSymbol::NextTemporaryName()
     return U"@t" + util::ToUtf32(std::to_string(nextTemporaryId++));
 }
 
-VariableSymbol* FunctionSymbol::CreateTemporary(TypeSymbol* type, std::int64_t nodeId)
+VariableSymbol* FunctionSymbol::CreateTemporary(TypeSymbol* type, std::int64_t nodeId, Context* context)
 {
     VariableSymbol* temporary = new VariableSymbol(NextTemporaryName());
+    temporary->SetTemporary();
     temporary->SetDeclaredType(type);
     AddLocalVariable(temporary);
     if (nodeId != -1)
     {
         temporaryMap[nodeId] = temporary;
+        temporary->SetNodeId(nodeId);
+    }
+    if (context->CurrentProject()->HasDefine("PRINT_TEMPORARIES"))
+    {
+        std::cout << "CREATE TEMPORARY:" << util::ToUtf8(temporary->Name()) << ":" << util::ToUtf8(type->FullName()) << ":" << nodeId << "\n";
     }
     return temporary;
 }
@@ -1268,7 +1268,10 @@ VariableSymbol* FunctionSymbol::GetTemporary(std::int64_t nodeId) const noexcept
     {
         return it->second;
     }
-    return nullptr;
+    else
+    {
+        return nullptr;
+    }
 }
 
 bool FunctionSymbol::IsStatic() const noexcept
@@ -1313,6 +1316,22 @@ soul::xml::Element* FunctionSymbol::ToXml() const
         element->SetAttribute("returnTypeId", util::ToString(returnType->Id()));
     }
     return element;
+}
+
+void FunctionSymbol::PrintLocals()
+{
+    std::cout << "LOCALS:" << "\n";
+    for (auto* var : localVariables)
+    {
+        if (var->IsTemporary())
+        {
+            std::cout << "TEMPORARY:" << util::ToUtf8(var->Name()) << ":" << util::ToUtf8(var->GetType()->FullName()) << ":" << var->NodeId() << "\n";
+        }
+        else
+        {
+            std::cout << "LOCAL:" << util::ToUtf8(var->Name()) << ":" << util::ToUtf8(var->GetType()->FullName()) << ":" << var->NodeId() << "\n";
+        }
+    }
 }
 
 FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) :
@@ -1512,6 +1531,24 @@ void FunctionDefinitionSymbol::SetNoExcept() noexcept
         declaration->SetNoExcept();
     }
     FunctionSymbol::SetNoExcept();
+}
+
+void FunctionDefinitionSymbol::SetOverride() noexcept
+{
+    if (declaration)
+    {
+        declaration->SetOverride();
+    }
+    FunctionSymbol::SetOverride();
+}
+
+void FunctionDefinitionSymbol::SetFinal() noexcept
+{
+    if (declaration)
+    {
+        declaration->SetFinal();
+    }
+    FunctionSymbol::SetFinal();
 }
 
 std::int32_t FunctionDefinitionSymbol::VTabIndex() const noexcept

@@ -50,13 +50,14 @@ void MakeProjectFile(Project* project, const std::string& projectFilePath, const
         {
             if (configurations.find("release") != configurations.end())
             {
-                std::string releaseReference = util::Path::Combine(util::Path::Combine(util::Path::Combine(referencedProject->Root(), config),
+                std::string releaseReference = util::Path::Combine(util::Path::Combine(util::Path::Combine(util::Path::Combine(referencedProject->Root(), "bin"), config),
                     std::to_string(otava::symbols::GetOptLevel(optLevel, true))), referencedProject->Name() + ".lib");
                 references.append(";").append(releaseReference);
             }
             else
             {
-                std::string debugReference = util::Path::Combine(util::Path::Combine(referencedProject->Root(), config), referencedProject->Name() + ".lib");
+                std::string debugReference = util::Path::Combine(util::Path::Combine(util::Path::Combine(referencedProject->Root(), "bin"), config), 
+                    referencedProject->Name() + ".lib");
                 references.append(";").append(debugReference);
             }
         }

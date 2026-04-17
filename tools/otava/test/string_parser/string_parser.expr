@@ -1,0 +1,5 @@
+expressions string_parser.expr
+{
+	ws = "[\n\r\t ]";
+	name = "[a-z][a-z0-9]*";
+}

@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 import std;
 import otava.build.parser;
 import otava.build.build;
@@ -60,6 +55,10 @@ void PrintHelp()
     std::cout << "  Initialize uuid seed from hash code of the file path of each project." << "\n";
     std::cout << "--symbol-xml | -y" << "\n";
     std::cout << "  Write symbols as XML" << "\n";
+    std::cout << "--debug | -b" << "\n";
+    std::cout << "  Set compile debugging on." << "\n";
+    std::cout << "--out=FILENAME | -o=FILENAME" << "\n";
+    std::cout << "  Write compile debug output to file FILENAME." << "\n";
 }
 
 int Action(int argc, const char** argv)
@@ -76,6 +75,7 @@ int Action(int argc, const char** argv)
     std::vector<std::string> files;
     bool verbose = false;
     bool rebuild = false;
+    bool debug = false;
     std::string config = "debug";
     bool multithreaded = false;
     bool debugParse = false;
@@ -84,6 +84,8 @@ int Action(int argc, const char** argv)
     bool symbolXml = false;
     bool all = false;
     int optLevel = -1;
+    std::ofstream outFileStream;
+    std::ostream* outFile = nullptr;
     for (int i = 1; i < argc; ++i)
     {
         std::string arg = argv[i];
@@ -105,6 +107,11 @@ int Action(int argc, const char** argv)
                     else if (components[0] == "--define")
                     {
                         otava::build::DefineSymbol(components[1]);
+                    }
+                    else if (components[0] == "--out")
+                    {
+                        outFileStream.open(components[1].c_str());
+                        outFile = &outFileStream;
                     }
                     else
                     {
@@ -157,6 +164,10 @@ int Action(int argc, const char** argv)
                 {
                     all = true;
                 }
+                else if (arg == "--debug")
+                {
+                    debug = true;
+                }
                 else
                 {
                     otava::symbols::SetExceptionThrown();
@@ -182,6 +193,11 @@ int Action(int argc, const char** argv)
                     else if (components[0] == "-d")
                     {
                         otava::build::DefineSymbol(components[1]);
+                    }
+                    else if (components[0] == "-o")
+                    {
+                        outFileStream.open(components[1].c_str());
+                        outFile = &outFileStream;
                     }
                     else
                     {
@@ -247,6 +263,11 @@ int Action(int argc, const char** argv)
                         case 'y':
                         {
                             symbolXml = true;
+                            break;
+                        }
+                        case 'b':
+                        {
+                            debug = true;
                             break;
                         }
                         default:
@@ -321,8 +342,12 @@ int Action(int argc, const char** argv)
             {
                 buildFlags = buildFlags | otava::build::BuildFlags::seed;
             }
+            if (debug)
+            {
+                buildFlags = buildFlags | otava::build::BuildFlags::debug;
+            }
             std::set<otava::build::Project*, otava::build::ProjectLess> projectSet;
-            otava::build::Build(fileMap, project.get(), config, optLevel, buildFlags, projectSet);
+            otava::build::Build(fileMap, project.get(), config, optLevel, buildFlags, projectSet, outFile);
         }
         else if (file.ends_with(".solution"))
         {
@@ -356,8 +381,12 @@ int Action(int argc, const char** argv)
             {
                 buildFlags = buildFlags | otava::build::BuildFlags::seed;
             }
+            if (debug)
+            {
+                buildFlags = buildFlags | otava::build::BuildFlags::debug;
+            }
             std::set<otava::build::Project*, otava::build::ProjectLess> projectSet;
-            otava::build::Build(fileMap, solution.get(), config, optLevel, buildFlags, projectSet);
+            otava::build::Build(fileMap, solution.get(), config, optLevel, buildFlags, projectSet, outFile);
         }
         else
         {
@@ -376,11 +405,6 @@ int main(int argc, const char** argv)
     catch (const std::exception& ex)
     {
         std::cerr << ex.what() << std::endl;
-        return 1;
-    }
-    catch (const otava::symbols::Exception& ex)
-    {
-        std::cerr << ex.Message() << std::endl;
         return 1;
     }
 }

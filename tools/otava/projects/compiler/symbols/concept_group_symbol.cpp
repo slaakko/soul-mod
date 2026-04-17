@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.concept_group.symbol;
 
 import otava.symbols.concepts;
@@ -25,7 +20,7 @@ void ConceptGroupSymbol::AddConcept(ConceptSymbol* conceptSymbol)
     }
 }
 
-Symbol* ConceptGroupSymbol::GetSingleSymbol(Context* context) noexcept
+Symbol* ConceptGroupSymbol::GetSingleSymbol(Context* contex) noexcept
 {
     if (concepts.size() == 1)
     {

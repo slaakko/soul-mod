@@ -204,6 +204,31 @@ Symbol::Symbol(SymbolKind kind_, const util::uuid& id_, const std::u32string& na
 {
 }
 
+SymbolTable* Symbol::GetSymbolTable() noexcept
+{
+    if (parent)
+    {
+        return parent->GetSymbolTable();
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+Module* Symbol::GetModule() noexcept
+{
+    SymbolTable* symbolTable = GetSymbolTable();
+    if (symbolTable)
+    {
+        return symbolTable->GetModule();
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 Symbol::~Symbol()
 {
     if (symbolDestroyedFunc)
@@ -557,6 +582,7 @@ bool Symbol::IsValueSymbol() const noexcept
         case SymbolKind::symbolValueSymbol:
         case SymbolKind::invokeValueSymbol:
         case SymbolKind::arrayValueSymbol:
+        case SymbolKind::structureValueSymbol:
         {
             return true;
         }

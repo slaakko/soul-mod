@@ -1,0 +1,14 @@
+project string_parser;
+target=program;
+reference <../../projects/util/util.project>;
+reference <../../projects/soul/ast/ast.project>;
+reference <../../projects/soul/lexer/lexer.project>;
+reference <../../projects/soul/parser/parser.project>;
+interface <string_parser.token.cppm>;
+interface <string_parser.parser.cppm>;
+source <string_parser.parser.cpp>;
+interface <string_parser_rules.cppm>;
+source <string_parser_rules.cpp>;
+interface <string_parser.lexer.cppm>;
+source <string_parser.lexer.cpp>;
+source <main.cpp>;

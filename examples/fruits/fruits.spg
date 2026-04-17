@@ -1,0 +1,3 @@
+project fruits.spg;
+tokens <fruits.token>;
+parser <fruits.parser>;

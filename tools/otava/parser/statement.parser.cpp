@@ -5416,8 +5416,18 @@ soul::parser::Match StatementParser<LexerT>::ExceptionDeclaration(LexerT& lexer,
                             soul::parser::Match* parentMatch18 = &match;
                             lexer.SetPos(save);
                             {
-                                soul::parser::Match match = otava::parser::punctuation::PunctuationParser<LexerT>::Ellipsis(lexer);
-                                ellipsis.reset(static_cast<otava::ast::Node*>(match.value));
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch19 = &match;
+                                {
+                                    std::int64_t pos = lexer.GetPos();
+                                    soul::parser::Match match = otava::parser::punctuation::PunctuationParser<LexerT>::Ellipsis(lexer);
+                                    ellipsis.reset(static_cast<otava::ast::Node*>(match.value));
+                                    if (match.hit)
+                                    {
+                                        if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                                    }
+                                    *parentMatch19 = match;
+                                }
                                 *parentMatch18 = match;
                             }
                             *parentMatch7 = match;

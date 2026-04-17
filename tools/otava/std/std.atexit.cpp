@@ -37,6 +37,7 @@ void run_at_exits()
         at_exit_fn invoke_fn = static_cast<at_exit_fn>(fn);
         void* arg = entry->arg;
         invoke_fn(arg);
+        delete entry;
         entry = at_exit_list;
     }
 }

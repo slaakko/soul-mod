@@ -83,6 +83,11 @@ enum class ContextFlags : std::int64_t
     setParentBlockIds = static_cast<std::int64_t>(1) << 48,
     matchClassTemplateSpecializationConversion = static_cast<std::int64_t>(1) << 49,
     noWarnings = static_cast<std::int64_t>(1) << 50,
+    debug = static_cast<std::int64_t>(1) << 51,
+    debugMemory = static_cast<std::int64_t>(1) << 52,
+    acquireTemporaryDestructorCalls = static_cast<std::int64_t>(1) << 53,
+    gendoc = static_cast<std::int64_t>(1) << 54,
+    skipMapIo = static_cast<std::int64_t>(1) << 55,
     sticky = noWarnings | expected
 };
 
@@ -151,6 +156,9 @@ public:
     EvaluationContext* GetEvaluationContext() noexcept;
     std::string FileName() const;
     void SetFileName(const std::string& fileName_);
+    int Line() const;
+    inline const std::u32string& Function() const noexcept { return function; }
+    void SetFunction(const std::u32string& function_);
     void PushFlags();
     void PopFlags();
     void PushSetFlag(ContextFlags flag);
@@ -265,7 +273,17 @@ public:
     inline int ParentBlockId() const noexcept { return parentBlockId; }
     void PushParentBlockId(int blockId);
     void PopParentBlockId();
+    inline int ParentStatementIndex() const noexcept { return parentStatementIndex; }
+    void PushParentStatementIndex(int parentStatementIndex_);
+    void PopParentStatementIndex();
     RangeForBlockIds& GetRangeForBlockIds(const util::uuid& rangeForId);
+    const std::u32string& DebugFn() const { return debugFn; }
+    void SetDebugFn(const std::u32string& debugFn_);
+    inline void SetDebugOutputStream(std::ostream* s) noexcept { debugOutputStream = s; }
+    inline std::ostream* DebugOutputStream() const noexcept { return debugOutputStream; }
+    inline std::int64_t NodeId() const noexcept { return nodeId; }
+    void PushNodeId(std::int64_t nodeId_);
+    void PopNodeId();
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -333,7 +351,19 @@ private:
     std::stack<FunctionDefinitionSymbol*> parentFnStack;
     std::stack<int> parentBlockIdStack;
     int parentBlockId;
+    std::stack<int> parentStatementIndexStack;
+    int parentStatementIndex;
     std::map<util::uuid, RangeForBlockIds> rangeForBlockIdMap;
+    std::u32string debugFn;
+    std::ostream* debugOutputStream;
+    std::u32string function;
+    std::int64_t nodeId;
+    std::stack<std::int64_t> nodeIdStack;
 };
+
+void PrintDebugMessage(Context* context, const std::string& message);
+
+Context* CurrentContext();
+void SetCurrentContext(Context* context);
 
 } // namespace otava::symbols

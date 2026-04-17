@@ -1,0 +1,3 @@
+project bound_temporary;
+target=program;
+source <main.cpp>;

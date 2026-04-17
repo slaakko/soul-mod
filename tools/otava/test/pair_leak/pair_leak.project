@@ -1,0 +1,3 @@
+project pair_leak;
+target=program;
+source <main.cpp>;

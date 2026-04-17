@@ -161,10 +161,12 @@ public:
     Symbol(SymbolKind kind_, const std::u32string& name_);
     Symbol(SymbolKind kind_, const util::uuid& id_, const std::u32string& name_);
     virtual ~Symbol();
+    virtual SymbolTable* GetSymbolTable() noexcept;
+    Module* GetModule() noexcept;
     inline SymbolKind Kind() const noexcept { return kind; }
     inline const util::uuid& Id() const noexcept { return id; }
     void SetId(const util::uuid& id_) noexcept { id = id_; }
-    virtual util::uuid IrId(Context* context) const noexcept { return id; }
+    virtual util::uuid IrId(const soul::ast::SourcePos& sourcePos, Context* context) const { return id; }
     inline const std::u32string& Name() const noexcept { return name; }
     void SetName(const std::u32string& name_);
     inline Access GetAccess() const noexcept { return access; }

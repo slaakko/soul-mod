@@ -1,13 +1,13 @@
 // this file has been automatically generated from 'D:/work/soul-mod/tools/otava/lexer/otava.token.line.lexer' using soul lexer generator slg version 5.0.0
 
-module soul.cpp20.token.line.lexer;
+module otava.token.line.lexer;
 
 
-namespace soul::cpp20::token::line::lexer {
+namespace otava::token::line::lexer {
 
 soul::ast::common::TokenCollection* GetTokens()
 {
-    static soul::ast::common::TokenCollection tokens("soul.cpp20.token.line.lexer.tokens");
+    static soul::ast::common::TokenCollection tokens("otava.token.line.lexer.tokens");
     if (!tokens.Initialized())
     {
         tokens.SetInitialized();
@@ -542,4 +542,4 @@ soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
     return &keywordMap;
 }
 
-} // namespace soul::cpp20::token::line::lexer
+} // namespace otava::token::line::lexer

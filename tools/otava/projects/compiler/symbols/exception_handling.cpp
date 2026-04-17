@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.exception_handling;
 
 import otava.symbols.expr.parser;
@@ -149,132 +144,6 @@ soul::ast::SourcePos Cleanup::GetSourcePos() const
     return soul::ast::SourcePos();
 }
 
-FunctionDefinitionSymbol* MakeInvokeFn(BoundFunctionCallNode* fnCall, Scope* parentFnScope, FunctionDefinitionSymbol* parentFn, Context* context)
-{
-    soul::ast::SourcePos sourcePos = fnCall->GetSourcePos();
-    bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
-    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
-    otava::ast::CompoundStatementNode* invokeBlock = new otava::ast::CompoundStatementNode(sourcePos);
-    if (!parentFn->Blocks().empty())
-    {
-        invokeBlock->SetBlockId(parentFn->Blocks().front()->BlockId());
-    }
-    if (!fnCall->GetType() || fnCall->GetType()->IsVoidType())
-    {
-        std::unique_ptr<otava::ast::Node> expr;
-        expr.reset(fnCall->Source()->Clone());
-        otava::ast::ExpressionStatementNode* exprStmt = new otava::ast::ExpressionStatementNode(sourcePos, expr.release(), nullptr, nullptr);
-        invokeBlock->AddNode(exprStmt);
-    }
-    else
-    {
-        std::unique_ptr<otava::ast::DeclarationStatementNode> declarationStatement = DeclarationToAst(
-            fnCall->GetType(), context->ResultVarName(), fnCall->Source()->Clone(), sourcePos);
-        invokeBlock->AddNode(declarationStatement.release());
-    }
-    otava::ast::DeclSpecifierSequenceNode* invokeDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
-    invokeDeclSpecifiers->AddNode(new otava::ast::VoidNode(sourcePos));
-    otava::ast::ParameterListNode* invokeParameters = new otava::ast::ParameterListNode(sourcePos);
-    otava::ast::ParameterNode* invokeParentFrameParameter = new otava::ast::ParameterNode(sourcePos);
-    otava::ast::DeclSpecifierSequenceNode* invokeParentFrameParamDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
-    invokeParentFrameParamDeclSpecifiers->AddNode(new otava::ast::VoidNode(sourcePos));
-    invokeParentFrameParameter->SetDeclSpecifiers(invokeParentFrameParamDeclSpecifiers);
-    otava::ast::PtrDeclaratorNode* invokeParentFramePtrDeclarator = new otava::ast::PtrDeclaratorNode(sourcePos);
-    invokeParentFramePtrDeclarator->AddNode(new otava::ast::PtrNode(sourcePos));
-    invokeParentFramePtrDeclarator->AddNode(new otava::ast::IdentifierNode(sourcePos, U"__parentFrame"));
-    invokeParentFrameParameter->SetDeclarator(invokeParentFramePtrDeclarator);
-    invokeParameters->AddNode(invokeParentFrameParameter);
-    int invokeSerial = context->NextInvokeSerial();
-    otava::ast::FunctionDeclaratorNode* invokeDeclarator = new otava::ast::FunctionDeclaratorNode(sourcePos,
-        new otava::ast::IdentifierNode(sourcePos, U"invoke_" +
-            util::ToUtf32(std::to_string(invokeSerial)) + U"_" + util::ToUtf32(context->GetBoundCompileUnit()->Id())), invokeParameters);
-    std::unique_ptr<otava::ast::FunctionDefinitionNode> invokeFnNode(
-        new otava::ast::FunctionDefinitionNode(sourcePos, nullptr, invokeDeclSpecifiers, invokeDeclarator, nullptr,
-            new otava::ast::FunctionBodyNode(sourcePos, invokeBlock)));
-    InstantiationScope invokeInstantiationScope(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->Parent()->GetScope());
-    invokeInstantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
-    context->GetSymbolTable()->BeginScope(&invokeInstantiationScope);
-    Instantiator invokeInstantiator(context, &invokeInstantiationScope);
-    invokeInstantiator.SetFunctionNode(invokeFnNode.get());
-    context->PushParentFn(parentFn);
-    context->PushSetFlag(ContextFlags::instantiateInlineFunction | ContextFlags::saveDeclarations | ContextFlags::dontBind | ContextFlags::invoke);
-    invokeFnNode->Accept(invokeInstantiator);
-    int invokeFnScopeCount = invokeInstantiator.ScopeCount();
-    FunctionDefinitionSymbol* invokeFnSymbol = static_cast<FunctionDefinitionSymbol*>(invokeInstantiator.GetSpecialization());
-    invokeFnSymbol->SetSkipInvokeChecking();
-    invokeFnSymbol->SetParentFn(parentFn);
-    invokeFnSymbol->SetParentFnScope(parentFnScope);
-    context->PushBoundFunction(new BoundFunctionNode(invokeFnSymbol, sourcePos));
-    context->PushSetFlag(ContextFlags::makeChildFn);
-    invokeFnSymbol->SetResultVarName(context->ResultVarName());
-    invokeFnSymbol = BindFunction(invokeFnNode.get(), invokeFnSymbol, context);
-    otava::symbols::EndFunctionDefinition(invokeFnNode.get(), invokeFnScopeCount, context);
-    context->PopFlags();
-    context->PopFlags();
-    context->GetSymbolTable()->EndScope();
-    context->PopParentFn();
-    invokeInstantiationScope.PopParentScope();
-    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
-    invokeFnSymbol->SetFnDefNode(invokeFnNode.release());
-    return invokeFnSymbol;
-}
-
-FunctionDefinitionSymbol* MakeCleanupFn(Cleanup& cleanup, Scope* parentFnScope, FunctionDefinitionSymbol* parentFn, Context* context)
-{
-    soul::ast::SourcePos sourcePos = cleanup.GetSourcePos();
-    bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
-    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
-    otava::ast::CompoundStatementNode* cleanupBlock = new otava::ast::CompoundStatementNode(sourcePos);
-    if (!parentFn->Blocks().empty())
-    {
-        cleanupBlock->SetBlockId(parentFn->Blocks().front()->BlockId());
-    }
-    cleanup.Make(cleanupBlock);
-    otava::ast::DeclSpecifierSequenceNode* cleanupDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
-    cleanupDeclSpecifiers->AddNode(new otava::ast::VoidNode(sourcePos));
-    otava::ast::ParameterListNode* cleanupParameters = new otava::ast::ParameterListNode(sourcePos);
-    int cleanupSerial = context->NextCleanupSerial();
-    otava::ast::ParameterNode* cleanupParentFrameParameter = new otava::ast::ParameterNode(sourcePos);
-    otava::ast::DeclSpecifierSequenceNode* cleanupParentFrameParamDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
-    cleanupParentFrameParamDeclSpecifiers->AddNode(new otava::ast::VoidNode(sourcePos));
-    cleanupParentFrameParameter->SetDeclSpecifiers(cleanupParentFrameParamDeclSpecifiers);
-    otava::ast::PtrDeclaratorNode* cleanupParentFramePtrDeclarator = new otava::ast::PtrDeclaratorNode(sourcePos);
-    cleanupParentFramePtrDeclarator->AddNode(new otava::ast::PtrNode(sourcePos));
-    cleanupParentFramePtrDeclarator->AddNode(new otava::ast::IdentifierNode(sourcePos, U"__parentFrame"));
-    cleanupParentFrameParameter->SetDeclarator(cleanupParentFramePtrDeclarator);
-    cleanupParameters->AddNode(cleanupParentFrameParameter);
-    otava::ast::FunctionDeclaratorNode* cleanupDeclarator = new otava::ast::FunctionDeclaratorNode(sourcePos,
-        new otava::ast::IdentifierNode(sourcePos, U"cleanup_" +
-            util::ToUtf32(std::to_string(cleanupSerial)) + U"_" + util::ToUtf32(context->GetBoundCompileUnit()->Id())), cleanupParameters);
-    std::unique_ptr<otava::ast::FunctionDefinitionNode> cleanupFnNode(new otava::ast::FunctionDefinitionNode(sourcePos, nullptr, cleanupDeclSpecifiers,
-        cleanupDeclarator, nullptr, new otava::ast::FunctionBodyNode(sourcePos, cleanupBlock)));
-    InstantiationScope cleanupInstantiationScope(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->Parent()->GetScope());
-    cleanupInstantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
-    context->GetSymbolTable()->BeginScope(&cleanupInstantiationScope);
-    Instantiator cleanupInstantiator(context, &cleanupInstantiationScope);
-    cleanupInstantiator.SetFunctionNode(cleanupFnNode.get());
-    context->PushSetFlag(ContextFlags::instantiateInlineFunction | ContextFlags::saveDeclarations | ContextFlags::dontBind);
-    cleanupFnNode->Accept(cleanupInstantiator);
-    int cleanupFnScopeCount = cleanupInstantiator.ScopeCount();
-    FunctionDefinitionSymbol* cleanupFnSymbol = static_cast<FunctionDefinitionSymbol*>(cleanupInstantiator.GetSpecialization());
-    cleanupFnSymbol->SetNoExcept();
-    cleanupFnSymbol->SetParentFn(parentFn);
-    cleanupFnSymbol->SetParentFnScope(parentFnScope);
-    context->PushBoundFunction(new BoundFunctionNode(cleanupFnSymbol, sourcePos));
-    context->PushSetFlag(ContextFlags::makeChildFn);
-    cleanupFnSymbol->SetResultVarName(context->ResultVarName());
-    cleanupFnSymbol = BindFunction(cleanupFnNode.get(), cleanupFnSymbol, context);
-    otava::symbols::EndFunctionDefinition(cleanupFnNode.get(), cleanupFnScopeCount, context);
-    context->PopFlags();
-    context->PopFlags();
-    context->GetSymbolTable()->EndScope();
-    cleanupInstantiationScope.PopParentScope();
-    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
-    cleanupFnSymbol->SetFnDefNode(cleanupFnNode.release());
-    cleanup.ResetChanged();
-    return cleanupFnSymbol;
-}
-
 class BoundNodeStack
 {
 public:
@@ -364,12 +233,153 @@ public:
     void Visit(BoundVariableAsVoidPtrNode& node) override;
     void Visit(BoundOperatorFnNode& node) override;
     BoundInvokeNode* MakeInvokeAndCleanup(BoundFunctionCallNode* fnCall);
+    void SetDestructTemporariesNode(BoundDestructTemporariesNode* destructTemporariesNode_);
 private:
     Context* context;
     FunctionDefinitionSymbol* functionDefinitionSymbol;
     BoundNodeStack s;
     Cleanup cleanup;
+    std::unique_ptr<BoundDestructTemporariesNode> destructTemporariesNode;
 };
+
+FunctionDefinitionSymbol* MakeInvokeFn(BoundFunctionCallNode* fnCall, Scope* parentFnScope, FunctionDefinitionSymbol* parentFn,
+    InvokeAndCleanupGenerator* generator, Context* context)
+{
+    soul::ast::SourcePos sourcePos = fnCall->GetSourcePos();
+    bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
+    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
+    otava::ast::CompoundStatementNode* invokeBlock = new otava::ast::CompoundStatementNode(sourcePos);
+    if (!parentFn->Blocks().empty())
+    {
+        invokeBlock->SetBlockId(parentFn->Blocks().front()->BlockId());
+    }
+    if (!fnCall->GetType() || fnCall->GetType()->IsVoidType())
+    {
+        std::unique_ptr<otava::ast::Node> expr;
+        expr.reset(fnCall->Source()->Clone());
+        if (expr->IsSimpleDeclarationNode())
+        {
+            invokeBlock->AddNode(expr.release());
+        }
+        else
+        {
+            otava::ast::ExpressionStatementNode* exprStmt = new otava::ast::ExpressionStatementNode(sourcePos, expr.release(), nullptr, nullptr);
+            invokeBlock->AddNode(exprStmt);
+        }
+    }
+    else
+    {
+        std::unique_ptr<otava::ast::DeclarationStatementNode> declarationStatement = DeclarationToAst(
+            fnCall->GetType(), context->ResultVarName(), fnCall->Source()->Clone(), sourcePos);
+        invokeBlock->AddNode(declarationStatement.release());
+    }
+    otava::ast::DeclSpecifierSequenceNode* invokeDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
+    invokeDeclSpecifiers->AddNode(new otava::ast::VoidNode(sourcePos));
+    otava::ast::ParameterListNode* invokeParameters = new otava::ast::ParameterListNode(sourcePos);
+    otava::ast::ParameterNode* invokeParentFrameParameter = new otava::ast::ParameterNode(sourcePos);
+    otava::ast::DeclSpecifierSequenceNode* invokeParentFrameParamDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
+    invokeParentFrameParamDeclSpecifiers->AddNode(new otava::ast::VoidNode(sourcePos));
+    invokeParentFrameParameter->SetDeclSpecifiers(invokeParentFrameParamDeclSpecifiers);
+    otava::ast::PtrDeclaratorNode* invokeParentFramePtrDeclarator = new otava::ast::PtrDeclaratorNode(sourcePos);
+    invokeParentFramePtrDeclarator->AddNode(new otava::ast::PtrNode(sourcePos));
+    invokeParentFramePtrDeclarator->AddNode(new otava::ast::IdentifierNode(sourcePos, U"__parentFrame"));
+    invokeParentFrameParameter->SetDeclarator(invokeParentFramePtrDeclarator);
+    invokeParameters->AddNode(invokeParentFrameParameter);
+    int invokeSerial = context->NextInvokeSerial();
+    otava::ast::FunctionDeclaratorNode* invokeDeclarator = new otava::ast::FunctionDeclaratorNode(sourcePos,
+        new otava::ast::IdentifierNode(sourcePos, U"invoke_" +
+            util::ToUtf32(std::to_string(invokeSerial)) + U"_" + util::ToUtf32(context->GetBoundCompileUnit()->Id())), invokeParameters);
+    std::unique_ptr<otava::ast::FunctionDefinitionNode> invokeFnNode(
+        new otava::ast::FunctionDefinitionNode(sourcePos, nullptr, invokeDeclSpecifiers, invokeDeclarator, nullptr,
+            new otava::ast::FunctionBodyNode(sourcePos, invokeBlock)));
+    InstantiationScope invokeInstantiationScope(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->Parent()->GetScope());
+    invokeInstantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
+    context->GetSymbolTable()->BeginScope(&invokeInstantiationScope);
+    Instantiator invokeInstantiator(context, &invokeInstantiationScope);
+    invokeInstantiator.SetFunctionNode(invokeFnNode.get());
+    context->PushParentFn(parentFn);
+    context->PushSetFlag(ContextFlags::instantiateInlineFunction | ContextFlags::saveDeclarations | ContextFlags::dontBind | ContextFlags::invoke);
+    invokeFnNode->Accept(invokeInstantiator);
+    int invokeFnScopeCount = invokeInstantiator.ScopeCount();
+    FunctionDefinitionSymbol* invokeFnSymbol = static_cast<FunctionDefinitionSymbol*>(invokeInstantiator.GetSpecialization());
+    invokeFnSymbol->SetSkipInvokeChecking();
+    invokeFnSymbol->SetParentFn(parentFn);
+    invokeFnSymbol->SetParentFnScope(parentFnScope);
+    BoundFunctionNode* boundFunction = new BoundFunctionNode(invokeFnSymbol, sourcePos);
+    context->PushBoundFunction(boundFunction);
+    context->PushSetFlag(ContextFlags::makeChildFn);
+    invokeFnSymbol->SetResultVarName(context->ResultVarName());
+    invokeFnSymbol = BindFunction(invokeFnNode.get(), invokeFnSymbol, context);
+    otava::symbols::EndFunctionDefinition(invokeFnNode.get(), invokeFnScopeCount, context);
+    context->PopFlags();
+    context->PopFlags();
+    context->GetSymbolTable()->EndScope();
+    context->PopParentFn();
+    invokeInstantiationScope.PopParentScope();
+    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+    invokeFnSymbol->SetFnDefNode(invokeFnNode.release());
+    if (boundFunction->HasTemporaryDestructorCalls())
+    {
+        generator->SetDestructTemporariesNode(new BoundDestructTemporariesNode(sourcePos, boundFunction->GetTemporaryDestructorCalls()));
+    }
+    return invokeFnSymbol;
+}
+
+FunctionDefinitionSymbol* MakeCleanupFn(Cleanup& cleanup, Scope* parentFnScope, FunctionDefinitionSymbol* parentFn, Context* context)
+{
+    soul::ast::SourcePos sourcePos = cleanup.GetSourcePos();
+    bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
+    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
+    otava::ast::CompoundStatementNode* cleanupBlock = new otava::ast::CompoundStatementNode(sourcePos);
+    if (!parentFn->Blocks().empty())
+    {
+        cleanupBlock->SetBlockId(parentFn->Blocks().front()->BlockId());
+    }
+    cleanup.Make(cleanupBlock);
+    otava::ast::DeclSpecifierSequenceNode* cleanupDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
+    cleanupDeclSpecifiers->AddNode(new otava::ast::VoidNode(sourcePos));
+    otava::ast::ParameterListNode* cleanupParameters = new otava::ast::ParameterListNode(sourcePos);
+    int cleanupSerial = context->NextCleanupSerial();
+    otava::ast::ParameterNode* cleanupParentFrameParameter = new otava::ast::ParameterNode(sourcePos);
+    otava::ast::DeclSpecifierSequenceNode* cleanupParentFrameParamDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
+    cleanupParentFrameParamDeclSpecifiers->AddNode(new otava::ast::VoidNode(sourcePos));
+    cleanupParentFrameParameter->SetDeclSpecifiers(cleanupParentFrameParamDeclSpecifiers);
+    otava::ast::PtrDeclaratorNode* cleanupParentFramePtrDeclarator = new otava::ast::PtrDeclaratorNode(sourcePos);
+    cleanupParentFramePtrDeclarator->AddNode(new otava::ast::PtrNode(sourcePos));
+    cleanupParentFramePtrDeclarator->AddNode(new otava::ast::IdentifierNode(sourcePos, U"__parentFrame"));
+    cleanupParentFrameParameter->SetDeclarator(cleanupParentFramePtrDeclarator);
+    cleanupParameters->AddNode(cleanupParentFrameParameter);
+    otava::ast::FunctionDeclaratorNode* cleanupDeclarator = new otava::ast::FunctionDeclaratorNode(sourcePos,
+        new otava::ast::IdentifierNode(sourcePos, U"cleanup_" +
+            util::ToUtf32(std::to_string(cleanupSerial)) + U"_" + util::ToUtf32(context->GetBoundCompileUnit()->Id())), cleanupParameters);
+    std::unique_ptr<otava::ast::FunctionDefinitionNode> cleanupFnNode(new otava::ast::FunctionDefinitionNode(sourcePos, nullptr, cleanupDeclSpecifiers,
+        cleanupDeclarator, nullptr, new otava::ast::FunctionBodyNode(sourcePos, cleanupBlock)));
+    InstantiationScope cleanupInstantiationScope(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->Parent()->GetScope());
+    cleanupInstantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
+    context->GetSymbolTable()->BeginScope(&cleanupInstantiationScope);
+    Instantiator cleanupInstantiator(context, &cleanupInstantiationScope);
+    cleanupInstantiator.SetFunctionNode(cleanupFnNode.get());
+    context->PushSetFlag(ContextFlags::instantiateInlineFunction | ContextFlags::saveDeclarations | ContextFlags::dontBind);
+    cleanupFnNode->Accept(cleanupInstantiator);
+    int cleanupFnScopeCount = cleanupInstantiator.ScopeCount();
+    FunctionDefinitionSymbol* cleanupFnSymbol = static_cast<FunctionDefinitionSymbol*>(cleanupInstantiator.GetSpecialization());
+    cleanupFnSymbol->SetNoExcept();
+    cleanupFnSymbol->SetParentFn(parentFn);
+    cleanupFnSymbol->SetParentFnScope(parentFnScope);
+    context->PushBoundFunction(new BoundFunctionNode(cleanupFnSymbol, sourcePos));
+    context->PushSetFlag(ContextFlags::makeChildFn);
+    cleanupFnSymbol->SetResultVarName(context->ResultVarName());
+    cleanupFnSymbol = BindFunction(cleanupFnNode.get(), cleanupFnSymbol, context);
+    otava::symbols::EndFunctionDefinition(cleanupFnNode.get(), cleanupFnScopeCount, context);
+    context->PopFlags();
+    context->PopFlags();
+    context->GetSymbolTable()->EndScope();
+    cleanupInstantiationScope.PopParentScope();
+    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+    cleanupFnSymbol->SetFnDefNode(cleanupFnNode.release());
+    cleanup.ResetChanged();
+    return cleanupFnSymbol;
+}
 
 InvokeAndCleanupGenerator::InvokeAndCleanupGenerator(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_) :
     context(context_), functionDefinitionSymbol(functionDefinitionSymbol_), s(context)
@@ -390,7 +400,7 @@ BoundInvokeNode* InvokeAndCleanupGenerator::MakeInvokeAndCleanup(BoundFunctionCa
         context->PushResultVarName(resultVarName);
     }
     FunctionDefinitionSymbol* invokeFnSymbol = MakeInvokeFn(
-        fnCall, context->GetSymbolTable()->CurrentScope(), functionDefinitionSymbol, context);
+        fnCall, context->GetSymbolTable()->CurrentScope(), functionDefinitionSymbol, this, context);
     FunctionDefinitionSymbol* cleanupFnSymbol = MakeCleanupFn(
         cleanup, context->GetSymbolTable()->CurrentScope(), functionDefinitionSymbol, context);
     std::u32string invokeCallText;
@@ -406,6 +416,19 @@ BoundInvokeNode* InvokeAndCleanupGenerator::MakeInvokeAndCleanup(BoundFunctionCa
     }
     context->IncInvokes();
     return boundInvoke.release();
+}
+
+void InvokeAndCleanupGenerator::SetDestructTemporariesNode(BoundDestructTemporariesNode* destructTemporariesNode_)
+{
+    if (destructTemporariesNode)
+    {
+        std::unique_ptr<BoundDestructTemporariesNode> that(destructTemporariesNode_);
+        destructTemporariesNode->Merge(that.get());
+    }
+    else
+    {
+        destructTemporariesNode.reset(destructTemporariesNode_);
+    }
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundFunctionNode& boundFunction)
@@ -543,6 +566,7 @@ void InvokeAndCleanupGenerator::Visit(BoundCompoundStatementNode& node)
 {
     int blockId = node.BlockId();
     context->PushParentBlockId(blockId);
+    context->PushParentStatementIndex(node.StatementIndex());
     Scope* scope = nullptr;
     if (blockId != -1)
     {
@@ -557,6 +581,7 @@ void InvokeAndCleanupGenerator::Visit(BoundCompoundStatementNode& node)
         }
     }
     BoundCompoundStatementNode* clone = new BoundCompoundStatementNode(node.GetSourcePos());
+    clone->SetBlockId(node.BlockId());
     cleanup.PushCleanupBlock();
     for (const auto& statement : node.Statements())
     {
@@ -577,7 +602,16 @@ void InvokeAndCleanupGenerator::Visit(BoundCompoundStatementNode& node)
     {
         context->GetSymbolTable()->EndScopeGeneric(context);
     }
+    context->PopParentStatementIndex();
     context->PopParentBlockId();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -585,6 +619,7 @@ void InvokeAndCleanupGenerator::Visit(BoundIfStatementNode& node)
 {
     int blockId = node.BlockId();
     context->PushParentBlockId(blockId);
+    context->PushParentStatementIndex(node.StatementIndex());
     Scope* scope = nullptr;
     if (blockId != -1)
     {
@@ -599,6 +634,7 @@ void InvokeAndCleanupGenerator::Visit(BoundIfStatementNode& node)
         }
     }
     BoundIfStatementNode* clone = new BoundIfStatementNode(node.GetSourcePos());
+    clone->SetBlockId(node.BlockId());
     BoundExpressionNode* condition = node.GetCondition();
     condition->Accept(*this);
     BoundNode* n = s.Pop();
@@ -642,7 +678,16 @@ void InvokeAndCleanupGenerator::Visit(BoundIfStatementNode& node)
     {
         context->GetSymbolTable()->EndScopeGeneric(context);
     }
+    context->PopParentStatementIndex();
     context->PopParentBlockId();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -650,6 +695,7 @@ void InvokeAndCleanupGenerator::Visit(BoundSwitchStatementNode& node)
 {
     int blockId = node.BlockId();
     context->PushParentBlockId(blockId);
+    context->PushParentStatementIndex(node.StatementIndex());
     Scope* scope = nullptr;
     if (blockId != -1)
     {
@@ -664,6 +710,7 @@ void InvokeAndCleanupGenerator::Visit(BoundSwitchStatementNode& node)
         }
     }
     BoundSwitchStatementNode* clone = new BoundSwitchStatementNode(node.GetSourcePos());
+    clone->SetBlockId(node.BlockId());
     BoundExpressionNode* condition = node.GetCondition();
     condition->Accept(*this);
     BoundNode* n = s.Pop();
@@ -692,12 +739,22 @@ void InvokeAndCleanupGenerator::Visit(BoundSwitchStatementNode& node)
     {
         context->GetSymbolTable()->EndScopeGeneric(context);
     }
+    context->PopParentStatementIndex();
     context->PopParentBlockId();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundCaseStatementNode& node)
 {
+    context->PushParentStatementIndex(node.StatementIndex());
     BoundCaseStatementNode* clone = new BoundCaseStatementNode(node.GetSourcePos());
     for (const auto& caseExpr : node.CaseExprs())
     {
@@ -725,11 +782,21 @@ void InvokeAndCleanupGenerator::Visit(BoundCaseStatementNode& node)
     {
         ThrowException("statement node expected", sn->GetSourcePos(), context);
     }
+    context->PopParentStatementIndex();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundDefaultStatementNode& node)
 {
+    context->PushParentStatementIndex(node.StatementIndex());
     BoundDefaultStatementNode* clone = new BoundDefaultStatementNode(node.GetSourcePos());
     BoundStatementNode* statement = node.Statement();
     statement->Accept(*this);
@@ -743,6 +810,15 @@ void InvokeAndCleanupGenerator::Visit(BoundDefaultStatementNode& node)
     {
         ThrowException("statement node expected", n->GetSourcePos(), context);
     }
+    context->PopParentStatementIndex();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -750,6 +826,7 @@ void InvokeAndCleanupGenerator::Visit(BoundWhileStatementNode& node)
 {
     int blockId = node.BlockId();
     context->PushParentBlockId(blockId);
+    context->PushParentStatementIndex(node.StatementIndex());
     Scope* scope = nullptr;
     if (blockId != -1)
     {
@@ -764,6 +841,7 @@ void InvokeAndCleanupGenerator::Visit(BoundWhileStatementNode& node)
         }
     }
     BoundWhileStatementNode* clone = new BoundWhileStatementNode(node.GetSourcePos());
+    clone->SetBlockId(node.BlockId());
     BoundExpressionNode* condition = node.GetCondition();
     condition->Accept(*this);
     BoundNode* n = s.Pop();
@@ -792,12 +870,22 @@ void InvokeAndCleanupGenerator::Visit(BoundWhileStatementNode& node)
     {
         context->GetSymbolTable()->EndScopeGeneric(context);
     }
+    context->PopParentStatementIndex();
     context->PopParentBlockId();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundDoStatementNode& node)
 {
+    context->PushParentStatementIndex(node.StatementIndex());
     BoundDoStatementNode* clone = new BoundDoStatementNode(node.GetSourcePos());
     s.Push(clone);
     BoundExpressionNode* expr = node.GetExpr();
@@ -824,6 +912,15 @@ void InvokeAndCleanupGenerator::Visit(BoundDoStatementNode& node)
     {
         ThrowException("statement node expected", sn->GetSourcePos(), context);
     }
+    context->PopParentStatementIndex();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -831,6 +928,7 @@ void InvokeAndCleanupGenerator::Visit(BoundForStatementNode& node)
 {
     int blockId = node.BlockId();
     context->PushParentBlockId(blockId);
+    context->PushParentStatementIndex(node.StatementIndex());
     Scope* scope = nullptr;
     if (blockId != -1)
     {
@@ -845,6 +943,7 @@ void InvokeAndCleanupGenerator::Visit(BoundForStatementNode& node)
         }
     }
     BoundForStatementNode* clone = new BoundForStatementNode(node.GetSourcePos());
+    clone->SetBlockId(node.BlockId());
     BoundStatementNode* initStatement = node.InitStatement();
     if (initStatement)
     {
@@ -906,12 +1005,22 @@ void InvokeAndCleanupGenerator::Visit(BoundForStatementNode& node)
     {
         context->GetSymbolTable()->EndScopeGeneric(context);
     }
+    context->PopParentStatementIndex();
     context->PopParentBlockId();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundSequenceStatementNode& node)
 {
+    context->PushParentStatementIndex(node.StatementIndex());
     BoundSequenceStatementNode* clone = new BoundSequenceStatementNode(node.GetSourcePos());
     BoundStatementNode* first = node.First();
     first->Accept(*this);
@@ -937,23 +1046,49 @@ void InvokeAndCleanupGenerator::Visit(BoundSequenceStatementNode& node)
     {
         ThrowException("statement node expected", sn->GetSourcePos(), context);
     }
+    context->PopParentStatementIndex();
+    if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundBreakStatementNode& node)
 {
+    context->PushParentStatementIndex(node.StatementIndex());
     BoundBreakStatementNode* clone = new BoundBreakStatementNode(node.GetSourcePos());
+    context->PopParentStatementIndex();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundContinueStatementNode& node)
 {
+    context->PushParentStatementIndex(node.StatementIndex());
     BoundContinueStatementNode* clone = new BoundContinueStatementNode(node.GetSourcePos());
+    context->PopParentStatementIndex();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundReturnStatementNode& node)
 {
+    context->PushParentStatementIndex(node.StatementIndex());
     BoundReturnStatementNode* clone = new BoundReturnStatementNode(node.GetSourcePos());
     BoundExpressionNode* expr = node.GetExpr();
     if (expr)
@@ -970,19 +1105,39 @@ void InvokeAndCleanupGenerator::Visit(BoundReturnStatementNode& node)
             ThrowException("expression node expected", n->GetSourcePos(), context);
         }
     }
+    context->PopParentStatementIndex();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundGotoStatementNode& node)
 {
+    context->PushParentStatementIndex(node.StatementIndex());
     BoundGotoStatementNode* clone = new BoundGotoStatementNode(node.GetSourcePos());
     clone->SetTarget(node.Target());
     clone->SetLabeledStatement(node.GetLabeledStatement());
+    context->PopParentStatementIndex();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundLabeledStatementNode& node)
 {
+    context->PushParentStatementIndex(node.StatementIndex());
     BoundLabeledStatementNode* clone = new BoundLabeledStatementNode(node.GetSourcePos());
     clone->SetLabel(node.Label());
     BoundStatementNode* statement = node.Statement();
@@ -997,11 +1152,21 @@ void InvokeAndCleanupGenerator::Visit(BoundLabeledStatementNode& node)
     {
         ThrowException("statement node expected", sn->GetSourcePos(), context);
     }
+    context->PopParentStatementIndex();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundSetVPtrStatementNode& node)
 {
+    context->PushParentStatementIndex(node.StatementIndex());
     BoundSetVPtrStatementNode* clone = new BoundSetVPtrStatementNode(node.GetSourcePos());
     node.ThisPtr()->Accept(*this);
     BoundNode* n = s.Pop();
@@ -1016,17 +1181,37 @@ void InvokeAndCleanupGenerator::Visit(BoundSetVPtrStatementNode& node)
     }
     clone->SetForClass(node.GetClass());
     clone->SetVPtrHolderClass(node.GetVPtrHolderClass());
+    context->PopParentStatementIndex();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundAliasDeclarationStatementNode& node)
 {
+    context->PushParentStatementIndex(node.StatementIndex());
     BoundAliasDeclarationStatementNode* clone = new BoundAliasDeclarationStatementNode(node.GetSourcePos());
+    context->PopParentStatementIndex();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundConstructionStatementNode& node)
 {
+    context->PushParentStatementIndex(node.StatementIndex());
     BoundConstructionStatementNode* clone = new BoundConstructionStatementNode(node.GetSourcePos());
     BoundExpressionNode* ctorCall = node.ConstructorCall();
     ctorCall->Accept(*this);
@@ -1057,11 +1242,21 @@ void InvokeAndCleanupGenerator::Visit(BoundConstructionStatementNode& node)
         cleanup.CurrentCleanupBlock()->Add(dtorCall, context);
     }
     clone->SetVariable(node.Variable());
+    context->PopParentStatementIndex();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundExpressionStatementNode& node)
 {
+    context->PushParentStatementIndex(node.StatementIndex());
     BoundExpressionStatementNode* clone = new BoundExpressionStatementNode(node.GetSourcePos());
     BoundExpressionNode* expr = node.GetExpr();
     if (expr)
@@ -1078,6 +1273,15 @@ void InvokeAndCleanupGenerator::Visit(BoundExpressionStatementNode& node)
             ThrowException("expression node expected", n->GetSourcePos(), context);
         }
     }
+    context->PopParentStatementIndex();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1089,12 +1293,28 @@ void InvokeAndCleanupGenerator::Visit(BoundValueExpressionNode& node)
 void InvokeAndCleanupGenerator::Visit(BoundLiteralNode& node)
 {
     BoundExpressionNode* clone = node.Clone();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundStringLiteralNode& node)
 {
     BoundExpressionNode* clone = node.Clone();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1116,6 +1336,14 @@ void InvokeAndCleanupGenerator::Visit(BoundVariableNode& node)
         }
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1138,6 +1366,14 @@ void InvokeAndCleanupGenerator::Visit(BoundParentVariableNode& node)
         }
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1145,6 +1381,14 @@ void InvokeAndCleanupGenerator::Visit(BoundParameterNode& node)
 {
     BoundParameterNode* clone = new BoundParameterNode(node.GetParameter(), node.GetSourcePos(), node.GetType());
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1159,30 +1403,70 @@ void InvokeAndCleanupGenerator::Visit(BoundParentParameterNode& node)
 void InvokeAndCleanupGenerator::Visit(BoundEnumConstant& node)
 {
     BoundExpressionNode* clone = node.Clone();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundFunctionGroupNode& node)
 {
     BoundExpressionNode* clone = node.Clone();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundClassGroupNode& node)
 {
     BoundExpressionNode* clone = node.Clone();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundAliasGroupNode& node)
 {
     BoundExpressionNode* clone = node.Clone();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundTypeNode& node)
 {
     BoundExpressionNode* clone = node.Clone();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1215,6 +1499,14 @@ void InvokeAndCleanupGenerator::Visit(BoundMemberExprNode& node)
     }
     clone->SetOp(node.Op());
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1223,10 +1515,19 @@ void InvokeAndCleanupGenerator::Visit(BoundFunctionCallNode& node)
     if (node.MayThrow() && !cleanup.IsEmpty() && node.Source())
     {
         BoundInvokeNode* boundInvoke = MakeInvokeAndCleanup(&node);
+        if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+        {
+            boundInvoke->SetDestructTemporariesNode(destructTemporariesNode.release());
+        }
         s.Push(boundInvoke);
     }
     else
     {
+        if (node.MayThrow() && !cleanup.IsEmpty() && !node.Source())
+        {
+            //std::cout << "NODE SOURCE NULL: " << util::ToUtf8(node.GetFunctionSymbol()->FullName()) << "\n";
+            context->IncUnresolvedInvokes();
+        }
         BoundFunctionCallNode* clone = new BoundFunctionCallNode(node.GetFunctionSymbol(), node.GetSourcePos(), node.GetType());
         for (const auto& arg : node.Args())
         {
@@ -1243,6 +1544,14 @@ void InvokeAndCleanupGenerator::Visit(BoundFunctionCallNode& node)
             }
         }
         clone->SetFlags(node.Flags());
+        if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+        {
+            clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+        }
+        else if (node.DestructTemporariesNode())
+        {
+            clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+        }
         s.Push(clone);
     }
 }
@@ -1250,6 +1559,14 @@ void InvokeAndCleanupGenerator::Visit(BoundFunctionCallNode& node)
 void InvokeAndCleanupGenerator::Visit(BoundEmptyFunctionCallNode& node)
 {
     BoundExpressionNode* clone = node.Clone();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1271,6 +1588,14 @@ void InvokeAndCleanupGenerator::Visit(BoundFunctionPtrCallNode& node)
         }
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1283,6 +1608,10 @@ void InvokeAndCleanupGenerator::Visit(BoundExpressionSequenceNode& node)
     if (n->IsBoundExpressionNode())
     {
         BoundExpressionNode* en = static_cast<BoundExpressionNode*>(n);
+        if (destructTemporariesNode)
+        {
+            en->SetDestructTemporariesNode(destructTemporariesNode.release());
+        }
         clone->SetLeft(en);
     }
     else
@@ -1295,6 +1624,10 @@ void InvokeAndCleanupGenerator::Visit(BoundExpressionSequenceNode& node)
     if (rn->IsBoundExpressionNode())
     {
         BoundExpressionNode* en = static_cast<BoundExpressionNode*>(rn);
+        if (destructTemporariesNode)
+        {
+            en->SetDestructTemporariesNode(destructTemporariesNode.release());
+        }
         clone->SetRight(en);
     }
     else
@@ -1302,6 +1635,14 @@ void InvokeAndCleanupGenerator::Visit(BoundExpressionSequenceNode& node)
         ThrowException("expression node expected", rn->GetSourcePos(), context);
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1323,6 +1664,14 @@ void InvokeAndCleanupGenerator::Visit(BoundExpressionListNode& node)
         }
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1368,6 +1717,14 @@ void InvokeAndCleanupGenerator::Visit(BoundConjunctionNode& node)
         }
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1413,6 +1770,14 @@ void InvokeAndCleanupGenerator::Visit(BoundDisjunctionNode& node)
         }
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1471,6 +1836,14 @@ void InvokeAndCleanupGenerator::Visit(BoundConditionalExprNode& node)
         }
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1490,6 +1863,14 @@ void InvokeAndCleanupGenerator::Visit(BoundConversionNode& node)
         ThrowException("expression node expected", n->GetSourcePos(), context);
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1509,6 +1890,14 @@ void InvokeAndCleanupGenerator::Visit(BoundAddressOfNode& node)
         ThrowException("expression node expected", n->GetSourcePos(), context);
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1529,6 +1918,14 @@ void InvokeAndCleanupGenerator::Visit(BoundDereferenceNode& node)
     }
     clone->SetKind(node.Kind());
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1548,6 +1945,14 @@ void InvokeAndCleanupGenerator::Visit(BoundRefToPtrNode& node)
         ThrowException("expression node expected", n->GetSourcePos(), context);
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1567,6 +1972,14 @@ void InvokeAndCleanupGenerator::Visit(BoundPtrToRefNode& node)
         ThrowException("expression node expected", n->GetSourcePos(), context);
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1586,6 +1999,14 @@ void InvokeAndCleanupGenerator::Visit(BoundDefaultInitNode& node)
         ThrowException("expression node expected", n->GetSourcePos(), context);
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1623,6 +2044,14 @@ void InvokeAndCleanupGenerator::Visit(BoundTemporaryNode& node)
         }
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1645,6 +2074,11 @@ void InvokeAndCleanupGenerator::Visit(BoundConstructTemporaryNode& node)
             BoundVariableNode* clonedTemporary = static_cast<BoundVariableNode*>(an->Subject());
             temporaryVar = clonedTemporary->GetVariable();
         }
+    }
+    if (context->CurrentProject()->HasDefine("PRINT_TEMPORARIES"))
+    {
+        std::cout << "CLONE TEMPORARY:" << util::ToUtf8(temporaryVar->Name()) << ":" <<
+            util::ToUtf8(temporaryVar->GetType()->FullName()) << ":" << temporaryVar->NodeId() << "\n";
     }
     BoundExpressionNode* constructorCall = node.ConstructorCall();
     constructorCall->Accept(*this);
@@ -1678,6 +2112,14 @@ void InvokeAndCleanupGenerator::Visit(BoundConstructTemporaryNode& node)
         ThrowException("expression node expected", nt->GetSourcePos(), context);
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1710,6 +2152,14 @@ void InvokeAndCleanupGenerator::Visit(BoundConstructExpressionNode& node)
     }
     clone->SetHasPlacement(node.HasPlacement());
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1722,12 +2172,28 @@ void InvokeAndCleanupGenerator::Visit(BoundGlobalVariableDefinitionNode& node)
 void InvokeAndCleanupGenerator::Visit(BoundEmptyDestructorNode& node)
 {
     BoundExpressionNode* clone = node.Clone();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundFunctionValueNode& node)
 {
     BoundExpressionNode* clone = node.Clone();
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1747,12 +2213,24 @@ void InvokeAndCleanupGenerator::Visit(BoundVariableAsVoidPtrNode& node)
         ThrowException("expression node expected", n->GetSourcePos(), context);
     }
     clone->SetFlags(node.Flags());
+    if (node.TemporaryDestructorCallsObtained() && destructTemporariesNode)
+    {
+        clone->SetDestructTemporariesNode(destructTemporariesNode.release());
+    }
+    else if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
 void InvokeAndCleanupGenerator::Visit(BoundOperatorFnNode& node)
 {
     BoundExpressionNode* clone = node.Clone();
+    if (node.DestructTemporariesNode())
+    {
+        clone->SetDestructTemporariesNode(static_cast<BoundDestructTemporariesNode*>(node.DestructTemporariesNode()->Clone()));
+    }
     s.Push(clone);
 }
 
@@ -1774,7 +2252,8 @@ otava::ast::Node* MakeClonedRetValExprNode(otava::ast::Node* node, bool makeAddr
     }
 }
 
-BoundStatementNode* ConvertReturnStatement(otava::ast::ReturnStatementNode* returnStatement, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
+std::unique_ptr<BoundStatementNode> ConvertReturnStatement(otava::ast::ReturnStatementNode* returnStatement,
+    FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
@@ -1791,19 +2270,19 @@ BoundStatementNode* ConvertReturnStatement(otava::ast::ReturnStatementNode* retu
         setChildControlResultStmtText = context->ChildControlResultVarName();
         setChildControlResultStmtText.append(U" = std::child_control_result::ret;");
         std::unique_ptr<otava::ast::Node> setChildControlResultStmt = ParseStatement(setChildControlResultStmtText, context);
-        BoundStatementNode* boundExpressionStatement = BindStatement(exprStatementNode, functionDefinitionSymbol, context);
-        BoundStatementNode* boundSetChildControlResultStatement = BindStatement(setChildControlResultStmt.get(), functionDefinitionSymbol, context);
-        BoundReturnStatementNode* boundReturnStatement = new BoundReturnStatementNode(returnStatement->GetSourcePos());
-        BoundSequenceStatementNode* boundSequenceStatement = new BoundSequenceStatementNode(returnStatement->GetSourcePos(), new BoundSequenceStatementNode(
-            returnStatement->GetSourcePos(), boundExpressionStatement, boundSetChildControlResultStatement), boundReturnStatement);
+        std::unique_ptr<BoundStatementNode> boundExpressionStatement = BindStatement(exprStatementNode, functionDefinitionSymbol, context);
+        std::unique_ptr<BoundStatementNode> boundSetChildControlResultStatement = BindStatement(setChildControlResultStmt.get(), functionDefinitionSymbol, context);
+        std::unique_ptr<BoundReturnStatementNode> boundReturnStatement(new BoundReturnStatementNode(returnStatement->GetSourcePos()));
+        std::unique_ptr<BoundSequenceStatementNode> boundSequenceStatement(new BoundSequenceStatementNode(returnStatement->GetSourcePos(), new BoundSequenceStatementNode(
+            returnStatement->GetSourcePos(), boundExpressionStatement.release(), boundSetChildControlResultStatement.release()), boundReturnStatement.release()));
         context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
-        return boundSequenceStatement;
+        return std::unique_ptr<BoundStatementNode>(boundSequenceStatement.release());
     }
     else
     {
-        BoundReturnStatementNode* boundReturnStatement = new BoundReturnStatementNode(returnStatement->GetSourcePos());
+        std::unique_ptr<BoundReturnStatementNode> boundReturnStatement(new BoundReturnStatementNode(returnStatement->GetSourcePos()));
         context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
-        return boundReturnStatement;
+        return std::unique_ptr<BoundStatementNode>(boundReturnStatement.release());
     }
 }
 

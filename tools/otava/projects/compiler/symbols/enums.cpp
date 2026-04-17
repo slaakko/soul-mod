@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.enums;
 
 import util;
@@ -34,11 +29,11 @@ bool EnumeratedTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const no
 {
     switch (scopeKind)
     {
-        case ScopeKind::namespaceScope:
-        case ScopeKind::classScope:
-        {
-            return true;
-        }
+    case ScopeKind::namespaceScope:
+    case ScopeKind::classScope:
+    {
+        return true;
+    }
     }
     return false;
 }

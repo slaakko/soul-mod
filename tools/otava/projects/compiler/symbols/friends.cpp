@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.friends;
 
 import otava.symbols.visitor;
@@ -17,11 +12,11 @@ bool FriendSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcept
 {
     switch (scopeKind)
     {
-        case ScopeKind::classScope:
-        case ScopeKind::blockScope:
-        {
-            return true;
-        }
+    case ScopeKind::classScope:
+    case ScopeKind::blockScope:
+    {
+        return true;
+    }
     }
     return false;
 }

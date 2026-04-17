@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.alias.type.templates;
 
 import otava.symbols.context;
@@ -147,11 +142,6 @@ TypeSymbol* InstantiateAliasTypeSymbol(TypeSymbol* typeSymbol, const std::vector
             {
                 ThrowException("otava.symbols.alias_type_templates: error instantiating specialization '" +
                     util::ToUtf8(specialization->FullName()) + "': " + std::string(ex.what()), node->GetSourcePos(), context);
-            }
-            catch (const Exception& ex)
-            {
-                ThrowException("otava.symbols.alias_type_templates: error instantiating specialization '" +
-                    util::ToUtf8(specialization->FullName()) + "': " + ex.Message(), node->GetSourcePos(), context);
             }
             context->GetSymbolTable()->EndScope();
         }

@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.fundamental.type.operation;
 
 import otava.symbols.fundamental.type.conversion.init;
@@ -499,14 +494,14 @@ void FundamentalTypeDefaultCtor::Resolve(SymbolTable& symbolTable, Context* cont
     type = symbolTable.GetType(typeId);
     if (!type)
     {
-        std::string note;
-        Module* requesterModule = context->GetRequesterModule();
-        if (requesterModule)
-        {
-            note = ": note: requester module is " + requesterModule->Name();
-        }
         if (!context->GetFlag(ContextFlags::noWarnings))
         {
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
             std::cout << "FundamentalTypeDefaultCtor::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
         }
     }
@@ -561,14 +556,14 @@ void FundamentalTypeCopyCtor::Resolve(SymbolTable& symbolTable, Context* context
     type = symbolTable.GetType(typeId);
     if (!type)
     {
-        std::string note;
-        Module* requesterModule = context->GetRequesterModule();
-        if (requesterModule)
-        {
-            note = ": note: requester module is " + requesterModule->Name();
-        }
         if (!context->GetFlag(ContextFlags::noWarnings))
         {
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
             std::cout << "FundamentalTypeCopyCtor::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
         }
     }
@@ -620,14 +615,14 @@ void FundamentalTypeMoveCtor::Resolve(SymbolTable& symbolTable, Context* context
     type = symbolTable.GetType(typeId);
     if (!type)
     {
-        std::string note;
-        Module* requesterModule = context->GetRequesterModule();
-        if (requesterModule)
-        {
-            note = ": note: requester module is " + requesterModule->Name();
-        }
         if (!context->GetFlag(ContextFlags::noWarnings))
         {
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
             std::cout << "FundamentalTypeMoveCtor::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
         }
     }
@@ -682,14 +677,14 @@ void FundamentalTypeCopyAssignment::Resolve(SymbolTable& symbolTable, Context* c
     type = symbolTable.GetType(typeId);
     if (!type)
     {
-        std::string note;
-        Module* requesterModule = context->GetRequesterModule();
-        if (requesterModule)
-        {
-            note = ": note: requester module is " + requesterModule->Name();
-        }
         if (!context->GetFlag(ContextFlags::noWarnings))
         {
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
             std::cout << "FundamentalTypeCopyAssignment::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
         }
     }
@@ -738,14 +733,14 @@ void FundamentalTypeMoveAssignment::Resolve(SymbolTable& symbolTable, Context* c
     type = symbolTable.GetType(typeId);
     if (!type)
     {
-        std::string note;
-        Module* requesterModule = context->GetRequesterModule();
-        if (requesterModule)
-        {
-            note = ": note: requester module is " + requesterModule->Name();
-        }
         if (!context->GetFlag(ContextFlags::noWarnings))
         {
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
             std::cout << "FundamentalTypeMoveAssignment::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
         }
     }
