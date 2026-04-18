@@ -1,4 +1,4 @@
-// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/compiler/build/solution.lexer' using soul lexer generator oslg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/compiler/build/solution.lexer' using soul lexer generator slg version 5.0.0
 
 module otava.build.solution_lexer;
 

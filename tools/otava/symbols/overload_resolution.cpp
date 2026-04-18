@@ -1183,7 +1183,7 @@ void SetTemplateArgs(FunctionSymbol* viableFunction, std::map<TemplateParameterS
     }
 }
 
-std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& viableFunctions, const std::vector<TypeSymbol*>& templateArgs, 
+std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& viableFunctions, const std::vector<TypeSymbol*>& templateArgs,
     const std::vector<std::unique_ptr<BoundExpressionNode>>& args, const std::u32string& groupName, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex)
 {
     std::vector<std::unique_ptr<FunctionMatch>> functionMatches;
@@ -1198,26 +1198,25 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
         {
             continue;
         }
-        if (viableFunction->IsFunctionDefinitionSymbol() && 
-            viableFunctionFullNameSet.find(viableFunction->FullName()) != viableFunctionFullNameSet.end())
+        std::u32string viableFunctionFullName = viableFunction->FullName();
+        if (viableFunction->IsFunctionDefinitionSymbol() &&
+            viableFunctionFullNameSet.find(viableFunctionFullName) != viableFunctionFullNameSet.end())
         {
             continue;
         }
-        else if (!viableFunction->IsFunctionDefinitionSymbol() && 
-            viableFunctionDeclarationFullNameSet.find(viableFunction->FullName()) != viableFunctionDeclarationFullNameSet.end())
+        else if (!viableFunction->IsFunctionDefinitionSymbol() &&
+            viableFunctionDeclarationFullNameSet.find(viableFunctionFullName) != viableFunctionDeclarationFullNameSet.end())
         {
             continue;
         }
         viableFunctionSet.insert(viableFunction);
         if (viableFunction->IsFunctionDefinitionSymbol())
         {
-            std::u32string fullName = viableFunction->FullName();
-            viableFunctionFullNameSet.insert(fullName);
+            viableFunctionFullNameSet.insert(viableFunctionFullName);
         }
         else
         {
-            std::u32string fullName = viableFunction->FullName();
-            viableFunctionDeclarationFullNameSet.insert(fullName);
+            viableFunctionDeclarationFullNameSet.insert(viableFunctionFullName);
         }
         std::unique_ptr<FunctionMatch> functionMatch(new FunctionMatch(viableFunction, context));
         SetTemplateArgs(viableFunction, functionMatch->templateParameterMap, templateArgs);
@@ -1260,7 +1259,7 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
     }
     else
     {
-        ex = Exception("overload resolution failed: overload in function group '" + util::ToUtf8(groupName) + "' not found, " + 
+        ex = Exception("overload resolution failed: overload in function group '" + util::ToUtf8(groupName) + "' not found, " +
             "or there are no acceptable conversions for all argument types. " + std::to_string(viableFunctions.size()) + " viable functions examined.", sourcePos, context);
         return std::unique_ptr<FunctionMatch>(nullptr);
     }

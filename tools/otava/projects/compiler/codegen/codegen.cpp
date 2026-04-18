@@ -380,6 +380,7 @@ private:
     void GenerateGlobalInitializationFunction();
     void GenerateGlobalDoneFunction();
     void SetCurrentLineNumber(const soul::ast::SourcePos& sourcePos);
+    void SetCurrentBlockSymbol(int blockId);
     void GenerateDestructorCallsForCurrentStatement();
     std::string optimizedIntermediateFilePath;
     otava::symbols::Context& context;
@@ -771,16 +772,27 @@ void CodeGenerator::SetCurrentLineNumber(const soul::ast::SourcePos& sourcePos)
     }
 }
 
+void CodeGenerator::SetCurrentBlockSymbol(int blockId)
+{
+    otava::symbols::Symbol* block = functionDefinition->GetBlock(blockId);
+    otava::symbols::BlockSymbol* blockSymbol = nullptr;
+    if (block && block->IsBlockSymbol())
+    {
+        blockSymbol = static_cast<otava::symbols::BlockSymbol*>(block);
+    }
+    currentBlockSymbol = blockSymbol;
+}
+
 void CodeGenerator::GenerateDestructorCallsForCurrentStatement()
 {
     if (currentBlockSymbol && currentStatement)
     {
-        std::pair<int, int> p = std::make_pair(currentBlockSymbol->BlockId(), currentStatement->StatementIndex());
-        if (statementDestructorSet.find(p) != statementDestructorSet.end())
+        std::pair<int, int> statementDestructorId(currentBlockSymbol->BlockId(), currentStatement->StatementIndex());
+        if (statementDestructorSet.find(statementDestructorId) != statementDestructorSet.end())
         {
             return;
         }
-        statementDestructorSet.insert(p);
+        statementDestructorSet.insert(statementDestructorId);
         if (currentBlockSymbol->HasDestructorCalls(currentStatement->StatementIndex()))
         {
             std::vector<otava::symbols::BoundExpressionNode*> destructorCalls = currentBlockSymbol->GetDestructorCalls(currentStatement->StatementIndex());
@@ -921,10 +933,6 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     if (functionDefinition->ContainsGotosOrLabels())
     {
         BuildGotoTargetMap(node.Body(), &context);
-    }
-    if (functionDefinition->GroupName() == U"foo")
-    {
-        int x = 0;
     }
     std::string functionDefinitionName = functionDefinition->IrName(&context);
     if (functionDefinition->GroupName() == U"main")
@@ -1162,14 +1170,8 @@ void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)
     }
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
-    otava::symbols::Symbol* block = functionDefinition->GetBlock(node.BlockId());
-    otava::symbols::BlockSymbol* blockSymbol = nullptr;
-    if (block && block->IsBlockSymbol())
-    {
-        blockSymbol = static_cast<otava::symbols::BlockSymbol*>(block);
-    }
     otava::symbols::BlockSymbol* prevBlockSymbol = currentBlockSymbol;
-    currentBlockSymbol = blockSymbol;
+    SetCurrentBlockSymbol(node.BlockId());
     otava::symbols::BoundStatementNode* prevStatement = currentStatement;
     int n = node.Statements().size();
     for (int i = 0; i < n; ++i)
@@ -1195,6 +1197,9 @@ void CodeGenerator::Visit(otava::symbols::BoundIfStatementNode& node)
 {
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
+    otava::symbols::BlockSymbol* prevBlockSymbol = currentBlockSymbol;
+    SetCurrentBlockSymbol(node.BlockId());
+    currentStatement = &node;
     otava::intermediate::BasicBlock* prevTrueBlock = trueBlock;
     otava::intermediate::BasicBlock* prevFalseBlock = falseBlock;
     trueBlock = emitter->CreateBasicBlock();
@@ -1234,12 +1239,16 @@ void CodeGenerator::Visit(otava::symbols::BoundIfStatementNode& node)
     trueBlock = prevTrueBlock;
     falseBlock = prevFalseBlock;
     node.DestructTemporaries(*emitter, &context);
+    currentBlockSymbol = prevBlockSymbol;
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundSwitchStatementNode& node)
 {
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
+    otava::symbols::BlockSymbol* prevBlockSymbol = currentBlockSymbol;
+    SetCurrentBlockSymbol(node.BlockId());
+    currentStatement = &node;
     bool prevEmitLineNumbers = emitLineNumbers;
     emitLineNumbers = false;
     node.GetCondition()->Accept(*this);
@@ -1317,6 +1326,7 @@ void CodeGenerator::Visit(otava::symbols::BoundSwitchStatementNode& node)
     breakBlock = prevBreakBlock;
     breakBlockId = prevBreakBlockId;
     emitLineNumbers = prevEmitLineNumbers;
+    currentBlockSymbol = prevBlockSymbol;
     node.DestructTemporaries(*emitter, &context);
 }
 
@@ -1324,6 +1334,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCaseStatementNode& node)
 {
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
+    currentStatement = &node;
     node.Statement()->Accept(*this);
 }
 
@@ -1331,6 +1342,7 @@ void CodeGenerator::Visit(otava::symbols::BoundDefaultStatementNode& node)
 {
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
+    currentStatement = &node;
     node.Statement()->Accept(*this);
 }
 
@@ -1338,6 +1350,9 @@ void CodeGenerator::Visit(otava::symbols::BoundWhileStatementNode& node)
 {
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
+    otava::symbols::BlockSymbol* prevBlockSymbol = currentBlockSymbol;
+    SetCurrentBlockSymbol(node.BlockId());
+    currentStatement = &node;
     otava::intermediate::BasicBlock* prevTrueBlock = trueBlock;
     otava::intermediate::BasicBlock* prevFalseBlock = falseBlock;
     otava::intermediate::BasicBlock* prevBreakBlock = breakBlock;
@@ -1367,6 +1382,7 @@ void CodeGenerator::Visit(otava::symbols::BoundWhileStatementNode& node)
     breakBlockId = prevBreakBlockId;
     falseBlock = prevFalseBlock;
     trueBlock = prevTrueBlock;
+    currentBlockSymbol = prevBlockSymbol;
     node.DestructTemporaries(*emitter, &context);
 }
 
@@ -1374,6 +1390,7 @@ void CodeGenerator::Visit(otava::symbols::BoundDoStatementNode& node)
 {
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
+    currentStatement = &node;
     otava::intermediate::BasicBlock* prevTrueBlock = trueBlock;
     otava::intermediate::BasicBlock* prevFalseBlock = falseBlock;
     otava::intermediate::BasicBlock* prevBreakBlock = breakBlock;
@@ -1412,6 +1429,9 @@ void CodeGenerator::Visit(otava::symbols::BoundForStatementNode& node)
 {
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
+    otava::symbols::BlockSymbol* prevBlockSymbol = currentBlockSymbol;
+    SetCurrentBlockSymbol(node.BlockId());
+    currentStatement = &node;
     otava::intermediate::BasicBlock* prevTrueBlock = trueBlock;
     otava::intermediate::BasicBlock* prevFalseBlock = falseBlock;
     otava::intermediate::BasicBlock* prevBreakBlock = breakBlock;
@@ -1462,12 +1482,14 @@ void CodeGenerator::Visit(otava::symbols::BoundForStatementNode& node)
     breakBlockId = prevBreakBlockId;
     falseBlock = prevFalseBlock;
     trueBlock = prevTrueBlock;
+    currentBlockSymbol = prevBlockSymbol;
     node.DestructTemporaries(*emitter, &context);
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundSequenceStatementNode& node)
 {
     StatementPrefix();
+    currentStatement = &node;
     otava::symbols::BoundStatementNode* prevSequenceSecond = sequenceSecond;
     sequenceSecond = node.Second();
     node.First()->Accept(*this);
@@ -1484,6 +1506,7 @@ void CodeGenerator::Visit(otava::symbols::BoundReturnStatementNode& node)
 {
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
+    currentStatement = &node;
     bool prevEmitLineNumbers = emitLineNumbers;
     emitLineNumbers = false;
     if (node.GetExpr())
@@ -1529,6 +1552,7 @@ void CodeGenerator::Visit(otava::symbols::BoundBreakStatementNode& node)
 {
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
+    currentStatement = &node;
     ExitBlocks(currentBlockId, breakBlockId + 1, node.GetSourcePos());
     node.DestructTemporaries(*emitter, &context);
     if (node.Parent())
@@ -1558,6 +1582,7 @@ void CodeGenerator::Visit(otava::symbols::BoundContinueStatementNode& node)
 {
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
+    currentStatement = &node;
     ExitBlocks(currentBlockId, continueBlockId + 1, node.GetSourcePos());
     node.DestructTemporaries(*emitter, &context);
     if (node.Parent())
@@ -1571,11 +1596,13 @@ void CodeGenerator::Visit(otava::symbols::BoundConstructionStatementNode& node)
 {
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
+    currentStatement = &node;
     node.ConstructorCall()->Accept(*this);
     if (node.DestructorCall())
     {
         blockExits[currentBlockId]->AddDestructorCall(node.DestructorCall());
     }
+    GenerateDestructorCallsForCurrentStatement();
     node.DestructTemporaries(*emitter, &context);
 }
 
@@ -1587,11 +1614,13 @@ void CodeGenerator::Visit(otava::symbols::BoundExpressionStatementNode& node)
         SetCurrentLineNumber(node.GetSourcePos());
     }
     if (!node.GetExpr()) return;
+    currentStatement = &node;
     node.GetExpr()->Accept(*this);
     if (node.GetExpr()->HasValue())
     {
         emitter->Stack().Pop();
     }
+    GenerateDestructorCallsForCurrentStatement();
     node.DestructTemporaries(*emitter, &context);
 }
 
@@ -1599,6 +1628,7 @@ void CodeGenerator::Visit(otava::symbols::BoundSetVPtrStatementNode& node)
 {
     StatementPrefix();
     SetCurrentLineNumber(node.GetSourcePos());
+    currentStatement = &node;
     node.ThisPtr()->Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
     otava::intermediate::Value* thisPtr = emitter->Stack().Pop();
     otava::symbols::TypeSymbol* thisPtrType = node.ThisPtr()->GetType()->GetBaseType();

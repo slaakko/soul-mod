@@ -503,13 +503,18 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     sourceFormatter.WriteLine();
     interfaceFormatter.WriteLine("export namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
     interfaceFormatter.WriteLine();
+    interfaceFormatter.WriteLine("enum class LexerTag");
+    interfaceFormatter.WriteLine("{");
+    interfaceFormatter.WriteLine("}");
+    interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("std::mutex& MakeLexerMtx();");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<typename Char>");
     interfaceFormatter.WriteLine("struct " + lexer->Name() + ";");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<typename Char>");
-    interfaceFormatter.WriteLine("soul::lexer::Lexer<" + lexer->Name() + "<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName);");
+    interfaceFormatter.WriteLine("soul::lexer::Lexer<" + lexer->Name() + "<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName, ");
+    interfaceFormatter.WriteLine(soul::ast::common::ToNamespaceName(moduleName) + "::LexerTag tag;)"
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<typename Char>");
     interfaceFormatter.WriteLine("soul::lexer::Lexer<" + lexer->Name() +

@@ -2347,10 +2347,6 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
     }
     StatementBinder binder(context, functionDefinitionSymbol);
     context->PushStatementBinder(&binder);
-    if (functionDefinitionSymbol->GroupName() == U"main")
-    {
-        int x = 0;
-    }
     GenerateEnterFunctionCode(functionDefinitionNode, functionDefinitionSymbol, context);
     functionDefinitionNode->Accept(binder);
     functionDefinitionSymbol = binder.GetFunctionDefinitionSymbol();

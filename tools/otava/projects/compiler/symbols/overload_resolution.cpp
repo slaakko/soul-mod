@@ -1188,26 +1188,25 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
         {
             continue;
         }
+        std::u32string viableFunctionFullName = viableFunction->FullName();
         if (viableFunction->IsFunctionDefinitionSymbol() &&
-            viableFunctionFullNameSet.find(viableFunction->FullName()) != viableFunctionFullNameSet.end())
+            viableFunctionFullNameSet.find(viableFunctionFullName) != viableFunctionFullNameSet.end())
         {
             continue;
         }
         else if (!viableFunction->IsFunctionDefinitionSymbol() &&
-            viableFunctionDeclarationFullNameSet.find(viableFunction->FullName()) != viableFunctionDeclarationFullNameSet.end())
+            viableFunctionDeclarationFullNameSet.find(viableFunctionFullName) != viableFunctionDeclarationFullNameSet.end())
         {
             continue;
         }
         viableFunctionSet.insert(viableFunction);
         if (viableFunction->IsFunctionDefinitionSymbol())
         {
-            std::u32string fullName = viableFunction->FullName();
-            viableFunctionFullNameSet.insert(fullName);
+            viableFunctionFullNameSet.insert(viableFunctionFullName);
         }
         else
         {
-            std::u32string fullName = viableFunction->FullName();
-            viableFunctionDeclarationFullNameSet.insert(fullName);
+            viableFunctionDeclarationFullNameSet.insert(viableFunctionFullName);
         }
         std::unique_ptr<FunctionMatch> functionMatch(new FunctionMatch(viableFunction, context));
         SetTemplateArgs(viableFunction, functionMatch->templateParameterMap, templateArgs);

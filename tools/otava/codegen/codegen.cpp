@@ -1607,6 +1607,7 @@ void CodeGenerator::Visit(otava::symbols::BoundConstructionStatementNode& node)
     {
         blockExits[currentBlockId]->AddDestructorCall(node.DestructorCall());
     }
+    GenerateDestructorCallsForCurrentStatement();
     node.DestructTemporaries(*emitter, &context);
 }
 
@@ -1624,6 +1625,7 @@ void CodeGenerator::Visit(otava::symbols::BoundExpressionStatementNode& node)
     {
         emitter->Stack().Pop();
     }
+    GenerateDestructorCallsForCurrentStatement();
     node.DestructTemporaries(*emitter, &context);
 }
 
