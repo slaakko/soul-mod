@@ -5,7 +5,7 @@ module soul.lex.slg;
 
 namespace soul::lex::slg {
 
-soul::ast::common::TokenCollection* GetTokens()
+soul::ast::common::TokenCollection* GetTokens(soul::lex::slg::Tag tag)
 {
     static soul::ast::common::TokenCollection tokens("soul.lex.slg.tokens");
     if (!tokens.Initialized())
@@ -153,7 +153,7 @@ std::mutex mtx;
 std::mutex& MakeLexerMtx() { return mtx; }
 
 template<>
-soul::lexer::KeywordMap<char>* GetKeywords<char>()
+soul::lexer::KeywordMap<char>* GetKeywords<char>(soul::lex::slg::Tag tag)
 {
     static const soul::lexer::Keyword<char> keywords[] = {
          { "auto", soul::cpp::token::AUTO },
@@ -222,7 +222,7 @@ soul::lexer::KeywordMap<char>* GetKeywords<char>()
 }
 
 template<>
-soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
+soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>(soul::lex::slg::Tag tag)
 {
     static const soul::lexer::Keyword<char8_t> keywords[] = {
          { u8"auto", soul::cpp::token::AUTO },
@@ -291,7 +291,7 @@ soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
 }
 
 template<>
-soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
+soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>(soul::lex::slg::Tag tag)
 {
     static const soul::lexer::Keyword<char16_t> keywords[] = {
          { u"auto", soul::cpp::token::AUTO },
@@ -360,7 +360,7 @@ soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
 }
 
 template<>
-soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
+soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>(soul::lex::slg::Tag tag)
 {
     static const soul::lexer::Keyword<char32_t> keywords[] = {
          { U"auto", soul::cpp::token::AUTO },

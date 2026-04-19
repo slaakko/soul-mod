@@ -11,6 +11,11 @@ import otava.intermediate.token;
 
 export namespace otava::intermediate::lexer {
 
+enum class Tag
+{
+    tag
+};
+
 std::mutex& MakeLexerMtx();
 
 template<typename Char>
@@ -22,7 +27,7 @@ soul::lexer::Lexer<IntermediateLexer<Char>, Char> MakeLexer(const Char* start, c
 template<typename Char>
 soul::lexer::Lexer<IntermediateLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);
 
-soul::ast::common::TokenCollection* GetTokens();
+soul::ast::common::TokenCollection* GetTokens(otava::intermediate::lexer::Tag tag);
 
 struct IntermediateLexer_Variables : public soul::lexer::Variables
 {
@@ -2165,42 +2170,42 @@ struct IntermediateLexer
 };
 
 template<typename Char>
-soul::lexer::ClassMap<Char>* GetClassMap()
+soul::lexer::ClassMap<Char>* GetClassMap(otava::intermediate::lexer::Tag tag)
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("otava.intermediate.lexer.classmap");
-    return classmap;
+    static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>("otava.intermediate.lexer.classmap"));
+    return classmap.get();
 }
 
 template<typename Char>
-soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)
+soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags, otava::intermediate::lexer::Tag tag)
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "otava.intermediate.lexer.classmap", resourceFlags);
-    return classmap;
+    static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>(moduleFileName, "otava.intermediate.lexer.classmap", resourceFlags));
+    return classmap.get();
 }
 
 template<typename Char>
-soul::lexer::KeywordMap<Char>* GetKeywords();
+soul::lexer::KeywordMap<Char>* GetKeywords(otava::intermediate::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char>* GetKeywords<char>();
+soul::lexer::KeywordMap<char>* GetKeywords<char>(otava::intermediate::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>();
+soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>(otava::intermediate::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>();
+soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>(otava::intermediate::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>();
+soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>(otava::intermediate::lexer::Tag tag);
 
 template<typename Char>
 soul::lexer::Lexer<IntermediateLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName)
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<IntermediateLexer<Char>, Char>(start, end, fileName);
-    lexer.SetClassMap(GetClassMap<Char>());
-    lexer.SetTokenCollection(GetTokens());
-    lexer.SetKeywordMap(GetKeywords<Char>());
+    lexer.SetClassMap(GetClassMap<Char>(otava::intermediate::lexer::Tag()));
+    lexer.SetTokenCollection(GetTokens(otava::intermediate::lexer::Tag()));
+    lexer.SetKeywordMap(GetKeywords<Char>(otava::intermediate::lexer::Tag()));
     return lexer;
 }
 
@@ -2209,9 +2214,9 @@ soul::lexer::Lexer<IntermediateLexer<Char>, Char> MakeLexer(const std::string& m
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<IntermediateLexer<Char>, Char>(start, end, fileName);
-    lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags));
-    lexer.SetTokenCollection(GetTokens());
-    lexer.SetKeywordMap(GetKeywords<Char>());
+    lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags, otava::intermediate::lexer::Tag()));
+    lexer.SetTokenCollection(GetTokens(otava::intermediate::lexer::Tag()));
+    lexer.SetKeywordMap(GetKeywords<Char>(otava::intermediate::lexer::Tag()));
     return lexer;
 }
 

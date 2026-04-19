@@ -14,6 +14,11 @@ import soul.tool.token;
 
 export namespace soul::lex::spg {
 
+enum class Tag
+{
+    tag
+};
+
 std::mutex& MakeLexerMtx();
 
 template<typename Char>
@@ -25,7 +30,7 @@ soul::lexer::Lexer<SpgLexer<Char>, Char> MakeLexer(const Char* start, const Char
 template<typename Char>
 soul::lexer::Lexer<SpgLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);
 
-soul::ast::common::TokenCollection* GetTokens();
+soul::ast::common::TokenCollection* GetTokens(soul::lex::spg::Tag tag);
 
 struct SpgLexer_Variables : public soul::lexer::Variables
 {
@@ -17280,42 +17285,42 @@ struct SpgLexer
 };
 
 template<typename Char>
-soul::lexer::ClassMap<Char>* GetClassMap()
+soul::lexer::ClassMap<Char>* GetClassMap(soul::lex::spg::Tag tag)
 {
     static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>("soul.lex.spg.classmap"));
     return classmap.get();
 }
 
 template<typename Char>
-soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)
+soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags, soul::lex::spg::Tag tag)
 {
     static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>(moduleFileName, "soul.lex.spg.classmap", resourceFlags));
     return classmap.get();
 }
 
 template<typename Char>
-soul::lexer::KeywordMap<Char>* GetKeywords();
+soul::lexer::KeywordMap<Char>* GetKeywords(soul::lex::spg::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char>* GetKeywords<char>();
+soul::lexer::KeywordMap<char>* GetKeywords<char>(soul::lex::spg::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>();
+soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>(soul::lex::spg::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>();
+soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>(soul::lex::spg::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>();
+soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>(soul::lex::spg::Tag tag);
 
 template<typename Char>
 soul::lexer::Lexer<SpgLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName)
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<SpgLexer<Char>, Char>(start, end, fileName);
-    lexer.SetClassMap(GetClassMap<Char>());
-    lexer.SetTokenCollection(GetTokens());
-    lexer.SetKeywordMap(GetKeywords<Char>());
+    lexer.SetClassMap(GetClassMap<Char>(soul::lex::spg::Tag()));
+    lexer.SetTokenCollection(GetTokens(soul::lex::spg::Tag()));
+    lexer.SetKeywordMap(GetKeywords<Char>(soul::lex::spg::Tag()));
     return lexer;
 }
 
@@ -17324,9 +17329,9 @@ soul::lexer::Lexer<SpgLexer<Char>, Char> MakeLexer(const std::string& moduleFile
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<SpgLexer<Char>, Char>(start, end, fileName);
-    lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags));
-    lexer.SetTokenCollection(GetTokens());
-    lexer.SetKeywordMap(GetKeywords<Char>());
+    lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags, soul::lex::spg::Tag()));
+    lexer.SetTokenCollection(GetTokens(soul::lex::spg::Tag()));
+    lexer.SetKeywordMap(GetKeywords<Char>(soul::lex::spg::Tag()));
     return lexer;
 }
 

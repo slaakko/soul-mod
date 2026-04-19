@@ -1,4 +1,4 @@
-// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/compiler/lexer/otava.lexer' using soul lexer generator oslg version 5.0.0
+// this file has been automatically generated from 'D:/work/test_soul/tools/otava/projects/compiler/lexer/otava.lexer' using soul lexer generator oslg version 5.0.0
 
 export module otava.lexer;
 
@@ -11,6 +11,11 @@ import otava.token;
 
 export namespace otava::lexer {
 
+enum class Tag
+{
+    tag
+};
+
 std::mutex& MakeLexerMtx();
 
 template<typename Char>
@@ -22,7 +27,7 @@ soul::lexer::Lexer<OtavaLexer<Char>, Char> MakeLexer(const Char* start, const Ch
 template<typename Char>
 soul::lexer::Lexer<OtavaLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);
 
-soul::ast::common::TokenCollection* GetTokens();
+soul::ast::common::TokenCollection* GetTokens(otava::lexer::Tag tag);
 
 struct OtavaLexer_Variables : public soul::lexer::Variables
 {
@@ -21721,41 +21726,42 @@ struct OtavaLexer
 };
 
 template<typename Char>
-soul::lexer::ClassMap<Char>* GetClassMap()
+soul::lexer::ClassMap<Char>* GetClassMap(otava::lexer::Tag tag)
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("otava.lexer.classmap");
-    return classmap;
+    static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>("otava.lexer.classmap"));
+    return classmap.get();
 }
 
 template<typename Char>
-soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)
+soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags, otava::lexer::Tag tag)
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "otava.lexer.classmap", resourceFlags);
-    return classmap;
+    static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>(moduleFileName, "otava.lexer.classmap", resourceFlags));
+    return classmap.get();
 }
 
 template<typename Char>
-soul::lexer::KeywordMap<Char>* GetKeywords();
+soul::lexer::KeywordMap<Char>* GetKeywords(otava::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char>* GetKeywords<char>();
+soul::lexer::KeywordMap<char>* GetKeywords<char>(otava::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>();
+soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>(otava::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>();
+soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>(otava::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>();
+soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>(otava::lexer::Tag tag);
 
 template<typename Char>
 soul::lexer::Lexer<OtavaLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName)
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<OtavaLexer<Char>, Char>(start, end, fileName);
-    lexer.SetClassMap(GetClassMap<Char>());
-    lexer.SetKeywordMap(GetKeywords<Char>());
+    lexer.SetClassMap(GetClassMap<Char>(otava::lexer::Tag()));
+    lexer.SetTokenCollection(GetTokens(otava::lexer::Tag()));
+    lexer.SetKeywordMap(GetKeywords<Char>(otava::lexer::Tag()));
     return lexer;
 }
 
@@ -21764,8 +21770,9 @@ soul::lexer::Lexer<OtavaLexer<Char>, Char> MakeLexer(const std::string& moduleFi
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<OtavaLexer<Char>, Char>(start, end, fileName);
-    lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags));
-    lexer.SetKeywordMap(GetKeywords<Char>());
+    lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags, otava::lexer::Tag()));
+    lexer.SetTokenCollection(GetTokens(otava::lexer::Tag()));
+    lexer.SetKeywordMap(GetKeywords<Char>(otava::lexer::Tag()));
     return lexer;
 }
 

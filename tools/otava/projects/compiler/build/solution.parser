@@ -37,7 +37,8 @@ parser SolutionParser
 
     FilePath(otava::build::Solution* sln)
         ::= 
-        (   ProjectFilePath:projectFilePath{ sln->AddProjectFilePath(projectFilePath); }
+        (   
+            ProjectFilePath:projectFilePath{ sln->AddProjectFilePath(projectFilePath); }
         )
 		;
 

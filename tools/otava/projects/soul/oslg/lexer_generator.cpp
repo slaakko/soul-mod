@@ -503,9 +503,12 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     sourceFormatter.WriteLine();
     interfaceFormatter.WriteLine("export namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
     interfaceFormatter.WriteLine();
-    interfaceFormatter.WriteLine("enum class LexerTag");
+    interfaceFormatter.WriteLine("enum class Tag");
     interfaceFormatter.WriteLine("{");
-    interfaceFormatter.WriteLine("}");
+    interfaceFormatter.IncIndent();
+    interfaceFormatter.WriteLine("tag");
+    interfaceFormatter.DecIndent();
+    interfaceFormatter.WriteLine("};");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("std::mutex& MakeLexerMtx();");
     interfaceFormatter.WriteLine();
@@ -513,18 +516,17 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.WriteLine("struct " + lexer->Name() + ";");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<typename Char>");
-    interfaceFormatter.WriteLine("soul::lexer::Lexer<" + lexer->Name() + "<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName, ");
-    interfaceFormatter.WriteLine(soul::ast::common::ToNamespaceName(moduleName) + "::LexerTag tag;)"
+    interfaceFormatter.WriteLine("soul::lexer::Lexer<" + lexer->Name() + "<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName);");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<typename Char>");
     interfaceFormatter.WriteLine("soul::lexer::Lexer<" + lexer->Name() +
         "<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);");
     interfaceFormatter.WriteLine();
-    interfaceFormatter.WriteLine("soul::ast::common::TokenCollection* GetTokens();");
+    interfaceFormatter.WriteLine("soul::ast::common::TokenCollection* GetTokens(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag tag);");
     interfaceFormatter.WriteLine();
     sourceFormatter.WriteLine("namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
     sourceFormatter.WriteLine();
-    sourceFormatter.WriteLine("soul::ast::common::TokenCollection* GetTokens()");
+    sourceFormatter.WriteLine("soul::ast::common::TokenCollection* GetTokens(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag tag)");
     sourceFormatter.WriteLine("{");
     sourceFormatter.IncIndent();
     sourceFormatter.WriteLine("static soul::ast::common::TokenCollection tokens(\"" + moduleName + ".tokens\");");
@@ -702,7 +704,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.WriteLine("};");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<typename Char>");
-    interfaceFormatter.WriteLine("soul::lexer::ClassMap<Char>* GetClassMap()");
+    interfaceFormatter.WriteLine("soul::lexer::ClassMap<Char>* GetClassMap(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag tag)");
     interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
     interfaceFormatter.WriteLine("static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>(\"" + moduleName + ".classmap\"));");
@@ -711,29 +713,30 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.WriteLine("}");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<typename Char>");
-    interfaceFormatter.WriteLine("soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)");
+    interfaceFormatter.WriteLine("soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags, " +
+        soul::ast::common::ToNamespaceName(moduleName) + "::Tag tag)");
     interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    interfaceFormatter.WriteLine("static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>(moduleFileName, \"" + 
-        moduleName + ".classmap\", resourceFlags));");
+    interfaceFormatter.WriteLine("static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>(moduleFileName, \"" + moduleName +
+        ".classmap\", resourceFlags));");
     interfaceFormatter.WriteLine("return classmap.get();");
     interfaceFormatter.DecIndent();
     interfaceFormatter.WriteLine("}");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<typename Char>");
-    interfaceFormatter.WriteLine("soul::lexer::KeywordMap<Char>* GetKeywords();");
+    interfaceFormatter.WriteLine("soul::lexer::KeywordMap<Char>* GetKeywords(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag tag);");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<>");
-    interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char>* GetKeywords<char>();");
+    interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char>* GetKeywords<char>(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag tag);");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<>");
-    interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>();");
+    interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag tag);");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<>");
-    interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>();");
+    interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag tag);");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<>");
-    interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>();");
+    interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag tag);");
     interfaceFormatter.WriteLine();
 
     interfaceFormatter.WriteLine("template<typename Char>");
@@ -742,9 +745,9 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.IncIndent();
     interfaceFormatter.WriteLine("std::lock_guard<std::mutex> lock(MakeLexerMtx());");
     interfaceFormatter.WriteLine("auto lexer = soul::lexer::Lexer<" + lexer->Name() + "<Char>, Char>(start, end, fileName);");
-    interfaceFormatter.WriteLine("lexer.SetClassMap(GetClassMap<Char>());");
-    //interfaceFormatter.WriteLine("lexer.SetTokenCollection(GetTokens());");
-    interfaceFormatter.WriteLine("lexer.SetKeywordMap(GetKeywords<Char>());");
+    interfaceFormatter.WriteLine("lexer.SetClassMap(GetClassMap<Char>(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag()));");
+    interfaceFormatter.WriteLine("lexer.SetTokenCollection(GetTokens(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag()));");
+    interfaceFormatter.WriteLine("lexer.SetKeywordMap(GetKeywords<Char>(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag()));");
     interfaceFormatter.WriteLine("return lexer;");
     interfaceFormatter.DecIndent();
     interfaceFormatter.WriteLine("}");
@@ -757,9 +760,9 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.IncIndent();
     interfaceFormatter.WriteLine("std::lock_guard<std::mutex> lock(MakeLexerMtx());");
     interfaceFormatter.WriteLine("auto lexer = soul::lexer::Lexer<" + lexer->Name() + "<Char>, Char>(start, end, fileName);");
-    interfaceFormatter.WriteLine("lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags));");
-    //interfaceFormatter.WriteLine("lexer.SetTokenCollection(GetTokens());");
-    interfaceFormatter.WriteLine("lexer.SetKeywordMap(GetKeywords<Char>());");
+    interfaceFormatter.WriteLine("lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags, " + soul::ast::common::ToNamespaceName(moduleName) + "::Tag()));");
+    interfaceFormatter.WriteLine("lexer.SetTokenCollection(GetTokens(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag()));");
+    interfaceFormatter.WriteLine("lexer.SetKeywordMap(GetKeywords<Char>(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag()));");
     interfaceFormatter.WriteLine("return lexer;");
     interfaceFormatter.DecIndent();
     interfaceFormatter.WriteLine("}");
@@ -777,7 +780,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     sourceFormatter.WriteLine("std::mutex& MakeLexerMtx() { return mtx; }");
     sourceFormatter.WriteLine();
     sourceFormatter.WriteLine("template<>");
-    sourceFormatter.WriteLine("soul::lexer::KeywordMap<char>* GetKeywords<char>()");
+    sourceFormatter.WriteLine("soul::lexer::KeywordMap<char>* GetKeywords<char>(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag tag)");
     sourceFormatter.WriteLine("{");
     sourceFormatter.IncIndent();
     sourceFormatter.WriteLine("static const soul::lexer::Keyword<char> keywords[] = {");
@@ -812,7 +815,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
 
     sourceFormatter.WriteLine();
     sourceFormatter.WriteLine("template<>");
-    sourceFormatter.WriteLine("soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()");
+    sourceFormatter.WriteLine("soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag tag)");
     sourceFormatter.WriteLine("{");
     sourceFormatter.IncIndent();
     sourceFormatter.WriteLine("static const soul::lexer::Keyword<char8_t> keywords[] = {");
@@ -847,7 +850,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
 
     sourceFormatter.WriteLine();
     sourceFormatter.WriteLine("template<>");
-    sourceFormatter.WriteLine("soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()");
+    sourceFormatter.WriteLine("soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag tag)");
     sourceFormatter.WriteLine("{");
     sourceFormatter.IncIndent();
     sourceFormatter.WriteLine("static const soul::lexer::Keyword<char16_t> keywords[] = {");
@@ -882,7 +885,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
 
     sourceFormatter.WriteLine();
     sourceFormatter.WriteLine("template<>");
-    sourceFormatter.WriteLine("soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()");
+    sourceFormatter.WriteLine("soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>(" + soul::ast::common::ToNamespaceName(moduleName) + "::Tag tag)");
     sourceFormatter.WriteLine("{");
     sourceFormatter.IncIndent();
     sourceFormatter.WriteLine("static const soul::lexer::Keyword<char32_t> keywords[] = {");
