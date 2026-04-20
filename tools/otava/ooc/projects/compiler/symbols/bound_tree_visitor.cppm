@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.bound.tree.visitor;
 
 import std;
@@ -64,11 +59,11 @@ class BoundDefaultInitNode;
 class BoundTemporaryNode;
 class BoundConstructExpressionNode;
 class BoundConstructTemporaryNode;
+class BoundDestructTemporariesNode;
 class BoundGlobalVariableDefinitionNode;
 class BoundEmptyDestructorNode;
 class BoundFunctionValueNode;
 class BoundVariableAsVoidPtrNode;
-class BoundNamespaceExpression;
 class BoundOperatorFnNode;
 
 class BoundTreeVisitor
@@ -129,12 +124,12 @@ public:
     virtual void Visit(BoundDefaultInitNode& node) {}
     virtual void Visit(BoundTemporaryNode& node) {}
     virtual void Visit(BoundConstructTemporaryNode& node) {}
+    virtual void Visit(BoundDestructTemporariesNode& node) {}
     virtual void Visit(BoundConstructExpressionNode& node) {}
     virtual void Visit(BoundGlobalVariableDefinitionNode& node) {}
     virtual void Visit(BoundEmptyDestructorNode& node) {}
     virtual void Visit(BoundFunctionValueNode& node) {}
     virtual void Visit(BoundVariableAsVoidPtrNode& node) {}
-    virtual void Visit(BoundNamespaceExpression& node) {}
     virtual void Visit(BoundOperatorFnNode& node) {}
 };
 

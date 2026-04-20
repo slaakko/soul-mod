@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.variable.symbol;
 
 import otava.symbols.modules;
@@ -37,7 +32,9 @@ VariableSymbol::VariableSymbol(const std::u32string& name_) :
     index(-1),
     global(nullptr),
     level(0),
-    foundFromParent(false)
+    foundFromParent(false),
+    nodeId(-1),
+    temporary(false)
 {
 }
 
@@ -96,14 +93,14 @@ void VariableSymbol::Resolve(SymbolTable& symbolTable, Context* context)
     declaredType = symbolTable.GetType(declaredTypeId);
     if (!declaredType)
     {
-        std::string note;
-        Module* requesterModule = context->GetRequesterModule();
-        if (requesterModule)
-        {
-            note = ": note: requester module is " + requesterModule->Name();
-        }
         if (!context->GetFlag(ContextFlags::noWarnings))
         {
+            std::string note;
+            Module* requesterModule = context->GetRequesterModule();
+            if (requesterModule)
+            {
+                note = ": note: requester module is " + requesterModule->Name();
+            }
             std::cout << "VariableSymbol::Resolve(): warning: declared type not resolved" << note << "\n";
         }
     }
@@ -112,14 +109,14 @@ void VariableSymbol::Resolve(SymbolTable& symbolTable, Context* context)
         initializerType = symbolTable.GetType(initializerTypeId);
         if (!initializerType)
         {
-            std::string note;
-            Module* requesterModule = context->GetRequesterModule();
-            if (requesterModule)
-            {
-                note = ": note: requester module is " + requesterModule->Name();
-            }
             if (!context->GetFlag(ContextFlags::noWarnings))
             {
+                std::string note;
+                Module* requesterModule = context->GetRequesterModule();
+                if (requesterModule)
+                {
+                    note = ": note: requester module is " + requesterModule->Name();
+                }
                 std::cout << "VariableSymbol::Resolve(): warning: initializer type not resolved" << note << "\n";
             }
         }

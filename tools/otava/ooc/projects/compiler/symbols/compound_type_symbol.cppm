@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.compound.type.symbol;
 
 import std;
@@ -18,7 +13,7 @@ class CompoundTypeSymbol : public TypeSymbol
 public:
     CompoundTypeSymbol(const std::u32string& name_);
     CompoundTypeSymbol(TypeSymbol* baseType_, Derivations derivations_, const util::uuid& id_);
-    util::uuid IrId(Context* context) const noexcept override;
+    util::uuid IrId(const soul::ast::SourcePos& sourcePos, Context* context) const override;
     TypeSymbol* GetBaseType() noexcept override { return baseType; }
     const TypeSymbol* GetBaseType() const noexcept override { return baseType; }
     std::string SymbolKindStr() const override { return "compound type symbol"; }

@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.declaration;
 
 import otava.symbols.context;
@@ -873,7 +868,7 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* function
                         std::unique_ptr<BoundExpressionNode> variableInitializer(nullptr);
                         if (declaration.initializer)
                         {
-                            variableInitializer.reset(BindExpression(declaration.initializer, context));
+                            variableInitializer = BindExpression(declaration.initializer, context);
                         }
                         if (!variable->IsExtern())
                         {

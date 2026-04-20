@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.function.templates;
 
 import std;
@@ -15,6 +10,9 @@ import otava.symbols.function.symbol;
 
 export namespace otava::symbols {
 
+class FunctionDefinitionSymbol;
+class FunctionSymbol;
+class TemplateParameterSymbol;
 class TypeSymbol;
 class Context;
 

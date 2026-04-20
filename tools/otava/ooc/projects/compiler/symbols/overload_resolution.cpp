@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.overload.resolution;
 
 import otava.symbols.bound.tree;
@@ -257,7 +252,8 @@ BoundExpressionNode* MakeLvalueExpression(BoundExpressionNode* arg, const soul::
     BoundVariableNode* backingStore = nullptr;
     if (context->GetBoundFunction())
     {
-        backingStore = new BoundVariableNode(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->CreateTemporary(arg->GetType(), -1), sourcePos);
+        std::int64_t nodeId = context->NodeId();
+        backingStore = new BoundVariableNode(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->CreateTemporary(arg->GetType(), nodeId, context), sourcePos);
     }
     return new BoundTemporaryNode(arg, backingStore, sourcePos);
 }
@@ -276,29 +272,29 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& fu
     int count = n + m;
     for (int i = 0; i < count; ++i)
     {
-        BoundExpressionNode* arg = nullptr;
+        std::unique_ptr<BoundExpressionNode> arg;
         if (i >= n)
         {
-            arg = functionMatch.defaultArgs[i - n].release();
+            arg.reset(functionMatch.defaultArgs[i - n].release());
         }
         else
         {
-            arg = args[i].release();
+            arg.reset(args[i].release());
         }
         if (i == 0 && !functionMatch.function->IsMemberFunction() && functionMatch.function->IsCtorAssignmentOrArrow())
         {
             if (arg->IsBoundAddressOfNode())
             {
-                BoundAddressOfNode* addrOfNode = static_cast<BoundAddressOfNode*>(arg);
+                BoundAddressOfNode* addrOfNode = static_cast<BoundAddressOfNode*>(arg.release());
                 BoundExpressionNode* subject = addrOfNode->ReleaseSubject();
                 args[i].reset(subject);
-                arg = args[i].release();
+                arg.reset(args[i].release());
             }
         }
         ArgumentMatch& argumentMatch = functionMatch.argumentMatches[i];
         if (argumentMatch.preConversionFlags == OperationFlags::addr)
         {
-            arg = MakeLvalueExpression(arg, sourcePos, context);
+            arg.reset(MakeLvalueExpression(arg.release(), sourcePos, context));
             TypeSymbol* type = nullptr;
             if (arg->GetType()->IsClassTypeSymbol() && arg->GetFlag(BoundExpressionFlags::bindToRvalueRef))
             {
@@ -308,11 +304,12 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& fu
             {
                 type = arg->GetType()->AddLValueRef(context);
             }
-            arg = new BoundAddressOfNode(arg, sourcePos, type);
+            arg.reset(new BoundAddressOfNode(arg.release(), sourcePos, type));
         }
         else if (argumentMatch.preConversionFlags == OperationFlags::deref)
         {
-            arg = new BoundDereferenceNode(arg, sourcePos, arg->GetType()->RemoveReference(context));
+            TypeSymbol* type = arg->GetType()->RemoveReference(context);
+            arg.reset(new BoundDereferenceNode(arg.release(), sourcePos, type));
         }
         if (argumentMatch.conversionFun)
         {
@@ -328,33 +325,60 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& fu
             {
                 if (argType->IsReferenceType())
                 {
-                    arg = new BoundRefToPtrNode(arg, sourcePos, argType->RemoveReference(context)->AddPointer(context));
+                    TypeSymbol* type = argType->RemoveReference(context)->AddPointer(context);
+                    arg.reset(new BoundRefToPtrNode(arg.release(), sourcePos, type));
                 }
                 else
                 {
-                    arg = new BoundAddressOfNode(arg, sourcePos, argType->GetBaseType()->AddPointer(context));
+                    TypeSymbol* type = argType->GetBaseType()->AddPointer(context);
+                    arg.reset(new BoundAddressOfNode(arg.release(), sourcePos, type));
                 }
                 BoundFunctionCallNode* functionCall = new BoundFunctionCallNode(conversionFun, sourcePos, conversionFun->ReturnType());
-                functionCall->AddArgument(arg);
-                arg = functionCall;
+                functionCall->AddArgument(arg.release());
+                arg.reset(functionCall);
             }
             else if (conversionFun->GetFunctionKind() == FunctionKind::constructor)
             {
-                VariableSymbol* temporary = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->CreateTemporary(conversionFun->ConversionParamType(), -1);
-                BoundVariableNode* boundTemporary = new BoundVariableNode(temporary, sourcePos);
+                VariableSymbol* temporary = nullptr;
+                BoundExpressionNode* temporaryDestructorCallArg = nullptr;
                 BoundFunctionCallNode* constructorCall = new BoundFunctionCallNode(conversionFun, sourcePos, nullptr);
-                BoundAddressOfNode* temporaryArg = new BoundAddressOfNode(boundTemporary, sourcePos, temporary->GetType()->AddPointer(context));
+                BoundAddressOfNode* temporaryArg = nullptr;
+                BoundExpressionNode* boundTemporary2 = nullptr;
+                int level = 0;
+                bool invoke = context->GetFlag(ContextFlags::invoke);
+                if (invoke)
+                {
+                    std::int64_t nodeId = context->NodeId() ^ context->GetSymbolTable()->GetArgumentId(i);
+                    std::pair<VariableSymbol*, int> temporaryLevel = GetParentTemporary(nodeId, context);
+                    temporary = temporaryLevel.first;
+                    level = temporaryLevel.second;
+                    BoundParentVariableNode* boundParentVariable = new BoundParentVariableNode(temporary, sourcePos);
+                    boundParentVariable->SetLevel(level);
+                    temporaryArg = new BoundAddressOfNode(boundParentVariable, sourcePos, temporary->GetType()->AddPointer(context));
+                    temporaryDestructorCallArg = temporaryArg;
+                    boundTemporary2 = new BoundParentVariableNode(temporary, sourcePos);
+                }
+                else
+                {
+                    std::int64_t nodeId = context->NodeId() ^ context->GetSymbolTable()->GetArgumentId(i);
+                    temporary = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->CreateTemporary(conversionFun->ConversionParamType(), nodeId, context);
+                    BoundVariableNode* boundTemporary = new BoundVariableNode(temporary, sourcePos);
+                    temporaryArg = new BoundAddressOfNode(boundTemporary, sourcePos, temporary->GetType()->AddPointer(context));
+                    temporaryDestructorCallArg = temporaryArg;
+                    boundTemporary2 = new BoundVariableNode(temporary, sourcePos);
+                }
                 constructorCall->AddArgument(temporaryArg);
                 if (argumentMatch.preConversionFlags == OperationFlags::addr)
                 {
-                    arg = new BoundAddressOfNode(MakeLvalueExpression(arg, sourcePos, context), sourcePos, arg->GetType()->AddPointer(context));
+                    TypeSymbol* type = arg->GetType()->AddPointer(context);
+                    arg.reset(new BoundAddressOfNode(MakeLvalueExpression(arg.release(), sourcePos, context), sourcePos, type));
                 }
                 else if (argumentMatch.preConversionFlags == OperationFlags::deref)
                 {
-                    arg = new BoundDereferenceNode(arg, sourcePos, arg->GetType()->RemoveReference(context));
+                    TypeSymbol* type = arg->GetType()->RemoveReference(context);
+                    arg.reset(new BoundDereferenceNode(arg.release(), sourcePos, type));
                 }
-                constructorCall->AddArgument(arg);
-                BoundExpressionNode* boundTemporary2 = new BoundVariableNode(temporary, sourcePos);
+                constructorCall->AddArgument(arg.release());
                 if (argumentMatch.postConversionFlags == OperationFlags::addr)
                 {
                     boundTemporary2 = new BoundAddressOfNode(MakeLvalueExpression(boundTemporary2, sourcePos, context), sourcePos,
@@ -366,22 +390,47 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& fu
                 }
                 argumentMatch.postConversionFlags = OperationFlags::none;
                 BoundConstructTemporaryNode* constructTemporary = new BoundConstructTemporaryNode(constructorCall, boundTemporary2, sourcePos);
-                arg = constructTemporary;
+                CheckGenerateTemporaryDestructorCall(constructTemporary, temporaryDestructorCallArg, context);
+                arg.reset(constructTemporary);
             }
             else
             {
-                arg = new BoundConversionNode(arg, conversionFun, sourcePos);
+                arg.reset(new BoundConversionNode(arg.release(), conversionFun, sourcePos));
             }
         }
         if (argumentMatch.postConversionFlags == OperationFlags::addr)
         {
-            arg = new BoundAddressOfNode(MakeLvalueExpression(arg, sourcePos, context), sourcePos, arg->GetType()->AddPointer(context));
+            TypeSymbol* type = arg->GetType()->AddPointer(context);
+            arg.reset(new BoundAddressOfNode(MakeLvalueExpression(arg.release(), sourcePos, context), sourcePos, type));
         }
         else if (argumentMatch.postConversionFlags == OperationFlags::deref)
         {
-            arg = new BoundDereferenceNode(arg, sourcePos, arg->GetType()->RemoveReference(context));
+            TypeSymbol* type = arg->GetType()->RemoveReference(context);
+            arg.reset(new BoundDereferenceNode(arg.release(), sourcePos, type));
         }
-        boundFunctionCall->AddArgument(arg);
+        boundFunctionCall->AddArgument(arg.release());
+    }
+    if (context->GetFlag(ContextFlags::debugMemory))
+    {
+        std::u32string fullName = boundFunctionCall->GetFunctionSymbol()->FullName();
+        if (fullName == U"::operator new(unsigned long long int)")
+        {
+            std::vector<TypeSymbol*> templateArgs;
+            std::vector<std::unique_ptr<BoundExpressionNode>> debugOpNewArgs;
+            debugOpNewArgs.push_back(std::unique_ptr<BoundExpressionNode>(boundFunctionCall.release()));
+            otava::ast::StringLiteralNode fnAst(sourcePos, context->Function(), otava::ast::EncodingPrefix::none, std::u32string());
+            std::unique_ptr<BoundExpressionNode> fn = BindExpression(&fnAst, context);
+            debugOpNewArgs.push_back(std::move(fn));
+            otava::ast::StringLiteralNode sfpAst(sourcePos, util::ToUtf32(context->FileName()), otava::ast::EncodingPrefix::none, std::u32string());
+            std::unique_ptr<BoundExpressionNode> sfp = BindExpression(&sfpAst, context);
+            debugOpNewArgs.push_back(std::move(sfp));
+            otava::ast::IntegerLiteralNode lnAst(sourcePos, context->Line(), otava::ast::Suffix::none, otava::ast::Base::decimal, std::u32string());
+            std::unique_ptr<BoundExpressionNode> ln = BindExpression(&lnAst, context);
+            debugOpNewArgs.push_back(std::move(ln));
+            std::unique_ptr<BoundFunctionCallNode> debugOperatorNewCall = ResolveOverloadThrow(context->GetSymbolTable()->GlobalNs()->GetScope(),
+                U"ort_debug_operator_new", templateArgs, debugOpNewArgs, sourcePos, context);
+            return debugOperatorNewCall;
+        }
     }
     return boundFunctionCall;
 }
@@ -998,7 +1047,7 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
             if (parameter->DefaultValue())
             {
                 context->GetSymbolTable()->CurrentScope()->PushParentScope(functionMatch.function->GetScope());
-                defaultArg.reset(BindExpression(parameter->DefaultValue(), context));
+                defaultArg = BindExpression(parameter->DefaultValue(), context);
                 context->GetSymbolTable()->CurrentScope()->PopParentScope();
                 arg = defaultArg.get();
                 argType = arg->GetType()->DirectType(context)->FinalType(sourcePos, context);
@@ -1139,26 +1188,25 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
         {
             continue;
         }
+        std::u32string viableFunctionFullName = viableFunction->FullName();
         if (viableFunction->IsFunctionDefinitionSymbol() &&
-            viableFunctionFullNameSet.find(viableFunction->FullName()) != viableFunctionFullNameSet.end())
+            viableFunctionFullNameSet.find(viableFunctionFullName) != viableFunctionFullNameSet.end())
         {
             continue;
         }
         else if (!viableFunction->IsFunctionDefinitionSymbol() &&
-            viableFunctionDeclarationFullNameSet.find(viableFunction->FullName()) != viableFunctionDeclarationFullNameSet.end())
+            viableFunctionDeclarationFullNameSet.find(viableFunctionFullName) != viableFunctionDeclarationFullNameSet.end())
         {
             continue;
         }
         viableFunctionSet.insert(viableFunction);
         if (viableFunction->IsFunctionDefinitionSymbol())
         {
-            std::u32string fullName = viableFunction->FullName();
-            viableFunctionFullNameSet.insert(fullName);
+            viableFunctionFullNameSet.insert(viableFunctionFullName);
         }
         else
         {
-            std::u32string fullName = viableFunction->FullName();
-            viableFunctionDeclarationFullNameSet.insert(fullName);
+            viableFunctionDeclarationFullNameSet.insert(viableFunctionFullName);
         }
         std::unique_ptr<FunctionMatch> functionMatch(new FunctionMatch(viableFunction, context));
         SetTemplateArgs(viableFunction, functionMatch->templateParameterMap, templateArgs);

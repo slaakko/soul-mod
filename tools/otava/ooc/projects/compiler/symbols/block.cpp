@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.block;
 
 import otava.symbols.context;
@@ -29,6 +24,13 @@ BlockSymbol::~BlockSymbol()
             function->RemoveLocalVariable(variable);
         }
     }
+    for (const auto& d : destructorCallMap)
+    {
+        for (const auto* s : d.second)
+        {
+            delete s;
+        }
+    }
 }
 
 void BlockSymbol::Accept(Visitor& visitor)
@@ -52,6 +54,22 @@ void BlockSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePo
             }
         }
     }
+}
+
+void BlockSymbol::AddDestructorCall(int statementIndex, BoundExpressionNode* destructorCall)
+{
+    destructorCallMap[statementIndex].push_back(destructorCall);
+}
+
+bool BlockSymbol::HasDestructorCalls(int statementIndex) const
+{
+    return destructorCallMap.find(statementIndex) != destructorCallMap.end();
+}
+
+std::vector<BoundExpressionNode*> BlockSymbol::GetDestructorCalls(int statementIndex)
+{
+    std::vector<BoundExpressionNode*> v = destructorCallMap[statementIndex];
+    return v;
 }
 
 BlockSymbol* BeginBlock(const soul::ast::SourcePos& sourcePos, int blockId, Context* context)

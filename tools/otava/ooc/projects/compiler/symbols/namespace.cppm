@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.namespaces;
 
 import std;
@@ -22,6 +17,10 @@ public:
     void Import(NamespaceSymbol* that, Context* context);
     void Accept(Visitor& visitor) override;
     bool ContainsSymbols() const noexcept;
+    inline void SetSymbolTable(SymbolTable* symbolTable_) noexcept { symbolTable = symbolTable_; }
+    SymbolTable* GetSymbolTable() noexcept override;
+private:
+    SymbolTable* symbolTable;
 };
 
 void BeginNamespace(otava::ast::Node* node, Context* context);

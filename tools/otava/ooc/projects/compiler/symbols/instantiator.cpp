@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.instantiator;
 
 import otava.symbols.alias.type.symbol;
@@ -49,17 +44,17 @@ void Instantiator::Visit(otava::ast::ClassSpecifierNode& node)
         baseClasses = ResolveBaseClasses(&node, context);
         switch (kind)
         {
-            case ClassKind::class_:
-            {
-                context->GetSymbolTable()->PushAccess(Access::private_);
-                break;
-            }
-            case ClassKind::struct_:
-            case ClassKind::union_:
-            {
-                context->GetSymbolTable()->PushAccess(Access::public_);
-                break;
-            }
+        case ClassKind::class_:
+        {
+            context->GetSymbolTable()->PushAccess(Access::private_);
+            break;
+        }
+        case ClassKind::struct_:
+        case ClassKind::union_:
+        {
+            context->GetSymbolTable()->PushAccess(Access::public_);
+            break;
+        }
         }
         innerClass = true;
         VisitSequenceContent(node);
@@ -72,21 +67,21 @@ void Instantiator::Visit(otava::ast::BeginAccessGroupNode& node)
 {
     switch (node.Child()->Kind())
     {
-        case otava::ast::NodeKind::publicNode:
-        {
-            context->GetSymbolTable()->SetCurrentAccess(Access::public_);
-            break;
-        }
-        case otava::ast::NodeKind::protectedNode:
-        {
-            context->GetSymbolTable()->SetCurrentAccess(Access::protected_);
-            break;
-        }
-        case otava::ast::NodeKind::privateNode:
-        {
-            context->GetSymbolTable()->SetCurrentAccess(Access::private_);
-            break;
-        }
+    case otava::ast::NodeKind::publicNode:
+    {
+        context->GetSymbolTable()->SetCurrentAccess(Access::public_);
+        break;
+    }
+    case otava::ast::NodeKind::protectedNode:
+    {
+        context->GetSymbolTable()->SetCurrentAccess(Access::protected_);
+        break;
+    }
+    case otava::ast::NodeKind::privateNode:
+    {
+        context->GetSymbolTable()->SetCurrentAccess(Access::private_);
+        break;
+    }
     }
 }
 

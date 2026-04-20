@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.enum_group.symbol;
 
 import otava.symbols.enums;
@@ -23,16 +18,16 @@ bool EnumGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexcep
 {
     switch (scopeKind)
     {
-        case ScopeKind::namespaceScope:
-        case ScopeKind::classScope:
-        {
-            return true;
-        }
+    case ScopeKind::namespaceScope:
+    case ScopeKind::classScope:
+    {
+        return true;
+    }
     }
     return false;
 }
 
-Symbol* EnumGroupSymbol::GetSingleSymbol(Context* context) noexcept
+Symbol* EnumGroupSymbol::GetSingleSymbol(Context* contex) noexcept
 {
     if (enumType)
     {

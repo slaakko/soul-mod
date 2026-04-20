@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.function.group.symbol;
 
 import std;
@@ -25,7 +20,7 @@ public:
     std::string SymbolKindStr() const override { return "function group symbol"; }
     std::string SymbolDocKindStr() const override { return "function_group"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
-    Symbol* GetSingleSymbol(Context* context) noexcept override;
+    Symbol* GetSingleSymbol(Context* contex) noexcept override;
     FunctionDefinitionSymbol* GetSingleDefinition() noexcept;
     void AddFunction(FunctionSymbol* function);
     inline const std::vector<FunctionSymbol*>& Functions() const noexcept { return functions; }

@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.function.templates;
 
 import otava.symbols.context;
@@ -188,16 +183,6 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
             ThrowException("otava.symbols.function_templates: error instantiating specialization '" + specializationFullName +
                 "': " + std::string(ex.what()), node->GetSourcePos(), context);
         }
-        catch (const Exception& ex)
-        {
-            std::string specializationFullName;
-            if (specialization)
-            {
-                specializationFullName = util::ToUtf8(specialization->FullName());
-            }
-            ThrowException("otava.symbols.function_templates: error instantiating specialization '" + specializationFullName +
-                "': " + ex.Message(), node->GetSourcePos(), context);
-        }
         context->GetSymbolTable()->EndScope();
         instantiationScope.PopParentScope();
         instantiationScope.PopParentScope();
@@ -302,17 +287,9 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
             ThrowException("otava.symbols.function_templates: error instantiating specialization '" + specializationName +
                 "': " + std::string(ex.what()), node->GetSourcePos(), context);
         }
-        catch (const Exception& ex)
-        {
-            std::string specializationName;
-            if (specialization)
-            {
-                specializationName = util::ToUtf8(specialization->Name());
-            }
-            ThrowException("otava.symbols.function_templates: error instantiating specialization '" + specializationName +
-                "': " + ex.Message(), node->GetSourcePos(), context);
-        }
         context->GetSymbolTable()->EndScope();
+        instantiationScope.PopParentScope();
+        instantiationScope.PopParentScope();
         context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
         for (const auto& boundTemplateParameter : boundTemplateParameters)
         {

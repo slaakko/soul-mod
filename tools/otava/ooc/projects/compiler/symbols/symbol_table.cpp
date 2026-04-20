@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.symbol.table;
 
 import util.unicode;
@@ -88,6 +83,7 @@ SymbolTable::SymbolTable() :
     currentLinkage(Linkage::cpp_linkage),
     functionTypeId(util::nil_uuid())
 {
+    globalNs->SetSymbolTable(this);
 }
 
 void SymbolTable::Accept(Visitor& visitor)
@@ -211,6 +207,7 @@ void SymbolTable::Init()
         InitTemplateParameterIds();
         InitLevelIds();
         InitFunctionTypeId();
+        InitArgumentsIds();
         CreateFundamentalTypes();
         AddFundamentalTypeOperations();
         AddIntrinsics();
@@ -259,6 +256,7 @@ void SymbolTable::Import(const SymbolTable& that, FunctionDefinitionSymbolSet* f
     compoundTypeIds = that.compoundTypeIds;
     levelIds = that.levelIds;
     functionTypeId = that.functionTypeId;
+    argumentIds = that.argumentIds;
 #ifdef DEBUG_SYMBOL_IO
     std::cout << "<import symbol table '" << module->Name() << "' <- '" << that.GetModule()->Name() << "'\n";
 #endif
@@ -459,6 +457,9 @@ void SymbolTable::ImportAliasGroupTypes(const SymbolTable& that)
 
 void SymbolTable::WriteMaps(Writer& writer, Context* context)
 {
+    bool skip = context->GetFlag(ContextFlags::skipMapIo);
+    writer.GetBinaryStreamWriter().Write(skip);
+    if (skip) return;
     std::vector<std::pair<otava::ast::Node*, Symbol*>> exportNodeSymbols;
     for (const auto& m : nodeSymbolMap)
     {
@@ -534,6 +535,8 @@ void SymbolTable::WriteMaps(Writer& writer, Context* context)
 
 void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, Context* context)
 {
+    bool skip = reader.GetBinaryStreamReader().ReadBool();
+    if (skip) return;
 #ifdef DEBUG_SYMBOL_IO
     std::cout << ">read maps " << GetModule()->Name() << "\n";
 #endif
@@ -583,13 +586,10 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, Context
                 symbolNodeMap[symbol] = node;
                 allSymbolNodeMap[symbol] = node;
             }
-            else
+            else if (!context->GetFlag(ContextFlags::noWarnings))
             {
-                if (!context->GetFlag(ContextFlags::noWarnings))
-                {
-                    std::cout << "SymbolTable::ReadMaps: warning: symbol-node map: symbol for id '" + util::ToString(symbolId) + "' not found";
-                    std::cout << "\n";
-                }
+                std::cout << "SymbolTable::ReadMaps: warning: symbol-node map: symbol for id '" + util::ToString(symbolId) + "' not found";
+                std::cout << "\n";
             }
         }
     }
@@ -662,6 +662,12 @@ void SymbolTable::Write(Writer& writer, Context* context)
             writer.GetBinaryStreamWriter().Write(levelIds[i]);
         }
         writer.GetBinaryStreamWriter().Write(functionTypeId);
+        int an = argumentIds.size();
+        writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(an));
+        for (int i = 0; i < an; ++i)
+        {
+            writer.GetBinaryStreamWriter().Write(argumentIds[i]);
+        }
     }
     globalNs->Write(writer);
     std::uint32_t scount = classTemplateSpecializations.size();
@@ -734,15 +740,15 @@ void SymbolTable::Write(Writer& writer, Context* context)
     }
 }
 
-void SymbolTable::Read(Reader& reader)
+void SymbolTable::Read(Reader& reader, Context* context)
 {
 #ifdef DEBUG_SYMBOL_IO
     std::cout << ">read " << GetModule()->Name() << "\n";
 #endif
-    Context context;
-    context.SetFunctionDefinitionSymbolSet(reader.GetFunctionDefinitionSymbolSet());
-    context.SetSymbolTable(this);
-    reader.SetContext(&context);
+    Context* prevReaderContext = reader.GetContext();
+    reader.SetContext(context);
+    SymbolTable* prevSymbolTable = context->GetSymbolTable();
+    context->SetSymbolTable(this);
     if (module->Name() == "std.type.fundamental")
     {
         templateParameterIds.clear();
@@ -770,6 +776,12 @@ void SymbolTable::Read(Reader& reader)
             levelIds.push_back(id);
         }
         reader.GetBinaryStreamReader().ReadUuid(functionTypeId);
+        argumentIds.clear();
+        int an = reader.GetBinaryStreamReader().ReadByte();
+        for (int i = 0; i < an; ++i)
+        {
+            argumentIds.push_back(reader.GetBinaryStreamReader().ReadLong());
+        }
     }
     globalNs->Read(reader);
     std::uint32_t scount = reader.GetBinaryStreamReader().ReadULEB128UInt();
@@ -949,6 +961,8 @@ void SymbolTable::Read(Reader& reader)
             throw std::runtime_error("otava.symbols.symbol_table: class group type symbol expected");
         }
     }
+    reader.SetContext(prevReaderContext);
+    context->SetSymbolTable(prevSymbolTable);
 #ifdef DEBUG_SYMBOL_IO
     std::cout << "index" << "\n";
 #endif
@@ -959,6 +973,7 @@ void SymbolTable::Read(Reader& reader)
 
 void SymbolTable::Resolve(Context* context)
 {
+    Module* prevRequesterModule = context->GetRequesterModule();
     context->SetRequesterModule(GetModule());
     for (auto& specialization : classTemplateSpecializations)
     {
@@ -1023,7 +1038,7 @@ void SymbolTable::Resolve(Context* context)
         compoundType->Resolve(*this, context);
     }
     conversionTable->Make();
-    context->SetRequesterModule(nullptr);
+    context->SetRequesterModule(prevRequesterModule);
 }
 
 Symbol* SymbolTable::Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -1226,8 +1241,8 @@ otava::ast::Node* SymbolTable::GetNode(Symbol* symbol) const
 
 void SymbolTable::RemoveNode(otava::ast::Node* node)
 {
-    if (ProjectReady() || soul::lexer::parsing_error_thrown || ExceptionThrown() || otava::ast::ExceptionThrown() || 
-        otava::assembly::ExceptionThrown() || otava::intermediate::ExceptionThrown() || otava::optimizer::ExceptionThrown()) return;
+    if (ProjectReady() || soul::lexer::parsing_error_thrown || ExceptionThrown() || otava::ast::ExceptionThrown() || otava::intermediate::ExceptionThrown() ||
+        otava::assembly::ExceptionThrown() || otava::optimizer::ExceptionThrown()) return;
     Symbol* symbol = nullptr;
     auto it = nodeSymbolMap.find(node);
     if (it != nodeSymbolMap.cend())
@@ -1244,7 +1259,7 @@ void SymbolTable::RemoveNode(otava::ast::Node* node)
 void SymbolTable::RemoveSymbol(Symbol* symbol)
 {
     if (ProjectReady() || soul::lexer::parsing_error_thrown || ExceptionThrown() || otava::ast::ExceptionThrown() ||
-        otava::assembly::ExceptionThrown() || otava::intermediate::ExceptionThrown() || otava::optimizer::ExceptionThrown()) return;
+        otava::intermediate::ExceptionThrown() || otava::optimizer::ExceptionThrown() || otava::assembly::ExceptionThrown()) return;
     otava::ast::Node* node = nullptr;
     auto it = symbolNodeMap.find(symbol);
     if (it != symbolNodeMap.end())
@@ -1326,7 +1341,10 @@ TypeSymbol* SymbolTable::GetType(const util::uuid& id) const
     }
     else
     {
-        std::cout << "SymbolTable::GetType(): warning: type for id '" + util::ToString(id) + "' not found" << "\n";
+        if (!CurrentContext()->GetFlag(ContextFlags::noWarnings))
+        {
+            std::cout << "SymbolTable::GetType(): warning: type for id '" + util::ToString(id) + "' not found" << "\n";
+        }
     }
     return nullptr;
 }
@@ -2449,6 +2467,14 @@ void SymbolTable::InitFunctionTypeId()
     functionTypeId = util::uuid::random();
 }
 
+void SymbolTable::InitArgumentsIds()
+{
+    for (int i = 0; i < maxArguments; ++i)
+    {
+        argumentIds.push_back(static_cast<std::int64_t>(util::Random64()));
+    }
+}
+
 const util::uuid& SymbolTable::GetTemplateParameterId(int index) const
 {
     if (index >= 0 && index < templateParameterIds.size())
@@ -2489,6 +2515,11 @@ const util::uuid& SymbolTable::GetLevelId(int level) const
         static util::uuid u;
         return u;
     }
+}
+
+std::int64_t SymbolTable::GetArgumentId(int index) const noexcept
+{
+    return argumentIds[index % maxArguments];
 }
 
 } // namespace otava::symbols

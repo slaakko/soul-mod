@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.statement.binder;
 
 import otava.symbols.bound.tree;
@@ -22,7 +17,7 @@ class StatementBinder : public otava::ast::DefaultVisitor
 {
 public:
     StatementBinder(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_);
-    inline BoundStatementNode* GetBoundStatement() const { return boundStatement; }
+    inline std::unique_ptr<BoundStatementNode> GetBoundStatement() { return std::move(boundStatement); }
     void Visit(otava::ast::FunctionDefinitionNode& node) override;
     void Visit(otava::ast::ConstructorNode& node) override;
     void Visit(otava::ast::ConstructorInitializerNode& node) override;
@@ -75,9 +70,10 @@ private:
     void BindStaticLocalVariable(VariableSymbol* variable, otava::ast::Node* initializer, otava::ast::SimpleDeclarationNode* declarationNode);
     Context* context;
     ClassTypeSymbol* currentClass;
-    BoundCtorInitializerNode* ctorInitializer;
-    BoundDtorTerminatorNode* dtorTerminator;
-    BoundStatementNode* boundStatement;
+    bool hasCtorInitializer;
+    std::unique_ptr<BoundCtorInitializerNode> ctorInitializer;
+    std::unique_ptr<BoundDtorTerminatorNode> dtorTerminator;
+    std::unique_ptr<BoundStatementNode> boundStatement;
     FunctionDefinitionSymbol* functionDefinitionSymbol;
     ClassTypeSymbol* classTypeSymbol;
     VariableSymbol* memberVariableSymbol;
@@ -102,7 +98,6 @@ private:
 };
 
 FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);
-BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);
-
+std::unique_ptr<BoundStatementNode> BindStatement(otava::ast::Node* statementNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);
 
 } // namespace otava::symbols

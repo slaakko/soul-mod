@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.function.symbol;
 
 import std;
@@ -129,7 +124,7 @@ public:
     virtual otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const;
     std::string IrName(Context* context) const override;
     const std::vector<VariableSymbol*>& LocalVariables() const noexcept { return  localVariables; }
-    VariableSymbol* CreateTemporary(TypeSymbol* type, std::int64_t nodeId);
+    VariableSymbol* CreateTemporary(TypeSymbol* type, std::int64_t nodeId, Context* context);
     VariableSymbol* GetTemporary(std::int64_t nodeId) const noexcept;
     virtual bool IsConst() const noexcept;
     virtual bool IsVirtual() const noexcept;
@@ -137,7 +132,8 @@ public:
     void SetVirtual() noexcept;
     virtual bool IsOverride() const noexcept;
     virtual bool IsFinal() const noexcept;
-    void SetOverride() noexcept;
+    virtual void SetOverride() noexcept;
+    virtual void SetFinal() noexcept;
     virtual bool IsNoExcept() const noexcept;
     virtual void SetNoExcept() noexcept;
     bool ContainsLocalVariableWithDestructor() const noexcept { return GetFlag(FunctionSymbolFlags::containsLocalVariableWithDestructor); }
@@ -173,6 +169,7 @@ public:
     inline const std::string& CompileUnitId() const noexcept { return compileUnitId; }
     void SetTemplateArgs(const std::vector<TypeSymbol*>& templateArgs_);
     soul::xml::Element* ToXml() const override;
+    void PrintLocals();
 private:
     mutable bool memFunParamsConstructed;
     FunctionKind kind;
@@ -232,6 +229,8 @@ public:
     bool IsFinal() const noexcept override;
     bool IsNoExcept() const noexcept override;
     void SetNoExcept() noexcept override;
+    void SetOverride() noexcept override;
+    void SetFinal() noexcept override;
     std::int32_t VTabIndex() const noexcept override;
     bool IsStatic() const noexcept override;
     bool IsExplicit() const noexcept override;

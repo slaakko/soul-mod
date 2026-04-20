@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.class_group.symbol;
 
 import otava.symbols.classes;
@@ -25,13 +20,13 @@ bool ClassGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noexce
 {
     switch (scopeKind)
     {
-        case ScopeKind::namespaceScope:
-        case ScopeKind::templateDeclarationScope:
-        case ScopeKind::classScope:
-        case ScopeKind::blockScope:
-        {
-            return true;
-        }
+    case ScopeKind::namespaceScope:
+    case ScopeKind::templateDeclarationScope:
+    case ScopeKind::classScope:
+    case ScopeKind::blockScope:
+    {
+        return true;
+    }
     }
     return false;
 }
@@ -50,7 +45,7 @@ void ClassGroupSymbol::AddClass(ClassTypeSymbol* classTypeSymbol)
     }
 }
 
-Symbol* ClassGroupSymbol::GetSingleSymbol(Context* context) noexcept
+Symbol* ClassGroupSymbol::GetSingleSymbol(Context* contex) noexcept
 {
     if (classes.size() == 1)
     {
@@ -302,7 +297,7 @@ ClassTypeSymbol* ClassGroupSymbol::GetBestMatchingClass(const std::vector<Symbol
             }
         }
     }
-    std::sort(viableClasses.begin(), viableClasses.end(), ViableClassGreater());
+    std::insertion_sort(viableClasses.begin(), viableClasses.end(), ViableClassGreater());
     if (!viableClasses.empty())
     {
         matchInfo = viableClasses[0].second;

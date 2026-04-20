@@ -8,7 +8,7 @@ reference <../lex/lex.project>;
 reference <../lexer/lexer.project>;
 reference <../parser/parser.project>;
 reference <../token/token.project>;
-reference <../xml/dom/soul.xml.dom.project>;
+reference <../xml/dom/dom.project>;
 interface <array_generator.cppm>;
 source <array_generator.cpp>;
 interface <code_generator.cppm>;

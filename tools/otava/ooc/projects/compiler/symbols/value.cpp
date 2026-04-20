@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.value;
 
 import util.unicode;
@@ -21,52 +16,70 @@ import otava.ast.error;
 
 namespace otava::symbols {
 
+std::string ValueKindStr(ValueKind kind)
+{
+    switch (kind)
+    {
+    case ValueKind::boolValue: return "boolValue";
+    case ValueKind::integerValue: return "integerValue";
+    case ValueKind::floatingValue: return "floatingValue";
+    case ValueKind::nullPtrValue: return "nullPtrValue";
+    case ValueKind::stringValue: return "stringValue";
+    case ValueKind::charValue: return "charValue";
+    case ValueKind::symbolValue: return "symbolValue";
+    case ValueKind::invokeValue: return "invokeValue";
+    case ValueKind::arrayValue: return "arrayValue";
+    case ValueKind::structureValue: return "structureValue";
+    }
+    return "<value>";
+}
+
 ValueKind CommonValueKind(ValueKind left, ValueKind right) noexcept
 {
     switch (left)
     {
+    case ValueKind::boolValue:
+    {
+        return ValueKind::boolValue;
+    }
+    case ValueKind::integerValue:
+    {
+        switch (right)
+        {
+        case ValueKind::integerValue:
+        {
+            return ValueKind::integerValue;
+        }
+        case ValueKind::floatingValue:
+        {
+            return ValueKind::floatingValue;
+        }
         case ValueKind::boolValue:
         {
             return ValueKind::boolValue;
         }
-        case ValueKind::integerValue:
+        default:
         {
-            switch (right)
-            {
-                case ValueKind::integerValue:
-                {
-                    return ValueKind::integerValue;
-                }
-                case ValueKind::floatingValue:
-                {
-                    return ValueKind::floatingValue;
-                }
-                case ValueKind::boolValue:
-                {
-                    return ValueKind::boolValue;
-                }
-                default:
-                {
-                    return ValueKind::none;
-                }
-            }
-            break;
+            return ValueKind::none;
         }
+        }
+        break;
+    }
+    case ValueKind::floatingValue:
+    {
+        switch (right)
+        {
+        case ValueKind::integerValue:
         case ValueKind::floatingValue:
         {
-            switch (right)
-            {
-                case ValueKind::integerValue:
-                case ValueKind::floatingValue:
-                {
-                    return ValueKind::floatingValue;
-                }
-                case ValueKind::boolValue:
-                {
-                    return ValueKind::boolValue;
-                }
-            }
+            return ValueKind::floatingValue;
         }
+        case ValueKind::boolValue:
+        {
+            return ValueKind::boolValue;
+        }
+        }
+    }
     }
     return ValueKind::none;
 }
@@ -102,14 +115,14 @@ void Value::Resolve(SymbolTable& symbolTable, Context* context)
         type = symbolTable.GetType(typeId);
         if (!type)
         {
-            std::string note;
-            Module* requesterModule = context->GetRequesterModule();
-            if (requesterModule)
-            {
-                note = ": note: requester module is " + requesterModule->Name();
-            }
             if (!context->GetFlag(ContextFlags::noWarnings))
             {
+                std::string note;
+                Module* requesterModule = context->GetRequesterModule();
+                if (requesterModule)
+                {
+                    note = ": note: requester module is " + requesterModule->Name();
+                }
                 std::cout << "Value::Resolve(): warning: type of '" + util::ToUtf8(FullName()) + "' not resolved" << note << "\n";
             }
         }
@@ -120,38 +133,38 @@ ValueKind Value::GetValueKind() const noexcept
 {
     switch (Kind())
     {
-        case SymbolKind::boolValueSymbol:
-        {
-            return ValueKind::boolValue;
-        }
-        case SymbolKind::integerValueSymbol:
-        {
-            return ValueKind::integerValue;
-        }
-        case SymbolKind::floatingValueSymbol:
-        {
-            return ValueKind::floatingValue;
-        }
-        case SymbolKind::nullPtrValueSymbol:
-        {
-            return ValueKind::nullPtrValue;
-        }
-        case SymbolKind::stringValueSymbol:
-        {
-            return ValueKind::stringValue;
-        }
-        case SymbolKind::charValueSymbol:
-        {
-            return ValueKind::charValue;
-        }
-        case SymbolKind::symbolValueSymbol:
-        {
-            return ValueKind::symbolValue;
-        }
-        case SymbolKind::invokeValueSymbol:
-        {
-            return ValueKind::invokeValue;
-        }
+    case SymbolKind::boolValueSymbol:
+    {
+        return ValueKind::boolValue;
+    }
+    case SymbolKind::integerValueSymbol:
+    {
+        return ValueKind::integerValue;
+    }
+    case SymbolKind::floatingValueSymbol:
+    {
+        return ValueKind::floatingValue;
+    }
+    case SymbolKind::nullPtrValueSymbol:
+    {
+        return ValueKind::nullPtrValue;
+    }
+    case SymbolKind::stringValueSymbol:
+    {
+        return ValueKind::stringValue;
+    }
+    case SymbolKind::charValueSymbol:
+    {
+        return ValueKind::charValue;
+    }
+    case SymbolKind::symbolValueSymbol:
+    {
+        return ValueKind::symbolValue;
+    }
+    case SymbolKind::invokeValueSymbol:
+    {
+        return ValueKind::invokeValue;
+    }
     }
     return ValueKind::none;
 }
@@ -178,17 +191,17 @@ Value* BoolValue::Convert(ValueKind kind, EvaluationContext& context)
 {
     switch (kind)
     {
-        case ValueKind::boolValue: return this;
-        case ValueKind::integerValue:
-        {
-            return context.GetIntegerValue(static_cast<std::int64_t>(value), util::ToUtf32(std::to_string(static_cast<int>(value))),
-                context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::intType));
-        }
-        case ValueKind::floatingValue:
-        {
-            return context.GetFloatingValue(static_cast<double>(static_cast<int>(value)), util::ToUtf32(std::to_string(static_cast<int>(value))),
-                context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::doubleType));
-        }
+    case ValueKind::boolValue: return this;
+    case ValueKind::integerValue:
+    {
+        return context.GetIntegerValue(static_cast<std::int64_t>(value), util::ToUtf32(std::to_string(static_cast<int>(value))),
+            context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::intType));
+    }
+    case ValueKind::floatingValue:
+    {
+        return context.GetFloatingValue(static_cast<double>(static_cast<int>(value)), util::ToUtf32(std::to_string(static_cast<int>(value))),
+            context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::doubleType));
+    }
     }
     return this;
 }
@@ -236,13 +249,13 @@ Value* IntegerValue::Convert(ValueKind kind, EvaluationContext& context)
 {
     switch (kind)
     {
-        case ValueKind::boolValue: return ToBoolValue(context);
-        case ValueKind::integerValue: return this;
-        case ValueKind::floatingValue:
-        {
-            return context.GetFloatingValue(static_cast<double>(value), util::ToUtf32(std::to_string(value)),
-                context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::doubleType));
-        }
+    case ValueKind::boolValue: return ToBoolValue(context);
+    case ValueKind::integerValue: return this;
+    case ValueKind::floatingValue:
+    {
+        return context.GetFloatingValue(static_cast<double>(value), util::ToUtf32(std::to_string(value)),
+            context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::doubleType));
+    }
     }
     return this;
 }
@@ -291,13 +304,13 @@ Value* FloatingValue::Convert(ValueKind kind, EvaluationContext& context)
 {
     switch (kind)
     {
-        case ValueKind::boolValue: return ToBoolValue(context);
-        case ValueKind::integerValue:
-        {
-            return context.GetIntegerValue(static_cast<std::int64_t>(value), util::ToUtf32(std::to_string(value)),
-                context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::intType));
-        }
-        case ValueKind::floatingValue: return this;
+    case ValueKind::boolValue: return ToBoolValue(context);
+    case ValueKind::integerValue:
+    {
+        return context.GetIntegerValue(static_cast<std::int64_t>(value), util::ToUtf32(std::to_string(value)),
+            context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::intType));
+    }
+    case ValueKind::floatingValue: return this;
     }
     return this;
 }
@@ -338,7 +351,7 @@ Value* NullPtrValue::Convert(ValueKind kind, EvaluationContext& context)
 {
     switch (kind)
     {
-        case ValueKind::boolValue: return ToBoolValue(context);
+    case ValueKind::boolValue: return ToBoolValue(context);
     }
     return this;
 }
@@ -363,11 +376,11 @@ otava::intermediate::Value* NullPtrValue::IrValue(Emitter& emitter, const soul::
     return GetType()->IrType(emitter, sourcePos, context)->DefaultValue();
 }
 
-StringValue::StringValue(TypeSymbol* type_) : Value(SymbolKind::stringValueSymbol, U"", type_), value()
+StringValue::StringValue(TypeSymbol* type_) : Value(SymbolKind::stringValueSymbol, std::u32string(), type_), value()
 {
 }
 
-StringValue::StringValue(const std::string& value_, TypeSymbol* type_) : Value(SymbolKind::stringValueSymbol, U"", type_), value(value_)
+StringValue::StringValue(const std::string& value_, TypeSymbol* type_) : Value(SymbolKind::stringValueSymbol, std::u32string(), type_), value(value_)
 {
 }
 
@@ -420,11 +433,11 @@ otava::intermediate::Value* StringValue::IrValue(Emitter& emitter, const soul::a
     return nullptr;
 }
 
-CharValue::CharValue(TypeSymbol* type_) : Value(SymbolKind::charValueSymbol, U"", type_), value()
+CharValue::CharValue(TypeSymbol* type_) : Value(SymbolKind::charValueSymbol, std::u32string(), type_), value()
 {
 }
 
-CharValue::CharValue(char32_t value_, TypeSymbol* type_) : Value(SymbolKind::charValueSymbol, U"", type_), value(value_)
+CharValue::CharValue(char32_t value_, TypeSymbol* type_) : Value(SymbolKind::charValueSymbol, std::u32string(), type_), value(value_)
 {
 }
 
@@ -473,32 +486,32 @@ Value* SymbolValue::Convert(ValueKind kind, EvaluationContext& context)
 {
     switch (kind)
     {
-        case ValueKind::integerValue:
+    case ValueKind::integerValue:
+    {
+        switch (symbol->Kind())
         {
-            switch (symbol->Kind())
+        case SymbolKind::enumConstantSymbol:
+        {
+            EnumConstantSymbol* enumConstantSymbol = static_cast<EnumConstantSymbol*>(symbol);
+            Value* value = enumConstantSymbol->GetValue();
+            switch (value->GetValueKind())
             {
-                case SymbolKind::enumConstantSymbol:
-                {
-                    EnumConstantSymbol* enumConstantSymbol = static_cast<EnumConstantSymbol*>(symbol);
-                    Value* value = enumConstantSymbol->GetValue();
-                    switch (value->GetValueKind())
-                    {
-                        case ValueKind::integerValue:
-                        {
-                            IntegerValue* integerValue = static_cast<IntegerValue*>(value);
-                            return context.GetIntegerValue(integerValue->GetValue(), enumConstantSymbol->Name(), value->GetType());
-                        }
-                        case ValueKind::boolValue:
-                        {
-                            BoolValue* boolValue = static_cast<BoolValue*>(value);
-                            return context.GetIntegerValue(static_cast<std::int64_t>(boolValue->GetValue()), enumConstantSymbol->Name(), value->GetType());
-                        }
-                    }
-                    break;
-                }
+            case ValueKind::integerValue:
+            {
+                IntegerValue* integerValue = static_cast<IntegerValue*>(value);
+                return context.GetIntegerValue(integerValue->GetValue(), enumConstantSymbol->Name(), value->GetType());
+            }
+            case ValueKind::boolValue:
+            {
+                BoolValue* boolValue = static_cast<BoolValue*>(value);
+                return context.GetIntegerValue(static_cast<std::int64_t>(boolValue->GetValue()), enumConstantSymbol->Name(), value->GetType());
+            }
             }
             break;
         }
+        }
+        break;
+    }
     }
     return this;
 }
@@ -911,6 +924,9 @@ void EvaluationContext::AddValue(Value* value)
 
 void EvaluationContext::Write(Writer& writer, Context* context)
 {
+    bool skip = context->GetFlag(ContextFlags::skipMapIo);
+    writer.GetBinaryStreamWriter().Write(skip);
+    if (skip) return;
     trueValue.Write(writer);
     falseValue.Write(writer);
     nullPtrValue.Write(writer);
@@ -933,6 +949,8 @@ void EvaluationContext::Write(Writer& writer, Context* context)
 
 void EvaluationContext::Read(Reader& reader)
 {
+    bool skip = reader.GetBinaryStreamReader().ReadBool();
+    if (skip) return;
     readingEvaluationContext = true;
     trueValue.Read(reader);
     falseValue.Read(reader);

@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.bound.tree;
 
 import std;
@@ -85,7 +80,7 @@ enum class BoundNodeKind
     boundInvokeNode, boundFunctionPtrCallNode, boundEmptyFunctionCallNode, boundExpressionListNode,
     boundConjunctionNode, boundDisjunctionNode, boundConditionalExprNode, boundExpressionSequenceNode, boundConstructExpressionNode,
     boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundPtrToRefNode, boundDefaultInitNode,
-    boundTemporaryNode, boundConstructTemporaryNode, boundCtorInitializerNode, boundDtorTerminatorNode, boundEmptyDestructorNode,
+    boundTemporaryNode, boundConstructTemporaryNode, boundDestructTemporariesNode, boundCtorInitializerNode, boundDtorTerminatorNode, boundEmptyDestructorNode,
     boundHandlerNode, boundFunctionValueNode, boundVariableAsVoidPtrNode, boundAdjustedThisPtrNode, boundOperatorFnNode
 };
 
@@ -105,6 +100,7 @@ public:
     virtual bool IsBoundExpressionNode() const noexcept { return false; }
     inline bool IsBoundAddressOfNode() const noexcept { return kind == BoundNodeKind::boundAddressOfNode; }
     inline bool IsBoundDereferenceNode() const noexcept { return kind == BoundNodeKind::boundDereferenceNode; }
+    inline bool IsBoundRefToPtrNode() const noexcept { return kind == BoundNodeKind::boundRefToPtrNode; }
     inline bool IsReturnStatementNode() const noexcept { return kind == BoundNodeKind::boundReturnStatementNode; }
     virtual bool IsBoundCtorInitializerNode() const noexcept { return false; }
     virtual bool IsBoundDtorTerminatorNode() const noexcept { return false; }
@@ -139,15 +135,19 @@ public:
     inline bool IsBoundExpressionStatementNode() const noexcept { return kind == BoundNodeKind::boundExpressionStatementNode; }
     inline bool IsBoundSequenceStatementNode() const noexcept { return kind == BoundNodeKind::boundSequenceStatementNode; }
     inline bool IsBoundLiteralNode() const noexcept { return kind == BoundNodeKind::boundLiteralNode; }
+    inline bool IsBoundStringLiteralNode() const noexcept { return kind == BoundNodeKind::boundStringLiteralNode; }
     inline int Index() const noexcept { return index; }
     inline void SetIndex(int index_) noexcept { index = index_; }
     inline otava::ast::Node* Source() const noexcept { return source.get(); }
     inline void SetSource(otava::ast::Node* source_) noexcept { source.reset(source_); }
+    inline bool TemporaryDestructorCallsObtained() const noexcept { return temporaryDestructorCallsObtained; }
+    inline void SetTemporaryDestructorCallsObtained() noexcept { temporaryDestructorCallsObtained = true; }
 private:
     BoundNodeKind kind;
     int index;
     soul::ast::SourcePos sourcePos;
     std::unique_ptr<otava::ast::Node> source;
+    bool temporaryDestructorCallsObtained;
 };
 
 enum class BoundExpressionFlags
@@ -170,10 +170,13 @@ constexpr BoundExpressionFlags operator~(BoundExpressionFlags flag) noexcept
     return BoundExpressionFlags(~int(flag));
 }
 
+class BoundDestructTemporariesNode;
+
 class BoundExpressionNode : public BoundNode
 {
 public:
     BoundExpressionNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept;
+    ~BoundExpressionNode();
     inline BoundExpressionFlags Flags() const noexcept { return flags; }
     inline void SetFlags(BoundExpressionFlags flags_) noexcept { flags = flags_; }
     inline TypeSymbol* GetType() const noexcept { return type; }
@@ -187,15 +190,20 @@ public:
     virtual BoundExpressionNode* Clone() const = 0;
     inline bool GetFlag(BoundExpressionFlags flag) const noexcept { return (flags & flag) != BoundExpressionFlags::none; }
     inline void SetFlag(BoundExpressionFlags flag) noexcept { flags = flags | flag; }
+    bool IsBoundExpressionNode() const noexcept override { return true; }
     virtual bool IsBoundLocalVariable() const noexcept { return false; }
     virtual bool IsBoundMemberVariable() const noexcept { return false; }
     virtual bool IsBoundParentLocalVariable() const noexcept { return false; }
     virtual bool IsBoundParentMemberVariable() const noexcept { return false; }
     virtual bool IsLvalueExpression() const noexcept { return false; }
     virtual bool IsNoReturnFunctionCall() const noexcept { return false; }
+    void SetDestructTemporariesNode(BoundDestructTemporariesNode* destructTemporariesNode_) noexcept;
+    inline BoundDestructTemporariesNode* DestructTemporariesNode() const noexcept { return destructTemporariesNode; }
+    void DestructTemporaries(Emitter& emitter, Context* context);
 private:
     BoundExpressionFlags flags;
     TypeSymbol* type;
+    BoundDestructTemporariesNode* destructTemporariesNode;
 };
 
 class BoundValueExpressionNode : public BoundExpressionNode
@@ -321,6 +329,9 @@ public:
     inline otava::ast::Node* GetSetLineStatementNode() const { return setLineStatementNode.get(); }
     void SetBoundSetLineStatement(BoundStatementNode* boundSetLineStatement_);
     inline BoundStatementNode* GetBoundSetLineStatement() const { return boundSetLineStatement.get(); }
+    void AddTemporaryDestructorCall(BoundFunctionCallNode* temporaryDestructorCall);
+    inline bool HasTemporaryDestructorCalls() const noexcept { return !temporaryDestructorCalls.empty(); }
+    std::vector<std::unique_ptr<BoundFunctionCallNode>> GetTemporaryDestructorCalls();
 private:
     FunctionDefinitionSymbol* functionDefinitionSymbol;
     std::unique_ptr<BoundCtorInitializerNode> ctorInitializer;
@@ -330,12 +341,14 @@ private:
     int serial;
     std::unique_ptr<otava::ast::Node> setLineStatementNode;
     std::unique_ptr<BoundStatementNode> boundSetLineStatement;
+    std::vector<std::unique_ptr<BoundFunctionCallNode>> temporaryDestructorCalls;
 };
 
 class BoundStatementNode : public BoundNode
 {
 public:
     BoundStatementNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept;
+    ~BoundStatementNode();
     virtual std::string Name() const = 0;
     virtual BoundStatementNode* Clone() const = 0;
     bool IsBoundStatementNode() const noexcept override { return true; }
@@ -353,11 +366,15 @@ public:
     inline void SetStatementIndex(int statementIndex_) { statementIndex = statementIndex_; }
     bool IsConditionalStatementInBlock(BoundCompoundStatementNode* block) const noexcept;
     BoundCompoundStatementNode* Block() noexcept;
+    void SetDestructTemporariesNode(BoundDestructTemporariesNode* destructTemporariesNode_) noexcept;
+    inline BoundDestructTemporariesNode* DestructTemporariesNode() const noexcept { return destructTemporariesNode; }
+    void DestructTemporaries(Emitter& emitter, Context* context);
 private:
     BoundStatementNode* parent;
     bool generated;
     bool postfix;
     int statementIndex;
+    BoundDestructTemporariesNode* destructTemporariesNode;
 };
 
 class BoundEmptyStatementNode : public BoundStatementNode
@@ -386,7 +403,6 @@ public:
     inline void SetBlockId(int blockId_) noexcept { blockId = blockId_; }
 private:
     std::vector<std::unique_ptr<BoundStatementNode>> statements;
-    std::vector<std::unique_ptr<BoundConstructionStatementNode>> invokeStatementsWithDestructor;
     int blockId;
 };
 
@@ -538,7 +554,7 @@ private:
 class BoundSequenceStatementNode : public BoundStatementNode
 {
 public:
-    BoundSequenceStatementNode(const soul::ast::SourcePos & sourcePos_) noexcept;
+    BoundSequenceStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept;
     BoundSequenceStatementNode(const soul::ast::SourcePos& sourcePos_, BoundStatementNode* first_, BoundStatementNode* second_) noexcept;
     std::string Name() const override { return "sequence"; }
     void Accept(BoundTreeVisitor& visitor) override;
@@ -643,6 +659,7 @@ public:
     bool MayThrow() const noexcept override;
     inline BoundExpressionNode* ConstructorCall() const noexcept { return constructorCall.get(); }
     void SetConstructorCall(BoundExpressionNode* constructorCall_) { constructorCall.reset(constructorCall_); }
+    BoundExpressionNode* ReleaseConstructorCall() noexcept { return constructorCall.release(); }
     void SetDestructorCall(BoundExpressionNode* destructorCall_) noexcept;
     inline BoundExpressionNode* DestructorCall() const noexcept { return destructorCall.get(); }
     inline BoundExpressionNode* ReleaseDestructorCall() noexcept { return destructorCall.release(); }
@@ -1223,6 +1240,18 @@ private:
     std::unique_ptr<BoundExpressionNode> temporary;
 };
 
+class BoundDestructTemporariesNode : public BoundExpressionNode
+{
+public:
+    BoundDestructTemporariesNode(const soul::ast::SourcePos& sourcePos_, std::vector<std::unique_ptr<BoundFunctionCallNode>>&& temporaryDestructorCalls_);
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void Accept(BoundTreeVisitor& visitor) override;
+    BoundExpressionNode* Clone() const override;
+    void Merge(BoundDestructTemporariesNode* that);
+private:
+    std::vector<std::unique_ptr<BoundFunctionCallNode>> temporaryDestructorCalls;
+};
+
 class BoundConstructExpressionNode : public BoundExpressionNode
 {
 public:
@@ -1273,6 +1302,7 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     BoundExpressionNode* Clone() const override;
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    FunctionSymbol* GetFunction() const { return function; }
 private:
     FunctionSymbol* function;
 };

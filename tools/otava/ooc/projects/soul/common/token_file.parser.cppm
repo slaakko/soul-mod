@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'D:/work/soul-mod/soul/common/token_file.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/soul/common/token_file.parser' using soul parser generator ospg version 5.0.0
 
 export module soul.common.token.file.parser;
 

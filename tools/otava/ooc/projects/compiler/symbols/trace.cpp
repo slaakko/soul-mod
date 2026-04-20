@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.trace;
 
 import otava.symbols.function.symbol;
@@ -242,7 +237,7 @@ void WriteTraceBin(TraceBin& traceBin, const std::string& traceBinPath)
 
 void GenerateEnterFunctionCode(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* fn, Context* context)
 {
-    if (context->ReleaseConfig() && !(context->CurrentProject() && context->CurrentProject()->HasDefine("TRACE"))) return;
+    if (!(context->CurrentProject() && context->CurrentProject()->HasDefine("TRACE"))) return;
     if (!context->GetTraceInfo()) return;
     if (fn->ParentFn()) return; // child functions do not have enter function code
     Module* module = context->GetModule();

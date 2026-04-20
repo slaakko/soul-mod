@@ -738,7 +738,8 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
     }
     if (condition->GetType()->IsReferenceType())
     {
-        condition.reset(new BoundDereferenceNode(condition.release(), node.GetSourcePos(), condition->GetType()->GetBaseType()));
+        TypeSymbol* type = condition->GetType()->GetBaseType();
+        condition.reset(new BoundDereferenceNode(condition.release(), node.GetSourcePos(), type));
     }
     if (!condition->GetType()->IsBoolType())
     {
@@ -786,7 +787,8 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
     }
     if (condition->GetType()->IsReferenceType())
     {
-        condition.reset(new BoundDereferenceNode(condition.release(), node.GetSourcePos(), condition->GetType()->PlainType(context)));
+        TypeSymbol* type = condition->GetType()->PlainType(context);
+        condition.reset(new BoundDereferenceNode(condition.release(), node.GetSourcePos(), type));
     }
     TypeSymbol* switchCondType = condition->GetType();
     boundSwitchStatement->SetCondition(condition.release());
@@ -892,7 +894,8 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
         }
         if (condition->GetType()->IsReferenceType())
         {
-            condition.reset(new BoundDereferenceNode(condition.release(), node.GetSourcePos(), condition->GetType()->GetBaseType()));
+            TypeSymbol* type = condition->GetType()->GetBaseType();
+            condition.reset(new BoundDereferenceNode(condition.release(), node.GetSourcePos(), type));
         }
         if (!condition->GetType()->IsBoolType())
         {
@@ -948,7 +951,8 @@ void StatementBinder::Visit(otava::ast::DoStatementNode& node)
     }
     if (condition->GetType()->IsReferenceType())
     {
-        condition.reset(new BoundDereferenceNode(condition.release(), node.GetSourcePos(), condition->GetType()->GetBaseType()));
+        TypeSymbol* type = condition->GetType()->GetBaseType();
+        condition.reset(new BoundDereferenceNode(condition.release(), node.GetSourcePos(), type));
     }
     if (!condition->GetType()->IsBoolType())
     {
@@ -1110,7 +1114,8 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
         }
         if (condition->GetType()->IsReferenceType())
         {
-            condition.reset(new BoundDereferenceNode(condition.release(), node.GetSourcePos(), condition->GetType()->GetBaseType()));
+            TypeSymbol* type = condition->GetType()->GetBaseType();
+            condition.reset(new BoundDereferenceNode(condition.release(), node.GetSourcePos(), type));
         }
         if (!condition->GetType()->IsBoolType())
         {
@@ -2343,10 +2348,6 @@ FunctionDefinitionSymbol* BindFunction(otava::ast::Node* functionDefinitionNode,
     StatementBinder binder(context, functionDefinitionSymbol);
     context->PushStatementBinder(&binder);
     GenerateEnterFunctionCode(functionDefinitionNode, functionDefinitionSymbol, context);
-    if (functionDefinitionSymbol->GroupName() == U"foo")
-    {
-        int x = 0;
-    }
     functionDefinitionNode->Accept(binder);
     functionDefinitionSymbol = binder.GetFunctionDefinitionSymbol();
     bool hasNoReturnAttribute = false;

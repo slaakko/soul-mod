@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.exception;
 
 import otava.symbols.context;
@@ -55,18 +50,17 @@ std::string ReferenceInfo(const soul::ast::SourcePos& refSourcePos, otava::symbo
 {
     if (refSourcePos.IsValid())
     {
-        std::string message = "\nSee reference file " + SourceFilePath(refSourcePos, context) + ", line " + std::to_string(refSourcePos.line) + 
-            ErrorLine(refSourcePos, context);
+        std::string message = "\nSee reference file " + SourceFilePath(refSourcePos, context) + ", line " + std::to_string(refSourcePos.line) + ErrorLine(refSourcePos, context);
         return message;
     }
     return std::string();
 }
 
-Exception::Exception() : message("empty"), warning(false)
+Exception::Exception() : std::runtime_error("empty"), warning(false)
 {
 }
 
-Exception::Exception(const std::string& message_) : message(message_)
+Exception::Exception(const std::string& message_) : std::runtime_error(message_)
 {
 }
 
@@ -87,7 +81,7 @@ Exception::Exception(const std::string& title, const std::string& message_, cons
 
 Exception::Exception(const std::string& title_, const std::string& message_, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos,
     otava::symbols::Context* context) :
-    message(title_ + message_ + ", file '" + SourceFilePath(sourcePos, context) +
+    std::runtime_error(title_ + message_ + ", file '" + SourceFilePath(sourcePos, context) +
         "', line " + std::to_string(sourcePos.line) + ErrorLine(sourcePos, context) + ReferenceInfo(refSourcePos, context)), warning(false)
 {
 }
@@ -109,14 +103,14 @@ void ThrowException(const std::string& message, const soul::ast::SourcePos& sour
 void ThrowException(const Exception& ex)
 {
     exception_thrown = true;
-    throw Exception(ex);
+    throw ex;
 }
 
 void PrintWarning(const Exception& ex, Context* context)
 {
     if (!context->GetFlag(ContextFlags::noWarnings))
     {
-        std::cout << ex.Message() << std::endl;
+        std::cout << ex.what() << std::endl;
     }
 }
 

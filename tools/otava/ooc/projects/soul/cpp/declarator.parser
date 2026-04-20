@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module soul.cpp.declarator.parser;
 
 [interface]import soul.ast.cpp;
@@ -70,9 +65,9 @@ parser DeclaratorParser
         }
         ;
 
-    DeclaratorId : std::string
-        ::= IdExpression:idExpr{ return idExpr->ToString(); }
-        |   TypeName:typeName{ return typeName->ToString(); }
+    DeclaratorId(var std::unique_ptr<soul::ast::cpp::IdExprNode> idExpr, var std::unique_ptr<soul::ast::cpp::TypeNameNode> typeName) : std::string
+        ::= IdExpression:ie{ idExpr.reset(ie); return idExpr->ToString(); }
+        |   TypeName:tn{ typeName.reset(tn); return typeName->ToString(); }
         ;
 
     TypeId(var std::unique_ptr<soul::ast::cpp::TypeIdNode> typeId) : soul::ast::cpp::TypeIdNode*

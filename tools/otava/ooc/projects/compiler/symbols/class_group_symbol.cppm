@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.class_group.symbol;
 
 import std;
@@ -38,7 +33,7 @@ public:
     std::string SymbolKindStr() const override { return "class group symbol"; }
     std::string SymbolDocKindStr() const override { return "class_group"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
-    Symbol* GetSingleSymbol(Context* context) noexcept override;
+    Symbol* GetSingleSymbol(Context* contex) noexcept override;
     void AddClass(ClassTypeSymbol* classTypeSymbol);
     ClassTypeSymbol* GetClass(int arity) const noexcept;
     inline const std::vector<ClassTypeSymbol*>& Classes() const noexcept { return classes; }

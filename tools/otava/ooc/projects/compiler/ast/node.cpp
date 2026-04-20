@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.ast.node;
 
 import otava.ast.error;
@@ -1028,6 +1023,11 @@ thread_local NodeIdFactory* nodeIdFactory = nullptr;
 void SetNodeIdFactory(NodeIdFactory* factory) noexcept
 {
     nodeIdFactory = factory;
+}
+
+NodeIdFactory* GetNodeIdFactory()
+{
+    return nodeIdFactory;
 }
 
 std::int64_t GetNextNodeId() noexcept

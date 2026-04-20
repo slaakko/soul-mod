@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.function.group.symbol;
 
 import otava.symbols.reader;
@@ -24,19 +19,19 @@ bool FunctionGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noe
 {
     switch (scopeKind)
     {
-        case ScopeKind::namespaceScope:
-        case ScopeKind::templateDeclarationScope:
-        case ScopeKind::classScope:
-        case ScopeKind::enumerationScope:
-        case ScopeKind::arrayScope:
-        {
-            return true;
-        }
+    case ScopeKind::namespaceScope:
+    case ScopeKind::templateDeclarationScope:
+    case ScopeKind::classScope:
+    case ScopeKind::enumerationScope:
+    case ScopeKind::arrayScope:
+    {
+        return true;
+    }
     }
     return false;
 }
 
-Symbol* FunctionGroupSymbol::GetSingleSymbol(Context* context) noexcept
+Symbol* FunctionGroupSymbol::GetSingleSymbol(Context* contex) noexcept
 {
     if (functions.size() == 1)
     {

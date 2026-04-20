@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.symbol.factory;
 
 import otava.symbols.symbol;
@@ -104,13 +99,13 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
     {
         otava::ast::SetExceptionThrown();
         throw std::runtime_error("not implemented");
-        break;
+        return nullptr;
     }
     case SymbolKind::nullPtrTypeSymbol:
     {
         otava::ast::SetExceptionThrown();
         throw std::runtime_error("not implemented");
-        break;
+        return nullptr;
     }
     case SymbolKind::aliasTypeSymbol:
     {
@@ -196,7 +191,7 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
     {
         otava::ast::SetExceptionThrown();
         throw std::runtime_error("not implemented");
-        break;
+        return nullptr;
     }
     case SymbolKind::variableSymbol:
     {

@@ -1,0 +1,5 @@
+project fn;
+target=program;
+interface <a.cppm>;
+interface <b.cppm>;
+source <main.cpp>;

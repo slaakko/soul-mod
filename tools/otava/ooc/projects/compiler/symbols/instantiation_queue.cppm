@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 export module otava.symbols.instantiation_queue;
 
 import std;
@@ -14,6 +9,7 @@ import soul.ast.source.pos;
 
 export namespace otava::symbols {
 
+class FunctionSymbol;
 class TypeSymbol;
 class Context;
 

@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.variable.group.symbol;
 
 import otava.symbols.variable.symbol;
@@ -21,18 +16,18 @@ bool VariableGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const noe
 {
     switch (scopeKind)
     {
-        case ScopeKind::namespaceScope:
-        case ScopeKind::templateDeclarationScope:
-        case ScopeKind::classScope:
-        case ScopeKind::blockScope:
-        {
-            return true;
-        }
+    case ScopeKind::namespaceScope:
+    case ScopeKind::templateDeclarationScope:
+    case ScopeKind::classScope:
+    case ScopeKind::blockScope:
+    {
+        return true;
+    }
     }
     return false;
 }
 
-Symbol* VariableGroupSymbol::GetSingleSymbol(Context* context) noexcept
+Symbol* VariableGroupSymbol::GetSingleSymbol(Context* contex) noexcept
 {
     if (variables.size() == 1)
     {

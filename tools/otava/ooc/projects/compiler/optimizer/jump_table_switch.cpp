@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.optimizer.jump_table_switch;
 
 import otava.optimizer.optimizing_code_generator;

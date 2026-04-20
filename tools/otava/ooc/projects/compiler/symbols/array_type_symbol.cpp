@@ -1,8 +1,3 @@
-// =================================
-// Copyright (c) 2025 Seppo Laakko
-// Distributed under the MIT license
-// =================================
-
 module otava.symbols.array.type.symbol;
 
 import otava.symbols.writer;
@@ -78,7 +73,7 @@ void ArrayTypeSymbol::Accept(Visitor& visitor)
 
 otava::intermediate::Type* ArrayTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    util::uuid irId = IrId(context);
+    util::uuid irId = IrId(sourcePos, context);
     otava::intermediate::Type* type = emitter.GetType(irId);
     if (!type)
     {
@@ -140,6 +135,7 @@ ArrayTypeDefaultCtor::ArrayTypeDefaultCtor(ArrayTypeSymbol* arrayType_, Context*
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
     AddParameter(thisParam, soul::ast::SourcePos(), context);
+    SetNoExcept();
 }
 
 void ArrayTypeDefaultCtor::Write(Writer& writer)
@@ -208,6 +204,7 @@ ArrayTypeCopyCtor::ArrayTypeCopyCtor(ArrayTypeSymbol* arrayType_, Context* conte
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddConst(context)->AddLValueRef(context));
     AddParameter(thatParam, soul::ast::SourcePos(), context);
+    SetNoExcept();
 }
 
 void ArrayTypeCopyCtor::Write(Writer& writer)
@@ -351,6 +348,7 @@ ArrayTypeCopyAssignment::ArrayTypeCopyAssignment(ArrayTypeSymbol* arrayType_, Co
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddConst(context)->AddLValueRef(context));
     AddParameter(thatParam, soul::ast::SourcePos(), context);
     SetReturnType(arrayType->AddLValueRef(context), context);
+    SetNoExcept();
 }
 
 void ArrayTypeCopyAssignment::Write(Writer& writer)

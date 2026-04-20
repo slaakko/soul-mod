@@ -1,6 +1,6 @@
-// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/compiler/lexer/otava.token.line.lexer' using soul lexer generator oslg version 5.0.0
+// this file has been automatically generated from 'D:/work/test_soul/tools/otava/projects/compiler/lexer/otava.token.line.lexer' using soul lexer generator oslg version 5.0.0
 
-export module soul.cpp20.token.line.lexer;
+export module otava.token.line.lexer;
 
 import std;
 import soul.lexer;
@@ -9,7 +9,12 @@ import soul.ast.common;
 import util;
 import otava.token;
 
-export namespace soul::cpp20::token::line::lexer {
+export namespace otava::token::line::lexer {
+
+enum class Tag
+{
+    tag
+};
 
 std::mutex& MakeLexerMtx();
 
@@ -22,7 +27,7 @@ soul::lexer::Lexer<OtavaTokenLineLexer<Char>, Char> MakeLexer(const Char* start,
 template<typename Char>
 soul::lexer::Lexer<OtavaTokenLineLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);
 
-soul::ast::common::TokenCollection* GetTokens();
+soul::ast::common::TokenCollection* GetTokens(otava::token::line::lexer::Tag tag);
 
 struct OtavaTokenLineLexer_Variables : public soul::lexer::Variables
 {
@@ -18384,42 +18389,42 @@ struct OtavaTokenLineLexer
 };
 
 template<typename Char>
-soul::lexer::ClassMap<Char>* GetClassMap()
+soul::lexer::ClassMap<Char>* GetClassMap(otava::token::line::lexer::Tag tag)
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("soul.cpp20.token.line.lexer.classmap");
-    return classmap;
+    static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>("otava.token.line.lexer.classmap"));
+    return classmap.get();
 }
 
 template<typename Char>
-soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)
+soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags, otava::token::line::lexer::Tag tag)
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "soul.cpp20.token.line.lexer.classmap", resourceFlags);
-    return classmap;
+    static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>(moduleFileName, "otava.token.line.lexer.classmap", resourceFlags));
+    return classmap.get();
 }
 
 template<typename Char>
-soul::lexer::KeywordMap<Char>* GetKeywords();
+soul::lexer::KeywordMap<Char>* GetKeywords(otava::token::line::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char>* GetKeywords<char>();
+soul::lexer::KeywordMap<char>* GetKeywords<char>(otava::token::line::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>();
+soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>(otava::token::line::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>();
+soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>(otava::token::line::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>();
+soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>(otava::token::line::lexer::Tag tag);
 
 template<typename Char>
 soul::lexer::Lexer<OtavaTokenLineLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName)
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<OtavaTokenLineLexer<Char>, Char>(start, end, fileName);
-    lexer.SetClassMap(GetClassMap<Char>());
-    lexer.SetTokenCollection(GetTokens());
-    lexer.SetKeywordMap(GetKeywords<Char>());
+    lexer.SetClassMap(GetClassMap<Char>(otava::token::line::lexer::Tag()));
+    lexer.SetTokenCollection(GetTokens(otava::token::line::lexer::Tag()));
+    lexer.SetKeywordMap(GetKeywords<Char>(otava::token::line::lexer::Tag()));
     return lexer;
 }
 
@@ -18428,10 +18433,10 @@ soul::lexer::Lexer<OtavaTokenLineLexer<Char>, Char> MakeLexer(const std::string&
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<OtavaTokenLineLexer<Char>, Char>(start, end, fileName);
-    lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags));
-    lexer.SetTokenCollection(GetTokens());
-    lexer.SetKeywordMap(GetKeywords<Char>());
+    lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags, otava::token::line::lexer::Tag()));
+    lexer.SetTokenCollection(GetTokens(otava::token::line::lexer::Tag()));
+    lexer.SetKeywordMap(GetKeywords<Char>(otava::token::line::lexer::Tag()));
     return lexer;
 }
 
-} // namespace soul::cpp20::token::line::lexer
+} // namespace otava::token::line::lexer

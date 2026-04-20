@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'D:/work/soul-mod/soul/spg/spg_file.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/soul/ospg/spg_file.parser' using soul parser generator ospg version 5.0.0
 
 module soul.spg.spg.file.parser;
 
@@ -19,23 +19,23 @@ template<typename LexerT>
 std::unique_ptr<soul::ast::spg::SpgFile> SpgFileParser<LexerT>::Parse(LexerT& lexer)
 {
     std::unique_ptr<soul::ast::spg::SpgFile> value;
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
     {
         lexer.Log()->WriteBeginRule("parse");
         lexer.Log()->IncIndent();
     }
-#endif
+    #endif
     ++lexer;
     soul::parser::Match match = SpgFileParser<LexerT>::SpgFile(lexer);
     value.reset(static_cast<soul::ast::spg::SpgFile*>(match.value));
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
     {
         lexer.Log()->DecIndent();
         lexer.Log()->WriteEndRule("parse");
     }
-#endif
+    #endif
     if (match.hit)
     {
         if (*lexer == soul::lexer::END_TOKEN)
@@ -57,7 +57,7 @@ std::unique_ptr<soul::ast::spg::SpgFile> SpgFileParser<LexerT>::Parse(LexerT& le
 template<typename LexerT>
 soul::parser::Match SpgFileParser<LexerT>::SpgFile(LexerT& lexer)
 {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
@@ -65,7 +65,7 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFile(LexerT& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "SpgFile");
     }
-#endif
+    #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8393744626267193345);
     std::unique_ptr<soul::ast::spg::SpgFile> spgFile = std::unique_ptr<soul::ast::spg::SpgFile>();
     std::unique_ptr<soul::parser::Value<std::string>> projectName;
@@ -184,21 +184,21 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFile(LexerT& lexer)
         if (match.hit)
         {
             {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SpgFile");
-#endif
+                #endif
                 return soul::parser::Match(true, spgFile.release());
             }
         }
         *parentMatch0 = match;
     }
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)
     {
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SpgFile");
         else soul::lexer::WriteFailureToLog(lexer, "SpgFile");
     }
-#endif
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -209,7 +209,7 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFile(LexerT& lexer)
 template<typename LexerT>
 soul::parser::Match SpgFileParser<LexerT>::SpgFileDeclaration(LexerT& lexer)
 {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
@@ -217,7 +217,7 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFileDeclaration(LexerT& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "SpgFileDeclaration");
     }
-#endif
+    #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8393744626267193346);
     std::unique_ptr<soul::ast::spg::ParserFileDeclaration> parserFileDeclaration;
     std::unique_ptr<soul::ast::spg::SpgFileDeclaration> tokenFileDeclaration;
@@ -234,9 +234,9 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFileDeclaration(LexerT& lexer)
             if (match.hit)
             {
                 {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SpgFileDeclaration");
-#endif
+                    #endif
                     return soul::parser::Match(true, parserFileDeclaration.release());
                 }
             }
@@ -258,9 +258,9 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFileDeclaration(LexerT& lexer)
                     if (match.hit)
                     {
                         {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+                            #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SpgFileDeclaration");
-#endif
+                            #endif
                             return soul::parser::Match(true, tokenFileDeclaration.release());
                         }
                     }
@@ -271,13 +271,13 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFileDeclaration(LexerT& lexer)
             *parentMatch0 = match;
         }
     }
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)
     {
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SpgFileDeclaration");
         else soul::lexer::WriteFailureToLog(lexer, "SpgFileDeclaration");
     }
-#endif
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -288,7 +288,7 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFileDeclaration(LexerT& lexer)
 template<typename LexerT>
 soul::parser::Match SpgFileParser<LexerT>::ParserFileDeclaration(LexerT& lexer)
 {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
@@ -296,7 +296,7 @@ soul::parser::Match SpgFileParser<LexerT>::ParserFileDeclaration(LexerT& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ParserFileDeclaration");
     }
-#endif
+    #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8393744626267193347);
     bool external = bool();
     std::unique_ptr<soul::parser::Value<std::string>> filePath;
@@ -411,21 +411,21 @@ soul::parser::Match SpgFileParser<LexerT>::ParserFileDeclaration(LexerT& lexer)
         if (match.hit)
         {
             {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ParserFileDeclaration");
-#endif
+                #endif
                 return soul::parser::Match(true, new soul::ast::spg::ParserFileDeclaration(lexer.GetSourcePos(pos), filePath->value, external));
             }
         }
         *parentMatch0 = match;
     }
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)
     {
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ParserFileDeclaration");
         else soul::lexer::WriteFailureToLog(lexer, "ParserFileDeclaration");
     }
-#endif
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -436,7 +436,7 @@ soul::parser::Match SpgFileParser<LexerT>::ParserFileDeclaration(LexerT& lexer)
 template<typename LexerT>
 soul::parser::Match SpgFileParser<LexerT>::TokenFileDeclaration(LexerT& lexer)
 {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
@@ -444,7 +444,7 @@ soul::parser::Match SpgFileParser<LexerT>::TokenFileDeclaration(LexerT& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "TokenFileDeclaration");
     }
-#endif
+    #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8393744626267193348);
     bool external = bool();
     std::unique_ptr<soul::parser::Value<std::string>> filePath;
@@ -564,21 +564,21 @@ soul::parser::Match SpgFileParser<LexerT>::TokenFileDeclaration(LexerT& lexer)
         if (match.hit)
         {
             {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TokenFileDeclaration");
-#endif
+                #endif
                 return soul::parser::Match(true, new soul::ast::spg::TokenFileDeclaration(lexer.GetSourcePos(pos), filePath->value, external));
             }
         }
         *parentMatch0 = match;
     }
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)
     {
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TokenFileDeclaration");
         else soul::lexer::WriteFailureToLog(lexer, "TokenFileDeclaration");
     }
-#endif
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

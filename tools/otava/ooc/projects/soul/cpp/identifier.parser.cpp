@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'D:/work/soul-mod/soul/cpp/identifier.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/projects/soul/cpp/identifier.parser' using soul parser generator ospg version 5.0.0
 
 module soul.cpp.identifier.parser;
 
@@ -18,7 +18,7 @@ namespace soul::cpp::identifier::parser {
 template<typename LexerT>
 soul::parser::Match CppIdentifierParser<LexerT>::CppIdentifier(LexerT& lexer)
 {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
@@ -26,7 +26,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::CppIdentifier(LexerT& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "CppIdentifier");
     }
-#endif
+    #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2155528619961614337);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -41,21 +41,21 @@ soul::parser::Match CppIdentifierParser<LexerT>::CppIdentifier(LexerT& lexer)
         if (match.hit)
         {
             {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CppIdentifier");
-#endif
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(util::ToUtf8(lexer.GetToken(pos).ToString())));
             }
         }
         *parentMatch0 = match;
     }
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)
     {
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CppIdentifier");
         else soul::lexer::WriteFailureToLog(lexer, "CppIdentifier");
     }
-#endif
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -66,7 +66,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::CppIdentifier(LexerT& lexer)
 template<typename LexerT>
 soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
 {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
@@ -74,7 +74,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedCppId");
     }
-#endif
+    #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2155528619961614338);
     std::string str = std::string();
     soul::parser::Match match(false);
@@ -227,21 +227,21 @@ soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
         if (match.hit)
         {
             {
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "QualifiedCppId");
-#endif
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(str));
             }
         }
         *parentMatch0 = match;
     }
-#ifdef SOUL_PARSER_DEBUG_SUPPORT
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)
     {
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "QualifiedCppId");
         else soul::lexer::WriteFailureToLog(lexer, "QualifiedCppId");
     }
-#endif
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

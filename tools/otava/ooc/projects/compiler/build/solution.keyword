@@ -1,0 +1,4 @@
+keywords otava.build.solution_keyword
+{
+    ("solution", SOLUTION), ("project", PROJECT)
+}
