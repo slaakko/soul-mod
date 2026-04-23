@@ -19,6 +19,7 @@ export namespace otava::symbols {
 class TypeSymbol;
 class Value;
 class BlockSymbol;
+class ClassParsingMap;
 
 class ParameterSymbol : public Symbol
 {
@@ -67,8 +68,14 @@ public:
     inline void SetFunctionKind(FunctionKind kind_) noexcept { kind = kind_; }
     inline FunctionQualifiers Qualifiers() const noexcept { return qualifiers; }
     inline void SetFunctionQualifiers(FunctionQualifiers qualifiers_) noexcept { qualifiers = qualifiers_; }
-    inline bool IsInline() const noexcept { return GetFlag(FunctionSymbolFlags::inline_); }
-    inline void SetInline() noexcept { SetFlag(FunctionSymbolFlags::inline_); }
+    virtual bool IsInline() const noexcept { return GetFlag(FunctionSymbolFlags::inline_); }
+    virtual void SetInline() noexcept { SetFlag(FunctionSymbolFlags::inline_); }
+    virtual bool IsUnparsed() const noexcept { return GetFlag(FunctionSymbolFlags::unparsed); }
+    virtual void SetUnparsed() noexcept { SetFlag(FunctionSymbolFlags::unparsed); }
+    virtual void ResetUnparsed() noexcept { ResetFlag(FunctionSymbolFlags::unparsed); }
+    virtual  bool Parsing() const noexcept { return GetFlag(FunctionSymbolFlags::parsing); }
+    virtual void SetParsing() noexcept { SetFlag(FunctionSymbolFlags::parsing); }
+    virtual void ResetParsing() noexcept { ResetFlag(FunctionSymbolFlags::parsing); }
     inline bool IsGenerated() const noexcept { return GetFlag(FunctionSymbolFlags::generated); }
     inline void SetGenerated() noexcept { SetFlag(FunctionSymbolFlags::generated); }
     inline bool IsConversion() const noexcept { return GetFlag(FunctionSymbolFlags::conversion); }
@@ -152,6 +159,7 @@ public:
     inline void SetIndex(std::int32_t index_) noexcept { index = index_; }
     inline bool GetFlag(FunctionSymbolFlags flag) const noexcept { return (flags & flag) != FunctionSymbolFlags::none; }
     inline void SetFlag(FunctionSymbolFlags flag) noexcept { flags = flags | flag; }
+    inline void ResetFlag(FunctionSymbolFlags flag) noexcept { flags = flags & ~flag; }
     inline bool IsBound() const noexcept { return GetFlag(FunctionSymbolFlags::bound); }
     inline void SetBound() noexcept { SetFlag(FunctionSymbolFlags::bound); }
     inline bool IsSpecialization() const noexcept { return GetFlag(FunctionSymbolFlags::specialization); }
@@ -175,6 +183,8 @@ public:
     void SetTemplateArgs(const std::vector<TypeSymbol*>& templateArgs_);
     soul::xml::Element* ToXml() const override;
     void PrintLocals();
+    virtual ClassParsingMap* GetClassParsingMap() const noexcept;
+    virtual void SetClassParsingMap(ClassParsingMap* classParsingMap_) noexcept;
 private:
     mutable bool memFunParamsConstructed;
     FunctionKind kind;
@@ -205,6 +215,7 @@ private:
     FunctionGroupSymbol* group;
     std::vector<std::unique_ptr<ParameterSymbol>> temporaryParams;
     std::string compileUnitId;
+    ClassParsingMap* classParsingMap;
 };
 
 class FunctionDefinitionSymbol : public FunctionSymbol
@@ -236,6 +247,14 @@ public:
     void SetNoExcept() noexcept override;
     void SetOverride() noexcept override;
     void SetFinal() noexcept override;
+    bool IsInline() const noexcept override;
+    void SetInline() noexcept override;
+    bool IsUnparsed() const noexcept override;
+    void SetUnparsed() noexcept override;
+    void ResetUnparsed() noexcept override;
+    bool Parsing() const noexcept override;
+    void SetParsing() noexcept override;
+    void ResetParsing() noexcept override;
     std::int32_t VTabIndex() const noexcept override;
     bool IsStatic() const noexcept override;
     bool IsExplicit() const noexcept override;
@@ -258,6 +277,8 @@ public:
     void MapBlock(int blockId, Symbol* block);
     Symbol* GetBlock(int blockId) const noexcept;
     inline void SetFnDefNode(otava::ast::FunctionDefinitionNode* fnDefNode_) { fnDefNode.reset(fnDefNode_); }
+    ClassParsingMap* GetClassParsingMap() const noexcept override;
+    void SetClassParsingMap(ClassParsingMap* classParsingMap_) noexcept override;
 private:
     FunctionSymbol* declaration;
     util::uuid declarationId;

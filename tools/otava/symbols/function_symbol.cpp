@@ -322,7 +322,8 @@ FunctionSymbol::FunctionSymbol(const std::u32string& name_) :
     conversionParamType(nullptr), 
     conversionArgType(nullptr),
     conversionDistance(0),
-    group(nullptr)
+    group(nullptr),
+    classParsingMap(nullptr)
 {
     GetScope()->SetKind(ScopeKind::functionScope);
 }
@@ -1340,6 +1341,16 @@ void FunctionSymbol::PrintLocals()
     }
 }
 
+ClassParsingMap* FunctionSymbol::GetClassParsingMap() const noexcept
+{
+    return classParsingMap;
+}
+
+void FunctionSymbol::SetClassParsingMap(ClassParsingMap* classParsingMap_) noexcept
+{
+    classParsingMap = classParsingMap_;
+}
+
 FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : 
     FunctionSymbol(SymbolKind::functionDefinitionSymbol, name_), 
     declaration(), 
@@ -1557,6 +1568,77 @@ void FunctionDefinitionSymbol::SetFinal() noexcept
     FunctionSymbol::SetFinal();
 }
 
+bool FunctionDefinitionSymbol::IsInline() const noexcept
+{
+    if (declaration)
+    {
+        return declaration->IsInline();
+    }
+    return FunctionSymbol::IsInline();
+}
+void FunctionDefinitionSymbol::SetInline() noexcept
+{
+    if (declaration)
+    {
+        declaration->SetInline();
+    }
+    FunctionSymbol::SetInline();
+}
+
+bool FunctionDefinitionSymbol::IsUnparsed() const noexcept
+{
+    if (declaration)
+    {
+        return declaration->IsUnparsed();
+    }
+    return FunctionSymbol::IsUnparsed();
+}
+
+void FunctionDefinitionSymbol::SetUnparsed() noexcept
+{
+    if (declaration)
+    {
+        declaration->SetUnparsed();
+    }
+    FunctionSymbol::SetUnparsed();
+}
+
+void FunctionDefinitionSymbol::ResetUnparsed() noexcept
+{
+    if (declaration)
+    {
+        declaration->ResetUnparsed();
+    }
+    FunctionSymbol::ResetUnparsed();
+}
+
+bool FunctionDefinitionSymbol::Parsing() const noexcept
+{
+    if (declaration)
+    {
+        return declaration->Parsing();
+    }
+    return FunctionSymbol::Parsing();
+}
+
+void FunctionDefinitionSymbol::SetParsing() noexcept
+{
+    if (declaration)
+    {
+        declaration->SetParsing();
+    }
+    FunctionSymbol::SetParsing();
+}
+
+void FunctionDefinitionSymbol::ResetParsing() noexcept
+{
+    if (declaration)
+    {
+        declaration->ResetParsing();
+    }
+    FunctionSymbol::ResetParsing();
+}
+
 std::int32_t FunctionDefinitionSymbol::VTabIndex() const noexcept
 {
     if (declaration)
@@ -1697,6 +1779,24 @@ Symbol* FunctionDefinitionSymbol::GetBlock(int blockId) const noexcept
         return it->second;
     }
     return nullptr;
+}
+
+ClassParsingMap* FunctionDefinitionSymbol::GetClassParsingMap() const noexcept
+{
+    if (declaration)
+    {
+        return declaration->GetClassParsingMap();
+    }
+    return FunctionSymbol::GetClassParsingMap();
+}
+
+void FunctionDefinitionSymbol::SetClassParsingMap(ClassParsingMap* classParsingMap_) noexcept
+{
+    if (declaration)
+    {
+        declaration->SetClassParsingMap(classParsingMap_);
+    }
+    FunctionSymbol::SetClassParsingMap(classParsingMap_);
 }
 
 ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol_,

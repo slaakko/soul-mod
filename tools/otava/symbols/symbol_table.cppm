@@ -238,7 +238,7 @@ public:
     inline const std::set<ClassTypeSymbol*>& Classes() const { return allClasses; }
     inline void SetNodeMap(otava::ast::NodeMap* nodeMap_) { nodeMap = nodeMap_; }
     inline otava::ast::NodeMap* GetNodeMap() { return nodeMap; }
-    inline void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
+    void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
     inline SymbolMap* GetSymbolMap() const { return symbolMap; }
     inline ConversionTable& GetConversionTable() { return *conversionTable; }
     inline const ConversionTable& GetConversionTable() const { return *conversionTable; }

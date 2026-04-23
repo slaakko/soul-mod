@@ -12,6 +12,7 @@ import otava.symbols.function.kind;
 import otava.ast.node;
 import otava.ast.statement;
 import otava.ast.classes;
+import otava.ast.function;
 import otava.intermediate.data;
 
 export namespace otava::symbols {
@@ -222,13 +223,26 @@ private:
     ClassGroupSymbol* group;
 };
 
+class ClassParsingMap
+{
+public:
+    ClassParsingMap();
+    inline const std::vector<FunctionSymbol*>& Functions() const noexcept { return fns; }
+    otava::ast::FunctionDefinitionNode* GetFunctionDefnitionNode(FunctionSymbol* fn)  const noexcept;
+    void MapFunctionDefinitionNode(FunctionSymbol* fn, otava::ast::FunctionDefinitionNode* node);
+private:
+    std::vector<FunctionSymbol*> fns;
+    std::map<FunctionSymbol*, otava::ast::FunctionDefinitionNode*> map;
+};
+
 void BeginClass(otava::ast::Node* node, Context* context);
 void EndClass(otava::ast::Node* node, Context* context);
 void ProcessElaboratedClassDeclaration(otava::ast::Node* node, otava::symbols::Context* context);
 void SetCurrentAccess(otava::ast::Node* node, otava::symbols::Context* context);
 void GetClassAttributes(otava::ast::Node* node, std::u32string& name, otava::symbols::ClassKind& kind, TypeSymbol*& specialization, Context* context);
 std::vector<ClassTypeSymbol*> ResolveBaseClasses(otava::ast::Node* node, Context* context);
-void ParseInlineMemberFunctions(otava::ast::Node* classSpecifierNode, ClassTypeSymbol* classTypeSymbol, otava::symbols::Context* context);
+void ParseInlineMemberFunctions(otava::ast::Node* classSpecifierNode, ClassTypeSymbol* classTypeSymbol, Context* context);
+void ParseInlineMemberFunction(Context* context, FunctionSymbol* memfn);
 Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 void GenerateDestructors(BoundCompileUnitNode* compileUnit, otava::symbols::Context* context);
 BoundFunctionCallNode* MakeDestructorCall(ClassTypeSymbol* cls, BoundExpressionNode* arg, FunctionDefinitionSymbol* destructor,

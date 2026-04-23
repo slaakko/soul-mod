@@ -1190,6 +1190,26 @@ std::vector<ClassTypeSymbol*> ResolveBaseClasses(otava::ast::Node* node, Context
     return resolver.BaseClasses();
 }
 
+ClassParsingMap::ClassParsingMap() : map()
+{
+}
+
+otava::ast::FunctionDefinitionNode* ClassParsingMap::GetFunctionDefnitionNode(FunctionSymbol* fn) const noexcept
+{
+    auto it = map.find(fn);
+    if (it != map.end())
+    {
+        return it->second;
+    }
+    return nullptr;
+}
+
+void ClassParsingMap::MapFunctionDefinitionNode(FunctionSymbol* fn, otava::ast::FunctionDefinitionNode* node)
+{
+    fns.push_back(fn);
+    map[fn] = node;
+}
+
 void BeginClass(otava::ast::Node* node, Context* context)
 {
     std::u32string name;
@@ -1287,25 +1307,69 @@ void SetCurrentAccess(otava::ast::Node* node, otava::symbols::Context* context)
     }
 }
 
-class InlineMemberFunctionParserVisitor : public otava::ast::DefaultVisitor
+class FunctionDefinitionMapBuilderVisitor : public otava::ast::DefaultVisitor
 {
 public:
-    InlineMemberFunctionParserVisitor(Context* context_);
+    FunctionDefinitionMapBuilderVisitor(Context* context_);
     void Visit(otava::ast::FunctionDefinitionNode& node) override;
+    ClassParsingMap* GetClassParsingMap() const { return classParsingMap.get(); }
 private:
     Context* context;
+    std::unique_ptr<ClassParsingMap> classParsingMap;
 };
 
-InlineMemberFunctionParserVisitor::InlineMemberFunctionParserVisitor(Context* context_) : context(context_)
+FunctionDefinitionMapBuilderVisitor::FunctionDefinitionMapBuilderVisitor(Context* context_) : context(context_), classParsingMap(new ClassParsingMap())
 {
 }
 
-void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode& node)
+void FunctionDefinitionMapBuilderVisitor::Visit(otava::ast::FunctionDefinitionNode& node)
 {
+    Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
+    FunctionSymbol* functionSymbol = nullptr;
+    if (symbol->IsFunctionSymbol())
+    {
+        functionSymbol = static_cast<FunctionSymbol*>(symbol);
+    }
+    else
+    {
+        ThrowException("function symbol expected", node.GetSourcePos(), context);
+    }
+    functionSymbol->SetClassParsingMap(classParsingMap.get());
+    functionSymbol->SetUnparsed();
+    classParsingMap->MapFunctionDefinitionNode(functionSymbol, &node);
+}
+
+void ParseInlineMemberFunctions(otava::ast::Node* classSpecifierNode, ClassTypeSymbol* classTypeSymbol, Context* context)
+{
+    context->GetSymbolTable()->BeginScope(classTypeSymbol->GetScope());
+    FunctionDefinitionMapBuilderVisitor visitor(context);
+    classSpecifierNode->Accept(visitor);
+    ClassParsingMap* classParsingMap = visitor.GetClassParsingMap();
+    for (auto* fn : classParsingMap->Functions())
+    {
+        ParseInlineMemberFunction(context, fn);
+    }
+    context->GetSymbolTable()->EndScope();
+}
+
+void ParseInlineMemberFunction(Context* context, FunctionSymbol* memfn)
+{
+    ClassParsingMap* classParsingMap = memfn->GetClassParsingMap();
+    if (!classParsingMap) return;
+    if (!memfn->IsUnparsed()) return;
+    if (memfn->Parsing() && memfn->IsInline())
+    {
+        ThrowException("inline member function cannot be recursive", memfn->GetSourcePos(), context);
+    }
+    memfn->SetParsing();
+    otava::ast::FunctionDefinitionNode* node = classParsingMap->GetFunctionDefnitionNode(memfn);
+    if (!node)
+    {
+        ThrowException("error parsing inline member function: function definition node not found", memfn->GetSourcePos(), context);
+    }
     try
     {
-        Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
-        otava::ast::Node* fnBody = node.FunctionBody();
+        otava::ast::Node* fnBody = node->FunctionBody();
         otava::ast::ConstructorInitializerNode* ctorInitializerNode = nullptr;
         otava::ast::CompoundStatementNode* compoundStatementNode = nullptr;
         otava::ast::ConstructorNode* constructorNode = nullptr;
@@ -1318,7 +1382,7 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
         }
         else if (fnBody->IsFunctionBodyNode())
         {
-            functionBodyNode = static_cast<otava::ast::FunctionBodyNode*>(node.FunctionBody());
+            functionBodyNode = static_cast<otava::ast::FunctionBodyNode*>(node->FunctionBody());
             compoundStatementNode = static_cast<otava::ast::CompoundStatementNode*>(functionBodyNode->Child());
         }
         if (ctorInitializerNode)
@@ -1335,20 +1399,11 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
                 RecordedParseCompoundStatement(compoundStatementNode, context);
             }
         }
-        FunctionSymbol* functionSymbol = nullptr;
-        if (symbol->IsFunctionSymbol())
+        if (!context->GetFlag(ContextFlags::parsingTemplateDeclaration) && memfn->IsFunctionDefinitionSymbol())
         {
-            functionSymbol = static_cast<FunctionSymbol*>(symbol);
-        }
-        else
-        {
-            ThrowException("function symbol expected", node.GetSourcePos(), context);
-        }
-        if (!context->GetFlag(ContextFlags::parsingTemplateDeclaration) && functionSymbol->IsFunctionDefinitionSymbol())
-        {
-            FunctionDefinitionSymbol* functionDefinitionSymbol = static_cast<FunctionDefinitionSymbol*>(functionSymbol);
-            context->PushBoundFunction(new BoundFunctionNode(functionDefinitionSymbol, node.GetSourcePos()));
-            functionDefinitionSymbol = BindFunction(&node, functionDefinitionSymbol, context);
+            FunctionDefinitionSymbol* functionDefinitionSymbol = static_cast<FunctionDefinitionSymbol*>(memfn);
+            context->PushBoundFunction(new BoundFunctionNode(functionDefinitionSymbol, node->GetSourcePos()));
+            functionDefinitionSymbol = BindFunction(node, functionDefinitionSymbol, context);
             std::unique_ptr<BoundNode> boundFunctionNode(context->ReleaseBoundFunction());
             if (functionDefinitionSymbol->IsBound())
             {
@@ -1360,16 +1415,11 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
     }
     catch (const std::exception& ex)
     {
-        ThrowException("error parsing inline member function body: " + std::string(ex.what()), node.GetSourcePos(), context);
+        ThrowException("error parsing inline member function body: " + std::string(ex.what()), node->GetSourcePos(), context);
     }
-}
-
-void ParseInlineMemberFunctions(otava::ast::Node* classSpecifierNode, ClassTypeSymbol* classTypeSymbol, otava::symbols::Context* context)
-{
-    context->GetSymbolTable()->BeginScope(classTypeSymbol->GetScope());
-    InlineMemberFunctionParserVisitor visitor(context);
-    classSpecifierNode->Accept(visitor);
-    context->GetSymbolTable()->EndScope();
+    memfn->ResetUnparsed();
+    memfn->ResetParsing();
+    memfn->SetClassParsingMap(nullptr);
 }
 
 bool ClassLess::operator()(ClassTypeSymbol* left, ClassTypeSymbol* right) const noexcept

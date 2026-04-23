@@ -1380,6 +1380,7 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
     if (instantiate)
     {
         context->PushResetFlag(ContextFlags::makeChildFn | ContextFlags::invoke | ContextFlags::tryCatch);
+        ParseInlineMemberFunction(context, bestMatch->function);
         if (bestMatch->function->IsTemplate())
         {
             bestMatch->function = InstantiateFunctionTemplate(bestMatch->function, bestMatch->templateParameterMap, sourcePos, context);

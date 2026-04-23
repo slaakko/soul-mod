@@ -781,7 +781,7 @@ public:
     inline void SetLevel(int level_) noexcept { level = level_; }
     void Accept(BoundTreeVisitor& visitor) override;
     bool HasValue() const noexcept override { return true; }
-    inline VariableSymbol* GetVariable() const noexcept { return variable; }
+    VariableSymbol* GetVariable() const noexcept { return variable; }
     BoundExpressionNode* ThisPtr() const noexcept { return thisPtr.get(); }
     void SetThisPtr(BoundExpressionNode* thisPtr_) noexcept;
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
