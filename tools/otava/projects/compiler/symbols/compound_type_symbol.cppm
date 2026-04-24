@@ -22,7 +22,7 @@ public:
     TypeSymbol* PlainType(Context* context) noexcept override;
     bool IsVoidPtrType() const noexcept override { return baseType->IsVoidType(); }
     int PointerCount() const noexcept override;
-    inline TypeSymbol* BaseType() const { return baseType; }
+    inline TypeSymbol* BaseType() const noexcept { return baseType; }
     Derivations GetDerivations() const noexcept override { return derivations; }
     TypeSymbol* RemoveDerivations(Derivations sourceDerivations, Context* context) override;
     TypeSymbol* Unify(TypeSymbol* argType, Context* context) override;

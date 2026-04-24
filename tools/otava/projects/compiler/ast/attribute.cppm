@@ -130,7 +130,8 @@ class AlignmentSpecifierNode : public CompoundNode
 {
 public:
     AlignmentSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    AlignmentSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* alignment_, Node* ellipsis_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept;
+    AlignmentSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* alignment_, Node* ellipsis_, const soul::ast::SourcePos& lpPos_, 
+        const soul::ast::SourcePos& rpPos_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;

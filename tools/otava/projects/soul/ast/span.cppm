@@ -41,7 +41,7 @@ inline bool operator==(const FullSpan& left, const FullSpan& right) noexcept
     return left.moduleId == right.moduleId && left.fileIndex == right.fileIndex && left.span == right.span;
 }
 
-inline bool operator!= (const FullSpan& left, const FullSpan& right) noexcept
+inline bool operator!=(const FullSpan& left, const FullSpan& right) noexcept
 {
     return !(left == right);
 }

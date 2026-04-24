@@ -226,23 +226,23 @@ public:
     BoundCompileUnitNode();
     ~BoundCompileUnitNode();
     void Sort();
-    inline OperationRepository* GetOperationRepository() const { return operationRepository.get(); }
-    inline ArgumentConversionTable* GetArgumentConversionTable() const { return argumentConversionTable.get(); }
-    inline FunctionTemplateRepository* GetFunctionTemplateRepository() const { return functionTemplateRepository.get(); }
-    inline ClassTemplateRepository* GetClassTemplateRepository() const { return classTemplateRepository.get(); }
-    inline InlineFunctionRepository* GetInlineFunctionRepository() const { return inlineFunctionRepository.get(); }
-    inline BoundFunctionNode* GetCompileUnitInitializationFunction() { return compileUnitInitializationFunction; }
+    inline OperationRepository* GetOperationRepository() const noexcept { return operationRepository.get(); }
+    inline ArgumentConversionTable* GetArgumentConversionTable() const noexcept { return argumentConversionTable.get(); }
+    inline FunctionTemplateRepository* GetFunctionTemplateRepository() const noexcept { return functionTemplateRepository.get(); }
+    inline ClassTemplateRepository* GetClassTemplateRepository() const noexcept { return classTemplateRepository.get(); }
+    inline InlineFunctionRepository* GetInlineFunctionRepository() const noexcept { return inlineFunctionRepository.get(); }
+    inline BoundFunctionNode* GetCompileUnitInitializationFunction() noexcept { return compileUnitInitializationFunction; }
     void AddDynamicInitialization(BoundExpressionNode* dynamicInitialization, BoundExpressionNode* atExitCall, const soul::ast::SourcePos& sourcePos, Context* context);
     void Accept(BoundTreeVisitor& visitor) override;
     void AddBoundNode(std::unique_ptr<BoundNode>&& node, Context* context);
     void AddBoundNodeForClass(ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos, Context* context);
-    inline const std::vector<std::unique_ptr<BoundNode>>& BoundNodes() const { return boundNodes; }
-    inline void SetId(const std::string& id_) { id = id_; }
-    inline const std::string& Id() const { return id; }
+    inline const std::vector<std::unique_ptr<BoundNode>>& BoundNodes() const noexcept { return boundNodes; }
+    inline void SetId(const std::string& id_) noexcept { id = id_; }
+    inline const std::string& Id() const noexcept { return id; }
     otava::intermediate::Value* CreateBoundGlobalVariable(VariableSymbol* globalVariableSymbol, Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context,
         bool definition);
     void AddClassToGenerateDestructorList(ClassTypeSymbol* classType);
-    inline const std::vector<ClassTypeSymbol*>& GenerateDestructorList() const { return generateDestructorList; }
+    inline const std::vector<ClassTypeSymbol*>& GenerateDestructorList() const noexcept { return generateDestructorList; }
 private:
     std::string id;
     std::vector<std::unique_ptr<BoundNode>> boundNodes;
@@ -315,20 +315,20 @@ public:
     ~BoundFunctionNode();
     void Accept(BoundTreeVisitor& visitor) override;
     void SetBody(BoundCompoundStatementNode* body_);
-    inline const BoundCompoundStatementNode* Body() const { return body.get(); }
-    inline BoundCompoundStatementNode* Body() { return body.get(); }
+    inline const BoundCompoundStatementNode* Body() const noexcept { return body.get(); }
+    inline BoundCompoundStatementNode* Body() noexcept { return body.get(); }
     void SetCtorInitializer(BoundCtorInitializerNode* ctorInitializer_);
     void SetDtorTerminator(BoundDtorTerminatorNode* dtorTerminator_);
-    inline BoundCtorInitializerNode* CtorInitializer() const { return ctorInitializer.get(); }
-    inline BoundDtorTerminatorNode* DtorTerminator() const { return dtorTerminator.get(); }
+    inline BoundCtorInitializerNode* CtorInitializer() const noexcept { return ctorInitializer.get(); }
+    inline BoundDtorTerminatorNode* DtorTerminator() const noexcept { return dtorTerminator.get(); }
     FunctionDefinitionSymbol* GetFunctionDefinitionSymbol() { return functionDefinitionSymbol; }
     void AddDefaultFunctionSymbol(FunctionSymbol* defaultFunctionSymbol);
-    inline void SetSerial(int serial_) { serial = serial_; };
-    inline int Serial() const { return serial; }
+    inline void SetSerial(int serial_) noexcept { serial = serial_; };
+    inline int Serial() const noexcept { return serial; }
     void SetSetLineStatementNode(otava::ast::Node* setLineStatementNode_);
-    inline otava::ast::Node* GetSetLineStatementNode() const { return setLineStatementNode.get(); }
+    inline otava::ast::Node* GetSetLineStatementNode() const noexcept { return setLineStatementNode.get(); }
     void SetBoundSetLineStatement(BoundStatementNode* boundSetLineStatement_);
-    inline BoundStatementNode* GetBoundSetLineStatement() const { return boundSetLineStatement.get(); }
+    inline BoundStatementNode* GetBoundSetLineStatement() const noexcept { return boundSetLineStatement.get(); }
     void AddTemporaryDestructorCall(BoundFunctionCallNode* temporaryDestructorCall);
     inline bool HasTemporaryDestructorCalls() const noexcept { return !temporaryDestructorCalls.empty(); }
     std::vector<std::unique_ptr<BoundFunctionCallNode>> GetTemporaryDestructorCalls();
@@ -362,8 +362,8 @@ public:
     inline void SetGenerated() noexcept { generated = true; }
     inline bool Postfix() const noexcept { return postfix; }
     inline void SetPostfix() noexcept { postfix = true; }
-    inline int StatementIndex() const { return statementIndex; }
-    inline void SetStatementIndex(int statementIndex_) { statementIndex = statementIndex_; }
+    inline int StatementIndex() const noexcept { return statementIndex; }
+    inline void SetStatementIndex(int statementIndex_) noexcept { statementIndex = statementIndex_; }
     bool IsConditionalStatementInBlock(BoundCompoundStatementNode* block) const noexcept;
     BoundCompoundStatementNode* Block() noexcept;
     void SetDestructTemporariesNode(BoundDestructTemporariesNode* destructTemporariesNode_) noexcept;
@@ -394,7 +394,7 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     BoundStatementNode* Clone() const override;
     int IndexOf(BoundStatementNode* stmt) noexcept override;
-    inline int NextStatementIndex() const { return statements.size(); }
+    inline int NextStatementIndex() const noexcept { return statements.size(); }
     void AddStatement(BoundStatementNode* statement);
     inline const std::vector<std::unique_ptr<BoundStatementNode>>& Statements() const noexcept { return statements; }
     bool EndsWithTerminator() const noexcept override;
@@ -898,11 +898,11 @@ public:
         TypeSymbol* type_) noexcept;
     void Accept(BoundTreeVisitor& visitor) override;
     inline BoundExpressionNode* Subject() const noexcept { return subject.get(); }
-    inline void SetSubject(BoundExpressionNode* subject_) { subject.reset(subject_); }
+    inline void SetSubject(BoundExpressionNode* subject_) noexcept { subject.reset(subject_); }
     inline BoundExpressionNode* Member() const noexcept { return member.get(); }
-    inline void SetMember(BoundExpressionNode* member_) { member.reset(member_); }
+    inline void SetMember(BoundExpressionNode* member_) noexcept { member.reset(member_); }
     inline otava::ast::NodeKind Op() const noexcept { return op; }
-    inline void SetOp(otava::ast::NodeKind op_) { op = op_; }
+    inline void SetOp(otava::ast::NodeKind op_) noexcept { op = op_; }
     BoundExpressionNode* Clone() const override;
     void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
@@ -1095,7 +1095,7 @@ public:
     void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsLvalueExpression() const noexcept override;
     inline BoundExpressionNode* Subject() const noexcept { return subject.get(); }
-    inline void SetSubject(BoundExpressionNode* subject_) { subject.reset(subject_); }
+    inline void SetSubject(BoundExpressionNode* subject_) noexcept { subject.reset(subject_); }
     inline FunctionSymbol* ConversionFunction() const noexcept { return conversionFunction; }
     BoundExpressionNode* Clone() const override;
     void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
@@ -1136,7 +1136,7 @@ public:
     inline BoundExpressionNode* Subject() noexcept { return subject.get(); }
     inline void SetSubject(BoundExpressionNode* subject_) noexcept { subject.reset(subject_); }
     inline OperationFlags Kind() const noexcept { return kind; }
-    inline void SetKind(OperationFlags kind_) { kind = kind_; }
+    inline void SetKind(OperationFlags kind_) noexcept { kind = kind_; }
     BoundExpressionNode* Clone() const override;
     void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:

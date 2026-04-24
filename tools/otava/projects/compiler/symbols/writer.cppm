@@ -12,10 +12,10 @@ class Writer
 {
 public:
     Writer(const std::string& fileName);
-    inline util::BinaryStreamWriter& GetBinaryStreamWriter() { return binaryStreamWriter; }
+    inline util::BinaryStreamWriter& GetBinaryStreamWriter() noexcept { return binaryStreamWriter; }
     void Write(Symbol* symbol);
-    inline Context* GetContext() { return context; }
-    inline void SetContext(Context* context_) { context = context_; }
+    inline Context* GetContext() noexcept { return context; }
+    inline void SetContext(Context* context_) noexcept { context = context_; }
 private:
     util::FileStream fileStream;
     util::BufferedStream bufferedStream;

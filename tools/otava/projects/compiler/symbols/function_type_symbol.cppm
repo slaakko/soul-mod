@@ -15,7 +15,7 @@ public:
     void MakeName();
     std::string SymbolKindStr() const override { return "function type symbol"; }
     std::string SymbolDocKindStr() const override { return "function_type"; }
-    inline TypeSymbol* ReturnType() const { return returnType; }
+    inline TypeSymbol* ReturnType() const noexcept { return returnType; }
     inline void SetReturnType(TypeSymbol* returnType_) noexcept { returnType = returnType_; }
     inline const std::vector<TypeSymbol*>& ParameterTypes() const noexcept { return parameterTypes; }
     void AddParameterType(TypeSymbol* parameterType);
