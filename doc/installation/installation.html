@@ -1,0 +1,336 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Installation</title>
+    <link href="../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>Installation</h1>
+
+    <p>
+        Prerequisites:<br/>
+        <ul>
+            <li>
+                Microsoft Visual Studio 2022 Community Edition with Desktop Development with C++ tool chain installed.
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        Do the following steps:
+    </p>
+
+    <ul>
+        <li>Extract the <span class="mono">soul-5.0.0.zip</span> package to a directory of your choice. 
+        In these instructions it is expected that the package is extracted to the <span class="mono">C:\</span> root directory so that the 
+        instalation directory is <span class="mono">C:\soul.5.0.0</span>.</li>
+        <li>
+            Create <span class="mono">SOUL_ROOT</span> environment variable and set it to contain path to the <span class="mono">soul-5.0.0</span> installation directory:<br />
+            <br />
+            <img src="../image/env_var.png" /><br />
+            The <span class="mono">SOUL_ROOT</span> environment variable is used by <span class="mono">Soul</span> programs to find the
+            Otava standard library <span class="mono">std</span> and the Unicode database <span class="mono">soul_ucd.bin</span>.
+        </li>
+        <li>
+            Create <span class="mono">bin</span> and <span class="mono">lib</span> directories under the <span class="mono">soul-5.0.0</span> installation directory:
+            <ul>
+                <div class="console">
+                    Microsoft Windows [Version 10.0.26200.8246]<br/>
+                    (c) Microsoft Corporation. All rights reserved.<br/>
+                    <br/>
+                    C:\soul-5.0.0>md bin<br/>
+                    <br/>
+                    C:\soul-5.0.0>md lib<br/>
+                    <br/>
+                    C:\soul-5.0.0><br/>
+                </div>
+            </ul>
+        </li>
+        <li>
+            Add the <span class="mono">bin</span> directory to <span class="mono">PATH</span> environment variable:<br />
+            <br />
+            <img src="../image/add_to_path.png" />
+        </li>
+        <li>
+            Open the <span class="mono">x64 Native Toools Command Prompt</span>:<br/>
+            <br />
+            <img src="../image/x64_native_tools_command_prompt.png" />
+            <ul>
+                <div class="console">
+                    **********************************************************************<<br />
+                    ** Visual Studio 2022 Developer Command Prompt v17.14.30<br />
+                    ** Copyright (c) 2025 Microsoft Corporation<br />
+                    **********************************************************************<br />
+                    [vcvarsall.bat] Environment initialized for: 'x64'<br />
+                                                                      <br />
+                    C:\Program Files\Microsoft Visual Studio\2022\Community><br />
+                </div>
+            </ul>
+        </li>
+        <li>
+            Change to the <span class="mono">C:\soul-5.0.0\ext\zlib-1.2.11\contrib\masmx64</span> directory:<br/>
+            <ul>
+                <div class="console">
+                    C:\Program Files\Microsoft Visual Studio\2022\Community>cd \soul-5.0.0\ext\zlib-1.2.11\contrib\masmx64<br />
+                    <br />
+                    C:\soul-5.0.0\ext\zlib-1.2.11\contrib\masmx64><br />
+                </div>
+            </ul>
+        </li>
+        <li>
+            Run <span class="mono">bld_ml64.bat</span>:<br/>
+            <ul>
+                <div class="console">
+                    C:\soul-5.0.0\ext\zlib-1.2.11\contrib\masmx64>bld_ml64.bat<br />
+                    <br />
+                    C:\soul-5.0.0\ext\zlib-1.2.11\contrib\masmx64>ml64.exe /Flinffasx64 /c /Zi inffasx64.asm<br />
+                    Microsoft (R) Macro Assembler (x64) Version 14.44.35225.0<br />
+                    Copyright (C) Microsoft Corporation.  All rights reserved.<br />
+                    <br />
+                    Assembling: inffasx64.asm<br />
+                    <br />
+                    C:\soul-5.0.0\ext\zlib-1.2.11\contrib\masmx64>ml64.exe /Flgvmat64   /c /Zi gvmat64.asm<br />
+                    Microsoft (R) Macro Assembler (x64) Version 14.44.35225.0<br />
+                    Copyright (C) Microsoft Corporation.  All rights reserved.<br />
+                    <br />
+                    Assembling: gvmat64.asm<br />
+                    <br />
+                    C:\soul-5.0.0\ext\zlib-1.2.11\contrib\masmx64><br />
+                </div>
+            </ul>
+        </li>
+        <li>
+            Exit the <span class="mono">x64 Native Toools Command Prompt</span>:<br/>
+            <ul>
+                <div class="console">
+                    C:\soul-5.0.0\ext\zlib-1.2.11\contrib\masmx64>exit<br/>
+                </div>
+            </ul>
+        </li>
+        <li>
+            Open <span class="mono">C:\soul-5.0.0\soul.sln</span> in Visual Studio.
+        </li>
+        <li>
+            Select the <span class="mono">Debug|x64</span> configuration and build the solution.
+        </li>
+        <li>
+            Select the <span class="mono">Release|x64</span> configuration and build the solution.
+        </li>
+        <li>
+            Search for <span class="mono">x64 Native Toools Command Prompt</span>, right-click its icon and select <span class="mono">Open file location</span>:<br/>
+            <img src="../image/x64_native_tools_location.png"/>
+        </li>
+        <li>
+            Right-click the <span class="mono">x64 Native Toools Command Prompt</span> icon and select <span class="mono">Properties..</span>:<br />
+            <br />
+            <img src="../image/x64_native_tools_properties.png" />
+        </li>
+        <li>
+            Select the <span class="mono">Target</span> path and copy it to clipboard:<br/><br />
+            <img src="../image/x64_native_tools_target_path.png"/>
+        </li>
+        <li>
+            Open <span class="mono">C:\soul-5.0.0\config\otava.config</span> file to a text editor such as <span class="mono">notepad</span> or 
+            <span class="mono">notepad++</span>.<br/>
+        </li>
+        <li>
+            Paste the target path from clipboard as the value of the <span class="mono">path</span> attribute of the <span class="mono">vcvars64</span> element:<br/><br />
+            <img src="../image/vcvars64_path.png" /><br/>
+            The <span class="mono">vcvars64</span> path is used by the Otava compiler <span class="mono">oc.exe</span> to start 
+            a Visual Studio Developer Command Prompt and to find <span class="mono">msbuild.exe</span>.
+</li>
+        <li>
+            Save the file and close the text editor.
+        </li>
+        <li>
+            Open terminal in <span class="mono">C:\soul-5.0.0\inst</span> directory and run <span class="mono">inst.bat</span> from there:
+            <ul>
+                <div class="console">
+                    Microsoft Windows [Version 10.0.26200.8246]<br/>
+                    (c) Microsoft Corporation. All rights reserved.<br/>
+                    <br/>
+                    C:\soul-5.0.0\inst>inst<br/>
+                    ..\x64\Release\soul_inst.exe<br/>
+                    1 File(s) copied<br/>
+                    C:/soul-5.0.0/x64/Debug/book_serverd.exe -> C:/soul-5.0.0/bin/book_serverd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/cpp2htmld.exe -> C:/soul-5.0.0/bin/cpp2htmld.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/eslgd.exe -> C:/soul-5.0.0/bin/eslgd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/espgd.exe -> C:/soul-5.0.0/bin/espgd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/fruits.exe -> C:/soul-5.0.0/bin/fruits.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/gendocd.exe -> C:/soul-5.0.0/bin/gendocd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/hexdumpd.exe -> C:/soul-5.0.0/bin/hexdumpd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/ixx2cppmd.exe -> C:/soul-5.0.0/bin/ixx2cppmd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/jsonpd.exe -> C:/soul-5.0.0/bin/jsonpd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/jsonrpccd.exe -> C:/soul-5.0.0/bin/jsonrpccd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/jsonrpcsd.exe -> C:/soul-5.0.0/bin/jsonrpcsd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/make_soul_ucdd.exe -> C:/soul-5.0.0/bin/make_soul_ucdd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/minilangd.exe -> C:/soul-5.0.0/bin/minilangd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/msd.exe -> C:/soul-5.0.0/bin/msd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/ocd.exe -> C:/soul-5.0.0/bin/ocd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/ref2htmld.exe -> C:/soul-5.0.0/bin/ref2htmld.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/slgd.exe -> C:/soul-5.0.0/bin/slgd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/slines.exe -> C:/soul-5.0.0/bin/slines.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/soul2htmld.exe -> C:/soul-5.0.0/bin/soul2htmld.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_expected.dom_parser_testd.exe -> C:/soul-5.0.0/bin/soul_expected.dom_parser_testd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_instd.exe -> C:/soul-5.0.0/bin/soul_instd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/spgd.exe -> C:/soul-5.0.0/bin/spgd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/uuid_test.exe -> C:/soul-5.0.0/bin/uuid_test.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/xmlsergend.exe -> C:/soul-5.0.0/bin/xmlsergend.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/xml_parser_testd.exe -> C:/soul-5.0.0/bin/xml_parser_testd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/xpath_expected_testd.exe -> C:/soul-5.0.0/bin/xpath_expected_testd.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/xpath_testd.exe -> C:/soul-5.0.0/bin/xpath_testd.exe<br/>
+                    C:/soul-5.0.0/x64/Release/book_server.exe -> C:/soul-5.0.0/bin/book_server.exe<br/>
+                    C:/soul-5.0.0/x64/Release/cpp2html.exe -> C:/soul-5.0.0/bin/cpp2html.exe<br/>
+                    C:/soul-5.0.0/x64/Release/eslg.exe -> C:/soul-5.0.0/bin/eslg.exe<br/>
+                    C:/soul-5.0.0/x64/Release/espg.exe -> C:/soul-5.0.0/bin/espg.exe<br/>
+                    C:/soul-5.0.0/x64/Release/fruits.exe -> C:/soul-5.0.0/bin/fruits.exe<br/>
+                    C:/soul-5.0.0/x64/Release/gendoc.exe -> C:/soul-5.0.0/bin/gendoc.exe<br/>
+                    C:/soul-5.0.0/x64/Release/hexdump.exe -> C:/soul-5.0.0/bin/hexdump.exe<br/>
+                    C:/soul-5.0.0/x64/Release/ixx2cppm.exe -> C:/soul-5.0.0/bin/ixx2cppm.exe<br/>
+                    C:/soul-5.0.0/x64/Release/jsonp.exe -> C:/soul-5.0.0/bin/jsonp.exe<br/>
+                    C:/soul-5.0.0/x64/Release/jsonrpcc.exe -> C:/soul-5.0.0/bin/jsonrpcc.exe<br/>
+                    C:/soul-5.0.0/x64/Release/jsonrpcs.exe -> C:/soul-5.0.0/bin/jsonrpcs.exe<br/>
+                    C:/soul-5.0.0/x64/Release/make_soul_ucd.exe -> C:/soul-5.0.0/bin/make_soul_ucd.exe<br/>
+                    C:/soul-5.0.0/x64/Release/minilang.exe -> C:/soul-5.0.0/bin/minilang.exe<br/>
+                    C:/soul-5.0.0/x64/Release/ms.exe -> C:/soul-5.0.0/bin/ms.exe<br/>
+                    C:/soul-5.0.0/x64/Release/oc.exe -> C:/soul-5.0.0/bin/oc.exe<br/>
+                    C:/soul-5.0.0/x64/Release/ref2html.exe -> C:/soul-5.0.0/bin/ref2html.exe<br/>
+                    C:/soul-5.0.0/x64/Release/slg.exe -> C:/soul-5.0.0/bin/slg.exe<br/>
+                    C:/soul-5.0.0/x64/Release/slines.exe -> C:/soul-5.0.0/bin/slines.exe<br/>
+                    C:/soul-5.0.0/x64/Release/soul2html.exe -> C:/soul-5.0.0/bin/soul2html.exe<br/>
+                    C:/soul-5.0.0/x64/Release/soul_expected.dom_parser_test.exe -> C:/soul-5.0.0/bin/soul_expected.dom_parser_test.exe<br/>
+                    C:/soul-5.0.0/x64/Release/soul_inst.exe -> C:/soul-5.0.0/bin/soul_inst.exe<br/>
+                    C:/soul-5.0.0/x64/Release/spg.exe -> C:/soul-5.0.0/bin/spg.exe<br/>
+                    C:/soul-5.0.0/x64/Release/uuid_test.exe -> C:/soul-5.0.0/bin/uuid_test.exe<br/>
+                    C:/soul-5.0.0/x64/Release/xmlsergen.exe -> C:/soul-5.0.0/bin/xmlsergen.exe<br/>
+                    C:/soul-5.0.0/x64/Release/xml_parser_test.exe -> C:/soul-5.0.0/bin/xml_parser_test.exe<br/>
+                    C:/soul-5.0.0/x64/Release/xpath_expected_test.exe -> C:/soul-5.0.0/bin/xpath_expected_test.exe<br/>
+                    C:/soul-5.0.0/x64/Release/xpath_test.exe -> C:/soul-5.0.0/bin/xpath_test.exe<br/>
+                    C:/soul-5.0.0/x64/Debug/ortd.lib -> C:/soul-5.0.0/lib/ortd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/otava.assemblyd.lib -> C:/soul-5.0.0/lib/otava.assemblyd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/otava.astd.lib -> C:/soul-5.0.0/lib/otava.astd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/otava.buildd.lib -> C:/soul-5.0.0/lib/otava.buildd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/otava.codegend.lib -> C:/soul-5.0.0/lib/otava.codegend.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/otava.intermediated.lib -> C:/soul-5.0.0/lib/otava.intermediated.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/otava.lexerd.lib -> C:/soul-5.0.0/lib/otava.lexerd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/otava.optimizerd.lib -> C:/soul-5.0.0/lib/otava.optimizerd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/otava.parserd.lib -> C:/soul-5.0.0/lib/otava.parserd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/otava.ppd.lib -> C:/soul-5.0.0/lib/otava.ppd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/otava.symbolsd.lib -> C:/soul-5.0.0/lib/otava.symbolsd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/otava.tokend.lib -> C:/soul-5.0.0/lib/otava.tokend.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.astd.lib -> C:/soul-5.0.0/lib/soul.astd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.commond.lib -> C:/soul-5.0.0/lib/soul.commond.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.cppd.lib -> C:/soul-5.0.0/lib/soul.cppd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.json.rpcd.lib -> C:/soul-5.0.0/lib/soul.json.rpcd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.jsond.lib -> C:/soul-5.0.0/lib/soul.jsond.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.lexd.lib -> C:/soul-5.0.0/lib/soul.lexd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.lexerd.lib -> C:/soul-5.0.0/lib/soul.lexerd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.module.mapd.lib -> C:/soul-5.0.0/lib/soul.module.mapd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.parserd.lib -> C:/soul-5.0.0/lib/soul.parserd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.red.lib -> C:/soul-5.0.0/lib/soul.red.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.rexd.lib -> C:/soul-5.0.0/lib/soul.rexd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.tokend.lib -> C:/soul-5.0.0/lib/soul.tokend.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.xml.dom.parserd.lib -> C:/soul-5.0.0/lib/soul.xml.dom.parserd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.xml.domd.lib -> C:/soul-5.0.0/lib/soul.xml.domd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.xml.parserd.lib -> C:/soul-5.0.0/lib/soul.xml.parserd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.xml.processord.lib -> C:/soul-5.0.0/lib/soul.xml.processord.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.xml.serializationd.lib -> C:/soul-5.0.0/lib/soul.xml.serializationd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul.xml.xpathd.lib -> C:/soul-5.0.0/lib/soul.xml.xpathd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_expected.ast_expectedd.lib -> C:/soul-5.0.0/lib/soul_expected.ast_expectedd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_expected.commond.lib -> C:/soul-5.0.0/lib/soul_expected.commond.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_expected.cppd.lib -> C:/soul-5.0.0/lib/soul_expected.cppd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_expected.dom_parserd.lib -> C:/soul-5.0.0/lib/soul_expected.dom_parserd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_expected.lexd.lib -> C:/soul-5.0.0/lib/soul_expected.lexd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_expected.lexerd.lib -> C:/soul-5.0.0/lib/soul_expected.lexerd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_expected.parserd.lib -> C:/soul-5.0.0/lib/soul_expected.parserd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_expected.red.lib -> C:/soul-5.0.0/lib/soul_expected.red.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_expected.rexd.lib -> C:/soul-5.0.0/lib/soul_expected.rexd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_expected.tokend.lib -> C:/soul-5.0.0/lib/soul_expected.tokend.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_expected.xml.domd.lib -> C:/soul-5.0.0/lib/soul_expected.xml.domd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_expected.xml.processord.lib -> C:/soul-5.0.0/lib/soul_expected.xml.processord.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_expected.xml.xpathd.lib -> C:/soul-5.0.0/lib/soul_expected.xml.xpathd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/soul_expected.xml_parserd.lib -> C:/soul-5.0.0/lib/soul_expected.xml_parserd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/utild.lib -> C:/soul-5.0.0/lib/utild.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/util_expectedd.lib -> C:/soul-5.0.0/lib/util_expectedd.lib<br/>
+                    C:/soul-5.0.0/x64/Debug/zlibstatd.lib -> C:/soul-5.0.0/lib/zlibstatd.lib<br/>
+                    C:/soul-5.0.0/x64/Release/ort.lib -> C:/soul-5.0.0/lib/ort.lib<br/>
+                    C:/soul-5.0.0/x64/Release/otava.assembly.lib -> C:/soul-5.0.0/lib/otava.assembly.lib<br/>
+                    C:/soul-5.0.0/x64/Release/otava.ast.lib -> C:/soul-5.0.0/lib/otava.ast.lib<br/>
+                    C:/soul-5.0.0/x64/Release/otava.build.lib -> C:/soul-5.0.0/lib/otava.build.lib<br/>
+                    C:/soul-5.0.0/x64/Release/otava.codegen.lib -> C:/soul-5.0.0/lib/otava.codegen.lib<br/>
+                    C:/soul-5.0.0/x64/Release/otava.intermediate.lib -> C:/soul-5.0.0/lib/otava.intermediate.lib<br/>
+                    C:/soul-5.0.0/x64/Release/otava.lexer.lib -> C:/soul-5.0.0/lib/otava.lexer.lib<br/>
+                    C:/soul-5.0.0/x64/Release/otava.optimizer.lib -> C:/soul-5.0.0/lib/otava.optimizer.lib<br/>
+                    C:/soul-5.0.0/x64/Release/otava.parser.lib -> C:/soul-5.0.0/lib/otava.parser.lib<br/>
+                    C:/soul-5.0.0/x64/Release/otava.pp.lib -> C:/soul-5.0.0/lib/otava.pp.lib<br/>
+                    C:/soul-5.0.0/x64/Release/otava.symbols.lib -> C:/soul-5.0.0/lib/otava.symbols.lib<br/>
+                    C:/soul-5.0.0/x64/Release/otava.token.lib -> C:/soul-5.0.0/lib/otava.token.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.ast.lib -> C:/soul-5.0.0/lib/soul.ast.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.common.lib -> C:/soul-5.0.0/lib/soul.common.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.cpp.lib -> C:/soul-5.0.0/lib/soul.cpp.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.json.lib -> C:/soul-5.0.0/lib/soul.json.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.json.rpc.lib -> C:/soul-5.0.0/lib/soul.json.rpc.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.lex.lib -> C:/soul-5.0.0/lib/soul.lex.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.lexer.lib -> C:/soul-5.0.0/lib/soul.lexer.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.module.map.lib -> C:/soul-5.0.0/lib/soul.module.map.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.parser.lib -> C:/soul-5.0.0/lib/soul.parser.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.re.lib -> C:/soul-5.0.0/lib/soul.re.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.rex.lib -> C:/soul-5.0.0/lib/soul.rex.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.token.lib -> C:/soul-5.0.0/lib/soul.token.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.xml.dom.lib -> C:/soul-5.0.0/lib/soul.xml.dom.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.xml.dom.parser.lib -> C:/soul-5.0.0/lib/soul.xml.dom.parser.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.xml.parser.lib -> C:/soul-5.0.0/lib/soul.xml.parser.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.xml.processor.lib -> C:/soul-5.0.0/lib/soul.xml.processor.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.xml.serialization.lib -> C:/soul-5.0.0/lib/soul.xml.serialization.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul.xml.xpath.lib -> C:/soul-5.0.0/lib/soul.xml.xpath.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul_expected.ast_expected.lib -> C:/soul-5.0.0/lib/soul_expected.ast_expected.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul_expected.common.lib -> C:/soul-5.0.0/lib/soul_expected.common.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul_expected.cpp.lib -> C:/soul-5.0.0/lib/soul_expected.cpp.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul_expected.dom_parser.lib -> C:/soul-5.0.0/lib/soul_expected.dom_parser.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul_expected.lex.lib -> C:/soul-5.0.0/lib/soul_expected.lex.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul_expected.lexer.lib -> C:/soul-5.0.0/lib/soul_expected.lexer.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul_expected.parser.lib -> C:/soul-5.0.0/lib/soul_expected.parser.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul_expected.re.lib -> C:/soul-5.0.0/lib/soul_expected.re.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul_expected.rex.lib -> C:/soul-5.0.0/lib/soul_expected.rex.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul_expected.token.lib -> C:/soul-5.0.0/lib/soul_expected.token.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul_expected.xml.dom.lib -> C:/soul-5.0.0/lib/soul_expected.xml.dom.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul_expected.xml.processor.lib -> C:/soul-5.0.0/lib/soul_expected.xml.processor.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul_expected.xml.xpath.lib -> C:/soul-5.0.0/lib/soul_expected.xml.xpath.lib<br/>
+                    C:/soul-5.0.0/x64/Release/soul_expected.xml_parser.lib -> C:/soul-5.0.0/lib/soul_expected.xml_parser.lib<br/>
+                    C:/soul-5.0.0/x64/Release/util.lib -> C:/soul-5.0.0/lib/util.lib<br/>
+                    C:/soul-5.0.0/x64/Release/util_expected.lib -> C:/soul-5.0.0/lib/util_expected.lib<br/>
+                    C:/soul-5.0.0/x64/Release/zlibstat.lib -> C:/soul-5.0.0/lib/zlibstat.lib<br/>
+                    source directory 'C:/soul-5.0.0/tools/otava/projects/soul/oslg/bin/release/2' does not exist<br/>
+                    has only single valid path<br/>
+                    source directory 'C:/soul-5.0.0/tools/otava/projects/soul/ospg/bin/release/2' does not exist<br/>
+                    has only single valid path<br/>
+                    source directory 'C:/soul-5.0.0/tools/otava/projects/compiler/ooc/bin/release/2' does not exist<br/>
+                    has only single valid path<br/>
+                </div>
+                The <span class="mono">inst.bat</span> copies executables from the Visual Studio solution output directory to the <span class="mono">bin</span> directory and
+                libraries to the <span class="mono">lib</span> directory.
+            </ul>
+        </li>
+        <li>
+            Open terminal in <span class="mono">C:\soul-5.0.0\unicode</span> directory and run <span class="mono">build.bat</span> from there:
+            <ul>
+                <div class="console">
+                    Microsoft Windows [Version 10.0.26200.8246]<br/>
+                    (c) Microsoft Corporation. All rights reserved.<br/>
+                    <br/>
+                    C:\soul-5.0.0\unicode>build<br/>
+                    processing C:/soul-5.0.0/unicode/ucd.all.flat.xml, done.<br/>
+                    <br/>
+                    C:\soul-5.0.0\unicode><br/>
+                </div>
+                This builds the Unicode database <span class="mono">soul_ucd.bin"</span>.
+            </ul>
+        </li>
+        <li>
+            <span class="mono">Soul 5.0.0</span> is now installed and configured.
+        </li>
+    </ul>
+</body>
+</html>

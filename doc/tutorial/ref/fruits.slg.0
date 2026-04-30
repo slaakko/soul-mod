@@ -1,0 +1,2 @@
+project fruits.slg;
+tokens <fruits.token>;

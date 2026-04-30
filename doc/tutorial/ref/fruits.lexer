@@ -1,0 +1,21 @@
+export module fruits.lexer;
+
+import fruits.token;
+import fruits.keyword;
+import fruits.expr;
+
+lexer FruitLexer
+{
+    rules
+    {
+        "{separators}" {}
+        "{identifier}" 
+        { 
+            std::int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); 
+            if (kw == soul::lexer::INVALID_TOKEN) return ID; else return kw; 
+        }
+        "," { return COMMA; }
+        "\(" { return LPAREN; }
+        "\)" { return RPAREN; }
+    }
+}

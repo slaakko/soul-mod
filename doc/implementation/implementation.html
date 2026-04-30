@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Implementation</title>
+    <link href="../style/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <h1>Implementation</h1>
+    <h2>Operation of the scanner generator</h2>
+    <p>First regular expressions of the scanner are turned to nondeterministic finite automata, NFA. Then the input alphabet, essentially Unicode characters, is partitioned into character classes with respect to transitions of the automata. Each character class is assigned a unique integer identifier. A map from Unicode characters to character class identifiers, a classmap, is created. Then the automata are combined to form one big NFA by creating a new start state and adding epsilon-transitions from the new start state to the start states of each small NFA. Finally the big NFA is compiled to a deterministic finite automaton, DFA, using the subset construction algorithm. The DFA has transitions for each character class. The generated scanner, the DFA, operates by getting an input character, getting its character class and moving from some state to another. When the DFA is in an accepting state, it has recognized some input token that corresponds to some regular expression.</p>
+    <h2>Operation of the parser generator</h2>
+    <p>
+      The parser generator generates a top-down recursive-descent parser from input grammars. The closest formalism for a Soul grammar is a <em>Parsing Expression Grammar</em>
+      or <a href="https://bford.info/pub/lang/peg.pdf">PEG</a>
+      . The <em>choice</em>
+      operator of the Soul grammar is equivalent to the <em>prioritized choice</em>
+      of the PEG. Soul grammar does not have <em>not-predicate</em>
+      that PEGs have. On the other hand PEG does not have the <em>positive closure</em>
+      , <em>optional</em>
+      and <em>lookahead</em>
+      operators that Soul grammars have.</p>
+    <p>First the parser generator parses given SPG, token and parser files. Then it links the parser files together and resolves the using statements in the parsers. Then if the optimize option is specified, it turns the choice operations to switch-case parsers for those choice operands that have disjoint FIRST sets, that is: if they have mutually exclusive starting tokens. Then the generator visits the parsing expressions contained by the parsers two times. Once for generating code for the interface module unit for the parser and once for generating code for the implementation module unit for the parser.</p>
+  </body>
+</html>

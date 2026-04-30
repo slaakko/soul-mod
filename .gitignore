@@ -23,6 +23,7 @@ bind
 *.log
 *.ast
 *.classmap
+doc.prev
 DFA.debug.txt
 CLASSMAP.debug.txt
 *.org

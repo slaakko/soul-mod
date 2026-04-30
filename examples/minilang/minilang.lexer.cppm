@@ -1,4 +1,4 @@
-// this file has been automatically generated from 'C:/work/soul-mod/examples/minilang/minilang.lexer' using soul lexer generator slg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/examples/minilang/minilang.lexer' using soul lexer generator slg version 5.0.0
 
 export module minilang.lexer;
 
@@ -9,11 +9,12 @@ import soul.ast.common;
 import util;
 import minilang.token;
 
-using namespace soul;
-using namespace soul::lexer;
-using namespace minilang::token;
-
 export namespace minilang::lexer {
+
+enum class Tag
+{
+    tag
+};
 
 std::mutex& MakeLexerMtx();
 
@@ -26,7 +27,7 @@ soul::lexer::Lexer<MinilangLexer<Char>, Char> MakeLexer(const Char* start, const
 template<typename Char>
 soul::lexer::Lexer<MinilangLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);
 
-soul::ast::common::TokenCollection* GetTokens();
+soul::ast::common::TokenCollection* GetTokens(minilang::lexer::Tag tag);
 
 struct MinilangLexer_Variables : public soul::lexer::Variables
 {
@@ -722,128 +723,128 @@ struct MinilangLexer
             {
                 lexer.Retract();
                 std::int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match);
-                if (kw == soul::lexer::INVALID_TOKEN) return ID;
+                if (kw == soul::lexer::INVALID_TOKEN) return minilang::token::ID;
                 else return kw;
                 break;
             }
             case 2:
             {
                 lexer.Retract();
-                return INTEGER_LITERAL;
+                return minilang::token::INTEGER_LITERAL;
                 break;
             }
             case 3:
             {
                 lexer.Retract();
-                return SEMICOLON;
+                return minilang::token::SEMICOLON;
                 break;
             }
             case 4:
             {
                 lexer.Retract();
-                return LPAREN;
+                return minilang::token::LPAREN;
                 break;
             }
             case 5:
             {
                 lexer.Retract();
-                return RPAREN;
+                return minilang::token::RPAREN;
                 break;
             }
             case 6:
             {
                 lexer.Retract();
-                return LBRACE;
+                return minilang::token::LBRACE;
                 break;
             }
             case 7:
             {
                 lexer.Retract();
-                return RBRACE;
+                return minilang::token::RBRACE;
                 break;
             }
             case 8:
             {
                 lexer.Retract();
-                return PLUS;
+                return minilang::token::PLUS;
                 break;
             }
             case 9:
             {
                 lexer.Retract();
-                return MINUS;
+                return minilang::token::MINUS;
                 break;
             }
             case 10:
             {
                 lexer.Retract();
-                return MUL;
+                return minilang::token::MUL;
                 break;
             }
             case 11:
             {
                 lexer.Retract();
-                return DIV;
+                return minilang::token::DIV;
                 break;
             }
             case 12:
             {
                 lexer.Retract();
-                return MOD;
+                return minilang::token::MOD;
                 break;
             }
             case 13:
             {
                 lexer.Retract();
-                return NOT;
+                return minilang::token::NOT;
                 break;
             }
             case 14:
             {
                 lexer.Retract();
-                return EQ;
+                return minilang::token::EQ;
                 break;
             }
             case 15:
             {
                 lexer.Retract();
-                return NEQ;
+                return minilang::token::NEQ;
                 break;
             }
             case 16:
             {
                 lexer.Retract();
-                return LEQ;
+                return minilang::token::LEQ;
                 break;
             }
             case 17:
             {
                 lexer.Retract();
-                return GEQ;
+                return minilang::token::GEQ;
                 break;
             }
             case 18:
             {
                 lexer.Retract();
-                return LESS;
+                return minilang::token::LESS;
                 break;
             }
             case 19:
             {
                 lexer.Retract();
-                return GREATER;
+                return minilang::token::GREATER;
                 break;
             }
             case 20:
             {
                 lexer.Retract();
-                return ASSIGN;
+                return minilang::token::ASSIGN;
                 break;
             }
             case 21:
             {
                 lexer.Retract();
-                return COMMA;
+                return minilang::token::COMMA;
                 break;
             }
         }
@@ -852,42 +853,42 @@ struct MinilangLexer
 };
 
 template<typename Char>
-soul::lexer::ClassMap<Char>* GetClassMap()
+soul::lexer::ClassMap<Char>* GetClassMap(minilang::lexer::Tag tag)
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("minilang.lexer.classmap");
-    return classmap;
+    static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>("minilang.lexer.classmap"));
+    return classmap.get();
 }
 
 template<typename Char>
-soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)
+soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags, minilang::lexer::Tag tag)
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "minilang.lexer.classmap", resourceFlags);
-    return classmap;
+    static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>(moduleFileName, "minilang.lexer.classmap", resourceFlags));
+    return classmap.get();
 }
 
 template<typename Char>
-soul::lexer::KeywordMap<Char>* GetKeywords();
+soul::lexer::KeywordMap<Char>* GetKeywords(minilang::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char>* GetKeywords<char>();
+soul::lexer::KeywordMap<char>* GetKeywords<char>(minilang::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>();
+soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>(minilang::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>();
+soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>(minilang::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>();
+soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>(minilang::lexer::Tag tag);
 
 template<typename Char>
 soul::lexer::Lexer<MinilangLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName)
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<MinilangLexer<Char>, Char>(start, end, fileName);
-    lexer.SetClassMap(GetClassMap<Char>());
-    lexer.SetTokenCollection(GetTokens());
-    lexer.SetKeywordMap(GetKeywords<Char>());
+    lexer.SetClassMap(GetClassMap<Char>(minilang::lexer::Tag()));
+    lexer.SetTokenCollection(GetTokens(minilang::lexer::Tag()));
+    lexer.SetKeywordMap(GetKeywords<Char>(minilang::lexer::Tag()));
     return lexer;
 }
 
@@ -896,9 +897,9 @@ soul::lexer::Lexer<MinilangLexer<Char>, Char> MakeLexer(const std::string& modul
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<MinilangLexer<Char>, Char>(start, end, fileName);
-    lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags));
-    lexer.SetTokenCollection(GetTokens());
-    lexer.SetKeywordMap(GetKeywords<Char>());
+    lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags, minilang::lexer::Tag()));
+    lexer.SetTokenCollection(GetTokens(minilang::lexer::Tag()));
+    lexer.SetKeywordMap(GetKeywords<Char>(minilang::lexer::Tag()));
     return lexer;
 }
 

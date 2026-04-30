@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>fruits.lexer.cppm</title>
+    <style>
+      div.cpp
+{
+ background-color: #e6f7ff;
+ margin: 20px;
+ padding: 20px;
+ font-family: monospace;
+}
+
+.cpp .kw
+{
+ color: #0000ff;
+}
+
+.cpp .id
+{
+ color: #000000;
+}
+
+.cpp .number
+{
+ color: #000000;
+}
+
+.cpp .string
+{
+ color: #a31515;
+}
+
+.cpp .pp
+{
+ color: #e6e7e8;
+}
+
+.cpp .other
+{
+ color: #000000;
+}
+
+.cpp .comment
+{
+ color: #57a64a;
+}
+
+</style>
+  </head>
+  <body>
+    <div class="cpp">
+      <span xml:space="preserve"><span class="comment">// this file has been automatically generated from 'C:/soul-5.0.0/fruits/fruits.lexer' using soul lexer generator slg version 5.0.0
+</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">fruits</span><span class="other">.</span><span class="id">lexer</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">std</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="other">.</span><span class="id">lexer</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="other">.</span><span class="id">ast</span><span class="other">.</span><span class="id">slg</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="other">.</span><span class="id">ast</span><span class="other">.</span><span class="id">common</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">util</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">fruits</span><span class="other">.</span><span class="id">token</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">namespace</span>&nbsp;<span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span>&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">enum</span>&nbsp;<span class="kw">class</span>&nbsp;<span class="id">Tag</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">tag</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="id">std</span><span class="other">::</span><span class="id">mutex</span><span class="other">&amp;</span>&nbsp;<span class="id">MakeLexerMtx</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="kw">typename</span>&nbsp;<span class="id">Char</span><span class="other">></span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">struct</span>&nbsp;<span class="id">FruitLexer</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="kw">typename</span>&nbsp;<span class="id">Char</span><span class="other">></span></span>
+      <br/>
+      <span xml:space="preserve"><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Lexer</span><span class="other">&lt;</span><span class="id">FruitLexer</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">,</span>&nbsp;<span class="id">Char</span><span class="other">></span>&nbsp;<span class="id">MakeLexer</span><span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">Char</span><span class="other">*</span>&nbsp;<span class="id">start</span><span class="other">,</span>&nbsp;<span class="kw">const</span>&nbsp;<span class="id">Char</span><span class="other">*</span>&nbsp;<span class="id">end</span><span class="other">,</span>&nbsp;<span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span><span class="other">&amp;</span>&nbsp;<span class="id">fileName</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="kw">typename</span>&nbsp;<span class="id">Char</span><span class="other">></span></span>
+      <br/>
+      <span xml:space="preserve"><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Lexer</span><span class="other">&lt;</span><span class="id">FruitLexer</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">,</span>&nbsp;<span class="id">Char</span><span class="other">></span>&nbsp;<span class="id">MakeLexer</span><span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span><span class="other">&amp;</span>&nbsp;<span class="id">moduleFileName</span><span class="other">,</span>&nbsp;<span class="id">util</span><span class="other">::</span><span class="id">ResourceFlags</span>&nbsp;<span class="id">resourceFlags</span><span class="other">,</span>&nbsp;<span class="kw">const</span>&nbsp;<span class="id">Char</span><span class="other">*</span>&nbsp;<span class="id">start</span><span class="other">,</span>&nbsp;<span class="kw">const</span>&nbsp;<span class="id">Char</span><span class="other">*</span>&nbsp;<span class="id">end</span><span class="other">,</span>&nbsp;<span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span><span class="other">&amp;</span>&nbsp;<span class="id">fileName</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="id">soul</span><span class="other">::</span><span class="id">ast</span><span class="other">::</span><span class="id">common</span><span class="other">::</span><span class="id">TokenCollection</span><span class="other">*</span>&nbsp;<span class="id">GetTokens</span><span class="other">(</span><span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Tag</span>&nbsp;<span class="id">tag</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">struct</span>&nbsp;<span class="id">FruitLexer_Variables</span>&nbsp;<span class="other">:</span>&nbsp;<span class="kw">public</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Variables</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">FruitLexer_Variables</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="kw">typename</span>&nbsp;<span class="id">Char</span><span class="other">></span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">struct</span>&nbsp;<span class="id">FruitLexer</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">Variables</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">FruitLexer_Variables</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int32_t</span>&nbsp;<span class="id">NextState</span><span class="other">(</span><span class="id">std</span><span class="other">::</span><span class="id">int32_t</span>&nbsp;<span class="id">state</span><span class="other">,</span>&nbsp;<span class="id">Char</span>&nbsp;<span class="id">chr</span><span class="other">,</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">LexerBase</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">&amp;</span>&nbsp;<span class="id">lexer</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">ClassMap</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">*</span>&nbsp;<span class="id">classmap</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">GetClassMap</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int32_t</span>&nbsp;<span class="id">cls</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">classmap</span><span class="other">-></span><span class="id">GetClass</span><span class="other">(</span><span class="id">chr</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">switch</span>&nbsp;<span class="other">(</span><span class="id">state</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">0</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">switch</span>&nbsp;<span class="other">(</span><span class="id">cls</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">4</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">5</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">6</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">7</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">9</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="number">2</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">10</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="number">3</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">11</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="number">4</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">12</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="number">5</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">default</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="other">-</span><span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">5</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span><span class="other">&amp;</span>&nbsp;<span class="id">token</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">CurrentToken</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span>&nbsp;<span class="id">prevMatch</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">CurrentLexeme</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int64_t</span>&nbsp;<span class="id">tokenId</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">GetTokenId</span><span class="other">(</span><span class="number">4</span><span class="other">,</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">tokenId</span>&nbsp;<span class="other">==</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">CONTINUE_TOKEN</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">id</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">CONTINUE_TOKEN</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="other">-</span><span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">tokenId</span>&nbsp;<span class="other">!=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">INVALID_TOKEN</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">id</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">tokenId</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">prevMatch</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="other">-</span><span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">4</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span><span class="other">&amp;</span>&nbsp;<span class="id">token</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">CurrentToken</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span>&nbsp;<span class="id">prevMatch</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">CurrentLexeme</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int64_t</span>&nbsp;<span class="id">tokenId</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">GetTokenId</span><span class="other">(</span><span class="number">3</span><span class="other">,</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">tokenId</span>&nbsp;<span class="other">==</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">CONTINUE_TOKEN</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">id</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">CONTINUE_TOKEN</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="other">-</span><span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">tokenId</span>&nbsp;<span class="other">!=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">INVALID_TOKEN</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">id</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">tokenId</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">prevMatch</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="other">-</span><span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">3</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span><span class="other">&amp;</span>&nbsp;<span class="id">token</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">CurrentToken</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span>&nbsp;<span class="id">prevMatch</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">CurrentLexeme</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int64_t</span>&nbsp;<span class="id">tokenId</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">GetTokenId</span><span class="other">(</span><span class="number">2</span><span class="other">,</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">tokenId</span>&nbsp;<span class="other">==</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">CONTINUE_TOKEN</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">id</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">CONTINUE_TOKEN</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="other">-</span><span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">tokenId</span>&nbsp;<span class="other">!=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">INVALID_TOKEN</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">id</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">tokenId</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">prevMatch</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="other">-</span><span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">2</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span><span class="other">&amp;</span>&nbsp;<span class="id">token</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">CurrentToken</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span>&nbsp;<span class="id">prevMatch</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">CurrentLexeme</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int64_t</span>&nbsp;<span class="id">tokenId</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">GetTokenId</span><span class="other">(</span><span class="number">1</span><span class="other">,</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">tokenId</span>&nbsp;<span class="other">==</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">CONTINUE_TOKEN</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">id</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">CONTINUE_TOKEN</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="other">-</span><span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">tokenId</span>&nbsp;<span class="other">!=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">INVALID_TOKEN</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">id</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">tokenId</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">prevMatch</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">switch</span>&nbsp;<span class="other">(</span><span class="id">cls</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">8</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">9</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="number">6</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">default</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="other">-</span><span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">6</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span><span class="other">&amp;</span>&nbsp;<span class="id">token</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">CurrentToken</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span>&nbsp;<span class="id">prevMatch</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">CurrentLexeme</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int64_t</span>&nbsp;<span class="id">tokenId</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">GetTokenId</span><span class="other">(</span><span class="number">1</span><span class="other">,</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">tokenId</span>&nbsp;<span class="other">==</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">CONTINUE_TOKEN</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">id</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">CONTINUE_TOKEN</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="other">-</span><span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">tokenId</span>&nbsp;<span class="other">!=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">INVALID_TOKEN</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">id</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">tokenId</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">prevMatch</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">switch</span>&nbsp;<span class="other">(</span><span class="id">cls</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">8</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">9</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="number">6</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">default</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="other">-</span><span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">1</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span><span class="other">&amp;</span>&nbsp;<span class="id">token</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">CurrentToken</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span>&nbsp;<span class="id">prevMatch</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">CurrentLexeme</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int64_t</span>&nbsp;<span class="id">tokenId</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">GetTokenId</span><span class="other">(</span><span class="number">0</span><span class="other">,</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">tokenId</span>&nbsp;<span class="other">==</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">CONTINUE_TOKEN</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">id</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">CONTINUE_TOKEN</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="other">-</span><span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">tokenId</span>&nbsp;<span class="other">!=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">INVALID_TOKEN</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">id</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">tokenId</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">token</span><span class="other">.</span><span class="id">match</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">prevMatch</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">switch</span>&nbsp;<span class="other">(</span><span class="id">cls</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">4</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">5</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">6</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">7</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">default</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="other">-</span><span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="other">-</span><span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int64_t</span>&nbsp;<span class="id">GetTokenId</span><span class="other">(</span><span class="id">std</span><span class="other">::</span><span class="id">int32_t</span>&nbsp;<span class="id">ruleIndex</span><span class="other">,</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">LexerBase</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">&amp;</span>&nbsp;<span class="id">lexer</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">switch</span>&nbsp;<span class="other">(</span><span class="id">ruleIndex</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">0</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">Retract</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">break</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">1</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">Retract</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int64_t</span>&nbsp;<span class="id">kw</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">GetKeywordToken</span><span class="other">(</span><span class="id">lexer</span><span class="other">.</span><span class="id">CurrentToken</span><span class="other">(</span><span class="other">)</span><span class="other">.</span><span class="id">match</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">kw</span>&nbsp;<span class="other">==</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">INVALID_TOKEN</span><span class="other">)</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">fruits</span><span class="other">::</span><span class="id">token</span><span class="other">::</span><span class="id">ID</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">kw</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">break</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">2</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">Retract</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">fruits</span><span class="other">::</span><span class="id">token</span><span class="other">::</span><span class="id">COMMA</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">break</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">3</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">Retract</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">fruits</span><span class="other">::</span><span class="id">token</span><span class="other">::</span><span class="id">LPAREN</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">break</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="number">4</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">Retract</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">fruits</span><span class="other">::</span><span class="id">token</span><span class="other">::</span><span class="id">RPAREN</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">break</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">CONTINUE_TOKEN</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="kw">typename</span>&nbsp;<span class="id">Char</span><span class="other">></span></span>
+      <br/>
+      <span xml:space="preserve"><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">ClassMap</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">*</span>&nbsp;<span class="id">GetClassMap</span><span class="other">(</span><span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Tag</span>&nbsp;<span class="id">tag</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">unique_ptr</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">ClassMap</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">>></span>&nbsp;<span class="id">classmap</span><span class="other">(</span><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">MakeClassMap</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">(</span><span class="string">"fruits.lexer.classmap"</span><span class="other">)</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">classmap</span><span class="other">.</span><span class="id">get</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="kw">typename</span>&nbsp;<span class="id">Char</span><span class="other">></span></span>
+      <br/>
+      <span xml:space="preserve"><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">ClassMap</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">*</span>&nbsp;<span class="id">GetClassMap</span><span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span><span class="other">&amp;</span>&nbsp;<span class="id">moduleFileName</span><span class="other">,</span>&nbsp;<span class="id">util</span><span class="other">::</span><span class="id">ResourceFlags</span>&nbsp;<span class="id">resourceFlags</span><span class="other">,</span>&nbsp;<span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Tag</span>&nbsp;<span class="id">tag</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">unique_ptr</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">ClassMap</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">>></span>&nbsp;<span class="id">classmap</span><span class="other">(</span><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">MakeClassMap</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">(</span><span class="id">moduleFileName</span><span class="other">,</span>&nbsp;<span class="string">"fruits.lexer.classmap"</span><span class="other">,</span>&nbsp;<span class="id">resourceFlags</span><span class="other">)</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">classmap</span><span class="other">.</span><span class="id">get</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="kw">typename</span>&nbsp;<span class="id">Char</span><span class="other">></span></span>
+      <br/>
+      <span xml:space="preserve"><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">KeywordMap</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">*</span>&nbsp;<span class="id">GetKeywords</span><span class="other">(</span><span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Tag</span>&nbsp;<span class="id">tag</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="other">></span></span>
+      <br/>
+      <span xml:space="preserve"><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">KeywordMap</span><span class="other">&lt;</span><span class="kw">char</span><span class="other">></span><span class="other">*</span>&nbsp;<span class="id">GetKeywords</span><span class="other">&lt;</span><span class="kw">char</span><span class="other">></span><span class="other">(</span><span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Tag</span>&nbsp;<span class="id">tag</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="other">></span></span>
+      <br/>
+      <span xml:space="preserve"><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">KeywordMap</span><span class="other">&lt;</span><span class="kw">char8_t</span><span class="other">></span><span class="other">*</span>&nbsp;<span class="id">GetKeywords</span><span class="other">&lt;</span><span class="kw">char8_t</span><span class="other">></span><span class="other">(</span><span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Tag</span>&nbsp;<span class="id">tag</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="other">></span></span>
+      <br/>
+      <span xml:space="preserve"><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">KeywordMap</span><span class="other">&lt;</span><span class="kw">char16_t</span><span class="other">></span><span class="other">*</span>&nbsp;<span class="id">GetKeywords</span><span class="other">&lt;</span><span class="kw">char16_t</span><span class="other">></span><span class="other">(</span><span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Tag</span>&nbsp;<span class="id">tag</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="other">></span></span>
+      <br/>
+      <span xml:space="preserve"><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">KeywordMap</span><span class="other">&lt;</span><span class="kw">char32_t</span><span class="other">></span><span class="other">*</span>&nbsp;<span class="id">GetKeywords</span><span class="other">&lt;</span><span class="kw">char32_t</span><span class="other">></span><span class="other">(</span><span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Tag</span>&nbsp;<span class="id">tag</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="kw">typename</span>&nbsp;<span class="id">Char</span><span class="other">></span></span>
+      <br/>
+      <span xml:space="preserve"><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Lexer</span><span class="other">&lt;</span><span class="id">FruitLexer</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">,</span>&nbsp;<span class="id">Char</span><span class="other">></span>&nbsp;<span class="id">MakeLexer</span><span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">Char</span><span class="other">*</span>&nbsp;<span class="id">start</span><span class="other">,</span>&nbsp;<span class="kw">const</span>&nbsp;<span class="id">Char</span><span class="other">*</span>&nbsp;<span class="id">end</span><span class="other">,</span>&nbsp;<span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span><span class="other">&amp;</span>&nbsp;<span class="id">fileName</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">lock_guard</span><span class="other">&lt;</span><span class="id">std</span><span class="other">::</span><span class="id">mutex</span><span class="other">></span>&nbsp;<span class="id">lock</span><span class="other">(</span><span class="id">MakeLexerMtx</span><span class="other">(</span><span class="other">)</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span>&nbsp;<span class="id">lexer</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Lexer</span><span class="other">&lt;</span><span class="id">FruitLexer</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">,</span>&nbsp;<span class="id">Char</span><span class="other">></span><span class="other">(</span><span class="id">start</span><span class="other">,</span>&nbsp;<span class="id">end</span><span class="other">,</span>&nbsp;<span class="id">fileName</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">SetClassMap</span><span class="other">(</span><span class="id">GetClassMap</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">(</span><span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Tag</span><span class="other">(</span><span class="other">)</span><span class="other">)</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">SetTokenCollection</span><span class="other">(</span><span class="id">GetTokens</span><span class="other">(</span><span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Tag</span><span class="other">(</span><span class="other">)</span><span class="other">)</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">SetKeywordMap</span><span class="other">(</span><span class="id">GetKeywords</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">(</span><span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Tag</span><span class="other">(</span><span class="other">)</span><span class="other">)</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">lexer</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="kw">typename</span>&nbsp;<span class="id">Char</span><span class="other">></span></span>
+      <br/>
+      <span xml:space="preserve"><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Lexer</span><span class="other">&lt;</span><span class="id">FruitLexer</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">,</span>&nbsp;<span class="id">Char</span><span class="other">></span>&nbsp;<span class="id">MakeLexer</span><span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span><span class="other">&amp;</span>&nbsp;<span class="id">moduleFileName</span><span class="other">,</span>&nbsp;<span class="id">util</span><span class="other">::</span><span class="id">ResourceFlags</span>&nbsp;<span class="id">resourceFlags</span><span class="other">,</span>&nbsp;<span class="kw">const</span>&nbsp;<span class="id">Char</span><span class="other">*</span>&nbsp;<span class="id">start</span><span class="other">,</span>&nbsp;<span class="kw">const</span>&nbsp;<span class="id">Char</span><span class="other">*</span>&nbsp;<span class="id">end</span><span class="other">,</span>&nbsp;<span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span><span class="other">&amp;</span>&nbsp;<span class="id">fileName</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">lock_guard</span><span class="other">&lt;</span><span class="id">std</span><span class="other">::</span><span class="id">mutex</span><span class="other">></span>&nbsp;<span class="id">lock</span><span class="other">(</span><span class="id">MakeLexerMtx</span><span class="other">(</span><span class="other">)</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span>&nbsp;<span class="id">lexer</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Lexer</span><span class="other">&lt;</span><span class="id">FruitLexer</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">,</span>&nbsp;<span class="id">Char</span><span class="other">></span><span class="other">(</span><span class="id">start</span><span class="other">,</span>&nbsp;<span class="id">end</span><span class="other">,</span>&nbsp;<span class="id">fileName</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">SetClassMap</span><span class="other">(</span><span class="id">GetClassMap</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">(</span><span class="id">moduleFileName</span><span class="other">,</span>&nbsp;<span class="id">resourceFlags</span><span class="other">,</span>&nbsp;<span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Tag</span><span class="other">(</span><span class="other">)</span><span class="other">)</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">SetTokenCollection</span><span class="other">(</span><span class="id">GetTokens</span><span class="other">(</span><span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Tag</span><span class="other">(</span><span class="other">)</span><span class="other">)</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">SetKeywordMap</span><span class="other">(</span><span class="id">GetKeywords</span><span class="other">&lt;</span><span class="id">Char</span><span class="other">></span><span class="other">(</span><span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Tag</span><span class="other">(</span><span class="other">)</span><span class="other">)</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">lexer</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span>&nbsp;<span class="comment">// namespace fruits::lexer
+</span></span>
+      <br/>
+    </div>
+  </body>
+</html>

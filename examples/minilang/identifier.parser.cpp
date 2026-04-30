@@ -1,17 +1,14 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/examples/minilang/identifier.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/examples/minilang/identifier.parser' using soul parser generator spg version 5.0.0
 
 module minilang.parser.identifier;
 
 import util;
+import soul.ast.common;
 import soul.ast.spg;
 import minilang.ast;
 import minilang.lexer;
 import minilang.token;
-
-using namespace minilang::ast;
-using namespace minilang::lexer;
-using namespace minilang::token;
 
 namespace minilang::parser::identifier {
 
@@ -33,7 +30,7 @@ soul::parser::Match IdentifierParser<LexerT>::Identifier(LexerT& lexer)
     {
         std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
-        if (*lexer == ID)
+        if (*lexer == minilang::token::ID)
         {
             ++lexer;
             match.hit = true;

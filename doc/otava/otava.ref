@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Otava</title>
+    <link href="../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>Otava</h1>
+
+    <p>
+        Otava is an experimental C++ compiler whose scanners and parsers are generated using <span class="mono">Soul</span>.
+        It generates x64 assembly code and uses <span class="mono">msbuild</span> to compile the assembly files to object code,
+        to archive object files in libraries, to compile main C++ files of programs and to link programs.
+    </p>
+    
+    <p>
+        Before we can compile C++ programs with Otava, its standard library <span class="mono">std</span> must be compiled for each configuration used:
+    </p>
+    <ul>
+        <li>
+            Please complete the <span class="mono"><a href="../installation/installation.html">installation</a></span> steps if you have not done so yet.
+        </li>
+        <li>
+            Start a terminal in the <span class="mono">C:\soul-5.0.0\tools\otava\std</span> directory
+            and enter command <span class="mono">oc std.project</span>:
+            <div class="console">
+Microsoft Windows [Version 10.0.26200.8246]<br/>
+(c) Microsoft Corporation. All rights reserved.<br/>
+<br/>
+C:\soul-5.0.0\tools\otava\std>oc std.project<br/>
+****************************************<br/>
+* Otava C++ Compiler version 5.0.0<br/>
+****************************************<br/>
+> building project 'std'...<br/>
+> C:/soul-5.0.0/tools/otava/std/std.type.fundamental.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.atexit.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.thread.mutex.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.init.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.type_traits.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.trace.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.rt.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.utilities.utility.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.utilities.pair.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.iterator.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.algorithm.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.atomic.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.new_delete.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.eh.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.basic_string.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.utilities.ratio.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.chrono.duration.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.chrono.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.chrono.time_point.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.chrono.clock.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.functional.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.container.vector.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.container.hash_table.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.container.list.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.utilities.unique_ptr.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.container.rb_tree.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.container.map.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.container.set.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.container.stack.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.container.unordered_map.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.container.unordered_set.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.utilities.shared_ptr.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.cow_string.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.error.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.exception.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.expected.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.hash.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.limits.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.utf.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.stream.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.stringstream.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.time.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.thread.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.thread.condition_variable.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.core.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.filesystem.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.cppm<br/>
+> C:/soul-5.0.0/tools/otava/std/std.atexit.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.init.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.atomic.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.basic_string.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.cow_string.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.rt.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.container.hash_table.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.error.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.exception.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.filesystem.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.hash.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.new_delete.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.container.rb_tree.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.stream.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.thread.mutex.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.trace.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.utf.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.utilities.shared_ptr.cpp<br/>
+> C:/soul-5.0.0/tools/otava/std/std.utilities.utility.cpp<br/>
+**********************************************************************<br/>
+** Visual Studio 2022 Developer Command Prompt v17.14.30<br/>
+** Copyright (c) 2025 Microsoft Corporation<br/>
+**********************************************************************<br/>
+[vcvarsall.bat] Environment initialized for: 'x64'<br/>
+MSBuild version 17.14.40+3e7442088 for .NET Framework<br/>
+<br/>
+  Assembling std.type.fundamental.cppm.asm...<br/>
+  Assembling std.atexit.cppm.asm...<br/>
+  Assembling std.thread.mutex.cppm.asm...<br/>
+  Assembling std.init.cppm.asm...<br/>
+  Assembling std.type_traits.cppm.asm...<br/>
+  Assembling std.trace.cppm.asm...<br/>
+  Assembling std.rt.cppm.asm...<br/>
+  Assembling std.utilities.utility.cppm.asm...<br/>
+  Assembling std.utilities.pair.cppm.asm...<br/>
+  Assembling std.iterator.cppm.asm...<br/>
+  Assembling std.algorithm.cppm.asm...<br/>
+  Assembling std.atomic.cppm.asm...<br/>
+  Assembling std.new_delete.cppm.asm...<br/>
+  Assembling std.eh.cppm.asm...<br/>
+  Assembling std.basic_string.cppm.asm...<br/>
+  Assembling std.utilities.ratio.cppm.asm...<br/>
+  Assembling std.chrono.duration.cppm.asm...<br/>
+  Assembling std.chrono.cppm.asm...<br/>
+  Assembling std.chrono.time_point.cppm.asm...<br/>
+  Assembling std.chrono.clock.cppm.asm...<br/>
+  Assembling std.functional.cppm.asm...<br/>
+  Assembling std.container.vector.cppm.asm...<br/>
+  Assembling std.container.hash_table.cppm.asm...<br/>
+  Assembling std.container.list.cppm.asm...<br/>
+  Assembling std.utilities.unique_ptr.cppm.asm...<br/>
+  Assembling std.container.rb_tree.cppm.asm...<br/>
+  Assembling std.container.map.cppm.asm...<br/>
+  Assembling std.container.set.cppm.asm...<br/>
+  Assembling std.container.stack.cppm.asm...<br/>
+  Assembling std.container.unordered_map.cppm.asm...<br/>
+  Assembling std.container.unordered_set.cppm.asm...<br/>
+  Assembling std.utilities.shared_ptr.cppm.asm...<br/>
+  Assembling std.cow_string.cppm.asm...<br/>
+  Assembling std.error.cppm.asm...<br/>
+  Assembling std.exception.cppm.asm...<br/>
+  Assembling std.expected.cppm.asm...<br/>
+  Assembling std.hash.cppm.asm...<br/>
+  Assembling std.limits.cppm.asm...<br/>
+  Assembling std.utf.cppm.asm...<br/>
+  Assembling std.stream.cppm.asm...<br/>
+  Assembling std.stringstream.cppm.asm...<br/>
+  Assembling std.time.cppm.asm...<br/>
+  Assembling std.thread.cppm.asm...<br/>
+  Assembling std.thread.condition_variable.cppm.asm...<br/>
+  Assembling std.core.cppm.asm...<br/>
+  Assembling std.filesystem.cppm.asm...<br/>
+  Assembling std.cppm.asm...<br/>
+  Assembling std.atexit.cpp.asm...<br/>
+  Assembling std.init.cpp.asm...<br/>
+  Assembling std.atomic.cpp.asm...<br/>
+  Assembling std.basic_string.cpp.asm...<br/>
+  Assembling std.cow_string.cpp.asm...<br/>
+  Assembling std.rt.cpp.asm...<br/>
+  Assembling std.container.hash_table.cpp.asm...<br/>
+  Assembling std.error.cpp.asm...<br/>
+  Assembling std.exception.cpp.asm...<br/>
+  Assembling std.filesystem.cpp.asm...<br/>
+  Assembling std.hash.cpp.asm...<br/>
+  Assembling std.new_delete.cpp.asm...<br/>
+  Assembling std.container.rb_tree.cpp.asm...<br/>
+  Assembling std.stream.cpp.asm...<br/>
+  Assembling std.thread.mutex.cpp.asm...<br/>
+  Assembling std.trace.cpp.asm...<br/>
+  Assembling std.utf.cpp.asm...<br/>
+  Assembling std.utilities.shared_ptr.cpp.asm...<br/>
+  Assembling std.utilities.utility.cpp.asm...<br/>
+  std.vcxproj -> C:\soul-5.0.0\tools\otava\std\bin\debug\std.lib<br/>
+<br/>
+project 'std' built successfully<br/>
+<br/>
+C:\soul-5.0.0\tools\otava\std><br/>
+        </div>
+        This command builds the standard library for the <span class="mono">debug</span> configuration.
+        </li>
+        <li>
+            Then enter the same <span class="mono">oc</span> command with the <span class="mono">release</span> configuration and <span class="mono">-O=1</span> arguments:
+            <div class="console">
+                C:\soul-5.0.0\tools\otava\std>oc -c=release -O=1 std.project
+            </div>
+        </li>
+        The <span class="mono">release/1</span> configuration does some optimizations but does not do function inlining.
+        <li>
+            And finally build for the <span class="mono">release/2</span> configuration:
+            <div class="console">
+                C:\soul-5.0.0\tools\otava\std>oc -c=release -O=2 std.project
+            </div>
+        </li>
+        The <span class="mono">release/2</span> configuration does all optimizations including function inlining.
+    </ul>
+
+<p>
+    After the stadard library is built we can compile for example the <span class="mono">hello world</span> application:
+    <ul>
+        <li>
+            Start a terminal in the <span class="mono">C:\soul-5.0.0\tools\otava\test\hello</span> directory and execute the 
+            <span class="mono">oc hello.project</span> command:
+            <div class="console">
+C:\soul-5.0.0\tools\otava\test\hello>oc hello.project<br/>
+****************************************<br/>
+* Otava C++ Compiler version 5.0.0<br/>
+****************************************<br/>
+> building project 'hello'...<br/>
+> C:/soul-5.0.0/tools/otava/test/hello/main.cpp<br/>
+> C:/soul-5.0.0/tools/otava/test/hello/bin/debug/__main__.cpp.i<br/>
+==> C:/soul-5.0.0/tools/otava/test/hello/bin/debug/__main__.cpp.asm<br/>
+**********************************************************************<br/>
+** Visual Studio 2022 Developer Command Prompt v17.14.30<br/>
+** Copyright (c) 2025 Microsoft Corporation<br/>
+**********************************************************************<br/>
+[vcvarsall.bat] Environment initialized for: 'x64'<br/>
+MSBuild version 17.14.40+3e7442088 for .NET Framework<br/>
+<br/>
+  Assembling main.cpp.asm...<br/>
+  Assembling __main__.cpp.asm...<br/>
+  __main__.cpp<br/>
+  hello.vcxproj -> C:\soul-5.0.0\tools\otava\test\hello\bin\debug\hello.exe<br/>
+<br/>
+project 'hello' built successfully<br/>
+<br/>
+C:\soul-5.0.0\tools\otava\test\hello><br/>
+            </div>
+        </li>
+        This builds the hello world application for the <span class="mono">debug</span> configuration.
+    </ul>
+</p>
+<p>
+    Testing:
+    <ul>
+        <li>
+            Then execute the application by entering command <span class="mono">bin\debug\hello</span>:
+            <div class="console">
+C:\soul-5.0.0\tools\otava\test\hello>bin\debug\hello<br/>
+Hello, world!<br/>
+<br/>
+C:\soul-5.0.0\tools\otava\test\hello><br/>
+            </div>
+        </li>
+    </ul>
+</p>
+</body>
+</html>

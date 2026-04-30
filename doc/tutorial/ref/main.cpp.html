@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>main.cpp</title>
+    <style>
+      div.cpp
+{
+ background-color: #e6f7ff;
+ margin: 20px;
+ padding: 20px;
+ font-family: monospace;
+}
+
+.cpp .kw
+{
+ color: #0000ff;
+}
+
+.cpp .id
+{
+ color: #000000;
+}
+
+.cpp .number
+{
+ color: #000000;
+}
+
+.cpp .string
+{
+ color: #a31515;
+}
+
+.cpp .pp
+{
+ color: #e6e7e8;
+}
+
+.cpp .other
+{
+ color: #000000;
+}
+
+.cpp .comment
+{
+ color: #57a64a;
+}
+
+</style>
+  </head>
+  <body>
+    <div class="cpp">
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">std</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">fruits</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">fruits</span><span class="other">.</span><span class="id">lexer</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">fruits</span><span class="other">.</span><span class="id">parser</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">fruits</span><span class="other">.</span><span class="id">token</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">util</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="id">std</span><span class="other">::</span><span class="id">vector</span><span class="other">&lt;</span><span class="id">std</span><span class="other">::</span><span class="id">unique_ptr</span><span class="other">&lt;</span><span class="id">fruits</span><span class="other">::</span><span class="id">fruit</span><span class="other">>></span>&nbsp;<span class="id">parse_fruit_list</span><span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span><span class="other">&amp;</span>&nbsp;<span class="id">fruitListText</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">u32string</span>&nbsp;<span class="id">fruitList</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">util</span><span class="other">::</span><span class="id">ToUtf32</span><span class="other">(</span><span class="id">fruitListText</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span>&nbsp;<span class="id">lexer</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">fruits</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">MakeLexer</span><span class="other">(</span><span class="id">fruitList</span><span class="other">.</span><span class="id">c_str</span><span class="other">(</span><span class="other">)</span><span class="other">,</span>&nbsp;<span class="id">fruitList</span><span class="other">.</span><span class="id">c_str</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="other">+</span>&nbsp;<span class="id">fruitList</span><span class="other">.</span><span class="id">length</span><span class="other">(</span><span class="other">)</span><span class="other">,</span>&nbsp;<span class="string">"&lt;fruitList>"</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">LexerType</span>&nbsp;<span class="other">=</span>&nbsp;<span class="kw">decltype</span><span class="other">(</span><span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">vector</span><span class="other">&lt;</span><span class="id">std</span><span class="other">::</span><span class="id">unique_ptr</span><span class="other">&lt;</span><span class="id">fruits</span><span class="other">::</span><span class="id">fruit</span><span class="other">>></span>&nbsp;<span class="id">fruitVec</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">fruits</span><span class="other">::</span><span class="id">parser</span><span class="other">::</span><span class="id">FruitParser</span><span class="other">&lt;</span><span class="id">LexerType</span><span class="other">></span><span class="other">::</span><span class="id">Parse</span><span class="other">(</span><span class="id">lexer</span><span class="other">,</span>&nbsp;<span class="other">&amp;</span><span class="id">fruitVec</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">fruitVec</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">int</span>&nbsp;<span class="id">main</span><span class="other">(</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">vector</span><span class="other">&lt;</span><span class="id">std</span><span class="other">::</span><span class="id">unique_ptr</span><span class="other">&lt;</span><span class="id">fruits</span><span class="other">::</span><span class="id">fruit</span><span class="other">>></span>&nbsp;<span class="id">fruitVec</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">parse_fruit_list</span><span class="other">(</span><span class="string">"(apple, orange, banana)"</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"("</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">bool</span>&nbsp;<span class="id">first</span>&nbsp;<span class="other">=</span>&nbsp;<span class="kw">true</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span>&nbsp;<span class="other">(</span><span class="kw">const</span>&nbsp;<span class="kw">auto</span><span class="other">&amp;</span>&nbsp;<span class="id">fruit</span>&nbsp;<span class="other">:</span>&nbsp;<span class="id">fruitVec</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">first</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">first</span>&nbsp;<span class="other">=</span>&nbsp;<span class="kw">false</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">", "</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">fruit</span><span class="other">-></span><span class="id">print</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">")"</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"\n"</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span></span>
+      <br/>
+    </div>
+  </body>
+</html>

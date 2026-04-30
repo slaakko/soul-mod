@@ -63,7 +63,7 @@ table.example
 
 div.soul
 {
-    background-color: #e6ffee;
+    background-color: #d7e9ff;
     margin: 20px;
     padding: 20px;
     font-family: monospace;
@@ -71,7 +71,7 @@ div.soul
 
 .soul .kw
 {
-    color: #a31515;
+    color: #0000ff;
     font-weight: bold;
 }
 
@@ -97,12 +97,12 @@ div.soul
 
 .soul .comment
 {
-    color: #006600;
+    color: #57a64a;
 }
 
 .soul .punctuation
 {
-    color: #a31515;
+    color: #0000ff;
     font-weight: bold;
 }
 
@@ -218,7 +218,8 @@ table.common-type, th.common-type, td.common-type
 
 div.console
 {
-    background-color: #e0e0e0;
+    background-color: #0C0C0C;
+	color: #CCCCCC;
     margin: 20px;
     padding: 20px;
     font-family: monospace;

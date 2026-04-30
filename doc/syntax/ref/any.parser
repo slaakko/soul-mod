@@ -1,9 +1,0 @@
-// 'any':
-
-parser DeclarationParser
-{
-	...
-    ParenthesizedTokens
-        ::= LPAREN ((any - (LPAREN | RPAREN)) | ParenthesizedTokens:ptokens)* RPAREN
-        ;
-}

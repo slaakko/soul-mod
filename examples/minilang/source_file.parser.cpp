@@ -1,17 +1,14 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/examples/minilang/source_file.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/examples/minilang/source_file.parser' using soul parser generator spg version 5.0.0
 
 module minilang.parser.source.file;
 
 import util;
+import soul.ast.common;
 import soul.ast.spg;
 import minilang.lexer;
 import minilang.token;
 import minilang.parser.function;
-
-using namespace minilang::lexer;
-using namespace minilang::token;
-using namespace minilang::parser::function;
 
 namespace minilang::parser::source::file {
 
@@ -86,7 +83,7 @@ soul::parser::Match SourceFileParser<LexerT>::SourceFile(LexerT& lexer)
                     soul::parser::Match match(true);
                     if (match.hit)
                     {
-                        sourceFile.reset(new minilang::ast::SourceFileNode);
+                        sourceFile.reset(new minilang::ast::SourceFileNode());
                     }
                     *parentMatch3 = match;
                 }
@@ -111,7 +108,7 @@ soul::parser::Match SourceFileParser<LexerT>::SourceFile(LexerT& lexer)
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = FunctionParser<LexerT>::Function(lexer);
+                                        soul::parser::Match match = minilang::parser::function::FunctionParser<LexerT>::Function(lexer);
                                         function.reset(static_cast<minilang::ast::FunctionNode*>(match.value));
                                         if (match.hit)
                                         {

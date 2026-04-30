@@ -1,0 +1,6 @@
+expressions fruits.expr
+{
+    identifier = "[a-z][a-z0-9]*";
+    ws = "[\n\r\t ]";
+    separators = "{ws}+";
+}

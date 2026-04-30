@@ -1,5 +1,0 @@
-project minilang.slg;
-tokens <minilang.token>;
-keywords <minilang.keyword>;
-expressions <minilang.expr>;
-lexer <minilang_lexer.lexer>;

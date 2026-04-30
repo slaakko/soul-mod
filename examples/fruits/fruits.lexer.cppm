@@ -11,6 +11,11 @@ import fruits.token;
 
 export namespace fruits::lexer {
 
+enum class Tag
+{
+    tag
+};
+
 std::mutex& MakeLexerMtx();
 
 template<typename Char>
@@ -22,7 +27,7 @@ soul::lexer::Lexer<FruitLexer<Char>, Char> MakeLexer(const Char* start, const Ch
 template<typename Char>
 soul::lexer::Lexer<FruitLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);
 
-soul::ast::common::TokenCollection* GetTokens();
+soul::ast::common::TokenCollection* GetTokens(fruits::lexer::Tag tag);
 
 struct FruitLexer_Variables : public soul::lexer::Variables
 {
@@ -279,42 +284,42 @@ struct FruitLexer
 };
 
 template<typename Char>
-soul::lexer::ClassMap<Char>* GetClassMap()
+soul::lexer::ClassMap<Char>* GetClassMap(fruits::lexer::Tag tag)
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("fruits.lexer.classmap");
-    return classmap;
+    static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>("fruits.lexer.classmap"));
+    return classmap.get();
 }
 
 template<typename Char>
-soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)
+soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags, fruits::lexer::Tag tag)
 {
-    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "fruits.lexer.classmap", resourceFlags);
-    return classmap;
+    static std::unique_ptr<soul::lexer::ClassMap<Char>> classmap(soul::lexer::MakeClassMap<Char>(moduleFileName, "fruits.lexer.classmap", resourceFlags));
+    return classmap.get();
 }
 
 template<typename Char>
-soul::lexer::KeywordMap<Char>* GetKeywords();
+soul::lexer::KeywordMap<Char>* GetKeywords(fruits::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char>* GetKeywords<char>();
+soul::lexer::KeywordMap<char>* GetKeywords<char>(fruits::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>();
+soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>(fruits::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>();
+soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>(fruits::lexer::Tag tag);
 
 template<>
-soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>();
+soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>(fruits::lexer::Tag tag);
 
 template<typename Char>
 soul::lexer::Lexer<FruitLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName)
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<FruitLexer<Char>, Char>(start, end, fileName);
-    lexer.SetClassMap(GetClassMap<Char>());
-    lexer.SetTokenCollection(GetTokens());
-    lexer.SetKeywordMap(GetKeywords<Char>());
+    lexer.SetClassMap(GetClassMap<Char>(fruits::lexer::Tag()));
+    lexer.SetTokenCollection(GetTokens(fruits::lexer::Tag()));
+    lexer.SetKeywordMap(GetKeywords<Char>(fruits::lexer::Tag()));
     return lexer;
 }
 
@@ -323,9 +328,9 @@ soul::lexer::Lexer<FruitLexer<Char>, Char> MakeLexer(const std::string& moduleFi
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<FruitLexer<Char>, Char>(start, end, fileName);
-    lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags));
-    lexer.SetTokenCollection(GetTokens());
-    lexer.SetKeywordMap(GetKeywords<Char>());
+    lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags, fruits::lexer::Tag()));
+    lexer.SetTokenCollection(GetTokens(fruits::lexer::Tag()));
+    lexer.SetKeywordMap(GetKeywords<Char>(fruits::lexer::Tag()));
     return lexer;
 }
 

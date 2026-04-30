@@ -259,7 +259,7 @@ soul::parser::Match FruitParser<LexerT>::Fruit(LexerT& lexer)
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Fruit");
                         #endif
-                        return soul::parser::Match(true, new apple());
+                        return soul::parser::Match(true, new fruits::apple());
                     }
                 }
                 *parentMatch2 = match;
@@ -287,7 +287,7 @@ soul::parser::Match FruitParser<LexerT>::Fruit(LexerT& lexer)
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Fruit");
                                 #endif
-                                return soul::parser::Match(true, new orange());
+                                return soul::parser::Match(true, new fruits::orange());
                             }
                         }
                         *parentMatch4 = match;
@@ -320,7 +320,7 @@ soul::parser::Match FruitParser<LexerT>::Fruit(LexerT& lexer)
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Fruit");
                             #endif
-                            return soul::parser::Match(true, new banana());
+                            return soul::parser::Match(true, new fruits::banana());
                         }
                     }
                     *parentMatch6 = match;

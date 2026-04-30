@@ -1,21 +1,16 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/examples/minilang/function.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/examples/minilang/function.parser' using soul parser generator spg version 5.0.0
 
 module minilang.parser.function;
 
 import util;
+import soul.ast.common;
 import soul.ast.spg;
 import minilang.lexer;
 import minilang.token;
 import minilang.parser.type;
 import minilang.parser.identifier;
 import minilang.parser.statement;
-
-using namespace minilang::lexer;
-using namespace minilang::token;
-using namespace minilang::parser::type;
-using namespace minilang::parser::identifier;
-using namespace minilang::parser::statement;
 
 namespace minilang::parser::function {
 
@@ -58,7 +53,7 @@ soul::parser::Match FunctionParser<LexerT>::Function(LexerT& lexer)
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch6 = &match;
                             {
-                                soul::parser::Match match = TypeParser<LexerT>::Type(lexer);
+                                soul::parser::Match match = minilang::parser::type::TypeParser<LexerT>::Type(lexer);
                                 returnType.reset(static_cast<minilang::ast::Node*>(match.value));
                                 *parentMatch6 = match;
                             }
@@ -71,7 +66,7 @@ soul::parser::Match FunctionParser<LexerT>::Function(LexerT& lexer)
                                     soul::parser::Match* parentMatch8 = &match;
                                     {
                                         std::int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer);
+                                        soul::parser::Match match = minilang::parser::identifier::IdentifierParser<LexerT>::Identifier(lexer);
                                         functionName.reset(static_cast<minilang::ast::IdentifierNode*>(match.value));
                                         if (match.hit)
                                         {
@@ -102,7 +97,7 @@ soul::parser::Match FunctionParser<LexerT>::Function(LexerT& lexer)
                                     {
                                         std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match(false);
-                                        if (*lexer == LPAREN)
+                                        if (*lexer == minilang::token::LPAREN)
                                         {
                                             ++lexer;
                                             match.hit = true;
@@ -113,7 +108,7 @@ soul::parser::Match FunctionParser<LexerT>::Function(LexerT& lexer)
                                         }
                                         else
                                         {
-                                            lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(LPAREN));
+                                            lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(minilang::token::LPAREN));
                                         }
                                     }
                                     if (match.hit)
@@ -137,7 +132,7 @@ soul::parser::Match FunctionParser<LexerT>::Function(LexerT& lexer)
                             std::int64_t save = lexer.GetPos();
                             soul::parser::Match* parentMatch13 = &match;
                             {
-                                soul::parser::Match match = FunctionParser<LexerT>::ParameterList(lexer, function.get());
+                                soul::parser::Match match = minilang::parser::function::FunctionParser<LexerT>::ParameterList(lexer, function.get());
                                 if (match.hit)
                                 {
                                     *parentMatch13 = match;
@@ -163,7 +158,7 @@ soul::parser::Match FunctionParser<LexerT>::Function(LexerT& lexer)
                         {
                             std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
-                            if (*lexer == RPAREN)
+                            if (*lexer == minilang::token::RPAREN)
                             {
                                 ++lexer;
                                 match.hit = true;
@@ -174,7 +169,7 @@ soul::parser::Match FunctionParser<LexerT>::Function(LexerT& lexer)
                             }
                             else
                             {
-                                lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(RPAREN));
+                                lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(minilang::token::RPAREN));
                             }
                         }
                         *parentMatch14 = match;
@@ -196,7 +191,7 @@ soul::parser::Match FunctionParser<LexerT>::Function(LexerT& lexer)
                         soul::parser::Match* parentMatch18 = &match;
                         {
                             std::int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = StatementParser<LexerT>::CompoundStatement(lexer);
+                            soul::parser::Match match = minilang::parser::statement::StatementParser<LexerT>::CompoundStatement(lexer);
                             functionBody.reset(static_cast<minilang::ast::CompoundStatementNode*>(match.value));
                             if (match.hit)
                             {
@@ -269,7 +264,7 @@ soul::parser::Match FunctionParser<LexerT>::ParameterList(LexerT& lexer, minilan
             soul::parser::Match* parentMatch2 = &match;
             {
                 std::int64_t pos = lexer.GetPos();
-                soul::parser::Match match = FunctionParser<LexerT>::Parameter(lexer);
+                soul::parser::Match match = minilang::parser::function::FunctionParser<LexerT>::Parameter(lexer);
                 left.reset(static_cast<minilang::ast::ParameterNode*>(match.value));
                 if (match.hit)
                 {
@@ -298,7 +293,7 @@ soul::parser::Match FunctionParser<LexerT>::ParameterList(LexerT& lexer, minilan
                                 soul::parser::Match* parentMatch6 = &match;
                                 {
                                     soul::parser::Match match(false);
-                                    if (*lexer == COMMA)
+                                    if (*lexer == minilang::token::COMMA)
                                     {
                                         ++lexer;
                                         match.hit = true;
@@ -318,7 +313,7 @@ soul::parser::Match FunctionParser<LexerT>::ParameterList(LexerT& lexer, minilan
                                             soul::parser::Match* parentMatch9 = &match;
                                             {
                                                 std::int64_t pos = lexer.GetPos();
-                                                soul::parser::Match match = FunctionParser<LexerT>::Parameter(lexer);
+                                                soul::parser::Match match = minilang::parser::function::FunctionParser<LexerT>::Parameter(lexer);
                                                 right.reset(static_cast<minilang::ast::ParameterNode*>(match.value));
                                                 if (match.hit)
                                                 {
@@ -398,7 +393,7 @@ soul::parser::Match FunctionParser<LexerT>::Parameter(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                soul::parser::Match match = TypeParser<LexerT>::Type(lexer);
+                soul::parser::Match match = minilang::parser::type::TypeParser<LexerT>::Type(lexer);
                 type.reset(static_cast<minilang::ast::Node*>(match.value));
                 *parentMatch2 = match;
             }
@@ -407,7 +402,7 @@ soul::parser::Match FunctionParser<LexerT>::Parameter(LexerT& lexer)
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer);
+                    soul::parser::Match match = minilang::parser::identifier::IdentifierParser<LexerT>::Identifier(lexer);
                     name.reset(static_cast<minilang::ast::IdentifierNode*>(match.value));
                     *parentMatch3 = match;
                 }

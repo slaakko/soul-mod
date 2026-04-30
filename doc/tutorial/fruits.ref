@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Tutorial</title>
+    <link href="../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>Tutorial</h1>
+
+    <p>
+        In this tutorial we will generate a scanner and parser using <span class="mono">Soul 5.0.0</span> for a string that contains a list of fruit names such as 
+        <div class="cpp"><span class="string">(apple, orange, banana)</span></div>
+    </p>
+
+    <p>
+        The generated scanner will tokenize the input string and the parser will consume the tokens and make a structured representation of the input.
+    </p>
+
+    <p>
+        Probably the easiest and fastest way to create a new application using <span class="mono">Soul 5.0.0"</span> 
+        is to add it to the <span class="mono">soul.sln</span> solution:
+    </p>
+
+    <ul>
+        <li>Open <span class="mono">C:\soul-5.0.0\soul.sln</span> in Visual Studio.</li>
+        <li>Right-click the <span class="mono">soul</span> solution in the solution explorer and select <span class="mono">Add | New Project...</span>.</li>
+        <li>Select <span class="mono">Windows Desktop Wizard</span> and click <span class="mono">Next</span>.</li>
+        <li>Enter <span class="mono">fruits</span> as <span class="mono">Project name</span> and click <span class="mono">Create</span>.</li>
+        <li>Select <span class="mono">Console Application</span> as <span class="mono">Application type</span>, select <span class="mono">Empty project</span> and click <span class="mono">OK</span>.</li>
+        <li>Right-click <span class="mono">References</span> and select <span class="mono">Add reference</span>.</li>
+        <li>
+            Select <span class="mono">ast (soul.ast)</span>, <span class="mono">lexer (soul.lexer)</span>,
+            <span class="mono">parser (soul.parser)</span> and <span class="mono">util</span>.
+        </li>
+        <li>
+            Right-click <span class="mono">fruits</span>, select <span class="mono">Add New Item...</span>, and enter
+            <span class="mono">main.cpp</span> and the file to create.
+        </li>
+        <li>Right-click <span class="mono">fruits</span>, select <span class="mono">Properties</span>, and select <span class="mono">All Configurations</span> as 
+            <span class="mono">Configurations</span>.
+        </li>
+        <li>
+            Select the <span class="mono">General</span> property sheet and 
+            select <span class="mono">Preview - Features from the Latest C++ Working Draft (/std:c++latest)</span> as the <span class="mono">C++ Language Standard</span>
+        </li>
+        <li>Select the <span class="mono">C/C++ | Language</span> property sheet and set <span class="mono">Build ISO C++23 Standard Library Modules</span> to <span class="mono">Yes</span>.</li>
+        <li>Select the <span class="mono">C/C++ | Advanced</span> property sheet and add value <span class="mono">4267</span> to the 
+            <span class="mono">Disable Specific Warnings</span> field.
+        </li>
+        <li>Select the <span class="mono">Linker | General</span> property sheet and enter <span class="mono">$(OutDir)</span> as the value for 
+        <span class="mono">Additional Library Directories</span></li>
+        <li>
+            Click <span class="mono">OK</span> to accept the configuration.
+        </li>
+        <li>Double-click the <span class="mono">main.cpp</span> source file and enter the following code:
+        <ref file="ref/empty_main.cpp.div"/>
+        We will complete this main file later.
+        </li>
+    </ul>
+
+    <p>
+        Now the program should compile, so right-click the the <span class="mono">fruits</span> project and select <span class="mono">Build</span>.
+    </p>
+
+    <h2>Generating a scanner</h2>
+
+    <p>
+        First we will create tokens that the scanner will return when the fruit list is scanned:
+    </p>
+
+    <ul>
+        <li>
+            Right-click the <span class="mono">fruits</span> project and select <span class="mono">Add | New Item...</span>.
+        </li>
+        <li>
+            Enter <span class="mono">fruits.token</span> as file name and click <span class="mono">Add</span>.
+        </li>
+        <li>
+            Enter the following text:
+            <ref file="ref/fruits.token.div"/>
+            A <a href="../syntax/syntax.html#token-file">token declaration</a> consists of the name of the token and token description string pair in parenthesis. 
+            This token file contains tokens for names of fruits, punctuation and identifier.
+        </li>
+    </ul>
+
+    <p>
+        Next we will create a <a href="../syntax/syntax.html#slg-file">lexer project file</a> that references the token file:
+    </p>
+
+    <ul>
+        <li>
+            Right-click the <span class="mono">fruits</span> project and select <span class="mono">Add | New Item...</span>.
+        </li>
+        <li>
+            Enter <span class="mono">fruits.slg</span> as file name and click <span class="mono">Add</span>.
+        </li>
+        <li>
+            Enter the following text:
+            <ref file="ref/fruits.slg.0.div"/>
+        </li>
+    </ul>
+
+    <p>
+        Now we can create C++ code for the token declarations by running the Soul lexer generator <span class="mono">slg</span>:
+    </p>
+    <ul>
+        <li>
+            Start a terminal in <span class="mono">C:\soul-5.0.0\fruits</span> directory and enter the following command:
+            <div class="console">
+                Microsoft Windows [Version 10.0.26200.8246]<br/>
+                (c) Microsoft Corporation. All rights reserved.<br/>
+                <br/>
+                C:\soul-5.0.0\fruits>slg -v fruits.slg<br/>
+                > C:/soul-5.0.0/fruits/fruits.slg<br/>
+                generating lexers for project 'fruits.slg'...<br/>
+                > C:/soul-5.0.0/fruits/fruits.token<br/>
+                ==> C:/soul-5.0.0/fruits/fruits.token.cppm<br/>
+                lexers for project 'fruits.slg' generated successfully.<br/>
+                <br/>
+                C:\soul-5.0.0\fruits><br/>
+            </div>
+        </li>
+        <li>
+            The lexer generator has generated the following C++ module interface unit <span class="mono">fruits.token.cppm</span> for the token declarations:
+            <ref file="ref/fruits.token.cppm.div"/>
+            Each token has a unique 64-bit identifier that consists of a 32-bit token set identifier and a 32-bit serial number.
+            A token set identifier is a hash value of the name of the token collection <span class="mono">fruits.token</span>.
+        </li>
+    </ul>
+
+    <p>
+        In this fruit list language the identifier of each fruit is also a <span class="mono">keyword</span>, that is: a reserved word.
+        So next we will create a file for the keywords:
+    </p>
+    <ul>
+        <li>
+            Right-click the <span class="mono">fruits</span> project and select <span class="mono">Add | New Item...</span>.
+        </li>
+        <li>
+            Enter <span class="mono">fruits.keyword</span> as file name and click <span class="mono">Add</span>.
+        </li>
+        <li>
+            Enter the following text:
+            <ref file="ref/fruits.keyword.div"/>
+            A <a href="../syntax/syntax.html#keyword-file">keyword declaration</a> consists of a pair of keyword string and token name in parenthesis. 
+        </li>
+    </ul>
+
+    <p>
+        Now we can update the scanner project file <span class="mono">fruits.slg</span>:
+        <ul>
+            <li>
+                Double-click the <span class="mono">fruits.slg</span> file and edit the contents to be the following:
+                <ref file="ref/fruits.slg.1.div"/>
+            </li>
+            <li>
+                We can now run the lexer generator <span class="mono">slg</span> again:
+                <div class="console">
+                    C:\soul-5.0.0\fruits>slg -v fruits.slg<br/>
+                    > C:/soul-5.0.0/fruits/fruits.slg<br/>
+                    generating lexers for project 'fruits.slg'...<br/>
+                    > C:/soul-5.0.0/fruits/fruits.token<br/>
+                    ==> C:/soul-5.0.0/fruits/fruits.token.cppm<br/>
+                    > C:/soul-5.0.0/fruits/fruits.keyword<br/>
+                    lexers for project 'fruits.slg' generated successfully.<br/>
+                </div>
+                The keyword file will not produce C++ code at this moment but the generator will parse it and check its validity.
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        Next we will create regular expressions for fruit name identifiers and whitespace seperator characters:
+        <ul>
+            <li>
+                Right-click the <span class="mono">fruits</span> project and select <span class="mono">Add | New Item...</span>.
+            </li>
+            <li>
+                Enter <span class="mono">fruits.expr</span> as file name and click <span class="mono">Add</span>.
+            </li>
+            <li>
+                Enter the following text:
+                <ref file="ref/fruits.expr.div"/>
+                An <a href="../syntax/syntax.html#expression-file">expression declaration</a> consists of the name of the expression, 
+                an equal sign, a <a href="../syntax/syntax.html#regular-expression">regular expression</a> string, and a semicolon.
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        Again we can update the scanner project file <span class="mono">fruits.slg</span>:
+        <ul>
+            <li>
+                Double-click the <span class="mono">fruits.slg</span> file and edit the contents to be the following:
+                <ref file="ref/fruits.slg.2.div"/>
+            </li>
+            <li>
+                Running lexer generator <span class="mono">slg</span> again will parse the expressions file:
+                <div class="console">
+                    C:\soul-5.0.0\fruits>slg -v fruits.slg<br/>
+                    > C:/soul-5.0.0/fruits/fruits.slg<br/>
+                    generating lexers for project 'fruits.slg'...<br/>
+                    > C:/soul-5.0.0/fruits/fruits.token<br/>
+                    ==> C:/soul-5.0.0/fruits/fruits.token.cppm<br/>
+                    > C:/soul-5.0.0/fruits/fruits.keyword<br/>
+                    > C:/soul-5.0.0/fruits/fruits.expr<br/>
+                    lexers for project 'fruits.slg' generated successfully.<br/>
+                </div>
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        We will now complete the fruit list scanner by adding a lexical analyzer file <span class="mono">fruits.lexer</span>:
+        <ul>
+            <li>
+                Right-click the <span class="mono">fruits</span> project and select <span class="mono">Add | New Item...</span>.
+            </li>
+            <li>
+                Enter <span class="mono">fruits.lexer</span> as file name and click <span class="mono">Add</span>.
+            </li>
+            <li>
+                Enter the following text:
+                <ref file="ref/fruits.lexer.div"/>
+            </li>
+            <li>
+                The <a href="../syntax/syntax.html#lexer-file">lexer file</a> has the following structure:
+                <ul>
+                    <li>
+                        First comes the <span class="mono">export module</span> declaration that 
+                        contains the name of the module interface unit that the generator will put the lexer in.
+                        In this case the name of the module interface unit will be <span class="mono">fruits.lexer</span>.
+                    </li>
+                    <li>
+                        Then comes <span class="mono">import</span> declarations for the token, keyword and expression collections.
+                    </li>
+                    <li>
+                        Finally comes the <span class="mono">lexer</span> declaration.
+                        The lexer declaration has rules that match current input token to a regular expression and if it matches,
+                        the body of the rule, a C++ compound statement, will be executed. 
+                        Actually the body of the rule with the longest match will execute.
+                        <ul>
+                            <li>
+                                The first rule will skip the separator characters. 
+                                The name of the regular expression to match is <span class="mono">separators</span>.
+                                Generally an identifier in braces will match an expression whose name equals to the identifier.
+                                The body of the rule is empty, that means that the scanner will not return any token but 
+                                continues matching further tokens.
+                            </li>
+                            <li>
+                                The next rule will match identifiers and keywords.
+                                If the lexeme of the current token matches a regular expression whose name is <span class="mono">identifier</span>,
+                                the body of the rule will check if the token is actually a keyword. If that is the case,
+                                the scanner will return the token identifier of that keyword, otherwise the scanner will
+                                return token identifier <span class="mono">ID</span>.
+                            </li>
+                            <li>
+                                The rest of rules will match punctuation tokens.
+                                If the lexeme of the current token matches a comma character, the token identifier <span class="mono">COMMA</span> will be returned.
+                                The regular expressions for left and right parenthesis are escaped with the backslash character.
+                                This is because the parenthesis are grouping operators in regular expressions, but this time we will
+                                want to match parenthesis literally, so they are escaped.
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        Finally we complete the scanner project file <span class="mono">fruits.slg</span>:
+        <ul>
+            <li>
+                Double-click the <span class="mono">fruits.slg</span> file and edit the contents to be the following:
+                <ref file="ref/fruits.slg.div"/>
+            </li>
+            <li>
+                Now we can generate C++ code for the scanner by running <span class="mono">slg</span>:
+                <div class="console">
+                    C:\soul-5.0.0\fruits>slg -v fruits.slg<br/>
+                    > C:/soul-5.0.0/fruits/fruits.slg<br/>
+                    generating lexers for project 'fruits.slg'...<br/>
+                    > C:/soul-5.0.0/fruits/fruits.token<br/>
+                    ==> C:/soul-5.0.0/fruits/fruits.token.cppm<br/>
+                    > C:/soul-5.0.0/fruits/fruits.keyword<br/>
+                    > C:/soul-5.0.0/fruits/fruits.expr<br/>
+                    > C:/soul-5.0.0/fruits/fruits.lexer<br/>
+                    ==> C:/soul-5.0.0/fruits/fruits.lexer.classmap<br/>
+                    ==> C:/soul-5.0.0/fruits/fruits.lexer.classmap.compressed<br/>
+                    ==> C:/soul-5.0.0/fruits/fruits.lexer.classmap.rc<br/>
+                    ==> C:/soul-5.0.0/fruits/fruits.lexer.cppm<br/>
+                    ==> C:/soul-5.0.0/fruits/fruits.lexer.cpp<br/>
+                    lexers for project 'fruits.slg' generated successfully.<br/>
+                    <br/>
+                    C:\soul-5.0.0\fruits><br/>
+                </div>
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        This time the scanner generator will generate various binary and text files:
+        <ul>
+            <li>
+                <span class="mono">fruits.token.cppm</span> is a C++ module interface unit that contains token identifiers.
+            </li>
+            <li>
+                <span class="mono">fruits.lexer.classmap</span> is a binary file that contains character class map that 
+                maps a Unicode character to a character class identifier that is a 32-bit integer.
+            </li>
+            <li>
+                <span class="mono">fruits.lexer.classmap.compressed</span> is a binary file that contains ZIP-compressed classmap.
+            </li>
+            <li>
+                <span class="mono">fruits.lexer.classmap.rc</span> is a resource script text file that can be added to a C++ executable project.
+                The script file will embed the classmap in the executable.
+            </li>
+            <li>
+                <span class="mono">fruits.lexer.cppm</span> is a C++ module interface unit that contains the generated scanner state machine and a 
+                factory function <span class="mono">MakeLexer</span> for instantiating the scanner.
+            </li>
+            <li>
+                <span class="mono">fruits.lexer.cpp</span> is a C++ module implementation unit that contains token and keyword descriptions.
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        <ul>
+            <li>
+                The scanner generator has generated the following C++ module interface unit <span class="mono">fruits.lexer.cppm</span>:
+                <ref file="ref/fruits.lexer.cppm.div"/>
+            </li>
+            <li>
+                The generator has generated the following C++ module implementation unit
+                <span class="mono">fruits.lexer.cpp</span>:
+                <ref file="ref/fruits.lexer.cpp.div"/>
+            </li>
+        </ul>
+    </p>
+
+    <h2>Generating a parser</h2>
+
+    <p>
+        First we will generate an abstract syntax tree classes for parsed fruits:
+        <ul>
+            <li>
+                Right-click the <span class="mono">fruits</span> project and select <span class="mono">Add | New Item...</span>.
+            </li>
+            <li>
+                Enter <span class="mono">fruits.cppm</span> as file name and click <span class="mono">Add</span>.
+            </li>
+            <li>
+                Enter the following text:
+                <ref file="ref/fruits.cppm.div"/>
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        Adding parser file:
+        <ul>
+            <li>
+                Right-click the <span class="mono">fruits</span> project and select <span class="mono">Add | New Item...</span>.
+            </li>
+            <li>
+                Enter <span class="mono">fruits.parser</span> as file name and click <span class="mono">Add</span>.
+            </li>
+            <li>
+                Enter the following text:
+                <ref file="ref/fruits.parser.div"/>
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        The <a href="../syntax/syntax.html#parser-file">parser file</a> has following structure:
+        <ul>
+            <li>
+                The <span class="mono">export module</span> declaration names the module that the parser generator will place the parser in.
+                This time the parser will be placed in <span class="mono">fruits.parser</span> module.
+            </li>
+            <li>
+                Next come import declarations.
+                The imports can be prefixed with <span class="mono">interface</span> and <span class="mono">implementation</span> specifiers.
+                If the import is prefixed with the <span class="mono">interface</span> specifier, the import will be placed to the module interface unit.
+                If the import is prefixed with the <span class="mono">implementation</span> specifier, the import will be placed to the module implementation unit.
+                If the import has no prefix, it will be placed to the module interface unit.
+                The parser imports the abstract syntax tree file <span class="mono">fruits.cppm</span>.
+                This import goes to the interface unit because the <span class="mono">fruit</span> class is referenced by the parser interface
+                in the parsing rules <span class="mono">FruitList</span> and <span class="mono">Fruit</span>.
+                The parser imports also the lexer module and the token module. Theses imports can go to the implementation unit, 
+                because the lexer is not referenced in the parser interface, and the tokens are referenced in the bodies of the parsing rules.
+            </li>
+            <li>
+                Finally comes the parser declaration.
+                The parser declaration can have:
+                <ul>
+                    <li>
+                        <span class="mono">lexer</span> statements
+                    </li>
+                    <li>
+                        <span class="mono">using</span> statements
+                    </li>
+                    <li>
+                        a <span class="mono">main</span> statement
+                    </li>
+                    <li>
+                        <span class="mono">parsing rules</span>
+                    </li>
+                </ul>
+                <p>
+                The <span class="mono">lexer</span> statement specifies the lexer that the parser is instantiated with.
+                There can be more than one <span class="mono">lexer</span> statement for a parser. In that case the lexers must 
+                produce same tokens. A <span class="mono">using</span> statement import a rule from another parser, so it can 
+                be used the same way as rules declared inside currrent parser.
+                The <span class="mono">main</span> statement states that the parser is a <em>main</em> parser.
+                The parser generator will generate a <span class="mono">Parse</span> function for each main parser.
+                There can be more than one main parsers in the same project. The <span class="mono">Parse</span> function acts as an entry point for a parser.
+                Rest of a parser consists of <span class="mono">parsing rules</span>. A parsing rule has a body, it can have paramters and local variables and 
+                it can return a value.
+                You can think of a parser as a class, and a parsing rule as a member function. In fact the parser is implemented as a static class and a parsing rule
+                is implemented as a member function of that class.
+                </p>
+                <p>
+                    The <span class="mono">FruitParser</span> parser has two parsing rules: <span class="mono">FruitList</span> and <span class="mono">Fruit</span>.
+                    The first rule is special in that the generated <span class="mono">Parse</span> function will <em>call</em> the first rule.
+                    The <span class="mono">FruitList</span> rule takes a vector of unique pointers to <span class="mono">fruits::fruit</span> as a parameter and 
+                    returns no value. The <span class="mono">Fruit</span> rule takes no parameters, has no local variables, and returns a 
+                    <span class="mono">fruits::fruit</span> pointer. The body of the rule is separated from the interface of the rule by <span class="mono">::=</span> 
+                    symbol pronounced <em>produces</em>. The body of a rule is terminated by a semicolon.
+                </p>
+                <p>
+                    The body of the <span class="mono">FruitList</span> rule consists of capitalized names of tokens, name of another rule <span class="mono">Fruit</span>,
+                    parsing operator symbols such as parenthesis, <span class="mono">:</span>, <span class="mono">*</span> and <span class="mono">?</span>, and 
+                    <em>semantic actions</em>, that are C++ compound statements attached as trailing elements of other parsing entities.
+                    The <span class="mono">FruitList</span> rule parses a possibly empty list of <span class="mono">Fruit</span>s separated by 
+                    <span class="mono">COMMA</span> tokens and enclosed in 
+                    parenthesis, that is: <span class="mono">LPAREN</span> and <span class="mono">RPAREN</span> tokens.
+                    When a <span class="mono">Fruit</span> is parsed it is added to a vector of <span class="mono">std::unique_ptr&lt;fruits::fruit></span>.
+                </p>
+                <p>
+                    The body of <span class="mono">Fruit</span> rule consists of tokens <span class="mono">APPLE</span>, <span class="mono">ORANGE</span> and
+                    <span class="mono">BANANA</span> separated by the <em>choice</em> parsing operator <span class="mono">|</span>.
+                    The choice parsing operator matches its operands from left to right. The semantic action, a C++ compound statement, attached to the 
+                    first matching operand will get executed.
+                </p>
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        Now a <a href="../syntax/syntax.html#spg-file">parser project file</a> can be created:
+        <ul>
+            <li>
+                Right-click the <span class="mono">fruits</span> project and select <span class="mono">Add | New Item...</span>.
+            </li>
+            <li>
+                Enter <span class="mono">fruits.spg</span> as file name and click <span class="mono">Add</span>.
+            </li>
+            <li>
+                Enter the following text:
+                <ref file="ref/fruits.spg.div"/>
+                In addition to <span class="mono">parser</span> files, files containing token declarations consumed by the parsers must be specified.
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        Now we can generate C++ source code for the parser:
+        <ul>
+            <li>
+                Execute the parser generator <span class="mono">spg</span> with the <span class="mono">fruits.spg</span> argument:
+            </li>
+            <div class="console">
+                C:\soul-5.0.0\fruits>spg -v fruits.spg<br/>
+                > C:/soul-5.0.0/fruits/fruits.spg<br/>
+                generating parsers for project 'fruits.spg'...<br/>
+                > C:/soul-5.0.0/fruits/fruits.parser<br/>
+                linking...<br/>
+                > C:/soul-5.0.0/fruits/fruits.parser<br/>
+                generating code...<br/>
+                ==> C:/soul-5.0.0/fruits/fruits.parser.cppm<br/>
+                ==> C:/soul-5.0.0/fruits/fruits.parser.cpp<br/>
+                generating rule name module...<br/>
+                ==> C:/soul-5.0.0/fruits/fruits_rules.cppm<br/>
+                ==> C:/soul-5.0.0/fruits/fruits_rules.cpp<br/>
+                parsers for project 'fruits.spg' generated successfully.<br/>
+                <br/>
+                C:\soul-5.0.0\fruits><br/>
+            </div>
+            <li>
+                The parser generator has generated the following C++ module interface unit 
+                <span class="mono">fruits.parser.cppm</span> for <span class="mono">fruits.parser</span>:
+                <ref file="ref/fruits.parser.cppm.div"/>
+                The <span class="mono">FruitParser</span> is a template that is instantiated in the C++ module implementation unit.
+            </li>
+            <li>
+                The generator has generated the following C++ module implementation unit 
+                <span class="mono">fruits.parser.cpp</span> for <span class="mono">fruits.parser</span>:
+                <ref file="ref/fruits.parser.cpp.div"/>
+                Because the <span class="mono">FruitParser</span> is defined as a <span class="mono">main</span> parser the 
+                generator has generated a <span class="mono">Parse</span> function that calls the first rule of the parser.
+                The <span class="mono">FruitParser</span> is explicitly instantiated with lexers defined in the <span class="mono">lexer</span> statements 
+                of the parser.
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        Now we can add the generated files to the <span class="mono">fruits</span> C++ project:
+        <ul>
+            <li>
+                Right-click the <span class="mono">fruits</span> project and select <span class="mono">Add Existing Item...</span>.
+            </li>
+            <li>
+                Add the following files:
+                <ul>
+                    <li><span class="mono">fruits.cppm</span>.</li>
+                    <li><span class="mono">fruits.lexer.classmap.rc</span></li>
+                    <li><span class="mono">fruits.lexer.cpp</span></li>
+                    <li><span class="mono">fruits.lexer.cppm</span></li>
+                    <li><span class="mono">fruits.parser.cpp</span></li>
+                    <li><span class="mono">fruits.parser.cppm</span></li>
+                    <li><span class="mono">fruits.token.cppm</span>.</li>
+                </ul>
+            </li>
+            <li>
+                Then right-click the <span class="mono">fruits</span> project and select <span class="mono">Build</span>.
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        We will now complete the main program:
+        <ul>
+            <li>
+                Double-click the <span class="mono">main.cpp</span> file and edit the contents to be the following:
+                <ref file="ref/main.cpp.div"/>
+                The <span class="mono">parse_fruit_list</span> function converts its text argument to UTF-32 string,
+                creates a scanner by calling the <span class="mono">MakeLexer</span> function,
+                creates an empty vector of fruits, and parses the UTF-32 string containing the fruit list into the vector.
+                The main function calls the <span class="mono">parse_fruit_list</span> function and then
+                prints parsed fruits.
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        Now we will edit the program configuration:
+        <ul>
+            <li>
+                Right-click <span class="mono">fruits</span> project and select <span class="mono">Properties</span>.
+            </li>
+            <li>
+                Select the <span class="mono">Debug</span> configuration.
+            </li>
+            <li>
+                Select the <span class="mono">General</span> property sheet.
+            </li>
+            <li>
+                Set <span class="mono">fruitsd</span> as the <span class="mono">Target Name</span>.
+            </li>
+            <li>
+                Select the <span class="mono">Release</span> configuration.
+            </li>
+            <li>
+                Set <span class="mono">fruits</span> as the <span class="mono">Target Name</span>.
+            </li>
+            <li>
+                Click <span class="mono">OK</span> to accept changes.
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        Now you can build the <span class="mono">fruits</span> project for the <span class="mono">x64 | Debug</span> and <span class="mono">x64 | Release</span>
+        configurations.
+    </p>
+
+    <p>
+        Testing:
+        <ul>
+            <li>
+                Start a terminal in <span class="mono">C:\soul-5.0.0\inst</span> directory and run the <span class="mono">inst.bat</span>:
+                <div class="console">
+                    C:\soul-5.0.0\inst>inst.bat<br/>
+                    C:/soul-5.0.0/x64/Debug/fruitsd.exe -> C:/soul-5.0.0/bin/fruitsd.exe<br/>
+                    C:/soul-5.0.0/x64/Release/fruits.exe -> C:/soul-5.0.0/bin/fruits.exe<br/>
+                    source directory 'C:/soul-5.0.0/tools/otava/projects/soul/oslg/bin/release/2' does not exist<br/>
+                    has only single valid path<br/>
+                    source directory 'C:/soul-5.0.0/tools/otava/projects/soul/ospg/bin/release/2' does not exist<br/>
+                    has only single valid path<br/>
+                    source directory 'C:/soul-5.0.0/tools/otava/projects/compiler/ooc/bin/release/2' does not exist<br/>
+                    has only single valid path<br/>
+                    <br/>
+                    C:\soul-5.0.0\inst><br/>
+                </div>
+                The compiled executables <span class="mono">fruits.exe</span> and the debug version <span class="mono">fruitsd.exe</span> are copied to the 
+                <span class="mono">bin</span> directory.
+            </li>
+            <li>
+                Run the fruits executable:
+                <div class="console">
+                    C:\soul-5.0.0\inst>fruits<br/>
+                    (apple, orange, banana)<br/>
+                    <br/>
+                    C:\soul-5.0.0\inst><br/>
+                </div>
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        This completes the tutorial.
+    </p>
+</body>
+</html>

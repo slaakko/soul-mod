@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2025 Seppo Laakko
+// Copyright (c) 2026 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -18,7 +18,7 @@ std::string Version()
 
 void PrintHelp()
 {
-    std::cout << "Parser to HTML converter version " << Version() << std::endl;
+    std::cout << "Soul to HTML converter version " << Version() << std::endl;
     std::cout << "usage: soul2html [options] { FILE.parser | FILE.token | FILE.keyword | FILE.expr | FILE.lexer | FILE.slg }" << std::endl;
     std::cout << "options:" << std::endl;
     std::cout << "--verbose | -v" << std::endl;
@@ -35,7 +35,7 @@ std::string MakeStyleText(int indent)
     formatter.WriteLine("div.soul");
     formatter.WriteLine("{");
     formatter.IncIndent();
-    formatter.WriteLine("background-color: #e6ffee;");
+    formatter.WriteLine("background-color: #d7e9ff;");
     formatter.WriteLine("margin: 20px;");
     formatter.WriteLine("padding: 20px;");
     formatter.WriteLine("font-family: monospace;");
@@ -45,12 +45,12 @@ std::string MakeStyleText(int indent)
     formatter.WriteLine(".soul .kw");
     formatter.WriteLine("{");
     formatter.IncIndent();
-    formatter.WriteLine("color: #a31515;");
+    formatter.WriteLine("color: #0000ff;");
     formatter.WriteLine("font-weight: bold;");
     formatter.DecIndent();
     formatter.WriteLine("}");
     formatter.WriteLine();
-
+     
     formatter.WriteLine(".soul .id");
     formatter.WriteLine("{");
     formatter.IncIndent();
@@ -86,7 +86,7 @@ std::string MakeStyleText(int indent)
     formatter.WriteLine(".soul .comment");
     formatter.WriteLine("{");
     formatter.IncIndent();
-    formatter.WriteLine("color: #006600;");
+    formatter.WriteLine("color: #57a64a;");
     formatter.DecIndent();
     formatter.WriteLine("}");
     formatter.WriteLine();
@@ -94,7 +94,7 @@ std::string MakeStyleText(int indent)
     formatter.WriteLine(".soul .punctuation");
     formatter.WriteLine("{");
     formatter.IncIndent();
-    formatter.WriteLine("color: #a31515;");
+    formatter.WriteLine("color: #0000ff;");
     formatter.WriteLine("font-weight: bold;");
     formatter.DecIndent();
     formatter.WriteLine("}");
@@ -218,42 +218,42 @@ void ProcessToken(const Token& token, soul::xml::Element* element, bool startOfL
 {
     switch (token.id)
     {
-        case WS:
-        {
-            AppendSpace(token.match.begin, token.match.end, element);
-            break;
-        }
-        case KEYWORD:
-        {
-            AppendKeyword(util::ToUtf8(token.match.ToString()), element, startOfLine);
-            break;
-        }
-        case ID:
-        {
-            AppendId(util::ToUtf8(token.match.ToString()), element);
-            break;
-        }
-        case CHAR_LITERAL:
-        case STRING_LITERAL:
-        {
-            AppendString(util::ToUtf8(token.match.ToString()), element);
-            break;
-        }
-        case NUMBER:
-        {
-            AppendNumber(util::ToUtf8(token.match.ToString()), element);
-            break;
-        }
-        case LINE_COMMENT:
-        {
-            AppendComment(util::ToUtf8(token.match.ToString()), element);
-            break;
-        }
-        case PUNCT:
-        {
-            AppendPunctuation(util::ToUtf8(token.match.ToString()), element);
-            break;
-        }
+    case WS:
+    {
+        AppendSpace(token.match.begin, token.match.end, element);
+        break;
+    }
+    case KEYWORD:
+    {
+        AppendKeyword(util::ToUtf8(token.match.ToString()), element, startOfLine);
+        break;
+    }
+    case ID:
+    {
+        AppendId(util::ToUtf8(token.match.ToString()), element);
+        break;
+    }
+    case CHAR_LITERAL:
+    case STRING_LITERAL:
+    {
+        AppendString(util::ToUtf8(token.match.ToString()), element);
+        break;
+    }
+    case NUMBER:
+    {
+        AppendNumber(util::ToUtf8(token.match.ToString()), element);
+        break;
+    }
+    case LINE_COMMENT:
+    {
+        AppendComment(util::ToUtf8(token.match.ToString()), element);
+        break;
+    }
+    case PUNCT:
+    {
+        AppendPunctuation(util::ToUtf8(token.match.ToString()), element);
+        break;
+    }
     }
 }
 
@@ -266,34 +266,34 @@ std::vector<std::u32string> GetLines(const std::u32string& text)
     {
         switch (state)
         {
-            case 0:
+        case 0:
+        {
+            if (c == '\n')
             {
-                if (c == '\n')
-                {
-                    lines.push_back(std::move(line));
-                    line.clear();
-                    state = 1;
-                }
-                else if (c != '\r')
-                {
-                    line.append(1, c);
-                }
-                break;
+                lines.push_back(std::move(line));
+                line.clear();
+                state = 1;
             }
-            case 1:
+            else if (c != '\r')
             {
-                if (c == '\n')
-                {
-                    lines.push_back(std::move(line));
-                    line.clear();
-                }
-                else if (c != '\r')
-                {
-                    line.append(1, c);
-                    state = 0;
-                }
-                break;
+                line.append(1, c);
             }
+            break;
+        }
+        case 1:
+        {
+            if (c == '\n')
+            {
+                lines.push_back(std::move(line));
+                line.clear();
+            }
+            else if (c != '\r')
+            {
+                line.append(1, c);
+                state = 0;
+            }
+            break;
+        }
         }
     }
     if (state == 0)

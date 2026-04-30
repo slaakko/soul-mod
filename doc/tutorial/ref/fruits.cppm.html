@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>fruits.cppm</title>
+    <style>
+      div.cpp
+{
+ background-color: #e6f7ff;
+ margin: 20px;
+ padding: 20px;
+ font-family: monospace;
+}
+
+.cpp .kw
+{
+ color: #0000ff;
+}
+
+.cpp .id
+{
+ color: #000000;
+}
+
+.cpp .number
+{
+ color: #000000;
+}
+
+.cpp .string
+{
+ color: #a31515;
+}
+
+.cpp .pp
+{
+ color: #e6e7e8;
+}
+
+.cpp .other
+{
+ color: #000000;
+}
+
+.cpp .comment
+{
+ color: #57a64a;
+}
+
+</style>
+  </head>
+  <body>
+    <div class="cpp">
+      <span xml:space="preserve"><span class="comment">// fruits.cppm:
+</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">fruits</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">std</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">namespace</span>&nbsp;<span class="id">fruits</span>&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">class</span>&nbsp;<span class="id">fruit</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">public</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">virtual</span>&nbsp;<span class="other">~</span><span class="id">fruit</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="other">{</span><span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">virtual</span>&nbsp;<span class="kw">void</span>&nbsp;<span class="id">print</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="other">=</span>&nbsp;<span class="number">0</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">class</span>&nbsp;<span class="id">apple</span>&nbsp;<span class="other">:</span>&nbsp;<span class="kw">public</span>&nbsp;<span class="id">fruit</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">public</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">apple</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="other">{</span><span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">void</span>&nbsp;<span class="id">print</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="id">override</span>&nbsp;<span class="other">{</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"apple"</span><span class="other">;</span>&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">class</span>&nbsp;<span class="id">orange</span>&nbsp;<span class="other">:</span>&nbsp;<span class="kw">public</span>&nbsp;<span class="id">fruit</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">public</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">orange</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="other">{</span><span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">void</span>&nbsp;<span class="id">print</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="id">override</span>&nbsp;<span class="other">{</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"orange"</span><span class="other">;</span>&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">class</span>&nbsp;<span class="id">banana</span>&nbsp;<span class="other">:</span>&nbsp;<span class="kw">public</span>&nbsp;<span class="id">fruit</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">public</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">banana</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="other">{</span><span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">void</span>&nbsp;<span class="id">print</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="id">override</span>&nbsp;<span class="other">{</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"banana"</span><span class="other">;</span>&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span>&nbsp;<span class="comment">// namespace fruits
+</span></span>
+      <br/>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>fruits.token.cppm</title>
+    <style>
+      div.cpp
+{
+ background-color: #e6f7ff;
+ margin: 20px;
+ padding: 20px;
+ font-family: monospace;
+}
+
+.cpp .kw
+{
+ color: #0000ff;
+}
+
+.cpp .id
+{
+ color: #000000;
+}
+
+.cpp .number
+{
+ color: #000000;
+}
+
+.cpp .string
+{
+ color: #a31515;
+}
+
+.cpp .pp
+{
+ color: #e6e7e8;
+}
+
+.cpp .other
+{
+ color: #000000;
+}
+
+.cpp .comment
+{
+ color: #57a64a;
+}
+
+</style>
+  </head>
+  <body>
+    <div class="cpp">
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="comment">// this file has been automatically generated from 'C:/soul-5.0.0/fruits/fruits.token' using soul lexer generator version 5.0.0
+</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">fruits</span><span class="other">.</span><span class="id">token</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">std</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">namespace</span>&nbsp;<span class="id">fruits</span><span class="other">::</span><span class="id">token</span>&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">constexpr</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int32_t</span>&nbsp;<span class="id">tokenSetID</span>&nbsp;<span class="other">=</span>&nbsp;<span class="number">175489805</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">constexpr</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int64_t</span>&nbsp;<span class="id">APPLE</span>&nbsp;<span class="other">=</span>&nbsp;<span class="other">(</span><span class="kw">static_cast</span><span class="other">&lt;</span><span class="id">std</span><span class="other">::</span><span class="id">int64_t</span><span class="other">></span><span class="other">(</span><span class="id">tokenSetID</span><span class="other">)</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="number">32</span><span class="other">)</span>&nbsp;<span class="other">|</span>&nbsp;<span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">constexpr</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int64_t</span>&nbsp;<span class="id">ORANGE</span>&nbsp;<span class="other">=</span>&nbsp;<span class="other">(</span><span class="kw">static_cast</span><span class="other">&lt;</span><span class="id">std</span><span class="other">::</span><span class="id">int64_t</span><span class="other">></span><span class="other">(</span><span class="id">tokenSetID</span><span class="other">)</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="number">32</span><span class="other">)</span>&nbsp;<span class="other">|</span>&nbsp;<span class="number">2</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">constexpr</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int64_t</span>&nbsp;<span class="id">BANANA</span>&nbsp;<span class="other">=</span>&nbsp;<span class="other">(</span><span class="kw">static_cast</span><span class="other">&lt;</span><span class="id">std</span><span class="other">::</span><span class="id">int64_t</span><span class="other">></span><span class="other">(</span><span class="id">tokenSetID</span><span class="other">)</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="number">32</span><span class="other">)</span>&nbsp;<span class="other">|</span>&nbsp;<span class="number">3</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">constexpr</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int64_t</span>&nbsp;<span class="id">COMMA</span>&nbsp;<span class="other">=</span>&nbsp;<span class="other">(</span><span class="kw">static_cast</span><span class="other">&lt;</span><span class="id">std</span><span class="other">::</span><span class="id">int64_t</span><span class="other">></span><span class="other">(</span><span class="id">tokenSetID</span><span class="other">)</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="number">32</span><span class="other">)</span>&nbsp;<span class="other">|</span>&nbsp;<span class="number">4</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">constexpr</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int64_t</span>&nbsp;<span class="id">LPAREN</span>&nbsp;<span class="other">=</span>&nbsp;<span class="other">(</span><span class="kw">static_cast</span><span class="other">&lt;</span><span class="id">std</span><span class="other">::</span><span class="id">int64_t</span><span class="other">></span><span class="other">(</span><span class="id">tokenSetID</span><span class="other">)</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="number">32</span><span class="other">)</span>&nbsp;<span class="other">|</span>&nbsp;<span class="number">5</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">constexpr</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int64_t</span>&nbsp;<span class="id">RPAREN</span>&nbsp;<span class="other">=</span>&nbsp;<span class="other">(</span><span class="kw">static_cast</span><span class="other">&lt;</span><span class="id">std</span><span class="other">::</span><span class="id">int64_t</span><span class="other">></span><span class="other">(</span><span class="id">tokenSetID</span><span class="other">)</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="number">32</span><span class="other">)</span>&nbsp;<span class="other">|</span>&nbsp;<span class="number">6</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">constexpr</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">int64_t</span>&nbsp;<span class="id">ID</span>&nbsp;<span class="other">=</span>&nbsp;<span class="other">(</span><span class="kw">static_cast</span><span class="other">&lt;</span><span class="id">std</span><span class="other">::</span><span class="id">int64_t</span><span class="other">></span><span class="other">(</span><span class="id">tokenSetID</span><span class="other">)</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="number">32</span><span class="other">)</span>&nbsp;<span class="other">|</span>&nbsp;<span class="number">7</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span>&nbsp;<span class="comment">// fruits::token
+</span></span>
+      <br/>
+    </div>
+  </body>
+</html>

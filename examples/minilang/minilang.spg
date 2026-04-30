@@ -1,4 +1,5 @@
 project minilang.spg;
+tokens <minilang.token>;
 parser <expression.parser>;
 parser <function.parser>;
 parser <identifier.parser>;
