@@ -236,7 +236,7 @@ C:\soul-5.0.0\tools\otava\test\hello><br/>
     Testing:
     <ul>
         <li>
-            Then execute the application by entering command <span class="mono">bin\debug\hello</span>:
+            Execute the application by entering command <span class="mono">bin\debug\hello</span>:
             <div class="console">
 C:\soul-5.0.0\tools\otava\test\hello>bin\debug\hello<br/>
 Hello, world!<br/>
