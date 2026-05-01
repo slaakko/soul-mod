@@ -177,41 +177,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xmlsergen", "soul\xml\xmlse
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "book_server", "examples\book_server\book_server.vcxproj", "{7CE86BEA-74DD-4798-82B2-8142DDE69661}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gendoc", "gendoc", "{DA74402A-B866-45C2-9F0E-E2678FFB320A}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "code", "code", "{E9BA1B51-CE99-499E-9CCF-00C0355E6B97}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib1", "lib1", "{7494E1B0-7289-4F07-A8AA-D69E77494016}"
-	ProjectSection(SolutionItems) = preProject
-		examples\gendoc\code\lib1\ex1.cpp = examples\gendoc\code\lib1\ex1.cpp
-		examples\gendoc\code\lib1\ex1.ixx = examples\gendoc\code\lib1\ex1.ixx
-		examples\gendoc\code\lib1\ex2.cpp = examples\gendoc\code\lib1\ex2.cpp
-		examples\gendoc\code\lib1\ex2.ixx = examples\gendoc\code\lib1\ex2.ixx
-		examples\gendoc\code\lib1\lib1.ixx = examples\gendoc\code\lib1\lib1.ixx
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib2", "lib2", "{C7C4DD97-2424-480F-B920-394E6816A921}"
-	ProjectSection(SolutionItems) = preProject
-		examples\gendoc\code\lib2\f1.cpp = examples\gendoc\code\lib2\f1.cpp
-		examples\gendoc\code\lib2\f1.ixx = examples\gendoc\code\lib2\f1.ixx
-		examples\gendoc\code\lib2\lib2.ixx = examples\gendoc\code\lib2\lib2.ixx
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{A16A4A44-EF64-4F02-93C1-7D93D73AADF8}"
-	ProjectSection(SolutionItems) = preProject
-		examples\gendoc\doc\gendoc.xml = examples\gendoc\doc\gendoc.xml
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib1", "lib1", "{F589B908-8894-4EF7-BAE1-79935BA191AA}"
-	ProjectSection(SolutionItems) = preProject
-		examples\gendoc\doc\lib1\gendoc.xml = examples\gendoc\doc\lib1\gendoc.xml
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib2", "lib2", "{70E1BAFF-EA99-4652-B88E-05E460D0DA1F}"
-	ProjectSection(SolutionItems) = preProject
-		examples\gendoc\doc\lib2\gendoc.xml = examples\gendoc\doc\lib2\gendoc.xml
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ms", "tools\ms\ms.vcxproj", "{C201CD5C-1EA2-422C-99C3-38FFDA9223ED}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hexdump", "tools\hexdump\hexdump.vcxproj", "{99973923-65EE-41E2-B991-EC50B3376E0B}"
@@ -331,9 +296,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "optimizer", "tools\otava\op
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rex_expected", "soul_expected\rex_expected\rex_expected.vcxproj", "{1D25811A-26B6-4EBF-B3A1-2F12FF705CFB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fruits", "examples\fruits\fruits.vcxproj", "{75C85465-025D-4A36-80DF-760C0F9169C5}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gendoc", "tools\gendoc\gendoc.vcxproj", "{D2A763BC-DB17-4DED-9C28-8F6A16FA6103}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fruits_example", "examples\fruits_example\fruits_example.vcxproj", "{75C85465-025D-4A36-80DF-760C0F9169C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2166,13 +2129,6 @@ Global
 		{8100879B-A3F2-4B53-9EC7-23AB0532E158} = {0EAEC954-637A-4FB5-AA46-FB34AFBF17D3}
 		{D020F9A2-616F-4AD9-B42F-7C761D6A2921} = {0EAEC954-637A-4FB5-AA46-FB34AFBF17D3}
 		{7CE86BEA-74DD-4798-82B2-8142DDE69661} = {ED596215-59BC-4D09-8D7A-D300704CAC59}
-		{DA74402A-B866-45C2-9F0E-E2678FFB320A} = {ED596215-59BC-4D09-8D7A-D300704CAC59}
-		{E9BA1B51-CE99-499E-9CCF-00C0355E6B97} = {DA74402A-B866-45C2-9F0E-E2678FFB320A}
-		{7494E1B0-7289-4F07-A8AA-D69E77494016} = {E9BA1B51-CE99-499E-9CCF-00C0355E6B97}
-		{C7C4DD97-2424-480F-B920-394E6816A921} = {E9BA1B51-CE99-499E-9CCF-00C0355E6B97}
-		{A16A4A44-EF64-4F02-93C1-7D93D73AADF8} = {DA74402A-B866-45C2-9F0E-E2678FFB320A}
-		{F589B908-8894-4EF7-BAE1-79935BA191AA} = {A16A4A44-EF64-4F02-93C1-7D93D73AADF8}
-		{70E1BAFF-EA99-4652-B88E-05E460D0DA1F} = {A16A4A44-EF64-4F02-93C1-7D93D73AADF8}
 		{C201CD5C-1EA2-422C-99C3-38FFDA9223ED} = {D32D9A58-313A-4EAB-BA1A-188C33D585C2}
 		{99973923-65EE-41E2-B991-EC50B3376E0B} = {D32D9A58-313A-4EAB-BA1A-188C33D585C2}
 		{899788FF-5DF2-42A2-A468-156FAB6DAF9B} = {D32D9A58-313A-4EAB-BA1A-188C33D585C2}

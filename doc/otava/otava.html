@@ -9,7 +9,7 @@
   <body>
     <h1>Otava</h1>
     <p>
-      Otava is an experimental C++ compiler whose scanners and parsers are generated using <span class="mono">Soul</span>
+      Otava is an experimental C++ compiler whose lexical analyzers and parsers are generated using <span class="mono">Soul</span>
       . It generates x64 assembly code and uses <span class="mono">msbuild</span>
       to compile the assembly files to object code, to archive object files in libraries, to compile main C++ files of programs and to link programs.</p>
     <p>
@@ -178,16 +178,20 @@
           <br/>
           C:\soul-5.0.0\tools\otava\std> <br/>
         </div>
-        This command builds the standard library for the <span class="mono">debug</span>
-        configuration.</li>
+        <p>
+          This command builds the standard library for the <span class="mono">debug</span>
+          configuration.</p>
+      </li>
       <li>
         Then enter the same <span class="mono">oc</span>
         command with the <span class="mono">release</span>
         configuration and <span class="mono">-O=1</span>
         arguments: <div class="console">C:\soul-5.0.0\tools\otava\std>oc -c=release -O=1 std.project</div>
       </li>
-      The <span class="mono">release/1</span>
-      configuration does some optimizations but does not do function inlining. <li>
+      <p>
+        The <span class="mono">release/1</span>
+        configuration does some optimizations but does not do function inlining.</p>
+      <li>
         And finally build for the <span class="mono">release/2</span>
         configuration: <div class="console">C:\soul-5.0.0\tools\otava\std>oc -c=release -O=2 std.project</div>
       </li>
@@ -231,8 +235,7 @@
     <p>
       Testing: <ul>
         <li>
-          Execute the application by entering command <span class="mono">bin\debug\hello</span>
-          : <div class="console">
+          Execute the application: <div class="console">
             C:\soul-5.0.0\tools\otava\test\hello>bin\debug\hello <br/>
             Hello, world! <br/>
             <br/>

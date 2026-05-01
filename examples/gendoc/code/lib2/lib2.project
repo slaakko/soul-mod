@@ -1,5 +1,0 @@
-project lib1;
-reference <../lib1/lib1.project>;
-interface <lib2.ixx>;
-interface <f1.ixx>;
-source <f1.cpp>;

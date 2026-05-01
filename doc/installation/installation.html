@@ -13,7 +13,7 @@
         Prerequisites:<br/>
         <ul>
             <li>
-                Microsoft Visual Studio 2022 Community Edition with Desktop Development with C++ tool chain installed.
+                Microsoft Visual Studio 2022 Community Edition version 17.14.30 or later with Desktop Development with C++ tool chain installed.
             </li>
         </ul>
     </p>
@@ -30,22 +30,26 @@
             Create <span class="mono">SOUL_ROOT</span> environment variable and set it to contain path to the <span class="mono">soul-5.0.0</span> installation directory:<br />
             <br />
             <img src="../image/env_var.png" /><br />
-            The <span class="mono">SOUL_ROOT</span> environment variable is used by <span class="mono">Soul</span> programs to find the
-            Otava standard library <span class="mono">std</span> and the Unicode database <span class="mono">soul_ucd.bin</span>.
         </li>
         <li>
             Create <span class="mono">bin</span> and <span class="mono">lib</span> directories under the <span class="mono">soul-5.0.0</span> installation directory:
             <ul>
-                <div class="console">
-                    Microsoft Windows [Version 10.0.26200.8246]<br/>
-                    (c) Microsoft Corporation. All rights reserved.<br/>
-                    <br/>
-                    C:\soul-5.0.0>md bin<br/>
-                    <br/>
-                    C:\soul-5.0.0>md lib<br/>
-                    <br/>
-                    C:\soul-5.0.0><br/>
-                </div>
+                <li>
+                    Start a terminal in <span class="mono">C:\soul-5.0.0</span> directory.
+                </li>
+                <li>
+                    Execute <span class="mono">md bin</span> and <span class="mono">md lib</span> commands:
+                    <div class="console">
+                        Microsoft Windows [Version 10.0.26200.8246]<br />
+                        (c) Microsoft Corporation. All rights reserved.<br />
+                        <br />
+                        C:\soul-5.0.0>md bin<br />
+                        <br />
+                        C:\soul-5.0.0>md lib<br />
+                        <br />
+                        C:\soul-5.0.0><br />
+                    </div>
+                </li>
             </ul>
         </li>
         <li>
@@ -102,14 +106,6 @@
             </ul>
         </li>
         <li>
-            Exit the <span class="mono">x64 Native Toools Command Prompt</span>:<br/>
-            <ul>
-                <div class="console">
-                    C:\soul-5.0.0\ext\zlib-1.2.11\contrib\masmx64>exit<br/>
-                </div>
-            </ul>
-        </li>
-        <li>
             Open <span class="mono">C:\soul-5.0.0\soul.sln</span> in Visual Studio.
         </li>
         <li>
@@ -136,16 +132,16 @@
             <span class="mono">notepad++</span>.<br/>
         </li>
         <li>
-            Paste the target path from clipboard as the value of the <span class="mono">path</span> attribute of the <span class="mono">vcvars64</span> element:<br/><br />
-            <img src="../image/vcvars64_path.png" /><br/>
-            The <span class="mono">vcvars64</span> path is used by the Otava compiler <span class="mono">oc.exe</span> to start 
-            a Visual Studio Developer Command Prompt and to find <span class="mono">msbuild.exe</span>.
-</li>
+            <p>
+                Paste the target path from clipboard as the value of the <span class="mono">path</span> attribute of the <span class="mono">vcvars64</span> element:<br /><br />
+                <img src="../image/vcvars64_path.png" /><br />
+            </p>
+            <p>
+                The <span class="mono">vcvars64</span> path is used by the Otava compiler to start Visual Studio Developer Command Prompt.
+            </p>
+		</li>
         <li>
-            Save the file and close the text editor.
-        </li>
-        <li>
-            Open terminal in <span class="mono">C:\soul-5.0.0\inst</span> directory and run <span class="mono">inst.bat</span> from there:
+            Open terminal in <span class="mono">C:\soul-5.0.0\inst</span> directory and run <span class="mono">inst.bat</span>:
             <ul>
                 <div class="console">
                     Microsoft Windows [Version 10.0.26200.8246]<br/>
@@ -309,12 +305,14 @@
                     source directory 'C:/soul-5.0.0/tools/otava/projects/compiler/ooc/bin/release/2' does not exist<br/>
                     has only single valid path<br/>
                 </div>
-                The <span class="mono">inst.bat</span> copies executables from the Visual Studio solution output directory to the <span class="mono">bin</span> directory and
-                libraries to the <span class="mono">lib</span> directory.
+                <p>
+                    The <span class="mono">inst.bat</span> copies executables from the Visual Studio solution output directory to the <span class="mono">bin</span> directory and
+                    libraries to the <span class="mono">lib</span> directory.
+                </p>
             </ul>
         </li>
         <li>
-            Open terminal in <span class="mono">C:\soul-5.0.0\unicode</span> directory and run <span class="mono">build.bat</span> from there:
+            Open terminal in <span class="mono">C:\soul-5.0.0\unicode</span> directory and run <span class="mono">build.bat</span>:
             <ul>
                 <div class="console">
                     Microsoft Windows [Version 10.0.26200.8246]<br/>
@@ -325,7 +323,9 @@
                     <br/>
                     C:\soul-5.0.0\unicode><br/>
                 </div>
-                This builds the Unicode database <span class="mono">soul_ucd.bin"</span>.
+                <p>
+                    This builds the Unicode database <span class="mono">soul_ucd.bin"</span>.
+                </p>
             </ul>
         </li>
         <li>
