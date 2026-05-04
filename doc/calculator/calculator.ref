@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>calculator example</title>
+    <link href="../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>Calculator example</h1>
+
+    <ul>
+        <li>Token definitions:</li>
+
+        <ref file="ref/calculator.token.div"/>
+
+        <li>Keywords:</li>
+
+        <ref file="ref/calculator.keyword.div"/>
+
+        <li>Regular expressions:</li>
+
+        <ref file="ref/calculator.expr.div"/>
+
+        <li>Lexer:</li>
+
+        <ref file="ref/calculator.lexer.div"/>
+
+        <li>Lexer project file:</li>
+
+        <ref file="ref/calculator.slg.div"/>
+
+        <li>Calculator interface:</li>
+
+        <ref file="ref/calculator.cppm.div"/>
+
+        <li>Calculator implementation:</li>
+
+        <ref file="ref/calculator.cpp.div"/>
+
+        <li>Parser:</li>
+
+        <ref file="ref/calculator.parser.div"/>
+
+        <li>Parser project file:</li>
+
+        <ref file="ref/calculator.spg.div"/>
+
+        <li>Main program:</li>
+
+        <ref file="ref/main.cpp.div"/>
+
+    </ul>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<div class="cpp">
+  <span xml:space="preserve"><span class="comment">// calculator.cppm:
+</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">calculator</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">std</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">namespace</span>&nbsp;<span class="id">calculator</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">enum</span>&nbsp;<span class="kw">class</span>&nbsp;<span class="id">Operator</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">plus</span><span class="other">,</span>&nbsp;<span class="id">minus</span><span class="other">,</span>&nbsp;<span class="id">times</span><span class="other">,</span>&nbsp;<span class="id">divides</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">class</span>&nbsp;<span class="id">Memory</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">public</span><span class="other">:</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Memory</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">void</span>&nbsp;<span class="id">SetValue</span><span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">u32string</span><span class="other">&amp;</span>&nbsp;<span class="id">variableName</span><span class="other">,</span>&nbsp;<span class="kw">double</span>&nbsp;<span class="id">value</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">double</span>&nbsp;<span class="id">GetValue</span><span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">u32string</span><span class="other">&amp;</span>&nbsp;<span class="id">variableName</span><span class="other">)</span>&nbsp;<span class="kw">const</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">private</span><span class="other">:</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">map</span><span class="other">&lt;</span><span class="id">std</span><span class="other">::</span><span class="id">u32string</span><span class="other">,</span>&nbsp;<span class="kw">double</span><span class="other">></span>&nbsp;<span class="id">variableMap</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">double</span>&nbsp;<span class="id">ParseDouble</span><span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">u32string</span><span class="other">&amp;</span>&nbsp;<span class="id">s</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">}</span></span>
+  <br/>
+</div>

@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/soul-5.0.0/fruits/fruits.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'C:/soul-5.1.0/fruits/fruits.parser' using soul parser generator spg version 5.1.0
 
 export module fruits.parser;
 

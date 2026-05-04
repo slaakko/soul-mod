@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Regular expressions</title>
+    <link href="../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>Regular expressions</h1>
+
+    <h2>Choice expression</h2>
+
+    <p>
+        If <span class="rule">e</span> and <span class="rule">f</span> are 
+        <span class="rule"><a href="../syntax/syntax.html#rule.regular-expression">regular&#8209;expressions</a></span>,
+        so is <span class="rule">e</span><span class="mono">|</span><span class="rule">f</span>, a 
+        <span class="rule"><a href="../syntax/syntax.html#rule.re-choice">re-choice</a></span> expression, 
+        that matches <span class="rule">e</span> or <span class="rule">f</span>.
+    </p>
+
+    <h2>Catenation expression</h2>
+
+    <p>
+        If <span class="rule">e</span> and <span class="rule">f</span> are 
+        <span class="rule"><a href="../syntax/syntax.html#rule.regular-expression">regular&#8209;expressions</a></span>,
+        so is <span class="rule">e</span><span class="rule">f</span>, a 
+        <span class="rule"><a href="../syntax/syntax.html#rule.catenation">catenation</a></span> expression, 
+        that matches <span class="rule">e</span> followed by <span class="rule">f</span>.
+    </p>
+
+    <h2>Repetition expressions</h2>
+
+    <p> 
+        If <span class="rule">e</span> is a <span class="rule"><a href="../syntax/syntax.html#rule.regular-expression">regular&#8209;expression</a></span>,
+        so are <span class="rule">e</span><span class="mono">*</span>, <span class="rule">e</span><span class="mono">+</span> and
+        <span class="rule">e</span><span class="mono">?</span>.
+        Expression <span class="rule">e</span><span class="mono">*</span> matches 0...N occurrences of <span class="rule">e</span>,
+        <span class="rule">e</span><span class="mono">+</span> matches 1...N occurrences of <span class="rule">e</span>, and 
+        <span class="rule">e</span><span class="mono">?</span> matches 0...1 occurrences of <span class="rule">e</span>.
+    </p>
+
+    <h2>Primary expressions</h2>
+
+    <h3>Grouping expression</h3>
+
+    <p>
+        If <span class="rule">e</span> is a <span class="rule"><a href="../syntax/syntax.html#rule.regular-expression">regular&#8209;expression</a></span>,
+        so is <span class="mono">(</span><span class="rule">e</span><span class="mono">)</span>, a grouping expression.
+    </p>
+
+    <h3>Escape sequences</h3>
+
+    <p>
+        The following <span class="rule"><a href="../syntax/syntax.html#rule.escape">escape</a></span> sequences start with a backslash character.
+    </p>
+
+    <p>
+        <span class="mono">\x</span> or <span class="mono">\X</span> followed by a hexadecimal digit sequence <em>c</em>matches a 
+        Unicode character whose code point is equal to <em>c</em>.
+    </p>
+
+    <p>
+        <span class="mono">\d</span> or <span class="mono">\D</span> followed by a decimal digit sequence <em>c</em>matches a Unicode character whose code point is equal to <em>c</em>.
+    </p>
+
+    <p>
+        <span class="mono">\</span> followed by an octal digit sequence <em>c</em>matches a Unicode character whose code point is equal to <em>c</em>.
+    </p>
+
+    <p>
+        <span class="mono">\u</span> followed by four hexadecimal digits <em>c</em>matches a Unicode character whose code point is equal to <em>c</em>.
+    </p>
+
+    <p>
+        <span class="mono">\U</span> followed by eight hexadecimal digits <em>c</em>matches a Unicode character whose code point is equal to <em>c</em>.
+    </p>
+
+    <table class="opt">
+        <tr>
+            <th>
+                Escape
+            </th>
+            <th>
+                Value
+            </th>
+        </tr>
+        <tr>
+            <td><span class="mono">\a</span></td>
+            <td><span class="mono">\u0007</span></td>
+        </tr>
+        <tr>
+            <td><span class="mono">\b</span></td>
+            <td><span class="mono">\u0008</span></td>
+        </tr>
+        <tr>
+            <td><span class="mono">\f</span></td>
+            <td><span class="mono">\u000c</span></td>
+        </tr>
+        <tr>
+            <td><span class="mono">\n</span></td>
+            <td><span class="mono">\u000a</span></td>
+        </tr>
+        <tr>
+            <td><span class="mono">\r</span></td>
+            <td><span class="mono">\u000d</span></td>
+        </tr>
+        <tr>
+            <td><span class="mono">\t</span></td>
+            <td><span class="mono">\u0009</span></td>
+        </tr>
+        <tr>
+            <td><span class="mono">\v</span></td>
+            <td><span class="mono">\u000b</span></td>
+        </tr>
+    </table>
+
+    <p>
+        Any other character following the backslash character matches that character literally.
+    </p>
+
+    <h3>Character class</h3>
+
+    <p>
+        Single characters or character ranges like <span class="mono">a-z</span> inside square brackets form a
+        <span class="rule"><a href="../syntax/syntax.html#rule.class">character class</a></span>.
+    </p>
+
+    <p>
+        A character class matches any single input character from the set of character contained by the class.
+    </p>
+
+    <p>
+        If the first character that follows the left square bracket is a caret (<span class="mono">^</span>), 
+        the class matches all but the listed characters and ranges following the caret.
+    </p>
+
+    <h3>
+        Dot
+    </h3>
+
+    <p>
+        The <span class="mono">.</span> character matches any single character except newline.
+    </p>
+
+    <h3>Expression reference</h3>
+
+    <p>
+        A regular expression in an <span class="rule"><a href="../syntax/syntax.html#expression-file">expression&#8209;file</a></span>
+        may refer to preceding expressions by name by enclosing the 
+        <span class="rule"><a href="../syntax/syntax.html#rule.expression-name">expression&#8209;name</a></span> inside braces.
+        This forms an <span class="rule"><a href="../syntax/syntax.html#rule.expression-reference">expression&#8209;reference</a></span>.
+    </p>
+
+    <p>
+        Similarly a regular expression in a <span class="rule"><a href="../syntax/syntax.html#lexer-file">lexer&#8209;file</a></span>
+        may refer to expressions contained by imported expression files by name
+        by enclosing the 
+        <span class="rule"><a href="../syntax/syntax.html#rule.expression-name">expression&#8209;name</a></span> inside braces.
+    </p>
+
+    <h3>Other characters</h3>
+
+    <p>
+        Any other character matches current input character literally.
+    </p>
+
+</body>
+</html>

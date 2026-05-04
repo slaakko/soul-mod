@@ -1,0 +1,103 @@
+// calculator.parser
+
+export module calculator.parser;
+
+[interface]import calculator;
+[implementation]import calculator.lexer;
+[implementation]import calculator.token;
+
+parser CalculatorParser
+{
+    lexer calculator::lexer::CalculatorLexer<char32_t>;
+
+    main;
+
+    expression(calculator::Memory* memory) : double
+        ::= assignment(memory):a{ return a; }
+        |   term(memory):t{ return t; }
+        ;
+
+    assignment(calculator::Memory* memory, var std::u32string variableName) : double
+        ::= VARIABLE{ variableName = lexer.GetToken(pos).ToString(); } 
+            ASSIGN 
+            term(memory):t{ double value = t; memory->SetValue(variableName, value); return value; }
+        ;
+
+    term(calculator::Memory* memory, var double value) : double
+        ::= 
+        (
+            factor(memory):left{ value = left; }
+            (
+                weak_operator:op factor(memory):right
+                {
+                    switch (op)
+                    {
+                        case calculator::Operator::plus:
+                        {
+                            value += right;
+                            break;
+                        }
+                        case calculator::Operator::minus:
+                        {
+                            value -= right;
+                            break;
+                        }
+                    }
+                }
+            )*
+        )
+        {
+            return value;
+        }
+        ;
+
+    weak_operator : calculator::Operator
+        ::= PLUS{ return calculator::Operator::plus; }
+        |   MINUS{ return calculator::Operator::minus; }
+        ;
+
+    factor(calculator::Memory* memory, var double value) : double
+        ::= 
+        (
+            unary(memory):left{ value = left; }
+            (
+                strong_operator:op unary(memory):right
+                {
+                    switch (op)
+                    {
+                        case calculator::Operator::times:
+                        {
+                            value *= right;
+                            break;
+                        }
+                        case calculator::Operator::divides:
+                        {
+                            value /= right;
+                            break;
+                        }
+                    }
+                }
+            )*
+        )
+        {
+            return value;
+        }
+        ;
+
+    strong_operator : calculator::Operator
+        ::= TIMES{ return calculator::Operator::times; }
+        |   DIVIDES{ return calculator::Operator::divides; }
+        ;
+
+    unary(calculator::Memory* memory) : double
+        ::= MINUS unary(memory):e{ return -e;}
+        |   primary(memory):p{ return p; }
+        ;
+
+    primary(calculator::Memory* memory) : double
+        ::= NUMBER{ return calculator::ParseDouble(lexer.GetToken(pos).ToString()); }
+        |   VARIABLE{ return memory->GetValue(lexer.GetToken(pos).ToString());}
+        |   PI{ return std::numbers::pi; }
+        |   LPAREN term(memory):t RPAREN{ return t; }
+        ;
+}

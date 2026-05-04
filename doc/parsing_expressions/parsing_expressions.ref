@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Parsing expressions</title>
+    <link href="../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>Parsing expressions</h1>
+
+    <h2>Choice expression</h2>
+
+    <p>
+        If <span class="rule">p</span> and <span class="rule">q</span> are 
+        <span class="rule"><a href="../syntax/syntax.html#rule.parsing-expression">parsing&#8209;expressions</a></span>,
+        so is <span class="rule">p</span><span class="mono">|</span><span class="rule">q</span>, a 
+        <span class="rule"><a href="../syntax/syntax.html#rule.choice">choice</a></span> expression, 
+        that matches <span class="rule">p</span> or <span class="rule">q</span> in left-to-right order.
+        If <span class="rule">p</span> matches, <span class="rule">q</span> is not tried at all. 
+        If <span class="rule">p</span> does not match, then <span class="rule">q</span> is tried to match.
+    </p>
+
+    <h2>Sequence expression</h2>
+
+    <p>
+        If <span class="rule">p</span> and <span class="rule">q</span> are 
+        <span class="rule"><a href="../syntax/syntax.html#rule.parsing-expression">parsing&#8209;expressions</a></span>,
+        so is <span class="rule">p</span><span class="rule">q</span>, a 
+        <span class="rule"><a href="../syntax/syntax.html#rule.sequence">sequence</a></span> expression,
+        that matches <span class="rule">p</span> followed by <span class="rule">q</span> in left-to-right order.
+    </p>
+
+    <h2>Difference expression</h2>
+
+    <p>
+        If <span class="rule">p</span> and <span class="rule">q</span> are 
+        <span class="rule"><a href="../syntax/syntax.html#rule.parsing-expression">parsing&#8209;expressions</a></span>,
+        so is <span class="rule">p</span><span class="mono">%</span><span class="rule">q</span>, a 
+        <span class="rule"><a href="../syntax/syntax.html#rule.list">list</a></span> expression.
+        The difference expression matches, if <span class="rule">p</span> matches but <span class="rule">q</span> does not match.
+    </p>
+
+    <h2>List expression</h2>
+
+    <p>
+        If <span class="rule">p</span> and <span class="rule">q</span> are 
+        <span class="rule"><a href="../syntax/syntax.html#rule.parsing-expression">parsing&#8209;expressions</a></span>,
+        so is <span class="rule">p</span><span class="mono">%</span><span class="rule">q</span>, a 
+        <span class="rule"><a href="../syntax/syntax.html#rule.list">list</a></span> expression.
+        The list expression matches 1...N occurrences of <span class="rule">p</span> separated by the occurrences of <span class="rule">q</span>.
+        The expression <span class="rule">p</span><span class="mono">%</span><span class="rule">q</span> has the same meaning as the expression 
+        <span class="rule">p</span>(<span class="rule">q</span><span class="rule">p</span>)<span class="mono">*</span>.
+    </p>
+
+    <h2>Lookahead expression</h2>
+
+    <p>
+        if <span class="rule">p</span> is a <span class="rule"><a href="../syntax/syntax.html#rule.parsing-expression">parsing&#8209;expression</a></span>, 
+        so is <span class="mono">&amp;</span><span class="rule">p</span>, 
+        a <span class="rule"><a href="../syntax/syntax.html#rule.lookahead">lookahead</a></span> expression.
+        A lookahead expression matches expression <span class="rule">p</span> without consuming any input.
+    </p>
+
+    <h2>Postfix expressions</h2>
+
+    <p>
+        If <span class="rule">p</span> is a <span class="rule"><a href="../syntax/syntax.html#rule.parsing-expression">parsing&#8209;expressions</a></span>,
+        so are <span class="rule">p</span><span class="mono">*</span>, <span class="rule">p</span><span class="mono">+</span> and 
+        <span class="rule">p</span><span class="mono">?</span>, <span class="rule"><a href="../syntax/syntax.html#rule.postfix">postfix&#8209;expressions</a></span>.
+        Expression <span class="rule">p</span><span class="mono">*</span> matches 0...N occurrences of <span class="rule">p</span>,
+        <span class="rule">p</span><span class="mono">+</span> matches 1...N occurrences of <span class="rule">p</span>, and 
+        <span class="rule">p</span><span class="mono">?</span> matches 0...1 occurrences of <span class="rule">p</span>.
+    </p>
+
+    <h2>Primary expressions</h2>
+
+    <p>
+        A <span class="rule"><a href="../syntax/syntax.html#rule.primary">primary</a></span> expression consists either a call of a rule, a primitive expression, 
+        or a grouping expression. A primary expression can contain an expectation operator and semantic actions.
+    </p>
+
+    <h3>Rule call</h3>
+
+    <p>
+        If <span class="rule">r</span> is a name of an existing <span class="rule"><a href="../syntax/syntax.html#rule.parsing-rule">parsing&#8209;rule</a></span>,
+        expressions <span class="rule">r</span><span class="mono">:</span><em>i</em>, that exists in the body of some parsing rule, will match the 
+        <span class="rule"><a href="../syntax/syntax.html#rule.parsing-rule-body">body</a></span> of 
+        <span class="rule">r</span>.
+        We might say that parsing rule <span class="rule">r</span> is <em><a href="../syntax/syntax.html#rule.rule-call">called</a></em> at the 
+        position of <span class="rule">r</span>.
+        Similarly expression 
+        <span class="rule">r</span>(<em>a</em><sub>0</sub>, <em>a</em><sub>1</sub>, ...<em>a</em><sub>n</sub>)<span class="mono">:</span><em>i</em> 
+        calls the rule <span class="rule">r</span> with arguments <em>a</em><sub>0</sub>, <em>a</em><sub>1</sub>, ..., <em>a</em><sub>n</sub>.
+        The identifier <em>i</em> is an <span class="rule"><a href="../syntax/syntax.html#rule.instance-identifier">instance&#8209;identifier</a></span> 
+        that is bound to an instance of rule <em>r</em>. You can use any name as an instance identifier as long as it is unique within the body 
+        of a rule and conforms to the the syntax of an identifier.
+    </p>
+
+    <h3>Primitive expressions</h3>
+
+    <p>
+        These <span class="rule"><a href="../syntax/syntax.html#rule.primitive">primitive expressions</a></span> are atomic parsing expressions:
+    </p>
+
+    <p>
+        <span class="mono">empty</span> expression matches an empty string without consuming any input.
+    </p>
+
+    <p>
+        <span class="mono">any</span> expression will match any single token. It <em>"eats"</em> the token, meaning it advances the lexer to the next input token.
+    </p>
+
+    <p>
+        A <span class="rule"><a href="../syntax/syntax.html#rule.token-name">token&#8209;name</a></span> expression matches a named token and 
+        advances the lexer to the next input token. A <em>nonterminal</em>, that is: the name of a parsing rule, and the named token are distinguished 
+        between each other, because a colon and an identifier is appended to the parsing rule name in a 
+        <span class="rule"><a href="../syntax/syntax.html#rule.rule-call">rule call</a></span>, but a single identifier without the colon and instance name 
+        represents a token name expression.
+    </p>
+
+    <p>
+        The <span class="rule"><a href="../syntax/syntax.html#rule.char-literal">char&#8209;literal</a></span> and the 
+        <span class="rule"><a href="../syntax/syntax.html#rule.string-literal">string&#8209;literal</a></span> expressions are used 
+        in <em>scannerless</em> parsers, or parsers whose <span class="mono">lexer</span> is defined to be 
+        <span class="mono">soul::lexer::trivial::TrivialLexer&lt;char32_t></span>.
+        The <a href="ref/xml_document_parser.parser.html">xml parser</a> defined in the 
+		<span class="mono">C:\soul-5.1.0\soul\xml\xml_parser</span> directory 
+        is an example of a scannerless parser.
+    </p>
+
+    <h3>Grouping expression</h3>
+    
+    <p>
+        If <span class="rule">p</span> is a <span class="rule"><a href="../syntax/syntax.html#rule.parsing-expression">parsing&#8209;expression</a></span>, 
+        so is <span class="mono">(</span> <span class="rule">p</span> <span class="mono">)</span>. 
+        When a <span class="rule"><a href="../syntax/syntax.html#rule.grouping">grouping</a></span> expression is matched, parsing expression <span class="rule">p</span>
+        is matched.
+    </p>
+
+    <h3>Expectation expression</h3>
+
+    <p>
+        If a primary expression contains an exclamation symbol after a rule call expression, primitive expression or grouping expression, 
+        and current input does not match that expresssion, a parsing exception is thrown.
+    </p>
+
+    <h3>Semantic actions</h3>
+
+    <p>
+        If a C++ compound statement is attached as a trailing element of a rule call expression, a primitive expression or a grouping expression,
+        and current input matches that expression, that compound statement, a
+        <span class="rule"><a href="../syntax/syntax.html#rule.success-action">success action</a></span>, gets executed.
+        Typically the success action returns a value. That value is bound to the 
+        <span class="rule"><a href="../syntax/syntax.html#rule.instance-identifier">instance&#8209;identifier</a></span> of the rule in a rule call.
+        A semantic action can also assign value to a 
+        <span class="rule"><a href="../syntax/syntax.html#rule.variable">local variable</a></span> of a parsing rule.
+    </p>
+
+    <p>
+        If a slash and a C++ compound statement is appended to a success action as a trailing element, and current input does <em>not</em> match
+        a rule call expression, a primitive expression or a grouping expression, that compound statement, a
+        <span class="rule"><a href="../syntax/syntax.html#rule.failure-action">failure action</a></span>, gets executed.
+    </p>
+
+</body>
+</html>

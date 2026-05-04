@@ -1,0 +1,13 @@
+// calculator.expr
+
+expressions calculator.expr
+{
+    ws = "[\t ]";
+    separators = "{ws}+";
+    dec_digit = "[0-9]";
+    fraction = "{dec_digit}*\.{dec_digit}+|{dec_digit}+\.";
+    sign = "\+|-";
+    exponent = "(e|E){sign}?{dec_digit}+";
+    number = "{fraction}{exponent}?|{dec_digit}+{exponent}?";
+    variable = "[a-zA-Z_][a-zA-Z_0-9]*";
+}

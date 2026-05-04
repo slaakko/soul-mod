@@ -1,0 +1,1150 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="comment">// =================================
+</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="comment">// Copyright (c) 2026 Seppo Laakko
+</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="comment">// Distributed under the MIT license
+</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="comment">// =================================
+</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">xml</span><span class="punctuation">.</span><span class="id">document</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">xml</span><span class="punctuation">.</span><span class="id">processor</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">trivial</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">XmlParser</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">lexer</span><span class="punctuation">::</span><span class="id">trivial</span><span class="punctuation">::</span><span class="id">TrivialLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">main</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Document</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">empty</span><span class="punctuation">{</span>&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">StartDocument</span><span class="punctuation">(</span><span class="punctuation">&amp;</span><span class="id">lexer</span><span class="punctuation">,</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Prolog</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">prolog</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Element</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">element</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Misc</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">misc</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">EndDocument</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Prolog</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">XmlDecl</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">xmlDecl</span><span class="punctuation">?</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Misc</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">misc1</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">DocTypeDecl</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">docTypeDecl</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Misc</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">misc2</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">?</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">XmlDecl</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span>&nbsp;&nbsp;&nbsp;<span class="string">"&lt;?xml"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">VersionInfo</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">versionInfo</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">EncodingDecl</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">encodingDecl</span><span class="punctuation">?</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">StandaloneDecl</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">standaloneDecl</span><span class="punctuation">?</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s</span><span class="punctuation">?</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"?>"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">VersionInfo</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s</span>&nbsp;<span class="string">"version"</span>&nbsp;<span class="id">Eq</span><span class="punctuation">:</span><span class="id">eq</span>&nbsp;<span class="id">VersionNumber</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">versionNumber</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">S</span>&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"[\x20\x9\xD\xA]"</span><span class="punctuation">+</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Eq</span>&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s</span><span class="punctuation">?</span>&nbsp;<span class="string">'='</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s</span><span class="punctuation">?</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">VersionNumber</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">VersionNumDQ</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">versionNumDQ</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">VersionNumSQ</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">versionNumSQ</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">VersionNumDQ</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">'"'</span>&nbsp;<span class="id">VersionNum</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">versionNum</span>&nbsp;<span class="string">'"'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">VersionNumSQ</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">'\''</span>&nbsp;<span class="id">VersionNum</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">versionNum</span>&nbsp;<span class="string">'\''</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">VersionNum</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">u32string</span>&nbsp;<span class="id">xmlVersion</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'1'</span><span class="punctuation">{</span>&nbsp;<span class="id">xmlVersion</span><span class="punctuation">.</span><span class="id">append</span><span class="punctuation">(</span><span class="number">1</span><span class="punctuation">,</span>&nbsp;<span class="string">'1'</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'.'</span><span class="punctuation">{</span>&nbsp;<span class="id">xmlVersion</span><span class="punctuation">.</span><span class="id">append</span><span class="punctuation">(</span><span class="number">1</span><span class="punctuation">,</span>&nbsp;<span class="string">'.'</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="string">"[0-9]"</span><span class="punctuation">{</span>&nbsp;<span class="id">xmlVersion</span><span class="punctuation">.</span><span class="id">append</span><span class="punctuation">(</span><span class="number">1</span><span class="punctuation">,</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">Chr</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span><span class="punctuation">)</span><span class="punctuation">+</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">XmlVersion</span><span class="punctuation">(</span><span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">xmlVersion</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">EncodingDecl</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s</span>&nbsp;<span class="string">"encoding"</span>&nbsp;<span class="id">Eq</span><span class="punctuation">:</span><span class="id">eq</span>&nbsp;<span class="id">EncodingName</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">encodingName</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">EncodingName</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">EncNameDQ</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">encNameDQ</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">EncNameSQ</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">encNameSQ</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">EncNameDQ</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">'"'</span>&nbsp;<span class="id">EncName</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">encName</span>&nbsp;<span class="string">'"'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">EncNameSQ</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">'\''</span>&nbsp;<span class="id">EncName</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">encName</span>&nbsp;<span class="string">'\''</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">EncName</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">u32string</span>&nbsp;<span class="id">xmlEncoding</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"[A-Za-z]"</span><span class="punctuation">{</span>&nbsp;<span class="id">xmlEncoding</span><span class="punctuation">.</span><span class="id">append</span><span class="punctuation">(</span><span class="number">1</span><span class="punctuation">,</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">Chr</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="string">"[A-Za-z0-9._-]"</span><span class="punctuation">{</span>&nbsp;<span class="id">xmlEncoding</span><span class="punctuation">.</span><span class="id">append</span><span class="punctuation">(</span><span class="number">1</span><span class="punctuation">,</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">Chr</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span><span class="punctuation">)</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">XmlEncoding</span><span class="punctuation">(</span><span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">xmlEncoding</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">StandaloneDecl</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s</span>&nbsp;<span class="string">"standalone"</span>&nbsp;<span class="id">Eq</span><span class="punctuation">:</span><span class="id">eq</span>&nbsp;<span class="id">YesNo</span><span class="punctuation">:</span><span class="id">yn</span><span class="punctuation">{</span>&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">Standalone</span><span class="punctuation">(</span><span class="id">yn</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">YesNo</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="kw">bool</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"\"yes\""</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">true</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">"\'yes\'"</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">true</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">"\"no\""</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">false</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">"\'no\'"</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">false</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Misc</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">Comment</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">comment</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">PI</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">pi</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Comment</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">SourcePos</span>&nbsp;<span class="id">sourcePos</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">u32string</span>&nbsp;<span class="id">comment</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"&lt;!--"</span><span class="punctuation">{</span>&nbsp;<span class="id">sourcePos</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="punctuation">(</span><span class="id">Char</span><span class="punctuation">:</span><span class="id">chr</span>&nbsp;<span class="punctuation">-</span>&nbsp;<span class="string">"-->"</span><span class="punctuation">)</span><span class="punctuation">{</span>&nbsp;<span class="id">comment</span><span class="punctuation">.</span><span class="id">append</span><span class="punctuation">(</span><span class="number">1</span><span class="punctuation">,</span>&nbsp;<span class="id">chr</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span><span class="punctuation">)</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"-->"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">Comment</span><span class="punctuation">(</span><span class="id">sourcePos</span><span class="punctuation">,</span>&nbsp;<span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">comment</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Char</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="kw">char32_t</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"[\x9\xA\xD\x20-\xD7FF\xE000-\xFFFD\x10000-\x10FFFF]"</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">Chr</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">PI</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">SourcePos</span>&nbsp;<span class="id">sourcePos</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">u32string</span>&nbsp;<span class="id">data</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"&lt;?"</span><span class="punctuation">{</span>&nbsp;<span class="id">sourcePos</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">PITarget</span><span class="punctuation">:</span><span class="id">target</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span>&nbsp;&nbsp;&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="punctuation">(</span><span class="id">Char</span><span class="punctuation">:</span><span class="id">chr</span>&nbsp;<span class="punctuation">-</span>&nbsp;<span class="string">"?>"</span><span class="punctuation">)</span><span class="punctuation">{</span>&nbsp;<span class="id">data</span><span class="punctuation">.</span><span class="id">append</span><span class="punctuation">(</span><span class="number">1</span><span class="punctuation">,</span>&nbsp;<span class="id">chr</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span><span class="punctuation">)</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">?</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"?>"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">PI</span><span class="punctuation">(</span><span class="id">sourcePos</span><span class="punctuation">,</span>&nbsp;<span class="id">target</span><span class="punctuation">,</span>&nbsp;<span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">data</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">PITarget</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">string</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">name</span>&nbsp;<span class="punctuation">-</span>&nbsp;<span class="id">Xml</span><span class="punctuation">:</span><span class="id">xml</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">name</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Name</span><span class="punctuation">(</span><span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">u32string</span>&nbsp;<span class="id">name</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">string</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">NameStartChar</span><span class="punctuation">:</span><span class="id">nameStartChar</span><span class="punctuation">{</span>&nbsp;<span class="id">name</span><span class="punctuation">.</span><span class="id">append</span><span class="punctuation">(</span><span class="number">1</span><span class="punctuation">,</span>&nbsp;<span class="id">nameStartChar</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="id">NameChar</span><span class="punctuation">:</span><span class="id">nameChar</span><span class="punctuation">{</span>&nbsp;<span class="id">name</span><span class="punctuation">.</span><span class="id">append</span><span class="punctuation">(</span><span class="number">1</span><span class="punctuation">,</span>&nbsp;<span class="id">nameChar</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span><span class="punctuation">)</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">name</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">NameStartChar</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="kw">char32_t</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"[:A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\x2FF\x370-\x37D\x37F-\x1FFF\x200C-\x200D\x2070-\x218F\x2C00-\x2FEF\x3001-\xD7FF\xF900-\xFDCF\xFDF0-\xFFFD\x10000-\xEFFFF]"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">Chr</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">NameChar</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="kw">char32_t</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span>&nbsp;&nbsp;&nbsp;<span class="id">NameStartChar</span><span class="punctuation">:</span><span class="id">nameStartChar</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">nameStartChar</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">"[-.0-9\xB7\x300-\x36F\x203F-\x2040]"</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">Chr</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Xml</span>&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"[xX]"</span>&nbsp;<span class="string">"[mM]"</span>&nbsp;<span class="string">"[lL]"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Element</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">SourcePos</span>&nbsp;<span class="id">sourcePos</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">string</span>&nbsp;<span class="id">tagName</span><span class="punctuation">)</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span>&nbsp;&nbsp;&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'&lt;'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">name</span><span class="punctuation">{</span>&nbsp;<span class="id">sourcePos</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="id">tagName</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">name</span><span class="punctuation">;</span>&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">BeginStartTag</span><span class="punctuation">(</span><span class="id">sourcePos</span><span class="punctuation">,</span>&nbsp;<span class="id">tagName</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="id">S</span><span class="punctuation">:</span><span class="id">s</span>&nbsp;<span class="id">Attribute</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">attribute</span><span class="punctuation">)</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s</span><span class="punctuation">?</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span>&nbsp;&nbsp;&nbsp;<span class="string">"/>"</span><span class="punctuation">{</span>&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">EndStartTag</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">EndTag</span><span class="punctuation">(</span><span class="id">sourcePos</span><span class="punctuation">,</span>&nbsp;<span class="id">tagName</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">'>'</span><span class="punctuation">{</span>&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">EndStartTag</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span>&nbsp;<span class="id">Content</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">content</span>&nbsp;<span class="id">ETag</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">etag</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Attribute</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">SourcePos</span>&nbsp;<span class="id">sourcePos</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">attName</span><span class="punctuation">{</span>&nbsp;<span class="id">sourcePos</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Eq</span><span class="punctuation">:</span><span class="id">eq</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">AttValue</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">attValue</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">AddAttribute</span><span class="punctuation">(</span><span class="id">sourcePos</span><span class="punctuation">,</span>&nbsp;<span class="id">attName</span><span class="punctuation">,</span>&nbsp;<span class="id">attValue</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">AttValue</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">string</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">AttValueDQ</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">attValueDQ</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">attValueDQ</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">AttValueSQ</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">attValueSQ</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">attValueSQ</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">AttValueDQ</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">string</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'"'</span><span class="punctuation">{</span>&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">BeginAttributeValue</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span>&nbsp;&nbsp;&nbsp;<span class="string">"[^&lt;&amp;\"]"</span><span class="punctuation">{</span>&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">AddAttValueChar</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">Chr</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">Reference</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">reference</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">*</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'"'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">string</span>&nbsp;<span class="id">attValue</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">AttValue</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">EndAttributeValue</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">attValue</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">AttValueSQ</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">string</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'\''</span><span class="punctuation">{</span>&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">BeginAttributeValue</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span>&nbsp;&nbsp;&nbsp;<span class="string">"[^&lt;&amp;']"</span><span class="punctuation">{</span>&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">AddAttValueChar</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">Chr</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">Reference</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">reference</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">*</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'\''</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">string</span>&nbsp;<span class="id">attValue</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">AttValue</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">EndAttributeValue</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">attValue</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Reference</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">CharRef</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">charRef</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">EntityRef</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">entityRef</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">CharRef</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">int32_t</span>&nbsp;<span class="id">codePoint</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span>&nbsp;&nbsp;&nbsp;<span class="string">"&amp;#"</span>&nbsp;<span class="id">DecCodePoint</span><span class="punctuation">:</span><span class="id">decCodePoint</span>&nbsp;<span class="string">';'</span><span class="punctuation">{</span>&nbsp;<span class="id">codePoint</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">decCodePoint</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">"&amp;#x"</span>&nbsp;<span class="id">HexCodePoint</span><span class="punctuation">:</span><span class="id">hexCodePoint</span>&nbsp;<span class="string">';'</span><span class="punctuation">{</span>&nbsp;<span class="id">codePoint</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">hexCodePoint</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">CharRef</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="kw">static_cast</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">(</span><span class="id">codePoint</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">DecCodePoint</span><span class="punctuation">(</span><span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">int32_t</span>&nbsp;<span class="id">val</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">int32_t</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"[0-9]"</span><span class="punctuation">{</span>&nbsp;<span class="id">val</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="number">10</span>&nbsp;<span class="punctuation">*</span>&nbsp;<span class="id">val</span>&nbsp;<span class="punctuation">+</span>&nbsp;<span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">Chr</span><span class="punctuation">(</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">-</span>&nbsp;<span class="string">'0'</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">+</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">val</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">HexCodePoint</span><span class="punctuation">(</span><span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">int32_t</span>&nbsp;<span class="id">val</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">int32_t</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"[0-9a-fA-F]"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">char32_t</span>&nbsp;<span class="id">chr</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">Chr</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="punctuation">(</span><span class="id">chr</span>&nbsp;<span class="punctuation">>=</span>&nbsp;<span class="string">'0'</span>&nbsp;<span class="punctuation">&amp;&amp;</span>&nbsp;<span class="id">chr</span>&nbsp;<span class="punctuation">&lt;=</span>&nbsp;<span class="string">'9'</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">val</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="number">16</span>&nbsp;<span class="punctuation">*</span>&nbsp;<span class="id">val</span>&nbsp;<span class="punctuation">+</span>&nbsp;<span class="punctuation">(</span><span class="id">chr</span>&nbsp;<span class="punctuation">-</span>&nbsp;<span class="string">'0'</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="punctuation">(</span><span class="id">chr</span>&nbsp;<span class="punctuation">>=</span>&nbsp;<span class="string">'a'</span>&nbsp;<span class="punctuation">&amp;&amp;</span>&nbsp;<span class="id">chr</span>&nbsp;<span class="punctuation">&lt;=</span>&nbsp;<span class="string">'f'</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">val</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="number">16</span>&nbsp;<span class="punctuation">*</span>&nbsp;<span class="id">val</span>&nbsp;<span class="punctuation">+</span>&nbsp;<span class="number">10</span>&nbsp;<span class="punctuation">+</span>&nbsp;<span class="punctuation">(</span><span class="id">chr</span>&nbsp;<span class="punctuation">-</span>&nbsp;<span class="string">'a'</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="punctuation">(</span><span class="id">chr</span>&nbsp;<span class="punctuation">>=</span>&nbsp;<span class="string">'A'</span>&nbsp;<span class="punctuation">&amp;&amp;</span>&nbsp;<span class="id">chr</span>&nbsp;<span class="punctuation">&lt;=</span>&nbsp;<span class="string">'F'</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">val</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="number">16</span>&nbsp;<span class="punctuation">*</span>&nbsp;<span class="id">val</span>&nbsp;<span class="punctuation">+</span>&nbsp;<span class="number">10</span>&nbsp;<span class="punctuation">+</span>&nbsp;<span class="punctuation">(</span><span class="id">chr</span>&nbsp;<span class="punctuation">-</span>&nbsp;<span class="string">'A'</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">+</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">val</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">EntityRef</span>&nbsp;<span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'&amp;'</span>&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">name</span>&nbsp;<span class="string">';'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">EntityRef</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="id">name</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Content</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">CharData</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">cd1</span><span class="punctuation">?</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span>&nbsp;&nbsp;&nbsp;<span class="id">Element</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">element</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">Reference</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">reference</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">CDSect</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">cdsect</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">PI</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">pi</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">Comment</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">comment</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">CharData</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">cd2</span><span class="punctuation">?</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">CharData</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">SourcePos</span>&nbsp;<span class="id">sourcePos</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">u32string</span>&nbsp;<span class="id">text</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">empty</span><span class="punctuation">{</span>&nbsp;<span class="id">sourcePos</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="punctuation">(</span><span class="id">CharDataChar</span><span class="punctuation">:</span><span class="id">charDataChar</span>&nbsp;<span class="punctuation">-</span>&nbsp;<span class="string">"]]>"</span><span class="punctuation">)</span><span class="punctuation">{</span>&nbsp;<span class="id">text</span><span class="punctuation">.</span><span class="id">append</span><span class="punctuation">(</span><span class="number">1</span><span class="punctuation">,</span>&nbsp;<span class="id">charDataChar</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span><span class="punctuation">)</span><span class="punctuation">+</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">Text</span><span class="punctuation">(</span><span class="id">sourcePos</span><span class="punctuation">,</span>&nbsp;<span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">text</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">CharDataChar</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="kw">char32_t</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"[^&lt;&amp;]"</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">Chr</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">CDSect</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">SourcePos</span>&nbsp;<span class="id">sourcePos</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">u32string</span>&nbsp;<span class="id">cdata</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"&lt;![CDATA["</span><span class="punctuation">{</span>&nbsp;<span class="id">sourcePos</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="id">Char</span><span class="punctuation">:</span><span class="id">chr</span>&nbsp;<span class="punctuation">-</span>&nbsp;<span class="string">"]]>"</span><span class="punctuation">)</span><span class="punctuation">{</span>&nbsp;<span class="id">cdata</span><span class="punctuation">.</span><span class="id">append</span><span class="punctuation">(</span><span class="number">1</span><span class="punctuation">,</span>&nbsp;<span class="id">chr</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">*</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"]]>"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">CDataSection</span><span class="punctuation">(</span><span class="id">sourcePos</span><span class="punctuation">,</span>&nbsp;<span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">cdata</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ETag</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">SourcePos</span>&nbsp;<span class="id">sourcePos</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"&lt;/"</span>&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">name</span><span class="punctuation">{</span>&nbsp;<span class="id">sourcePos</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s</span><span class="punctuation">?</span>&nbsp;<span class="string">'>'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">processor</span><span class="punctuation">-></span><span class="id">EndTag</span><span class="punctuation">(</span><span class="id">sourcePos</span><span class="punctuation">,</span>&nbsp;<span class="id">name</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">DocTypeDecl</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"&lt;!DOCTYPE"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s1</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">rootElementName</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="id">S</span><span class="punctuation">:</span><span class="id">s2</span>&nbsp;<span class="id">ExternalID</span><span class="punctuation">:</span><span class="id">extID</span><span class="punctuation">)</span><span class="punctuation">?</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s3</span><span class="punctuation">?</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="string">'['</span>&nbsp;<span class="id">IntSubset</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">intSubset</span>&nbsp;<span class="string">']'</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s4</span><span class="punctuation">?</span><span class="punctuation">)</span><span class="punctuation">?</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'>'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ExternalID</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="punctuation">(</span><span class="string">"SYSTEM"</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s1</span>&nbsp;<span class="id">SystemLiteral</span><span class="punctuation">:</span><span class="id">s2</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="string">"PUBLIC"</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s3</span>&nbsp;<span class="id">PubidLiteral</span><span class="punctuation">:</span><span class="id">p2</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s4</span>&nbsp;<span class="id">SystemLiteral</span><span class="punctuation">:</span><span class="id">s5</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">SystemLiteral</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">'"'</span>&nbsp;<span class="string">"[^\"]"</span><span class="punctuation">*</span>&nbsp;<span class="string">'"'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">'\''</span>&nbsp;<span class="string">"[^']"</span><span class="punctuation">*</span>&nbsp;<span class="string">'\''</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">PubidLiteral</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">'"'</span>&nbsp;<span class="id">PubidChar</span><span class="punctuation">:</span><span class="id">p1</span><span class="punctuation">*</span>&nbsp;<span class="string">'"'</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">'\''</span>&nbsp;<span class="punctuation">(</span><span class="id">PubidChar</span><span class="punctuation">:</span><span class="id">p2</span>&nbsp;<span class="punctuation">-</span>&nbsp;<span class="string">'\''</span><span class="punctuation">)</span><span class="punctuation">*</span>&nbsp;<span class="string">'\''</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">PubidChar</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"[\x20\xD\xA]"</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="string">"[a-zA-Z0-9]"</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="string">"[-'()+,./:=?;!*#@$_%]"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">IntSubset</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span>&nbsp;&nbsp;&nbsp;<span class="id">MarkupDecl</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">mdecl</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">DeclSep</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">declsep</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">MarkupDecl</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">ElementDecl</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">elementDecl</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">AttlistDecl</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">attlistDecl</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">EntityDecl</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">entityDecl</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">NotationDecl</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">notationDecl</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">PI</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">pi</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">Comment</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">comment</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ElementDecl</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"&lt;!ELEMENT"</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s1</span>&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">elementName</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s2</span>&nbsp;<span class="id">ContentSpec</span><span class="punctuation">:</span><span class="id">contentSpec</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s3</span><span class="punctuation">?</span>&nbsp;<span class="string">'>'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ContentSpec</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"EMPTY"</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="string">"ANY"</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">Mixed</span><span class="punctuation">:</span><span class="id">mixed</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">Children</span><span class="punctuation">:</span><span class="id">children</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Mixed</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">'('</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s1</span><span class="punctuation">?</span>&nbsp;<span class="string">"#PCDATA"</span>&nbsp;<span class="punctuation">(</span><span class="id">S</span><span class="punctuation">:</span><span class="id">s2</span><span class="punctuation">?</span>&nbsp;<span class="string">'|'</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s3</span><span class="punctuation">?</span>&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">name</span><span class="punctuation">)</span><span class="punctuation">*</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s4</span><span class="punctuation">?</span>&nbsp;<span class="string">")*"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">'('</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s5</span><span class="punctuation">?</span>&nbsp;<span class="string">"#PCDATA"</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s6</span><span class="punctuation">?</span>&nbsp;<span class="string">')'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Choice</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">'('</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s1</span><span class="punctuation">?</span>&nbsp;<span class="id">CP</span><span class="punctuation">:</span><span class="id">cp1</span>&nbsp;<span class="punctuation">(</span><span class="id">S</span><span class="punctuation">:</span><span class="id">s2</span><span class="punctuation">?</span>&nbsp;<span class="string">'|'</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s3</span><span class="punctuation">?</span>&nbsp;<span class="id">CP</span><span class="punctuation">:</span><span class="id">cp2</span><span class="punctuation">)</span><span class="punctuation">+</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s4</span><span class="punctuation">?</span>&nbsp;<span class="string">')'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">CP</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="punctuation">(</span><span class="id">Name</span><span class="punctuation">:</span><span class="id">name</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">Choice</span><span class="punctuation">:</span><span class="id">choice</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">Seq</span><span class="punctuation">:</span><span class="id">seq</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">(</span><span class="string">'?'</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="string">'*'</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="string">'+'</span><span class="punctuation">)</span><span class="punctuation">?</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Seq</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">'('</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s1</span><span class="punctuation">?</span>&nbsp;<span class="id">CP</span><span class="punctuation">:</span><span class="id">cp1</span>&nbsp;<span class="punctuation">(</span><span class="id">S</span><span class="punctuation">:</span><span class="id">s2</span><span class="punctuation">?</span>&nbsp;<span class="string">','</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s3</span><span class="punctuation">?</span>&nbsp;<span class="id">CP</span><span class="punctuation">:</span><span class="id">cp2</span><span class="punctuation">)</span><span class="punctuation">*</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s4</span><span class="punctuation">?</span>&nbsp;<span class="string">')'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Children</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="punctuation">(</span><span class="id">Choice</span><span class="punctuation">:</span><span class="id">choice</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">Seq</span><span class="punctuation">:</span><span class="id">seq</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">(</span><span class="string">'?'</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="string">'*'</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="string">'+'</span><span class="punctuation">)</span><span class="punctuation">?</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">AttlistDecl</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"&lt;!ATTLIST"</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s1</span>&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">name</span>&nbsp;<span class="id">AttDef</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">attdef</span><span class="punctuation">*</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s2</span><span class="punctuation">?</span>&nbsp;<span class="string">'>'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">AttDef</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s</span>&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">name</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s2</span>&nbsp;<span class="id">AttType</span><span class="punctuation">:</span><span class="id">attType</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s3</span>&nbsp;<span class="id">DefaultDecl</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">defaultDecl</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">AttType</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">StringType</span><span class="punctuation">:</span><span class="id">stringType</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">TokenizedType</span><span class="punctuation">:</span><span class="id">tokenizedType</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">EnumeratedType</span><span class="punctuation">:</span><span class="id">enumeratedType</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">StringType</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"CDATA"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">TokenizedType</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"ID"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">"IDREF"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">"IDREFS"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">"ENTITY"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">"ENTITIES"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">"NMTOKEN"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">"NMTOKENS"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">EnumeratedType</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">NotationType</span><span class="punctuation">:</span><span class="id">notationType</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">Enumeration</span><span class="punctuation">:</span><span class="id">enumeration</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">NotationType</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"NOTATION"</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s1</span>&nbsp;<span class="string">'('</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s2</span><span class="punctuation">?</span>&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">f</span>&nbsp;<span class="punctuation">(</span><span class="id">S</span><span class="punctuation">:</span><span class="id">s3</span><span class="punctuation">?</span>&nbsp;<span class="string">'|'</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s4</span><span class="punctuation">?</span>&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">n</span><span class="punctuation">)</span><span class="punctuation">*</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s5</span><span class="punctuation">?</span>&nbsp;<span class="string">')'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Enumeration</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">'('</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s1</span><span class="punctuation">?</span>&nbsp;<span class="id">Nmtoken</span><span class="punctuation">:</span><span class="id">nmtoken</span>&nbsp;<span class="punctuation">(</span><span class="id">S</span><span class="punctuation">:</span><span class="id">s2</span><span class="punctuation">?</span>&nbsp;<span class="string">'|'</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s3</span><span class="punctuation">?</span>&nbsp;<span class="id">Nmtoken</span><span class="punctuation">:</span><span class="id">nmtoken2</span><span class="punctuation">)</span><span class="punctuation">*</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s4</span><span class="punctuation">?</span>&nbsp;<span class="string">')'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Nmtoken</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">NameChar</span><span class="punctuation">:</span><span class="id">nameChar</span><span class="punctuation">+</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">DefaultDecl</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"#REQUIRED"</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="string">"#IMPLIED"</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="punctuation">(</span><span class="punctuation">(</span><span class="string">"#FIXED"</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s</span><span class="punctuation">)</span><span class="punctuation">?</span>&nbsp;<span class="id">AttValue</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">attValue</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">EntityDecl</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">GEDecl</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">gedecl</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">PEDecl</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">pedecl</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">GEDecl</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"&lt;!ENTITY"</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s0</span>&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">entityName</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s1</span>&nbsp;<span class="id">EntityDef</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">entityDef</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s2</span><span class="punctuation">?</span>&nbsp;<span class="string">'>'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">EntityDef</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">EntityValue</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">entityValue</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="punctuation">(</span><span class="id">ExternalID</span><span class="punctuation">:</span><span class="id">extID</span>&nbsp;<span class="id">NDataDecl</span><span class="punctuation">:</span><span class="id">notation</span><span class="punctuation">?</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">EntityValue</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">'"'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span>&nbsp;&nbsp;&nbsp;<span class="string">"[^%&amp;\"]"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">PEReference</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">pr1</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">Reference</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">ref1</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">*</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'"'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="string">'\''</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span>&nbsp;&nbsp;&nbsp;<span class="string">"[^%&amp;']"</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">PEReference</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">pr2</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">Reference</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">ref2</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">*</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'\''</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">PEReference</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">'%'</span>&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">name</span>&nbsp;<span class="string">';'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">PEDecl</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"&lt;!ENTITY"</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s0</span>&nbsp;<span class="string">'%'</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s1</span>&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">peName</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s2</span>&nbsp;<span class="id">PEDef</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">peValue</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s3</span><span class="punctuation">?</span>&nbsp;<span class="string">'>'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">PEDef</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">EntityValue</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">entityValue</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">ExternalID</span><span class="punctuation">:</span><span class="id">extID</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">NDataDecl</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s1</span>&nbsp;<span class="string">"NDATA"</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s2</span>&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">name</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">NotationDecl</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"&lt;!NOTATION"</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s</span>&nbsp;<span class="id">Name</span><span class="punctuation">:</span><span class="id">name</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s2</span>&nbsp;<span class="punctuation">(</span><span class="id">ExternalID</span><span class="punctuation">:</span><span class="id">extID</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">PublicID</span><span class="punctuation">:</span><span class="id">pubID</span><span class="punctuation">)</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s3</span><span class="punctuation">?</span>&nbsp;<span class="string">'>'</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">DeclSep</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">processor</span><span class="punctuation">::</span><span class="id">XmlProcessor</span><span class="punctuation">*</span>&nbsp;<span class="id">processor</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">PEReference</span><span class="punctuation">(</span><span class="id">processor</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">peref</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">PublicID</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="string">"PUBLIC"</span>&nbsp;<span class="id">S</span><span class="punctuation">:</span><span class="id">s</span>&nbsp;<span class="id">PubidLiteral</span><span class="punctuation">:</span><span class="id">pl</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+</div>

@@ -1,0 +1,11 @@
+@echo off
+cpp2html calculator.cppm
+cpp2html calculator.cpp
+cpp2html main.cpp
+soul2html calculator.expr
+soul2html calculator.keyword
+soul2html calculator.lexer
+soul2html calculator.parser
+soul2html calculator.slg
+soul2html calculator.spg
+soul2html calculator.token

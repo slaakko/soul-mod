@@ -1,4 +1,4 @@
-// this file has been automatically generated from 'C:/soul-5.0.0/fruits/fruits.lexer' using soul lexer generator slg version 5.0.0
+// this file has been automatically generated from 'C:/soul-5.1.0/fruits/fruits.lexer' using soul lexer generator slg version 5.1.0
 
 module fruits.lexer;
 

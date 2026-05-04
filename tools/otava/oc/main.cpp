@@ -64,7 +64,7 @@ void PrintHelp()
 
 std::string Version()
 {
-    return "5.0.0";
+    return "5.1.0";
 }
 
 int main(int argc, const char** argv)

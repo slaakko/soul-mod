@@ -1,0 +1,19 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="comment">// calculator.keyword
+</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">calculator</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">keywords</span>&nbsp;<span class="id">calculator</span><span class="punctuation">.</span><span class="id">keyword</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="string">"pi"</span><span class="punctuation">,</span>&nbsp;<span class="id">PI</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+</div>

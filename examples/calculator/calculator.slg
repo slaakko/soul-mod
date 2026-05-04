@@ -1,0 +1,7 @@
+// calculator.slg
+
+project calculator.slg;
+tokens <calculator.token>;
+keywords <calculator.keyword>;
+expressions <calculator.expr>;
+lexer <calculator.lexer>;

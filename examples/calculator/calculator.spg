@@ -1,0 +1,5 @@
+// calculator.spg
+
+project calculator.spg;
+parser <calculator.parser>;
+tokens <calculator.token>;

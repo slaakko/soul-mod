@@ -1,0 +1,8 @@
+// calculator.keyword
+
+import calculator.token;
+
+keywords calculator.keyword
+{
+    ("pi", PI)
+}

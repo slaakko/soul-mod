@@ -209,6 +209,14 @@ div.cpp
     margin: 120px;
 }
 
+table.opt, th.opt, td.opt
+{
+    text-align: left;
+    border: 1px solid #dddddd;
+    margin: 20px;
+    padding: 8px;
+}
+
 table.common-type, th.common-type, td.common-type
 {
     border: 1px solid #dddddd;

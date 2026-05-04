@@ -1,0 +1,38 @@
+// calculator.cpp:
+
+module calculator;
+
+import util;
+
+namespace calculator 
+{
+    Memory::Memory()
+    {
+    }
+
+    void Memory::SetValue(const std::u32string& variableName, double value)
+    {
+        variableMap[variableName] = value;
+    }
+
+    double Memory::GetValue(const std::u32string& variableName) const
+    {
+        auto it = variableMap.find(variableName);
+        if (it != variableMap.end())
+        {
+            return it->second;
+        }
+        else
+        {
+            throw std::runtime_error("variable '" + util::ToUtf8(variableName) + "' not found");
+        }
+    }
+
+    double ParseDouble(const std::u32string& s)
+    {
+        std::stringstream strm(util::ToUtf8(s));
+        double d;
+        strm >> d;
+        return d;
+    }
+}

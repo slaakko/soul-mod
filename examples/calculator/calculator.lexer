@@ -1,0 +1,28 @@
+// calculator.lexer
+
+export module calculator.lexer;
+
+import calculator.token;
+import calculator.keyword;
+import calculator.expr;
+
+lexer CalculatorLexer
+{
+    rules
+    {
+        "{separators}" {}
+        "{number}" { return NUMBER; }
+        "{variable}" 
+        { 
+            std::int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); 
+            if (kw == soul::lexer::INVALID_TOKEN) return VARIABLE; else return kw; 
+        }
+        "\+" { return PLUS; }
+        "-" { return MINUS; }
+        "\*" { return TIMES; }
+        "/" { return DIVIDES; }
+        "=" { return ASSIGN; }
+        "\(" { return LPAREN; }
+        "\)" { return RPAREN; }
+    }
+}

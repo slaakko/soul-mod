@@ -1,0 +1,79 @@
+<div class="cpp">
+  <span xml:space="preserve"><span class="comment">// calculator.cpp:
+</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">module</span>&nbsp;<span class="id">calculator</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">util</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">namespace</span>&nbsp;<span class="id">calculator</span>&nbsp;</span>
+  <br/>
+  <span xml:space="preserve"><span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Memory</span><span class="other">::</span><span class="id">Memory</span><span class="other">(</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">void</span>&nbsp;<span class="id">Memory</span><span class="other">::</span><span class="id">SetValue</span><span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">u32string</span><span class="other">&amp;</span>&nbsp;<span class="id">variableName</span><span class="other">,</span>&nbsp;<span class="kw">double</span>&nbsp;<span class="id">value</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">variableMap</span><span class="other">[</span><span class="id">variableName</span><span class="other">]</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">value</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">double</span>&nbsp;<span class="id">Memory</span><span class="other">::</span><span class="id">GetValue</span><span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">u32string</span><span class="other">&amp;</span>&nbsp;<span class="id">variableName</span><span class="other">)</span>&nbsp;<span class="kw">const</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span>&nbsp;<span class="id">it</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">variableMap</span><span class="other">.</span><span class="id">find</span><span class="other">(</span><span class="id">variableName</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">it</span>&nbsp;<span class="other">!=</span>&nbsp;<span class="id">variableMap</span><span class="other">.</span><span class="id">end</span><span class="other">(</span><span class="other">)</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">it</span><span class="other">-></span><span class="id">second</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">throw</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">runtime_error</span><span class="other">(</span><span class="string">"variable '"</span>&nbsp;<span class="other">+</span>&nbsp;<span class="id">util</span><span class="other">::</span><span class="id">ToUtf8</span><span class="other">(</span><span class="id">variableName</span><span class="other">)</span>&nbsp;<span class="other">+</span>&nbsp;<span class="string">"' not found"</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">double</span>&nbsp;<span class="id">ParseDouble</span><span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">u32string</span><span class="other">&amp;</span>&nbsp;<span class="id">s</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">stringstream</span>&nbsp;<span class="id">strm</span><span class="other">(</span><span class="id">util</span><span class="other">::</span><span class="id">ToUtf8</span><span class="other">(</span><span class="id">s</span><span class="other">)</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">double</span>&nbsp;<span class="id">d</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">strm</span>&nbsp;<span class="other">>></span>&nbsp;<span class="id">d</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">d</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">}</span></span>
+  <br/>
+</div>

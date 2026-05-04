@@ -10,7 +10,7 @@
     <h1>Tutorial</h1>
 
     <p>
-        In this tutorial we will generate a lexical analyzer and parser using <span class="mono">Soul 5.0.0</span> for a string that contains a list of fruit names such as 
+        In this tutorial we will generate a lexical analyzer and parser using <span class="mono">Soul 5.1.0</span> for a string that contains a list of fruit names such as 
         <div class="cpp"><span class="string">(apple, orange, banana)</span></div>
     </p>
 
@@ -19,12 +19,12 @@
     </p>
 
     <p>
-        Probably the easiest and fastest way to create a new application using <span class="mono">Soul 5.0.0</span> 
+        Probably the easiest and fastest way to create a new application using <span class="mono">Soul 5.1.0</span> 
         is to add it to the <span class="mono">soul.sln</span> solution:
     </p>
 
     <ul>
-        <li>Open <span class="mono">C:\soul-5.0.0\soul.sln</span> in Visual Studio.</li>
+        <li>Open <span class="mono">C:\soul-5.1.0\soul.sln</span> in Visual Studio.</li>
         <li>Right-click the <span class="mono">soul</span> solution in the solution explorer and select <span class="mono">Add | New Project...</span>.</li>
         <li>Select <span class="mono">Windows Desktop Wizard</span> and click <span class="mono">Next</span>.</li>
         <li>Enter <span class="mono">fruits</span> as <span class="mono">Project name</span> and click <span class="mono">Create</span>.</li>
@@ -107,19 +107,19 @@
     </p>
     <ul>
         <li>
-            Start a terminal in <span class="mono">C:\soul-5.0.0\fruits</span> directory and enter the following command:
+            Start a terminal in <span class="mono">C:\soul-5.1.0\fruits</span> directory and enter the following command:
             <div class="console">
                 Microsoft Windows [Version 10.0.26200.8246]<br/>
                 (c) Microsoft Corporation. All rights reserved.<br/>
                 <br/>
-                C:\soul-5.0.0\fruits>slg -v fruits.slg<br/>
-                > C:/soul-5.0.0/fruits/fruits.slg<br/>
+                C:\soul-5.1.0\fruits>slg -v fruits.slg<br/>
+                > C:/soul-5.1.0/fruits/fruits.slg<br/>
                 generating lexers for project 'fruits.slg'...<br/>
-                > C:/soul-5.0.0/fruits/fruits.token<br/>
-                ==> C:/soul-5.0.0/fruits/fruits.token.cppm<br/>
+                > C:/soul-5.1.0/fruits/fruits.token<br/>
+                ==> C:/soul-5.1.0/fruits/fruits.token.cppm<br/>
                 lexers for project 'fruits.slg' generated successfully.<br/>
                 <br/>
-                C:\soul-5.0.0\fruits><br/>
+                C:\soul-5.1.0\fruits><br/>
             </div>
         </li>
         <li>
@@ -158,12 +158,12 @@
             <li>
                 We can now run the lexer generator <span class="mono">slg</span> again:
                 <div class="console">
-                    C:\soul-5.0.0\fruits>slg -v fruits.slg<br/>
-                    > C:/soul-5.0.0/fruits/fruits.slg<br/>
+                    C:\soul-5.1.0\fruits>slg -v fruits.slg<br/>
+                    > C:/soul-5.1.0/fruits/fruits.slg<br/>
                     generating lexers for project 'fruits.slg'...<br/>
-                    > C:/soul-5.0.0/fruits/fruits.token<br/>
-                    ==> C:/soul-5.0.0/fruits/fruits.token.cppm<br/>
-                    > C:/soul-5.0.0/fruits/fruits.keyword<br/>
+                    > C:/soul-5.1.0/fruits/fruits.token<br/>
+                    ==> C:/soul-5.1.0/fruits/fruits.token.cppm<br/>
+                    > C:/soul-5.1.0/fruits/fruits.keyword<br/>
                     lexers for project 'fruits.slg' generated successfully.<br/>
                 </div>
                 The keyword file will not produce C++ code at this moment but the generator will parse it and check its validity.
@@ -172,7 +172,8 @@
     </p>
 
     <p>
-        Next we will create regular expressions for fruit name identifiers and whitespace seperator characters:
+        Next we will create <a href="../regular_expressions/regular_expressions.html">regular expressions</a> 
+        for fruit name identifiers and whitespace seperator characters:
         <ul>
             <li>
                 Right-click the <span class="mono">fruits</span> project and select <span class="mono">Add | New Item...</span>.
@@ -199,13 +200,13 @@
             <li>
                 Running lexer generator <span class="mono">slg</span> again will parse the expressions file:
                 <div class="console">
-                    C:\soul-5.0.0\fruits>slg -v fruits.slg<br/>
-                    > C:/soul-5.0.0/fruits/fruits.slg<br/>
+                    C:\soul-5.1.0\fruits>slg -v fruits.slg<br/>
+                    > C:/soul-5.1.0/fruits/fruits.slg<br/>
                     generating lexers for project 'fruits.slg'...<br/>
-                    > C:/soul-5.0.0/fruits/fruits.token<br/>
-                    ==> C:/soul-5.0.0/fruits/fruits.token.cppm<br/>
-                    > C:/soul-5.0.0/fruits/fruits.keyword<br/>
-                    > C:/soul-5.0.0/fruits/fruits.expr<br/>
+                    > C:/soul-5.1.0/fruits/fruits.token<br/>
+                    ==> C:/soul-5.1.0/fruits/fruits.token.cppm<br/>
+                    > C:/soul-5.1.0/fruits/fruits.keyword<br/>
+                    > C:/soul-5.1.0/fruits/fruits.expr<br/>
                     lexers for project 'fruits.slg' generated successfully.<br/>
                 </div>
             </li>
@@ -280,22 +281,22 @@
             <li>
                 Now we can generate C++ code for the lexical analyzer by running <span class="mono">slg</span>:
                 <div class="console">
-                    C:\soul-5.0.0\fruits>slg -v fruits.slg<br/>
-                    > C:/soul-5.0.0/fruits/fruits.slg<br/>
+                    C:\soul-5.1.0\fruits>slg -v fruits.slg<br/>
+                    > C:/soul-5.1.0/fruits/fruits.slg<br/>
                     generating lexers for project 'fruits.slg'...<br/>
-                    > C:/soul-5.0.0/fruits/fruits.token<br/>
-                    ==> C:/soul-5.0.0/fruits/fruits.token.cppm<br/>
-                    > C:/soul-5.0.0/fruits/fruits.keyword<br/>
-                    > C:/soul-5.0.0/fruits/fruits.expr<br/>
-                    > C:/soul-5.0.0/fruits/fruits.lexer<br/>
-                    ==> C:/soul-5.0.0/fruits/fruits.lexer.classmap<br/>
-                    ==> C:/soul-5.0.0/fruits/fruits.lexer.classmap.compressed<br/>
-                    ==> C:/soul-5.0.0/fruits/fruits.lexer.classmap.rc<br/>
-                    ==> C:/soul-5.0.0/fruits/fruits.lexer.cppm<br/>
-                    ==> C:/soul-5.0.0/fruits/fruits.lexer.cpp<br/>
+                    > C:/soul-5.1.0/fruits/fruits.token<br/>
+                    ==> C:/soul-5.1.0/fruits/fruits.token.cppm<br/>
+                    > C:/soul-5.1.0/fruits/fruits.keyword<br/>
+                    > C:/soul-5.1.0/fruits/fruits.expr<br/>
+                    > C:/soul-5.1.0/fruits/fruits.lexer<br/>
+                    ==> C:/soul-5.1.0/fruits/fruits.lexer.classmap<br/>
+                    ==> C:/soul-5.1.0/fruits/fruits.lexer.classmap.compressed<br/>
+                    ==> C:/soul-5.1.0/fruits/fruits.lexer.classmap.rc<br/>
+                    ==> C:/soul-5.1.0/fruits/fruits.lexer.cppm<br/>
+                    ==> C:/soul-5.1.0/fruits/fruits.lexer.cpp<br/>
                     lexers for project 'fruits.slg' generated successfully.<br/>
                     <br/>
-                    C:\soul-5.0.0\fruits><br/>
+                    C:\soul-5.1.0\fruits><br/>
                 </div>
             </li>
         </ul>
@@ -434,7 +435,8 @@
                     symbol pronounced <em>produces</em>. The body of a rule is terminated by a semicolon.
                 </p>
                 <p>
-                    The body of the <span class="mono">FruitList</span> rule consists of capitalized names of tokens, name of another rule <span class="mono">Fruit</span>,
+                    The <a href="../parsing_expressions/parsing_expressions.html">body</a> of the 
+                    <span class="mono">FruitList</span> rule consists of capitalized names of tokens, name of another rule <span class="mono">Fruit</span>,
                     parsing operator symbols such as parenthesis, <span class="mono">:</span>, <span class="mono">*</span> and <span class="mono">?</span>, and 
                     <em>semantic actions</em>, that are C++ compound statements attached as trailing elements of other parsing entities.
                     The <span class="mono">FruitList</span> rule parses a possibly empty list of <span class="mono">Fruit</span>s separated by 
@@ -476,21 +478,21 @@
                 Execute the parser generator <span class="mono">spg</span> with the <span class="mono">fruits.spg</span> argument:
             </li>
             <div class="console">
-                C:\soul-5.0.0\fruits>spg -v fruits.spg<br/>
-                > C:/soul-5.0.0/fruits/fruits.spg<br/>
+                C:\soul-5.1.0\fruits>spg -v fruits.spg<br/>
+                > C:/soul-5.1.0/fruits/fruits.spg<br/>
                 generating parsers for project 'fruits.spg'...<br/>
-                > C:/soul-5.0.0/fruits/fruits.parser<br/>
+                > C:/soul-5.1.0/fruits/fruits.parser<br/>
                 linking...<br/>
-                > C:/soul-5.0.0/fruits/fruits.parser<br/>
+                > C:/soul-5.1.0/fruits/fruits.parser<br/>
                 generating code...<br/>
-                ==> C:/soul-5.0.0/fruits/fruits.parser.cppm<br/>
-                ==> C:/soul-5.0.0/fruits/fruits.parser.cpp<br/>
+                ==> C:/soul-5.1.0/fruits/fruits.parser.cppm<br/>
+                ==> C:/soul-5.1.0/fruits/fruits.parser.cpp<br/>
                 generating rule name module...<br/>
-                ==> C:/soul-5.0.0/fruits/fruits_rules.cppm<br/>
-                ==> C:/soul-5.0.0/fruits/fruits_rules.cpp<br/>
+                ==> C:/soul-5.1.0/fruits/fruits_rules.cppm<br/>
+                ==> C:/soul-5.1.0/fruits/fruits_rules.cpp<br/>
                 parsers for project 'fruits.spg' generated successfully.<br/>
                 <br/>
-                C:\soul-5.0.0\fruits><br/>
+                C:\soul-5.1.0\fruits><br/>
             </div>
             <li>
                 The parser generator has generated the following C++ module interface unit 
@@ -587,19 +589,19 @@
         Testing:
         <ul>
             <li>
-                Start a terminal in <span class="mono">C:\soul-5.0.0\inst</span> directory and run the <span class="mono">inst.bat</span>:
+                Start a terminal in <span class="mono">C:\soul-5.1.0\inst</span> directory and run the <span class="mono">inst.bat</span>:
                 <div class="console">
-                    C:\soul-5.0.0\inst>inst.bat<br/>
-                    C:/soul-5.0.0/x64/Debug/fruitsd.exe -> C:/soul-5.0.0/bin/fruitsd.exe<br/>
-                    C:/soul-5.0.0/x64/Release/fruits.exe -> C:/soul-5.0.0/bin/fruits.exe<br/>
-                    source directory 'C:/soul-5.0.0/tools/otava/projects/soul/oslg/bin/release/2' does not exist<br/>
+                    C:\soul-5.1.0\inst>inst.bat<br/>
+                    C:/soul-5.1.0/x64/Debug/fruitsd.exe -> C:/soul-5.1.0/bin/fruitsd.exe<br/>
+                    C:/soul-5.1.0/x64/Release/fruits.exe -> C:/soul-5.1.0/bin/fruits.exe<br/>
+                    source directory 'C:/soul-5.1.0/tools/otava/projects/soul/oslg/bin/release/2' does not exist<br/>
                     has only single valid path<br/>
-                    source directory 'C:/soul-5.0.0/tools/otava/projects/soul/ospg/bin/release/2' does not exist<br/>
+                    source directory 'C:/soul-5.1.0/tools/otava/projects/soul/ospg/bin/release/2' does not exist<br/>
                     has only single valid path<br/>
-                    source directory 'C:/soul-5.0.0/tools/otava/projects/compiler/ooc/bin/release/2' does not exist<br/>
+                    source directory 'C:/soul-5.1.0/tools/otava/projects/compiler/ooc/bin/release/2' does not exist<br/>
                     has only single valid path<br/>
                     <br/>
-                    C:\soul-5.0.0\inst><br/>
+                    C:\soul-5.1.0\inst><br/>
                 </div>
                 <p>
                     The compiled executables <span class="mono">fruits.exe</span> and the debug version <span class="mono">fruitsd.exe</span> are copied to the 
@@ -609,10 +611,10 @@
             <li>
                 Run the fruits executable:
                 <div class="console">
-                    C:\soul-5.0.0\inst>fruits<br/>
+                    C:\soul-5.1.0\inst>fruits<br/>
                     (apple, orange, banana)<br/>
                     <br/>
-                    C:\soul-5.0.0\inst><br/>
+                    C:\soul-5.1.0\inst><br/>
                 </div>
             </li>
         </ul>

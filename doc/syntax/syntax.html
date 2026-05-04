@@ -867,6 +867,15 @@
         <td class="sep">&rarr;</td>
         <td class="rcontent">
           <span class="rule">
+            <a href="#rule.parsing-expression">parsing&#8209;expression</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.parsing-expression">parsing&#8209;expression</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
             <a href="#rule.choice">choice</a>
           </span>
         </td>
@@ -924,7 +933,7 @@
         <td class="sep">&rarr;</td>
         <td class="rcontent">
           <span class="rule">
-            <a href="#rule.postfix">lookahead</a>
+            <a href="#rule.lookahead">lookahead</a>
           </span>
           | <span class="rule">
             <a href="#rule.postfix">postfix</a>
@@ -932,7 +941,7 @@
         </td>
       </tr>
       <tr>
-        <td class="rule" id="rule.prefix">lookahead</td>
+        <td class="rule" id="rule.lookahead">lookahead</td>
         <td class="sep">&rarr;</td>
         <td class="rcontent">
           <span class="mono">&amp;</span>
@@ -1058,7 +1067,7 @@
         <td class="rcontent">
           <span class="mono">(</span>
           <span class="rule">
-            <a href="#rule.choice">choice</a>
+            <a href="#rule.parsing-expression">parsing&#8209;expression</a>
           </span>
           <span class="mono">)</span>
         </td>
@@ -1106,6 +1115,10 @@
     <p>
       A using statement imports a rule from another parser, so it can be used the same way as rules declared inside the currrent parser. The <a href="#rule.parser-rule-name">parser&#8209;rule&#8209;name</a>
       is of the form <span class="mono">PARSER_NAME.RULE_NAME</span>
+      .</p>
+    <h3>Parsing rule body</h3>
+    <p>
+      Parsing rule body consists of <a href="../parsing_expressions/parsing_expressions.html">parsing expressions</a>
       .</p>
     <h3>Rule call</h3>
     <p>
