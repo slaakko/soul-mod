@@ -95,7 +95,7 @@ parser CalculatorParser
         ;
 
     primary(calculator::Memory* memory) : double
-        ::= NUMBER{ return calculator::ParseDouble(lexer.GetToken(pos).ToString()); }
+        ::= NUMBER{ return lexer.GetToken(pos).ToDouble(); }
         |   VARIABLE{ return memory->GetValue(lexer.GetToken(pos).ToString());}
         |   PI{ return std::numbers::pi; }
         |   LPAREN term(memory):t RPAREN{ return t; }

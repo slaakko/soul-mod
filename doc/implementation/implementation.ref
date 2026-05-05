@@ -28,7 +28,7 @@
     <h2>Operation of the parser generator</h2>
 
     <p>
-        The parser generator generates a top-down recursive-descent parser from input grammars.
+        The parser generator generates a top-down backtracking recursive descent parser from input grammars.
         The closest formalism for a Soul grammar is a <em>Parsing Expression Grammar</em> or <a href="https://bford.info/pub/lang/peg.pdf">PEG</a>.
         The <em>choice</em> operator of the Soul grammar is equivalent to the <em>prioritized choice</em> of the PEG.
         Soul grammar does not have <em>not-predicate</em> that PEGs have. On the other hand PEG does not have the 

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>slg</title>
+    <link href="../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>slg</h1>
+    
+    <p>
+        Soul lexical analyzer generator.
+    </p>
+
+    <p>
+        Usage: <span class="mono">slg [options] { FILE.slg }</span>
+    </p>
+
+    <p>Options:</p>
+
+    <table class="opt">
+        <tr>
+            <th class="opt">Long option</th>
+            <th class="opt">Short option</th>
+            <th class="opt">Description</th>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--help</span></td>
+            <td class="opt"><span class="mono">-h</span></td>
+            <td class="opt">Print help and exit.</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--verbose</span></td>
+            <td class="opt"><span class="mono">-v</span></td>
+            <td class="opt">Be verbose.</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--ppstyle</span></td>
+            <td class="opt"><span class="mono">-p</span></td>
+            <td class="opt">Generate preprocessor style code.</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--debug</span></td>
+            <td class="opt"><span class="mono">-d</span></td>
+            <td class="opt">Generate debugging files.</td>
+        </tr>
+    </table>
+
+    <p>
+        Examples:
+    </p>
+
+    <table class="opt">
+        <tr>
+            <th class="opt">Command</th>
+            <th class="opt">Description</th>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">slg re.slg</span></td>
+            <td class="opt">Process lexer project file <span class="mono">re.slg</span>. Generates source code for all lexers and token files contained by the 
+            <span class="mono">re.slg</span>.</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">slg -vd spg.slg</span></td>
+            <td class="opt">Process lexer project file <span class="mono">spg.slg</span>. Generate verbose output and debugging files.</td>
+        </tr>
+    </table>
+</body>
+</html>

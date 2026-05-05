@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'D:/work/soul-mod/examples/calculator/calculator.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/examples/calculator/calculator.parser' using soul parser generator spg version 5.1.0
 
 module calculator.parser;
 
@@ -816,7 +816,7 @@ soul::parser::Match CalculatorParser<LexerT>::primary(LexerT& lexer, calculator:
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "primary");
                             #endif
-                            return soul::parser::Match(true, new soul::parser::Value<double>(calculator::ParseDouble(lexer.GetToken(pos).ToString())));
+                            return soul::parser::Match(true, new soul::parser::Value<double>(lexer.GetToken(pos).ToDouble()));
                         }
                     }
                     *parentMatch3 = match;

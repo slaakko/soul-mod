@@ -43,9 +43,9 @@ void PrintHelp()
     std::cout << "--define=SYMBOL | -d=SYMBOL" << "\n";
     std::cout << "  Define build symbol SYMBOL." << "\n";
     std::cout << "--rebuild | -r" << "\n";
-    std::cout << "  rebuild project" << "\n";
+    std::cout << "  Rebuild project or solution." << "\n";
     std::cout << "--all | -a" << "\n";
-    std::cout << "  build all dependent projects" << "\n";
+    std::cout << "  Build all dependent projects." << "\n";
     std::cout << "--multithreaded | -m" << "\n";
     std::cout << "  Build using all cores." << "\n";
     std::cout << "--debug-parse | -p" << "\n";

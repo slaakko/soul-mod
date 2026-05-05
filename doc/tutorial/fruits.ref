@@ -382,7 +382,7 @@
         <ul>
             <li>
                 The <span class="mono">export module</span> declaration names the module that the parser generator will place the parser in.
-                This time the parser will be placed in <span class="mono">fruits.parser</span> module.
+                This parser will be placed in <span class="mono">fruits.parser</span> module.
             </li>
             <li>
                 Next come import declarations.
@@ -428,21 +428,20 @@
                 </p>
                 <p>
                     The <span class="mono">FruitParser</span> parser has two parsing rules: <span class="mono">FruitList</span> and <span class="mono">Fruit</span>.
-                    The first rule is special in that the generated <span class="mono">Parse</span> function will <em>call</em> the first rule.
+                    The first rule is special in that the generated <span class="mono">Parse</span> function will call the first rule.
                     The <span class="mono">FruitList</span> rule takes a vector of unique pointers to <span class="mono">fruits::fruit</span> as a parameter and 
                     returns no value. The <span class="mono">Fruit</span> rule takes no parameters, has no local variables, and returns a 
                     <span class="mono">fruits::fruit</span> pointer. The body of the rule is separated from the interface of the rule by <span class="mono">::=</span> 
                     symbol pronounced <em>produces</em>. The body of a rule is terminated by a semicolon.
                 </p>
                 <p>
-                    The <a href="../parsing_expressions/parsing_expressions.html">body</a> of the 
-                    <span class="mono">FruitList</span> rule consists of capitalized names of tokens, name of another rule <span class="mono">Fruit</span>,
-                    parsing operator symbols such as parenthesis, <span class="mono">:</span>, <span class="mono">*</span> and <span class="mono">?</span>, and 
-                    <em>semantic actions</em>, that are C++ compound statements attached as trailing elements of other parsing entities.
+                    The body of a rule consists of
+                    <span class="rule"><a href="../parsing_expressions/parsing_expressions.html">parsing expressions</a></span>.
                     The <span class="mono">FruitList</span> rule parses a possibly empty list of <span class="mono">Fruit</span>s separated by 
-                    <span class="mono">COMMA</span> tokens and enclosed in 
-                    parenthesis, that is: <span class="mono">LPAREN</span> and <span class="mono">RPAREN</span> tokens.
-                    When a <span class="mono">Fruit</span> is parsed it is added to a vector of <span class="mono">std::unique_ptr&lt;fruits::fruit></span>.
+                    <span class="mono">COMMA</span> tokens and enclosed in parenthesis, that is: 
+                    <span class="mono">LPAREN</span> and <span class="mono">RPAREN</span> tokens.
+                    When a <span class="mono">Fruit</span> rule is parsed its return value is added to a 
+                    vector of <span class="mono">std::unique_ptr&lt;fruits::fruit></span>.
                 </p>
                 <p>
                     The body of <span class="mono">Fruit</span> rule consists of tokens <span class="mono">APPLE</span>, <span class="mono">ORANGE</span> and

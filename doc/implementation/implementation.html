@@ -12,7 +12,7 @@
     <p>First regular expressions of the lexical analyzer are turned to nondeterministic finite automata, NFA. Then the input alphabet, essentially Unicode characters, is partitioned into character classes with respect to transitions of the automata. Each character class is assigned a unique integer identifier. A map from Unicode characters to character class identifiers, a classmap, is created. Then the automata are combined to form one big NFA by creating a new start state and adding epsilon-transitions from the new start state to the start states of each small NFA. Finally the big NFA is compiled to a deterministic finite automaton, DFA, using the subset construction algorithm. The DFA has transitions for each character class. The generated lexical analyzer, the DFA, operates by getting an input character, getting its character class and moving from some state to another. When the DFA is in an accepting state, it has recognized some input token that corresponds to some regular expression.</p>
     <h2>Operation of the parser generator</h2>
     <p>
-      The parser generator generates a top-down recursive-descent parser from input grammars. The closest formalism for a Soul grammar is a <em>Parsing Expression Grammar</em>
+      The parser generator generates a top-down backtracking recursive descent parser from input grammars. The closest formalism for a Soul grammar is a <em>Parsing Expression Grammar</em>
       or <a href="https://bford.info/pub/lang/peg.pdf">PEG</a>
       . The <em>choice</em>
       operator of the Soul grammar is equivalent to the <em>prioritized choice</em>

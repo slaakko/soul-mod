@@ -18,7 +18,7 @@
         <span class="rule"><a href="../syntax/syntax.html#rule.choice">choice</a></span> expression, 
         that matches <span class="rule">p</span> or <span class="rule">q</span> in left-to-right order.
         If <span class="rule">p</span> matches, <span class="rule">q</span> is not tried at all. 
-        If <span class="rule">p</span> does not match, then <span class="rule">q</span> is tried to match.
+        If <span class="rule">p</span> does not match, then the parser backtracks and <span class="rule">q</span> is tried to match.
     </p>
 
     <h2>Sequence expression</h2>
@@ -163,5 +163,25 @@
         <span class="rule"><a href="../syntax/syntax.html#rule.failure-action">failure action</a></span>, gets executed.
     </p>
 
+    <h4>Parameters and variables available in semantic actions</h4>
+
+    <ul>
+        <li>
+            <span class="mono">lexer</span> parameter provides access to the interface of current lexer.
+        </li>
+        <li>
+            <span class="mono">pos</span> integer variable represents the position of the matching token in lexer.
+        </li>
+        <li>
+            <span class="mono">pass</span> Boolean variable affects the operation of the parser.
+            By setting <span class="mono">pass</span> to false, the parser operates as if the current rule has <em>not</em> matched, 
+            that is: the parser backtracks and tries to match the next possible choice.
+        </li>
+    </ul>
+
+    <p>
+        Getting the lexeme of the matched token:
+        <ref file="ref/integer.parser.div"/>
+    </p>
 </body>
 </html>

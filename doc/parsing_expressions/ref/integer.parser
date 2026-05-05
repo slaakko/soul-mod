@@ -1,0 +1,6 @@
+parser IntegerParser
+{
+    Integer
+        ::= INTEGER{ std::u32string s = lexer.GetToken(pos).ToString(); /* do something with s */ }
+        ;
+}

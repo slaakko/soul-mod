@@ -211,6 +211,8 @@ div.cpp
 
 table.opt, th.opt, td.opt
 {
+    font-family: sans-serif;
+    border-collapse: collapse;
     text-align: left;
     border: 1px solid #dddddd;
     margin: 20px;

@@ -20,6 +20,4 @@ export namespace calculator
     private:
         std::map<std::u32string, double> variableMap;
     };
-
-    double ParseDouble(const std::u32string& s);
 }

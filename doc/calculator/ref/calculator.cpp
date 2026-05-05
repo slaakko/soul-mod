@@ -27,12 +27,4 @@ namespace calculator
             throw std::runtime_error("variable '" + util::ToUtf8(variableName) + "' not found");
         }
     }
-
-    double ParseDouble(const std::u32string& s)
-    {
-        std::stringstream strm(util::ToUtf8(s));
-        double d;
-        strm >> d;
-        return d;
-    }
 }

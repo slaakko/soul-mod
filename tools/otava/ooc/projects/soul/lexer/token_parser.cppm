@@ -259,7 +259,7 @@ bool ParseFloating(const Char* begin, const Char* end, Value& value) noexcept
         {
             if (ch >= '0' && ch <= '9')
             {
-                value = 10 * value + (static_cast<int>(ch) - static_cast<int>('0')) / d;
+                value = value + (static_cast<int>(ch) - static_cast<int>('0')) / d;
                 d = 10 * d;
             }
             else if (ch == 'e' || ch == 'E')

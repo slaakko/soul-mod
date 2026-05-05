@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>oc</title>
+    <link href="../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <h1>oc</h1>
+
+    <p>
+        Otava C++ compiler.
+    </p>
+
+    <p>
+        Usage: <span class="mono">oc [options] { FILE.project | FILE.solution }</span>
+    </p>
+
+    <p>Options:</p>
+
+    <table class="opt">
+        <tr>
+            <th class="opt">Long option</th>
+            <th class="opt">Short option</th>
+            <th class="opt">Description</th>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--help</span></td>
+            <td class="opt"><span class="mono">-h</span></td>
+            <td class="opt">Print help and exit.</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--verbose</span></td>
+            <td class="opt"><span class="mono">-v</span></td>
+            <td class="opt">Be verbose.</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--config=(debug|release|trace|CONFIG)</span></td>
+            <td class="opt"><span class="mono">-c=(debug|release|trace|CONFIG)</span></td>
+            <td class="opt">
+                Set build configuration to<br /> <span class="mono">debug</span>, <span class="mono">release</span>, <span class="mono">trace</span>,
+                or user defined configuration <span class="mono">CONFIG</span>. Default configuration is <span class="mono">debug</span>.
+            </td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--opt=OPTIMIZATION_LEVEL</span></td>
+            <td class="opt"><span class="mono">-O=OPTIMIZATION_LEVEL</span></td>
+            <td class="opt">
+                Set release mode optimization level to OPTIMIZATION_LEVEL (0-3).<br/>Default level for release configuration is 2.
+            </td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--define=SYMBOL</span></td>
+            <td class="opt"><span class="mono">-d=SYMBOL</span></td>
+            <td class="opt">
+                Define build symbol SYMBOL.
+            </td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--rebuild</span></td>
+            <td class="opt"><span class="mono">-r</span></td>
+            <td class="opt">
+                Rebuild project or solution.
+            </td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--all</span></td>
+            <td class="opt"><span class="mono">-a</span></td>
+            <td class="opt">
+                Build also all projects the given project depends on.
+            </td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--debug-parse</span></td>
+            <td class="opt"><span class="mono">-p</span></td>
+            <td class="opt">
+                Print source parsing log to "parse.log" file located in the current working directory.
+            </td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--xml</span></td>
+            <td class="opt"><span class="mono">-x</span></td>
+            <td class="opt">
+                Write ASTs as XML.
+            </td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--seed</span></td>
+            <td class="opt"><span class="mono">-s</span></td>
+            <td class="opt">
+                Initialize uuid seed from hash code of the file path of each project.
+            </td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--symbol-xml</span></td>
+            <td class="opt"><span class="mono">-y</span></td>
+            <td class="opt">
+                Write symbols as XML.
+            </td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--debug</span></td>
+            <td class="opt"><span class="mono">-b</span></td>
+            <td class="opt">
+                Set compile debugging on.
+            </td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--out=FILENAME</span></td>
+            <td class="opt"><span class="mono">-o=FILENAME</span></td>
+            <td class="opt">
+                Write compile debug output to file FILENAME.
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        Examples:
+    </p>
+
+    <table class="opt">
+        <tr>
+            <th class="opt">Command</th>
+            <th class="opt">Description</th>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">oc hello.project</span></td>
+            <td class="opt">Compile <span class="mono">hello.project</span> using <span class="mono">debug</span> configuration.</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">oc -c=release -O=1 hello.project</span></td>
+            <td class="opt">Compile <span class="mono">hello.project</span> using <span class="mono">release</span> configuration with optimization level 1.</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">oc -v soul.solution</span></td>
+            <td class="opt">Build all projects in solution <span class="mono">soul.solution</span>. Generate verbose output.</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">oc -d=NOWARN soul.solution</span></td>
+            <td class="opt">Build all projects in solution <span class="mono">soul.solution</span> with <span class="mono">NOWARN</span> symbol defined. 
+            This does not generate any warning messages.</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">oc -c=memdbg hello.project</span></td>
+            <td class="opt">Compile the <span class="mono">hello.project</span> using <span class="mono">memdbg</span> configuration.<br/>
+            When runnig <span class="mono">bin/memdbg/hello.exe</span> this will print memory leaks to standard output after <span class="mono">hello.exe</span> has been run.
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">oc -a xml_parser.project</span></td>
+            <td class="opt">Compile <span class="mono">xml_parser.project</span> and all projects it depends on.</td>.
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">oc -r xml_parser.project</span></td>
+            <td class="opt">Rebuild only <span class="mono">xml_parser.project</span>.</td>.
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">oc -ra xml_parser.project</span></td>
+            <td class="opt">Rebuild <span class="mono">xml_parser.project</span> and all projects it depends on.</td>.
+        </tr>
+    </table>
+</body>
+</html>

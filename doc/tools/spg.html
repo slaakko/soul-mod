@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>spg</title>
+    <link href="../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <h1>spg</h1>
+
+    <p>
+        Soul parser generator.
+    </p>
+
+    <p>
+        Usage: <span class="mono">spg [options] { FILE.spg }</span>
+    </p>
+
+    <p>Options:</p>
+
+    <table class="opt">
+        <tr>
+            <th class="opt">Long option</th>
+            <th class="opt">Short option</th>
+            <th class="opt">Description</th>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--help</span></td>
+            <td class="opt"><span class="mono">-h</span></td>
+            <td class="opt">Print help and exit.</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--verbose</span></td>
+            <td class="opt"><span class="mono">-v</span></td>
+            <td class="opt">Be verbose.</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--no-debug-support</span></td>
+            <td class="opt"><span class="mono">-n</span></td>
+            <td class="opt">Do not generate parser debugging code.</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--optimize</span></td>
+            <td class="opt"><span class="mono">-o</span></td>
+            <td class="opt">Do switch optimization.</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--xml</span></td>
+            <td class="opt"><span class="mono">-x</span></td>
+            <td class="opt">Generate XML info documents.</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">--ppstyle</span></td>
+            <td class="opt"><span class="mono">-p</span></td>
+            <td class="opt">Generate preprocessor style code.</td>
+        </tr>
+    </table>
+
+    <p>
+        Examples:
+    </p>
+
+    <table class="opt">
+        <tr>
+            <th class="opt">Command</th>
+            <th class="opt">Description</th>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">spg parser.spg</span></td>
+            <td class="opt">Process parser project file <span class="mono">parser.spg</span>. Generates source code for all parsers contained by the 
+            <span class="mono">parser.spg</span>,</td>
+        </tr>
+        <tr>
+            <td class="opt"><span class="mono">spg -vox cpp_parsers.spg</span></td>
+            <td class="opt">Process parser project file <span class="mono">cpp_parsers.spg</span>. 
+                Do switch optimization and generate verbose output and XML info documents.</td>
+        </tr>
+    </table>
+</body>
+</html>

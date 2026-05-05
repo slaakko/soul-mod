@@ -58,22 +58,6 @@
   <br/>
   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
   <br/>
-  <span xml:space="preserve"/>
-  <br/>
-  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">double</span>&nbsp;<span class="id">ParseDouble</span><span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">u32string</span><span class="other">&amp;</span>&nbsp;<span class="id">s</span><span class="other">)</span></span>
-  <br/>
-  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
-  <br/>
-  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">stringstream</span>&nbsp;<span class="id">strm</span><span class="other">(</span><span class="id">util</span><span class="other">::</span><span class="id">ToUtf8</span><span class="other">(</span><span class="id">s</span><span class="other">)</span><span class="other">)</span><span class="other">;</span></span>
-  <br/>
-  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">double</span>&nbsp;<span class="id">d</span><span class="other">;</span></span>
-  <br/>
-  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">strm</span>&nbsp;<span class="other">>></span>&nbsp;<span class="id">d</span><span class="other">;</span></span>
-  <br/>
-  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">d</span><span class="other">;</span></span>
-  <br/>
-  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
-  <br/>
   <span xml:space="preserve"><span class="other">}</span></span>
   <br/>
 </div>
