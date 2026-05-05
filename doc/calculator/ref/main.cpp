@@ -15,7 +15,7 @@ int main()
         {
             std::cout << "enter expression:" << "\n";
             std::string expr;
-            std::cin >> expr;
+            std::getline(std::cin, expr);
             if (expr == "exit") break;
             std::u32string e = util::ToUtf32(expr);
             auto lexer = calculator::lexer::MakeLexer(e.c_str(), e.c_str() + e.length(), "<expr>");

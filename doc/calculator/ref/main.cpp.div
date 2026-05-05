@@ -34,7 +34,7 @@
   <br/>
   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span>&nbsp;<span class="id">expr</span><span class="other">;</span></span>
   <br/>
-  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cin</span>&nbsp;<span class="other">>></span>&nbsp;<span class="id">expr</span><span class="other">;</span></span>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">getline</span><span class="other">(</span><span class="id">std</span><span class="other">::</span><span class="id">cin</span><span class="other">,</span>&nbsp;<span class="id">expr</span><span class="other">)</span><span class="other">;</span></span>
   <br/>
   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">expr</span>&nbsp;<span class="other">==</span>&nbsp;<span class="string">"exit"</span><span class="other">)</span>&nbsp;<span class="kw">break</span><span class="other">;</span></span>
   <br/>
