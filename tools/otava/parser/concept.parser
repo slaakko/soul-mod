@@ -7,7 +7,7 @@ export module otava.parser.concepts;
 
 [interface]import otava.symbols.context;
 [interface]import otava.ast;
-[implementation]import soul.ast.source.pos;
+[implementation]import soul.ast.span;
 [implementation]import otava.token;
 [implementation]import otava.lexer;
 [implementation]import otava.symbols;
@@ -34,17 +34,17 @@ parser ConceptParser
     using PunctuationParser.Semicolon;
     using TemplateParser.TemplateArgumentList;
 
-    ConceptDefinition(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    ConceptDefinition(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            CONCEPT{ sourcePos = lexer.GetSourcePos(pos); } 
+            CONCEPT{ span = lexer.GetSpan(pos); } 
             ConceptName(context):conceptName 
             Assign:assign{ context->PushSetFlag(otava::symbols::ContextFlags::parsingConceptDefinition); }
             ConstraintExpression(context):constraintExpr{ context->PopFlags(); } / { context->PopFlags(); }
             Semicolon:semicolon
         )
         {
-            otava::ast::ConceptDefinitionNode* conceptDefinitionNode = new otava::ast::ConceptDefinitionNode(sourcePos, conceptName, assign, constraintExpr, semicolon);
+            otava::ast::ConceptDefinitionNode* conceptDefinitionNode = new otava::ast::ConceptDefinitionNode(span, conceptName, assign, constraintExpr, semicolon);
             otava::symbols::ProcessConcept(conceptDefinitionNode, context);
             return conceptDefinitionNode;
         }
@@ -70,25 +70,25 @@ parser ConceptParser
         ::= LogicalOrExpression(context):logicalOrExpr{ return logicalOrExpr; }
         ;
 
-    RequiresClause(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    RequiresClause(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            REQUIRES{ sourcePos = lexer.GetSourcePos(pos); }
+            REQUIRES{ span = lexer.GetSpan(pos); }
             ConstraintLogicalOrExpression(context):orExpr
         )
         {
-            return new otava::ast::RequiresClauseNode(sourcePos, orExpr);
+            return new otava::ast::RequiresClauseNode(span, orExpr);
         }
         ;
 
     ConstraintLogicalOrExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node, 
-        var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos opPos) : otava::ast::Node*
+        var soul::ast::Span span, var soul::ast::Span opSpan) : otava::ast::Node*
         ::= 
         (
-            ConstraintLogicalAndExpression(context):left{ node.reset(left); sourcePos = lexer.GetSourcePos(pos); }
+            ConstraintLogicalAndExpression(context):left{ node.reset(left); span = lexer.GetSpan(pos); }
             (
-                OR_OR{ opPos = lexer.GetSourcePos(pos); } 
-                ConstraintLogicalAndExpression(context):right{ node.reset(new otava::ast::BinaryExprNode(sourcePos, new otava::ast::DisjunctionNode(opPos), node.release(), right)); }
+                OR_OR{ opSpan = lexer.GetSpan(pos); } 
+                ConstraintLogicalAndExpression(context):right{ node.reset(new otava::ast::BinaryExprNode(span, new otava::ast::DisjunctionNode(opSpan), node.release(), right)); }
             )*
         )
         {
@@ -97,13 +97,13 @@ parser ConceptParser
         ;
 
     ConstraintLogicalAndExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node, 
-        var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos opPos) : otava::ast::Node*
+        var soul::ast::Span span, var soul::ast::Span opSpan) : otava::ast::Node*
         ::= 
         (
             PrimaryExpression(context):left{ node.reset(left); }
             (
-                AMP_AMP{ opPos = lexer.GetSourcePos(pos); } 
-                PrimaryExpression(context):right{ node.reset(new otava::ast::BinaryExprNode(sourcePos, new otava::ast::ConjunctionNode(opPos), node.release(), right)); }
+                AMP_AMP{ opSpan = lexer.GetSpan(pos); } 
+                PrimaryExpression(context):right{ node.reset(new otava::ast::BinaryExprNode(span, new otava::ast::ConjunctionNode(opSpan), node.release(), right)); }
             )*
         )
         {
@@ -112,42 +112,42 @@ parser ConceptParser
         ;
 
 
-    RequiresExpression(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    RequiresExpression(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            REQUIRES{ sourcePos = lexer.GetSourcePos(pos); } RequirementParameterList(context):params? RequirementBody(context):body
+            REQUIRES{ span = lexer.GetSpan(pos); } RequirementParameterList(context):params? RequirementBody(context):body
         )
         {
-            return new otava::ast::RequiresExprNode(sourcePos, params, body);
+            return new otava::ast::RequiresExprNode(span, params, body);
         }
         ;
 
     RequirementParameterList(otava::symbols::Context* context, var std::unique_ptr<otava::ast::ParameterListNode> node, 
-        var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : otava::ast::Node*
+        var soul::ast::Span lpSpan, var soul::ast::Span rpSpan) : otava::ast::Node*
         ::=
         (
-            LPAREN{ lpPos = lexer.GetSourcePos(pos); node.reset(new otava::ast::ParameterListNode(lpPos)); } 
+            LPAREN{ lpSpan = lexer.GetSpan(pos); node.reset(new otava::ast::ParameterListNode(lpSpan)); } 
             ParameterDeclarationClause(context, node.get()):paramDeclClause 
-            RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+            RPAREN{ rpSpan = lexer.GetSpan(pos); }
         )
         {
-            node->SetLParenPos(lpPos);
-            node->SetRParenPos(rpPos);
+            node->SetLParenSpan(lpSpan);
+            node->SetRParenSpan(rpSpan);
             return node.release();
         }
         ;
 
     RequirementBody(otava::symbols::Context* context, var std::unique_ptr<otava::ast::RequirementBodyNode> node, 
-        var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : otava::ast::Node*
+        var soul::ast::Span lbSpan, var soul::ast::Span rbSpan) : otava::ast::Node*
         ::= 
         (
-            LBRACE{ lbPos = lexer.GetSourcePos(pos); node.reset(new otava::ast::RequirementBodyNode(lbPos)); }
+            LBRACE{ lbSpan = lexer.GetSpan(pos); node.reset(new otava::ast::RequirementBodyNode(lbSpan)); }
             RequirementSeq(context, node.get()):requirementSeq
-            RBRACE{ rbPos = lexer.GetSourcePos(pos); }
+            RBRACE{ rbSpan = lexer.GetSpan(pos); }
         )
         {
-            node->SetLBracePos(lbPos);
-            node->SetRBracePos(rbPos);
+            node->SetLBraceSpan(lbSpan);
+            node->SetRBraceSpan(rbSpan);
             return node.release();
         }
         ;
@@ -166,78 +166,78 @@ parser ConceptParser
         |   SimpleRequirement(context):simpleRequirement{ return simpleRequirement; }
         ;
 
-    SimpleRequirement(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
-        ::= Expression(context):expr{ sourcePos = lexer.GetSourcePos(pos); } Semicolon:semicolon{ return new otava::ast::SimpleRequirementNode(sourcePos, expr, semicolon); }
+    SimpleRequirement(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
+        ::= Expression(context):expr{ span = lexer.GetSpan(pos); } Semicolon:semicolon{ return new otava::ast::SimpleRequirementNode(span, expr, semicolon); }
         ;
 
-    TypeRequirement(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
-        ::= TYPENAME{ sourcePos = lexer.GetSourcePos(pos); } 
+    TypeRequirement(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
+        ::= TYPENAME{ span = lexer.GetSpan(pos); } 
             NestedNameSpecifier(context):nns? 
             empty{ context->PushSetFlag(otava::symbols::ContextFlags::assumeType); }
             TypeName(context):typeName{ context->PopFlags(); } / { context->PopFlags(); }
             Semicolon:semicolon
         { 
-            return new otava::ast::TypeRequirementNode(sourcePos, nns, typeName, semicolon); 
+            return new otava::ast::TypeRequirementNode(span, nns, typeName, semicolon); 
         }
         ;
 
-    CompoundRequirement(otava::symbols::Context* context, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : otava::ast::Node*
+    CompoundRequirement(otava::symbols::Context* context, var soul::ast::Span lbSpan, var soul::ast::Span rbSpan) : otava::ast::Node*
         ::= 
         (
-            LBRACE{ lbPos = lexer.GetSourcePos(pos); }
+            LBRACE{ lbSpan = lexer.GetSpan(pos); }
             Expression(context):expr 
-            RBRACE{ rbPos = lexer.GetSourcePos(pos); }
+            RBRACE{ rbSpan = lexer.GetSpan(pos); }
             Noexcept:noexcept_? 
             ReturnTypeRequirement(context):returnTypeRequirement?
             Semicolon:semicolon
         )
         {
-            return new otava::ast::CompoundRequirementNode(lbPos, expr, noexcept_, returnTypeRequirement, semicolon, lbPos, rbPos);
+            return new otava::ast::CompoundRequirementNode(lbSpan, expr, noexcept_, returnTypeRequirement, semicolon, lbSpan, rbSpan);
         }
         ;
 
-    ReturnTypeRequirement(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    ReturnTypeRequirement(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            ARROW{ sourcePos = lexer.GetSourcePos(pos); } TypeConstraint(context):typeConstraint
+            ARROW{ span = lexer.GetSpan(pos); } TypeConstraint(context):typeConstraint
         )
         {
-            return new otava::ast::ReturnTypeRequirementNode(sourcePos, typeConstraint);
+            return new otava::ast::ReturnTypeRequirementNode(span, typeConstraint);
         }
         ;
 
-    NestedRequirement(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    NestedRequirement(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            REQUIRES{ sourcePos = lexer.GetSourcePos(pos); } ConstraintExpression(context):constraintExpr Semicolon:semicolon
+            REQUIRES{ span = lexer.GetSpan(pos); } ConstraintExpression(context):constraintExpr Semicolon:semicolon
         )
         {
-            return new otava::ast::NestedRequirementNode(sourcePos, constraintExpr, semicolon);
+            return new otava::ast::NestedRequirementNode(span, constraintExpr, semicolon);
         }
         ;
 
     TypeConstraint(otava::symbols::Context* context, var std::unique_ptr<otava::ast::TypeConstraintNode> node, var std::unique_ptr<otava::ast::Node> conceptName, 
-        var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos laPos, var soul::ast::SourcePos raPos) : otava::ast::Node*
+        var soul::ast::Span span, var soul::ast::Span laSpan, var soul::ast::Span raSpan) : otava::ast::Node*
         ::= 
         (
             (
-                (   NestedNameSpecifier(context):nns{ sourcePos = lexer.GetSourcePos(pos); } 
-                    ConceptNameChecked(context):conceptName1{ conceptName.reset(new otava::ast::QualifiedIdNode(sourcePos, nns, conceptName1)); }
-                |   ConceptNameChecked(context):conceptName2{ sourcePos = lexer.GetSourcePos(pos); conceptName.reset(conceptName2); }
+                (   NestedNameSpecifier(context):nns{ span = lexer.GetSpan(pos); } 
+                    ConceptNameChecked(context):conceptName1{ conceptName.reset(new otava::ast::QualifiedIdNode(span, nns, conceptName1)); }
+                |   ConceptNameChecked(context):conceptName2{ span = lexer.GetSpan(pos); conceptName.reset(conceptName2); }
                 )
                 {
-                    node.reset(new otava::ast::TypeConstraintNode(sourcePos, conceptName.release())); 
+                    node.reset(new otava::ast::TypeConstraintNode(span, conceptName.release())); 
                 }
             )
             (
-                LANGLE{ laPos = lexer.GetSourcePos(pos); ++vars->langleCount; context->PushSetFlag(otava::symbols::ContextFlags::parsingTemplateId); node->SetHasTemplateArgumentList(); }
+                LANGLE{ laSpan = lexer.GetSpan(pos); ++vars->langleCount; context->PushSetFlag(otava::symbols::ContextFlags::parsingTemplateId); node->SetHasTemplateArgumentList(); }
                 TemplateArgumentList(context, node.get()):templateArgs?
-                RANGLE{ raPos = lexer.GetSourcePos(pos); --vars->langleCount; context->PopFlags(); } / { --vars->langleCount; context->PopFlags(); }
+                RANGLE{ raSpan = lexer.GetSpan(pos); --vars->langleCount; context->PopFlags(); } / { --vars->langleCount; context->PopFlags(); }
             )?
         )
         {
-            node->SetLAnglePos(laPos);
-            node->SetRAnglePos(raPos);
+            node->SetLAngleSpan(laSpan);
+            node->SetRAngleSpan(raSpan);
             return node.release();
         }
     ;

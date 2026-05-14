@@ -24,7 +24,7 @@ import util.unicode;
 
 namespace otava::symbols {
 
-TypeSymbol* GetIntegerType(otava::ast::Suffix suffix, const soul::ast::SourcePos& sourcePos, Context* context)
+TypeSymbol* GetIntegerType(otava::ast::Suffix suffix, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     DeclarationFlags flags = DeclarationFlags::intFlag;
     if ((suffix & otava::ast::Suffix::u) != otava::ast::Suffix::none)
@@ -39,10 +39,10 @@ TypeSymbol* GetIntegerType(otava::ast::Suffix suffix, const soul::ast::SourcePos
     {
         flags = flags | DeclarationFlags::longLongFlag;
     }
-    return GetFundamentalType(flags, sourcePos, context);
+    return GetFundamentalType(flags, fullSpan, context);
 }
 
-TypeSymbol* GetFloatingPointType(otava::ast::Suffix suffix, const soul::ast::SourcePos& sourcePos, Context* context)
+TypeSymbol* GetFloatingPointType(otava::ast::Suffix suffix, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     DeclarationFlags flags = DeclarationFlags::doubleFlag;
     if ((suffix & otava::ast::Suffix::l) != otava::ast::Suffix::none)
@@ -53,10 +53,10 @@ TypeSymbol* GetFloatingPointType(otava::ast::Suffix suffix, const soul::ast::Sou
     {
         flags = (flags & ~DeclarationFlags::doubleFlag) | DeclarationFlags::floatFlag;
     }
-    return GetFundamentalType(flags, sourcePos, context);
+    return GetFundamentalType(flags, fullSpan, context);
 }
 
-TypeSymbol* GetStringType(otava::ast::EncodingPrefix encodingPrefix, const soul::ast::SourcePos& sourcePos, Context* context)
+TypeSymbol* GetStringType(otava::ast::EncodingPrefix encodingPrefix, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     switch (encodingPrefix)
     {
@@ -83,7 +83,7 @@ TypeSymbol* GetStringType(otava::ast::EncodingPrefix encodingPrefix, const soul:
     }
 }
 
-TypeSymbol* GetCharacterType(otava::ast::EncodingPrefix encodingPrefix, const soul::ast::SourcePos& sourcePos, Context* context)
+TypeSymbol* GetCharacterType(otava::ast::EncodingPrefix encodingPrefix, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     switch (encodingPrefix)
     {
@@ -141,25 +141,25 @@ Evaluator::Evaluator(Context* context_) : context(context_), value(nullptr), sco
 
 void Evaluator::Visit(otava::ast::IntegerLiteralNode& node)
 {
-    TypeSymbol* type = GetIntegerType(node.GetSuffix(), node.GetSourcePos(), context);
+    TypeSymbol* type = GetIntegerType(node.GetSuffix(), context->MakeFullSpan(node.GetSpan()), context);
     value = context->GetEvaluationContext()->GetIntegerValue(node.GetValue(), node.Rep(), type);
 }
 
 void Evaluator::Visit(otava::ast::FloatingLiteralNode& node)
 {
-    TypeSymbol* type = GetFloatingPointType(node.GetSuffix(), node.GetSourcePos(), context);
+    TypeSymbol* type = GetFloatingPointType(node.GetSuffix(), context->MakeFullSpan(node.GetSpan()), context);
     value = context->GetEvaluationContext()->GetFloatingValue(node.GetValue(), node.Rep(), type);
 }
 
 void Evaluator::Visit(otava::ast::CharacterLiteralNode& node)
 {
-    TypeSymbol* type = GetCharacterType(node.GetEncodingPrefix(), node.GetSourcePos(), context);
+    TypeSymbol* type = GetCharacterType(node.GetEncodingPrefix(), context->MakeFullSpan(node.GetSpan()), context);
     value = context->GetEvaluationContext()->GetCharValue(node.GetValue(), type);
 }
 
 void Evaluator::Visit(otava::ast::StringLiteralNode& node)
 {
-    TypeSymbol* type = GetStringType(node.GetEncodingPrefix(), node.GetSourcePos(), context);
+    TypeSymbol* type = GetStringType(node.GetEncodingPrefix(), context->MakeFullSpan(node.GetSpan()), context);
     value = context->GetEvaluationContext()->GetStringValue(util::ToUtf8(node.GetValue()), type);
 }
 
@@ -184,7 +184,7 @@ void Evaluator::Visit(otava::ast::IdentifierNode& node)
     Symbol* symbol = scope->Lookup(node.Str(),
         SymbolGroupKind::variableSymbolGroup | SymbolGroupKind::enumConstantSymbolGroup | SymbolGroupKind::typeSymbolGroup,
         ScopeLookup::allScopes,
-        node.GetSourcePos(),
+        context->MakeFullSpan(node.GetSpan()),
         context,
         LookupFlags::none);
     if (symbol)
@@ -501,8 +501,8 @@ void Evaluator::Visit(otava::ast::InvokeExprNode& node)
 void Evaluator::Visit(otava::ast::SizeOfTypeExprNode& node)
 {
     TypeSymbol* type = ResolveType(node.Child(), DeclarationFlags::none, context);
-    type = type->DirectType(context)->FinalType(node.GetSourcePos(), context);
-    otava::intermediate::Type* irType = type->IrType(*context->GetEmitter(), node.GetSourcePos(), context);
+    type = type->DirectType(context)->FinalType(context->MakeFullSpan(node.GetSpan()), context);
+    otava::intermediate::Type* irType = type->IrType(*context->GetEmitter(), context->MakeFullSpan(node.GetSpan()), context);
     std::int64_t size = irType->Size();
     value = context->GetEvaluationContext()->GetIntegerValue(size, util::ToUtf32(std::to_string(size)),
         context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType));
@@ -534,7 +534,7 @@ void Evaluator::Visit(otava::ast::BracedInitListNode& node)
             else if (arrayTypeSymbol->Size() != count)
             {
                 ThrowException("conflicting array size: size=" + std::to_string(arrayTypeSymbol->Size()) + ", number of elements in initializer=" + std::to_string(count),
-                    node.GetSourcePos(), context);
+                    context->MakeFullSpan(node.GetSpan()), context);
             }
             value = arrayValue;
         }

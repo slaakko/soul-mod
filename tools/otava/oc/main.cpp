@@ -9,21 +9,13 @@ import otava.build.build;
 import otava.build.config;
 import otava.build_project;
 import otava.build_solution;
-import otava.symbols.init;
-import otava.symbols.expr.parser;
-import otava.symbols.stmt.parser;
-import otava.symbols.decl_specifier_seq.parser;
-import otava.symbols.modules;
-import otava.symbols.namespaces;
-import otava.symbols.compound.type.symbol;
-import otava.symbols.conversion.table;
-import otava.symbols.type.symbol;
-import otava.symbols.exception;
+import otava.symbols;
 import otava.parser.recorded.parse;
 import otava.expr.parser;
 import otava.stmt.parser;
 import otava.decl_specifier_seq.parser;
 import otava.opt;
+import otava.ast;
 import soul.lexer.file.map;
 import util;
 
@@ -64,7 +56,7 @@ void PrintHelp()
 
 std::string Version()
 {
-    return "5.1.0";
+    return "5.2.0";
 }
 
 int main(int argc, const char** argv)

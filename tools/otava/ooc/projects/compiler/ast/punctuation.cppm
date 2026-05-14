@@ -8,7 +8,7 @@ export namespace otava::ast {
 class SemicolonNode : public Node
 {
 public:
-    SemicolonNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    SemicolonNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U";"; }
@@ -17,7 +17,7 @@ public:
 class CommaNode : public Node
 {
 public:
-    CommaNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    CommaNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U", "; }
@@ -26,7 +26,7 @@ public:
 class QuestNode : public Node
 {
 public:
-    QuestNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    QuestNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"?"; }
@@ -35,7 +35,7 @@ public:
 class ColonNode : public Node
 {
 public:
-    ColonNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ColonNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U":"; }
@@ -44,7 +44,7 @@ public:
 class EllipsisNode : public Node
 {
 public:
-    EllipsisNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    EllipsisNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U":::"; }
@@ -53,7 +53,7 @@ public:
 class LParenNode : public Node
 {
 public:
-    LParenNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    LParenNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"("; }
@@ -62,7 +62,7 @@ public:
 class RParenNode : public Node
 {
 public:
-    RParenNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    RParenNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U")"; }
@@ -71,7 +71,7 @@ public:
 class LBracketNode : public Node
 {
 public:
-    LBracketNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    LBracketNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"["; }
@@ -80,7 +80,7 @@ public:
 class RBracketNode : public Node
 {
 public:
-    RBracketNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    RBracketNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"]"; }
@@ -89,7 +89,7 @@ public:
 class LBraceNode : public Node
 {
 public:
-    LBraceNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    LBraceNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"{"; }
@@ -98,7 +98,7 @@ public:
 class RBraceNode : public Node
 {
 public:
-    RBraceNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    RBraceNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"}"; }

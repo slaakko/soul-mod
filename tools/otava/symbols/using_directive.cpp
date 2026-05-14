@@ -45,7 +45,8 @@ void UsingDirectiveProcessor::Visit(otava::ast::QualifiedIdNode& node)
 
 void UsingDirectiveProcessor::Visit(otava::ast::IdentifierNode& node)
 {
-    Symbol* symbol = scope->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::none);
+    soul::ast::FullSpan fullSpan = context->MakeFullSpan(node.GetSpan());
+    Symbol* symbol = scope->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::allScopes, fullSpan, context, LookupFlags::none);
     if (symbol)
     {
         if (symbol->IsNamespaceSymbol())
@@ -55,12 +56,12 @@ void UsingDirectiveProcessor::Visit(otava::ast::IdentifierNode& node)
         }
         else
         {
-            ThrowException("symbol '" + util::ToUtf8(symbol->FullName()) + "' does not denote a namespace", node.GetSourcePos(), context);
+            ThrowException("symbol '" + util::ToUtf8(symbol->FullName()) + "' does not denote a namespace", fullSpan, context);
         }
     }
     else
     {
-        ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found", node.GetSourcePos(), context);
+        ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found", fullSpan, context);
     }
 }
 

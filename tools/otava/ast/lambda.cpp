@@ -11,12 +11,12 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-LambdaExpressionNode::LambdaExpressionNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::lambdaExpressionNode, sourcePos_)
+LambdaExpressionNode::LambdaExpressionNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::lambdaExpressionNode, span_)
 {
 }
 
-LambdaExpressionNode::LambdaExpressionNode(const soul::ast::SourcePos& sourcePos_, Node* introducer_, Node* templateParams_, Node* declarator_, Node* body_) noexcept :
-    CompoundNode(NodeKind::lambdaExpressionNode, sourcePos_), introducer(introducer_), templateParams(templateParams_), declarator(declarator_), body(body_)
+LambdaExpressionNode::LambdaExpressionNode(const soul::ast::Span& span_, Node* introducer_, Node* templateParams_, Node* declarator_, Node* body_) noexcept :
+    CompoundNode(NodeKind::lambdaExpressionNode, span_), introducer(introducer_), templateParams(templateParams_), declarator(declarator_), body(body_)
 {
 }
 
@@ -27,7 +27,7 @@ Node* LambdaExpressionNode::Clone() const
     {
         clonedTemplateParams = templateParams->Clone();
     }
-    LambdaExpressionNode* clone = new LambdaExpressionNode(GetSourcePos(), introducer->Clone(), clonedTemplateParams, declarator->Clone(), body->Clone());
+    LambdaExpressionNode* clone = new LambdaExpressionNode(GetSpan(), introducer->Clone(), clonedTemplateParams, declarator->Clone(), body->Clone());
     clone->SetId(Id());
     return clone;
 }
@@ -55,13 +55,13 @@ void LambdaExpressionNode::Read(Reader& reader)
     body.reset(reader.ReadNode());
 }
 
-LambdaIntroducerNode::LambdaIntroducerNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::lambdaIntroducerNode, sourcePos_)
+LambdaIntroducerNode::LambdaIntroducerNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::lambdaIntroducerNode, span_)
 {
 }
 
-LambdaIntroducerNode::LambdaIntroducerNode(const soul::ast::SourcePos& sourcePos_, Node* capture_, 
-    const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) noexcept :
-    CompoundNode(NodeKind::lambdaIntroducerNode, sourcePos_), capture(capture_), lbPos(lbPos_), rbPos(rbPos_)
+LambdaIntroducerNode::LambdaIntroducerNode(const soul::ast::Span& span_, Node* capture_,
+    const soul::ast::Span& lbSpan_, const soul::ast::Span& rbSpan_) noexcept :
+    CompoundNode(NodeKind::lambdaIntroducerNode, span_), capture(capture_), lbSpan(lbSpan_), rbSpan(rbSpan_)
 {
 }
 
@@ -72,7 +72,7 @@ Node* LambdaIntroducerNode::Clone() const
     {
         clonedCapture = capture->Clone();
     }
-    LambdaIntroducerNode* clone = new LambdaIntroducerNode(GetSourcePos(), clonedCapture, lbPos, rbPos);
+    LambdaIntroducerNode* clone = new LambdaIntroducerNode(GetSpan(), clonedCapture, lbSpan, rbSpan);
     clone->SetId(Id());
     return clone;
 }
@@ -86,25 +86,25 @@ void LambdaIntroducerNode::Write(Writer& writer)
 {
     CompoundNode::Write(writer);
     writer.Write(capture.get());
-    writer.Write(lbPos);
-    writer.Write(rbPos);
+    writer.Write(lbSpan);
+    writer.Write(rbSpan);
 }
 
 void LambdaIntroducerNode::Read(Reader& reader)
 {
     CompoundNode::Read(reader);
     capture.reset(reader.ReadNode());
-    lbPos = reader.ReadSourcePos();
-    rbPos = reader.ReadSourcePos();
+    lbSpan = reader.ReadSpan();
+    rbSpan = reader.ReadSpan();
 }
 
-LambdaCaptureNode::LambdaCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::lambdaCaptureNode, sourcePos_)
+LambdaCaptureNode::LambdaCaptureNode(const soul::ast::Span& span_) noexcept : ListNode(NodeKind::lambdaCaptureNode, span_)
 {
 }
 
 Node* LambdaCaptureNode::Clone() const
 {
-    LambdaCaptureNode* clone = new LambdaCaptureNode(GetSourcePos());
+    LambdaCaptureNode* clone = new LambdaCaptureNode(GetSpan());
     for (const auto& node : Nodes())
     {
         clone->AddNode(node->Clone());
@@ -118,13 +118,13 @@ void LambdaCaptureNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-DefaultRefCaptureNode::DefaultRefCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::defaultRefCaptureNode, sourcePos_)
+DefaultRefCaptureNode::DefaultRefCaptureNode(const soul::ast::Span& span_) noexcept : Node(NodeKind::defaultRefCaptureNode, span_)
 {
 }
 
 Node* DefaultRefCaptureNode::Clone() const
 {
-    DefaultRefCaptureNode* clone = new DefaultRefCaptureNode(GetSourcePos());
+    DefaultRefCaptureNode* clone = new DefaultRefCaptureNode(GetSpan());
     clone->SetId(Id());
     return clone;
 }
@@ -134,13 +134,13 @@ void DefaultRefCaptureNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-DefaultCopyCaptureNode::DefaultCopyCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::defaultCopyCaptureNode, sourcePos_)
+DefaultCopyCaptureNode::DefaultCopyCaptureNode(const soul::ast::Span& span_) noexcept : Node(NodeKind::defaultCopyCaptureNode, span_)
 {
 }
 
 Node* DefaultCopyCaptureNode::Clone() const
 {
-    DefaultCopyCaptureNode* clone = new DefaultCopyCaptureNode(GetSourcePos());
+    DefaultCopyCaptureNode* clone = new DefaultCopyCaptureNode(GetSpan());
     clone->SetId(Id());
     return clone;
 }
@@ -150,13 +150,13 @@ void DefaultCopyCaptureNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ByRefCaptureNode::ByRefCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::byRefCaptureNode, sourcePos_)
+ByRefCaptureNode::ByRefCaptureNode(const soul::ast::Span& span_) noexcept : Node(NodeKind::byRefCaptureNode, span_)
 {
 }
 
 Node* ByRefCaptureNode::Clone() const
 {
-    ByRefCaptureNode* clone = new ByRefCaptureNode(GetSourcePos());
+    ByRefCaptureNode* clone = new ByRefCaptureNode(GetSpan());
     clone->SetId(Id());
     return clone;
 }
@@ -166,12 +166,12 @@ void ByRefCaptureNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-SimpleCaptureNode::SimpleCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::simpleCaptureNode, sourcePos_)
+SimpleCaptureNode::SimpleCaptureNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::simpleCaptureNode, span_)
 {
 }
 
-SimpleCaptureNode::SimpleCaptureNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* byRefCapture_, Node* ellipsis_) noexcept :
-    CompoundNode(NodeKind::simpleCaptureNode, sourcePos_), identifier(identifier_), byRefCapture(byRefCapture_), ellipsis(ellipsis_)
+SimpleCaptureNode::SimpleCaptureNode(const soul::ast::Span& span_, Node* identifier_, Node* byRefCapture_, Node* ellipsis_) noexcept :
+    CompoundNode(NodeKind::simpleCaptureNode, span_), identifier(identifier_), byRefCapture(byRefCapture_), ellipsis(ellipsis_)
 {
 }
 
@@ -187,7 +187,7 @@ Node* SimpleCaptureNode::Clone() const
     {
         clonedEllipsis = ellipsis->Clone();
     }
-    SimpleCaptureNode* clone = new SimpleCaptureNode(GetSourcePos(), identifier->Clone(), clonedByRefCapture, clonedEllipsis);
+    SimpleCaptureNode* clone = new SimpleCaptureNode(GetSpan(), identifier->Clone(), clonedByRefCapture, clonedEllipsis);
     clone->SetId(Id());
     return clone;
 }
@@ -213,18 +213,18 @@ void SimpleCaptureNode::Read(Reader& reader)
     ellipsis.reset(reader.ReadNode());
 }
 
-CurrentObjectCopyCapture::CurrentObjectCopyCapture(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::currentObjectCopyCapture, sourcePos_)
+CurrentObjectCopyCapture::CurrentObjectCopyCapture(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::currentObjectCopyCapture, span_)
 {
 }
 
-CurrentObjectCopyCapture::CurrentObjectCopyCapture(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& thisPos_) noexcept : 
-    CompoundNode(NodeKind::currentObjectCopyCapture, sourcePos_), thisPos(thisPos_)
+CurrentObjectCopyCapture::CurrentObjectCopyCapture(const soul::ast::Span& span_, const soul::ast::Span& thisSpan_) noexcept :
+    CompoundNode(NodeKind::currentObjectCopyCapture, span_), thisSpan(thisSpan_)
 {
 }
 
 Node* CurrentObjectCopyCapture::Clone() const
 {
-    CurrentObjectCopyCapture* clone = new CurrentObjectCopyCapture(GetSourcePos(), thisPos);
+    CurrentObjectCopyCapture* clone = new CurrentObjectCopyCapture(GetSpan(), thisSpan);
     clone->SetId(Id());
     return clone;
 }
@@ -237,27 +237,27 @@ void CurrentObjectCopyCapture::Accept(Visitor& visitor)
 void CurrentObjectCopyCapture::Write(Writer& writer)
 {
     CompoundNode::Write(writer);
-    writer.Write(thisPos);
+    writer.Write(thisSpan);
 }
 
 void CurrentObjectCopyCapture::Read(Reader& reader)
 {
     CompoundNode::Read(reader);
-    thisPos = reader.ReadSourcePos();
+    thisSpan = reader.ReadSpan();
 }
 
-CurrentObjectByRefCapture::CurrentObjectByRefCapture(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::currentObjectByRefCapture, sourcePos_)
+CurrentObjectByRefCapture::CurrentObjectByRefCapture(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::currentObjectByRefCapture, span_)
 {
 }
 
-CurrentObjectByRefCapture::CurrentObjectByRefCapture(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& thisPos_) noexcept : 
-    CompoundNode(NodeKind::currentObjectByRefCapture, sourcePos_), thisPos(thisPos_)
+CurrentObjectByRefCapture::CurrentObjectByRefCapture(const soul::ast::Span& span_, const soul::ast::Span& thisSpan_) noexcept :
+    CompoundNode(NodeKind::currentObjectByRefCapture, span_), thisSpan(thisSpan_)
 {
 }
 
 Node* CurrentObjectByRefCapture::Clone() const
 {
-    CurrentObjectByRefCapture* clone = new CurrentObjectByRefCapture(GetSourcePos(), thisPos);
+    CurrentObjectByRefCapture* clone = new CurrentObjectByRefCapture(GetSpan(), thisSpan);
     clone->SetId(Id());
     return clone;
 }
@@ -270,21 +270,21 @@ void CurrentObjectByRefCapture::Accept(Visitor& visitor)
 void CurrentObjectByRefCapture::Write(Writer& writer)
 {
     CompoundNode::Write(writer);
-    writer.Write(thisPos);
+    writer.Write(thisSpan);
 }
 
 void CurrentObjectByRefCapture::Read(Reader& reader)
 {
     CompoundNode::Read(reader);
-    thisPos = reader.ReadSourcePos();
+    thisSpan = reader.ReadSpan();
 }
 
-InitCaptureNode::InitCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::initCaptureNode, sourcePos_)
+InitCaptureNode::InitCaptureNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::initCaptureNode, span_)
 {
 }
 
-InitCaptureNode::InitCaptureNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* initializer_, Node* byRefCapture_, Node* ellipsis_) noexcept :
-    CompoundNode(NodeKind::initCaptureNode, sourcePos_), identifier(identifier_), initializer(initializer_), byRefCapture(byRefCapture_), ellipsis(ellipsis_)
+InitCaptureNode::InitCaptureNode(const soul::ast::Span& span_, Node* identifier_, Node* initializer_, Node* byRefCapture_, Node* ellipsis_) noexcept :
+    CompoundNode(NodeKind::initCaptureNode, span_), identifier(identifier_), initializer(initializer_), byRefCapture(byRefCapture_), ellipsis(ellipsis_)
 {
 }
 
@@ -300,7 +300,7 @@ Node* InitCaptureNode::Clone() const
     {
         clonedEllipsis = ellipsis->Clone();
     }
-    InitCaptureNode* clone = new InitCaptureNode(GetSourcePos(), identifier->Clone(), initializer->Clone(), clonedByRefCapture, clonedEllipsis);
+    InitCaptureNode* clone = new InitCaptureNode(GetSpan(), identifier->Clone(), initializer->Clone(), clonedByRefCapture, clonedEllipsis);
     clone->SetId(Id());
     return clone;
 }
@@ -328,12 +328,12 @@ void InitCaptureNode::Read(Reader& reader)
     ellipsis.reset(reader.ReadNode());
 }
 
-LambdaDeclaratorNode::LambdaDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::lambdaDeclaratorNode, sourcePos_)
+LambdaDeclaratorNode::LambdaDeclaratorNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::lambdaDeclaratorNode, span_)
 {
 }
 
-LambdaDeclaratorNode::LambdaDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* parameterList_, Node* specifiers_, Node* requiresClause_) noexcept :
-    CompoundNode(NodeKind::lambdaDeclaratorNode, sourcePos_), parameterList(parameterList_), specifiers(specifiers_), requiresClause(requiresClause_)
+LambdaDeclaratorNode::LambdaDeclaratorNode(const soul::ast::Span& span_, Node* parameterList_, Node* specifiers_, Node* requiresClause_) noexcept :
+    CompoundNode(NodeKind::lambdaDeclaratorNode, span_), parameterList(parameterList_), specifiers(specifiers_), requiresClause(requiresClause_)
 {
 }
 
@@ -349,7 +349,7 @@ Node* LambdaDeclaratorNode::Clone() const
     {
         clonedParameterList = parameterList->Clone();
     }
-    LambdaDeclaratorNode* clone = new LambdaDeclaratorNode(GetSourcePos(), clonedParameterList, specifiers->Clone(), clonedRequiresClause);
+    LambdaDeclaratorNode* clone = new LambdaDeclaratorNode(GetSpan(), clonedParameterList, specifiers->Clone(), clonedRequiresClause);
     clone->SetId(Id());
     return clone;
 }
@@ -375,13 +375,13 @@ void LambdaDeclaratorNode::Read(Reader& reader)
     requiresClause.reset(reader.ReadNode());
 }
 
-LambdaSpecifiersNode::LambdaSpecifiersNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::lambdaSpecifiersNode, sourcePos_)
+LambdaSpecifiersNode::LambdaSpecifiersNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::lambdaSpecifiersNode, span_)
 {
 }
 
-LambdaSpecifiersNode::LambdaSpecifiersNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifiers_, Node* noexceptSpecifier_, Node* attributes_, 
+LambdaSpecifiersNode::LambdaSpecifiersNode(const soul::ast::Span& span_, Node* declSpecifiers_, Node* noexceptSpecifier_, Node* attributes_,
     Node* trailingReturnType_) noexcept :
-    CompoundNode(NodeKind::lambdaSpecifiersNode, sourcePos_), declSpecifiers(declSpecifiers_), noexceptSpecifier(noexceptSpecifier_), 
+    CompoundNode(NodeKind::lambdaSpecifiersNode, span_), declSpecifiers(declSpecifiers_), noexceptSpecifier(noexceptSpecifier_), 
     attributes(attributes_), trailingReturnType(trailingReturnType_)
 {
 }
@@ -408,7 +408,7 @@ Node* LambdaSpecifiersNode::Clone() const
     {
         clonedTrailingReturnType = trailingReturnType->Clone();
     }
-    LambdaSpecifiersNode* clone = new LambdaSpecifiersNode(GetSourcePos(), clonedDeclSpecifiers, clonedNoexceptSpecifier, clonedAttributes, clonedTrailingReturnType);
+    LambdaSpecifiersNode* clone = new LambdaSpecifiersNode(GetSpan(), clonedDeclSpecifiers, clonedNoexceptSpecifier, clonedAttributes, clonedTrailingReturnType);
     clone->SetId(Id());
     return clone;
 }
@@ -441,13 +441,13 @@ bool LambdaSpecifiersNode::IsEmpty() const
     return !declSpecifiers && !noexceptSpecifier && !attributes && !trailingReturnType;
 }
 
-LambdaTemplateParamsNode::LambdaTemplateParamsNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
-    CompoundNode(NodeKind::lambdaTemplateParamsNode, sourcePos_)
+LambdaTemplateParamsNode::LambdaTemplateParamsNode(const soul::ast::Span& span_) noexcept :
+    CompoundNode(NodeKind::lambdaTemplateParamsNode, span_)
 {
 }
 
-LambdaTemplateParamsNode::LambdaTemplateParamsNode(const soul::ast::SourcePos& sourcePos_, Node* templateParams_, Node* requiresClause_) noexcept :
-    CompoundNode(NodeKind::lambdaTemplateParamsNode, sourcePos_), templateParams(templateParams_), requiresClause(requiresClause_)
+LambdaTemplateParamsNode::LambdaTemplateParamsNode(const soul::ast::Span& span_, Node* templateParams_, Node* requiresClause_) noexcept :
+    CompoundNode(NodeKind::lambdaTemplateParamsNode, span_), templateParams(templateParams_), requiresClause(requiresClause_)
 {
 }
 
@@ -458,7 +458,7 @@ Node* LambdaTemplateParamsNode::Clone() const
     {
         clonedRequiresClause = requiresClause->Clone();
     }
-    LambdaTemplateParamsNode* clone = new LambdaTemplateParamsNode(GetSourcePos(), templateParams->Clone(), clonedRequiresClause);
+    LambdaTemplateParamsNode* clone = new LambdaTemplateParamsNode(GetSpan(), templateParams->Clone(), clonedRequiresClause);
     clone->SetId(Id());
     return clone;
 }

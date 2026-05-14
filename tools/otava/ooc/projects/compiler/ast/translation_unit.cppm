@@ -9,8 +9,8 @@ export namespace otava::ast {
 class TranslationUnitNode : public CompoundNode
 {
 public:
-    TranslationUnitNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    TranslationUnitNode(const soul::ast::SourcePos& sourcePos_, Node* unit_) noexcept;
+    TranslationUnitNode(const soul::ast::Span& span_) noexcept;
+    TranslationUnitNode(const soul::ast::Span& span_, Node* unit_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -23,8 +23,8 @@ private:
 class ModuleUnitNode : public CompoundNode
 {
 public:
-    ModuleUnitNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ModuleUnitNode(const soul::ast::SourcePos& sourcePos_, Node* globalModuleFragment_, Node* moduleDeclaration_, Node* declarations_,
+    ModuleUnitNode(const soul::ast::Span& span_) noexcept;
+    ModuleUnitNode(const soul::ast::Span& span_, Node* globalModuleFragment_, Node* moduleDeclaration_, Node* declarations_,
         Node* privateModuleFragment_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;

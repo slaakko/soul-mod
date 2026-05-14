@@ -13,7 +13,7 @@ using namespace cpp::token;
 
 std::string Version()
 {
-    return "5.1.0";
+    return "5.2.0";
 }
 
 std::string KeywordColor()

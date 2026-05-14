@@ -31,7 +31,7 @@ parser IdentifierParser
     using TemplateParser.SimpleTemplateId;
 
     Identifier(otava::symbols::Context* context) : otava::ast::Node*
-        ::= ID{ return otava::parser::token::ParseIdentifier(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)); }
+        ::= ID{ return otava::parser::token::ParseIdentifier(lexer.GetSpan(pos), lexer.FileName(), lexer.GetToken(pos)); }
         ;
 
     UnqualifiedId(otava::symbols::Context* context) : otava::ast::Node*
@@ -43,38 +43,38 @@ parser IdentifierParser
         |   DestructorId(context):destructorId{ return destructorId; }
         ;
 
-    QualifiedId(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos templatePos) : otava::ast::Node*
+    QualifiedId(otava::symbols::Context* context, var soul::ast::Span span, var soul::ast::Span templatePos) : otava::ast::Node*
         ::= 
         (
-            NestedNameSpecifier(context):nns{ sourcePos = lexer.GetSourcePos(pos); } 
+            NestedNameSpecifier(context):nns{ span = lexer.GetSpan(pos); } 
             (
-                Template:tmp{ templatePos = lexer.GetSourcePos(pos); } 
+                Template:tmp{ templatePos = lexer.GetSpan(pos); } 
                 UnqualifiedId(context):unqualifiedId
                 {
-                    return new otava::ast::QualifiedIdNode(sourcePos, nns, new otava::ast::PrefixNode(templatePos, tmp, unqualifiedId));
+                    return new otava::ast::QualifiedIdNode(span, nns, new otava::ast::PrefixNode(templatePos, tmp, unqualifiedId));
                 }
             |   UnqualifiedId(context):unqualifiedId
                 {
-                    return new otava::ast::QualifiedIdNode(sourcePos, nns, unqualifiedId);
+                    return new otava::ast::QualifiedIdNode(span, nns, unqualifiedId);
                 }
             )
         )
         ;
 
     Template : otava::ast::Node*
-        ::= TEMPLATE{ return new otava::ast::TemplateNode(lexer.GetSourcePos(pos)); }
+        ::= TEMPLATE{ return new otava::ast::TemplateNode(lexer.GetSpan(pos)); }
         ;
 
     NestedNameSpecifier(otava::symbols::Context* context, var std::unique_ptr<otava::ast::NestedNameSpecifierNode> nnsNode, 
         var std::unique_ptr<otava::ast::Node> idNode) : otava::ast::Node*
         ::= 
-        (   empty{ nnsNode.reset(new otava::ast::NestedNameSpecifierNode(lexer.GetSourcePos(pos))); }
-            (COLON_COLON{ nnsNode->AddNode(new otava::ast::ColonColonNode(lexer.GetSourcePos(pos))); })?
-            (   (TEMPLATE{ nnsNode->AddNode(new otava::ast::TemplateNode(lexer.GetSourcePos(pos))); })?
+        (   empty{ nnsNode.reset(new otava::ast::NestedNameSpecifierNode(lexer.GetSpan(pos))); }
+            (COLON_COLON{ nnsNode->AddNode(new otava::ast::ColonColonNode(lexer.GetSpan(pos))); })?
+            (   (TEMPLATE{ nnsNode->AddNode(new otava::ast::TemplateNode(lexer.GetSpan(pos))); })?
                 SimpleTemplateId(context):simpleTemplateId{ idNode.reset(simpleTemplateId); }
-                COLON_COLON{ nnsNode->AddNode(idNode.release()); nnsNode->AddNode(new otava::ast::ColonColonNode(lexer.GetSourcePos(pos))); }
-            |   ID{ idNode.reset(otava::parser::token::ParseIdentifier(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos))); } 
-                COLON_COLON{ nnsNode->AddNode(idNode.release()); nnsNode->AddNode(new otava::ast::ColonColonNode(lexer.GetSourcePos(pos))); }
+                COLON_COLON{ nnsNode->AddNode(idNode.release()); nnsNode->AddNode(new otava::ast::ColonColonNode(lexer.GetSpan(pos))); }
+            |   ID{ idNode.reset(otava::parser::token::ParseIdentifier(lexer.GetSpan(pos), lexer.FileName(), lexer.GetToken(pos))); } 
+                COLON_COLON{ nnsNode->AddNode(idNode.release()); nnsNode->AddNode(new otava::ast::ColonColonNode(lexer.GetSpan(pos))); }
             )*
         )
         {
@@ -84,7 +84,7 @@ parser IdentifierParser
             }
             else
             {
-                nnsNode->SetSourcePos(nnsNode->Nodes()[0]->GetSourcePos());
+                nnsNode->SetSpan(nnsNode->Nodes()[0]->GetSpan());
                 return nnsNode.release();
             }
         }
@@ -93,7 +93,7 @@ parser IdentifierParser
     IdentifierList(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> identifierListNode) : otava::ast::Node*
         ::= 
         (
-            Identifier(context):first{ identifierListNode.reset(new otava::ast::IdentifierListNode(lexer.GetSourcePos(pos))); identifierListNode->AddNode(first); } 
+            Identifier(context):first{ identifierListNode.reset(new otava::ast::IdentifierListNode(lexer.GetSpan(pos))); identifierListNode->AddNode(first); } 
             (   Comma:comma{ identifierListNode->AddNode(comma); }
                 Identifier(context):next{ identifierListNode->AddNode(next); }
             )*
@@ -119,11 +119,11 @@ parser IdentifierParser
     TypeIdentifierChecked(otava::symbols::Context* context) : otava::ast::Node*
         ::= ID
             { 
-                std::unique_ptr<otava::ast::IdentifierNode> identifier(otava::parser::token::ParseIdentifier(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
+                std::unique_ptr<otava::ast::IdentifierNode> identifier(otava::parser::token::ParseIdentifier(lexer.GetSpan(pos), lexer.FileName(), lexer.GetToken(pos)));
                 otava::symbols::Symbol* symbol = context->GetSymbolTable()->Lookup(
                     identifier->Str(), 
                     otava::symbols::SymbolGroupKind::typeSymbolGroup, 
-                    lexer.GetSourcePos(pos), 
+                    context->MakeFullSpan(lexer.GetSpan(pos)), 
                     context);
                 if (symbol && (symbol->IsTypeSymbol() || symbol->IsClassGroupSymbol() || symbol->IsAliasGroupSymbol()))
                 {
@@ -138,7 +138,7 @@ parser IdentifierParser
         ;
 
     Unnamed : otava::ast::Node*
-        ::= empty{ return new otava::ast::UnnamedNode(lexer.GetSourcePos(pos)); }
+        ::= empty{ return new otava::ast::UnnamedNode(lexer.GetSpan(pos)); }
         ;
 
 }

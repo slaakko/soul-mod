@@ -256,7 +256,7 @@ void DeclaratorProcessor::Visit(otava::ast::FunctionDeclaratorNode& node)
             context->GetSymbolTable()->RecomputeNames();
             context->GetSymbolTable()->SetAddToRecomputeNameSet(false);
         }
-        context->GetSymbolTable()->CurrentScope()->SymbolScope()->AddSymbol(functionTypeSymbol, node.GetSourcePos(), context);
+        context->GetSymbolTable()->CurrentScope()->SymbolScope()->AddSymbol(functionTypeSymbol, context->MakeFullSpan(node.GetSpan()), context);
     }
 }
 
@@ -881,11 +881,11 @@ void DeclaratorProcessor::Visit(otava::ast::ArrayDeclaratorNode& node)
         }
         else
         {
-            ThrowException("integer value expected", node.GetSourcePos(), context);
+            ThrowException("integer value expected", context->MakeFullSpan(node.GetSpan()), context);
         }
     }
     ArrayTypeSymbol* arrayType = context->GetSymbolTable()->MakeArrayType(baseType, size);
-    arrayType->Bind(node.GetSourcePos(), context);
+    arrayType->Bind(context->MakeFullSpan(node.GetSpan()), context);
     declaration = Declaration(flags, arrayType, new ArrayDeclarator(arrayName, &node, size));
 }
 

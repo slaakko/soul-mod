@@ -10,5 +10,4 @@ class Context;
 void CheckFunctionReturnPaths(otava::ast::Node* node, Context* context);
 bool TerminatesCaseOrDefault(otava::ast::Node* statementNode);
 
-
 } // namespace otava::symbols

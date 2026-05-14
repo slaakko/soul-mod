@@ -1,8 +1,13 @@
+// =================================
+// Copyright (c) 2026 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
 export module otava.parser.translation.unit;
 
 [interface]import otava.symbols.context;
 [interface]import otava.ast;
-[implementation]import soul.ast.source.pos;
+[implementation]import soul.ast.span;
 [implementation]import soul.ast.lexer.pos.pair;
 [implementation]import otava.token;
 [implementation]import otava.lexer;
@@ -21,24 +26,24 @@ parser TranslationUnitParser
     
     TranslationUnit(otava::symbols::Context* context) : otava::ast::Node*
         ::= 
-        (   ModuleUnit(context):moduleUnit{ return new otava::ast::TranslationUnitNode(lexer.GetSourcePos(pos), moduleUnit); }
-        |   DeclarationSeq(context):declarations{ return new otava::ast::TranslationUnitNode(lexer.GetSourcePos(pos), declarations); }
-        |   empty{ return new otava::ast::TranslationUnitNode(lexer.GetSourcePos(pos), nullptr); }
+        (   ModuleUnit(context):moduleUnit{ return new otava::ast::TranslationUnitNode(lexer.GetSpan(pos), moduleUnit); }
+        |   DeclarationSeq(context):declarations{ return new otava::ast::TranslationUnitNode(lexer.GetSpan(pos), declarations); }
+        |   empty{ return new otava::ast::TranslationUnitNode(lexer.GetSpan(pos), nullptr); }
         )
         ;
 
-    ModuleUnit(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    ModuleUnit(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
             (
-                GlobalModuleFragment(context):globalModuleFragment{ sourcePos = lexer.GetSourcePos(pos); }
+                GlobalModuleFragment(context):globalModuleFragment{ span = lexer.GetSpan(pos); }
             )? 
-            ModuleDeclaration(context):moduleDeclaration{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); } 
+            ModuleDeclaration(context):moduleDeclaration{ if (!span.IsValid()) span = lexer.GetSpan(pos); } 
             DeclarationSeq(context):declarations? 
             PrivateModuleFragment(context):privateModuleFragment?
         )
         {
-            return new otava::ast::ModuleUnitNode(sourcePos, globalModuleFragment, moduleDeclaration, declarations, privateModuleFragment);
+            return new otava::ast::ModuleUnitNode(span, globalModuleFragment, moduleDeclaration, declarations, privateModuleFragment);
         }
         ;
 }

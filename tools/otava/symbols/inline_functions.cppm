@@ -6,7 +6,7 @@
 export module otava.symbols.inline_functions;
 
 import std;
-import soul.ast.source.pos;
+import soul.ast.span;
 import otava.symbols.symbol;
 
 export namespace otava::symbols {
@@ -23,6 +23,6 @@ private:
     std::map<FunctionSymbol*, FunctionSymbol*> inlineFunctionMap;
 };
 
-FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::SourcePos& sourcePos, Context* context);
+FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::FullSpan& fullSpan, Context* context);
 
 } // namespace otava::symbols

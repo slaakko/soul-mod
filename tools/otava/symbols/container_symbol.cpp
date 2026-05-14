@@ -36,7 +36,7 @@ ContainerSymbol::ContainerSymbol(SymbolKind kind_, const util::uuid& id_, const 
     scope.SetContainerSymbol(this);
 }
 
-void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
+void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     symbol->SetParent(this);
     Scope* childScope = symbol->GetScope();
@@ -159,7 +159,7 @@ void ContainerSymbol::Read(Reader& reader)
         Symbol* symbol = reader.ReadSymbol();
         if (symbol)
         {
-            AddSymbol(symbol, soul::ast::SourcePos(), reader.GetContext());
+            AddSymbol(symbol, soul::ast::FullSpan(), reader.GetContext());
             if (symbol->IsFunctionDefinitionSymbol())
             {
                 FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(symbol);

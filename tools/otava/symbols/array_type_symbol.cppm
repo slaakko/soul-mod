@@ -27,10 +27,10 @@ public:
     inline TypeSymbol* ElementType() const noexcept { return elementType; }
     inline std::int64_t Size() const noexcept { return size; }
     inline void SetSize(std::int64_t size_) noexcept { size = size_; }
-    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context) override;
     inline bool IsBound() const noexcept { return bound; }
     inline void SetBound() noexcept { bound = true; }
-    void Bind(const soul::ast::SourcePos& sourcePos, Context* context);
+    void Bind(const soul::ast::FullSpan& fullSpan, Context* context);
 private:
     bool bound;
     TypeSymbol* elementType;
@@ -47,7 +47,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     ArrayTypeSymbol* arrayType;
@@ -63,7 +63,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     ArrayTypeSymbol* arrayType;
@@ -79,7 +79,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     ArrayTypeSymbol* arrayType;
@@ -95,7 +95,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     ArrayTypeSymbol* arrayType;
@@ -111,7 +111,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     ArrayTypeSymbol* arrayType;
@@ -127,7 +127,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     ArrayTypeSymbol* arrayType;
@@ -143,7 +143,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     ArrayTypeSymbol* arrayType;

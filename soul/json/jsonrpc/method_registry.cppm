@@ -6,10 +6,9 @@
 export module soul.json.rpc.method.registry;
 
 import std;
+import soul.json.rpc.method;
 
 export namespace soul::json::rpc {
-
-class Method;
 
 void AddMethod(Method* method);
 Method* GetMethod(const std::string& methodName);

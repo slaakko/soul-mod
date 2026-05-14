@@ -30,7 +30,7 @@ public:
     bool IsRValueRefType() const noexcept;
     bool IsReferenceType() const noexcept;
     virtual TypeSymbol* PlainType(Context* context) { return this; }
-    virtual TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) { return this; }
+    virtual TypeSymbol* FinalType(const soul::ast::FullSpan& fullSpan, Context* context) { return this; }
     virtual TypeSymbol* DirectType(Context* context) { return this; }
     virtual bool HasBaseClass(TypeSymbol* baseClass, int& distance, Context* context) const noexcept { return false; }
     virtual bool IsVoidType() const noexcept { return false; }
@@ -65,7 +65,7 @@ public:
     virtual TypeSymbol* RemoveDerivations(Derivations sourceDerivations, Context* context);
     virtual TypeSymbol* Unify(TypeSymbol* argType, Context* context);
     virtual TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap,
-        const soul::ast::SourcePos& sourcePos, Context* context) {
+        const soul::ast::FullSpan& fullSpan, Context* context) {
         return nullptr;
     }
     virtual bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const noexcept { return true; }
@@ -79,8 +79,8 @@ public:
     TypeSymbol* RemoveRValueRef(Context* context);
     TypeSymbol* RemoveReference(Context* context);
     TypeSymbol* RemoveRefOrPtr(Context* context);
-    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    virtual otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
+    void AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context) override;
+    virtual otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context);
 };
 
 class NestedTypeSymbol : public TypeSymbol
@@ -181,6 +181,6 @@ private:
 TypeSymbol* ConvertRefToPtrType(TypeSymbol* type, Context* context);
 
 std::unique_ptr<otava::ast::DeclarationStatementNode> DeclarationToAst(TypeSymbol* type, const std::u32string& variableName, otava::ast::Node* initializer,
-    const soul::ast::SourcePos& sourcePos);
+    const soul::ast::FullSpan& fullSpan);
 
 } // namespace otava::symbols

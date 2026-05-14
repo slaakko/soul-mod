@@ -55,10 +55,11 @@ void ScopeResolver::Visit(otava::ast::ColonColonNode& node)
 void ScopeResolver::Visit(otava::ast::IdentifierNode& node)
 {
     first = false;
-    Symbol* symbol = currentScope->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::none);
+    Symbol* symbol = currentScope->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::allScopes, context->MakeFullSpan(node.GetSpan()), context, LookupFlags::none);
     if (!symbol)
     {
-        symbol = context->GetSymbolTable()->LookupInScopeStack(node.Str(), SymbolGroupKind::typeSymbolGroup, node.GetSourcePos(), context, LookupFlags::none);
+        symbol = context->GetSymbolTable()->LookupInScopeStack(node.Str(), SymbolGroupKind::typeSymbolGroup, context->MakeFullSpan(node.GetSpan()), 
+            context, LookupFlags::none);
     }
     if (symbol)
     {
@@ -76,17 +77,17 @@ void ScopeResolver::Visit(otava::ast::IdentifierNode& node)
             }
             else
             {
-                ThrowException("symbol '" + util::ToUtf8(symbol->FullName()) + "' does not have a scope", node.GetSourcePos(), context);
+                ThrowException("symbol '" + util::ToUtf8(symbol->FullName()) + "' does not have a scope", context->MakeFullSpan(node.GetSpan()), context);
             }
         }
         else
         {
-            ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found from " + ScopeKindStr(currentScope->Kind()) + " '" + currentScope->FullName() + "'", node.GetSourcePos(), context);
+            ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found from " + ScopeKindStr(currentScope->Kind()) + " '" + currentScope->FullName() + "'", context->MakeFullSpan(node.GetSpan()), context);
         }
     }
     else
     {
-        ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found from " + ScopeKindStr(currentScope->Kind()) + " '" + currentScope->FullName() + "'", node.GetSourcePos(), context);
+        ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found from " + ScopeKindStr(currentScope->Kind()) + " '" + currentScope->FullName() + "'", context->MakeFullSpan(node.GetSpan()), context);
     }
 }
 

@@ -30,7 +30,7 @@ class IdentityConversion : public FunctionSymbol
 public:
     IdentityConversion(TypeSymbol* type_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     TypeSymbol* ConversionParamType() const noexcept override { return type; }
     TypeSymbol* ConversionArgType() const noexcept override { return type; }
     ConversionKind GetConversionKind() const noexcept override { return ConversionKind::implicitConversion; }
@@ -45,25 +45,25 @@ IdentityConversion::IdentityConversion(TypeSymbol* type_, Context* context) : Fu
     SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", type);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    AddParameter(arg, soul::ast::FullSpan(), context);
     SetReturnType(type, context);
     SetNoExcept();
 }
 
 void IdentityConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
 }
 
 class IdentityArgumentConversion : public ArgumentConversion
 {
 public:
-    FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+    FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg,
+        ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context) override;
 };
 
-FunctionSymbol* IdentityArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+FunctionSymbol* IdentityArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg,
+    ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (TypesEqual(argType->PlainType(context), paramType->PlainType(context), context))
     {
@@ -75,18 +75,18 @@ FunctionSymbol* IdentityArgumentConversion::Get(TypeSymbol* paramType, TypeSymbo
 class ClassTemplateSpecializationConversion : public ArgumentConversion
 {
 public:
-    FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+    FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg,
+        ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context) override;
 };
 
 FunctionSymbol* ClassTemplateSpecializationConversion::Get(
     TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-    const soul::ast::SourcePos& sourcePos, Context* context)
+    const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (context->GetFlag(ContextFlags::matchClassTemplateSpecializationConversion))
     {
         context->PushResetFlag(ContextFlags::matchClassTemplateSpecializationConversion);
-        bool found = FindClassTemplateSpecializationMatch(argType, paramType, arg, functionMatch, sourcePos, context);
+        bool found = FindClassTemplateSpecializationMatch(argType, paramType, arg, functionMatch, fullSpan, context);
         context->PopFlags();
         if (found)
         {
@@ -101,7 +101,7 @@ class DerivedToBaseConversion : public FunctionSymbol
 public:
     DerivedToBaseConversion(TypeSymbol* derivedTypePtr_, TypeSymbol* baseTypePtr_, int distance_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     bool IsDerivedToBaseConversion() const noexcept override { return true; }
     TypeSymbol* ConversionParamType() const noexcept override { return baseTypePtr; }
     TypeSymbol* ConversionArgType() const noexcept override { return derivedTypePtr; }
@@ -119,13 +119,13 @@ DerivedToBaseConversion::DerivedToBaseConversion(TypeSymbol* derivedTypePtr_, Ty
     SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", derivedTypePtr);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    AddParameter(arg, soul::ast::FullSpan(), context);
     SetReturnType(baseTypePtr, context);
     SetNoExcept();
 }
 
 void DerivedToBaseConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     ClassTypeSymbol* derivedClassType = nullptr;
     ClassTypeSymbol* baseClassType = nullptr;
@@ -136,29 +136,29 @@ void DerivedToBaseConversion::GenerateCode(Emitter& emitter, std::vector<BoundEx
     }
     else
     {
-        ThrowException("class pointer types expected", sourcePos, context);
+        ThrowException("class pointer types expected", fullSpan, context);
     }
     std::pair<bool, std::int64_t> p = Delta(derivedClassType, baseClassType, emitter, context);
     bool success = p.first;
     std::int64_t delta = p.second;
     if (!success)
     {
-        ThrowException("classes have no inheritance relationship", sourcePos, context);
+        ThrowException("classes have no inheritance relationship", fullSpan, context);
     }
     otava::intermediate::Value* classPtr = emitter.Stack().Pop();
     otava::intermediate::Value* deltaValue = emitter.EmitLong(delta);
-    emitter.Stack().Push(emitter.EmitClassPtrConversion(classPtr, deltaValue, baseTypePtr->IrType(emitter, sourcePos, context), true));
+    emitter.Stack().Push(emitter.EmitClassPtrConversion(classPtr, deltaValue, baseTypePtr->IrType(emitter, fullSpan, context), true));
 }
 
 class DerivedToBaseArgumentConversion : public ArgumentConversion
 {
 public:
     FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+        const soul::ast::FullSpan& fullSpan, Context* context) override;
 };
 
-FunctionSymbol* DerivedToBaseArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+FunctionSymbol* DerivedToBaseArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg,
+    ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     int distance = 0;
     if (paramType->PointerCount() == 1 && argType->PointerCount() == 1 && argType->GetBaseType()->HasBaseClass(paramType->GetBaseType(), distance, context))
@@ -190,7 +190,7 @@ class BaseToDerivedConversion : public FunctionSymbol
 public:
     BaseToDerivedConversion(TypeSymbol* baseTypePtr_, TypeSymbol* derivedTypePtr_, int distance_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     TypeSymbol* ConversionParamType() const noexcept override { return derivedTypePtr; }
     TypeSymbol* ConversionArgType() const noexcept override { return baseTypePtr; }
     ConversionKind GetConversionKind() const noexcept override { return ConversionKind::explicitConversion; }
@@ -208,13 +208,13 @@ BaseToDerivedConversion::BaseToDerivedConversion(TypeSymbol* baseTypePtr_, TypeS
     SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", baseTypePtr);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    AddParameter(arg, soul::ast::FullSpan(), context);
     SetReturnType(derivedTypePtr, context);
     SetNoExcept();
 }
 
 void BaseToDerivedConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     ClassTypeSymbol* baseClassType = nullptr;
     ClassTypeSymbol* derivedClassType = nullptr;
@@ -225,29 +225,29 @@ void BaseToDerivedConversion::GenerateCode(Emitter& emitter, std::vector<BoundEx
     }
     else
     {
-        ThrowException("class pointer types expected", sourcePos, context);
+        ThrowException("class pointer types expected", fullSpan, context);
     }
     std::pair<bool, std::int64_t> p = Delta(baseClassType, derivedClassType, emitter, context);
     bool success = p.first;
     std::int64_t delta = p.second;
     if (!success)
     {
-        ThrowException("classes have no inheritance relationship", sourcePos, context);
+        ThrowException("classes have no inheritance relationship", fullSpan, context);
     }
     otava::intermediate::Value* classPtr = emitter.Stack().Pop();
     otava::intermediate::Value* deltaValue = emitter.EmitLong(delta);
-    emitter.Stack().Push(emitter.EmitClassPtrConversion(classPtr, deltaValue, derivedTypePtr->IrType(emitter, sourcePos, context), true));
+    emitter.Stack().Push(emitter.EmitClassPtrConversion(classPtr, deltaValue, derivedTypePtr->IrType(emitter, fullSpan, context), true));
 }
 
 class BaseToDerivedArgumentConversion : public ArgumentConversion
 {
 public:
     FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+        const soul::ast::FullSpan& fullSpan, Context* context) override;
 };
 
 FunctionSymbol* BaseToDerivedArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+    FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     int distance = 0;
     if (paramType->PointerCount() == 1 && argType->PointerCount() == 1 && paramType->GetBaseType()->HasBaseClass(argType->GetBaseType(), distance, context))
@@ -283,7 +283,7 @@ class DynamicPtrCast : public FunctionSymbol
 public:
     DynamicPtrCast(ClassTypeSymbol* baseClassType_, ClassTypeSymbol* derivedClassType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
 private:
     ClassTypeSymbol* baseClassType;
     ClassTypeSymbol* derivedClassType;
@@ -296,13 +296,13 @@ DynamicPtrCast::DynamicPtrCast(ClassTypeSymbol* baseClassType_, ClassTypeSymbol*
     SetAccess(Access::public_);
     SetConversionKind(ConversionKind::explicitConversion);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", baseClassType->AddPointer(context));
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    AddParameter(arg, soul::ast::FullSpan(), context);
     SetReturnType(derivedClassType->AddPointer(context), context);
     SetNoExcept();
 }
 
 void DynamicPtrCast::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
     std::uint64_t derived1;
@@ -334,10 +334,10 @@ void DynamicPtrCast::GenerateCode(Emitter& emitter, std::vector<BoundExpressionN
     std::int64_t delta = p.second;
     if (!success)
     {
-        ThrowException("classes have no inheritance relationship", sourcePos, context);
+        ThrowException("classes have no inheritance relationship", fullSpan, context);
     }
     otava::intermediate::Value* deltaValue = emitter.EmitLong(delta);
-    otava::intermediate::Type* derivedClassIrType = derivedClassType->IrType(emitter, sourcePos, context)->AddPointer(emitter.GetIntermediateContext());
+    otava::intermediate::Type* derivedClassIrType = derivedClassType->IrType(emitter, fullSpan, context)->AddPointer(emitter.GetIntermediateContext());
     otava::intermediate::Value* ptr = emitter.EmitClassPtrConversion(value, deltaValue, derivedClassIrType, false);
     otava::intermediate::Value* result = emitter.EmitLocal(derivedClassIrType);
     emitter.EmitStore(ptr, result);
@@ -356,7 +356,7 @@ class NullPtrToPtrConversion : public FunctionSymbol
 public:
     NullPtrToPtrConversion(TypeSymbol* argType_, TypeSymbol* pointerType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     TypeSymbol* ConversionParamType() const noexcept override { return pointerType; }
     TypeSymbol* ConversionArgType() const noexcept override { return argType; }
     ConversionKind GetConversionKind() const noexcept override { return ConversionKind::implicitConversion; }
@@ -372,27 +372,27 @@ NullPtrToPtrConversion::NullPtrToPtrConversion(TypeSymbol* argType_, TypeSymbol*
     SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", argType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    AddParameter(arg, soul::ast::FullSpan(), context);
     SetReturnType(pointerType, context);
     SetNoExcept();
 }
 
 void NullPtrToPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
-    emitter.Stack().Push(emitter.EmitBitcast(value, pointerType->IrType(emitter, sourcePos, context)));
+    emitter.Stack().Push(emitter.EmitBitcast(value, pointerType->IrType(emitter, fullSpan, context)));
 }
 
 class NullPtrToPtrArgumentConversion : public ArgumentConversion
 {
 public:
     FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+        const soul::ast::FullSpan& fullSpan, Context* context) override;
 };
 
 FunctionSymbol* NullPtrToPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+    FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (argType->IsNullPtrType() && paramType->IsPointerType())
     {
@@ -406,7 +406,7 @@ class VoidPtrToPtrConversion : public FunctionSymbol
 public:
     VoidPtrToPtrConversion(TypeSymbol* voidPtrType_, TypeSymbol* targetPointerType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     TypeSymbol* ConversionParamType() const noexcept override { return targetPointerType; }
     TypeSymbol* ConversionArgType() const noexcept override { return voidPtrType; }
     ConversionKind GetConversionKind() const noexcept override { return ConversionKind::explicitConversion; }
@@ -423,27 +423,27 @@ VoidPtrToPtrConversion::VoidPtrToPtrConversion(TypeSymbol* voidPtrType_, TypeSym
     SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", voidPtrType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    AddParameter(arg, soul::ast::FullSpan(), context);
     SetReturnType(targetPointerType, context);
     SetNoExcept();
 }
 
 void VoidPtrToPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
-    emitter.Stack().Push(emitter.EmitBitcast(value, targetPointerType->IrType(emitter, sourcePos, context)));
+    emitter.Stack().Push(emitter.EmitBitcast(value, targetPointerType->IrType(emitter, fullSpan, context)));
 }
 
 class VoidPtrToPtrArgumentConversion : public ArgumentConversion
 {
 public:
     FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+        const soul::ast::FullSpan& fullSpan, Context* context) override;
 };
 
 FunctionSymbol* VoidPtrToPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+    FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (argType->IsPointerType() && argType->PointerCount() == 1 && argType->GetBaseType()->IsVoidType() && paramType->IsPointerType())
     {
@@ -457,7 +457,7 @@ class PtrToVoidPtrConversion : public FunctionSymbol
 public:
     PtrToVoidPtrConversion(TypeSymbol* ptrType_, TypeSymbol* voidPtrType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     TypeSymbol* ConversionParamType() const noexcept override { return voidPtrType; }
     TypeSymbol* ConversionArgType() const noexcept override { return ptrType; }
     ConversionKind GetConversionKind() const noexcept override { return ConversionKind::implicitConversion; }
@@ -473,27 +473,27 @@ PtrToVoidPtrConversion::PtrToVoidPtrConversion(TypeSymbol* ptrType_, TypeSymbol*
     SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", ptrType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    AddParameter(arg, soul::ast::FullSpan(), context);
     SetReturnType(voidPtrType, context);
     SetNoExcept();
 }
 
 void PtrToVoidPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
-    emitter.Stack().Push(emitter.EmitBitcast(value, voidPtrType->IrType(emitter, sourcePos, context)));
+    emitter.Stack().Push(emitter.EmitBitcast(value, voidPtrType->IrType(emitter, fullSpan, context)));
 }
 
 class PtrToVoidPtrArgumentConversion : public ArgumentConversion
 {
 public:
     FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+        const soul::ast::FullSpan& fullSpan, Context* context) override;
 };
 
 FunctionSymbol* PtrToVoidPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+    FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (argType->IsPointerType() && paramType->IsPointerType() && paramType->PointerCount() == 1 && paramType->GetBaseType()->IsVoidType())
     {
@@ -507,7 +507,7 @@ class PtrToPtrConversion : public FunctionSymbol
 public:
     PtrToPtrConversion(TypeSymbol* sourcePtrType_, TypeSymbol* targetPtrType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     TypeSymbol* ConversionParamType() const noexcept override { return targetPtrType; }
     TypeSymbol* ConversionArgType() const noexcept override { return sourcePtrType; }
     ConversionKind GetConversionKind() const noexcept override { return ConversionKind::explicitConversion; }
@@ -524,27 +524,27 @@ PtrToPtrConversion::PtrToPtrConversion(TypeSymbol* sourcePtrType_, TypeSymbol* t
     SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", sourcePtrType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    AddParameter(arg, soul::ast::FullSpan(), context);
     SetReturnType(targetPtrType, context);
     SetNoExcept();
 }
 
 void PtrToPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
-    emitter.Stack().Push(emitter.EmitBitcast(value, targetPtrType->IrType(emitter, sourcePos, context)));
+    emitter.Stack().Push(emitter.EmitBitcast(value, targetPtrType->IrType(emitter, fullSpan, context)));
 }
 
 class ReinterpretCastArgumentConversion : public ArgumentConversion
 {
 public:
     FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+        const soul::ast::FullSpan& fullSpan, Context* context) override;
 };
 
 FunctionSymbol* ReinterpretCastArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+    FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (context->GetFlag(ContextFlags::reinterpretCast))
     {
@@ -561,7 +561,7 @@ class VoidPtrToUInt64Conversion : public FunctionSymbol
 public:
     VoidPtrToUInt64Conversion(TypeSymbol* ptrType_, TypeSymbol* uint64Type_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     TypeSymbol* ConversionParamType() const noexcept override { return uint64Type; }
     TypeSymbol* ConversionArgType() const noexcept override { return ptrType; }
     ConversionKind GetConversionKind() const noexcept override { return ConversionKind::explicitConversion; }
@@ -578,27 +578,27 @@ VoidPtrToUInt64Conversion::VoidPtrToUInt64Conversion(TypeSymbol* ptrType_, TypeS
     SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", ptrType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    AddParameter(arg, soul::ast::FullSpan(), context);
     SetReturnType(uint64Type, context);
     SetNoExcept();
 }
 
 void VoidPtrToUInt64Conversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
-    emitter.Stack().Push(emitter.EmitPtrToInt(value, uint64Type->IrType(emitter, sourcePos, context)));
+    emitter.Stack().Push(emitter.EmitPtrToInt(value, uint64Type->IrType(emitter, fullSpan, context)));
 }
 
 class VoidPtrToUInt64ArgumentConversion : public ArgumentConversion
 {
 public:
     FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+        const soul::ast::FullSpan& fullSpan, Context* context) override;
 };
 
 FunctionSymbol* VoidPtrToUInt64ArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+    FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     TypeSymbol* uint64Type = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType);
     if (argType->PlainType(context)->IsVoidPtrType() && TypesEqual(paramType->PlainType(context), uint64Type, context))
@@ -613,7 +613,7 @@ class UInt64ToVoidPtrConversion : public FunctionSymbol
 public:
     UInt64ToVoidPtrConversion(TypeSymbol* uint64Type_, TypeSymbol* ptrType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     TypeSymbol* ConversionParamType() const noexcept override { return ptrType; }
     TypeSymbol* ConversionArgType() const noexcept override { return uint64Type; }
     ConversionKind GetConversionKind() const noexcept override { return ConversionKind::explicitConversion; }
@@ -630,27 +630,27 @@ UInt64ToVoidPtrConversion::UInt64ToVoidPtrConversion(TypeSymbol* uint64Type_, Ty
     SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", uint64Type);
-    AddParameter(arg, soul::ast::SourcePos(), nullptr);
+    AddParameter(arg, soul::ast::FullSpan(), nullptr);
     SetReturnType(ptrType, context);
     SetNoExcept();
 }
 
 void UInt64ToVoidPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
-    emitter.Stack().Push(emitter.EmitIntToPtr(value, ptrType->IrType(emitter, sourcePos, context)));
+    emitter.Stack().Push(emitter.EmitIntToPtr(value, ptrType->IrType(emitter, fullSpan, context)));
 }
 
 class UInt64ToVoidPtrArgumentConversion : public ArgumentConversion
 {
 public:
     FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+        const soul::ast::FullSpan& fullSpan, Context* context) override;
 };
 
 FunctionSymbol* UInt64ToVoidPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+    FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     TypeSymbol* uint64Type = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType);
     if (TypesEqual(argType, uint64Type, context) && paramType->IsVoidPtrType())
@@ -665,7 +665,7 @@ class PtrToBooleanConversion : public FunctionSymbol
 public:
     PtrToBooleanConversion(TypeSymbol* ptrType_, TypeSymbol* boolType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     TypeSymbol* ConversionParamType() const noexcept override { return boolType; }
     TypeSymbol* ConversionArgType() const noexcept override { return ptrType; }
     ConversionKind GetConversionKind() const noexcept override { return ConversionKind::implicitConversion; }
@@ -681,16 +681,16 @@ PtrToBooleanConversion::PtrToBooleanConversion(TypeSymbol* ptrType_, TypeSymbol*
     SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", ptrType);
-    AddParameter(arg, soul::ast::SourcePos(), nullptr);
+    AddParameter(arg, soul::ast::FullSpan(), nullptr);
     SetReturnType(boolType, context);
     SetNoExcept();
 }
 
 void PtrToBooleanConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
-    otava::intermediate::Type* irType = static_cast<otava::intermediate::Type*>(ptrType->IrType(emitter, sourcePos, context));
+    otava::intermediate::Type* irType = static_cast<otava::intermediate::Type*>(ptrType->IrType(emitter, fullSpan, context));
     otava::intermediate::Value* defaultValue = irType->DefaultValue();
     otava::intermediate::Value* equal = emitter.EmitEqual(value, defaultValue);
     otava::intermediate::Value* notEqual = emitter.EmitNot(equal);
@@ -701,11 +701,11 @@ class PtrToBooleanArgumentConversion : public ArgumentConversion
 {
 public:
     FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+        const soul::ast::FullSpan& fullSpan, Context* context) override;
 };
 
 FunctionSymbol* PtrToBooleanArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+    FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (context->GetFlag(ContextFlags::skipFirstPtrToBooleanConversion) && context->ArgIndex() == 0) return nullptr;
     TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::boolType);
@@ -721,7 +721,7 @@ class ArrayToPtrConversion : public FunctionSymbol
 public:
     ArrayToPtrConversion(ArrayTypeSymbol* arrayType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     TypeSymbol* ConversionParamType() const noexcept override { return elementPtrType; }
     TypeSymbol* ConversionArgType() const noexcept override { return arrayPtrType; }
     ConversionKind GetConversionKind() const noexcept override { return ConversionKind::implicitConversion; }
@@ -738,13 +738,13 @@ ArrayToPtrConversion::ArrayToPtrConversion(ArrayTypeSymbol* arrayType_, Context*
     SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", arrayType->AddPointer(context));
-    AddParameter(arg, soul::ast::SourcePos(), nullptr);
+    AddParameter(arg, soul::ast::FullSpan(), nullptr);
     SetReturnType(elementPtrType, context);
     SetNoExcept();
 }
 
 void ArrayToPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* arrayPtr = emitter.Stack().Pop();
     otava::intermediate::Value* elemAddr = emitter.EmitElemAddr(arrayPtr, emitter.EmitLong(0));
@@ -755,11 +755,11 @@ class ArrayToPtrArgumentConversion : public ArgumentConversion
 {
 public:
     FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+        const soul::ast::FullSpan& fullSpan, Context* context) override;
 };
 
 FunctionSymbol* ArrayToPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+    FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     bool addAddr = false;
     if (argType->IsArrayTypeSymbol())
@@ -790,7 +790,7 @@ FunctionSymbol* ArrayToPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSym
             {
                 FunctionMatch tempFunctionMatch;
                 tempFunctionMatch = functionMatch;
-                if (FindTemplateParameterMatch(elementType, paramType, arg, tempFunctionMatch, sourcePos, context))
+                if (FindTemplateParameterMatch(elementType, paramType, arg, tempFunctionMatch, fullSpan, context))
                 {
                     if (addAddr)
                     {
@@ -798,7 +798,7 @@ FunctionSymbol* ArrayToPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSym
                     }
                     return new ArrayToPtrConversion(arrayType, context);
                 }
-                else if (FindClassTemplateMatch(elementType, paramType, arg, tempFunctionMatch, sourcePos, context))
+                else if (FindClassTemplateMatch(elementType, paramType, arg, tempFunctionMatch, fullSpan, context))
                 {
                     if (addAddr)
                     {
@@ -806,7 +806,7 @@ FunctionSymbol* ArrayToPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSym
                     }
                     return new ArrayToPtrConversion(arrayType, context);
                 }
-                else if (FindClassTemplateSpecializationMatch(elementType, paramType, arg, tempFunctionMatch, sourcePos, context))
+                else if (FindClassTemplateSpecializationMatch(elementType, paramType, arg, tempFunctionMatch, fullSpan, context))
                 {
                     if (addAddr)
                     {
@@ -825,7 +825,7 @@ class EnumTypeToUnderlyingTypeConversion : public FunctionSymbol
 public:
     EnumTypeToUnderlyingTypeConversion(EnumeratedTypeSymbol* enumType_, TypeSymbol* underlyingType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     TypeSymbol* ConversionParamType() const noexcept override { return underlyingType; }
     TypeSymbol* ConversionArgType() const noexcept override { return enumType; }
     ConversionKind GetConversionKind() const noexcept override { return ConversionKind::explicitConversion; }
@@ -842,27 +842,27 @@ EnumTypeToUnderlyingTypeConversion::EnumTypeToUnderlyingTypeConversion(Enumerate
     SetAccess(Access::public_);
     SetConversionKind(ConversionKind::explicitConversion);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", enumType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    AddParameter(arg, soul::ast::FullSpan(), context);
     SetReturnType(underlyingType, context);
     SetNoExcept();
 }
 
 void EnumTypeToUnderlyingTypeConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
-    emitter.Stack().Push(emitter.EmitBitcast(value, underlyingType->IrType(emitter, sourcePos, context)));
+    emitter.Stack().Push(emitter.EmitBitcast(value, underlyingType->IrType(emitter, fullSpan, context)));
 }
 
 class EnumTypeToUnderlyingTypeArgumentConversion : public ArgumentConversion
 {
 public:
     FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+        const soul::ast::FullSpan& fullSpan, Context* context) override;
 };
 
 FunctionSymbol* EnumTypeToUnderlyingTypeArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+    FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (argType->IsEnumeratedTypeSymbol())
     {
@@ -872,7 +872,7 @@ FunctionSymbol* EnumTypeToUnderlyingTypeArgumentConversion::Get(TypeSymbol* para
         {
             underlyingType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType);
         }
-        underlyingType = underlyingType->DirectType(context)->FinalType(sourcePos, context);
+        underlyingType = underlyingType->DirectType(context)->FinalType(fullSpan, context);
         if (TypesEqual(paramType, underlyingType, context))
         {
             return new EnumTypeToUnderlyingTypeConversion(enumType, underlyingType, context);
@@ -886,7 +886,7 @@ class UnderlyingTypeToEnumTypeConversion : public FunctionSymbol
 public:
     UnderlyingTypeToEnumTypeConversion(EnumeratedTypeSymbol* enumType_, TypeSymbol* underlyingType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     TypeSymbol* ConversionParamType() const noexcept override { return enumType; }
     TypeSymbol* ConversionArgType() const noexcept override { return underlyingType; }
     ConversionKind GetConversionKind() const noexcept override { return ConversionKind::explicitConversion; }
@@ -903,27 +903,27 @@ UnderlyingTypeToEnumTypeConversion::UnderlyingTypeToEnumTypeConversion(Enumerate
     SetAccess(Access::public_);
     SetConversionKind(ConversionKind::explicitConversion);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", underlyingType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    AddParameter(arg, soul::ast::FullSpan(), context);
     SetReturnType(enumType, context);
     SetNoExcept();
 }
 
 void UnderlyingTypeToEnumTypeConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
-    emitter.Stack().Push(emitter.EmitBitcast(value, enumType->IrType(emitter, sourcePos, context)));
+    emitter.Stack().Push(emitter.EmitBitcast(value, enumType->IrType(emitter, fullSpan, context)));
 }
 
 class UnderlyingTypeEnumTypeToArgumentConversion : public ArgumentConversion
 {
 public:
     FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+        const soul::ast::FullSpan& fullSpan, Context* context) override;
 };
 
 FunctionSymbol* UnderlyingTypeEnumTypeToArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+    FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (paramType->IsEnumeratedTypeSymbol())
     {
@@ -933,7 +933,7 @@ FunctionSymbol* UnderlyingTypeEnumTypeToArgumentConversion::Get(TypeSymbol* para
         {
             underlyingType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType);
         }
-        underlyingType = underlyingType->DirectType(context)->FinalType(sourcePos, context);
+        underlyingType = underlyingType->DirectType(context)->FinalType(fullSpan, context);
         if (TypesEqual(argType, underlyingType, context))
         {
             return new UnderlyingTypeToEnumTypeConversion(enumType, underlyingType, context);
@@ -951,7 +951,7 @@ public:
     ConversionKind GetConversionKind() const noexcept override { return ConversionKind::implicitConversion; }
     std::int32_t ConversionDistance() const noexcept override { return distance; }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
 private:
     TypeSymbol* functionPtrType;
     TypeSymbol* functionType;
@@ -965,24 +965,24 @@ FunctionToFunctionPtrConversion::FunctionToFunctionPtrConversion(TypeSymbol* fun
     SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", functionType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    AddParameter(arg, soul::ast::FullSpan(), context);
     SetReturnType(functionPtrType, context);
     SetNoExcept();
 }
 
 void FunctionToFunctionPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
     emitter.Stack().Push(emitter.GetOrInsertFunction(util::ToUtf8(function->IrName(context)), static_cast<otava::intermediate::FunctionType*>(
-        function->IrType(emitter, sourcePos, context))));
+        function->IrType(emitter, fullSpan, context))));
 };
 
 class FunctionToFunctionPtrArgumentConversion : public ArgumentConversion
 {
 public:
     FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+        const soul::ast::FullSpan& fullSpan, Context* context) override;
 };
 
 struct ClassTemplateSpecializationConversionMatch
@@ -1006,7 +1006,7 @@ struct ClassTemplateSpecializationConversionMatch
 };
 
 FunctionSymbol* FunctionToFunctionPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg, ArgumentMatch& argumentMatch,
-    FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, Context* context)
+    FunctionMatch& functionMatch, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (paramType->IsFunctionPtrType() && argType->IsFunctionGroupTypeSymbol())
     {
@@ -1024,10 +1024,10 @@ FunctionSymbol* FunctionToFunctionPtrArgumentConversion::Get(TypeSymbol* paramTy
                     bool found = true;
                     for (int i = 0; i < n; ++i)
                     {
-                        TypeSymbol* leftType = functionType->ParameterTypes()[i]->DirectType(context)->FinalType(sourcePos, context);;
-                        TypeSymbol* rightType = functionSymbol->Parameters()[i]->GetType()->DirectType(context)->FinalType(sourcePos, context);
+                        TypeSymbol* leftType = functionType->ParameterTypes()[i]->DirectType(context)->FinalType(fullSpan, context);;
+                        TypeSymbol* rightType = functionSymbol->Parameters()[i]->GetType()->DirectType(context)->FinalType(fullSpan, context);
                         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                            leftType, rightType, sourcePos, context);
+                            leftType, rightType, fullSpan, context);
                         if (!conversion)
                         {
                             found = false;
@@ -1036,10 +1036,10 @@ FunctionSymbol* FunctionToFunctionPtrArgumentConversion::Get(TypeSymbol* paramTy
                     }
                     if (found)
                     {
-                        TypeSymbol* leftType = functionType->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
-                        TypeSymbol* rightType = functionSymbol->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
+                        TypeSymbol* leftType = functionType->ReturnType()->DirectType(context)->FinalType(fullSpan, context);
+                        TypeSymbol* rightType = functionSymbol->ReturnType()->DirectType(context)->FinalType(fullSpan, context);
                         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                            leftType, rightType, sourcePos, context);
+                            leftType, rightType, fullSpan, context);
                         if (conversion)
                         {
                             return new FunctionToFunctionPtrConversion(paramType, functionSymbol, 1 + conversion->ConversionDistance(), context);
@@ -1055,10 +1055,10 @@ FunctionSymbol* FunctionToFunctionPtrArgumentConversion::Get(TypeSymbol* paramTy
                     bool found = true;
                     for (int i = 0; i < n; ++i)
                     {
-                        TypeSymbol* leftType = functionType->ParameterTypes()[i]->DirectType(context)->FinalType(sourcePos, context);
-                        TypeSymbol* rightType = functionDefinitionSymbol->Parameters()[i]->GetType()->DirectType(context)->FinalType(sourcePos, context);
+                        TypeSymbol* leftType = functionType->ParameterTypes()[i]->DirectType(context)->FinalType(fullSpan, context);
+                        TypeSymbol* rightType = functionDefinitionSymbol->Parameters()[i]->GetType()->DirectType(context)->FinalType(fullSpan, context);
                         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                            leftType, rightType, sourcePos, context);
+                            leftType, rightType, fullSpan, context);
                         if (!conversion)
                         {
                             found = false;
@@ -1067,15 +1067,15 @@ FunctionSymbol* FunctionToFunctionPtrArgumentConversion::Get(TypeSymbol* paramTy
                     }
                     if (found)
                     {
-                        TypeSymbol* leftType = functionType->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
-                        TypeSymbol* rightType = functionDefinitionSymbol->ReturnType()->DirectType(context)->FinalType(sourcePos, context);
+                        TypeSymbol* leftType = functionType->ReturnType()->DirectType(context)->FinalType(fullSpan, context);
+                        TypeSymbol* rightType = functionDefinitionSymbol->ReturnType()->DirectType(context)->FinalType(fullSpan, context);
                         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                            leftType, rightType, sourcePos, context);
+                            leftType, rightType, fullSpan, context);
                         if (conversion)
                         {
                             if (functionDefinitionSymbol->IsTemplate())
                             {
-                                functionDefinitionSymbol = InstantiateFunctionTemplate(functionDefinitionSymbol, functionMatch.templateParameterMap, sourcePos, context);
+                                functionDefinitionSymbol = InstantiateFunctionTemplate(functionDefinitionSymbol, functionMatch.templateParameterMap, fullSpan, context);
                             }
                             return new FunctionToFunctionPtrConversion(paramType, functionDefinitionSymbol, 1 + conversion->ConversionDistance(), context);
                         }
@@ -1092,7 +1092,7 @@ class AdjustDeletePtrConversionFn : public FunctionSymbol
 public:
     AdjustDeletePtrConversionFn(TypeSymbol* thisPtrBaseType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
 private:
     TypeSymbol* thisPtrBaseType;
 };
@@ -1106,13 +1106,13 @@ AdjustDeletePtrConversionFn::AdjustDeletePtrConversionFn(TypeSymbol* thisPtrBase
     TypeSymbol* voidType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType);
     TypeSymbol* voidPtrType = voidType->AddPointer(context);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", voidPtrType);
-    AddParameter(arg, soul::ast::SourcePos(), context);
+    AddParameter(arg, soul::ast::FullSpan(), context);
     SetReturnType(voidPtrType, context);
     SetNoExcept();
 }
 
 void AdjustDeletePtrConversionFn::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     ClassTypeSymbol* classType = nullptr;
     if (thisPtrBaseType->IsClassTypeSymbol())
@@ -1121,19 +1121,19 @@ void AdjustDeletePtrConversionFn::GenerateCode(Emitter& emitter, std::vector<Bou
     }
     else
     {
-        ThrowException("class type expected", sourcePos, context);
+        ThrowException("class type expected", fullSpan, context);
     }
     std::vector<ClassTypeSymbol*> vptrHolderClasses = classType->VPtrHolderClasses();
     if (vptrHolderClasses.empty())
     {
-        ThrowException("no vptr holder classes for the class '" + util::ToUtf8(classType->FullName()) + "'", sourcePos, context);
+        ThrowException("no vptr holder classes for the class '" + util::ToUtf8(classType->FullName()) + "'", fullSpan, context);
     }
     otava::intermediate::Value* thisPtr = emitter.Stack().Pop();
     emitter.Stack().Push(thisPtr);
     ClassTypeSymbol* vptrHolderClass = vptrHolderClasses.front();
     if (classType != vptrHolderClass)
     {
-        thisPtr = emitter.EmitBitcast(thisPtr, vptrHolderClass->AddPointer(context)->IrType(emitter, sourcePos, context));
+        thisPtr = emitter.EmitBitcast(thisPtr, vptrHolderClass->AddPointer(context)->IrType(emitter, fullSpan, context));
     }
     otava::intermediate::Value* vptrPtr = emitter.EmitElemAddr(thisPtr, emitter.EmitLong(vptrHolderClass->VPtrIndex()));
     otava::intermediate::Value* voidVPtr = emitter.EmitLoad(vptrPtr);
@@ -1178,12 +1178,12 @@ FunctionSymbol* ArgumentConversionTable::GetAdjustDeletePtrConversionFn(TypeSymb
     return adjustDeletePtrConversion;
 }
 
-FunctionSymbol* ArgumentConversionTable::GetDynamicPtrCastFn(TypeSymbol* baseClassPtr, TypeSymbol* derivedClassPtr, const soul::ast::SourcePos& sourcePos, Context* context)
+FunctionSymbol* ArgumentConversionTable::GetDynamicPtrCastFn(TypeSymbol* baseClassPtr, TypeSymbol* derivedClassPtr, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (baseClassPtr->PointerCount() != 1 || !baseClassPtr->GetBaseType()->IsClassTypeSymbol() ||
         derivedClassPtr->PointerCount() != 1 || !derivedClassPtr->GetBaseType()->IsClassTypeSymbol())
     {
-        ThrowException("invalid dynamic cast arguments: both arguments should have pointer to class type", sourcePos, context);
+        ThrowException("invalid dynamic cast arguments: both arguments should have pointer to class type", fullSpan, context);
     }
     std::pair<TypeSymbol*, TypeSymbol*> p = std::make_pair(baseClassPtr, derivedClassPtr);
     auto it = dynamicPtrCastFns.find(p);
@@ -1203,16 +1203,16 @@ void ArgumentConversionTable::AddArgumentConversion(ArgumentConversion* argument
     argumentConversions.push_back(std::unique_ptr<ArgumentConversion>(argumentConversion));
 }
 
-FunctionSymbol* ArgumentConversionTable::GetArgumentConversion(TypeSymbol* paramType, TypeSymbol* argType, const soul::ast::SourcePos& sourcePos,
+FunctionSymbol* ArgumentConversionTable::GetArgumentConversion(TypeSymbol* paramType, TypeSymbol* argType, const soul::ast::FullSpan& fullSpan,
     Context* context)
 {
     ArgumentMatch argumentMatch;
     FunctionMatch functionMatch;
-    return GetArgumentConversion(paramType, argType, nullptr, sourcePos, argumentMatch, functionMatch, context);
+    return GetArgumentConversion(paramType, argType, nullptr, fullSpan, argumentMatch, functionMatch, context);
 }
 
 FunctionSymbol* ArgumentConversionTable::GetArgumentConversion(TypeSymbol* paramType, TypeSymbol* argType, BoundExpressionNode* arg,
-    const soul::ast::SourcePos& sourcePos, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, Context* context)
+    const soul::ast::FullSpan& fullSpan, ArgumentMatch& argumentMatch, FunctionMatch& functionMatch, Context* context)
 {
     FunctionSymbol* conversion = nullptr;
     if (!TypesEqual(paramType, argType, context))
@@ -1266,7 +1266,7 @@ FunctionSymbol* ArgumentConversionTable::GetArgumentConversion(TypeSymbol* param
                 {
                     std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
                     FunctionSymbol* instantiatedConversionFunction = InstantiateMemFnOfClassTemplate(
-                        conversionFunction, specialization, templateParameterMap, sourcePos, context);
+                        conversionFunction, specialization, templateParameterMap, fullSpan, context);
                     return instantiatedConversionFunction;
                 }
             }
@@ -1282,7 +1282,7 @@ FunctionSymbol* ArgumentConversionTable::GetArgumentConversion(TypeSymbol* param
     }
     for (const auto& argumentConversion : argumentConversions)
     {
-        FunctionSymbol* conversionFunction = argumentConversion->Get(paramType, argType, arg, argumentMatch, functionMatch, sourcePos, context);
+        FunctionSymbol* conversionFunction = argumentConversion->Get(paramType, argType, arg, argumentMatch, functionMatch, fullSpan, context);
         if (conversionFunction)
         {
             conversionFunctions.push_back(std::unique_ptr<FunctionSymbol>(conversionFunction));

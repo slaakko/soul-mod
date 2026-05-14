@@ -3,14 +3,14 @@ export module otava.symbols.type.resolver;
 import std;
 import otava.ast;
 import otava.symbols.symbol;
-import soul.ast.source.pos;
+import soul.ast.span;
 
 export namespace otava::symbols {
 
 class Context;
 class TypeSymbol;
 
-void CheckDuplicateSpecifier(DeclarationFlags flags, DeclarationFlags flag, const std::string& specifierStr, const soul::ast::SourcePos& sourcePos, Context* context);
+void CheckDuplicateSpecifier(DeclarationFlags flags, DeclarationFlags flag, const std::string& specifierStr, const soul::ast::FullSpan& fullSpan, Context* context);
 
 enum class TypeResolverFlags : std::int32_t
 {
@@ -34,6 +34,6 @@ constexpr TypeResolverFlags operator~(TypeResolverFlags flags) noexcept
 
 TypeSymbol* ResolveType(otava::ast::Node* node, DeclarationFlags flags, Context* context);
 TypeSymbol* ResolveType(otava::ast::Node* node, DeclarationFlags flags, Context* context, TypeResolverFlags resolverFlags);
-TypeSymbol* ResolveFwdDeclaredType(TypeSymbol* type, const soul::ast::SourcePos& sourcePos, Context* context);
+TypeSymbol* ResolveFwdDeclaredType(TypeSymbol* type, const soul::ast::FullSpan& fullSpan, Context* context);
 
 } // namespace otava::symbols

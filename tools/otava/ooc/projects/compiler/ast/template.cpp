@@ -6,19 +6,19 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-TemplateDeclarationNode::TemplateDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BinaryNode(NodeKind::templateDeclarationNode, sourcePos_, nullptr, nullptr)
+TemplateDeclarationNode::TemplateDeclarationNode(const soul::ast::Span& span_) noexcept :
+    BinaryNode(NodeKind::templateDeclarationNode, span_, nullptr, nullptr)
 {
 }
 
-TemplateDeclarationNode::TemplateDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* templateHead_, Node* declaration_) noexcept :
-    BinaryNode(NodeKind::templateDeclarationNode, sourcePos_, templateHead_, declaration_)
+TemplateDeclarationNode::TemplateDeclarationNode(const soul::ast::Span& span_, Node* templateHead_, Node* declaration_) noexcept :
+    BinaryNode(NodeKind::templateDeclarationNode, span_, templateHead_, declaration_)
 {
 }
 
 Node* TemplateDeclarationNode::Clone() const
 {
-    TemplateDeclarationNode* clone = new TemplateDeclarationNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    TemplateDeclarationNode* clone = new TemplateDeclarationNode(GetSpan(), Left()->Clone(), Right()->Clone());
     clone->SetId(Id());
     return clone;
 }
@@ -28,7 +28,7 @@ void TemplateDeclarationNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-TemplateHeadNode::TemplateHeadNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::templateHeadNode, sourcePos_)
+TemplateHeadNode::TemplateHeadNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::templateHeadNode, span_)
 {
 }
 
@@ -44,7 +44,7 @@ void TemplateHeadNode::SetRequiresClause(Node* requiresClause_) noexcept
 
 Node* TemplateHeadNode::Clone() const
 {
-    TemplateHeadNode* clone = new TemplateHeadNode(GetSourcePos());
+    TemplateHeadNode* clone = new TemplateHeadNode(GetSpan());
     if (templateParamList)
     {
         clone->SetTemplateParameterList(templateParamList->Clone());
@@ -76,19 +76,19 @@ void TemplateHeadNode::Read(Reader& reader)
     requiresClause.reset(reader.ReadNode());
 }
 
-TemplateParameterListNode::TemplateParameterListNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::templateParameterListNode, sourcePos_)
+TemplateParameterListNode::TemplateParameterListNode(const soul::ast::Span& span_) noexcept : ListNode(NodeKind::templateParameterListNode, span_)
 {
 }
 
 Node* TemplateParameterListNode::Clone() const
 {
-    TemplateParameterListNode* clone = new TemplateParameterListNode(GetSourcePos());
+    TemplateParameterListNode* clone = new TemplateParameterListNode(GetSpan());
     for (const auto& node : Nodes())
     {
         clone->AddNode(node->Clone());
     }
-    clone->SetLAnglePos(laPos);
-    clone->SetRAnglePos(raPos);
+    clone->SetLAngleSpan(laSpan);
+    clone->SetRAngleSpan(raSpan);
     clone->SetId(Id());
     return clone;
 }
@@ -101,24 +101,24 @@ void TemplateParameterListNode::Accept(Visitor& visitor)
 void TemplateParameterListNode::Write(Writer& writer)
 {
     ListNode::Write(writer);
-    writer.Write(laPos);
-    writer.Write(raPos);
+    writer.Write(laSpan);
+    writer.Write(raSpan);
 }
 
 void TemplateParameterListNode::Read(Reader& reader)
 {
     ListNode::Read(reader);
-    laPos = reader.ReadSourcePos();
-    raPos = reader.ReadSourcePos();
+    laSpan = reader.ReadSpan();
+    raSpan = reader.ReadSpan();
 }
 
-TypeParameterNode::TypeParameterNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::typeParameterNode, sourcePos_)
+TypeParameterNode::TypeParameterNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::typeParameterNode, span_)
 {
 }
 
-TypeParameterNode::TypeParameterNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_, Node* identifier_, Node* assign_, Node* typeId_,
+TypeParameterNode::TypeParameterNode(const soul::ast::Span& span_, Node* typeConstraint_, Node* identifier_, Node* assign_, Node* typeId_,
     Node* ellipsis_, Node* templateHead_) noexcept :
-    CompoundNode(NodeKind::typeParameterNode, sourcePos_), typeConstraint(typeConstraint_), identifier(identifier_), assign(assign_), typeId(typeId_),
+    CompoundNode(NodeKind::typeParameterNode, span_), typeConstraint(typeConstraint_), identifier(identifier_), assign(assign_), typeId(typeId_),
     ellipsis(ellipsis_), templateHead(templateHead_)
 {
 }
@@ -145,7 +145,7 @@ Node* TypeParameterNode::Clone() const
     {
         clonedTemplateHead = templateHead->Clone();
     }
-    TypeParameterNode* clone = new TypeParameterNode(GetSourcePos(), typeConstraint->Clone(), identifier->Clone(), clonedAssign, clonedTypeId,
+    TypeParameterNode* clone = new TypeParameterNode(GetSpan(), typeConstraint->Clone(), identifier->Clone(), clonedAssign, clonedTypeId,
         clonedEllipsis, clonedTemplateHead);
     clone->SetId(Id());
     return clone;
@@ -178,22 +178,24 @@ void TypeParameterNode::Read(Reader& reader)
     templateHead.reset(reader.ReadNode());
 }
 
-TemplateIdNode::TemplateIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::templateIdNode, sourcePos_)
+TemplateIdNode::TemplateIdNode(const soul::ast::Span& span_) noexcept : ListNode(NodeKind::templateIdNode, span_)
 {
 }
 
-TemplateIdNode::TemplateIdNode(const soul::ast::SourcePos& sourcePos_, Node* templateName_) noexcept :
-    ListNode(NodeKind::templateIdNode, sourcePos_), templateName(templateName_)
+TemplateIdNode::TemplateIdNode(const soul::ast::Span& span_, Node* templateName_) noexcept :
+    ListNode(NodeKind::templateIdNode, span_), templateName(templateName_)
 {
 }
 
 Node* TemplateIdNode::Clone() const
 {
-    TemplateIdNode* clone = new TemplateIdNode(GetSourcePos(), templateName->Clone());
+    TemplateIdNode* clone = new TemplateIdNode(GetSpan(), templateName->Clone());
     for (const auto& node : Nodes())
     {
         clone->AddNode(node->Clone());
     }
+    clone->SetLAngleSpan(laSpan);
+    clone->SetRAngleSpan(raSpan);
     clone->SetId(Id());
     return clone;
 }
@@ -207,16 +209,16 @@ void TemplateIdNode::Write(Writer& writer)
 {
     ListNode::Write(writer);
     writer.Write(templateName.get());
-    writer.Write(laPos);
-    writer.Write(raPos);
+    writer.Write(laSpan);
+    writer.Write(raSpan);
 }
 
 void TemplateIdNode::Read(Reader& reader)
 {
     ListNode::Read(reader);
     templateName.reset(reader.ReadNode());
-    laPos = reader.ReadSourcePos();
-    raPos = reader.ReadSourcePos();
+    laSpan = reader.ReadSpan();
+    raSpan = reader.ReadSpan();
 }
 
 void TemplateIdNode::SetTemplateArgKinds(const std::vector<bool>& templateArgKinds_)
@@ -233,13 +235,13 @@ std::u32string TemplateIdNode::Str() const
     return str;
 }
 
-TypenameNode::TypenameNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::typenameNode, sourcePos_)
+TypenameNode::TypenameNode(const soul::ast::Span& span_) noexcept : Node(NodeKind::typenameNode, span_)
 {
 }
 
 Node* TypenameNode::Clone() const
 {
-    TypenameNode* clone = new TypenameNode(GetSourcePos());
+    TypenameNode* clone = new TypenameNode(GetSpan());
     clone->SetId(Id());
     return clone;
 }
@@ -249,14 +251,14 @@ void TypenameNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-DeductionGuideNode::DeductionGuideNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::deductionGuideNode, sourcePos_)
+DeductionGuideNode::DeductionGuideNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::deductionGuideNode, span_)
 {
 }
 
-DeductionGuideNode::DeductionGuideNode(const soul::ast::SourcePos& sourcePos_, Node* templateName_, Node* params_, Node* arrow_, Node* templateId_,
-    Node* explicitSpecifier_, Node* semicolon_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
-    CompoundNode(NodeKind::deductionGuideNode, sourcePos_), templateName(templateName_), params(params_), arrow(arrow_), explicitSpecifier(explicitSpecifier_),
-    semicolon(semicolon_), lpPos(lpPos_), rpPos(rpPos_)
+DeductionGuideNode::DeductionGuideNode(const soul::ast::Span& span_, Node* templateName_, Node* params_, Node* arrow_, Node* templateId_,
+    Node* explicitSpecifier_, Node* semicolon_, const soul::ast::Span& lpSpan_, const soul::ast::Span& rpSpan_) noexcept :
+    CompoundNode(NodeKind::deductionGuideNode, span_), templateName(templateName_), params(params_), arrow(arrow_), explicitSpecifier(explicitSpecifier_),
+    semicolon(semicolon_), lpSpan(lpSpan_), rpSpan(rpSpan_)
 {
 }
 
@@ -267,8 +269,8 @@ Node* DeductionGuideNode::Clone() const
     {
         clonedExplicitSpecifier = explicitSpecifier->Clone();
     }
-    DeductionGuideNode* clone = new DeductionGuideNode(GetSourcePos(), templateName->Clone(), params->Clone(), arrow->Clone(), templateId->Clone(), clonedExplicitSpecifier,
-        semicolon->Clone(), lpPos, rpPos);
+    DeductionGuideNode* clone = new DeductionGuideNode(GetSpan(), templateName->Clone(), params->Clone(), arrow->Clone(), templateId->Clone(), clonedExplicitSpecifier,
+        semicolon->Clone(), lpSpan, rpSpan);
     clone->SetId(Id());
     return clone;
 }
@@ -287,8 +289,8 @@ void DeductionGuideNode::Write(Writer& writer)
     writer.Write(templateId.get());
     writer.Write(explicitSpecifier.get());
     writer.Write(semicolon.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    writer.Write(lpSpan);
+    writer.Write(rpSpan);
 }
 
 void DeductionGuideNode::Read(Reader& reader)
@@ -300,16 +302,16 @@ void DeductionGuideNode::Read(Reader& reader)
     templateId.reset(reader.ReadNode());
     explicitSpecifier.reset(reader.ReadNode());
     semicolon.reset(reader.ReadNode());
-    lpPos = reader.ReadSourcePos();
-    rpPos = reader.ReadSourcePos();
+    lpSpan = reader.ReadSpan();
+    rpSpan = reader.ReadSpan();
 }
 
-ExplicitInstantiationNode::ExplicitInstantiationNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::explicitInstantiationNode, sourcePos_)
+ExplicitInstantiationNode::ExplicitInstantiationNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::explicitInstantiationNode, span_)
 {
 }
 
-ExplicitInstantiationNode::ExplicitInstantiationNode(const soul::ast::SourcePos& sourcePos_, Node* extrn_, Node* tmp_, Node* declaration_) noexcept :
-    CompoundNode(NodeKind::explicitInstantiationNode, sourcePos_), extrn(extrn_), tmp(tmp_), declaration(declaration_)
+ExplicitInstantiationNode::ExplicitInstantiationNode(const soul::ast::Span& span_, Node* extrn_, Node* tmp_, Node* declaration_) noexcept :
+    CompoundNode(NodeKind::explicitInstantiationNode, span_), extrn(extrn_), tmp(tmp_), declaration(declaration_)
 {
 }
 
@@ -320,7 +322,7 @@ Node* ExplicitInstantiationNode::Clone() const
     {
         clonedExtrn = extrn->Clone();
     }
-    ExplicitInstantiationNode* clone = new ExplicitInstantiationNode(GetSourcePos(), clonedExtrn, tmp->Clone(), declaration->Clone());
+    ExplicitInstantiationNode* clone = new ExplicitInstantiationNode(GetSpan(), clonedExtrn, tmp->Clone(), declaration->Clone());
     clone->SetId(Id());
     return clone;
 }
@@ -346,13 +348,13 @@ void ExplicitInstantiationNode::Read(Reader& reader)
     declaration.reset(reader.ReadNode());
 }
 
-TemplateNode::TemplateNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::templateNode, sourcePos_)
+TemplateNode::TemplateNode(const soul::ast::Span& span_) noexcept : Node(NodeKind::templateNode, span_)
 {
 }
 
 Node* TemplateNode::Clone() const
 {
-    TemplateNode* clone = new TemplateNode(GetSourcePos());
+    TemplateNode* clone = new TemplateNode(GetSpan());
     clone->SetId(Id());
     return clone;
 }
@@ -362,19 +364,20 @@ void TemplateNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ExplicitSpecializationNode::ExplicitSpecializationNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::explicitSpecializationNode, sourcePos_)
+ExplicitSpecializationNode::ExplicitSpecializationNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::explicitSpecializationNode, span_)
 {
 }
 
-ExplicitSpecializationNode::ExplicitSpecializationNode(const soul::ast::SourcePos& sourcePos_, Node* tmp_, Node* templateHeadNode_, Node* declaration_,
-    const soul::ast::SourcePos& laPos_, const soul::ast::SourcePos& raPos_) noexcept :
-    CompoundNode(NodeKind::explicitSpecializationNode, sourcePos_), tmp(tmp_), templateHeadNode(templateHeadNode_), declaration(declaration_), laPos(laPos_), raPos(raPos_)
+ExplicitSpecializationNode::ExplicitSpecializationNode(const soul::ast::Span& span_, Node* tmp_, Node* templateHeadNode_, Node* declaration_,
+    const soul::ast::Span& laSpan_, const soul::ast::Span& raSpan_) noexcept :
+    CompoundNode(NodeKind::explicitSpecializationNode, span_), tmp(tmp_), templateHeadNode(templateHeadNode_), declaration(declaration_),
+    laSpan(laSpan_), raSpan(raSpan_)
 {
 }
 
 Node* ExplicitSpecializationNode::Clone() const
 {
-    ExplicitSpecializationNode* clone = new ExplicitSpecializationNode(GetSourcePos(), tmp->Clone(), templateHeadNode->Clone(), declaration->Clone(), laPos, raPos);
+    ExplicitSpecializationNode* clone = new ExplicitSpecializationNode(GetSpan(), tmp->Clone(), templateHeadNode->Clone(), declaration->Clone(), laSpan, raSpan);
     clone->SetId(Id());
     return clone;
 }
@@ -389,8 +392,8 @@ void ExplicitSpecializationNode::Write(Writer& writer)
     CompoundNode::Write(writer);
     writer.Write(tmp.get());
     writer.Write(declaration.get());
-    writer.Write(laPos);
-    writer.Write(raPos);
+    writer.Write(laSpan);
+    writer.Write(raSpan);
 }
 
 void ExplicitSpecializationNode::Read(Reader& reader)
@@ -398,8 +401,8 @@ void ExplicitSpecializationNode::Read(Reader& reader)
     CompoundNode::Read(reader);
     tmp.reset(reader.ReadNode());
     declaration.reset(reader.ReadNode());
-    laPos = reader.ReadSourcePos();
-    raPos = reader.ReadSourcePos();
+    laSpan = reader.ReadSpan();
+    raSpan = reader.ReadSpan();
 }
 
 } // namespace otava::ast

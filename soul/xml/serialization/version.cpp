@@ -9,7 +9,7 @@ namespace soul::xml::serialization::version {
 
 std::string Version()
 {
-    return "5.1.0";
+    return "5.2.0";
 }
 
 } // namespace soul::xml::serialization::version

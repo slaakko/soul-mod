@@ -11,21 +11,23 @@ import otava.ast.util;
 
 namespace otava::ast {
 
-SourceCodePrinterVisitor::SourceCodePrinterVisitor(std::ostream& stream) : formatter(stream), line(1), col(1)
+SourceCodePrinterVisitor::SourceCodePrinterVisitor(std::ostream& stream, const std::vector<int>& lineStartIndeces_) : 
+    formatter(stream), line(1), col(1), lineStartIndeces(lineStartIndeces_)
 {
 }
 
-void SourceCodePrinterVisitor::Move(const soul::ast::SourcePos& sourcePos)
+void SourceCodePrinterVisitor::Move(const soul::ast::Span& span)
 {
-    while (sourcePos.line > line)
+    soul::ast::LineColLen lineColLen = soul::ast::SpanToLineColLen(span, lineStartIndeces);
+    while (lineColLen.line > line)
     {
         formatter.WriteLine();
         ++line;
         col = 1;
     }
-    if (sourcePos.col > col)
+    if (lineColLen.col > col)
     {
-        int n = sourcePos.col - col;
+        int n = lineColLen.col - col;
         formatter.Write(std::string(n, ' '));
         col += n;
     }
@@ -65,42 +67,42 @@ void SourceCodePrinterVisitor::Write(const std::u32string& str)
 
 void SourceCodePrinterVisitor::BeginVisit(Node& node)
 {
-    Move(node.GetSourcePos());
+    Move(node.GetSpan());
 }
 
-void SourceCodePrinterVisitor::VisitIdentifier(const std::u32string& id, const soul::ast::SourcePos& sourcePos)
+void SourceCodePrinterVisitor::VisitIdentifier(const std::u32string& id, const soul::ast::Span& span)
 {
-    Move(sourcePos);
+    Move(span);
     Write(ToUniversalId(id));
 }
 
-void SourceCodePrinterVisitor::VisitKeyword(const std::string& keyword, const soul::ast::SourcePos& sourcePos)
+void SourceCodePrinterVisitor::VisitKeyword(const std::string& keyword, const soul::ast::Span& span)
 {
-    Move(sourcePos);
+    Move(span);
     Write(keyword);
 }
 
-void SourceCodePrinterVisitor::VisitOperator(const std::string& symbol, const soul::ast::SourcePos& sourcePos)
+void SourceCodePrinterVisitor::VisitOperator(const std::string& symbol, const soul::ast::Span& span)
 {
-    Move(sourcePos);
+    Move(span);
     Write(symbol);
 }
 
-void SourceCodePrinterVisitor::VisitToken(const std::u32string& tokenStr, const soul::ast::SourcePos& sourcePos)
+void SourceCodePrinterVisitor::VisitToken(const std::u32string& tokenStr, const soul::ast::Span& span)
 {
-    Move(sourcePos);
+    Move(span);
     Write(tokenStr);
 }
 
-void SourceCodePrinterVisitor::VisitLiteral(const std::u32string& rep, const soul::ast::SourcePos& sourcePos)
+void SourceCodePrinterVisitor::VisitLiteral(const std::u32string& rep, const soul::ast::Span& span)
 {
-    Move(sourcePos);
+    Move(span);
     Write(rep);
 }
 
-void SourceCodePrinterVisitor::VisitHeaderName(const std::u32string& rep, const soul::ast::SourcePos& sourcePos)
+void SourceCodePrinterVisitor::VisitHeaderName(const std::u32string& rep, const soul::ast::Span& span)
 {
-    Move(sourcePos);
+    Move(span);
     Write(rep);
 }
 

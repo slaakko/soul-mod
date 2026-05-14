@@ -121,6 +121,15 @@ Module* Context::GetModule() noexcept
     return symbolTable->GetModule();
 }
 
+soul::ast::FullSpan Context::MakeFullSpan(const soul::ast::Span& span) const
+{
+    if (lexer && span.IsValid())
+    {
+        return soul::ast::FullSpan(lexer->File(), span);
+    }
+    return soul::ast::FullSpan();
+}
+
 OperationRepository* Context::GetOperationRepository() const noexcept
 {
     return GetBoundCompileUnit()->GetOperationRepository();
@@ -131,7 +140,7 @@ EvaluationContext* Context::GetEvaluationContext() noexcept
     return symbolTable->GetModule()->GetEvaluationContext();
 }
 
-BoundExpressionNode* Context::GetThisPtr(const soul::ast::SourcePos& sourcePos)
+BoundExpressionNode* Context::GetThisPtr(const soul::ast::FullSpan& fullSpan)
 {
     FunctionDefinitionSymbol* function = boundFunction->GetFunctionDefinitionSymbol();
     if (function)
@@ -153,7 +162,7 @@ BoundExpressionNode* Context::GetThisPtr(const soul::ast::SourcePos& sourcePos)
                 ParameterSymbol* parentThisParam = parentFn->ThisParam(this);
                 if (parentThisParam)
                 {
-                    BoundParentParameterNode* parentThisPtr = new BoundParentParameterNode(parentThisParam, sourcePos, parentThisParam->GetType());
+                    BoundParentParameterNode* parentThisPtr = new BoundParentParameterNode(parentThisParam, fullSpan, parentThisParam->GetType());
                     parentThisPtr->SetLevel(level);
                     return parentThisPtr;
                 }
@@ -162,7 +171,7 @@ BoundExpressionNode* Context::GetThisPtr(const soul::ast::SourcePos& sourcePos)
         ParameterSymbol* thisParam = function->ThisParam(this);
         if (thisParam)
         {
-            return new BoundParameterNode(thisParam, sourcePos, thisParam->GetType());
+            return new BoundParameterNode(thisParam, fullSpan, thisParam->GetType());
         }
     }
     return nullptr;

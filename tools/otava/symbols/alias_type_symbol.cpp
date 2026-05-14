@@ -95,9 +95,9 @@ TypeSymbol* AliasTypeSymbol::DirectType(Context* context)
     return referredType->DirectType(context);
 }
 
-otava::intermediate::Type* AliasTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+otava::intermediate::Type* AliasTypeSymbol::IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    return DirectType(context)->IrType(emitter, sourcePos, context);
+    return DirectType(context)->IrType(emitter, fullSpan, context);
 }
 
 soul::xml::Element* AliasTypeSymbol::ToXml() const

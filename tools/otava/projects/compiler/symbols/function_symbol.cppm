@@ -106,12 +106,12 @@ public:
     virtual bool IsCtorAssignmentOrArrow() const noexcept { return false; }
     virtual bool IsIdentityConversion() const noexcept { return false; }
     virtual bool IsDerivedToBaseConversion() const noexcept { return false; }
-    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context) override;
     inline const std::vector<ParameterSymbol*>& Parameters() const noexcept { return parameters; }
     const std::vector<ParameterSymbol*>& MemFunParameters(Context* context) const;
     inline ParameterSymbol* ReturnValueParam() const noexcept { return returnValueParam.get(); }
     void SetReturnValueParam(ParameterSymbol* returnValueParam_) noexcept;
-    void AddParameter(ParameterSymbol* parameter, const soul::ast::SourcePos& sourcePos, Context* context);
+    void AddParameter(ParameterSymbol* parameter, const soul::ast::FullSpan& fullSpan, Context* context);
     void AddTemporaryParameter(TypeSymbol* paramType, int index);
     void ClearTemporaryParameters();
     void AddLocalVariable(VariableSymbol* variable);
@@ -125,10 +125,10 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     virtual void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    void GenerateVirtualFunctionCall(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context);
+    void GenerateVirtualFunctionCall(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context);
     FunctionTypeSymbol* GetFunctionType(otava::symbols::Context* context);
-    virtual otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const;
+    virtual otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) const;
     std::string IrName(Context* context) const override;
     const std::vector<VariableSymbol*>& LocalVariables() const noexcept { return  localVariables; }
     VariableSymbol* CreateTemporary(TypeSymbol* type, std::int64_t nodeId, Context* context);
@@ -169,7 +169,7 @@ public:
     virtual bool IsStatic() const noexcept;
     virtual bool IsExplicit() const noexcept;
     virtual bool IsPointerCopyAssignment() const noexcept { return false; }
-    void CheckGenerateClassCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context);
+    void CheckGenerateClassCopyCtor(const soul::ast::FullSpan& fullSpan, Context* context);
     virtual void AddDefinitionToGroup(Context* context);
     void SetFixedIrName(const std::string& fixedIrName_);
     const std::string& FixedIrName() const noexcept { return fixedIrName; }
@@ -225,7 +225,7 @@ public:
     inline FunctionSymbol* Declaration() const noexcept { return declaration; }
     std::string IrName(Context* context) const override;
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
-    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const override;
+    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) const override;
     void SetReturnType(TypeSymbol* returnType_, Context* context) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -290,12 +290,12 @@ private:
 class ExplicitlyInstantiatedFunctionDefinitionSymbol : public FunctionDefinitionSymbol
 {
 public:
-    ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol_, const soul::ast::SourcePos& sourcePos, Context* context);
+    ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol_, const soul::ast::FullSpan& fullSpan, Context* context);
     ExplicitlyInstantiatedFunctionDefinitionSymbol(const std::u32string& name_);
     std::string SymbolKindStr() const override { return "explicitly instantiated function definition symbol"; }
     std::string SymbolDocKindStr() const override { return "explcitly_instantiated_function_definition"; }
     std::string IrName(Context* context) const override { return irName; }
-    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const override;
+    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) const override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
@@ -319,7 +319,7 @@ class CompileUnitInitFn : public FunctionSymbol
 public:
     CompileUnitInitFn(const std::u32string& name_);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
 };
 
 } // namespace otava::symbols

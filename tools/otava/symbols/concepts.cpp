@@ -131,7 +131,7 @@ int ConceptSymbol::Arity() noexcept
 bool IsConceptName(otava::ast::Node* node, Context* context) noexcept
 {
     std::u32string name = node->Str();
-    Symbol* symbol = context->GetSymbolTable()->Lookup(name, SymbolGroupKind::conceptSymbolGroup, node->GetSourcePos(), context);
+    Symbol* symbol = context->GetSymbolTable()->Lookup(name, SymbolGroupKind::conceptSymbolGroup, context->MakeFullSpan(node->GetSpan()), context);
     if (symbol)
     {
         return symbol->IsConceptSymbol();

@@ -1,12 +1,12 @@
 
-// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/function.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/function.parser' using soul parser generator spg version 5.1.0
 
 module otava.parser.function;
 
 import util;
 import soul.ast.common;
 import soul.ast.spg;
-import soul.ast.source.pos;
+import soul.ast.span;
 import soul.ast.lexer.pos.pair;
 import otava.token;
 import otava.lexer;
@@ -35,7 +35,7 @@ soul::parser::Match FunctionParser<LexerT>::FunctionDefinition(LexerT& lexer, ot
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3334239814043041793);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> declSpecifierSeqNode = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> declaratorNode = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> specifierNode = std::unique_ptr<otava::ast::Node>();
@@ -73,7 +73,7 @@ soul::parser::Match FunctionParser<LexerT>::FunctionDefinition(LexerT& lexer, ot
                                 attributes.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
-                                    lexer.GetSourcePos(pos);
+                                    lexer.GetSpan(pos);
                                 }
                                 *parentMatch6 = match;
                             }
@@ -104,7 +104,7 @@ soul::parser::Match FunctionParser<LexerT>::FunctionDefinition(LexerT& lexer, ot
                             if (match.hit)
                             {
                                 declSpecifierSeqNode.reset(declSpecifiers.release());
-                                if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                                if (!span.IsValid()) span = lexer.GetSpan(pos);
                             }
                             *parentMatch8 = match;
                         }
@@ -127,7 +127,7 @@ soul::parser::Match FunctionParser<LexerT>::FunctionDefinition(LexerT& lexer, ot
                         declarator.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
-                            if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                            if (!span.IsValid()) span = lexer.GetSpan(pos);
                             declaratorNode.reset(declarator.release());
                         }
                         else
@@ -244,7 +244,7 @@ soul::parser::Match FunctionParser<LexerT>::FunctionDefinition(LexerT& lexer, ot
                 functionBody.reset(static_cast<otava::ast::Node*>(match.value));
                 if (match.hit)
                 {
-                    otava::ast::Node *node = new otava::ast::FunctionDefinitionNode(sourcePos, attributes.release(), declSpecifierSeqNode.release(), declaratorNode.release(), specifierNode.release(), functionBody.release());
+                    otava::ast::Node *node = new otava::ast::FunctionDefinitionNode(span, attributes.release(), declSpecifierSeqNode.release(), declaratorNode.release(), specifierNode.release(), functionBody.release());
                     otava::symbols::EndFunctionDefinition(node, scopes, context);
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -286,7 +286,7 @@ soul::parser::Match FunctionParser<LexerT>::NoDeclSpecFunctionDefinition(LexerT&
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3334239814043041794);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> declSpecifierSeqNode = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> declaratorNode = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> specifierNode = std::unique_ptr<otava::ast::Node>();
@@ -320,7 +320,7 @@ soul::parser::Match FunctionParser<LexerT>::NoDeclSpecFunctionDefinition(LexerT&
                             attributes.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
-                                lexer.GetSourcePos(pos);
+                                lexer.GetSpan(pos);
                             }
                             *parentMatch5 = match;
                         }
@@ -350,7 +350,7 @@ soul::parser::Match FunctionParser<LexerT>::NoDeclSpecFunctionDefinition(LexerT&
                         declarator.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
-                            if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                            if (!span.IsValid()) span = lexer.GetSpan(pos);
                             declaratorNode.reset(declarator.release());
                         }
                         else
@@ -467,7 +467,7 @@ soul::parser::Match FunctionParser<LexerT>::NoDeclSpecFunctionDefinition(LexerT&
                 functionBody.reset(static_cast<otava::ast::Node*>(match.value));
                 if (match.hit)
                 {
-                    otava::ast::Node *node = new otava::ast::FunctionDefinitionNode(sourcePos, attributes.release(), declSpecifierSeqNode.release(), declaratorNode.release(), specifierNode.release(), functionBody.release());
+                    otava::ast::Node *node = new otava::ast::FunctionDefinitionNode(span, attributes.release(), declSpecifierSeqNode.release(), declaratorNode.release(), specifierNode.release(), functionBody.release());
                     otava::symbols::EndFunctionDefinition(node, scopes, context);
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -509,7 +509,7 @@ soul::parser::Match FunctionParser<LexerT>::FunctionBody(LexerT& lexer, otava::s
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3334239814043041795);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> assign;
     std::unique_ptr<otava::ast::Node> def;
     std::unique_ptr<otava::ast::Node> semicolon;
@@ -537,7 +537,7 @@ soul::parser::Match FunctionParser<LexerT>::FunctionBody(LexerT& lexer, otava::s
                     assign.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
-                        sourcePos = lexer.GetSourcePos(pos);
+                        span = lexer.GetSpan(pos);
                     }
                     *parentMatch3 = match;
                 }
@@ -581,7 +581,7 @@ soul::parser::Match FunctionParser<LexerT>::FunctionBody(LexerT& lexer, otava::s
                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionBody");
                                                     #endif
-                                                    return soul::parser::Match(true, new otava::ast::DefaultedOrDeletedFunctionNode(sourcePos, assign.release(), def.release(), semicolon.release()));
+                                                    return soul::parser::Match(true, new otava::ast::DefaultedOrDeletedFunctionNode(span, assign.release(), def.release(), semicolon.release()));
                                                 }
                                             }
                                             *parentMatch9 = match;
@@ -622,7 +622,7 @@ soul::parser::Match FunctionParser<LexerT>::FunctionBody(LexerT& lexer, otava::s
                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionBody");
                                                     #endif
-                                                    return soul::parser::Match(true, new otava::ast::DefaultedOrDeletedFunctionNode(sourcePos, assign.release(), del.release(), semicolon2.release()));
+                                                    return soul::parser::Match(true, new otava::ast::DefaultedOrDeletedFunctionNode(span, assign.release(), del.release(), semicolon2.release()));
                                                 }
                                             }
                                             *parentMatch12 = match;
@@ -662,7 +662,7 @@ soul::parser::Match FunctionParser<LexerT>::FunctionBody(LexerT& lexer, otava::s
                             ctorInitializer.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
-                                sourcePos = lexer.GetSourcePos(pos);
+                                span = lexer.GetSpan(pos);
                             }
                             *parentMatch15 = match;
                         }
@@ -685,7 +685,7 @@ soul::parser::Match FunctionParser<LexerT>::FunctionBody(LexerT& lexer, otava::s
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionBody");
                                         #endif
-                                        return soul::parser::Match(true, new otava::ast::ConstructorNode(sourcePos, ctorInitializer.release(), compoundStatement.release()));
+                                        return soul::parser::Match(true, new otava::ast::ConstructorNode(span, ctorInitializer.release(), compoundStatement.release()));
                                     }
                                 }
                                 *parentMatch17 = match;
@@ -718,7 +718,7 @@ soul::parser::Match FunctionParser<LexerT>::FunctionBody(LexerT& lexer, otava::s
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionBody");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::FunctionBodyNode(lexer.GetSourcePos(pos), compoundStatement2.release()));
+                            return soul::parser::Match(true, new otava::ast::FunctionBodyNode(lexer.GetSpan(pos), compoundStatement2.release()));
                         }
                     }
                     *parentMatch19 = match;
@@ -771,7 +771,7 @@ soul::parser::Match FunctionParser<LexerT>::Default(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Default");
                 #endif
-                return soul::parser::Match(true, new otava::ast::DefaultNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::DefaultNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -819,7 +819,7 @@ soul::parser::Match FunctionParser<LexerT>::Delete(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Delete");
                 #endif
-                return soul::parser::Match(true, new otava::ast::DeleteNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::DeleteNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -1259,7 +1259,7 @@ soul::parser::Match FunctionParser<LexerT>::ParameterDeclaration(LexerT& lexer, 
             soul::parser::Match match(true);
             if (match.hit)
             {
-                parameterNode.reset(new otava::ast::ParameterNode(lexer.GetSourcePos(pos)));
+                parameterNode.reset(new otava::ast::ParameterNode(lexer.GetSpan(pos)));
             }
             *parentMatch1 = match;
         }
@@ -1519,7 +1519,7 @@ soul::parser::Match FunctionParser<LexerT>::OperatorFunctionId(LexerT& lexer, ot
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3334239814043041801);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> operatorKw;
     std::unique_ptr<otava::ast::Node> op;
     soul::parser::Match match(false);
@@ -1540,7 +1540,7 @@ soul::parser::Match FunctionParser<LexerT>::OperatorFunctionId(LexerT& lexer, ot
                     operatorKw.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
-                        sourcePos = lexer.GetSourcePos(pos);
+                        span = lexer.GetSpan(pos);
                     }
                     *parentMatch3 = match;
                 }
@@ -1565,7 +1565,7 @@ soul::parser::Match FunctionParser<LexerT>::OperatorFunctionId(LexerT& lexer, ot
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "OperatorFunctionId");
                 #endif
-                return soul::parser::Match(true, new otava::ast::OperatorFunctionIdNode(sourcePos, operatorKw.release(), op.release()));
+                return soul::parser::Match(true, new otava::ast::OperatorFunctionIdNode(span, operatorKw.release(), op.release()));
             }
         }
         *parentMatch0 = match;
@@ -1597,7 +1597,7 @@ soul::parser::Match FunctionParser<LexerT>::ConversionFunctionId(LexerT& lexer, 
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3334239814043041802);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> operatorKw;
     std::unique_ptr<otava::ast::Node> conversionTypeId;
     soul::parser::Match match(false);
@@ -1618,7 +1618,7 @@ soul::parser::Match FunctionParser<LexerT>::ConversionFunctionId(LexerT& lexer, 
                     operatorKw.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
-                        sourcePos = lexer.GetSourcePos(pos);
+                        span = lexer.GetSpan(pos);
                     }
                     *parentMatch3 = match;
                 }
@@ -1643,7 +1643,7 @@ soul::parser::Match FunctionParser<LexerT>::ConversionFunctionId(LexerT& lexer, 
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ConversionFunctionId");
                 #endif
-                return soul::parser::Match(true, new otava::ast::ConversionFunctionIdNode(sourcePos, operatorKw.release(), conversionTypeId.release()));
+                return soul::parser::Match(true, new otava::ast::ConversionFunctionIdNode(span, operatorKw.release(), conversionTypeId.release()));
             }
         }
         *parentMatch0 = match;
@@ -1676,7 +1676,7 @@ soul::parser::Match FunctionParser<LexerT>::DestructorId(LexerT& lexer, otava::s
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3334239814043041803);
     std::unique_ptr<otava::ast::Node> node = std::unique_ptr<otava::ast::Node>();
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> typeName;
     std::unique_ptr<otava::ast::Node> declTypeSpecifier;
     soul::parser::Match match(false);
@@ -1694,7 +1694,7 @@ soul::parser::Match FunctionParser<LexerT>::DestructorId(LexerT& lexer, otava::s
             }
             if (match.hit)
             {
-                sourcePos = lexer.GetSourcePos(pos);
+                span = lexer.GetSpan(pos);
             }
             *parentMatch1 = match;
         }
@@ -1760,7 +1760,7 @@ soul::parser::Match FunctionParser<LexerT>::DestructorId(LexerT& lexer, otava::s
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DestructorId");
                         #endif
-                        return soul::parser::Match(true, new otava::ast::DestructorIdNode(sourcePos, node.release()));
+                        return soul::parser::Match(true, new otava::ast::DestructorIdNode(span, node.release()));
                     }
                 }
                 *parentMatch3 = match;
@@ -1796,7 +1796,7 @@ soul::parser::Match FunctionParser<LexerT>::ConversionTypeId(LexerT& lexer, otav
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3334239814043041804);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> typeSpecifierSeq;
     std::unique_ptr<otava::ast::Node> declarator;
     soul::parser::Match match(false);
@@ -1817,7 +1817,7 @@ soul::parser::Match FunctionParser<LexerT>::ConversionTypeId(LexerT& lexer, otav
                     typeSpecifierSeq.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
-                        sourcePos = lexer.GetSourcePos(pos);
+                        span = lexer.GetSpan(pos);
                     }
                     *parentMatch3 = match;
                 }
@@ -1855,7 +1855,7 @@ soul::parser::Match FunctionParser<LexerT>::ConversionTypeId(LexerT& lexer, otav
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ConversionTypeId");
                 #endif
-                return soul::parser::Match(true, new otava::ast::ConversionTypeIdNode(sourcePos, typeSpecifierSeq.release(), declarator.release()));
+                return soul::parser::Match(true, new otava::ast::ConversionTypeIdNode(span, typeSpecifierSeq.release(), declarator.release()));
             }
         }
         *parentMatch0 = match;
@@ -1887,7 +1887,7 @@ soul::parser::Match FunctionParser<LexerT>::ConversionDeclarator(LexerT& lexer, 
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3334239814043041805);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> op;
     std::unique_ptr<otava::ast::Node> declarator;
     soul::parser::Match match(false);
@@ -1908,7 +1908,7 @@ soul::parser::Match FunctionParser<LexerT>::ConversionDeclarator(LexerT& lexer, 
                     op.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
-                        sourcePos = lexer.GetSourcePos(pos);
+                        span = lexer.GetSpan(pos);
                     }
                     *parentMatch3 = match;
                 }
@@ -1946,7 +1946,7 @@ soul::parser::Match FunctionParser<LexerT>::ConversionDeclarator(LexerT& lexer, 
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ConversionDeclarator");
                 #endif
-                return soul::parser::Match(true, new otava::ast::ConversionDeclaratorNode(sourcePos, op.release(), declarator.release()));
+                return soul::parser::Match(true, new otava::ast::ConversionDeclaratorNode(span, op.release(), declarator.release()));
             }
         }
         *parentMatch0 = match;
@@ -1994,7 +1994,7 @@ soul::parser::Match FunctionParser<LexerT>::OperatorKw(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "OperatorKw");
                 #endif
-                return soul::parser::Match(true, new otava::ast::OperatorNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::OperatorNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -2026,9 +2026,9 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3334239814043041807);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
-    soul::ast::SourcePos lbPos = soul::ast::SourcePos();
-    soul::ast::SourcePos rbPos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
+    soul::ast::Span lbSpan = soul::ast::Span();
+    soul::ast::Span rbSpan = soul::ast::Span();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -2071,7 +2071,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                                             }
                                             if (match.hit)
                                             {
-                                                sourcePos = lexer.GetSourcePos(pos);
+                                                span = lexer.GetSpan(pos);
                                             }
                                             *parentMatch7 = match;
                                         }
@@ -2094,7 +2094,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    lbPos = lexer.GetSourcePos(pos);
+                                                    lbSpan = lexer.GetSpan(pos);
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -2121,12 +2121,12 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                                             }
                                             if (match.hit)
                                             {
-                                                rbPos = lexer.GetSourcePos(pos);
+                                                rbSpan = lexer.GetSpan(pos);
                                                 {
                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                                                     #endif
-                                                    return soul::parser::Match(true, new otava::ast::NewArrayOpNode(sourcePos, lbPos, rbPos));
+                                                    return soul::parser::Match(true, new otava::ast::NewArrayOpNode(span, lbSpan, rbSpan));
                                                 }
                                             }
                                             *parentMatch11 = match;
@@ -2158,7 +2158,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                                                     #endif
-                                                    return soul::parser::Match(true, new otava::ast::NewOpNode(lexer.GetSourcePos(pos)));
+                                                    return soul::parser::Match(true, new otava::ast::NewOpNode(lexer.GetSpan(pos)));
                                                 }
                                             }
                                             *parentMatch13 = match;
@@ -2194,7 +2194,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                                         }
                                         if (match.hit)
                                         {
-                                            sourcePos = lexer.GetSourcePos(pos);
+                                            span = lexer.GetSpan(pos);
                                         }
                                         *parentMatch16 = match;
                                     }
@@ -2217,7 +2217,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                                             }
                                             if (match.hit)
                                             {
-                                                lbPos = sourcePos;
+                                                lbSpan = span;
                                             }
                                             *parentMatch18 = match;
                                         }
@@ -2244,12 +2244,12 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                                         }
                                         if (match.hit)
                                         {
-                                            rbPos = sourcePos;
+                                            rbSpan = span;
                                             {
                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                                                 #endif
-                                                return soul::parser::Match(true, new otava::ast::DeleteArrayOpNode(sourcePos, lbPos, rbPos));
+                                                return soul::parser::Match(true, new otava::ast::DeleteArrayOpNode(span, lbSpan, rbSpan));
                                             }
                                         }
                                         *parentMatch20 = match;
@@ -2288,7 +2288,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                                         #endif
-                                        return soul::parser::Match(true, new otava::ast::DeleteOpNode(lexer.GetSourcePos(pos)));
+                                        return soul::parser::Match(true, new otava::ast::DeleteOpNode(lexer.GetSpan(pos)));
                                     }
                                 }
                                 *parentMatch22 = match;
@@ -2322,7 +2322,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::CoAwaitOpNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::CoAwaitOpNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch23 = match;
@@ -2350,7 +2350,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                         }
                         if (match.hit)
                         {
-                            sourcePos = lexer.GetSourcePos(pos);
+                            span = lexer.GetSpan(pos);
                         }
                         *parentMatch25 = match;
                     }
@@ -2377,7 +2377,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                                     #endif
-                                    return soul::parser::Match(true, new otava::ast::InvokeOpNode(sourcePos));
+                                    return soul::parser::Match(true, new otava::ast::InvokeOpNode(span));
                                 }
                             }
                             *parentMatch27 = match;
@@ -2409,7 +2409,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                         }
                         if (match.hit)
                         {
-                            sourcePos = lexer.GetSourcePos(pos);
+                            span = lexer.GetSpan(pos);
                         }
                         *parentMatch29 = match;
                     }
@@ -2436,7 +2436,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                                     #endif
-                                    return soul::parser::Match(true, new otava::ast::SubscriptOpNode(sourcePos));
+                                    return soul::parser::Match(true, new otava::ast::SubscriptOpNode(span));
                                 }
                             }
                             *parentMatch31 = match;
@@ -2469,7 +2469,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::ArrowNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::ArrowNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch32 = match;
@@ -2498,7 +2498,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::ArrowStarNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::ArrowStarNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch33 = match;
@@ -2527,7 +2527,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::ComplementNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::ComplementNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch34 = match;
@@ -2556,7 +2556,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::NotNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::NotNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch35 = match;
@@ -2585,7 +2585,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::PlusNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::PlusNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch36 = match;
@@ -2614,7 +2614,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::MinusNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::MinusNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch37 = match;
@@ -2643,7 +2643,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::MulNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::MulNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch38 = match;
@@ -2672,7 +2672,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::DivNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::DivNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch39 = match;
@@ -2701,7 +2701,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::ModNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::ModNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch40 = match;
@@ -2730,7 +2730,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::ExclusiveOrNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::ExclusiveOrNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch41 = match;
@@ -2759,7 +2759,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::AndNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::AndNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch42 = match;
@@ -2788,7 +2788,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::InclusiveOrNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::InclusiveOrNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch43 = match;
@@ -2817,7 +2817,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::AssignNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::AssignNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch44 = match;
@@ -2846,7 +2846,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::PlusAssignNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::PlusAssignNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch45 = match;
@@ -2875,7 +2875,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::MinusAssignNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::MinusAssignNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch46 = match;
@@ -2904,7 +2904,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::MulAssignNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::MulAssignNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch47 = match;
@@ -2933,7 +2933,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::DivAssignNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::DivAssignNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch48 = match;
@@ -2962,7 +2962,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::ModAssignNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::ModAssignNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch49 = match;
@@ -2991,7 +2991,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::XorAssignNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::XorAssignNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch50 = match;
@@ -3020,7 +3020,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::AndAssignNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::AndAssignNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch51 = match;
@@ -3049,7 +3049,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::OrAssignNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::OrAssignNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch52 = match;
@@ -3078,7 +3078,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::ShiftLeftAssignNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::ShiftLeftAssignNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch53 = match;
@@ -3107,7 +3107,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::ShiftRightAssignNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::ShiftRightAssignNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch54 = match;
@@ -3136,7 +3136,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::EqualNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::EqualNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch55 = match;
@@ -3165,7 +3165,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::NotEqualNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::NotEqualNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch56 = match;
@@ -3194,7 +3194,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::LessOrEqualNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::LessOrEqualNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch57 = match;
@@ -3223,7 +3223,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::GreaterOrEqualNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::GreaterOrEqualNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch58 = match;
@@ -3252,7 +3252,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::CompareNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::CompareNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch59 = match;
@@ -3281,7 +3281,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::LessNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::LessNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch60 = match;
@@ -3310,7 +3310,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::GreaterNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::GreaterNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch61 = match;
@@ -3339,7 +3339,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::ConjunctionNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::ConjunctionNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch62 = match;
@@ -3368,7 +3368,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::DisjunctionNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::DisjunctionNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch63 = match;
@@ -3397,7 +3397,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::ShiftLeftNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::ShiftLeftNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch64 = match;
@@ -3426,7 +3426,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::ShiftRightNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::ShiftRightNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch65 = match;
@@ -3455,7 +3455,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::PrefixIncNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::PrefixIncNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch66 = match;
@@ -3484,7 +3484,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::PrefixDecNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::PrefixDecNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch67 = match;
@@ -3513,7 +3513,7 @@ soul::parser::Match FunctionParser<LexerT>::Operator(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::CommaNode(lexer.GetSourcePos(pos)));
+                            return soul::parser::Match(true, new otava::ast::CommaNode(lexer.GetSpan(pos)));
                         }
                     }
                     *parentMatch68 = match;
@@ -3570,7 +3570,7 @@ soul::parser::Match FunctionParser<LexerT>::Noexcept(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Noexcept");
                 #endif
-                return soul::parser::Match(true, new otava::ast::NoexceptNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::NoexceptNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;

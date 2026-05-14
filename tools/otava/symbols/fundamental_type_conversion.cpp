@@ -56,8 +56,8 @@ otava::intermediate::Value* FundamentalTypeIntToFloat::Generate(Emitter& emitter
             }
             FunctionSymbol* conversion = conversionTable.GetConversion(paramType, argType, context);
             BoundValueExpressionNode* arg = new BoundValueExpressionNode(value, argType);
-            BoundConversionNode boundConversionNode(arg, conversion, soul::ast::SourcePos());
-            boundConversionNode.Load(emitter, OperationFlags::none, soul::ast::SourcePos(), context);
+            BoundConversionNode boundConversionNode(arg, conversion, soul::ast::FullSpan());
+            boundConversionNode.Load(emitter, OperationFlags::none, soul::ast::FullSpan(), context);
             value = emitter.Stack().Pop();
         }
     }
@@ -78,8 +78,8 @@ otava::intermediate::Value* FundamentalTypeIntToFloat::Generate(Emitter& emitter
             }
             FunctionSymbol* conversion = conversionTable.GetConversion(paramType, argType, context);
             BoundValueExpressionNode* arg = new BoundValueExpressionNode(value, argType);
-            BoundConversionNode boundConversionNode(arg, conversion, soul::ast::SourcePos());
-            boundConversionNode.Load(emitter, OperationFlags::none, soul::ast::SourcePos(), context);
+            BoundConversionNode boundConversionNode(arg, conversion, soul::ast::FullSpan());
+            boundConversionNode.Load(emitter, OperationFlags::none, soul::ast::FullSpan(), context);
             value = emitter.Stack().Pop();
         }
     }
@@ -106,13 +106,13 @@ otava::intermediate::Value* FundamentalTypeFloatToInt::Generate(Emitter& emitter
             }
             FunctionSymbol* firstConversion = conversionTable.GetConversion(paramType, argType, context);
             BoundValueExpressionNode* firstArg = new BoundValueExpressionNode(value, argType);
-            BoundConversionNode firstConversionNode(firstArg, firstConversion, soul::ast::SourcePos());
-            firstConversionNode.Load(emitter, OperationFlags::none, soul::ast::SourcePos(), context);
+            BoundConversionNode firstConversionNode(firstArg, firstConversion, soul::ast::FullSpan());
+            firstConversionNode.Load(emitter, OperationFlags::none, soul::ast::FullSpan(), context);
             value = emitter.Stack().Pop();
             BoundValueExpressionNode* arg = new BoundValueExpressionNode(value, paramType);
             FunctionSymbol* conversion = conversionTable.GetConversion(finalParamType, paramType, context);
-            BoundConversionNode boundConversionNode(arg, conversion, soul::ast::SourcePos());
-            boundConversionNode.Load(emitter, OperationFlags::none, soul::ast::SourcePos(), context);
+            BoundConversionNode boundConversionNode(arg, conversion, soul::ast::FullSpan());
+            boundConversionNode.Load(emitter, OperationFlags::none, soul::ast::FullSpan(), context);
             value = emitter.Stack().Pop();
             return value;
         }
@@ -135,13 +135,13 @@ otava::intermediate::Value* FundamentalTypeFloatToInt::Generate(Emitter& emitter
             }
             FunctionSymbol* firstConversion = conversionTable.GetConversion(paramType, argType, context);
             BoundValueExpressionNode* firstArg = new BoundValueExpressionNode(value, argType);
-            BoundConversionNode firstConversionNode(firstArg, firstConversion, soul::ast::SourcePos());
-            firstConversionNode.Load(emitter, OperationFlags::none, soul::ast::SourcePos(), context);
+            BoundConversionNode firstConversionNode(firstArg, firstConversion, soul::ast::FullSpan());
+            firstConversionNode.Load(emitter, OperationFlags::none, soul::ast::FullSpan(), context);
             value = emitter.Stack().Pop();
             BoundValueExpressionNode* arg = new BoundValueExpressionNode(value, paramType);
             FunctionSymbol* conversion = conversionTable.GetConversion(finalParamType, paramType, context);
-            BoundConversionNode boundConversionNode(arg, conversion, soul::ast::SourcePos());
-            boundConversionNode.Load(emitter, OperationFlags::none, soul::ast::SourcePos(), context);
+            BoundConversionNode boundConversionNode(arg, conversion, soul::ast::FullSpan());
+            boundConversionNode.Load(emitter, OperationFlags::none, soul::ast::FullSpan(), context);
             value = emitter.Stack().Pop();
             return value;
         }
@@ -259,7 +259,7 @@ FundamentalTypeBooleanConversion::FundamentalTypeBooleanConversion(TypeSymbol* t
     SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* param = new ParameterSymbol(U"param", argType);
-    AddParameter(param, soul::ast::SourcePos(), context);
+    AddParameter(param, soul::ast::FullSpan(), context);
     SetReturnType(boolType, context);
     SetNoExcept();
 }
@@ -306,10 +306,10 @@ void FundamentalTypeBooleanConversion::Resolve(SymbolTable& symbolTable, Context
 }
 
 void FundamentalTypeBooleanConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
-    otava::intermediate::Type* irType = static_cast<otava::intermediate::Type*>(argType->IrType(emitter, sourcePos, context));
+    otava::intermediate::Type* irType = static_cast<otava::intermediate::Type*>(argType->IrType(emitter, fullSpan, context));
     otava::intermediate::Value* defaultValue = irType->DefaultValue();
     otava::intermediate::Value* equal = emitter.EmitEqual(value, defaultValue);
     otava::intermediate::Value* notEqual = emitter.EmitNot(equal);

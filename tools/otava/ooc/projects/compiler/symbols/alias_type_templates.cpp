@@ -97,7 +97,7 @@ TypeSymbol* InstantiateAliasTypeSymbol(TypeSymbol* typeSymbol, const std::vector
             {
                 ThrowException("otava.symbols.alias_type_templates: wrong number of template args for instantiating alias type template '" +
                     util::ToUtf8(aliasTypeSymbol->Name()) + "'",
-                    node->GetSourcePos(),
+                    context->MakeFullSpan(node->GetSpan()),
                     context);
             }
             for (int i = 0; i < arity; ++i)
@@ -116,7 +116,7 @@ TypeSymbol* InstantiateAliasTypeSymbol(TypeSymbol* typeSymbol, const std::vector
                     else
                     {
                         ThrowException("otava.symbols.alias_type_templates: template parameter " + std::to_string(i) +
-                            " has no default type argument", node->GetSourcePos(), context);
+                            " has no default type argument", context->MakeFullSpan(node->GetSpan()), context);
                     }
                 }
                 else
@@ -141,19 +141,19 @@ TypeSymbol* InstantiateAliasTypeSymbol(TypeSymbol* typeSymbol, const std::vector
             catch (const std::exception& ex)
             {
                 ThrowException("otava.symbols.alias_type_templates: error instantiating specialization '" +
-                    util::ToUtf8(specialization->FullName()) + "': " + std::string(ex.what()), node->GetSourcePos(), context);
+                    util::ToUtf8(specialization->FullName()) + "': " + std::string(ex.what()), context->MakeFullSpan(node->GetSpan()), context);
             }
             context->GetSymbolTable()->EndScope();
         }
         else
         {
             ThrowException("otava.symbols.alias_type_templates: template declarator for alias type template '" +
-                util::ToUtf8(aliasTypeSymbol->Name()) + "' not found", node->GetSourcePos(), context);
+                util::ToUtf8(aliasTypeSymbol->Name()) + "' not found", context->MakeFullSpan(node->GetSpan()), context);
         }
     }
     else
     {
-        ThrowException("otava.symbols.alias_type_templates: alias type template expected", node->GetSourcePos(), context);
+        ThrowException("otava.symbols.alias_type_templates: alias type template expected", context->MakeFullSpan(node->GetSpan()), context);
     }
     return specialization;
 }

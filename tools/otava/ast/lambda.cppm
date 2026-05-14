@@ -13,8 +13,8 @@ export namespace otava::ast {
 class LambdaExpressionNode : public CompoundNode
 {
 public:
-    LambdaExpressionNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    LambdaExpressionNode(const soul::ast::SourcePos& sourcePos_, Node* introducer_, Node* templateParams_, Node* declarator_, Node* body_) noexcept;
+    LambdaExpressionNode(const soul::ast::Span& span_) noexcept;
+    LambdaExpressionNode(const soul::ast::Span& span_, Node* introducer_, Node* templateParams_, Node* declarator_, Node* body_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -33,25 +33,25 @@ private:
 class LambdaIntroducerNode : public CompoundNode
 {
 public:
-    LambdaIntroducerNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    LambdaIntroducerNode(const soul::ast::SourcePos& sourcePos_, Node* capture_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) noexcept;
+    LambdaIntroducerNode(const soul::ast::Span& span_) noexcept;
+    LambdaIntroducerNode(const soul::ast::Span& span_, Node* capture_, const soul::ast::Span& lbSpan_, const soul::ast::Span& rbSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* Capture() const noexcept { return capture.get(); }
-    inline const soul::ast::SourcePos& LBracketPos() const noexcept { return lbPos; }
-    inline const soul::ast::SourcePos& RBracketPos() const noexcept { return rbPos; }
+    inline const soul::ast::Span& LBracketSpan() const noexcept { return lbSpan; }
+    inline const soul::ast::Span& RBracketSpan() const noexcept { return rbSpan; }
 private:
     std::unique_ptr<Node> capture;
-    soul::ast::SourcePos lbPos;
-    soul::ast::SourcePos rbPos;
+    soul::ast::Span lbSpan;
+    soul::ast::Span rbSpan;
 };
 
 class LambdaCaptureNode : public ListNode
 {
 public:
-    LambdaCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    LambdaCaptureNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -59,7 +59,7 @@ public:
 class DefaultRefCaptureNode : public Node
 {
 public:
-    DefaultRefCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    DefaultRefCaptureNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -67,7 +67,7 @@ public:
 class DefaultCopyCaptureNode : public Node
 {
 public:
-    DefaultCopyCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    DefaultCopyCaptureNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -75,7 +75,7 @@ public:
 class ByRefCaptureNode : public Node
 {
 public:
-    ByRefCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ByRefCaptureNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -83,8 +83,8 @@ public:
 class SimpleCaptureNode : public CompoundNode
 {
 public:
-    SimpleCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    SimpleCaptureNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* byRefCapture_, Node* ellipsis_) noexcept;
+    SimpleCaptureNode(const soul::ast::Span& span_) noexcept;
+    SimpleCaptureNode(const soul::ast::Span& span_, Node* identifier_, Node* byRefCapture_, Node* ellipsis_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -101,36 +101,36 @@ private:
 class CurrentObjectCopyCapture : public CompoundNode
 {
 public:
-    CurrentObjectCopyCapture(const soul::ast::SourcePos& sourcePos_) noexcept;
-    CurrentObjectCopyCapture(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& thisPos_) noexcept;
+    CurrentObjectCopyCapture(const soul::ast::Span& span_) noexcept;
+    CurrentObjectCopyCapture(const soul::ast::Span& span_, const soul::ast::Span& thisSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline const soul::ast::SourcePos& ThisPos() const noexcept { return thisPos; }
+    inline const soul::ast::Span& ThisSpan() const noexcept { return thisSpan; }
 private:
-    soul::ast::SourcePos thisPos;
+    soul::ast::Span thisSpan;
 };
 
 class CurrentObjectByRefCapture : public CompoundNode
 {
 public:
-    CurrentObjectByRefCapture(const soul::ast::SourcePos& sourcePos_) noexcept;
-    CurrentObjectByRefCapture(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& thisPos_) noexcept;
+    CurrentObjectByRefCapture(const soul::ast::Span& span_) noexcept;
+    CurrentObjectByRefCapture(const soul::ast::Span& span_, const soul::ast::Span& thisSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline const soul::ast::SourcePos& ThisPos() const noexcept { return thisPos; }
+    inline const soul::ast::Span& ThisSpan() const noexcept { return thisSpan; }
 private:
-    soul::ast::SourcePos thisPos;
+    soul::ast::Span thisSpan;
 };
 
 class InitCaptureNode : public CompoundNode
 {
 public:
-    InitCaptureNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    InitCaptureNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* initializer_, Node* byRefCapture_, Node* ellipsis_) noexcept;
+    InitCaptureNode(const soul::ast::Span& span_) noexcept;
+    InitCaptureNode(const soul::ast::Span& span_, Node* identifier_, Node* initializer_, Node* byRefCapture_, Node* ellipsis_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -149,8 +149,8 @@ private:
 class LambdaDeclaratorNode : public CompoundNode
 {
 public:
-    LambdaDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    LambdaDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* parameterList_, Node* specifiers_, Node* requiresClause_) noexcept;
+    LambdaDeclaratorNode(const soul::ast::Span& span_) noexcept;
+    LambdaDeclaratorNode(const soul::ast::Span& span_, Node* parameterList_, Node* specifiers_, Node* requiresClause_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -167,8 +167,8 @@ private:
 class LambdaSpecifiersNode : public CompoundNode
 {
 public:
-    LambdaSpecifiersNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    LambdaSpecifiersNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifiers_, Node* noexceptSpecifier_, Node* attributes_, Node* trailingReturnType_) noexcept;
+    LambdaSpecifiersNode(const soul::ast::Span& span_) noexcept;
+    LambdaSpecifiersNode(const soul::ast::Span& span_, Node* declSpecifiers_, Node* noexceptSpecifier_, Node* attributes_, Node* trailingReturnType_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -188,8 +188,8 @@ private:
 class LambdaTemplateParamsNode : public CompoundNode
 {
 public:
-    LambdaTemplateParamsNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    LambdaTemplateParamsNode(const soul::ast::SourcePos& sourcePos_, Node* templateParams_, Node* requiresClause_) noexcept;
+    LambdaTemplateParamsNode(const soul::ast::Span& span_) noexcept;
+    LambdaTemplateParamsNode(const soul::ast::Span& span_, Node* templateParams_, Node* requiresClause_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;

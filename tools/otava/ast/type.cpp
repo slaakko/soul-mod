@@ -11,13 +11,13 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-TypeSpecifierSequenceNode::TypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept : SequenceNode(NodeKind::typeSpecifierSequenceNode, sourcePos_)
+TypeSpecifierSequenceNode::TypeSpecifierSequenceNode(const soul::ast::Span& span_) noexcept : SequenceNode(NodeKind::typeSpecifierSequenceNode, span_)
 {
 }
 
 Node* TypeSpecifierSequenceNode::Clone() const
 {
-    TypeSpecifierSequenceNode* clone = new TypeSpecifierSequenceNode(GetSourcePos());
+    TypeSpecifierSequenceNode* clone = new TypeSpecifierSequenceNode(GetSpan());
     for (const auto& node : Nodes())
     {
         clone->AddNode(node->Clone());
@@ -50,12 +50,12 @@ std::u32string TypeSpecifierSequenceNode::Str() const
     return str;
 }
 
-TypenameSpecifierNode::TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::typenameSpecifierNode, sourcePos_)
+TypenameSpecifierNode::TypenameSpecifierNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::typenameSpecifierNode, span_)
 {
 }
 
-TypenameSpecifierNode::TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* id_, Node* templateNode_) noexcept :
-    CompoundNode(NodeKind::typenameSpecifierNode, sourcePos_), nns(nns_), id(id_), templateNode(templateNode_)
+TypenameSpecifierNode::TypenameSpecifierNode(const soul::ast::Span& span_, Node* nns_, Node* id_, Node* templateNode_) noexcept :
+    CompoundNode(NodeKind::typenameSpecifierNode, span_), nns(nns_), id(id_), templateNode(templateNode_)
 {
 }
 
@@ -66,7 +66,7 @@ Node* TypenameSpecifierNode::Clone() const
     {
         clonedTemplateNode = templateNode->Clone();
     }
-    TypenameSpecifierNode* clone = new TypenameSpecifierNode(GetSourcePos(), nns->Clone(), id->Clone(), clonedTemplateNode);
+    TypenameSpecifierNode* clone = new TypenameSpecifierNode(GetSpan(), nns->Clone(), id->Clone(), clonedTemplateNode);
     clone->SetId(Id());
     return clone;
 }
@@ -92,12 +92,12 @@ void TypenameSpecifierNode::Read(Reader& reader)
     templateNode.reset(reader.ReadNode());
 }
 
-TypeIdNode::TypeIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::typeIdNode, sourcePos_)
+TypeIdNode::TypeIdNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::typeIdNode, span_)
 {
 }
 
-TypeIdNode::TypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_, Node* declarator_) noexcept :
-    CompoundNode(NodeKind::typeIdNode, sourcePos_), typeSpecifiers(typeSpecifiers_), declarator(declarator_)
+TypeIdNode::TypeIdNode(const soul::ast::Span& span_, Node* typeSpecifiers_, Node* declarator_) noexcept :
+    CompoundNode(NodeKind::typeIdNode, span_), typeSpecifiers(typeSpecifiers_), declarator(declarator_)
 {
 }
 
@@ -108,7 +108,7 @@ Node* TypeIdNode::Clone() const
     {
         clonedDeclarator = declarator->Clone();
     }
-    TypeIdNode* clone = new TypeIdNode(GetSourcePos(), typeSpecifiers->Clone(), clonedDeclarator);
+    TypeIdNode* clone = new TypeIdNode(GetSpan(), typeSpecifiers->Clone(), clonedDeclarator);
     clone->SetId(Id());
     return clone;
 }
@@ -139,12 +139,12 @@ std::u32string TypeIdNode::Str() const
     return str;
 }
 
-DefiningTypeIdNode::DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::definingTypeIdNode, sourcePos_)
+DefiningTypeIdNode::DefiningTypeIdNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::definingTypeIdNode, span_)
 {
 }
 
-DefiningTypeIdNode::DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* definingTypeSpecifiers_, Node* abstractDeclarator_) noexcept :
-    CompoundNode(NodeKind::definingTypeIdNode, sourcePos_), definingTypeSpecifiers(definingTypeSpecifiers_), abstractDeclarator(abstractDeclarator_)
+DefiningTypeIdNode::DefiningTypeIdNode(const soul::ast::Span& span_, Node* definingTypeSpecifiers_, Node* abstractDeclarator_) noexcept :
+    CompoundNode(NodeKind::definingTypeIdNode, span_), definingTypeSpecifiers(definingTypeSpecifiers_), abstractDeclarator(abstractDeclarator_)
 {
 }
 
@@ -155,7 +155,7 @@ Node* DefiningTypeIdNode::Clone() const
     {
         clonedDeclarator = abstractDeclarator->Clone();
     }
-    DefiningTypeIdNode* clone = new DefiningTypeIdNode(GetSourcePos(), definingTypeSpecifiers->Clone(), clonedDeclarator);
+    DefiningTypeIdNode* clone = new DefiningTypeIdNode(GetSpan(), definingTypeSpecifiers->Clone(), clonedDeclarator);
     clone->SetId(Id());
     return clone;
 }
@@ -186,14 +186,14 @@ std::u32string DefiningTypeIdNode::Str() const
     return str;
 }
 
-DefiningTypeSpecifierSequenceNode::DefiningTypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    SequenceNode(NodeKind::definingTypeSpecifierSequenceNode, sourcePos_)
+DefiningTypeSpecifierSequenceNode::DefiningTypeSpecifierSequenceNode(const soul::ast::Span& span_) noexcept :
+    SequenceNode(NodeKind::definingTypeSpecifierSequenceNode, span_)
 {
 }
 
 Node* DefiningTypeSpecifierSequenceNode::Clone() const
 {
-    DefiningTypeSpecifierSequenceNode* clone = new DefiningTypeSpecifierSequenceNode(GetSourcePos());
+    DefiningTypeSpecifierSequenceNode* clone = new DefiningTypeSpecifierSequenceNode(GetSpan());
     for (const auto& node : Nodes())
     {
         clone->AddNode(node->Clone());
@@ -226,18 +226,18 @@ std::u32string DefiningTypeSpecifierSequenceNode::Str() const
     return str;
 }
 
-TrailingReturnTypeNode::TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::trailingReturnTypeNode, sourcePos_, nullptr)
+TrailingReturnTypeNode::TrailingReturnTypeNode(const soul::ast::Span& span_) noexcept : UnaryNode(NodeKind::trailingReturnTypeNode, span_, nullptr)
 {
 }
 
-TrailingReturnTypeNode::TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_) noexcept : 
-    UnaryNode(NodeKind::trailingReturnTypeNode, sourcePos_, typeId_)
+TrailingReturnTypeNode::TrailingReturnTypeNode(const soul::ast::Span& span_, Node* typeId_) noexcept :
+    UnaryNode(NodeKind::trailingReturnTypeNode, span_, typeId_)
 {
 }
 
 Node* TrailingReturnTypeNode::Clone() const
 {
-    TrailingReturnTypeNode* clone = new TrailingReturnTypeNode(GetSourcePos(), Child()->Clone());
+    TrailingReturnTypeNode* clone = new TrailingReturnTypeNode(GetSpan(), Child()->Clone());
     clone->SetId(Id());
     return clone;
 }
@@ -247,13 +247,13 @@ void TrailingReturnTypeNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ElaboratedTypeSpecifierNode::ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
-    CompoundNode(NodeKind::elaboratedTypeSpecifierNode, sourcePos_)
+ElaboratedTypeSpecifierNode::ElaboratedTypeSpecifierNode(const soul::ast::Span& span_) noexcept :
+    CompoundNode(NodeKind::elaboratedTypeSpecifierNode, span_)
 {
 }
 
-ElaboratedTypeSpecifierNode::ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* id_, Node* attributes_) noexcept :
-    CompoundNode(NodeKind::elaboratedTypeSpecifierNode, sourcePos_), classKey(classKey_), id(id_), attributes(attributes_)
+ElaboratedTypeSpecifierNode::ElaboratedTypeSpecifierNode(const soul::ast::Span& span_, Node* classKey_, Node* id_, Node* attributes_) noexcept :
+    CompoundNode(NodeKind::elaboratedTypeSpecifierNode, span_), classKey(classKey_), id(id_), attributes(attributes_)
 {
 }
 
@@ -264,7 +264,7 @@ Node* ElaboratedTypeSpecifierNode::Clone() const
     {
         clonedAttributes = attributes->Clone();
     }
-    ElaboratedTypeSpecifierNode* clone = new ElaboratedTypeSpecifierNode(GetSourcePos(), classKey->Clone(), id->Clone(), clonedAttributes);
+    ElaboratedTypeSpecifierNode* clone = new ElaboratedTypeSpecifierNode(GetSpan(), classKey->Clone(), id->Clone(), clonedAttributes);
     clone->SetId(Id());
     return clone;
 }
@@ -297,19 +297,19 @@ std::u32string ElaboratedTypeSpecifierNode::Str() const
     return str;
 }
 
-DeclTypeSpecifierNode::DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::declTypeSpecifierNode, sourcePos_)
+DeclTypeSpecifierNode::DeclTypeSpecifierNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::declTypeSpecifierNode, span_)
 {
 }
 
-DeclTypeSpecifierNode::DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, 
-    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
-    CompoundNode(NodeKind::declTypeSpecifierNode, sourcePos_), expr(expr_), lpPos(lpPos_), rpPos(rpPos_)
+DeclTypeSpecifierNode::DeclTypeSpecifierNode(const soul::ast::Span& span_, Node* expr_,
+    const soul::ast::Span& lpSpan_, const soul::ast::Span& rpSpan_) noexcept :
+    CompoundNode(NodeKind::declTypeSpecifierNode, span_), expr(expr_), lpSpan(lpSpan_), rpSpan(rpSpan_)
 {
 }
 
 Node* DeclTypeSpecifierNode::Clone() const
 {
-    DeclTypeSpecifierNode* clone = new DeclTypeSpecifierNode(GetSourcePos(), expr->Clone(), lpPos, rpPos);
+    DeclTypeSpecifierNode* clone = new DeclTypeSpecifierNode(GetSpan(), expr->Clone(), lpSpan, rpSpan);
     clone->SetId(Id());
     return clone;
 }
@@ -323,26 +323,26 @@ void DeclTypeSpecifierNode::Write(Writer& writer)
 {
     CompoundNode::Write(writer);
     writer.Write(expr.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    writer.Write(lpSpan);
+    writer.Write(rpSpan);
 }
 
 void DeclTypeSpecifierNode::Read(Reader& reader)
 {
     CompoundNode::Read(reader);
     expr.reset(reader.ReadNode());
-    lpPos = reader.ReadSourcePos();
-    rpPos = reader.ReadSourcePos();
+    lpSpan = reader.ReadSpan();
+    rpSpan = reader.ReadSpan();
 }
 
-PlaceholderTypeSpecifierNode::PlaceholderTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
-    CompoundNode(NodeKind::placeholderTypeSpecifierNode, sourcePos_)
+PlaceholderTypeSpecifierNode::PlaceholderTypeSpecifierNode(const soul::ast::Span& span_) noexcept :
+    CompoundNode(NodeKind::placeholderTypeSpecifierNode, span_)
 {
 }
 
-PlaceholderTypeSpecifierNode::PlaceholderTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_,
-    const soul::ast::SourcePos& dtPos_, const soul::ast::SourcePos& autoPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
-    CompoundNode(NodeKind::placeholderTypeSpecifierNode, sourcePos_), typeConstraint(typeConstraint_), dtPos(dtPos_), autoPos(autoPos_), lpPos(lpPos_), rpPos(rpPos_)
+PlaceholderTypeSpecifierNode::PlaceholderTypeSpecifierNode(const soul::ast::Span& span_, Node* typeConstraint_,
+    const soul::ast::Span& dtSpan_, const soul::ast::Span& autoSpan_, const soul::ast::Span& lpSpan_, const soul::ast::Span& rpSpan_) noexcept :
+    CompoundNode(NodeKind::placeholderTypeSpecifierNode, span_), typeConstraint(typeConstraint_), dtSpan(dtSpan_), autoSpan(autoSpan_), lpSpan(lpSpan_), rpSpan(rpSpan_)
 {
 }
 
@@ -353,7 +353,7 @@ Node* PlaceholderTypeSpecifierNode::Clone() const
     {
         clonedTypeConstraint = typeConstraint->Clone();
     }
-    PlaceholderTypeSpecifierNode* clone = new PlaceholderTypeSpecifierNode(GetSourcePos(), clonedTypeConstraint, dtPos, autoPos, lpPos, rpPos);
+    PlaceholderTypeSpecifierNode* clone = new PlaceholderTypeSpecifierNode(GetSpan(), clonedTypeConstraint, dtSpan, autoSpan, lpSpan, rpSpan);
     clone->SetId(Id());
     return clone;
 }
@@ -367,20 +367,20 @@ void PlaceholderTypeSpecifierNode::Write(Writer& writer)
 {
     CompoundNode::Write(writer);
     writer.Write(typeConstraint.get());
-    writer.Write(dtPos);
-    writer.Write(autoPos);
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    writer.Write(dtSpan);
+    writer.Write(autoSpan);
+    writer.Write(lpSpan);
+    writer.Write(rpSpan);
 }
 
 void PlaceholderTypeSpecifierNode::Read(Reader& reader)
 {
     CompoundNode::Read(reader);
     typeConstraint.reset(reader.ReadNode());
-    dtPos = reader.ReadSourcePos();
-    autoPos = reader.ReadSourcePos();
-    lpPos = reader.ReadSourcePos();
-    rpPos = reader.ReadSourcePos();
+    dtSpan = reader.ReadSpan();
+    autoSpan = reader.ReadSpan();
+    lpSpan = reader.ReadSpan();
+    rpSpan = reader.ReadSpan();
 }
 
 } // namespace otava::ast

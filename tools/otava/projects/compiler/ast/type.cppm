@@ -9,7 +9,7 @@ export namespace otava::ast {
 class TypeSpecifierSequenceNode : public SequenceNode
 {
 public:
-    TypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    TypeSpecifierSequenceNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override;
@@ -18,8 +18,8 @@ public:
 class TypenameSpecifierNode : public CompoundNode
 {
 public:
-    TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* id_, Node* templateNode_) noexcept;
+    TypenameSpecifierNode(const soul::ast::Span& span_) noexcept;
+    TypenameSpecifierNode(const soul::ast::Span& span_, Node* nns_, Node* id_, Node* templateNode_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -36,8 +36,8 @@ private:
 class TypeIdNode : public CompoundNode
 {
 public:
-    TypeIdNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    TypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_, Node* declarator_) noexcept;
+    TypeIdNode(const soul::ast::Span& span_) noexcept;
+    TypeIdNode(const soul::ast::Span& span_, Node* typeSpecifiers_, Node* declarator_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -53,8 +53,8 @@ private:
 class DefiningTypeIdNode : public CompoundNode
 {
 public:
-    DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* definingTypeSpecifiers_, Node* abstractDeclarator_) noexcept;
+    DefiningTypeIdNode(const soul::ast::Span& span_) noexcept;
+    DefiningTypeIdNode(const soul::ast::Span& span_, Node* definingTypeSpecifiers_, Node* abstractDeclarator_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -70,7 +70,7 @@ private:
 class DefiningTypeSpecifierSequenceNode : public SequenceNode
 {
 public:
-    DefiningTypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    DefiningTypeSpecifierSequenceNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override;
@@ -79,8 +79,8 @@ public:
 class TrailingReturnTypeNode : public UnaryNode
 {
 public:
-    TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_) noexcept;
+    TrailingReturnTypeNode(const soul::ast::Span& span_) noexcept;
+    TrailingReturnTypeNode(const soul::ast::Span& span_, Node* typeId_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -88,8 +88,8 @@ public:
 class ElaboratedTypeSpecifierNode : public CompoundNode
 {
 public:
-    ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* id_, Node* attributes_) noexcept;
+    ElaboratedTypeSpecifierNode(const soul::ast::Span& span_) noexcept;
+    ElaboratedTypeSpecifierNode(const soul::ast::Span& span_, Node* classKey_, Node* id_, Node* attributes_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -107,43 +107,43 @@ private:
 class DeclTypeSpecifierNode : public CompoundNode
 {
 public:
-    DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept;
+    DeclTypeSpecifierNode(const soul::ast::Span& span_) noexcept;
+    DeclTypeSpecifierNode(const soul::ast::Span& span_, Node* expr_, const soul::ast::Span& lpSpan_, const soul::ast::Span& rpSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* Expression() const noexcept { return expr.get(); }
-    inline const soul::ast::SourcePos& LParenPos() const noexcept { return lpPos; }
-    inline const soul::ast::SourcePos& RParenPos() const noexcept { return rpPos; }
+    inline const soul::ast::Span& LParenSpan() const noexcept { return lpSpan; }
+    inline const soul::ast::Span& RParenSpan() const noexcept { return rpSpan; }
 private:
     std::unique_ptr<Node> expr;
-    soul::ast::SourcePos lpPos;
-    soul::ast::SourcePos rpPos;
+    soul::ast::Span lpSpan;
+    soul::ast::Span rpSpan;
 };
 
 class PlaceholderTypeSpecifierNode : public CompoundNode
 {
 public:
-    PlaceholderTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    PlaceholderTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_, const soul::ast::SourcePos& dtPos_,
-        const soul::ast::SourcePos& autoPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept;
+    PlaceholderTypeSpecifierNode(const soul::ast::Span& span_) noexcept;
+    PlaceholderTypeSpecifierNode(const soul::ast::Span& span_, Node* typeConstraint_, const soul::ast::Span& dtSpan_,
+        const soul::ast::Span& autoSpan_, const soul::ast::Span& lpSpan_, const soul::ast::Span& rpSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* TypeConstraint() const { return typeConstraint.get(); }
-    inline const soul::ast::SourcePos& DeclTypePos() const noexcept { return dtPos; }
-    inline const soul::ast::SourcePos& AutoPos() const noexcept { return autoPos; }
-    inline const soul::ast::SourcePos& LParenPos() const noexcept { return lpPos; }
-    inline const soul::ast::SourcePos& RParenPos() const noexcept { return rpPos; }
-    inline bool IsDeclType() const noexcept { return dtPos.IsValid(); };
+    inline const soul::ast::Span& DeclTypeSpan() const noexcept { return dtSpan; }
+    inline const soul::ast::Span& AutoSpan() const noexcept { return autoSpan; }
+    inline const soul::ast::Span& LParenSpan() const noexcept { return lpSpan; }
+    inline const soul::ast::Span& RParenSpan() const noexcept { return rpSpan; }
+    inline bool IsDeclType() const noexcept { return dtSpan.IsValid(); };
 private:
     std::unique_ptr<Node> typeConstraint;
-    soul::ast::SourcePos dtPos;
-    soul::ast::SourcePos autoPos;
-    soul::ast::SourcePos lpPos;
-    soul::ast::SourcePos rpPos;
+    soul::ast::Span dtSpan;
+    soul::ast::Span autoSpan;
+    soul::ast::Span lpSpan;
+    soul::ast::Span rpSpan;
 };
 
 } // namespace otava::ast

@@ -134,14 +134,14 @@ public:
         SetFunctionKind(FunctionKind::function);
         SetAccess(Access::public_);
         ParameterSymbol* param = new ParameterSymbol(U"param", type_);
-        AddParameter(param, soul::ast::SourcePos(), nullptr);
+        AddParameter(param, soul::ast::FullSpan(), nullptr);
         SetReturnType(type_, context);
         SetNoExcept();
     }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override
     {
-        args[0]->Load(emitter, flags, sourcePos, context);
+        args[0]->Load(emitter, flags, fullSpan, context);
         otava::intermediate::Value* value = emitter.Stack().Pop();
         emitter.Stack().Push(Op::Generate(emitter, value));
     }
@@ -160,18 +160,18 @@ public:
         SetFunctionKind(FunctionKind::function);
         SetAccess(Access::public_);
         ParameterSymbol* leftParam = new ParameterSymbol(U"left", type_);
-        AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
+        AddParameter(leftParam, soul::ast::FullSpan(), nullptr);
         ParameterSymbol* rightParam = new ParameterSymbol(U"right", type_);
-        AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
+        AddParameter(rightParam, soul::ast::FullSpan(), nullptr);
         SetReturnType(type_, context);
         SetNoExcept();
     }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override
     {
-        args[0]->Load(emitter, flags, sourcePos, context);
+        args[0]->Load(emitter, flags, fullSpan, context);
         otava::intermediate::Value* left = emitter.Stack().Pop();
-        args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+        args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
         otava::intermediate::Value* right = emitter.Stack().Pop();
         emitter.Stack().Push(Op::Generate(emitter, left, right));
     }
@@ -190,21 +190,21 @@ public:
         SetFunctionKind(FunctionKind::function);
         SetAccess(Access::public_);
         ParameterSymbol* thisParam = new ParameterSymbol(U"this", type);
-        AddParameter(thisParam, soul::ast::SourcePos(), context);
+        AddParameter(thisParam, soul::ast::FullSpan(), context);
         ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
-        AddParameter(thatParam, soul::ast::SourcePos(), context);
+        AddParameter(thatParam, soul::ast::FullSpan(), context);
         SetReturnType(type->AddLValueRef(context), context);
         SetNoExcept();
     }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
     {
-        args[0]->Load(emitter, OperationFlags::none, sourcePos, context);
+        args[0]->Load(emitter, OperationFlags::none, fullSpan, context);
         otava::intermediate::Value* left = emitter.Stack().Pop();
-        args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+        args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
         otava::intermediate::Value* right = emitter.Stack().Pop();
         emitter.Stack().Push(Op::Generate(emitter, left, right));
-        args[0]->Store(emitter, OperationFlags::setPtr, sourcePos, context);
+        args[0]->Store(emitter, OperationFlags::setPtr, fullSpan, context);
         emitter.Stack().Push(context->Ptr());
     }
     bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
@@ -225,18 +225,18 @@ public:
         SetFunctionKind(FunctionKind::function);
         SetAccess(Access::public_);
         ParameterSymbol* leftParam = new ParameterSymbol(U"left", type_);
-        AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
+        AddParameter(leftParam, soul::ast::FullSpan(), nullptr);
         ParameterSymbol* rightParam = new ParameterSymbol(U"right", type_);
-        AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
+        AddParameter(rightParam, soul::ast::FullSpan(), nullptr);
         SetReturnType(boolType, context);
         SetNoExcept();
     }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override
     {
-        args[0]->Load(emitter, flags, sourcePos, context);
+        args[0]->Load(emitter, flags, fullSpan, context);
         otava::intermediate::Value* left = emitter.Stack().Pop();
-        args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+        args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
         otava::intermediate::Value* right = emitter.Stack().Pop();
         emitter.Stack().Push(Op::Generate(emitter, left, right));
     }
@@ -434,7 +434,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
 private:
     TypeSymbol* type;
@@ -450,7 +450,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
@@ -467,7 +467,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
@@ -484,7 +484,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
@@ -501,7 +501,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const noexcept override { return true; }
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
@@ -515,7 +515,7 @@ public:
     TrivialDestructor();
     TrivialDestructor(TypeSymbol* type_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
 private:
     TypeSymbol* type;

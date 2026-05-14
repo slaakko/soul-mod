@@ -130,30 +130,30 @@ std::unique_ptr<SwitchTargets> CollectSwitchTargets(otava::symbols::Emitter& emi
 class ConstantExpressionEvaluator : public otava::symbols::DefaultBoundTreeVisitor
 {
 public:
-    ConstantExpressionEvaluator(otava::symbols::Emitter& emitter_, const soul::ast::SourcePos& sourcePos_, otava::symbols::Context& context_);
+    ConstantExpressionEvaluator(otava::symbols::Emitter& emitter_, const soul::ast::FullSpan& fullSpan_, otava::symbols::Context& context_);
     void Visit(otava::symbols::BoundLiteralNode& node) override;
     void Visit(otava::symbols::BoundEnumConstant& node) override;
     void Visit(otava::symbols::BoundVariableNode& node) override;
     void Visit(otava::symbols::BoundConversionNode& node) override;
 private:
     otava::symbols::Emitter& emitter;
-    soul::ast::SourcePos sourcePos;
+    soul::ast::FullSpan fullSpan;
     otava::symbols::Context& context;
 };
 
-ConstantExpressionEvaluator::ConstantExpressionEvaluator(otava::symbols::Emitter& emitter_, const soul::ast::SourcePos& sourcePos_, otava::symbols::Context& context_) :
-    emitter(emitter_), sourcePos(sourcePos_), context(context_)
+ConstantExpressionEvaluator::ConstantExpressionEvaluator(otava::symbols::Emitter& emitter_, const soul::ast::FullSpan& fullSpan_, otava::symbols::Context& context_) :
+    emitter(emitter_), fullSpan(fullSpan_), context(context_)
 {
 }
 
 void ConstantExpressionEvaluator::Visit(otava::symbols::BoundLiteralNode& node)
 {
-    emitter.Stack().Push(node.GetValue()->IrValue(emitter, sourcePos, &context));
+    emitter.Stack().Push(node.GetValue()->IrValue(emitter, fullSpan, &context));
 }
 
 void ConstantExpressionEvaluator::Visit(otava::symbols::BoundEnumConstant& node)
 {
-    emitter.Stack().Push(node.EnumConstant()->GetValue()->IrValue(emitter, sourcePos, &context));
+    emitter.Stack().Push(node.EnumConstant()->GetValue()->IrValue(emitter, fullSpan, &context));
 }
 
 void ConstantExpressionEvaluator::Visit(otava::symbols::BoundVariableNode& node)
@@ -162,9 +162,9 @@ void ConstantExpressionEvaluator::Visit(otava::symbols::BoundVariableNode& node)
     otava::symbols::Value* value = variable->GetValue();
     if (!value)
     {
-        otava::symbols::ThrowException("cannot evaluate statically", sourcePos, &context);
+        otava::symbols::ThrowException("cannot evaluate statically", fullSpan, &context);
     }
-    otava::intermediate::Value* irValue = value->IrValue(emitter, sourcePos, &context);
+    otava::intermediate::Value* irValue = value->IrValue(emitter, fullSpan, &context);
     emitter.Stack().Push(irValue);
 }
 
@@ -175,7 +175,7 @@ void ConstantExpressionEvaluator::Visit(otava::symbols::BoundConversionNode& nod
     if (value->IsIntegerValue())
     {
         std::int64_t val = value->GetIntegerValue();
-        otava::intermediate::Type* type = node.GetType()->IrType(emitter, sourcePos, &context);
+        otava::intermediate::Type* type = node.GetType()->IrType(emitter, fullSpan, &context);
         if (type->IsIntegerType())
         {
             switch (type->Id())
@@ -222,7 +222,7 @@ void ConstantExpressionEvaluator::Visit(otava::symbols::BoundConversionNode& nod
             }
             default:
             {
-                otava::symbols::ThrowException("cannot evaluate statically", sourcePos, &context);
+                otava::symbols::ThrowException("cannot evaluate statically", fullSpan, &context);
                 break;
             }
             }
@@ -230,23 +230,23 @@ void ConstantExpressionEvaluator::Visit(otava::symbols::BoundConversionNode& nod
         }
         else
         {
-            otava::symbols::ThrowException("cannot evaluate statically", sourcePos, &context);
+            otava::symbols::ThrowException("cannot evaluate statically", fullSpan, &context);
         }
     }
     else
     {
-        otava::symbols::ThrowException("cannot evaluate statically", sourcePos, &context);
+        otava::symbols::ThrowException("cannot evaluate statically", fullSpan, &context);
     }
 }
 
-void EvaluateConstantExpr(otava::symbols::Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context& context,
+void EvaluateConstantExpr(otava::symbols::Emitter& emitter, const soul::ast::FullSpan& fullSpan, otava::symbols::Context& context,
     otava::symbols::BoundExpressionNode* constantExpr)
 {
-    ConstantExpressionEvaluator evaluator(emitter, sourcePos, context);
+    ConstantExpressionEvaluator evaluator(emitter, fullSpan, context);
     constantExpr->Accept(evaluator);
     if (emitter.Stack().IsEmpty())
     {
-        otava::symbols::ThrowException("cannot evaluate statically", sourcePos, &context);
+        otava::symbols::ThrowException("cannot evaluate statically", fullSpan, &context);
     }
 }
 
@@ -257,7 +257,7 @@ public:
     bool IsEmpty() const { return destructorCalls.empty(); }
     int Size() const { return destructorCalls.size(); }
     void AddDestructorCall(otava::symbols::BoundExpressionNode* destructorCall);
-    void Execute(otava::symbols::Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context, bool reset);
+    void Execute(otava::symbols::Emitter& emitter, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context, bool reset);
 private:
     std::vector<std::unique_ptr<otava::symbols::BoundExpressionNode>> destructorCalls;
     std::set<util::uuid> variableIdSet;
@@ -308,13 +308,13 @@ void BlockExit::AddDestructorCall(otava::symbols::BoundExpressionNode* destructo
     destructorCalls.push_back(std::unique_ptr<otava::symbols::BoundExpressionNode>(destructorCall->Clone()));
 }
 
-void BlockExit::Execute(otava::symbols::Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context, bool reset)
+void BlockExit::Execute(otava::symbols::Emitter& emitter, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context, bool reset)
 {
     int n = destructorCalls.size();
     for (int i = n - 1; i >= 0; --i)
     {
         otava::symbols::BoundExpressionNode* destructorCall = destructorCalls[i].get();
-        destructorCall->Load(emitter, otava::symbols::OperationFlags::none, sourcePos, context);
+        destructorCall->Load(emitter, otava::symbols::OperationFlags::none, fullSpan, context);
     }
 }
 
@@ -373,13 +373,13 @@ public:
 private:
     void StatementPrefix();
     void GenJumpingBoolCode();
-    void GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos);
+    void GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const soul::ast::FullSpan& fullSpan);
     void AddClassInfo(otava::symbols::ClassTypeSymbol* cls);
-    void EmitReturn(const soul::ast::SourcePos& sourcePos);
-    void ExitBlocks(int sourceBlockId, int targetBlockId, const soul::ast::SourcePos& sourcePos);
+    void EmitReturn(const soul::ast::FullSpan& fullSpan);
+    void ExitBlocks(int sourceBlockId, int targetBlockId, const soul::ast::FullSpan& fullSpan);
     void GenerateGlobalInitializationFunction();
     void GenerateGlobalDoneFunction();
-    void SetCurrentLineNumber(const soul::ast::SourcePos& sourcePos);
+    void SetCurrentLineNumber(const soul::ast::FullSpan& fullSpan);
     void SetCurrentBlockSymbol(int blockId);
     void GenerateDestructorCallsForCurrentStatement();
     std::string optimizedIntermediateFilePath;
@@ -518,7 +518,7 @@ void CodeGenerator::GenJumpingBoolCode()
     emitter->EmitBranch(cond, trueBlock, falseBlock);
 }
 
-void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos)
+void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const soul::ast::FullSpan& fullSpan)
 {
     if (!cls->IsPolymorphic()) return;
     if (!cls->IsClassTemplateSpecializationSymbol())
@@ -531,7 +531,7 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
     if (emittedVTabNames.find(vtabName) != emittedVTabNames.end()) return;
     emittedVTabNames.insert(vtabName);
     context.SetFlag(otava::symbols::ContextFlags::generatingVTab);
-    cls->MakeVTab(&context, sourcePos);
+    cls->MakeVTab(&context, fullSpan);
     otava::intermediate::Type* voidPtrIrType = emitter->MakePtrType(emitter->GetVoidType());
     otava::intermediate::Type* arrayType = emitter->MakeArrayType(cls->VTab().size() * 2 + otava::symbols::vtabClassIdElementCount, voidPtrIrType);
     otava::intermediate::Type* arrayPtrType = emitter->MakePtrType(arrayType);
@@ -548,7 +548,7 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
     {
         if (functionSymbol)
         {
-            otava::intermediate::Type* irType = functionSymbol->IrType(*emitter, sourcePos, &context);
+            otava::intermediate::Type* irType = functionSymbol->IrType(*emitter, fullSpan, &context);
             if (irType->IsFunctionType())
             {
                 if (functionSymbol->IsPure())
@@ -571,7 +571,7 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
                     if (!succeeded)
                     {
                         otava::symbols::ThrowException("could not resolve delta for classes '" + util::ToUtf8(cls->FullName()) + "' and '" +
-                            util::ToUtf8(functionSymbol->ParentClassType()->FullName()) + "'", sourcePos, &context);
+                            util::ToUtf8(functionSymbol->ParentClassType()->FullName()) + "'", fullSpan, &context);
                     }
                     otava::intermediate::Value* deltaValue = emitter->EmitLong(delta);
                     otava::intermediate::Value* element1Value = emitter->EmitConversionValue(voidPtrIrType, functionValue);
@@ -582,7 +582,7 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
             }
             else
             {
-                otava::symbols::ThrowException("function type expected", sourcePos, &context);
+                otava::symbols::ThrowException("function type expected", fullSpan, &context);
             }
         }
         else
@@ -605,7 +605,7 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
     context.ClearBoundVTabFunctions();
 }
 
-void CodeGenerator::ExitBlocks(int sourceBlockId, int targetBlockId, const soul::ast::SourcePos& sourcePos)
+void CodeGenerator::ExitBlocks(int sourceBlockId, int targetBlockId, const soul::ast::FullSpan& fullSpan)
 {
     bool prevEmitLineNumbers = emitLineNumbers;
     emitLineNumbers = false;
@@ -645,7 +645,7 @@ void CodeGenerator::ExitBlocks(int sourceBlockId, int targetBlockId, const soul:
                             emitter->SetCurrentBasicBlock(nextBlock);
                             createBasicBlock = false;
                         }
-                        exit->Execute(*emitter, sourcePos, &context, false);
+                        exit->Execute(*emitter, fullSpan, &context, false);
                         destructorCallGenerated = true;
                     }
                 }
@@ -673,7 +673,7 @@ void CodeGenerator::ExitBlocks(int sourceBlockId, int targetBlockId, const soul:
                             emitter->SetCurrentBasicBlock(nextBlock);
                             createBasicBlock = false;
                         }
-                        exit->Execute(*emitter, sourcePos, &context, true);
+                        exit->Execute(*emitter, fullSpan, &context, true);
                         destructorCallGenerated = true;
                     }
                 }
@@ -683,12 +683,12 @@ void CodeGenerator::ExitBlocks(int sourceBlockId, int targetBlockId, const soul:
     emitLineNumbers = prevEmitLineNumbers;
 }
 
-void CodeGenerator::EmitReturn(const soul::ast::SourcePos& sourcePos)
+void CodeGenerator::EmitReturn(const soul::ast::FullSpan& fullSpan)
 {
     if (functionDefinition->ReturnType() && !functionDefinition->ReturnType()->IsVoidType() && !functionDefinition->ReturnsClass())
     {
-        otava::intermediate::Value* returnValue = functionDefinition->ReturnType()->DirectType(&context)->FinalType(sourcePos, &context)->IrType(
-            *emitter, sourcePos, &context)->DefaultValue();
+        otava::intermediate::Value* returnValue = functionDefinition->ReturnType()->DirectType(&context)->FinalType(fullSpan, &context)->IrType(
+            *emitter, fullSpan, &context)->DefaultValue();
         emitter->EmitRet(returnValue);
     }
     else
@@ -705,18 +705,18 @@ void CodeGenerator::GenerateGlobalInitializationFunction()
     std::uint64_t ext2 = 0;
     otava::symbols::FunctionDefinitionSymbol* globalInit = new otava::symbols::FunctionDefinitionSymbol(U"__global_init__");
     globalInit->SetLinkage(otava::symbols::Linkage::c_linkage);
-    otava::ast::NestedNameSpecifierNode* nnsNode = new otava::ast::NestedNameSpecifierNode(soul::ast::SourcePos());
-    nnsNode->AddNode(new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"std"));
-    otava::ast::QualifiedIdNode badAllocNode(soul::ast::SourcePos(), nnsNode, new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"bad_alloc"));
+    otava::ast::NestedNameSpecifierNode* nnsNode = new otava::ast::NestedNameSpecifierNode(soul::ast::Span());
+    nnsNode->AddNode(new otava::ast::IdentifierNode(soul::ast::Span(), U"std"));
+    otava::ast::QualifiedIdNode badAllocNode(soul::ast::Span(), nnsNode, new otava::ast::IdentifierNode(soul::ast::Span(), U"bad_alloc"));
     otava::symbols::TypeSymbol* badAllocType = otava::symbols::ResolveType(&badAllocNode, otava::symbols::DeclarationFlags::none, &context);
     util::UuidToInts(badAllocType->Id(), ext1, ext2);
     setBadAllocExStr.append(U"ort_set_bad_alloc(new std::bad_alloc(), ").append(util::ToUtf32(std::to_string(ext1)).append(U"ull, ").
         append(util::ToUtf32(std::to_string(ext2)).append(U"ull);")));
     std::unique_ptr<otava::ast::Node> setBadAllocStmtNode = otava::symbols::ParseStatement(setBadAllocExStr, &context);
-    std::unique_ptr<otava::symbols::BoundFunctionNode> boundFunction(new otava::symbols::BoundFunctionNode(globalInit, soul::ast::SourcePos()));
+    std::unique_ptr<otava::symbols::BoundFunctionNode> boundFunction(new otava::symbols::BoundFunctionNode(globalInit, soul::ast::FullSpan()));
     context.PushBoundFunction(boundFunction.release());
     std::unique_ptr<otava::symbols::BoundStatementNode> setBadAllocStmt(otava::symbols::BindStatement(setBadAllocStmtNode.get(), nullptr, &context));
-    std::unique_ptr<otava::symbols::BoundCompoundStatementNode> compoundStmt(new otava::symbols::BoundCompoundStatementNode(soul::ast::SourcePos()));
+    std::unique_ptr<otava::symbols::BoundCompoundStatementNode> compoundStmt(new otava::symbols::BoundCompoundStatementNode(soul::ast::FullSpan()));
     compoundStmt->AddStatement(setBadAllocStmt.release());
     context.PushSetFlag(otava::symbols::ContextFlags::makeCompileUnitInitFn);
     int n = compileUnitInitFnNames.size();
@@ -738,36 +738,41 @@ void CodeGenerator::GenerateGlobalDoneFunction()
     std::unique_ptr<otava::ast::Node> deleteBadAllocStmtNode = otava::symbols::ParseStatement(deleteBadAllocStr, &context);
     otava::symbols::FunctionDefinitionSymbol* globalDone = new otava::symbols::FunctionDefinitionSymbol(U"__global_done__");
     globalDone->SetLinkage(otava::symbols::Linkage::c_linkage);
-    std::unique_ptr<otava::symbols::BoundFunctionNode> boundFunction(new otava::symbols::BoundFunctionNode(globalDone, soul::ast::SourcePos()));
+    std::unique_ptr<otava::symbols::BoundFunctionNode> boundFunction(new otava::symbols::BoundFunctionNode(globalDone, soul::ast::FullSpan()));
     context.PushBoundFunction(boundFunction.release());
     std::unique_ptr<otava::symbols::BoundStatementNode> deleteBadAllocStmt(otava::symbols::BindStatement(deleteBadAllocStmtNode.get(), nullptr, &context));
-    std::unique_ptr<otava::symbols::BoundCompoundStatementNode> compoundStmt(new otava::symbols::BoundCompoundStatementNode(soul::ast::SourcePos()));
+    std::unique_ptr<otava::symbols::BoundCompoundStatementNode> compoundStmt(new otava::symbols::BoundCompoundStatementNode(soul::ast::FullSpan()));
     compoundStmt->AddStatement(deleteBadAllocStmt.release());
     context.GetBoundFunction()->SetBody(compoundStmt.release());
     context.GetBoundFunction()->Accept(*this);
 }
 
-void CodeGenerator::SetCurrentLineNumber(const soul::ast::SourcePos& sourcePos)
+void CodeGenerator::SetCurrentLineNumber(const soul::ast::FullSpan& fullSpan)
 {
     if (!emitLineNumbers) return;
-    if (!sourcePos.IsValid()) return;
+    if (!fullSpan.IsValid()) return;
     if (inLineNumberCode) return;
     if (boundFunction)
     {
-        if (line != sourcePos.line)
+        const std::vector<int>* lineStartIndeces = context.GetFileMap()->LineStartIndeces(fullSpan.fileIndex);
+        if (lineStartIndeces)
         {
-            line = sourcePos.line;
-            emitter->SetLine(line);
-            if (boundFunction->GetBoundSetLineStatement())
+            soul::ast::LineColLen lineColLen = soul::ast::SpanToLineColLen(fullSpan.span, *lineStartIndeces);
+            if (line != lineColLen.line)
             {
-                inLineNumberCode = true;
-                bool prevGenJumpingBoolCode = genJumpingBoolCode;
-                genJumpingBoolCode = false;
-                boundFunction->GetBoundSetLineStatement()->Accept(*this);
-                genJumpingBoolCode = prevGenJumpingBoolCode;
-                inLineNumberCode = false;
+                line = lineColLen.line;
+                emitter->SetLine(line);
+                if (boundFunction->GetBoundSetLineStatement())
+                {
+                    inLineNumberCode = true;
+                    bool prevGenJumpingBoolCode = genJumpingBoolCode;
+                    genJumpingBoolCode = false;
+                    boundFunction->GetBoundSetLineStatement()->Accept(*this);
+                    genJumpingBoolCode = prevGenJumpingBoolCode;
+                    inLineNumberCode = false;
+                }
+                emitter->SetLine(0);
             }
-            emitter->SetLine(0);
         }
     }
 }
@@ -887,8 +892,8 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundClassNode& node)
 {
     otava::symbols::ClassTypeSymbol* cls = node.GetClass();
-    cls->MakeObjectLayout(soul::ast::SourcePos(), &context);
-    GenerateVTab(cls, node.GetSourcePos());
+    cls->MakeObjectLayout(soul::ast::FullSpan(), &context);
+    GenerateVTab(cls, node.GetFullSpan());
 }
 
 void CodeGenerator::AddClassInfo(otava::symbols::ClassTypeSymbol* cls)
@@ -902,7 +907,7 @@ void CodeGenerator::AddClassInfo(otava::symbols::ClassTypeSymbol* cls)
     otava::symbols::SymbolTable* symbolTable = context.GetSymbolTable();
     info::class_index& index = symbolTable->ClassIndex();
     if (index.get_class_info(id)) return;
-    otava::intermediate::Type* clsType = cls->IrType(*emitter, soul::ast::SourcePos(), &context);
+    otava::intermediate::Type* clsType = cls->IrType(*emitter, soul::ast::FullSpan(), &context);
     otava::symbols::ClassKind kind = cls->GetClassKind();
     info::class_key key = info::class_key::cls;
     switch (kind)
@@ -940,7 +945,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         mainIrName = functionDefinitionName;
         mainFunctionParams = functionDefinition->Arity();
     }
-    otava::intermediate::Type* functionType = functionDefinition->IrType(*emitter, node.GetSourcePos(), &context);
+    otava::intermediate::Type* functionType = functionDefinition->IrType(*emitter, node.GetFullSpan(), &context);
     bool once = false;
     bool inline_ = context.ReleaseConfig() && functionDefinition->IsInline();
     bool child = functionDefinition->ParentFn() != nullptr;
@@ -978,12 +983,12 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
                 otava::symbols::TypeSymbol* type = parameter->GetReferredType(&context);
                 if (type)
                 {
-                    otava::intermediate::Value* plocal = emitter->EmitPLocal(type->IrType(*emitter, node.GetSourcePos(), &context), level);
+                    otava::intermediate::Value* plocal = emitter->EmitPLocal(type->IrType(*emitter, node.GetFullSpan(), &context), level);
                     emitter->SetIrObject(parameter, plocal);
                 }
                 else
                 {
-                    otava::symbols::PrintWarning("type of parameter '" + util::ToUtf8(parameter->Name()) + "' not set", node.GetSourcePos(), &context);
+                    otava::symbols::PrintWarning("type of parameter '" + util::ToUtf8(parameter->Name()) + "' not set", node.GetFullSpan(), &context);
                 }
             }
             if (parentFn->ReturnsClass())
@@ -993,12 +998,12 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
                 if (type)
                 {
                     otava::intermediate::Value* plocal = emitter->EmitPLocal(
-                        parameter->GetReferredType(&context)->IrType(*emitter, node.GetSourcePos(), &context), level);
+                        parameter->GetReferredType(&context)->IrType(*emitter, node.GetFullSpan(), &context), level);
                     emitter->SetIrObject(parameter, plocal);
                 }
                 else
                 {
-                    otava::symbols::PrintWarning("type of parameter '" + util::ToUtf8(parameter->Name()) + "' not set", node.GetSourcePos(), &context);
+                    otava::symbols::PrintWarning("type of parameter '" + util::ToUtf8(parameter->Name()) + "' not set", node.GetFullSpan(), &context);
                 }
             }
             int nlv = parentFn->LocalVariables().size();
@@ -1008,7 +1013,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
                 otava::symbols::TypeSymbol* type = localVariable->GetReferredType();
                 if (type)
                 {
-                    otava::intermediate::Value* plocal = emitter->EmitPLocal(type->IrType(*emitter, node.GetSourcePos(), &context), level);
+                    otava::intermediate::Value* plocal = emitter->EmitPLocal(type->IrType(*emitter, node.GetFullSpan(), &context), level);
                     emitter->SetIrObject(localVariable, plocal);
                 }
                 else
@@ -1027,12 +1032,12 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         otava::symbols::TypeSymbol* type = parameter->GetReferredType(&context);
         if (type)
         {
-            otava::intermediate::Value* local = emitter->EmitLocal(type->IrType(*emitter, node.GetSourcePos(), &context));
+            otava::intermediate::Value* local = emitter->EmitLocal(type->IrType(*emitter, node.GetFullSpan(), &context));
             emitter->SetIrObject(parameter, local);
         }
         else
         {
-            otava::symbols::PrintWarning("type of parameter '" + util::ToUtf8(parameter->Name()) + "' not set", node.GetSourcePos(), &context);
+            otava::symbols::PrintWarning("type of parameter '" + util::ToUtf8(parameter->Name()) + "' not set", node.GetFullSpan(), &context);
         }
     }
     if (functionDefinition->ReturnsClass())
@@ -1041,12 +1046,12 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         otava::symbols::TypeSymbol* type = parameter->GetReferredType(&context);
         if (type)
         {
-            otava::intermediate::Value* local = emitter->EmitLocal(parameter->GetReferredType(&context)->IrType(*emitter, node.GetSourcePos(), &context));
+            otava::intermediate::Value* local = emitter->EmitLocal(parameter->GetReferredType(&context)->IrType(*emitter, node.GetFullSpan(), &context));
             emitter->SetIrObject(parameter, local);
         }
         else
         {
-            otava::symbols::PrintWarning("type of parameter '" + util::ToUtf8(parameter->Name()) + "' not set", node.GetSourcePos(), &context);
+            otava::symbols::PrintWarning("type of parameter '" + util::ToUtf8(parameter->Name()) + "' not set", node.GetFullSpan(), &context);
         }
     }
     int nlv = functionDefinition->LocalVariables().size();
@@ -1056,7 +1061,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         otava::symbols::TypeSymbol* type = localVariable->GetReferredType();
         if (type)
         {
-            otava::intermediate::Value* local = emitter->EmitLocal(type->IrType(*emitter, node.GetSourcePos(), &context));
+            otava::intermediate::Value* local = emitter->EmitLocal(type->IrType(*emitter, node.GetFullSpan(), &context));
             emitter->SetIrObject(localVariable, local);
         }
         else
@@ -1074,19 +1079,19 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
             if (classTypeSymbol->CopyCtor())
             {
                 otava::intermediate::FunctionType* copyCtorType = static_cast<otava::intermediate::FunctionType*>(classTypeSymbol->CopyCtor()->IrType(
-                    *emitter, node.GetSourcePos(), &context));
+                    *emitter, node.GetFullSpan(), &context));
                 otava::intermediate::Function* copyCtor = emitter->GetOrInsertFunction(classTypeSymbol->CopyCtor()->IrName(&context), copyCtorType);
                 std::vector<otava::intermediate::Value*> args;
-                args.push_back(static_cast<otava::intermediate::Value*>(parameter->IrObject(*emitter, node.GetSourcePos(), &context)));
+                args.push_back(static_cast<otava::intermediate::Value*>(parameter->IrObject(*emitter, node.GetFullSpan(), &context)));
                 args.push_back(param);
                 emitter->EmitCall(copyCtor, args);
-                otava::symbols::Symbol* dtorSymbol = otava::symbols::GenerateDestructor(classTypeSymbol, node.GetSourcePos(), &context);
+                otava::symbols::Symbol* dtorSymbol = otava::symbols::GenerateDestructor(classTypeSymbol, node.GetFullSpan(), &context);
                 if (dtorSymbol && dtorSymbol->IsFunctionSymbol())
                 {
                     otava::symbols::FunctionSymbol* dtorFn = static_cast<otava::symbols::FunctionSymbol*>(dtorSymbol);
-                    otava::symbols::BoundFunctionCallNode* dtorCall = new otava::symbols::BoundFunctionCallNode(dtorFn, node.GetSourcePos(), classTypeSymbol);
+                    otava::symbols::BoundFunctionCallNode* dtorCall = new otava::symbols::BoundFunctionCallNode(dtorFn, node.GetFullSpan(), classTypeSymbol);
                     dtorCall->AddArgument(new otava::symbols::BoundValueExpressionNode(
-                        static_cast<otava::intermediate::Value*>(parameter->IrObject(*emitter, node.GetSourcePos(), &context)),
+                        static_cast<otava::intermediate::Value*>(parameter->IrObject(*emitter, node.GetFullSpan(), &context)),
                         classTypeSymbol->AddPointer(&context)));
                     exitCalls.push_back(std::unique_ptr<otava::symbols::BoundFunctionCallNode>(dtorCall));
                 }
@@ -1094,19 +1099,19 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
             else
             {
                 otava::symbols::ThrowException("class type '" + util::ToUtf8(classTypeSymbol->FullName()) + "' has no copy constructor needed by function '" +
-                    util::ToUtf8(functionDefinition->FullName()) + "'", node.GetSourcePos(), &context);
+                    util::ToUtf8(functionDefinition->FullName()) + "'", node.GetFullSpan(), &context);
             }
         }
         else
         {
-            emitter->EmitStore(param, static_cast<otava::intermediate::Value*>(parameter->IrObject(*emitter, node.GetSourcePos(), &context)));
+            emitter->EmitStore(param, static_cast<otava::intermediate::Value*>(parameter->IrObject(*emitter, node.GetFullSpan(), &context)));
         }
     }
     if (functionDefinition->ReturnsClass())
     {
         otava::intermediate::Value* param = emitter->GetParam(np);
         otava::symbols::ParameterSymbol* parameter = functionDefinition->ReturnValueParam();
-        emitter->EmitStore(param, static_cast<otava::intermediate::Value*>(parameter->IrObject(*emitter, node.GetSourcePos(), &context)));
+        emitter->EmitStore(param, static_cast<otava::intermediate::Value*>(parameter->IrObject(*emitter, node.GetFullSpan(), &context)));
     }
     otava::symbols::BoundCtorInitializerNode* ctorInitializer = node.CtorInitializer();
     if (ctorInitializer)
@@ -1140,8 +1145,8 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     {
         if (functionDefinition->ReturnType() && !functionDefinition->ReturnType()->IsVoidType() && !functionDefinition->ReturnsClass())
         {
-            otava::intermediate::Value* returnValue = functionDefinition->ReturnType()->DirectType(&context)->FinalType(node.GetSourcePos(), &context)->IrType(
-                *emitter, node.GetSourcePos(), &context)->DefaultValue();
+            otava::intermediate::Value* returnValue = functionDefinition->ReturnType()->DirectType(&context)->FinalType(node.GetFullSpan(), &context)->IrType(
+                *emitter, node.GetFullSpan(), &context)->DefaultValue();
             emitter->EmitRet(returnValue);
             lastInstructionWasRet = true;
         }
@@ -1169,7 +1174,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)
         }
     }
     StatementPrefix();
-    SetCurrentLineNumber(node.GetSourcePos());
+    SetCurrentLineNumber(node.GetFullSpan());
     otava::symbols::BlockSymbol* prevBlockSymbol = currentBlockSymbol;
     SetCurrentBlockSymbol(node.BlockId());
     otava::symbols::BoundStatementNode* prevStatement = currentStatement;
@@ -1184,7 +1189,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)
     }
     if (!prevWasTerminator && !blockExits[currentBlockId]->IsEmpty())
     {
-        ExitBlocks(currentBlockId, currentBlockId, node.GetSourcePos());
+        ExitBlocks(currentBlockId, currentBlockId, node.GetFullSpan());
     }
     --currentBlockId;
     currentBlock = prevBlock;
@@ -1196,7 +1201,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundIfStatementNode& node)
 {
     StatementPrefix();
-    SetCurrentLineNumber(node.GetSourcePos());
+    SetCurrentLineNumber(node.GetFullSpan());
     otava::symbols::BlockSymbol* prevBlockSymbol = currentBlockSymbol;
     SetCurrentBlockSymbol(node.BlockId());
     currentStatement = &node;
@@ -1245,7 +1250,7 @@ void CodeGenerator::Visit(otava::symbols::BoundIfStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundSwitchStatementNode& node)
 {
     StatementPrefix();
-    SetCurrentLineNumber(node.GetSourcePos());
+    SetCurrentLineNumber(node.GetFullSpan());
     otava::symbols::BlockSymbol* prevBlockSymbol = currentBlockSymbol;
     SetCurrentBlockSymbol(node.BlockId());
     currentStatement = &node;
@@ -1278,7 +1283,7 @@ void CodeGenerator::Visit(otava::symbols::BoundSwitchStatementNode& node)
         emitter->SetCurrentBasicBlock(caseTarget->block);
         for (auto* expr : caseTarget->exprs)
         {
-            EvaluateConstantExpr(*emitter, node.GetSourcePos(), context, expr);
+            EvaluateConstantExpr(*emitter, node.GetFullSpan(), context, expr);
             otava::intermediate::Value* caseValue = emitter->Stack().Pop();
             otava::intermediate::CaseTarget target(caseValue, caseTarget->block->Id());
             switchInst->AddCaseTarget(target);
@@ -1333,7 +1338,7 @@ void CodeGenerator::Visit(otava::symbols::BoundSwitchStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundCaseStatementNode& node)
 {
     StatementPrefix();
-    SetCurrentLineNumber(node.GetSourcePos());
+    SetCurrentLineNumber(node.GetFullSpan());
     currentStatement = &node;
     node.Statement()->Accept(*this);
 }
@@ -1341,7 +1346,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCaseStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundDefaultStatementNode& node)
 {
     StatementPrefix();
-    SetCurrentLineNumber(node.GetSourcePos());
+    SetCurrentLineNumber(node.GetFullSpan());
     currentStatement = &node;
     node.Statement()->Accept(*this);
 }
@@ -1349,7 +1354,7 @@ void CodeGenerator::Visit(otava::symbols::BoundDefaultStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundWhileStatementNode& node)
 {
     StatementPrefix();
-    SetCurrentLineNumber(node.GetSourcePos());
+    SetCurrentLineNumber(node.GetFullSpan());
     otava::symbols::BlockSymbol* prevBlockSymbol = currentBlockSymbol;
     SetCurrentBlockSymbol(node.BlockId());
     currentStatement = &node;
@@ -1389,7 +1394,7 @@ void CodeGenerator::Visit(otava::symbols::BoundWhileStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundDoStatementNode& node)
 {
     StatementPrefix();
-    SetCurrentLineNumber(node.GetSourcePos());
+    SetCurrentLineNumber(node.GetFullSpan());
     currentStatement = &node;
     otava::intermediate::BasicBlock* prevTrueBlock = trueBlock;
     otava::intermediate::BasicBlock* prevFalseBlock = falseBlock;
@@ -1428,7 +1433,7 @@ void CodeGenerator::Visit(otava::symbols::BoundDoStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundForStatementNode& node)
 {
     StatementPrefix();
-    SetCurrentLineNumber(node.GetSourcePos());
+    SetCurrentLineNumber(node.GetFullSpan());
     otava::symbols::BlockSymbol* prevBlockSymbol = currentBlockSymbol;
     SetCurrentBlockSymbol(node.BlockId());
     currentStatement = &node;
@@ -1505,7 +1510,7 @@ void CodeGenerator::Visit(otava::symbols::BoundSequenceStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundReturnStatementNode& node)
 {
     StatementPrefix();
-    SetCurrentLineNumber(node.GetSourcePos());
+    SetCurrentLineNumber(node.GetFullSpan());
     currentStatement = &node;
     bool prevEmitLineNumbers = emitLineNumbers;
     emitLineNumbers = false;
@@ -1520,13 +1525,13 @@ void CodeGenerator::Visit(otava::symbols::BoundReturnStatementNode& node)
             node.DestructTemporaries(*emitter, &context);
             sequenceSecond->Accept(*this);
         }
-        ExitBlocks(currentBlockId, -1, node.GetSourcePos());
+        ExitBlocks(currentBlockId, -1, node.GetFullSpan());
         emitter->EmitRet(returnValue);
         lastInstructionWasRet = true;
     }
     else
     {
-        ExitBlocks(currentBlockId, -1, node.GetSourcePos());
+        ExitBlocks(currentBlockId, -1, node.GetFullSpan());
         node.DestructTemporaries(*emitter, &context);
         emitter->EmitRetVoid();
         lastInstructionWasRet = true;
@@ -1551,9 +1556,9 @@ void CodeGenerator::Visit(otava::symbols::BoundReturnStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundBreakStatementNode& node)
 {
     StatementPrefix();
-    SetCurrentLineNumber(node.GetSourcePos());
+    SetCurrentLineNumber(node.GetFullSpan());
     currentStatement = &node;
-    ExitBlocks(currentBlockId, breakBlockId + 1, node.GetSourcePos());
+    ExitBlocks(currentBlockId, breakBlockId + 1, node.GetFullSpan());
     node.DestructTemporaries(*emitter, &context);
     if (node.Parent())
     {
@@ -1581,9 +1586,9 @@ void CodeGenerator::Visit(otava::symbols::BoundBreakStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundContinueStatementNode& node)
 {
     StatementPrefix();
-    SetCurrentLineNumber(node.GetSourcePos());
+    SetCurrentLineNumber(node.GetFullSpan());
     currentStatement = &node;
-    ExitBlocks(currentBlockId, continueBlockId + 1, node.GetSourcePos());
+    ExitBlocks(currentBlockId, continueBlockId + 1, node.GetFullSpan());
     node.DestructTemporaries(*emitter, &context);
     if (node.Parent())
     {
@@ -1595,7 +1600,7 @@ void CodeGenerator::Visit(otava::symbols::BoundContinueStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundConstructionStatementNode& node)
 {
     StatementPrefix();
-    SetCurrentLineNumber(node.GetSourcePos());
+    SetCurrentLineNumber(node.GetFullSpan());
     currentStatement = &node;
     node.ConstructorCall()->Accept(*this);
     if (node.DestructorCall())
@@ -1611,7 +1616,7 @@ void CodeGenerator::Visit(otava::symbols::BoundExpressionStatementNode& node)
     if (!inLineNumberCode)
     {
         StatementPrefix();
-        SetCurrentLineNumber(node.GetSourcePos());
+        SetCurrentLineNumber(node.GetFullSpan());
     }
     if (!node.GetExpr()) return;
     currentStatement = &node;
@@ -1627,9 +1632,9 @@ void CodeGenerator::Visit(otava::symbols::BoundExpressionStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundSetVPtrStatementNode& node)
 {
     StatementPrefix();
-    SetCurrentLineNumber(node.GetSourcePos());
+    SetCurrentLineNumber(node.GetFullSpan());
     currentStatement = &node;
-    node.ThisPtr()->Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    node.ThisPtr()->Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     otava::intermediate::Value* thisPtr = emitter->Stack().Pop();
     otava::symbols::TypeSymbol* thisPtrType = node.ThisPtr()->GetType()->GetBaseType();
     if (thisPtrType->IsClassTypeSymbol())
@@ -1648,7 +1653,7 @@ void CodeGenerator::Visit(otava::symbols::BoundSetVPtrStatementNode& node)
         if (!succeeded)
         {
             otava::symbols::ThrowException("classes '" + util::ToUtf8(forClass->FullName()) + "' and '" + util::ToUtf8(vptrHolderClass->FullName()) +
-                "' have no inheritance relationship", node.GetSourcePos(), &context);
+                "' have no inheritance relationship", node.GetFullSpan(), &context);
         }
         std::int32_t deltaIndex = classType->DeltaIndex();
         otava::intermediate::Value* deltaPtrElem = emitter->EmitElemAddr(thisPtr, emitter->EmitLong(deltaIndex));
@@ -1658,14 +1663,14 @@ void CodeGenerator::Visit(otava::symbols::BoundSetVPtrStatementNode& node)
     }
     else
     {
-        otava::symbols::ThrowException("class type symbol expected", node.GetSourcePos(), &context);
+        otava::symbols::ThrowException("class type symbol expected", node.GetFullSpan(), &context);
     }
     node.DestructTemporaries(*emitter, &context);
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundLiteralNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
+    SetCurrentLineNumber(node.GetFullSpan());
     if (inLineNumberCode)
     {
         node.SetValue(context.GetEvaluationContext()->GetIntegerValue(line, util::ToUtf32(std::to_string(line)),
@@ -1673,151 +1678,151 @@ void CodeGenerator::Visit(otava::symbols::BoundLiteralNode& node)
     }
     else
     {
-        node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+        node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     }
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundStringLiteralNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundVariableNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundParentVariableNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundParameterNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundParentParameterNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundEnumConstant& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundMemberExprNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundFunctionCallNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     if (node.IsNoReturnFunctionCall())
     {
-        EmitReturn(node.GetSourcePos());
+        EmitReturn(node.GetFullSpan());
     }
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundFunctionPtrCallNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundInvokeNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundExpressionSequenceNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundConversionNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundAddressOfNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundDereferenceNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundPtrToRefNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundConstructTemporaryNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundConstructExpressionNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundDefaultInitNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundTemporaryNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
-    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    SetCurrentLineNumber(node.GetFullSpan());
+    node.Load(*emitter, otava::symbols::OperationFlags::none, node.GetFullSpan(), &context);
     GenJumpingBoolCode();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundConjunctionNode& boundConjunction)
 {
-    SetCurrentLineNumber(boundConjunction.GetSourcePos());
+    SetCurrentLineNumber(boundConjunction.GetFullSpan());
     if (genJumpingBoolCode)
     {
         otava::intermediate::BasicBlock* rightBlock = emitter->CreateBasicBlock();
@@ -1830,13 +1835,13 @@ void CodeGenerator::Visit(otava::symbols::BoundConjunctionNode& boundConjunction
     }
     else
     {
-        boundConjunction.Load(*emitter, otava::symbols::OperationFlags::none, boundConjunction.GetSourcePos(), &context);
+        boundConjunction.Load(*emitter, otava::symbols::OperationFlags::none, boundConjunction.GetFullSpan(), &context);
     }
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundDisjunctionNode& boundDisjunction)
 {
-    SetCurrentLineNumber(boundDisjunction.GetSourcePos());
+    SetCurrentLineNumber(boundDisjunction.GetFullSpan());
     if (genJumpingBoolCode)
     {
         otava::intermediate::BasicBlock* rightBlock = emitter->CreateBasicBlock();
@@ -1849,29 +1854,29 @@ void CodeGenerator::Visit(otava::symbols::BoundDisjunctionNode& boundDisjunction
     }
     else
     {
-        boundDisjunction.Load(*emitter, otava::symbols::OperationFlags::none, boundDisjunction.GetSourcePos(), &context);
+        boundDisjunction.Load(*emitter, otava::symbols::OperationFlags::none, boundDisjunction.GetFullSpan(), &context);
     }
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundConditionalExprNode& boundConditionalExpr)
 {
-    SetCurrentLineNumber(boundConditionalExpr.GetSourcePos());
-    boundConditionalExpr.Load(*emitter, otava::symbols::OperationFlags::none, boundConditionalExpr.GetSourcePos(), &context);
+    SetCurrentLineNumber(boundConditionalExpr.GetFullSpan());
+    boundConditionalExpr.Load(*emitter, otava::symbols::OperationFlags::none, boundConditionalExpr.GetFullSpan(), &context);
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundGlobalVariableDefinitionNode& node)
 {
-    SetCurrentLineNumber(node.GetSourcePos());
+    SetCurrentLineNumber(node.GetFullSpan());
     otava::symbols::VariableSymbol* variable = node.GetGlobalVariable();
-    otava::symbols::TypeSymbol* type = otava::symbols::ResolveFwdDeclaredType(variable->GetType(), node.GetSourcePos(), &context);
+    otava::symbols::TypeSymbol* type = otava::symbols::ResolveFwdDeclaredType(variable->GetType(), node.GetFullSpan(), &context);
     if (type->IsForwardClassDeclarationSymbol()) return;
     variable->SetDeclaredType(type);
     otava::intermediate::Value* initializer = nullptr;
-    otava::intermediate::Type* irType = variable->GetType()->IrType(*emitter, node.GetSourcePos(), &context);
+    otava::intermediate::Type* irType = variable->GetType()->IrType(*emitter, node.GetFullSpan(), &context);
     if (variable->GetValue() && !variable->GetType()->IsClassTypeSymbol())
     {
         std::unique_ptr<otava::symbols::Value> clonedVariableValue = otava::symbols::CloneAndSetType(variable->GetValue(), variable->GetType());
-        initializer = clonedVariableValue->IrValue(*emitter, node.GetSourcePos(), &context);
+        initializer = clonedVariableValue->IrValue(*emitter, node.GetFullSpan(), &context);
     }
     else
     {

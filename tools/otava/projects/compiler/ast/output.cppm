@@ -5,7 +5,7 @@ import otava.ast.node;
 
 export namespace otava::ast {
 
-void PrintSource(Node& node, std::ostream& stream);
+void PrintSource(Node& node, std::ostream& stream, std::vector<int>& lineStartIndeces);
 void PrintXml(Node& node, std::ostream& stream);
 
 } // namespace otava::ast

@@ -275,7 +275,7 @@ char32_t ParseEscape(const char32_t*& p, const char32_t* e, bool& valid)
     return value;
 }
 
-otava::ast::IntegerLiteralNode* ParseIntegerLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
+otava::ast::IntegerLiteralNode* ParseIntegerLiteral(const soul::ast::Span& span, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token)
 {
     std::uint64_t value = 0;
@@ -401,24 +401,24 @@ otava::ast::IntegerLiteralNode* ParseIntegerLiteral(const soul::ast::SourcePos& 
     if (firstWasSingleQuote)
     {
         otava::symbols::SetExceptionThrown();
-        throw std::runtime_error("invalid integer literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ", literal begins with single quote: " + 
+        throw std::runtime_error("invalid integer literal in '" + fileName + ", literal begins with single quote: " + 
             util::ToUtf8(token.ToString()));
     }
     else if (lastWasSingleQuote)
     {
         otava::symbols::SetExceptionThrown();
-        throw std::runtime_error("invalid integer literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ", literal ends with single quote: " + 
+        throw std::runtime_error("invalid integer literal in '" + fileName + ", literal ends with single quote: " + 
             util::ToUtf8(token.ToString()));
     }
     else if (p != e)
     {
         otava::symbols::SetExceptionThrown();
-        throw std::runtime_error("invalid integer literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));
+        throw std::runtime_error("invalid integer literal in '" + fileName + ": " + util::ToUtf8(token.ToString()));
     }
-    return new otava::ast::IntegerLiteralNode(sourcePos, value, suffix, base, token.ToString());
+    return new otava::ast::IntegerLiteralNode(span, value, suffix, base, token.ToString());
 }
 
-otava::ast::FloatingLiteralNode* ParseFloatingLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
+otava::ast::FloatingLiteralNode* ParseFloatingLiteral(const soul::ast::Span& span, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token)
 {
     std::string s;
@@ -524,12 +524,12 @@ otava::ast::FloatingLiteralNode* ParseFloatingLiteral(const soul::ast::SourcePos
     if (p != e)
     {
         otava::symbols::SetExceptionThrown();
-        throw std::runtime_error("invalid floating literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));
+        throw std::runtime_error("invalid floating literal in '" + fileName + ": " + util::ToUtf8(token.ToString()));
     }
-    return new otava::ast::FloatingLiteralNode(sourcePos, value, suffix, base, token.ToString());
+    return new otava::ast::FloatingLiteralNode(span, value, suffix, base, token.ToString());
 }
 
-otava::ast::CharacterLiteralNode* ParseCharacterLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
+otava::ast::CharacterLiteralNode* ParseCharacterLiteral(const soul::ast::Span& span, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token)
 {
     bool valid = false;
@@ -577,12 +577,12 @@ otava::ast::CharacterLiteralNode* ParseCharacterLiteral(const soul::ast::SourceP
     if (p != e || !valid)
     {
         otava::symbols::SetExceptionThrown();
-        throw std::runtime_error("invalid character literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));
+        throw std::runtime_error("invalid character literal in '" + fileName + ": " + util::ToUtf8(token.ToString()));
     }
-    return new otava::ast::CharacterLiteralNode(sourcePos, value, encodingPrefix, token.ToString(), hasMultipleCharacters);
+    return new otava::ast::CharacterLiteralNode(span, value, encodingPrefix, token.ToString(), hasMultipleCharacters);
 }
 
-otava::ast::RawStringLiteralNode* ParseRawStringLiteral(const soul::ast::SourcePos& sourcePos, soul::lexer::LexerBase<char32_t>& lexer)
+otava::ast::RawStringLiteralNode* ParseRawStringLiteral(const soul::ast::Span& span, soul::lexer::LexerBase<char32_t>& lexer)
 {
     auto token = lexer.GetToken(lexer.GetPos());
     const char32_t* start = token.match.begin;
@@ -731,10 +731,10 @@ otava::ast::RawStringLiteralNode* ParseRawStringLiteral(const soul::ast::SourceP
         otava::symbols::SetExceptionThrown();
         throw std::runtime_error("invalid raw string literal in '" + lexer.FileName() + "' at line " + std::to_string(lexer.Line()));
     }
-    return new otava::ast::RawStringLiteralNode(sourcePos, value, encodingPrefix, dm, rep);
+    return new otava::ast::RawStringLiteralNode(span, value, encodingPrefix, dm, rep);
 }
 
-otava::ast::StringLiteralNode* ParseStringLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
+otava::ast::StringLiteralNode* ParseStringLiteral(const soul::ast::Span& span, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token)
 {
     bool valid = false;
@@ -780,12 +780,12 @@ otava::ast::StringLiteralNode* ParseStringLiteral(const soul::ast::SourcePos& so
     if (p != e || !valid)
     {
         otava::symbols::SetExceptionThrown();
-        throw std::runtime_error("invalid string literal in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));
+        throw std::runtime_error("invalid string literal in '" + fileName + ": " + util::ToUtf8(token.ToString()));
     }
-    return new otava::ast::StringLiteralNode(sourcePos, value, encodingPrefix, token.ToString());
+    return new otava::ast::StringLiteralNode(span, value, encodingPrefix, token.ToString());
 }
 
-otava::ast::IdentifierNode* ParseIdentifier(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
+otava::ast::IdentifierNode* ParseIdentifier(const soul::ast::Span& span, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token)
 {
     std::u32string s;
@@ -846,9 +846,9 @@ otava::ast::IdentifierNode* ParseIdentifier(const soul::ast::SourcePos& sourcePo
     if (p != e || !valid)
     {
         otava::symbols::SetExceptionThrown();
-        throw std::runtime_error("invalid identifier in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));
+        throw std::runtime_error("invalid identifier in '" + fileName + ": " + util::ToUtf8(token.ToString()));
     }
-    return new otava::ast::IdentifierNode(sourcePos, s);
+    return new otava::ast::IdentifierNode(span, s);
 }
 
 } // namespace otava::parser::token

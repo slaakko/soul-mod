@@ -6,18 +6,18 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-IdentifierNode::IdentifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::identifierNode, sourcePos_)
+IdentifierNode::IdentifierNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::identifierNode, span_)
 {
 }
 
-IdentifierNode::IdentifierNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& str_) noexcept :
-    CompoundNode(NodeKind::identifierNode, sourcePos_), str(str_)
+IdentifierNode::IdentifierNode(const soul::ast::Span& span_, const std::u32string& str_) noexcept :
+    CompoundNode(NodeKind::identifierNode, span_), str(str_)
 {
 }
 
 Node* IdentifierNode::Clone() const
 {
-    IdentifierNode* clone = new IdentifierNode(GetSourcePos(), str);
+    IdentifierNode* clone = new IdentifierNode(GetSpan(), str);
     clone->SetId(Id());
     return clone;
 }
@@ -39,13 +39,13 @@ void IdentifierNode::Read(Reader& reader)
     str = reader.ReadStr();
 }
 
-UnnamedNode::UnnamedNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::unnamedNode, sourcePos_)
+UnnamedNode::UnnamedNode(const soul::ast::Span& span_) noexcept : Node(NodeKind::unnamedNode, span_)
 {
 }
 
 Node* UnnamedNode::Clone() const
 {
-    UnnamedNode* clone = new UnnamedNode(GetSourcePos());
+    UnnamedNode* clone = new UnnamedNode(GetSpan());
     clone->SetId(Id());
     return clone;
 }
@@ -55,13 +55,13 @@ void UnnamedNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ColonColonNode::ColonColonNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::colonColonNode, sourcePos_)
+ColonColonNode::ColonColonNode(const soul::ast::Span& span_) noexcept : Node(NodeKind::colonColonNode, span_)
 {
 }
 
 Node* ColonColonNode::Clone() const
 {
-    ColonColonNode* clone = new ColonColonNode(GetSourcePos());
+    ColonColonNode* clone = new ColonColonNode(GetSpan());
     clone->SetId(Id());
     return clone;
 }
@@ -71,13 +71,13 @@ void ColonColonNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-NestedNameSpecifierNode::NestedNameSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : SequenceNode(NodeKind::nestedNameSpecifierNode, sourcePos_)
+NestedNameSpecifierNode::NestedNameSpecifierNode(const soul::ast::Span& span_) noexcept : SequenceNode(NodeKind::nestedNameSpecifierNode, span_)
 {
 }
 
 Node* NestedNameSpecifierNode::Clone() const
 {
-    NestedNameSpecifierNode* clone = new NestedNameSpecifierNode(GetSourcePos());
+    NestedNameSpecifierNode* clone = new NestedNameSpecifierNode(GetSpan());
     for (const auto& node : Nodes())
     {
         clone->AddNode(node->Clone());
@@ -91,18 +91,18 @@ void NestedNameSpecifierNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-QualifiedIdNode::QualifiedIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : BinaryNode(NodeKind::qualifiedIdNode, sourcePos_, nullptr, nullptr)
+QualifiedIdNode::QualifiedIdNode(const soul::ast::Span& span_) noexcept : BinaryNode(NodeKind::qualifiedIdNode, span_, nullptr, nullptr)
 {
 }
 
-QualifiedIdNode::QualifiedIdNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* unqualifiedId_) noexcept :
-    BinaryNode(NodeKind::qualifiedIdNode, sourcePos_, nns_, unqualifiedId_)
+QualifiedIdNode::QualifiedIdNode(const soul::ast::Span& span_, Node* nns_, Node* unqualifiedId_) noexcept :
+    BinaryNode(NodeKind::qualifiedIdNode, span_, nns_, unqualifiedId_)
 {
 }
 
 Node* QualifiedIdNode::Clone() const
 {
-    QualifiedIdNode* clone = new QualifiedIdNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    QualifiedIdNode* clone = new QualifiedIdNode(GetSpan(), Left()->Clone(), Right()->Clone());
     clone->SetId(Id());
     return clone;
 }
@@ -112,13 +112,13 @@ void QualifiedIdNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-IdentifierListNode::IdentifierListNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::identifierListNode, sourcePos_)
+IdentifierListNode::IdentifierListNode(const soul::ast::Span& span_) noexcept : ListNode(NodeKind::identifierListNode, span_)
 {
 }
 
 Node* IdentifierListNode::Clone() const
 {
-    IdentifierListNode* clone = new IdentifierListNode(GetSourcePos());
+    IdentifierListNode* clone = new IdentifierListNode(GetSpan());
     for (const auto& node : Nodes())
     {
         clone->AddNode(node->Clone());
@@ -132,17 +132,17 @@ void IdentifierListNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ModuleNameNode::ModuleNameNode(const soul::ast::SourcePos& sourcePos_) noexcept : Node(NodeKind::moduleNameNode, sourcePos_)
+ModuleNameNode::ModuleNameNode(const soul::ast::Span& span_) noexcept : Node(NodeKind::moduleNameNode, span_)
 {
 }
 
-ModuleNameNode::ModuleNameNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& str_) : Node(NodeKind::moduleNameNode, sourcePos_), str(str_)
+ModuleNameNode::ModuleNameNode(const soul::ast::Span& span_, const std::u32string& str_) : Node(NodeKind::moduleNameNode, span_), str(str_)
 {
 }
 
 Node* ModuleNameNode::Clone() const
 {
-    ModuleNameNode* clone = new ModuleNameNode(GetSourcePos(), str);
+    ModuleNameNode* clone = new ModuleNameNode(GetSpan(), str);
     clone->SetId(Id());
     return clone;
 }

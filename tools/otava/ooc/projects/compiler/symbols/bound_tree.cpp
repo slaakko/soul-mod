@@ -240,8 +240,8 @@ bool BoundNodeLess::operator()(const std::unique_ptr<BoundNode>& left, const std
     return left->Index() < right->Index();
 }
 
-BoundNode::BoundNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    kind(kind_), index(-1), sourcePos(sourcePos_), source(nullptr), temporaryDestructorCallsObtained(false)
+BoundNode::BoundNode(BoundNodeKind kind_, const soul::ast::FullSpan& fullSpan_) noexcept :
+    kind(kind_), index(-1), fullSpan(fullSpan_), source(nullptr), temporaryDestructorCallsObtained(false)
 {
 }
 
@@ -249,8 +249,8 @@ BoundNode::~BoundNode()
 {
 }
 
-BoundExpressionNode::BoundExpressionNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundNode(kind_, sourcePos_), flags(BoundExpressionFlags::none), type(type_), destructTemporariesNode(nullptr)
+BoundExpressionNode::BoundExpressionNode(BoundNodeKind kind_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundNode(kind_, fullSpan_), flags(BoundExpressionFlags::none), type(type_), destructTemporariesNode(nullptr)
 {
 }
 
@@ -262,14 +262,14 @@ BoundExpressionNode::~BoundExpressionNode()
     }
 }
 
-void BoundExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ThrowException("LOAD not implemented for " + BoundNodeKindStr(Kind()), sourcePos, context);
+    ThrowException("LOAD not implemented for " + BoundNodeKindStr(Kind()), fullSpan, context);
 }
 
-void BoundExpressionNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundExpressionNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ThrowException("STORE not implemented for " + BoundNodeKindStr(Kind()), sourcePos, context);
+    ThrowException("STORE not implemented for " + BoundNodeKindStr(Kind()), fullSpan, context);
 }
 
 void BoundExpressionNode::SetDestructTemporariesNode(BoundDestructTemporariesNode* destructTemporariesNode_) noexcept
@@ -280,42 +280,42 @@ void BoundExpressionNode::SetDestructTemporariesNode(BoundDestructTemporariesNod
 void BoundExpressionNode::DestructTemporaries(Emitter& emitter, Context* context)
 {
     if (!destructTemporariesNode) return;
-    destructTemporariesNode->Load(emitter, OperationFlags::none, GetSourcePos(), context);
+    destructTemporariesNode->Load(emitter, OperationFlags::none, GetFullSpan(), context);
 }
 
-Scope* BoundExpressionNode::GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const
+Scope* BoundExpressionNode::GetMemberScope(otava::ast::Node* op, const soul::ast::FullSpan& fullSpan, Context* context) const
 {
     if (type)
     {
         if (op->IsDotNode())
         {
-            TypeSymbol* baseType = type->DirectType(context)->FinalType(sourcePos, context)->GetBaseType();
+            TypeSymbol* baseType = type->DirectType(context)->FinalType(fullSpan, context)->GetBaseType();
             return baseType->GetScope();
         }
         else if (op->IsArrowNode() && type->IsPointerType())
         {
-            TypeSymbol* baseType = type->DirectType(context)->FinalType(sourcePos, context)->RemovePointer(context)->GetBaseType();
+            TypeSymbol* baseType = type->DirectType(context)->FinalType(fullSpan, context)->RemovePointer(context)->GetBaseType();
             return baseType->GetScope();
         }
         else if (op->IsArrowNode() && type->PlainType(context)->IsClassTypeSymbol())
         {
-            TypeSymbol* baseType = type->PlainType(context)->DirectType(context)->FinalType(sourcePos, context);
+            TypeSymbol* baseType = type->PlainType(context)->DirectType(context)->FinalType(fullSpan, context);
             return baseType->GetScope();
         }
     }
     return nullptr;
 }
 
-void BoundExpressionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundExpressionNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (type)
     {
-        type = type->FinalType(sourcePos, context)->DirectType(context);
+        type = type->FinalType(fullSpan, context)->DirectType(context);
     }
 }
 
 BoundValueExpressionNode::BoundValueExpressionNode(otava::intermediate::Value* value_, TypeSymbol* type) :
-    BoundExpressionNode(BoundNodeKind::boundValueNode, soul::ast::SourcePos(), type), value(value_)
+    BoundExpressionNode(BoundNodeKind::boundValueNode, soul::ast::FullSpan(), type), value(value_)
 {
 }
 
@@ -334,13 +334,13 @@ BoundExpressionNode* BoundValueExpressionNode::Clone() const
     return clone;
 }
 
-void BoundValueExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundValueExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     emitter.Stack().Push(value);
 }
 
 BoundCompileUnitNode::BoundCompileUnitNode() :
-    BoundNode(BoundNodeKind::boundCompileUnitNode, soul::ast::SourcePos()),
+    BoundNode(BoundNodeKind::boundCompileUnitNode, soul::ast::FullSpan()),
     operationRepository(new OperationRepository()),
     argumentConversionTable(new ArgumentConversionTable()),
     functionTemplateRepository(new FunctionTemplateRepository()),
@@ -398,16 +398,16 @@ void BoundCompileUnitNode::AddBoundNode(std::unique_ptr<BoundNode>&& node, Conte
     }
 }
 
-void BoundCompileUnitNode::AddBoundNodeForClass(ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundCompileUnitNode::AddBoundNodeForClass(ClassTypeSymbol* cls, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     std::set<const Symbol*> visited;
     if (cls->IsTemplateParameterInstantiation(context, visited)) return;
     if (boundClasses.find(cls) != boundClasses.end()) return;
     boundClasses.insert(cls);
-    AddBoundNode(std::unique_ptr<BoundNode>(new BoundClassNode(cls, sourcePos)), context);
+    AddBoundNode(std::unique_ptr<BoundNode>(new BoundClassNode(cls, fullSpan)), context);
     for (ClassTypeSymbol* base : cls->BaseClasses())
     {
-        AddBoundNodeForClass(base, sourcePos, context);
+        AddBoundNodeForClass(base, fullSpan, context);
     }
 }
 
@@ -416,19 +416,19 @@ void BoundCompileUnitNode::Sort()
     std::insertion_sort(boundNodes.begin(), boundNodes.end(), BoundNodeLess());
 }
 
-otava::intermediate::Value* BoundCompileUnitNode::CreateBoundGlobalVariable(VariableSymbol* globalVariableSymbol, Emitter& emitter, const soul::ast::SourcePos& sourcePos,
+otava::intermediate::Value* BoundCompileUnitNode::CreateBoundGlobalVariable(VariableSymbol* globalVariableSymbol, Emitter& emitter, const soul::ast::FullSpan& fullSpan,
     Context* context, bool definition)
 {
-    otava::symbols::TypeSymbol* type = otava::symbols::ResolveFwdDeclaredType(globalVariableSymbol->GetType(), sourcePos, context);
+    otava::symbols::TypeSymbol* type = otava::symbols::ResolveFwdDeclaredType(globalVariableSymbol->GetType(), fullSpan, context);
     globalVariableSymbol->SetDeclaredType(type);
     otava::intermediate::Value* initializer = nullptr;
-    otava::intermediate::Type* irType = globalVariableSymbol->GetType()->IrType(emitter, sourcePos, context);
+    otava::intermediate::Type* irType = globalVariableSymbol->GetType()->IrType(emitter, fullSpan, context);
     otava::intermediate::Type* ptrIrType = emitter.MakePtrType(irType);
     if (definition)
     {
         if (globalVariableSymbol->GetValue())
         {
-            initializer = globalVariableSymbol->GetValue()->IrValue(emitter, sourcePos, context);
+            initializer = globalVariableSymbol->GetValue()->IrValue(emitter, fullSpan, context);
         }
         else
         {
@@ -441,24 +441,24 @@ otava::intermediate::Value* BoundCompileUnitNode::CreateBoundGlobalVariable(Vari
 }
 
 void BoundCompileUnitNode::AddDynamicInitialization(BoundExpressionNode* dynamicInitialization, BoundExpressionNode* atExitCall,
-    const soul::ast::SourcePos& sourcePos, Context* context)
+    const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (!compileUnitInitializationFunction)
     {
         FunctionDefinitionSymbol* compileUnitInitializationFunctionSymbol = new FunctionDefinitionSymbol(U"__dynamic_init__" + util::ToUtf32(id));
         compileUnitInitializationFunctionSymbol->SetGenerated();
-        context->GetSymbolTable()->GlobalNs()->AddSymbol(compileUnitInitializationFunctionSymbol, sourcePos, context);
-        compileUnitInitializationFunction = new BoundFunctionNode(compileUnitInitializationFunctionSymbol, sourcePos);
-        compileUnitInitializationFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
+        context->GetSymbolTable()->GlobalNs()->AddSymbol(compileUnitInitializationFunctionSymbol, fullSpan, context);
+        compileUnitInitializationFunction = new BoundFunctionNode(compileUnitInitializationFunctionSymbol, fullSpan);
+        compileUnitInitializationFunction->SetBody(new BoundCompoundStatementNode(fullSpan));
     }
     BoundCompoundStatementNode* body = compileUnitInitializationFunction->Body();
-    BoundExpressionStatementNode* initExprStmt = new BoundExpressionStatementNode(sourcePos);
-    initExprStmt->SetExpr(dynamicInitialization, sourcePos, context);
+    BoundExpressionStatementNode* initExprStmt = new BoundExpressionStatementNode(fullSpan);
+    initExprStmt->SetExpr(dynamicInitialization, fullSpan, context);
     body->AddStatement(initExprStmt);
     if (atExitCall)
     {
-        BoundExpressionStatementNode* atExitStmt = new BoundExpressionStatementNode(sourcePos);
-        atExitStmt->SetExpr(atExitCall, sourcePos, context);
+        BoundExpressionStatementNode* atExitStmt = new BoundExpressionStatementNode(fullSpan);
+        atExitStmt->SetExpr(atExitCall, fullSpan, context);
         body->AddStatement(atExitStmt);
     }
 }
@@ -471,7 +471,7 @@ void BoundCompileUnitNode::AddClassToGenerateDestructorList(ClassTypeSymbol* cla
     }
 }
 
-BoundCtorInitializerNode::BoundCtorInitializerNode(const soul::ast::SourcePos& sourcePos_) : BoundNode(BoundNodeKind::boundCtorInitializerNode, sourcePos_)
+BoundCtorInitializerNode::BoundCtorInitializerNode(const soul::ast::FullSpan& fullSpan_) : BoundNode(BoundNodeKind::boundCtorInitializerNode, fullSpan_)
 {
 }
 
@@ -494,7 +494,7 @@ void BoundCtorInitializerNode::GenerateCode(BoundTreeVisitor& visitor, Emitter& 
 {
     for (const auto& baseInitializer : baseInitializers)
     {
-        baseInitializer->Load(emitter, OperationFlags::defaultInit, GetSourcePos(), context);
+        baseInitializer->Load(emitter, OperationFlags::defaultInit, GetFullSpan(), context);
     }
     for (const auto& setVPtrStatement : setVPtrStatements)
     {
@@ -502,7 +502,7 @@ void BoundCtorInitializerNode::GenerateCode(BoundTreeVisitor& visitor, Emitter& 
     }
     for (const auto& memberInitializer : memberInitializers)
     {
-        memberInitializer->Load(emitter, OperationFlags::defaultInit, GetSourcePos(), context);
+        memberInitializer->Load(emitter, OperationFlags::defaultInit, GetFullSpan(), context);
     }
 }
 
@@ -528,7 +528,7 @@ bool BoundCtorInitializerNode::MayThrow() const noexcept
     return false;
 }
 
-BoundDtorTerminatorNode::BoundDtorTerminatorNode(const soul::ast::SourcePos& sourcePos_) : BoundNode(BoundNodeKind::boundDtorTerminatorNode, sourcePos_)
+BoundDtorTerminatorNode::BoundDtorTerminatorNode(const soul::ast::FullSpan& fullSpan_) : BoundNode(BoundNodeKind::boundDtorTerminatorNode, fullSpan_)
 {
 }
 
@@ -551,11 +551,11 @@ void BoundDtorTerminatorNode::GenerateCode(BoundTreeVisitor& visitor, Emitter& e
 {
     for (const auto& memberTerminator : memberTerminators)
     {
-        memberTerminator->Load(emitter, OperationFlags::none, GetSourcePos(), context);
+        memberTerminator->Load(emitter, OperationFlags::none, GetFullSpan(), context);
     }
 }
 
-BoundClassNode::BoundClassNode(ClassTypeSymbol* cls_, const soul::ast::SourcePos& sourcePos_) : BoundNode(BoundNodeKind::boundClassNode, sourcePos_), cls(cls_)
+BoundClassNode::BoundClassNode(ClassTypeSymbol* cls_, const soul::ast::FullSpan& fullSpan_) : BoundNode(BoundNodeKind::boundClassNode, fullSpan_), cls(cls_)
 {
 }
 
@@ -564,8 +564,8 @@ void BoundClassNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-BoundFunctionNode::BoundFunctionNode(FunctionDefinitionSymbol* functionDefinitionSymbol_, const soul::ast::SourcePos& sourcePos_) :
-    BoundNode(BoundNodeKind::boundFunctionNode, sourcePos_),
+BoundFunctionNode::BoundFunctionNode(FunctionDefinitionSymbol* functionDefinitionSymbol_, const soul::ast::FullSpan& fullSpan_) :
+    BoundNode(BoundNodeKind::boundFunctionNode, fullSpan_),
     functionDefinitionSymbol(functionDefinitionSymbol_),
     body(),
     serial(-1)
@@ -630,8 +630,8 @@ std::vector<std::unique_ptr<BoundFunctionCallNode>> BoundFunctionNode::GetTempor
     return std::move(temporaryDestructorCalls);
 }
 
-BoundStatementNode::BoundStatementNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundNode(kind_, sourcePos_), parent(nullptr), generated(false), postfix(false), statementIndex(-1), destructTemporariesNode(nullptr)
+BoundStatementNode::BoundStatementNode(BoundNodeKind kind_, const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundNode(kind_, fullSpan_), parent(nullptr), generated(false), postfix(false), statementIndex(-1), destructTemporariesNode(nullptr)
 {
 }
 
@@ -680,10 +680,11 @@ void BoundStatementNode::SetDestructTemporariesNode(BoundDestructTemporariesNode
 void BoundStatementNode::DestructTemporaries(Emitter& emitter, Context* context)
 {
     if (!destructTemporariesNode) return;
-    destructTemporariesNode->Load(emitter, OperationFlags::none, GetSourcePos(), context);
+    destructTemporariesNode->Load(emitter, OperationFlags::none, GetFullSpan(), context);
 }
 
-BoundEmptyStatementNode::BoundEmptyStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept : BoundStatementNode(BoundNodeKind::boundEmptyStatementNode, sourcePos_)
+BoundEmptyStatementNode::BoundEmptyStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundEmptyStatementNode, fullSpan_)
 {
 }
 
@@ -694,12 +695,12 @@ void BoundEmptyStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundEmptyStatementNode::Clone() const
 {
-    BoundEmptyStatementNode* clone = new BoundEmptyStatementNode(GetSourcePos());
+    BoundEmptyStatementNode* clone = new BoundEmptyStatementNode(GetFullSpan());
     return clone;
 }
 
-BoundCompoundStatementNode::BoundCompoundStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundCompoundStatementNode, sourcePos_), blockId(-1)
+BoundCompoundStatementNode::BoundCompoundStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundCompoundStatementNode, fullSpan_), blockId(-1)
 {
 }
 
@@ -710,7 +711,7 @@ void BoundCompoundStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundCompoundStatementNode::Clone() const
 {
-    BoundCompoundStatementNode* clone = new BoundCompoundStatementNode(GetSourcePos());
+    BoundCompoundStatementNode* clone = new BoundCompoundStatementNode(GetFullSpan());
     int n = statements.size();
     for (int i = 0; i < n; ++i)
     {
@@ -768,8 +769,8 @@ bool BoundCompoundStatementNode::ContainsLocalVariableWithDestructor() const noe
     return false;
 }
 
-BoundIfStatementNode::BoundIfStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundIfStatementNode, sourcePos_), blockId(-1)
+BoundIfStatementNode::BoundIfStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundIfStatementNode, fullSpan_), blockId(-1)
 {
 }
 
@@ -780,7 +781,7 @@ void BoundIfStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundIfStatementNode::Clone() const
 {
-    BoundIfStatementNode* clone = new BoundIfStatementNode(GetSourcePos());
+    BoundIfStatementNode* clone = new BoundIfStatementNode(GetFullSpan());
     if (condition)
     {
         clone->SetCondition(condition->Clone());
@@ -823,8 +824,8 @@ bool BoundIfStatementNode::ContainsLocalVariableWithDestructor() const noexcept
     return false;
 }
 
-BoundSwitchStatementNode::BoundSwitchStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundSwitchStatementNode, sourcePos_), blockId(-1)
+BoundSwitchStatementNode::BoundSwitchStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundSwitchStatementNode, fullSpan_), blockId(-1)
 {
 }
 
@@ -835,7 +836,7 @@ void BoundSwitchStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundSwitchStatementNode::Clone() const
 {
-    BoundSwitchStatementNode* clone = new BoundSwitchStatementNode(GetSourcePos());
+    BoundSwitchStatementNode* clone = new BoundSwitchStatementNode(GetFullSpan());
     clone->SetCondition(condition->Clone());
     clone->SetStatement(statement->Clone());
     return clone;
@@ -864,8 +865,8 @@ bool BoundSwitchStatementNode::ContainsLocalVariableWithDestructor() const noexc
     return false;
 }
 
-BoundCaseStatementNode::BoundCaseStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundCaseStatementNode, sourcePos_)
+BoundCaseStatementNode::BoundCaseStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundCaseStatementNode, fullSpan_)
 {
 }
 
@@ -876,7 +877,7 @@ void BoundCaseStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundCaseStatementNode::Clone() const
 {
-    BoundCaseStatementNode* clone = new BoundCaseStatementNode(GetSourcePos());
+    BoundCaseStatementNode* clone = new BoundCaseStatementNode(GetFullSpan());
     for (const auto& caseExpr : caseExprs)
     {
         clone->AddCaseExpr(caseExpr->Clone());
@@ -910,8 +911,8 @@ bool BoundCaseStatementNode::ContainsLocalVariableWithDestructor() const noexcep
     return stmt->ContainsLocalVariableWithDestructor();
 }
 
-BoundDefaultStatementNode::BoundDefaultStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundDefaultStatementNode, sourcePos_)
+BoundDefaultStatementNode::BoundDefaultStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundDefaultStatementNode, fullSpan_)
 {
 }
 
@@ -922,7 +923,7 @@ void BoundDefaultStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundDefaultStatementNode::Clone() const
 {
-    BoundDefaultStatementNode* clone = new BoundDefaultStatementNode(GetSourcePos());
+    BoundDefaultStatementNode* clone = new BoundDefaultStatementNode(GetFullSpan());
     clone->SetStatement(stmt->Clone());
     return clone;
 }
@@ -942,8 +943,8 @@ bool BoundDefaultStatementNode::ContainsLocalVariableWithDestructor() const noex
     return stmt->ContainsLocalVariableWithDestructor();
 }
 
-BoundWhileStatementNode::BoundWhileStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundWhileStatementNode, sourcePos_), blockId(-1)
+BoundWhileStatementNode::BoundWhileStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundWhileStatementNode, fullSpan_), blockId(-1)
 {
 }
 
@@ -954,7 +955,7 @@ void BoundWhileStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundWhileStatementNode::Clone() const
 {
-    BoundWhileStatementNode* clone = new BoundWhileStatementNode(GetSourcePos());
+    BoundWhileStatementNode* clone = new BoundWhileStatementNode(GetFullSpan());
     clone->SetCondition(condition->Clone());
     clone->SetStatement(statement->Clone());
     return clone;
@@ -982,8 +983,8 @@ bool BoundWhileStatementNode::ContainsLocalVariableWithDestructor() const noexce
     return statement->ContainsLocalVariableWithDestructor();
 }
 
-BoundDoStatementNode::BoundDoStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundDoStatementNode, sourcePos_)
+BoundDoStatementNode::BoundDoStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundDoStatementNode, fullSpan_)
 {
 }
 
@@ -994,7 +995,7 @@ void BoundDoStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundDoStatementNode::Clone() const
 {
-    BoundDoStatementNode* clone = new BoundDoStatementNode(GetSourcePos());
+    BoundDoStatementNode* clone = new BoundDoStatementNode(GetFullSpan());
     clone->SetExpr(expr->Clone());
     clone->SetStatement(statement->Clone());
     return clone;
@@ -1022,8 +1023,8 @@ bool BoundDoStatementNode::ContainsLocalVariableWithDestructor() const noexcept
     return statement->ContainsLocalVariableWithDestructor();
 }
 
-BoundForStatementNode::BoundForStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundForStatementNode, sourcePos_), blockId(-1)
+BoundForStatementNode::BoundForStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundForStatementNode, fullSpan_), blockId(-1)
 {
 }
 
@@ -1034,7 +1035,7 @@ void BoundForStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundForStatementNode::Clone() const
 {
-    BoundForStatementNode* clone = new BoundForStatementNode(GetSourcePos());
+    BoundForStatementNode* clone = new BoundForStatementNode(GetFullSpan());
     if (initStatement)
     {
         clone->SetInitStatement(initStatement->Clone());
@@ -1087,13 +1088,13 @@ bool BoundForStatementNode::ContainsLocalVariableWithDestructor() const noexcept
     return false;
 }
 
-BoundSequenceStatementNode::BoundSequenceStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundSequenceStatementNode, sourcePos_), first(), second()
+BoundSequenceStatementNode::BoundSequenceStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundSequenceStatementNode, fullSpan_), first(), second()
 {
 }
 
-BoundSequenceStatementNode::BoundSequenceStatementNode(const soul::ast::SourcePos& sourcePos_, BoundStatementNode* first_, BoundStatementNode* second_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundSequenceStatementNode, sourcePos_), first(first_), second(second_)
+BoundSequenceStatementNode::BoundSequenceStatementNode(const soul::ast::FullSpan& fullSpan_, BoundStatementNode* first_, BoundStatementNode* second_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundSequenceStatementNode, fullSpan_), first(first_), second(second_)
 {
 }
 
@@ -1104,7 +1105,7 @@ void BoundSequenceStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundSequenceStatementNode::Clone() const
 {
-    BoundSequenceStatementNode* clone = new BoundSequenceStatementNode(GetSourcePos(), first->Clone(), second->Clone());
+    BoundSequenceStatementNode* clone = new BoundSequenceStatementNode(GetFullSpan(), first->Clone(), second->Clone());
     return clone;
 }
 
@@ -1122,8 +1123,8 @@ bool BoundSequenceStatementNode::ContainsLocalVariableWithDestructor() const noe
     return false;
 }
 
-BoundBreakStatementNode::BoundBreakStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundBreakStatementNode, sourcePos_)
+BoundBreakStatementNode::BoundBreakStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundBreakStatementNode, fullSpan_)
 {
 }
 
@@ -1134,12 +1135,12 @@ void BoundBreakStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundBreakStatementNode::Clone() const
 {
-    BoundBreakStatementNode* clone = new BoundBreakStatementNode(GetSourcePos());
+    BoundBreakStatementNode* clone = new BoundBreakStatementNode(GetFullSpan());
     return clone;
 }
 
-BoundContinueStatementNode::BoundContinueStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundContinueStatementNode, sourcePos_)
+BoundContinueStatementNode::BoundContinueStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundContinueStatementNode, fullSpan_)
 {
 }
 
@@ -1150,12 +1151,12 @@ void BoundContinueStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundContinueStatementNode::Clone() const
 {
-    BoundContinueStatementNode* clone = new BoundContinueStatementNode(GetSourcePos());
+    BoundContinueStatementNode* clone = new BoundContinueStatementNode(GetFullSpan());
     return clone;
 }
 
-BoundReturnStatementNode::BoundReturnStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundReturnStatementNode, sourcePos_)
+BoundReturnStatementNode::BoundReturnStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundReturnStatementNode, fullSpan_)
 {
 }
 
@@ -1166,7 +1167,7 @@ void BoundReturnStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundReturnStatementNode::Clone() const
 {
-    BoundReturnStatementNode* clone = new BoundReturnStatementNode(GetSourcePos());
+    BoundReturnStatementNode* clone = new BoundReturnStatementNode(GetFullSpan());
     if (expr)
     {
         clone->SetExpr(expr->Clone());
@@ -1185,19 +1186,19 @@ void BoundReturnStatementNode::SetExpr(BoundExpressionNode* expr_) noexcept
     expr.reset(expr_);
 }
 
-void BoundReturnStatementNode::SetExpr(BoundExpressionNode* expr_, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundReturnStatementNode::SetExpr(BoundExpressionNode* expr_, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     expr.reset(expr_);
-    expr->ModifyTypes(sourcePos, context);
+    expr->ModifyTypes(fullSpan, context);
 }
 
-BoundLabeledStatementNode::BoundLabeledStatementNode(const soul::ast::SourcePos& sourcePos_) :
-    BoundStatementNode(BoundNodeKind::boundLabeledStatementNode, sourcePos_), label(), stmt(nullptr), bb(nullptr)
+BoundLabeledStatementNode::BoundLabeledStatementNode(const soul::ast::FullSpan& fullSpan_) :
+    BoundStatementNode(BoundNodeKind::boundLabeledStatementNode, fullSpan_), label(), stmt(nullptr), bb(nullptr)
 {
 }
 
-BoundLabeledStatementNode::BoundLabeledStatementNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& label_, BoundStatementNode* stmt_) :
-    BoundStatementNode(BoundNodeKind::boundLabeledStatementNode, sourcePos_), label(label_), stmt(stmt_), bb(nullptr)
+BoundLabeledStatementNode::BoundLabeledStatementNode(const soul::ast::FullSpan& fullSpan_, const std::u32string& label_, BoundStatementNode* stmt_) :
+    BoundStatementNode(BoundNodeKind::boundLabeledStatementNode, fullSpan_), label(label_), stmt(stmt_), bb(nullptr)
 {
 }
 
@@ -1208,7 +1209,7 @@ void BoundLabeledStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundLabeledStatementNode::Clone() const
 {
-    BoundLabeledStatementNode* clone = new BoundLabeledStatementNode(GetSourcePos(), label, stmt->Clone());
+    BoundLabeledStatementNode* clone = new BoundLabeledStatementNode(GetFullSpan(), label, stmt->Clone());
     return clone;
 }
 
@@ -1226,13 +1227,13 @@ bool BoundLabeledStatementNode::ContainsLocalVariableWithDestructor() const noex
     return stmt->ContainsLocalVariableWithDestructor();
 }
 
-BoundGotoStatementNode::BoundGotoStatementNode(const soul::ast::SourcePos& sourcePos_) :
-    BoundStatementNode(BoundNodeKind::boundGotoStatementNode, sourcePos_), target(), labeledStatement(nullptr)
+BoundGotoStatementNode::BoundGotoStatementNode(const soul::ast::FullSpan& fullSpan_) :
+    BoundStatementNode(BoundNodeKind::boundGotoStatementNode, fullSpan_), target(), labeledStatement(nullptr)
 {
 }
 
-BoundGotoStatementNode::BoundGotoStatementNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& target_) :
-    BoundStatementNode(BoundNodeKind::boundGotoStatementNode, sourcePos_), target(target_), labeledStatement(nullptr)
+BoundGotoStatementNode::BoundGotoStatementNode(const soul::ast::FullSpan& fullSpan_, const std::u32string& target_) :
+    BoundStatementNode(BoundNodeKind::boundGotoStatementNode, fullSpan_), target(target_), labeledStatement(nullptr)
 {
 }
 
@@ -1243,7 +1244,7 @@ void BoundGotoStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundGotoStatementNode::Clone() const
 {
-    BoundGotoStatementNode* clone = new BoundGotoStatementNode(GetSourcePos(), target);
+    BoundGotoStatementNode* clone = new BoundGotoStatementNode(GetFullSpan(), target);
     return clone;
 }
 
@@ -1252,13 +1253,13 @@ otava::intermediate::BasicBlock* BoundGotoStatementNode::GetBB(Emitter& emitter)
     return labeledStatement->GetBB(emitter);
 }
 
-BoundConstructionStatementNode::BoundConstructionStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundConstructionStatementNode, sourcePos_), variable(nullptr)
+BoundConstructionStatementNode::BoundConstructionStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundConstructionStatementNode, fullSpan_), variable(nullptr)
 {
 }
 
-BoundConstructionStatementNode::BoundConstructionStatementNode(const soul::ast::SourcePos& sourcePos_, BoundExpressionNode* constructorCall_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundConstructionStatementNode, sourcePos_), constructorCall(constructorCall_), variable(nullptr)
+BoundConstructionStatementNode::BoundConstructionStatementNode(const soul::ast::FullSpan& fullSpan_, BoundExpressionNode* constructorCall_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundConstructionStatementNode, fullSpan_), constructorCall(constructorCall_), variable(nullptr)
 {
 }
 
@@ -1269,7 +1270,7 @@ void BoundConstructionStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundConstructionStatementNode::Clone() const
 {
-    BoundConstructionStatementNode* clone = new BoundConstructionStatementNode(GetSourcePos(), static_cast<BoundExpressionNode*>(constructorCall->Clone()));
+    BoundConstructionStatementNode* clone = new BoundConstructionStatementNode(GetFullSpan(), static_cast<BoundExpressionNode*>(constructorCall->Clone()));
     if (destructorCall)
     {
         clone->SetDestructorCall(static_cast<BoundExpressionNode*>(destructorCall->Clone()));
@@ -1295,8 +1296,8 @@ bool BoundConstructionStatementNode::ContainsLocalVariableWithDestructor() const
     return false;
 }
 
-BoundExpressionStatementNode::BoundExpressionStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundExpressionStatementNode, sourcePos_)
+BoundExpressionStatementNode::BoundExpressionStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundExpressionStatementNode, fullSpan_)
 {
 }
 
@@ -1307,7 +1308,7 @@ void BoundExpressionStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundExpressionStatementNode::Clone() const
 {
-    BoundExpressionStatementNode* clone = new BoundExpressionStatementNode(GetSourcePos());
+    BoundExpressionStatementNode* clone = new BoundExpressionStatementNode(GetFullSpan());
     if (expr)
     {
         clone->SetExpr(expr->Clone());
@@ -1326,10 +1327,10 @@ void BoundExpressionStatementNode::SetExpr(BoundExpressionNode* expr_) noexcept
     expr.reset(expr_);
 }
 
-void BoundExpressionStatementNode::SetExpr(BoundExpressionNode* expr_, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundExpressionStatementNode::SetExpr(BoundExpressionNode* expr_, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     expr.reset(expr_);
-    expr->ModifyTypes(sourcePos, context);
+    expr->ModifyTypes(fullSpan, context);
 }
 
 bool BoundExpressionStatementNode::IsTerminator() const noexcept
@@ -1337,14 +1338,14 @@ bool BoundExpressionStatementNode::IsTerminator() const noexcept
     return expr && (expr->IsNoReturnFunctionCall());
 }
 
-BoundSetVPtrStatementNode::BoundSetVPtrStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundSetVPtrStatementNode, sourcePos_), thisPtr(), forClass(nullptr), vptrHolderClass(nullptr)
+BoundSetVPtrStatementNode::BoundSetVPtrStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundSetVPtrStatementNode, fullSpan_), thisPtr(), forClass(nullptr), vptrHolderClass(nullptr)
 {
 }
 
 BoundSetVPtrStatementNode::BoundSetVPtrStatementNode(BoundExpressionNode* thisPtr_, ClassTypeSymbol* forClass_, ClassTypeSymbol* vptrHolderClass_,
-    const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundSetVPtrStatementNode, sourcePos_), thisPtr(thisPtr_), forClass(forClass_), vptrHolderClass(vptrHolderClass_)
+    const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundSetVPtrStatementNode, fullSpan_), thisPtr(thisPtr_), forClass(forClass_), vptrHolderClass(vptrHolderClass_)
 {
 }
 
@@ -1355,12 +1356,12 @@ void BoundSetVPtrStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundSetVPtrStatementNode::Clone() const
 {
-    BoundSetVPtrStatementNode* clone = new BoundSetVPtrStatementNode(thisPtr->Clone(), forClass, vptrHolderClass, GetSourcePos());
+    BoundSetVPtrStatementNode* clone = new BoundSetVPtrStatementNode(thisPtr->Clone(), forClass, vptrHolderClass, GetFullSpan());
     return clone;
 }
 
-BoundAliasDeclarationStatementNode::BoundAliasDeclarationStatementNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundStatementNode(BoundNodeKind::boundAliasDeclarationStatementNode, sourcePos_)
+BoundAliasDeclarationStatementNode::BoundAliasDeclarationStatementNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundStatementNode(BoundNodeKind::boundAliasDeclarationStatementNode, fullSpan_)
 {
 }
 
@@ -1371,12 +1372,12 @@ void BoundAliasDeclarationStatementNode::Accept(BoundTreeVisitor& visitor)
 
 BoundStatementNode* BoundAliasDeclarationStatementNode::Clone() const
 {
-    BoundAliasDeclarationStatementNode* clone = new BoundAliasDeclarationStatementNode(GetSourcePos());
+    BoundAliasDeclarationStatementNode* clone = new BoundAliasDeclarationStatementNode(GetFullSpan());
     return clone;
 }
 
-BoundLiteralNode::BoundLiteralNode(Value* value_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundLiteralNode, sourcePos_, value_->GetType()), value(value_)
+BoundLiteralNode::BoundLiteralNode(Value* value_, const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundLiteralNode, fullSpan_, value_->GetType()), value(value_)
 {
 }
 
@@ -1385,24 +1386,24 @@ void BoundLiteralNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-void BoundLiteralNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundLiteralNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (emitter.Line())
     {
         Value* lineValue = context->GetEvaluationContext()->GetIntegerValue(emitter.Line(), util::ToUtf32(std::to_string(emitter.Line())),
             context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType));
-        emitter.Stack().Push(lineValue->IrValue(emitter, sourcePos, context));
+        emitter.Stack().Push(lineValue->IrValue(emitter, fullSpan, context));
     }
     else
     {
-        emitter.Stack().Push(value->IrValue(emitter, sourcePos, context));
+        emitter.Stack().Push(value->IrValue(emitter, fullSpan, context));
     }
     DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundLiteralNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundLiteralNode(value, GetSourcePos());
+    BoundExpressionNode* clone = new BoundLiteralNode(value, GetFullSpan());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -1411,8 +1412,8 @@ BoundExpressionNode* BoundLiteralNode::Clone() const
     return clone;
 }
 
-BoundStringLiteralNode::BoundStringLiteralNode(Value* value_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundStringLiteralNode, sourcePos_, value_->GetType()), value(value_), irValue(nullptr)
+BoundStringLiteralNode::BoundStringLiteralNode(Value* value_, const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundStringLiteralNode, fullSpan_, value_->GetType()), value(value_), irValue(nullptr)
 {
 }
 
@@ -1421,11 +1422,11 @@ void BoundStringLiteralNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-void BoundStringLiteralNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundStringLiteralNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (!irValue)
     {
-        irValue = value->IrValue(emitter, sourcePos, context);
+        irValue = value->IrValue(emitter, fullSpan, context);
     }
     emitter.Stack().Push(irValue);
     DestructTemporaries(emitter, context);
@@ -1433,7 +1434,7 @@ void BoundStringLiteralNode::Load(Emitter& emitter, OperationFlags flags, const 
 
 BoundExpressionNode* BoundStringLiteralNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundStringLiteralNode(value, GetSourcePos());
+    BoundExpressionNode* clone = new BoundStringLiteralNode(value, GetFullSpan());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -1442,8 +1443,8 @@ BoundExpressionNode* BoundStringLiteralNode::Clone() const
     return clone;
 }
 
-BoundVariableNode::BoundVariableNode(VariableSymbol* variable_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundVariableNode, sourcePos_, variable_->GetReferredType()), variable(variable_)
+BoundVariableNode::BoundVariableNode(VariableSymbol* variable_, const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundVariableNode, fullSpan_, variable_->GetReferredType()), variable(variable_)
 {
 }
 
@@ -1457,17 +1458,17 @@ void BoundVariableNode::SetThisPtr(BoundExpressionNode* thisPtr_) noexcept
     thisPtr.reset(thisPtr_);
 }
 
-void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (variable->IsLocalVariable())
     {
         if ((flags & OperationFlags::addr) != OperationFlags::none || variable->GetType()->IsClassTypeSymbol())
         {
-            emitter.Stack().Push(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context)));
+            emitter.Stack().Push(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, fullSpan, context)));
         }
         else if ((flags & OperationFlags::deref) != OperationFlags::none)
         {
-            otava::intermediate::Value* value = emitter.EmitLoad(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context)));
+            otava::intermediate::Value* value = emitter.EmitLoad(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, fullSpan, context)));
             std::uint8_t derefCount = GetDerefCount(flags);
             for (std::uint8_t i = 0; i < derefCount; ++i)
             {
@@ -1477,17 +1478,17 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
         }
         else
         {
-            emitter.Stack().Push(emitter.EmitLoad(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context))));
+            emitter.Stack().Push(emitter.EmitLoad(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, fullSpan, context))));
         }
     }
     else if (variable->IsMemberVariable())
     {
         if (variable->IsStatic())
         {
-            otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context));
+            otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, fullSpan, context));
             if (!ptr)
             {
-                ptr = context->GetBoundCompileUnit()->CreateBoundGlobalVariable(variable, emitter, sourcePos, context, true);
+                ptr = context->GetBoundCompileUnit()->CreateBoundGlobalVariable(variable, emitter, fullSpan, context, true);
             }
             if ((flags & OperationFlags::addr) != OperationFlags::none)
             {
@@ -1512,9 +1513,9 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
         {
             if (!thisPtr)
             {
-                ThrowException("'this ptr' of bound member variable not set", sourcePos, context);
+                ThrowException("'this ptr' of bound member variable not set", fullSpan, context);
             }
-            thisPtr->Load(emitter, OperationFlags::none, sourcePos, context);
+            thisPtr->Load(emitter, OperationFlags::none, fullSpan, context);
             otava::intermediate::Value* ptr = emitter.Stack().Pop();
             std::int32_t layoutIndex = variable->LayoutIndex();
             otava::intermediate::Value* elementPtr = emitter.EmitElemAddr(ptr, emitter.EmitLong(layoutIndex));
@@ -1540,10 +1541,10 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
     }
     else if (variable->IsGlobalVariable())
     {
-        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context));
+        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, fullSpan, context));
         if (!ptr)
         {
-            ptr = context->GetBoundCompileUnit()->CreateBoundGlobalVariable(variable, emitter, sourcePos, context, false);
+            ptr = context->GetBoundCompileUnit()->CreateBoundGlobalVariable(variable, emitter, fullSpan, context, false);
         }
         if ((flags & OperationFlags::addr) != OperationFlags::none)
         {
@@ -1567,15 +1568,15 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
     DestructTemporaries(emitter, context);
 }
 
-void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if ((flags & OperationFlags::addr) != OperationFlags::none)
     {
-        ThrowException("invalid operation flag 'addr' for variable store operation", sourcePos, context);
+        ThrowException("invalid operation flag 'addr' for variable store operation", fullSpan, context);
     }
     if (variable->IsLocalVariable())
     {
-        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context));
+        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, fullSpan, context));
         otava::intermediate::Value* value = emitter.Stack().Pop();
         if ((flags & OperationFlags::deref) != OperationFlags::none)
         {
@@ -1605,9 +1606,9 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
         otava::intermediate::Value* value = emitter.Stack().Pop();
         if (!thisPtr)
         {
-            ThrowException("'this ptr' of bound member variable not set", sourcePos, context);
+            ThrowException("'this ptr' of bound member variable not set", fullSpan, context);
         }
-        thisPtr->Load(emitter, OperationFlags::none, sourcePos, context);
+        thisPtr->Load(emitter, OperationFlags::none, fullSpan, context);
         otava::intermediate::Value* ptr = emitter.Stack().Pop();
         std::int32_t layoutIndex = variable->LayoutIndex();
         otava::intermediate::Value* elementPtr = emitter.EmitElemAddr(ptr, emitter.EmitLong(layoutIndex));
@@ -1637,10 +1638,10 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
     else if (variable->IsGlobalVariable())
     {
         otava::intermediate::Value* value = emitter.Stack().Pop();
-        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context));
+        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, fullSpan, context));
         if (!ptr)
         {
-            ptr = context->GetBoundCompileUnit()->CreateBoundGlobalVariable(variable, emitter, sourcePos, context, false);
+            ptr = context->GetBoundCompileUnit()->CreateBoundGlobalVariable(variable, emitter, fullSpan, context, false);
         }
         if ((flags & OperationFlags::deref) != OperationFlags::none)
         {
@@ -1670,7 +1671,7 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
 
 BoundExpressionNode* BoundVariableNode::Clone() const
 {
-    BoundVariableNode* clone = new BoundVariableNode(variable, GetSourcePos());
+    BoundVariableNode* clone = new BoundVariableNode(variable, GetFullSpan());
     if (thisPtr)
     {
         clone->SetThisPtr(thisPtr->Clone());
@@ -1693,17 +1694,17 @@ bool BoundVariableNode::IsBoundMemberVariable() const noexcept
     return variable->IsMemberVariable();
 }
 
-void BoundVariableNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundVariableNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
     if (thisPtr)
     {
-        thisPtr->ModifyTypes(sourcePos, context);
+        thisPtr->ModifyTypes(fullSpan, context);
     }
 }
 
-BoundParentVariableNode::BoundParentVariableNode(VariableSymbol* variable_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundParentVariableNode, sourcePos_, variable_->GetReferredType()), variable(variable_), level(0)
+BoundParentVariableNode::BoundParentVariableNode(VariableSymbol* variable_, const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundParentVariableNode, fullSpan_, variable_->GetReferredType()), variable(variable_), level(0)
 {
 }
 
@@ -1717,17 +1718,17 @@ void BoundParentVariableNode::SetThisPtr(BoundExpressionNode* thisPtr_) noexcept
     thisPtr.reset(thisPtr_);
 }
 
-void BoundParentVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundParentVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (variable->IsLocalVariable())
     {
         if ((flags & OperationFlags::addr) != OperationFlags::none || variable->GetType()->IsClassTypeSymbol())
         {
-            emitter.Stack().Push(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context)));
+            emitter.Stack().Push(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, fullSpan, context)));
         }
         else if ((flags & OperationFlags::deref) != OperationFlags::none)
         {
-            otava::intermediate::Value* value = emitter.EmitLoad(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context)));
+            otava::intermediate::Value* value = emitter.EmitLoad(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, fullSpan, context)));
             std::uint8_t derefCount = GetDerefCount(flags);
             for (std::uint8_t i = 0; i < derefCount; ++i)
             {
@@ -1737,16 +1738,16 @@ void BoundParentVariableNode::Load(Emitter& emitter, OperationFlags flags, const
         }
         else
         {
-            emitter.Stack().Push(emitter.EmitLoad(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context))));
+            emitter.Stack().Push(emitter.EmitLoad(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, fullSpan, context))));
         }
     }
     else if (variable->IsMemberVariable())
     {
         if (!thisPtr)
         {
-            ThrowException("'this ptr' of bound member variable not set", sourcePos, context);
+            ThrowException("'this ptr' of bound member variable not set", fullSpan, context);
         }
-        thisPtr->Load(emitter, OperationFlags::none, sourcePos, context);
+        thisPtr->Load(emitter, OperationFlags::none, fullSpan, context);
         otava::intermediate::Value* ptr = emitter.Stack().Pop();
         std::int32_t layoutIndex = variable->LayoutIndex();
         otava::intermediate::Value* elementPtr = emitter.EmitElemAddr(ptr, emitter.EmitLong(layoutIndex));
@@ -1771,16 +1772,16 @@ void BoundParentVariableNode::Load(Emitter& emitter, OperationFlags flags, const
     }
     else if (variable->IsGlobalVariable())
     {
-        ThrowException("bound parent variable cannot be global", sourcePos, context);
+        ThrowException("bound parent variable cannot be global", fullSpan, context);
     }
     DestructTemporaries(emitter, context);
 }
 
-void BoundParentVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundParentVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (variable->IsLocalVariable())
     {
-        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context));
+        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, fullSpan, context));
         otava::intermediate::Value* value = emitter.Stack().Pop();
         if ((flags & OperationFlags::deref) != OperationFlags::none)
         {
@@ -1810,9 +1811,9 @@ void BoundParentVariableNode::Store(Emitter& emitter, OperationFlags flags, cons
         otava::intermediate::Value* value = emitter.Stack().Pop();
         if (!thisPtr)
         {
-            ThrowException("'this ptr' of bound member variable not set", sourcePos, context);
+            ThrowException("'this ptr' of bound member variable not set", fullSpan, context);
         }
-        thisPtr->Load(emitter, OperationFlags::none, sourcePos, context);
+        thisPtr->Load(emitter, OperationFlags::none, fullSpan, context);
         otava::intermediate::Value* ptr = emitter.Stack().Pop();
         std::int32_t layoutIndex = variable->LayoutIndex();
         otava::intermediate::Value* elementPtr = emitter.EmitElemAddr(ptr, emitter.EmitLong(layoutIndex));
@@ -1841,7 +1842,7 @@ void BoundParentVariableNode::Store(Emitter& emitter, OperationFlags flags, cons
     }
     else if (variable->IsGlobalVariable())
     {
-        ThrowException("bound parent variable cannot be global", sourcePos, context);
+        ThrowException("bound parent variable cannot be global", fullSpan, context);
     }
     DestructTemporaries(emitter, context);
 }
@@ -1858,7 +1859,7 @@ bool BoundParentVariableNode::IsBoundParentMemberVariable() const noexcept
 
 BoundExpressionNode* BoundParentVariableNode::Clone() const
 {
-    BoundParentVariableNode* clone = new BoundParentVariableNode(variable, GetSourcePos());
+    BoundParentVariableNode* clone = new BoundParentVariableNode(variable, GetFullSpan());
     if (thisPtr)
     {
         clone->SetThisPtr(thisPtr->Clone());
@@ -1871,17 +1872,17 @@ BoundExpressionNode* BoundParentVariableNode::Clone() const
     return clone;
 }
 
-void BoundParentVariableNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundParentVariableNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
     if (thisPtr)
     {
-        thisPtr->ModifyTypes(sourcePos, context);
+        thisPtr->ModifyTypes(fullSpan, context);
     }
 }
 
-BoundParameterNode::BoundParameterNode(ParameterSymbol* parameter_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundParameterNode, sourcePos_, type), parameter(parameter_)
+BoundParameterNode::BoundParameterNode(ParameterSymbol* parameter_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* type) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundParameterNode, fullSpan_, type), parameter(parameter_)
 {
 }
 
@@ -1890,15 +1891,15 @@ void BoundParameterNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-void BoundParameterNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundParameterNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if ((flags & OperationFlags::addr) != OperationFlags::none)
     {
-        emitter.Stack().Push(static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, sourcePos, context)));
+        emitter.Stack().Push(static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, fullSpan, context)));
     }
     else if ((flags & OperationFlags::deref) != OperationFlags::none)
     {
-        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, sourcePos, context));
+        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, fullSpan, context));
         otava::intermediate::Value* value = emitter.EmitLoad(ptr);
         std::uint8_t n = GetDerefCount(flags);
         for (std::uint8_t i = 0; i < n; ++i)
@@ -1909,18 +1910,18 @@ void BoundParameterNode::Load(Emitter& emitter, OperationFlags flags, const soul
     }
     else
     {
-        emitter.Stack().Push(emitter.EmitLoad(static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, sourcePos, context))));
+        emitter.Stack().Push(emitter.EmitLoad(static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, fullSpan, context))));
     }
     DestructTemporaries(emitter, context);
 }
 
-void BoundParameterNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundParameterNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, sourcePos, context));
+    otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, fullSpan, context));
     otava::intermediate::Value* value = emitter.Stack().Pop();
     if ((flags & OperationFlags::addr) != OperationFlags::none)
     {
-        ThrowException("invalid operation flag 'addr' for parameter store operation", sourcePos, context);
+        ThrowException("invalid operation flag 'addr' for parameter store operation", fullSpan, context);
     }
     else if ((flags & OperationFlags::deref) != OperationFlags::none)
     {
@@ -1949,7 +1950,7 @@ void BoundParameterNode::Store(Emitter& emitter, OperationFlags flags, const sou
 
 BoundExpressionNode* BoundParameterNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundParameterNode(parameter, GetSourcePos(), GetType());
+    BoundExpressionNode* clone = new BoundParameterNode(parameter, GetFullSpan(), GetType());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -1958,8 +1959,8 @@ BoundExpressionNode* BoundParameterNode::Clone() const
     return clone;
 }
 
-BoundParentParameterNode::BoundParentParameterNode(ParameterSymbol* parameter_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundParentParameterNode, sourcePos_, type), parameter(parameter_), level(0)
+BoundParentParameterNode::BoundParentParameterNode(ParameterSymbol* parameter_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* type) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundParentParameterNode, fullSpan_, type), parameter(parameter_), level(0)
 {
 }
 
@@ -1968,15 +1969,15 @@ void BoundParentParameterNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-void BoundParentParameterNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundParentParameterNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if ((flags & OperationFlags::addr) != OperationFlags::none)
     {
-        emitter.Stack().Push(static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, sourcePos, context)));
+        emitter.Stack().Push(static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, fullSpan, context)));
     }
     else if ((flags & OperationFlags::deref) != OperationFlags::none)
     {
-        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, sourcePos, context));
+        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, fullSpan, context));
         otava::intermediate::Value* value = emitter.EmitLoad(ptr);
         std::uint8_t n = GetDerefCount(flags);
         for (std::uint8_t i = 0; i < n; ++i)
@@ -1987,18 +1988,18 @@ void BoundParentParameterNode::Load(Emitter& emitter, OperationFlags flags, cons
     }
     else
     {
-        emitter.Stack().Push(emitter.EmitLoad(static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, sourcePos, context))));
+        emitter.Stack().Push(emitter.EmitLoad(static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, fullSpan, context))));
     }
     DestructTemporaries(emitter, context);
 }
 
-void BoundParentParameterNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundParentParameterNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, sourcePos, context));
+    otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, fullSpan, context));
     otava::intermediate::Value* value = emitter.Stack().Pop();
     if ((flags & OperationFlags::addr) != OperationFlags::none)
     {
-        ThrowException("invalid operation flag 'addr' for parameter store operation", sourcePos, context);
+        ThrowException("invalid operation flag 'addr' for parameter store operation", fullSpan, context);
     }
     else if ((flags & OperationFlags::deref) != OperationFlags::none)
     {
@@ -2027,7 +2028,7 @@ void BoundParentParameterNode::Store(Emitter& emitter, OperationFlags flags, con
 
 BoundExpressionNode* BoundParentParameterNode::Clone() const
 {
-    BoundParentParameterNode* clone = new BoundParentParameterNode(parameter, GetSourcePos(), GetType());
+    BoundParentParameterNode* clone = new BoundParentParameterNode(parameter, GetFullSpan(), GetType());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -2036,8 +2037,8 @@ BoundExpressionNode* BoundParentParameterNode::Clone() const
     return clone;
 }
 
-BoundEnumConstant::BoundEnumConstant(EnumConstantSymbol* enumConstant_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundEnumConstantNode, sourcePos_, enumConstant_->GetEnumType()), enumConstant(enumConstant_)
+BoundEnumConstant::BoundEnumConstant(EnumConstantSymbol* enumConstant_, const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundEnumConstantNode, fullSpan_, enumConstant_->GetEnumType()), enumConstant(enumConstant_)
 {
 }
 
@@ -2046,26 +2047,26 @@ void BoundEnumConstant::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-void BoundEnumConstant::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundEnumConstant::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if ((flags & OperationFlags::addr) != OperationFlags::none)
     {
-        ThrowException("cannot take address of an enumeration constant", sourcePos, context);
+        ThrowException("cannot take address of an enumeration constant", fullSpan, context);
     }
     else if ((flags & OperationFlags::deref) != OperationFlags::none)
     {
-        ThrowException("cannot dereference an enumeration constant", sourcePos, context);
+        ThrowException("cannot dereference an enumeration constant", fullSpan, context);
     }
     else
     {
-        emitter.Stack().Push(enumConstant->GetValue()->IrValue(emitter, sourcePos, context));
+        emitter.Stack().Push(enumConstant->GetValue()->IrValue(emitter, fullSpan, context));
     }
     DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundEnumConstant::Clone() const
 {
-    BoundExpressionNode* clone = new BoundEnumConstant(enumConstant, GetSourcePos());
+    BoundExpressionNode* clone = new BoundEnumConstant(enumConstant, GetFullSpan());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -2074,8 +2075,8 @@ BoundExpressionNode* BoundEnumConstant::Clone() const
     return clone;
 }
 
-BoundFunctionGroupNode::BoundFunctionGroupNode(FunctionGroupSymbol* functionGroupSymbol_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundFunctionGroupNode, sourcePos_, type_), functionGroupSymbol(functionGroupSymbol_)
+BoundFunctionGroupNode::BoundFunctionGroupNode(FunctionGroupSymbol* functionGroupSymbol_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundFunctionGroupNode, fullSpan_, type_), functionGroupSymbol(functionGroupSymbol_)
 {
 }
 
@@ -2084,7 +2085,7 @@ void BoundFunctionGroupNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-void BoundFunctionGroupNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundFunctionGroupNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     emitter.Stack().Push(nullptr);
     DestructTemporaries(emitter, context);
@@ -2092,7 +2093,7 @@ void BoundFunctionGroupNode::Load(Emitter& emitter, OperationFlags flags, const 
 
 BoundExpressionNode* BoundFunctionGroupNode::Clone() const
 {
-    BoundFunctionGroupNode* clone = new BoundFunctionGroupNode(functionGroupSymbol, GetSourcePos(), GetType());
+    BoundFunctionGroupNode* clone = new BoundFunctionGroupNode(functionGroupSymbol, GetFullSpan(), GetType());
     for (auto templateArg : templateArgs)
     {
         clone->AddTemplateArg(templateArg);
@@ -2110,8 +2111,8 @@ void BoundFunctionGroupNode::AddTemplateArg(TypeSymbol* templateArg)
     templateArgs.push_back(templateArg);
 }
 
-BoundClassGroupNode::BoundClassGroupNode(ClassGroupSymbol* classGroupSymbol_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundClassGroupNode, sourcePos_, type_), classGroupSymbol(classGroupSymbol_)
+BoundClassGroupNode::BoundClassGroupNode(ClassGroupSymbol* classGroupSymbol_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundClassGroupNode, fullSpan_, type_), classGroupSymbol(classGroupSymbol_)
 {
 }
 
@@ -2120,7 +2121,7 @@ void BoundClassGroupNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-void BoundClassGroupNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundClassGroupNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     emitter.Stack().Push(nullptr);
     DestructTemporaries(emitter, context);
@@ -2128,7 +2129,7 @@ void BoundClassGroupNode::Load(Emitter& emitter, OperationFlags flags, const sou
 
 BoundExpressionNode* BoundClassGroupNode::Clone() const
 {
-    BoundClassGroupNode* clone = new BoundClassGroupNode(classGroupSymbol, GetSourcePos(), GetType());
+    BoundClassGroupNode* clone = new BoundClassGroupNode(classGroupSymbol, GetFullSpan(), GetType());
     for (auto templateArg : templateArgs)
     {
         clone->AddTemplateArg(templateArg);
@@ -2146,8 +2147,8 @@ void BoundClassGroupNode::AddTemplateArg(TypeSymbol* templateArg)
     templateArgs.push_back(templateArg);
 }
 
-BoundAliasGroupNode::BoundAliasGroupNode(AliasGroupSymbol* aliasGroupSymbol_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundAliasGroupNode, sourcePos_, type_), aliasGroupSymbol(aliasGroupSymbol_)
+BoundAliasGroupNode::BoundAliasGroupNode(AliasGroupSymbol* aliasGroupSymbol_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundAliasGroupNode, fullSpan_, type_), aliasGroupSymbol(aliasGroupSymbol_)
 {
 }
 
@@ -2156,7 +2157,7 @@ void BoundAliasGroupNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-void BoundAliasGroupNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundAliasGroupNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     emitter.Stack().Push(nullptr);
     DestructTemporaries(emitter, context);
@@ -2164,7 +2165,7 @@ void BoundAliasGroupNode::Load(Emitter& emitter, OperationFlags flags, const sou
 
 BoundExpressionNode* BoundAliasGroupNode::Clone() const
 {
-    BoundAliasGroupNode* clone = new BoundAliasGroupNode(aliasGroupSymbol, GetSourcePos(), GetType());
+    BoundAliasGroupNode* clone = new BoundAliasGroupNode(aliasGroupSymbol, GetFullSpan(), GetType());
     for (auto templateArg : templateArgs)
     {
         clone->AddTemplateArg(templateArg);
@@ -2182,8 +2183,8 @@ void BoundAliasGroupNode::AddTemplateArg(TypeSymbol* templateArg)
     templateArgs.push_back(templateArg);
 }
 
-BoundTypeNode::BoundTypeNode(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundTypeNode, sourcePos_, type_)
+BoundTypeNode::BoundTypeNode(TypeSymbol* type_, const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundTypeNode, fullSpan_, type_)
 {
 }
 
@@ -2194,7 +2195,7 @@ void BoundTypeNode::Accept(BoundTreeVisitor& visitor)
 
 BoundExpressionNode* BoundTypeNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundTypeNode(GetType(), GetSourcePos());
+    BoundExpressionNode* clone = new BoundTypeNode(GetType(), GetFullSpan());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -2203,14 +2204,14 @@ BoundExpressionNode* BoundTypeNode::Clone() const
     return clone;
 }
 
-BoundMemberExprNode::BoundMemberExprNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundMemberExprNode, sourcePos_, type_), op()
+BoundMemberExprNode::BoundMemberExprNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundMemberExprNode, fullSpan_, type_), op()
 {
 }
 
 BoundMemberExprNode::BoundMemberExprNode(BoundExpressionNode* subject_, BoundExpressionNode* member_, otava::ast::NodeKind op_,
-    const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundMemberExprNode, sourcePos_, type_), subject(subject_), member(member_), op(op_)
+    const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundMemberExprNode, fullSpan_, type_), subject(subject_), member(member_), op(op_)
 {
 }
 
@@ -2221,7 +2222,7 @@ void BoundMemberExprNode::Accept(BoundTreeVisitor& visitor)
 
 BoundExpressionNode* BoundMemberExprNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundMemberExprNode(subject->Clone(), member->Clone(), op, GetSourcePos(), GetType());
+    BoundExpressionNode* clone = new BoundMemberExprNode(subject->Clone(), member->Clone(), op, GetFullSpan(), GetType());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -2230,15 +2231,15 @@ BoundExpressionNode* BoundMemberExprNode::Clone() const
     return clone;
 }
 
-void BoundMemberExprNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundMemberExprNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    subject->ModifyTypes(sourcePos, context);
-    member->ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
+    subject->ModifyTypes(fullSpan, context);
+    member->ModifyTypes(fullSpan, context);
 }
 
-BoundFunctionCallNode::BoundFunctionCallNode(FunctionSymbol* functionSymbol_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundFunctionCallNode, sourcePos_, type_), functionSymbol(functionSymbol_)
+BoundFunctionCallNode::BoundFunctionCallNode(FunctionSymbol* functionSymbol_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundFunctionCallNode, fullSpan_, type_), functionSymbol(functionSymbol_)
 {
 }
 
@@ -2263,7 +2264,7 @@ void BoundFunctionCallNode::AddArgument(BoundExpressionNode* arg)
     args.push_back(std::unique_ptr<BoundExpressionNode>(arg));
 }
 
-void BoundFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     std::vector<BoundExpressionNode*> arguments;
     for (const auto& arg : args)
@@ -2274,7 +2275,7 @@ void BoundFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const s
     {
         flags = flags | OperationFlags::virtualCall;
     }
-    functionSymbol->GenerateCode(emitter, arguments, flags, sourcePos, context);
+    functionSymbol->GenerateCode(emitter, arguments, flags, fullSpan, context);
     if ((flags & OperationFlags::deref) != OperationFlags::none && functionSymbol->Name() != U"operator_bool")
     {
         otava::intermediate::Value* value = emitter.Stack().Pop();
@@ -2288,11 +2289,11 @@ void BoundFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const s
     DestructTemporaries(emitter, context);
 }
 
-void BoundFunctionCallNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundFunctionCallNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if ((flags & OperationFlags::addr) != OperationFlags::none)
     {
-        ThrowException("cannot take address of a function call", sourcePos, context);
+        ThrowException("cannot take address of a function call", fullSpan, context);
     }
     else
     {
@@ -2307,7 +2308,7 @@ void BoundFunctionCallNode::Store(Emitter& emitter, OperationFlags flags, const 
         {
             callFlags = callFlags | OperationFlags::virtualCall;
         }
-        functionSymbol->GenerateCode(emitter, arguments, callFlags, sourcePos, context);
+        functionSymbol->GenerateCode(emitter, arguments, callFlags, fullSpan, context);
         otava::intermediate::Value* ptr = emitter.Stack().Pop();
         if ((flags & OperationFlags::deref) != OperationFlags::none || GetFlag(BoundExpressionFlags::deref))
         {
@@ -2347,7 +2348,7 @@ bool BoundFunctionCallNode::IsLvalueExpression() const noexcept
 
 BoundExpressionNode* BoundFunctionCallNode::Clone() const
 {
-    BoundFunctionCallNode* clone = new BoundFunctionCallNode(functionSymbol, GetSourcePos(), GetType());
+    BoundFunctionCallNode* clone = new BoundFunctionCallNode(functionSymbol, GetFullSpan(), GetType());
     for (auto& arg : args)
     {
         clone->AddArgument(arg->Clone());
@@ -2383,9 +2384,9 @@ bool BoundFunctionCallNode::IsNoReturnFunctionCall() const noexcept
     return false;
 }
 
-void BoundFunctionCallNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundFunctionCallNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
     if (!functionSymbol->IsArrayElementAccess())
     {
         if (functionSymbol->ReturnType() && functionSymbol->ReturnType()->GetBaseType()->IsForwardDeclarationSymbol())
@@ -2401,12 +2402,12 @@ void BoundFunctionCallNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, C
     }
     for (auto& arg : args)
     {
-        arg->ModifyTypes(sourcePos, context);
+        arg->ModifyTypes(fullSpan, context);
     }
 }
 
-BoundEmptyFunctionCallNode::BoundEmptyFunctionCallNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundEmptyFunctionCallNode, sourcePos_, nullptr)
+BoundEmptyFunctionCallNode::BoundEmptyFunctionCallNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundEmptyFunctionCallNode, fullSpan_, nullptr)
 {
 }
 
@@ -2415,14 +2416,14 @@ void BoundEmptyFunctionCallNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-void BoundEmptyFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundEmptyFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundEmptyFunctionCallNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundEmptyFunctionCallNode(GetSourcePos());
+    BoundExpressionNode* clone = new BoundEmptyFunctionCallNode(GetFullSpan());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -2431,8 +2432,8 @@ BoundExpressionNode* BoundEmptyFunctionCallNode::Clone() const
     return clone;
 }
 
-BoundFunctionPtrCallNode::BoundFunctionPtrCallNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundFunctionPtrCallNode, sourcePos_, type_)
+BoundFunctionPtrCallNode::BoundFunctionPtrCallNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundFunctionPtrCallNode, fullSpan_, type_)
 {
 }
 
@@ -2446,14 +2447,14 @@ void BoundFunctionPtrCallNode::AddArgument(BoundExpressionNode* arg)
     args.push_back(std::unique_ptr<BoundExpressionNode>(arg));
 }
 
-void BoundFunctionPtrCallNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundFunctionPtrCallNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     otava::intermediate::Value* callee = nullptr;
     std::vector<otava::intermediate::Value*> irArgs;
     bool first = true;
     for (const auto& arg : args)
     {
-        arg->Load(emitter, OperationFlags::none, sourcePos, context);
+        arg->Load(emitter, OperationFlags::none, fullSpan, context);
         otava::intermediate::Value* irArg = emitter.Stack().Pop();
         if (first)
         {
@@ -2472,7 +2473,7 @@ void BoundFunctionPtrCallNode::Load(Emitter& emitter, OperationFlags flags, cons
 
 BoundExpressionNode* BoundFunctionPtrCallNode::Clone() const
 {
-    BoundFunctionPtrCallNode* clone = new BoundFunctionPtrCallNode(GetSourcePos(), GetType());
+    BoundFunctionPtrCallNode* clone = new BoundFunctionPtrCallNode(GetFullSpan(), GetType());
     for (auto& arg : args)
     {
         clone->AddArgument(arg->Clone());
@@ -2485,17 +2486,17 @@ BoundExpressionNode* BoundFunctionPtrCallNode::Clone() const
     return clone;
 }
 
-void BoundFunctionPtrCallNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundFunctionPtrCallNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
     for (auto& arg : args)
     {
-        arg->ModifyTypes(sourcePos, context);
+        arg->ModifyTypes(fullSpan, context);
     }
 }
 
-BoundInvokeNode::BoundInvokeNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundInvokeNode, sourcePos_, type_)
+BoundInvokeNode::BoundInvokeNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundInvokeNode, fullSpan_, type_)
 {
 }
 
@@ -2511,7 +2512,7 @@ bool BoundInvokeNode::HasValue() const noexcept
 
 BoundExpressionNode* BoundInvokeNode::Clone() const
 {
-    BoundInvokeNode* clone = new BoundInvokeNode(GetSourcePos(), GetType());
+    BoundInvokeNode* clone = new BoundInvokeNode(GetFullSpan(), GetType());
     if (result)
     {
         clone->SetResult(static_cast<BoundVariableNode*>(result->Clone()));
@@ -2528,27 +2529,27 @@ BoundExpressionNode* BoundInvokeNode::Clone() const
     return clone;
 }
 
-void BoundInvokeNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundInvokeNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    invokeCall->Load(emitter, OperationFlags::none, sourcePos, context);
+    invokeCall->Load(emitter, OperationFlags::none, fullSpan, context);
     if (result)
     {
-        result->Load(emitter, flags, sourcePos, context);
+        result->Load(emitter, flags, fullSpan, context);
     }
     DestructTemporaries(emitter, context);
 }
 
-void BoundInvokeNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundInvokeNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if ((flags & OperationFlags::addr) != OperationFlags::none)
     {
-        ThrowException("cannot take address of a function call", sourcePos, context);
+        ThrowException("cannot take address of a function call", fullSpan, context);
     }
     else
     {
         otava::intermediate::Value* value = emitter.Stack().Pop();
-        invokeCall->Load(emitter, OperationFlags::none, sourcePos, context);
-        result->Load(emitter, OperationFlags::none, sourcePos, context);
+        invokeCall->Load(emitter, OperationFlags::none, fullSpan, context);
+        result->Load(emitter, OperationFlags::none, fullSpan, context);
         otava::intermediate::Value* ptr = emitter.Stack().Pop();
         if ((flags & OperationFlags::deref) != OperationFlags::none || GetFlag(BoundExpressionFlags::deref))
         {
@@ -2576,13 +2577,13 @@ void BoundInvokeNode::Store(Emitter& emitter, OperationFlags flags, const soul::
 }
 
 
-BoundExpressionSequenceNode::BoundExpressionSequenceNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type) :
-    BoundExpressionNode(BoundNodeKind::boundExpressionSequenceNode, sourcePos_, type), left(), right()
+BoundExpressionSequenceNode::BoundExpressionSequenceNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* type) :
+    BoundExpressionNode(BoundNodeKind::boundExpressionSequenceNode, fullSpan_, type), left(), right()
 {
 }
 
-BoundExpressionSequenceNode::BoundExpressionSequenceNode(const soul::ast::SourcePos& sourcePos_, BoundExpressionNode* left_, BoundExpressionNode* right_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundExpressionSequenceNode, sourcePos_, right_->GetType()), left(left_), right(right_)
+BoundExpressionSequenceNode::BoundExpressionSequenceNode(const soul::ast::FullSpan& fullSpan_, BoundExpressionNode* left_, BoundExpressionNode* right_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundExpressionSequenceNode, fullSpan_, right_->GetType()), left(left_), right(right_)
 {
 }
 
@@ -2605,7 +2606,7 @@ bool BoundExpressionSequenceNode::IsLvalueExpression() const noexcept
 
 BoundExpressionNode* BoundExpressionSequenceNode::Clone() const
 {
-    BoundExpressionSequenceNode* clone = new BoundExpressionSequenceNode(GetSourcePos(), left->Clone(), right->Clone());
+    BoundExpressionSequenceNode* clone = new BoundExpressionSequenceNode(GetFullSpan(), left->Clone(), right->Clone());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -2614,25 +2615,25 @@ BoundExpressionNode* BoundExpressionSequenceNode::Clone() const
     return clone;
 }
 
-void BoundExpressionSequenceNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundExpressionSequenceNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    left->Load(emitter, flags, sourcePos, context);
+    left->Load(emitter, flags, fullSpan, context);
     if (left->HasValue())
     {
         emitter.Stack().Pop();
     }
-    right->Load(emitter, flags, sourcePos, context);
+    right->Load(emitter, flags, fullSpan, context);
     DestructTemporaries(emitter, context);
 }
 
-void BoundExpressionSequenceNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundExpressionSequenceNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    left->Load(emitter, flags, sourcePos, context);
+    left->Load(emitter, flags, fullSpan, context);
     if (left->HasValue())
     {
         emitter.Stack().Pop();
     }
-    right->Store(emitter, flags, sourcePos, context);
+    right->Store(emitter, flags, fullSpan, context);
     DestructTemporaries(emitter, context);
 }
 
@@ -2641,15 +2642,15 @@ bool BoundExpressionSequenceNode::HasValue() const noexcept
     return right->HasValue();
 }
 
-void BoundExpressionSequenceNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundExpressionSequenceNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    left->ModifyTypes(sourcePos, context);
-    right->ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
+    left->ModifyTypes(fullSpan, context);
+    right->ModifyTypes(fullSpan, context);
 }
 
-BoundExpressionListNode::BoundExpressionListNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundExpressionListNode, sourcePos_, nullptr)
+BoundExpressionListNode::BoundExpressionListNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundExpressionListNode, fullSpan_, nullptr)
 {
 }
 
@@ -2660,7 +2661,7 @@ void BoundExpressionListNode::Accept(BoundTreeVisitor& visitor)
 
 BoundExpressionNode* BoundExpressionListNode::Clone() const
 {
-    BoundExpressionListNode* clone = new BoundExpressionListNode(GetSourcePos());
+    BoundExpressionListNode* clone = new BoundExpressionListNode(GetFullSpan());
     for (auto& expr : exprs)
     {
         clone->AddExpression(expr->Clone());
@@ -2686,22 +2687,22 @@ void BoundExpressionListNode::AddExpression(BoundExpressionNode* expr)
     exprs.push_back(std::unique_ptr<BoundExpressionNode>(expr));
 }
 
-void BoundExpressionListNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundExpressionListNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
     for (auto& expr : exprs)
     {
-        expr->ModifyTypes(sourcePos, context);
+        expr->ModifyTypes(fullSpan, context);
     }
 }
 
-BoundConjunctionNode::BoundConjunctionNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* boolType) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundConjunctionNode, sourcePos_, boolType)
+BoundConjunctionNode::BoundConjunctionNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* boolType) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundConjunctionNode, fullSpan_, boolType)
 {
 }
 
-BoundConjunctionNode::BoundConjunctionNode(BoundExpressionNode* left_, BoundExpressionNode* right_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* boolType) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundConjunctionNode, sourcePos_, boolType), left(left_), right(right_)
+BoundConjunctionNode::BoundConjunctionNode(BoundExpressionNode* left_, BoundExpressionNode* right_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* boolType) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundConjunctionNode, fullSpan_, boolType), left(left_), right(right_)
 {
 }
 
@@ -2727,11 +2728,11 @@ bool BoundConjunctionNode::HasValue() const noexcept
     return true;
 }
 
-void BoundConjunctionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundConjunctionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    temporary->Load(emitter, OperationFlags::addr, sourcePos, context);
+    temporary->Load(emitter, OperationFlags::addr, fullSpan, context);
     otava::intermediate::Value* temp = emitter.Stack().Pop();
-    left->Load(emitter, OperationFlags::none, sourcePos, context);
+    left->Load(emitter, OperationFlags::none, fullSpan, context);
     left->DestructTemporaries(emitter, context);
     otava::intermediate::Value* leftValue = emitter.Stack().Pop();
     otava::intermediate::BasicBlock* trueBlock = emitter.CreateBasicBlock();
@@ -2740,7 +2741,7 @@ void BoundConjunctionNode::Load(Emitter& emitter, OperationFlags flags, const so
     otava::intermediate::BasicBlock* nextBlock = emitter.CreateBasicBlock();
     emitter.EmitBranch(leftValue, rightBlock, falseBlock);
     emitter.SetCurrentBasicBlock(rightBlock);
-    right->Load(emitter, OperationFlags::none, sourcePos, context);
+    right->Load(emitter, OperationFlags::none, fullSpan, context);
     right->DestructTemporaries(emitter, context);
     otava::intermediate::Value* rightValue = emitter.Stack().Pop();
     emitter.EmitBranch(rightValue, trueBlock, falseBlock);
@@ -2758,7 +2759,7 @@ void BoundConjunctionNode::Load(Emitter& emitter, OperationFlags flags, const so
 
 BoundExpressionNode* BoundConjunctionNode::Clone() const
 {
-    BoundConjunctionNode* clone = new BoundConjunctionNode(left->Clone(), right->Clone(), GetSourcePos(), GetType());
+    BoundConjunctionNode* clone = new BoundConjunctionNode(left->Clone(), right->Clone(), GetFullSpan(), GetType());
     if (temporary)
     {
         clone->SetTemporary(static_cast<BoundVariableNode*>(temporary->Clone()));
@@ -2771,24 +2772,24 @@ BoundExpressionNode* BoundConjunctionNode::Clone() const
     return clone;
 }
 
-void BoundConjunctionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundConjunctionNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    left->ModifyTypes(sourcePos, context);
-    right->ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
+    left->ModifyTypes(fullSpan, context);
+    right->ModifyTypes(fullSpan, context);
     if (temporary)
     {
-        temporary->ModifyTypes(sourcePos, context);
+        temporary->ModifyTypes(fullSpan, context);
     }
 }
 
-BoundDisjunctionNode::BoundDisjunctionNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* boolType) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundDisjunctionNode, sourcePos_, boolType), left(), right()
+BoundDisjunctionNode::BoundDisjunctionNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* boolType) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundDisjunctionNode, fullSpan_, boolType), left(), right()
 {
 }
 
-BoundDisjunctionNode::BoundDisjunctionNode(BoundExpressionNode* left_, BoundExpressionNode* right_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* boolType) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundDisjunctionNode, sourcePos_, boolType), left(left_), right(right_)
+BoundDisjunctionNode::BoundDisjunctionNode(BoundExpressionNode* left_, BoundExpressionNode* right_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* boolType) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundDisjunctionNode, fullSpan_, boolType), left(left_), right(right_)
 {
 }
 
@@ -2814,11 +2815,11 @@ bool BoundDisjunctionNode::HasValue() const noexcept
     return true;
 }
 
-void BoundDisjunctionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundDisjunctionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    temporary->Load(emitter, OperationFlags::addr, sourcePos, context);
+    temporary->Load(emitter, OperationFlags::addr, fullSpan, context);
     otava::intermediate::Value* temp = emitter.Stack().Pop();
-    left->Load(emitter, OperationFlags::none, sourcePos, context);
+    left->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* leftValue = emitter.Stack().Pop();
     otava::intermediate::BasicBlock* trueBlock = emitter.CreateBasicBlock();
     otava::intermediate::BasicBlock* rightBlock = emitter.CreateBasicBlock();
@@ -2826,7 +2827,7 @@ void BoundDisjunctionNode::Load(Emitter& emitter, OperationFlags flags, const so
     otava::intermediate::BasicBlock* nextBlock = emitter.CreateBasicBlock();
     emitter.EmitBranch(leftValue, trueBlock, rightBlock);
     emitter.SetCurrentBasicBlock(rightBlock);
-    right->Load(emitter, OperationFlags::none, sourcePos, context);
+    right->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* rightValue = emitter.Stack().Pop();
     emitter.EmitBranch(rightValue, trueBlock, falseBlock);
     emitter.SetCurrentBasicBlock(trueBlock);
@@ -2843,7 +2844,7 @@ void BoundDisjunctionNode::Load(Emitter& emitter, OperationFlags flags, const so
 
 BoundExpressionNode* BoundDisjunctionNode::Clone() const
 {
-    BoundDisjunctionNode* clone = new BoundDisjunctionNode(left->Clone(), right->Clone(), GetSourcePos(), GetType());
+    BoundDisjunctionNode* clone = new BoundDisjunctionNode(left->Clone(), right->Clone(), GetFullSpan(), GetType());
     if (temporary)
     {
         clone->SetTemporary(static_cast<BoundVariableNode*>(temporary->Clone()));
@@ -2856,25 +2857,25 @@ BoundExpressionNode* BoundDisjunctionNode::Clone() const
     return clone;
 }
 
-void BoundDisjunctionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundDisjunctionNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    left->ModifyTypes(sourcePos, context);
-    right->ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
+    left->ModifyTypes(fullSpan, context);
+    right->ModifyTypes(fullSpan, context);
     if (temporary)
     {
-        temporary->ModifyTypes(sourcePos, context);
+        temporary->ModifyTypes(fullSpan, context);
     }
 }
 
-BoundConditionalExprNode::BoundConditionalExprNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundConditionalExprNode, sourcePos_, type)
+BoundConditionalExprNode::BoundConditionalExprNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* type) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundConditionalExprNode, fullSpan_, type)
 {
 }
 
 BoundConditionalExprNode::BoundConditionalExprNode(BoundExpressionNode* condition_, BoundExpressionNode* thenExpr_, BoundExpressionNode* elseExpr_,
     TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundConditionalExprNode, condition_->GetSourcePos(), type_),
+    BoundExpressionNode(BoundNodeKind::boundConditionalExprNode, condition_->GetFullSpan(), type_),
     condition(condition_), thenExpr(thenExpr_), elseExpr(elseExpr_)
 {
 }
@@ -2897,24 +2898,24 @@ bool BoundConditionalExprNode::MayThrow() const noexcept
     return false;
 }
 
-void BoundConditionalExprNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundConditionalExprNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    temporary->Load(emitter, OperationFlags::addr, sourcePos, context);
+    temporary->Load(emitter, OperationFlags::addr, fullSpan, context);
     otava::intermediate::Value* temp = emitter.Stack().Pop();
-    condition->Load(emitter, flags, sourcePos, context);
+    condition->Load(emitter, flags, fullSpan, context);
     otava::intermediate::Value* cond = emitter.Stack().Pop();
     otava::intermediate::BasicBlock* trueBlock = emitter.CreateBasicBlock();
     otava::intermediate::BasicBlock* falseBlock = emitter.CreateBasicBlock();
     otava::intermediate::BasicBlock* nextBlock = emitter.CreateBasicBlock();
     emitter.EmitBranch(cond, trueBlock, falseBlock);
     emitter.SetCurrentBasicBlock(trueBlock);
-    thenExpr->Load(emitter, flags, sourcePos, context);
+    thenExpr->Load(emitter, flags, fullSpan, context);
     thenExpr->DestructTemporaries(emitter, context);
     otava::intermediate::Value* left = emitter.Stack().Pop();
     emitter.EmitStore(left, temp);
     emitter.EmitJump(nextBlock);
     emitter.SetCurrentBasicBlock(falseBlock);
-    elseExpr->Load(emitter, flags, sourcePos, context);
+    elseExpr->Load(emitter, flags, fullSpan, context);
     elseExpr->DestructTemporaries(emitter, context);
     otava::intermediate::Value* right = emitter.Stack().Pop();
     emitter.EmitStore(right, temp);
@@ -2937,25 +2938,25 @@ BoundExpressionNode* BoundConditionalExprNode::Clone() const
     return clone;
 }
 
-void BoundConditionalExprNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundConditionalExprNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    condition->ModifyTypes(sourcePos, context);
-    thenExpr->ModifyTypes(sourcePos, context);
-    elseExpr->ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
+    condition->ModifyTypes(fullSpan, context);
+    thenExpr->ModifyTypes(fullSpan, context);
+    elseExpr->ModifyTypes(fullSpan, context);
     if (temporary)
     {
-        temporary->ModifyTypes(sourcePos, context);
+        temporary->ModifyTypes(fullSpan, context);
     }
 }
 
-BoundConversionNode::BoundConversionNode(FunctionSymbol* conversionFunction_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundConversionNode, sourcePos_, conversionFunction_->ReturnType()), subject(), conversionFunction(conversionFunction_)
+BoundConversionNode::BoundConversionNode(FunctionSymbol* conversionFunction_, const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundConversionNode, fullSpan_, conversionFunction_->ReturnType()), subject(), conversionFunction(conversionFunction_)
 {
 }
 
-BoundConversionNode::BoundConversionNode(BoundExpressionNode* subject_, FunctionSymbol* conversionFunction_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundConversionNode, sourcePos_, conversionFunction_->ReturnType()), subject(subject_), conversionFunction(conversionFunction_)
+BoundConversionNode::BoundConversionNode(BoundExpressionNode* subject_, FunctionSymbol* conversionFunction_, const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundConversionNode, fullSpan_, conversionFunction_->ReturnType()), subject(subject_), conversionFunction(conversionFunction_)
 {
 }
 
@@ -2971,11 +2972,11 @@ bool BoundConversionNode::MayThrow() const noexcept
     return false;
 }
 
-void BoundConversionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundConversionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    subject->Load(emitter, flags, sourcePos, context);
+    subject->Load(emitter, flags, fullSpan, context);
     std::vector<BoundExpressionNode*> args;
-    conversionFunction->GenerateCode(emitter, args, flags, sourcePos, context);
+    conversionFunction->GenerateCode(emitter, args, flags, fullSpan, context);
     if ((flags & OperationFlags::derefAfterConv) != OperationFlags::none)
     {
         otava::intermediate::Value* value = emitter.Stack().Pop();
@@ -2989,10 +2990,10 @@ void BoundConversionNode::Load(Emitter& emitter, OperationFlags flags, const sou
     DestructTemporaries(emitter, context);
 }
 
-void BoundConversionNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundConversionNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    Load(emitter, flags, sourcePos, context);
-    subject->Store(emitter, flags, sourcePos, context);
+    Load(emitter, flags, fullSpan, context);
+    subject->Store(emitter, flags, fullSpan, context);
     DestructTemporaries(emitter, context);
 }
 
@@ -3003,7 +3004,7 @@ bool BoundConversionNode::IsLvalueExpression() const noexcept
 
 BoundExpressionNode* BoundConversionNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundConversionNode(subject->Clone(), conversionFunction, GetSourcePos());
+    BoundExpressionNode* clone = new BoundConversionNode(subject->Clone(), conversionFunction, GetFullSpan());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -3012,19 +3013,19 @@ BoundExpressionNode* BoundConversionNode::Clone() const
     return clone;
 }
 
-void BoundConversionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundConversionNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    subject->ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
+    subject->ModifyTypes(fullSpan, context);
 }
 
-BoundAddressOfNode::BoundAddressOfNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundAddressOfNode, sourcePos_, type_), subject()
+BoundAddressOfNode::BoundAddressOfNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundAddressOfNode, fullSpan_, type_), subject()
 {
 }
 
-BoundAddressOfNode::BoundAddressOfNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundAddressOfNode, sourcePos_, type_), subject(subject_)
+BoundAddressOfNode::BoundAddressOfNode(BoundExpressionNode* subject_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundAddressOfNode, fullSpan_, type_), subject(subject_)
 {
 }
 
@@ -3043,37 +3044,37 @@ bool BoundAddressOfNode::MayThrow() const noexcept
     return false;
 }
 
-void BoundAddressOfNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundAddressOfNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (!subject->IsBoundDereferenceNode())
     {
-        subject->Load(emitter, OperationFlags::addr, sourcePos, context);
+        subject->Load(emitter, OperationFlags::addr, fullSpan, context);
     }
     else
     {
         BoundDereferenceNode* derefExpr = static_cast<BoundDereferenceNode*>(subject.get());
-        derefExpr->Subject()->Load(emitter, flags, sourcePos, context);
+        derefExpr->Subject()->Load(emitter, flags, fullSpan, context);
     }
     DestructTemporaries(emitter, context);
 }
 
-void BoundAddressOfNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundAddressOfNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (!subject->IsBoundDereferenceNode())
     {
-        subject->Store(emitter, OperationFlags::addr | (flags & OperationFlags::setPtr), sourcePos, context);
+        subject->Store(emitter, OperationFlags::addr | (flags & OperationFlags::setPtr), fullSpan, context);
     }
     else
     {
         BoundDereferenceNode* derefExpr = static_cast<BoundDereferenceNode*>(subject.get());
-        derefExpr->Subject()->Store(emitter, flags, sourcePos, context);
+        derefExpr->Subject()->Store(emitter, flags, fullSpan, context);
     }
     DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundAddressOfNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundAddressOfNode(subject->Clone(), GetSourcePos(), GetType());
+    BoundExpressionNode* clone = new BoundAddressOfNode(subject->Clone(), GetFullSpan(), GetType());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -3082,24 +3083,24 @@ BoundExpressionNode* BoundAddressOfNode::Clone() const
     return clone;
 }
 
-void BoundAddressOfNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundAddressOfNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    subject->ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
+    subject->ModifyTypes(fullSpan, context);
 }
 
-BoundDereferenceNode::BoundDereferenceNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, sourcePos_, type_), kind(OperationFlags::deref)
-{
-}
-
-BoundDereferenceNode::BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, sourcePos_, type_), subject(subject_), kind(OperationFlags::deref)
+BoundDereferenceNode::BoundDereferenceNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, fullSpan_, type_), kind(OperationFlags::deref)
 {
 }
 
-BoundDereferenceNode::BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_, OperationFlags kind_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, sourcePos_, type_), subject(subject_), kind(kind_)
+BoundDereferenceNode::BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, fullSpan_, type_), subject(subject_), kind(OperationFlags::deref)
+{
+}
+
+BoundDereferenceNode::BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_, OperationFlags kind_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, fullSpan_, type_), subject(subject_), kind(kind_)
 {
 }
 
@@ -3114,44 +3115,44 @@ bool BoundDereferenceNode::MayThrow() const noexcept
     return false;
 }
 
-void BoundDereferenceNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundDereferenceNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (!subject->IsBoundAddressOfNode())
     {
         if (GetDerefCount(flags) == 0 && (flags & OperationFlags::addr) != OperationFlags::none)
         {
-            subject->Load(emitter, OperationFlags::none, sourcePos, context);
+            subject->Load(emitter, OperationFlags::none, fullSpan, context);
         }
         else
         {
-            subject->Load(emitter, SetDerefCount(kind, GetDerefCount(flags) + 1), sourcePos, context);
+            subject->Load(emitter, SetDerefCount(kind, GetDerefCount(flags) + 1), fullSpan, context);
         }
     }
     else
     {
         BoundAddressOfNode* addressOfExpr = static_cast<BoundAddressOfNode*>(subject.get());
-        addressOfExpr->Subject()->Load(emitter, flags, sourcePos, context);
+        addressOfExpr->Subject()->Load(emitter, flags, fullSpan, context);
     }
     DestructTemporaries(emitter, context);
 }
 
-void BoundDereferenceNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundDereferenceNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (!subject->IsBoundAddressOfNode())
     {
-        subject->Store(emitter, SetDerefCount(OperationFlags::deref | (flags & OperationFlags::setPtr), GetDerefCount(flags) + 1), sourcePos, context);
+        subject->Store(emitter, SetDerefCount(OperationFlags::deref | (flags & OperationFlags::setPtr), GetDerefCount(flags) + 1), fullSpan, context);
     }
     else
     {
         BoundAddressOfNode* addressOfExpr = static_cast<BoundAddressOfNode*>(subject.get());
-        addressOfExpr->Subject()->Store(emitter, flags, sourcePos, context);
+        addressOfExpr->Subject()->Store(emitter, flags, fullSpan, context);
     }
     DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundDereferenceNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundDereferenceNode(subject->Clone(), GetSourcePos(), GetType(), kind);
+    BoundExpressionNode* clone = new BoundDereferenceNode(subject->Clone(), GetFullSpan(), GetType(), kind);
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -3160,19 +3161,19 @@ BoundExpressionNode* BoundDereferenceNode::Clone() const
     return clone;
 }
 
-void BoundDereferenceNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundDereferenceNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    subject->ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
+    subject->ModifyTypes(fullSpan, context);
 }
 
-BoundRefToPtrNode::BoundRefToPtrNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundRefToPtrNode, sourcePos_, type_), subject()
+BoundRefToPtrNode::BoundRefToPtrNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundRefToPtrNode, fullSpan_, type_), subject()
 {
 }
 
-BoundRefToPtrNode::BoundRefToPtrNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundRefToPtrNode, sourcePos_, type_), subject(subject_)
+BoundRefToPtrNode::BoundRefToPtrNode(BoundExpressionNode* subject_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundRefToPtrNode, fullSpan_, type_), subject(subject_)
 {
 }
 
@@ -3187,21 +3188,21 @@ bool BoundRefToPtrNode::MayThrow() const noexcept
     return false;
 }
 
-void BoundRefToPtrNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundRefToPtrNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    subject->Load(emitter, flags, sourcePos, context);
+    subject->Load(emitter, flags, fullSpan, context);
     DestructTemporaries(emitter, context);
 }
 
-void BoundRefToPtrNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundRefToPtrNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    subject->Store(emitter, flags, sourcePos, context);
+    subject->Store(emitter, flags, fullSpan, context);
     DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundRefToPtrNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundRefToPtrNode(subject->Clone(), GetSourcePos(), GetType());
+    BoundExpressionNode* clone = new BoundRefToPtrNode(subject->Clone(), GetFullSpan(), GetType());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -3210,19 +3211,19 @@ BoundExpressionNode* BoundRefToPtrNode::Clone() const
     return clone;
 }
 
-void BoundRefToPtrNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundRefToPtrNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    subject->ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
+    subject->ModifyTypes(fullSpan, context);
 }
 
-BoundPtrToRefNode::BoundPtrToRefNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundPtrToRefNode, sourcePos_, type_), subject()
+BoundPtrToRefNode::BoundPtrToRefNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundPtrToRefNode, fullSpan_, type_), subject()
 {
 }
 
-BoundPtrToRefNode::BoundPtrToRefNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundPtrToRefNode, sourcePos_, type_), subject(subject_)
+BoundPtrToRefNode::BoundPtrToRefNode(BoundExpressionNode* subject_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundPtrToRefNode, fullSpan_, type_), subject(subject_)
 {
 }
 
@@ -3233,7 +3234,7 @@ void BoundPtrToRefNode::Accept(BoundTreeVisitor& visitor)
 
 BoundExpressionNode* BoundPtrToRefNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundPtrToRefNode(subject->Clone(), GetSourcePos(), GetType());
+    BoundExpressionNode* clone = new BoundPtrToRefNode(subject->Clone(), GetFullSpan(), GetType());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -3248,31 +3249,31 @@ bool BoundPtrToRefNode::MayThrow() const noexcept
     return false;
 }
 
-void BoundPtrToRefNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundPtrToRefNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    subject->Load(emitter, flags, sourcePos, context);
+    subject->Load(emitter, flags, fullSpan, context);
     DestructTemporaries(emitter, context);
 }
 
-void BoundPtrToRefNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundPtrToRefNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    subject->Store(emitter, flags, sourcePos, context);
+    subject->Store(emitter, flags, fullSpan, context);
     DestructTemporaries(emitter, context);
 }
 
-void BoundPtrToRefNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundPtrToRefNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    subject->ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
+    subject->ModifyTypes(fullSpan, context);
 }
 
-BoundDefaultInitNode::BoundDefaultInitNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundDefaultInitNode, sourcePos_, type_), subject()
+BoundDefaultInitNode::BoundDefaultInitNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundDefaultInitNode, fullSpan_, type_), subject()
 {
 }
 
-BoundDefaultInitNode::BoundDefaultInitNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundDefaultInitNode, sourcePos_, subject_->GetType()), subject(subject_)
+BoundDefaultInitNode::BoundDefaultInitNode(BoundExpressionNode* subject_, const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundDefaultInitNode, fullSpan_, subject_->GetType()), subject(subject_)
 {
 }
 
@@ -3287,21 +3288,21 @@ bool BoundDefaultInitNode::MayThrow() const noexcept
     return false;
 }
 
-void BoundDefaultInitNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundDefaultInitNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    subject->Load(emitter, flags | OperationFlags::defaultInit, sourcePos, context);
+    subject->Load(emitter, flags | OperationFlags::defaultInit, fullSpan, context);
     DestructTemporaries(emitter, context);
 }
 
-void BoundDefaultInitNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundDefaultInitNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    subject->Store(emitter, flags | OperationFlags::defaultInit, sourcePos, context);
+    subject->Store(emitter, flags | OperationFlags::defaultInit, fullSpan, context);
     DestructTemporaries(emitter, context);
 }
 
 BoundExpressionNode* BoundDefaultInitNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundDefaultInitNode(subject->Clone(), GetSourcePos());
+    BoundExpressionNode* clone = new BoundDefaultInitNode(subject->Clone(), GetFullSpan());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -3310,48 +3311,48 @@ BoundExpressionNode* BoundDefaultInitNode::Clone() const
     return clone;
 }
 
-void BoundDefaultInitNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundDefaultInitNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    subject->ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
+    subject->ModifyTypes(fullSpan, context);
 }
 
-BoundTemporaryNode::BoundTemporaryNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundTemporaryNode, sourcePos_, type_), rvalueExpr(), backingStore()
-{
-}
-
-BoundTemporaryNode::BoundTemporaryNode(BoundExpressionNode* rvalueExpr_, BoundVariableNode* backingStore_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundTemporaryNode, sourcePos_, rvalueExpr_->GetType()), rvalueExpr(rvalueExpr_), backingStore(backingStore_)
+BoundTemporaryNode::BoundTemporaryNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundTemporaryNode, fullSpan_, type_), rvalueExpr(), backingStore()
 {
 }
 
-void BoundTemporaryNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+BoundTemporaryNode::BoundTemporaryNode(BoundExpressionNode* rvalueExpr_, BoundVariableNode* backingStore_, const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundTemporaryNode, fullSpan_, rvalueExpr_->GetType()), rvalueExpr(rvalueExpr_), backingStore(backingStore_)
+{
+}
+
+void BoundTemporaryNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (!backingStore)
     {
-        ThrowException("backing store of temporary not set", sourcePos, context);
+        ThrowException("backing store of temporary not set", fullSpan, context);
     }
-    rvalueExpr->Load(emitter, OperationFlags::none, sourcePos, context);
-    backingStore->Store(emitter, OperationFlags::none, sourcePos, context);
+    rvalueExpr->Load(emitter, OperationFlags::none, fullSpan, context);
+    backingStore->Store(emitter, OperationFlags::none, fullSpan, context);
     if ((flags & OperationFlags::addr) != OperationFlags::none)
     {
-        backingStore->Load(emitter, OperationFlags::addr, sourcePos, context);
+        backingStore->Load(emitter, OperationFlags::addr, fullSpan, context);
     }
     else if ((flags & OperationFlags::deref) != OperationFlags::none)
     {
-        backingStore->Load(emitter, SetDerefCount(OperationFlags::deref, GetDerefCount(flags) + 1), sourcePos, context);
+        backingStore->Load(emitter, SetDerefCount(OperationFlags::deref, GetDerefCount(flags) + 1), fullSpan, context);
     }
     else
     {
-        backingStore->Load(emitter, OperationFlags::none, sourcePos, context);
+        backingStore->Load(emitter, OperationFlags::none, fullSpan, context);
     }
     DestructTemporaries(emitter, context);
 }
 
-void BoundTemporaryNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundTemporaryNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    backingStore->Store(emitter, OperationFlags::none, sourcePos, context);
+    backingStore->Store(emitter, OperationFlags::none, fullSpan, context);
     DestructTemporaries(emitter, context);
 }
 
@@ -3369,7 +3370,7 @@ bool BoundTemporaryNode::MayThrow() const noexcept
 
 BoundExpressionNode* BoundTemporaryNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundTemporaryNode(rvalueExpr->Clone(), static_cast<BoundVariableNode*>(backingStore->Clone()), GetSourcePos());
+    BoundExpressionNode* clone = new BoundTemporaryNode(rvalueExpr->Clone(), static_cast<BoundVariableNode*>(backingStore->Clone()), GetFullSpan());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -3378,34 +3379,34 @@ BoundExpressionNode* BoundTemporaryNode::Clone() const
     return clone;
 }
 
-void BoundTemporaryNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundTemporaryNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    rvalueExpr->ModifyTypes(sourcePos, context);
-    backingStore->ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
+    rvalueExpr->ModifyTypes(fullSpan, context);
+    backingStore->ModifyTypes(fullSpan, context);
 }
 
-BoundConstructTemporaryNode::BoundConstructTemporaryNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundConstructTemporaryNode, sourcePos_, type_), constructorCall(), temporary()
+BoundConstructTemporaryNode::BoundConstructTemporaryNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundConstructTemporaryNode, fullSpan_, type_), constructorCall(), temporary()
 {
 }
 
 BoundConstructTemporaryNode::BoundConstructTemporaryNode(BoundExpressionNode* constructorCall_, BoundExpressionNode* temporary_,
-    const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundConstructTemporaryNode, sourcePos_, temporary_->GetType()), constructorCall(constructorCall_), temporary(temporary_)
+    const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundConstructTemporaryNode, fullSpan_, temporary_->GetType()), constructorCall(constructorCall_), temporary(temporary_)
 {
 }
 
-void BoundConstructTemporaryNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundConstructTemporaryNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    constructorCall->Load(emitter, OperationFlags::defaultInit, sourcePos, context);
-    temporary->Load(emitter, flags, sourcePos, context);
+    constructorCall->Load(emitter, OperationFlags::defaultInit, fullSpan, context);
+    temporary->Load(emitter, flags, fullSpan, context);
     DestructTemporaries(emitter, context);
 }
 
-void BoundConstructTemporaryNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundConstructTemporaryNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    temporary->Store(emitter, flags, sourcePos, context);
+    temporary->Store(emitter, flags, fullSpan, context);
     DestructTemporaries(emitter, context);
 }
 
@@ -3423,7 +3424,7 @@ bool BoundConstructTemporaryNode::MayThrow() const noexcept
 
 BoundExpressionNode* BoundConstructTemporaryNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundConstructTemporaryNode(constructorCall->Clone(), temporary->Clone(), GetSourcePos());
+    BoundExpressionNode* clone = new BoundConstructTemporaryNode(constructorCall->Clone(), temporary->Clone(), GetFullSpan());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -3432,25 +3433,25 @@ BoundExpressionNode* BoundConstructTemporaryNode::Clone() const
     return clone;
 }
 
-void BoundConstructTemporaryNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundConstructTemporaryNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    constructorCall->ModifyTypes(sourcePos, context);
-    temporary->ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
+    constructorCall->ModifyTypes(fullSpan, context);
+    temporary->ModifyTypes(fullSpan, context);
 }
 
-BoundDestructTemporariesNode::BoundDestructTemporariesNode(const soul::ast::SourcePos& sourcePos_,
+BoundDestructTemporariesNode::BoundDestructTemporariesNode(const soul::ast::FullSpan& fullSpan_,
     std::vector<std::unique_ptr<BoundFunctionCallNode>>&& temporaryDestructorCalls_) :
-    BoundExpressionNode(BoundNodeKind::boundDestructTemporariesNode, sourcePos_, nullptr),
+    BoundExpressionNode(BoundNodeKind::boundDestructTemporariesNode, fullSpan_, nullptr),
     temporaryDestructorCalls(std::move(temporaryDestructorCalls_))
 {
 }
 
-void BoundDestructTemporariesNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundDestructTemporariesNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     for (const auto& call : temporaryDestructorCalls)
     {
-        call->Load(emitter, flags, sourcePos, context);
+        call->Load(emitter, flags, fullSpan, context);
     }
 }
 
@@ -3466,7 +3467,7 @@ BoundExpressionNode* BoundDestructTemporariesNode::Clone() const
     {
         clonedTemporaryDestructorCalls.push_back(std::unique_ptr<BoundFunctionCallNode>(static_cast<BoundFunctionCallNode*>(temporaryDestructorCall->Clone())));
     }
-    BoundDestructTemporariesNode* clone = new BoundDestructTemporariesNode(GetSourcePos(), std::move(clonedTemporaryDestructorCalls));
+    BoundDestructTemporariesNode* clone = new BoundDestructTemporariesNode(GetFullSpan(), std::move(clonedTemporaryDestructorCalls));
     return clone;
 }
 
@@ -3478,22 +3479,22 @@ void BoundDestructTemporariesNode::Merge(BoundDestructTemporariesNode* that)
     }
 }
 
-BoundConstructExpressionNode::BoundConstructExpressionNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundConstructExpressionNode, sourcePos_, type_), allocation(), constructObjectCall(), hasPlacement(false)
+BoundConstructExpressionNode::BoundConstructExpressionNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundConstructExpressionNode, fullSpan_, type_), allocation(), constructObjectCall(), hasPlacement(false)
 {
 }
 
-BoundConstructExpressionNode::BoundConstructExpressionNode(BoundExpressionNode* allocation_, BoundExpressionNode* constructObjectCall_, TypeSymbol* type_,
-    bool hasPlacement_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundConstructExpressionNode, sourcePos_, type_), allocation(allocation_), constructObjectCall(constructObjectCall_),
+BoundConstructExpressionNode::BoundConstructExpressionNode(BoundExpressionNode* allocation_, BoundExpressionNode* constructObjectCall_,
+    TypeSymbol* type_, bool hasPlacement_, const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundConstructExpressionNode, fullSpan_, type_), allocation(allocation_), constructObjectCall(constructObjectCall_),
     hasPlacement(hasPlacement_)
 {
 }
 
-void BoundConstructExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundConstructExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    allocation->Load(emitter, flags | OperationFlags::dup, sourcePos, context);
-    constructObjectCall->Load(emitter, flags | OperationFlags::storeDeref | OperationFlags::defaultInit, sourcePos, context);
+    allocation->Load(emitter, flags | OperationFlags::dup, fullSpan, context);
+    constructObjectCall->Load(emitter, flags | OperationFlags::storeDeref | OperationFlags::defaultInit, fullSpan, context);
     DestructTemporaries(emitter, context);
 }
 
@@ -3511,7 +3512,7 @@ bool BoundConstructExpressionNode::MayThrow() const noexcept
 
 BoundExpressionNode* BoundConstructExpressionNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundConstructExpressionNode(allocation->Clone(), constructObjectCall->Clone(), GetType(), hasPlacement, GetSourcePos());
+    BoundExpressionNode* clone = new BoundConstructExpressionNode(allocation->Clone(), constructObjectCall->Clone(), GetType(), hasPlacement, GetFullSpan());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -3520,15 +3521,15 @@ BoundExpressionNode* BoundConstructExpressionNode::Clone() const
     return clone;
 }
 
-void BoundConstructExpressionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundConstructExpressionNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    allocation->ModifyTypes(sourcePos, context);
-    constructObjectCall->ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
+    allocation->ModifyTypes(fullSpan, context);
+    constructObjectCall->ModifyTypes(fullSpan, context);
 }
 
-BoundGlobalVariableDefinitionNode::BoundGlobalVariableDefinitionNode(VariableSymbol* globalVariable_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundNode(BoundNodeKind::boundGlobalVariableDefinitionNode, sourcePos_), globalVariable(globalVariable_)
+BoundGlobalVariableDefinitionNode::BoundGlobalVariableDefinitionNode(VariableSymbol* globalVariable_, const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundNode(BoundNodeKind::boundGlobalVariableDefinitionNode, fullSpan_), globalVariable(globalVariable_)
 {
 }
 
@@ -3537,8 +3538,8 @@ void BoundGlobalVariableDefinitionNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-BoundEmptyDestructorNode::BoundEmptyDestructorNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundEmptyDestructorNode, sourcePos_, nullptr)
+BoundEmptyDestructorNode::BoundEmptyDestructorNode(const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundEmptyDestructorNode, fullSpan_, nullptr)
 {
 }
 
@@ -3549,7 +3550,7 @@ void BoundEmptyDestructorNode::Accept(BoundTreeVisitor& visitor)
 
 BoundExpressionNode* BoundEmptyDestructorNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundEmptyDestructorNode(GetSourcePos());
+    BoundExpressionNode* clone = new BoundEmptyDestructorNode(GetFullSpan());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -3558,13 +3559,13 @@ BoundExpressionNode* BoundEmptyDestructorNode::Clone() const
     return clone;
 }
 
-void BoundEmptyDestructorNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundEmptyDestructorNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     DestructTemporaries(emitter, context);
 }
 
-BoundFunctionValueNode::BoundFunctionValueNode(FunctionSymbol* function_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundFunctionValueNode, sourcePos_, type_), function(function_)
+BoundFunctionValueNode::BoundFunctionValueNode(FunctionSymbol* function_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundFunctionValueNode, fullSpan_, type_), function(function_)
 {
 }
 
@@ -3575,7 +3576,7 @@ void BoundFunctionValueNode::Accept(BoundTreeVisitor& visitor)
 
 BoundExpressionNode* BoundFunctionValueNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundFunctionValueNode(function, GetSourcePos(), GetType());
+    BoundExpressionNode* clone = new BoundFunctionValueNode(function, GetFullSpan(), GetType());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -3584,23 +3585,23 @@ BoundExpressionNode* BoundFunctionValueNode::Clone() const
     return clone;
 }
 
-void BoundFunctionValueNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundFunctionValueNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    emitter.GetOrInsertFunction(function->IrName(context), static_cast<otava::intermediate::FunctionType*>(function->IrType(emitter, sourcePos, context)));
-    otava::intermediate::Value* functionValue = emitter.EmitSymbolValue(function->IrType(emitter, sourcePos, context), function->IrName(context));
+    emitter.GetOrInsertFunction(function->IrName(context), static_cast<otava::intermediate::FunctionType*>(function->IrType(emitter, fullSpan, context)));
+    otava::intermediate::Value* functionValue = emitter.EmitSymbolValue(function->IrType(emitter, fullSpan, context), function->IrName(context));
     otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
     otava::intermediate::Value* functionValueAsVoidPtr = emitter.EmitBitcast(functionValue, voidPtrIrType);
     emitter.Stack().Push(functionValueAsVoidPtr);
     DestructTemporaries(emitter, context);
 }
 
-BoundVariableAsVoidPtrNode::BoundVariableAsVoidPtrNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundVariableAsVoidPtrNode, sourcePos_, type_)
+BoundVariableAsVoidPtrNode::BoundVariableAsVoidPtrNode(const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundVariableAsVoidPtrNode, fullSpan_, type_)
 {
 }
 
-BoundVariableAsVoidPtrNode::BoundVariableAsVoidPtrNode(BoundExpressionNode* addrOfBoundVariable_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundVariableAsVoidPtrNode, sourcePos_, type_), addrOfBoundVariable(addrOfBoundVariable_)
+BoundVariableAsVoidPtrNode::BoundVariableAsVoidPtrNode(BoundExpressionNode* addrOfBoundVariable_, const soul::ast::FullSpan& fullSpan_, TypeSymbol* type_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundVariableAsVoidPtrNode, fullSpan_, type_), addrOfBoundVariable(addrOfBoundVariable_)
 {
 }
 
@@ -3611,7 +3612,7 @@ void BoundVariableAsVoidPtrNode::Accept(BoundTreeVisitor& visitor)
 
 BoundExpressionNode* BoundVariableAsVoidPtrNode::Clone() const
 {
-    BoundExpressionNode* clone = new BoundVariableAsVoidPtrNode(addrOfBoundVariable->Clone(), GetSourcePos(), GetType());
+    BoundExpressionNode* clone = new BoundVariableAsVoidPtrNode(addrOfBoundVariable->Clone(), GetFullSpan(), GetType());
     if (Source())
     {
         clone->SetSource(Source()->Clone());
@@ -3620,9 +3621,9 @@ BoundExpressionNode* BoundVariableAsVoidPtrNode::Clone() const
     return clone;
 }
 
-void BoundVariableAsVoidPtrNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundVariableAsVoidPtrNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    addrOfBoundVariable->Load(emitter, flags, sourcePos, context);
+    addrOfBoundVariable->Load(emitter, flags, fullSpan, context);
     otava::intermediate::Value* variableValue = emitter.Stack().Pop();
     otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
     otava::intermediate::Value* variableAsVoidPtr = emitter.EmitBitcast(variableValue, voidPtrIrType);
@@ -3630,14 +3631,14 @@ void BoundVariableAsVoidPtrNode::Load(Emitter& emitter, OperationFlags flags, co
     DestructTemporaries(emitter, context);
 }
 
-void BoundVariableAsVoidPtrNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundVariableAsVoidPtrNode::ModifyTypes(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    addrOfBoundVariable->ModifyTypes(sourcePos, context);
+    BoundExpressionNode::ModifyTypes(fullSpan, context);
+    addrOfBoundVariable->ModifyTypes(fullSpan, context);
 }
 
-BoundOperatorFnNode::BoundOperatorFnNode(otava::ast::NodeKind operatorFnNodeKind_, const soul::ast::SourcePos& sourcePos_) noexcept :
-    BoundExpressionNode(BoundNodeKind::boundOperatorFnNode, sourcePos_, nullptr), operatorFnNodeKind(operatorFnNodeKind_)
+BoundOperatorFnNode::BoundOperatorFnNode(otava::ast::NodeKind operatorFnNodeKind_, const soul::ast::FullSpan& fullSpan_) noexcept :
+    BoundExpressionNode(BoundNodeKind::boundOperatorFnNode, fullSpan_, nullptr), operatorFnNodeKind(operatorFnNodeKind_)
 {
 }
 
@@ -3648,7 +3649,7 @@ void BoundOperatorFnNode::Accept(BoundTreeVisitor& visitor)
 
 BoundExpressionNode* BoundOperatorFnNode::Clone() const
 {
-    BoundOperatorFnNode* clone = new BoundOperatorFnNode(operatorFnNodeKind, GetSourcePos());
+    BoundOperatorFnNode* clone = new BoundOperatorFnNode(operatorFnNodeKind, GetFullSpan());
     if (Source())
     {
         clone->SetSource(Source()->Clone());

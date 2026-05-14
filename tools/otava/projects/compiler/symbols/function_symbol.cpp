@@ -199,7 +199,7 @@ void ParameterSymbol::Accept(Visitor& visitor)
 
 TypeSymbol* ParameterSymbol::GetReferredType(Context* context) const
 {
-    TypeSymbol* referredType = type->GetBaseType()->DirectType(context)->FinalType(soul::ast::SourcePos(), context);
+    TypeSymbol* referredType = type->GetBaseType()->DirectType(context)->FinalType(type->GetFullSpan(), context);
     if (context->GetFlag(ContextFlags::resolveNestedTypes) && referredType->IsNestedTypeSymbol())
     {
         if (context->TemplateParameterMap())
@@ -212,7 +212,7 @@ TypeSymbol* ParameterSymbol::GetReferredType(Context* context) const
                 {
                     TypeSymbol* tp = it->second;
                     Symbol* symbol = tp->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope,
-                        context->GetSourcePos(), context, LookupFlags::none);
+                        context->GetFullSpan(), context, LookupFlags::none);
                     if (symbol && symbol->IsTypeSymbol())
                     {
                         referredType = static_cast<TypeSymbol*>(symbol);
@@ -242,7 +242,7 @@ TypeSymbol* ParameterSymbol::GetReferredType(Context* context) const
                     {
                         TypeSymbol* tp = it->second;
                         Symbol* symbol = tp->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope,
-                            context->GetSourcePos(), context, LookupFlags::none);
+                            context->GetFullSpan(), context, LookupFlags::none);
                         if (symbol && symbol->IsTypeSymbol())
                         {
                             referredType = static_cast<TypeSymbol*>(symbol);
@@ -701,9 +701,9 @@ std::u32string FunctionSymbol::FullName() const
     return fullName;
 }
 
-void FunctionSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
+void FunctionSymbol::AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ContainerSymbol::AddSymbol(symbol, sourcePos, context);
+    ContainerSymbol::AddSymbol(symbol, fullSpan, context);
     if (symbol->IsParameterSymbol())
     {
         ParameterSymbol* parameterSymbol = static_cast<ParameterSymbol*>(symbol);
@@ -715,9 +715,9 @@ void FunctionSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourc
     }
 }
 
-void FunctionSymbol::AddParameter(ParameterSymbol* parameter, const soul::ast::SourcePos& sourcePos, Context* context)
+void FunctionSymbol::AddParameter(ParameterSymbol* parameter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    AddSymbol(parameter, sourcePos, context);
+    AddSymbol(parameter, fullSpan, context);
 }
 
 void FunctionSymbol::AddTemporaryParameter(TypeSymbol* paramType, int index)
@@ -928,19 +928,19 @@ void FunctionSymbol::Accept(Visitor& visitor)
 }
 
 void FunctionSymbol::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     if (IsTrivialDestructor()) return;
     if ((flags & OperationFlags::virtualCall) != OperationFlags::none)
     {
-        GenerateVirtualFunctionCall(emitter, args, sourcePos, context);
+        GenerateVirtualFunctionCall(emitter, args, fullSpan, context);
         return;
     }
     int n = args.size();
     for (int i = 0; i < n; ++i)
     {
         BoundExpressionNode* arg = args[i];
-        arg->Load(emitter, OperationFlags::none, sourcePos, context);
+        arg->Load(emitter, OperationFlags::none, fullSpan, context);
     }
     std::vector<otava::intermediate::Value*> arguments;
     arguments.resize(n);
@@ -949,7 +949,7 @@ void FunctionSymbol::GenerateCode(Emitter& emitter, std::vector<BoundExpressionN
         otava::intermediate::Value* arg = emitter.Stack().Pop();
         arguments[n - i - 1] = arg;
     }
-    otava::intermediate::Type* type = IrType(emitter, sourcePos, context);
+    otava::intermediate::Type* type = IrType(emitter, fullSpan, context);
     if (type->IsFunctionType())
     {
         otava::intermediate::FunctionType* functionType = static_cast<otava::intermediate::FunctionType*>(type);
@@ -966,15 +966,15 @@ void FunctionSymbol::GenerateCode(Emitter& emitter, std::vector<BoundExpressionN
     }
     else
     {
-        ThrowException("function type expected", sourcePos, context);
+        ThrowException("function type expected", fullSpan, context);
     }
 }
 
-void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos,
+void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::FullSpan& fullSpan,
     otava::symbols::Context* context)
 {
-    TypeSymbol* thisPtrBaseType = args[0]->GetType()->GetBaseType()->DirectType(context)->FinalType(sourcePos, context);
-    otava::intermediate::Type* irType = IrType(emitter, sourcePos, context);
+    TypeSymbol* thisPtrBaseType = args[0]->GetType()->GetBaseType()->DirectType(context)->FinalType(fullSpan, context);
+    otava::intermediate::Type* irType = IrType(emitter, fullSpan, context);
     otava::intermediate::FunctionType* functionType = nullptr;
     if (irType->IsFunctionType())
     {
@@ -982,7 +982,7 @@ void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<B
     }
     else
     {
-        ThrowException("function type expected", sourcePos, context);
+        ThrowException("function type expected", fullSpan, context);
     }
     ClassTypeSymbol* classType = nullptr;
     if (thisPtrBaseType->IsClassTypeSymbol())
@@ -991,26 +991,26 @@ void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<B
     }
     else
     {
-        ThrowException("class type expected", sourcePos, context);
+        ThrowException("class type expected", fullSpan, context);
     }
-    classType->MakeVTab(context, sourcePos);
+    classType->MakeVTab(context, fullSpan);
     std::vector<ClassTypeSymbol*> vptrHolderClasses = classType->VPtrHolderClasses();
     if (vptrHolderClasses.empty())
     {
-        ThrowException("no vptr holder classes for the class '" + util::ToUtf8(classType->FullName()) + "'", sourcePos, context);
+        ThrowException("no vptr holder classes for the class '" + util::ToUtf8(classType->FullName()) + "'", fullSpan, context);
     }
     ClassTypeSymbol* vptrHolderClass = vptrHolderClasses.front();
     int na = args.size();
     otava::intermediate::Value* callee = nullptr;
     for (int i = 0; i < na; ++i)
     {
-        args[i]->Load(emitter, OperationFlags::none, sourcePos, context);
+        args[i]->Load(emitter, OperationFlags::none, fullSpan, context);
         if (i == 0)
         {
             otava::intermediate::Value* thisPtr = emitter.Stack().Pop();
             if (classType != vptrHolderClass)
             {
-                thisPtr = emitter.EmitBitcast(thisPtr, vptrHolderClass->AddPointer(context)->IrType(emitter, sourcePos, context));
+                thisPtr = emitter.EmitBitcast(thisPtr, vptrHolderClass->AddPointer(context)->IrType(emitter, fullSpan, context));
             }
             otava::intermediate::Value* vptrPtr = emitter.EmitElemAddr(thisPtr, emitter.EmitLong(vptrHolderClass->VPtrIndex()));
             otava::intermediate::Value* voidVPtr = emitter.EmitLoad(vptrPtr);
@@ -1022,7 +1022,7 @@ void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<B
             otava::intermediate::Value* adjustedObjectPtr = emitter.EmitClassPtrConversion(thisPtr, objectDelta, thisPtr->GetType(), false);
             if (VTabIndex() == -1)
             {
-                ThrowException("invalid vtab index", sourcePos, context);
+                ThrowException("invalid vtab index", fullSpan, context);
             }
             otava::intermediate::Value* functionPtrPtr = emitter.EmitElemAddr(vptr, emitter.EmitLong(vtabClassIdElementCount + 2 * VTabIndex()));
             otava::intermediate::Value* voidFunctionPtr = emitter.EmitLoad(functionPtrPtr);
@@ -1049,7 +1049,7 @@ void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<B
     {
         emitter.Stack().Push(emitter.EmitCall(callee, arguments));
     }
-    context->GetBoundCompileUnit()->AddBoundNodeForClass(classType, sourcePos, context);
+    context->GetBoundCompileUnit()->AddBoundNodeForClass(classType, fullSpan, context);
 }
 
 FunctionTypeSymbol* FunctionSymbol::GetFunctionType(otava::symbols::Context* context)
@@ -1058,16 +1058,16 @@ FunctionTypeSymbol* FunctionSymbol::GetFunctionType(otava::symbols::Context* con
     return functionType;
 }
 
-otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const
+otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) const
 {
-    util::uuid irId = IrId(sourcePos, context);
+    util::uuid irId = IrId(fullSpan, context);
     otava::intermediate::Type* type = emitter.GetType(irId);
     if (!type)
     {
         otava::intermediate::Type* returnIrType = nullptr;
         if (returnType && !ReturnsClass())
         {
-            returnIrType = returnType->DirectType(context)->FinalType(sourcePos, context)->IrType(emitter, sourcePos, context);
+            returnIrType = returnType->DirectType(context)->FinalType(fullSpan, context)->IrType(emitter, fullSpan, context);
         }
         else
         {
@@ -1080,17 +1080,17 @@ otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::
             TypeSymbol* paramType = param->GetReferredType(context);
             if (paramType->IsClassTypeSymbol())
             {
-                paramIrType = paramType->AddConst(context)->AddLValueRef(context)->IrType(emitter, sourcePos, context);
+                paramIrType = paramType->AddConst(context)->AddLValueRef(context)->IrType(emitter, fullSpan, context);
             }
             else
             {
-                paramIrType = paramType->IrType(emitter, sourcePos, context);
+                paramIrType = paramType->IrType(emitter, fullSpan, context);
             }
             paramIrTypes.push_back(paramIrType);
         }
         if (ReturnsClass())
         {
-            paramIrTypes.push_back(ReturnValueParam()->GetReferredType(context)->IrType(emitter, sourcePos, context));
+            paramIrTypes.push_back(ReturnValueParam()->GetReferredType(context)->IrType(emitter, fullSpan, context));
         }
         type = emitter.MakeFunctionType(returnIrType, paramIrTypes);
         emitter.SetType(irId, type);
@@ -1290,7 +1290,7 @@ bool FunctionSymbol::IsDestructor() const noexcept
     return GroupName() == U"@destructor";
 }
 
-void FunctionSymbol::CheckGenerateClassCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context)
+void FunctionSymbol::CheckGenerateClassCopyCtor(const soul::ast::FullSpan& fullSpan, Context* context)
 {
     for (ParameterSymbol* parameter : MemFunParameters(context))
     {
@@ -1298,7 +1298,7 @@ void FunctionSymbol::CheckGenerateClassCopyCtor(const soul::ast::SourcePos& sour
         if (paramType->IsClassTypeSymbol())
         {
             ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(paramType);
-            classType->GenerateCopyCtor(sourcePos, context);
+            classType->GenerateCopyCtor(fullSpan, context);
         }
     }
 }
@@ -1424,15 +1424,15 @@ std::string FunctionDefinitionSymbol::IrName(Context* context) const
     }
 }
 
-otava::intermediate::Type* FunctionDefinitionSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) const
+otava::intermediate::Type* FunctionDefinitionSymbol::IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) const
 {
     if (declaration)
     {
-        return declaration->IrType(emitter, sourcePos, context);
+        return declaration->IrType(emitter, fullSpan, context);
     }
     else
     {
-        return FunctionSymbol::IrType(emitter, sourcePos, context);
+        return FunctionSymbol::IrType(emitter, fullSpan, context);
     }
 }
 
@@ -1794,7 +1794,7 @@ void FunctionDefinitionSymbol::SetClassParsingMap(ClassParsingMap* classParsingM
 }
 
 ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol_,
-    const soul::ast::SourcePos& sourcePos, Context* context) :
+    const soul::ast::FullSpan& fullSpan, Context* context) :
     FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, functionDefinitionSymbol_->Name()),
     functionDefinitionSymbol(functionDefinitionSymbol_),
     irName(functionDefinitionSymbol->IrName(context))
@@ -1805,7 +1805,7 @@ ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDe
     SetFunctionQualifiers(functionDefinitionSymbol->Qualifiers());
     for (ParameterSymbol* parameter : functionDefinitionSymbol->Parameters())
     {
-        AddParameter(parameter->Copy(), sourcePos, context);
+        AddParameter(parameter->Copy(), fullSpan, context);
     }
     if (functionDefinitionSymbol->ReturnType())
     {
@@ -1848,16 +1848,16 @@ void ExplicitlyInstantiatedFunctionDefinitionSymbol::Resolve(SymbolTable& symbol
     }
 }
 
-otava::intermediate::Type* ExplicitlyInstantiatedFunctionDefinitionSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos,
+otava::intermediate::Type* ExplicitlyInstantiatedFunctionDefinitionSymbol::IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan,
     otava::symbols::Context* context) const
 {
     if (functionDefinitionSymbol)
     {
-        return functionDefinitionSymbol->IrType(emitter, sourcePos, context);
+        return functionDefinitionSymbol->IrType(emitter, fullSpan, context);
     }
     else
     {
-        return FunctionDefinitionSymbol::IrType(emitter, sourcePos, context);
+        return FunctionDefinitionSymbol::IrType(emitter, fullSpan, context);
     }
 }
 
@@ -1908,7 +1908,7 @@ CompileUnitInitFn::CompileUnitInitFn(const std::u32string& name_) : FunctionSymb
 }
 
 void CompileUnitInitFn::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::FunctionType* initFunctionType = static_cast<otava::intermediate::FunctionType*>(emitter.MakeFunctionType(emitter.GetVoidType(),
         std::vector<otava::intermediate::Type*>()));

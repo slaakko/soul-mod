@@ -270,10 +270,10 @@ std::string Symbol::IrName(Context* context) const
     return util::ToUtf8(Name());
 }
 
-void Symbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
+void Symbol::AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     ThrowException("cannot add " + symbol->SymbolKindStr() + " '" + util::ToUtf8(symbol->FullName()) + "' to " + SymbolKindStr() + " '" + util::ToUtf8(FullName()),
-        sourcePos, context);
+        fullSpan, context);
 }
 
 std::unique_ptr<Symbol> Symbol::RemoveSymbol(Symbol* symbol)
@@ -728,7 +728,7 @@ bool Symbol::IsDtor() const noexcept
     return false;
 }
 
-void* Symbol::IrObject(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+void* Symbol::IrObject(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     return emitter.GetIrObject(this);
 }

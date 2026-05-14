@@ -14,13 +14,12 @@ Writer::Writer(util::BinaryStreamWriter* writerPtr_) : writerPtr(writerPtr_)
 {
 }
 
-void Writer::Write(const soul::ast::SourcePos& sourcePos)
+void Writer::Write(const soul::ast::Span& span)
 {
-    if (sourcePos.IsValid())
+    if (span.IsValid())
     {
-        writerPtr->WriteULEB128UInt(sourcePos.line);
-        writerPtr->WriteULEB128UInt(sourcePos.col);
-        writerPtr->WriteULEB128UInt(sourcePos.file);
+        writerPtr->WriteULEB128UInt(span.len);
+        writerPtr->WriteULEB128UInt(span.pos);
     }
     else
     {
@@ -53,7 +52,7 @@ void Writer::Write(Node* node)
     else
     {
         Write(node->Kind());
-        Write(node->GetSourcePos());
+        Write(node->GetSpan());
         node->Write(*this);
     }
 }

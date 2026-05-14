@@ -6,7 +6,7 @@
 export module otava.symbols.fundamental.type.symbol;
 
 import std;
-import soul.ast.source.pos;
+import soul.ast.span;
 import otava.symbols.namespaces;
 import otava.symbols.type.symbol;
 import otava.symbols.declaration;
@@ -56,14 +56,14 @@ public:
     int Rank() const noexcept override { return otava::symbols::Rank(fundamentalTypeKind); }
     bool IsSignedIntegerType() const noexcept override { return otava::symbols::IsSignedIntegerType(fundamentalTypeKind);; }
     bool IsUnsignedIntegerType() const noexcept override { return otava::symbols::IsUnsignedIntegerType(fundamentalTypeKind);; }
-    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context) override;
     inline std::int32_t Score() const noexcept { return static_cast<std::uint8_t>(fundamentalTypeKind); }
 private:
     FundamentalTypeKind fundamentalTypeKind;
 };
 
-TypeSymbol* GetFundamentalType(DeclarationFlags fundamentalTypeFlags, const soul::ast::SourcePos& sourcePos, Context* context);
+TypeSymbol* GetFundamentalType(DeclarationFlags fundamentalTypeFlags, const soul::ast::FullSpan& fullSpan, Context* context);
 
-void MakeFundamentaTypeSequence(FundamentalTypeSymbol* fundamentalType, const soul::ast::SourcePos& sourcePos, otava::ast::SequenceNode* sequence);
+void MakeFundamentaTypeSequence(FundamentalTypeSymbol* fundamentalType, const soul::ast::FullSpan& fullSpan, otava::ast::SequenceNode* sequence);
 
 } // namespace otava::symbols

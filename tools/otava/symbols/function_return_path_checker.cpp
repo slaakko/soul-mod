@@ -218,7 +218,7 @@ void FunctionReturnPathChecker::Visit(otava::ast::CompoundStatementNode& node)
                 return;
             }
         }
-        ThrowException("not all control paths terminate in return statement or throw expression", node.GetSourcePos(), context);
+        ThrowException("not all control paths terminate in return statement or throw expression", context->MakeFullSpan(node.GetSpan()), context);
     }
 }
 

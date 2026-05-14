@@ -267,22 +267,22 @@ void GenerateEnterFunctionCode(otava::ast::Node* functionDefinitionNode, Functio
                 if (body->Child()->IsCompoundStatementNode())
                 {
                     otava::ast::CompoundStatementNode* compoundStatement = static_cast<otava::ast::CompoundStatementNode*>(body->Child());
-                    otava::ast::DeclSpecifierSequenceNode* entryDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::SourcePos());
-                    otava::ast::NestedNameSpecifierNode* entryNns = new otava::ast::NestedNameSpecifierNode(soul::ast::SourcePos());
-                    entryNns->AddNode(new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"std"));
-                    entryNns->AddNode(new otava::ast::ColonColonNode(soul::ast::SourcePos()));
-                    otava::ast::IdentifierNode* entryId = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"trace_entry");
-                    otava::ast::QualifiedIdNode* entrQualifiedId = new otava::ast::QualifiedIdNode(soul::ast::SourcePos(), entryNns, entryId);
+                    otava::ast::DeclSpecifierSequenceNode* entryDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::Span());
+                    otava::ast::NestedNameSpecifierNode* entryNns = new otava::ast::NestedNameSpecifierNode(soul::ast::Span());
+                    entryNns->AddNode(new otava::ast::IdentifierNode(soul::ast::Span(), U"std"));
+                    entryNns->AddNode(new otava::ast::ColonColonNode(soul::ast::Span()));
+                    otava::ast::IdentifierNode* entryId = new otava::ast::IdentifierNode(soul::ast::Span(), U"trace_entry");
+                    otava::ast::QualifiedIdNode* entrQualifiedId = new otava::ast::QualifiedIdNode(soul::ast::Span(), entryNns, entryId);
                     entryDeclSpecifiers->AddNode(entrQualifiedId);
-                    otava::ast::IdentifierNode* entryDeclaratorId = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"@entry");
-                    otava::ast::IntegerLiteralNode* fnIdNode = new otava::ast::IntegerLiteralNode(soul::ast::SourcePos(),
+                    otava::ast::IdentifierNode* entryDeclaratorId = new otava::ast::IdentifierNode(soul::ast::Span(), U"@entry");
+                    otava::ast::IntegerLiteralNode* fnIdNode = new otava::ast::IntegerLiteralNode(soul::ast::Span(),
                         static_cast<std::uint64_t>(fnId), otava::ast::Suffix::ll, otava::ast::Base::decimal, util::ToUtf32(std::to_string(fnId)));
-                    otava::ast::InitDeclaratorNode* entryInitDeclarator = new otava::ast::InitDeclaratorNode(soul::ast::SourcePos(), entryDeclaratorId, fnIdNode);
-                    otava::ast::InitDeclaratorListNode* entryInitDeclaratorList = new otava::ast::InitDeclaratorListNode(soul::ast::SourcePos());
+                    otava::ast::InitDeclaratorNode* entryInitDeclarator = new otava::ast::InitDeclaratorNode(soul::ast::Span(), entryDeclaratorId, fnIdNode);
+                    otava::ast::InitDeclaratorListNode* entryInitDeclaratorList = new otava::ast::InitDeclaratorListNode(soul::ast::Span());
                     entryInitDeclaratorList->AddNode(entryInitDeclarator);
-                    otava::ast::SimpleDeclarationNode* entrySimpleDeclarationNode = new otava::ast::SimpleDeclarationNode(soul::ast::SourcePos(),
+                    otava::ast::SimpleDeclarationNode* entrySimpleDeclarationNode = new otava::ast::SimpleDeclarationNode(soul::ast::Span(),
                         entryDeclSpecifiers, entryInitDeclaratorList, nullptr, nullptr);
-                    otava::ast::DeclarationStatementNode* entryStatementNode = new otava::ast::DeclarationStatementNode(soul::ast::SourcePos(), entrySimpleDeclarationNode);
+                    otava::ast::DeclarationStatementNode* entryStatementNode = new otava::ast::DeclarationStatementNode(soul::ast::Span(), entrySimpleDeclarationNode);
                     context->GetSymbolTable()->BeginScope(fn->GetScope());
                     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(compoundStatement);
                     context->GetSymbolTable()->BeginScope(block->GetScope());
@@ -291,23 +291,23 @@ void GenerateEnterFunctionCode(otava::ast::Node* functionDefinitionNode, Functio
                     context->PopFlags();
                     compoundStatement->InsertNode(0, entryStatementNode);
                     context->GetSymbolTable()->EndScope();
-                    otava::ast::DeclSpecifierSequenceNode* guardDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::SourcePos());
-                    otava::ast::NestedNameSpecifierNode* guardNns = new otava::ast::NestedNameSpecifierNode(soul::ast::SourcePos());
-                    guardNns->AddNode(new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"std"));
-                    guardNns->AddNode(new otava::ast::ColonColonNode(soul::ast::SourcePos()));
-                    otava::ast::IdentifierNode* guardId = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"trace_guard");
-                    otava::ast::QualifiedIdNode* guardQualifiedId = new otava::ast::QualifiedIdNode(soul::ast::SourcePos(), guardNns, guardId);
+                    otava::ast::DeclSpecifierSequenceNode* guardDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::Span());
+                    otava::ast::NestedNameSpecifierNode* guardNns = new otava::ast::NestedNameSpecifierNode(soul::ast::Span());
+                    guardNns->AddNode(new otava::ast::IdentifierNode(soul::ast::Span(), U"std"));
+                    guardNns->AddNode(new otava::ast::ColonColonNode(soul::ast::Span()));
+                    otava::ast::IdentifierNode* guardId = new otava::ast::IdentifierNode(soul::ast::Span(), U"trace_guard");
+                    otava::ast::QualifiedIdNode* guardQualifiedId = new otava::ast::QualifiedIdNode(soul::ast::Span(), guardNns, guardId);
                     guardDeclSpecifiers->AddNode(guardQualifiedId);
-                    otava::ast::IdentifierNode* guardDeclaratorId = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"@guard");
-                    otava::ast::IdentifierNode* entryIdNode = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"@entry");
-                    otava::ast::UnaryExprNode* entryNode = new otava::ast::UnaryExprNode(soul::ast::SourcePos(),
-                        new otava::ast::AddrOfNode(soul::ast::SourcePos()), entryIdNode);
-                    otava::ast::InitDeclaratorNode* guardInitDeclarator = new otava::ast::InitDeclaratorNode(soul::ast::SourcePos(), guardDeclaratorId, entryNode);
-                    otava::ast::InitDeclaratorListNode* guardInitDeclaratorList = new otava::ast::InitDeclaratorListNode(soul::ast::SourcePos());
+                    otava::ast::IdentifierNode* guardDeclaratorId = new otava::ast::IdentifierNode(soul::ast::Span(), U"@guard");
+                    otava::ast::IdentifierNode* entryIdNode = new otava::ast::IdentifierNode(soul::ast::Span(), U"@entry");
+                    otava::ast::UnaryExprNode* entryNode = new otava::ast::UnaryExprNode(soul::ast::Span(),
+                        new otava::ast::AddrOfNode(soul::ast::Span()), entryIdNode);
+                    otava::ast::InitDeclaratorNode* guardInitDeclarator = new otava::ast::InitDeclaratorNode(soul::ast::Span(), guardDeclaratorId, entryNode);
+                    otava::ast::InitDeclaratorListNode* guardInitDeclaratorList = new otava::ast::InitDeclaratorListNode(soul::ast::Span());
                     guardInitDeclaratorList->AddNode(guardInitDeclarator);
-                    otava::ast::SimpleDeclarationNode* guardSimpleDeclarationNode = new otava::ast::SimpleDeclarationNode(soul::ast::SourcePos(),
+                    otava::ast::SimpleDeclarationNode* guardSimpleDeclarationNode = new otava::ast::SimpleDeclarationNode(soul::ast::Span(),
                         guardDeclSpecifiers, guardInitDeclaratorList, nullptr, nullptr);
-                    otava::ast::DeclarationStatementNode* guardStatementNode = new otava::ast::DeclarationStatementNode(soul::ast::SourcePos(), guardSimpleDeclarationNode);
+                    otava::ast::DeclarationStatementNode* guardStatementNode = new otava::ast::DeclarationStatementNode(soul::ast::Span(), guardSimpleDeclarationNode);
                     Symbol* guardBlock = context->GetSymbolTable()->GetSymbolNothrow(compoundStatement);
                     context->GetSymbolTable()->BeginScope(guardBlock->GetScope());
                     context->PushSetFlag(ContextFlags::saveDeclarations);
@@ -317,15 +317,15 @@ void GenerateEnterFunctionCode(otava::ast::Node* functionDefinitionNode, Functio
                     context->GetSymbolTable()->EndScope();
                     context->GetSymbolTable()->EndScope();
 
-                    otava::ast::MemberExprNode* memberExprNode = new otava::ast::MemberExprNode(soul::ast::SourcePos(),
-                        new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"@entry"),
-                        new otava::ast::DotNode(soul::ast::SourcePos()),
-                        new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"line"));
+                    otava::ast::MemberExprNode* memberExprNode = new otava::ast::MemberExprNode(soul::ast::Span(),
+                        new otava::ast::IdentifierNode(soul::ast::Span(), U"@entry"),
+                        new otava::ast::DotNode(soul::ast::Span()),
+                        new otava::ast::IdentifierNode(soul::ast::Span(), U"line"));
                     otava::ast::IntegerLiteralNode* lineNumberNode = new otava::ast::IntegerLiteralNode(
-                        soul::ast::SourcePos(), 0, otava::ast::Suffix::none, otava::ast::Base::decimal, U"0");
-                    otava::ast::BinaryExprNode* setLineNode = new otava::ast::BinaryExprNode(soul::ast::SourcePos(),
-                        new otava::ast::AssignNode(soul::ast::SourcePos()), memberExprNode, lineNumberNode);
-                    otava::ast::ExpressionStatementNode* setLineStatement = new otava::ast::ExpressionStatementNode(soul::ast::SourcePos(), setLineNode, nullptr, nullptr);
+                        soul::ast::Span(), 0, otava::ast::Suffix::none, otava::ast::Base::decimal, U"0");
+                    otava::ast::BinaryExprNode* setLineNode = new otava::ast::BinaryExprNode(soul::ast::Span(),
+                        new otava::ast::AssignNode(soul::ast::Span()), memberExprNode, lineNumberNode);
+                    otava::ast::ExpressionStatementNode* setLineStatement = new otava::ast::ExpressionStatementNode(soul::ast::Span(), setLineNode, nullptr, nullptr);
                     context->GetBoundFunction()->SetSetLineStatementNode(setLineStatement);
                 }
             }

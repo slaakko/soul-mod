@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/literal.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/literal.parser' using soul parser generator spg version 5.1.0
 
 module otava.parser.literal;
 
@@ -102,7 +102,7 @@ soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer, otava::symbols
                                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
                                                         #endif
-                                                        return soul::parser::Match(true, otava::parser::token::ParseIntegerLiteral(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
+                                                        return soul::parser::Match(true, otava::parser::token::ParseIntegerLiteral(lexer.GetSpan(pos), lexer.FileName(), lexer.GetToken(pos)));
                                                     }
                                                 }
                                                 *parentMatch8 = match;
@@ -135,7 +135,7 @@ soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer, otava::symbols
                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
                                                     #endif
-                                                    return soul::parser::Match(true, otava::parser::token::ParseFloatingLiteral(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
+                                                    return soul::parser::Match(true, otava::parser::token::ParseFloatingLiteral(lexer.GetSpan(pos), lexer.FileName(), lexer.GetToken(pos)));
                                                 }
                                             }
                                             *parentMatch10 = match;
@@ -168,7 +168,7 @@ soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer, otava::symbols
                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
                                                 #endif
-                                                return soul::parser::Match(true, otava::parser::token::ParseCharacterLiteral(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
+                                                return soul::parser::Match(true, otava::parser::token::ParseCharacterLiteral(lexer.GetSpan(pos), lexer.FileName(), lexer.GetToken(pos)));
                                             }
                                         }
                                         *parentMatch12 = match;
@@ -203,7 +203,7 @@ soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer, otava::symbols
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
                                     #endif
-                                    return soul::parser::Match(true, otava::parser::token::ParseRawStringLiteral(lexer.GetSourcePos(pos), lexer));
+                                    return soul::parser::Match(true, otava::parser::token::ParseRawStringLiteral(lexer.GetSpan(pos), lexer));
                                 }
                             }
                             *parentMatch13 = match;
@@ -238,7 +238,7 @@ soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer, otava::symbols
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
                                     #endif
-                                    return soul::parser::Match(true, otava::parser::token::ParseStringLiteral(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
+                                    return soul::parser::Match(true, otava::parser::token::ParseStringLiteral(lexer.GetSpan(pos), lexer.FileName(), lexer.GetToken(pos)));
                                 }
                             }
                             *parentMatch15 = match;
@@ -272,7 +272,7 @@ soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer, otava::symbols
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
                         #endif
-                        return soul::parser::Match(true, new otava::ast::BooleanLiteralNode(lexer.GetSourcePos(pos), true, lexer.GetToken(pos).ToString()));
+                        return soul::parser::Match(true, new otava::ast::BooleanLiteralNode(lexer.GetSpan(pos), true, lexer.GetToken(pos).ToString()));
                     }
                 }
                 *parentMatch16 = match;
@@ -301,7 +301,7 @@ soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer, otava::symbols
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
                         #endif
-                        return soul::parser::Match(true, new otava::ast::BooleanLiteralNode(lexer.GetSourcePos(pos), false, lexer.GetToken(pos).ToString()));
+                        return soul::parser::Match(true, new otava::ast::BooleanLiteralNode(lexer.GetSpan(pos), false, lexer.GetToken(pos).ToString()));
                     }
                 }
                 *parentMatch17 = match;
@@ -330,7 +330,7 @@ soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer, otava::symbols
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
                         #endif
-                        return soul::parser::Match(true, new otava::ast::NullPtrLiteralNode(lexer.GetSourcePos(pos), lexer.GetToken(pos).ToString()));
+                        return soul::parser::Match(true, new otava::ast::NullPtrLiteralNode(lexer.GetSpan(pos), lexer.GetToken(pos).ToString()));
                     }
                 }
                 *parentMatch18 = match;
@@ -369,7 +369,7 @@ soul::parser::Match LiteralParser<LexerT>::UserDefinedLiteral(LexerT& lexer, ota
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2723703907904651266);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::int64_t p = std::int64_t();
     std::unique_ptr<otava::ast::Node> udLiteralNode = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> udSuffix;
@@ -401,7 +401,7 @@ soul::parser::Match LiteralParser<LexerT>::UserDefinedLiteral(LexerT& lexer, ota
                             }
                             if (match.hit)
                             {
-                                sourcePos = lexer.GetSourcePos(pos);
+                                span = lexer.GetSpan(pos);
                                 p = pos;
                             }
                             *parentMatch4 = match;
@@ -421,7 +421,7 @@ soul::parser::Match LiteralParser<LexerT>::UserDefinedLiteral(LexerT& lexer, ota
                                 udSuffix.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
-                                    udLiteralNode.reset(new otava::ast::UserDefinedLiteraNode(sourcePos, otava::parser::token::ParseIntegerLiteral(sourcePos, lexer.FileName(), lexer.GetToken(p)), udSuffix.release()));
+                                    udLiteralNode.reset(new otava::ast::UserDefinedLiteraNode(span, otava::parser::token::ParseIntegerLiteral(span, lexer.FileName(), lexer.GetToken(p)), udSuffix.release()));
                                 }
                                 *parentMatch6 = match;
                             }
@@ -452,7 +452,7 @@ soul::parser::Match LiteralParser<LexerT>::UserDefinedLiteral(LexerT& lexer, ota
                             }
                             if (match.hit)
                             {
-                                sourcePos = lexer.GetSourcePos(pos);
+                                span = lexer.GetSpan(pos);
                                 p = pos;
                             }
                             *parentMatch8 = match;
@@ -472,7 +472,7 @@ soul::parser::Match LiteralParser<LexerT>::UserDefinedLiteral(LexerT& lexer, ota
                                 udSuffix.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
-                                    udLiteralNode.reset(new otava::ast::UserDefinedLiteraNode(sourcePos, otava::parser::token::ParseFloatingLiteral(sourcePos, lexer.FileName(), lexer.GetToken(p)), udSuffix.release()));
+                                    udLiteralNode.reset(new otava::ast::UserDefinedLiteraNode(span, otava::parser::token::ParseFloatingLiteral(span, lexer.FileName(), lexer.GetToken(p)), udSuffix.release()));
                                 }
                                 *parentMatch10 = match;
                             }
@@ -503,7 +503,7 @@ soul::parser::Match LiteralParser<LexerT>::UserDefinedLiteral(LexerT& lexer, ota
                             }
                             if (match.hit)
                             {
-                                sourcePos = lexer.GetSourcePos(pos);
+                                span = lexer.GetSpan(pos);
                                 p = pos;
                             }
                             *parentMatch12 = match;
@@ -523,7 +523,7 @@ soul::parser::Match LiteralParser<LexerT>::UserDefinedLiteral(LexerT& lexer, ota
                                 udSuffix.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
-                                    udLiteralNode.reset(new otava::ast::UserDefinedLiteraNode(sourcePos, otava::parser::token::ParseStringLiteral(sourcePos, lexer.FileName(), lexer.GetToken(p)), udSuffix.release()));
+                                    udLiteralNode.reset(new otava::ast::UserDefinedLiteraNode(span, otava::parser::token::ParseStringLiteral(span, lexer.FileName(), lexer.GetToken(p)), udSuffix.release()));
                                 }
                                 *parentMatch14 = match;
                             }
@@ -554,7 +554,7 @@ soul::parser::Match LiteralParser<LexerT>::UserDefinedLiteral(LexerT& lexer, ota
                             }
                             if (match.hit)
                             {
-                                sourcePos = lexer.GetSourcePos(pos);
+                                span = lexer.GetSpan(pos);
                                 p = pos;
                             }
                             *parentMatch16 = match;
@@ -574,7 +574,7 @@ soul::parser::Match LiteralParser<LexerT>::UserDefinedLiteral(LexerT& lexer, ota
                                 udSuffix.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
-                                    udLiteralNode.reset(new otava::ast::UserDefinedLiteraNode(sourcePos, otava::parser::token::ParseCharacterLiteral(sourcePos, lexer.FileName(), lexer.GetToken(p)), udSuffix.release()));
+                                    udLiteralNode.reset(new otava::ast::UserDefinedLiteraNode(span, otava::parser::token::ParseCharacterLiteral(span, lexer.FileName(), lexer.GetToken(p)), udSuffix.release()));
                                 }
                                 *parentMatch18 = match;
                             }
@@ -645,7 +645,7 @@ soul::parser::Match LiteralParser<LexerT>::UdSuffix(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UdSuffix");
                 #endif
-                return soul::parser::Match(true, otava::parser::token::ParseIdentifier(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
+                return soul::parser::Match(true, otava::parser::token::ParseIdentifier(lexer.GetSpan(pos), lexer.FileName(), lexer.GetToken(pos)));
             }
         }
         *parentMatch0 = match;
@@ -677,9 +677,9 @@ soul::parser::Match LiteralParser<LexerT>::LiteralOperatorId(LexerT& lexer, otav
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2723703907904651268);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
-    soul::ast::SourcePos stringLitPos = soul::ast::SourcePos();
-    soul::ast::SourcePos idPos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
+    soul::ast::Span stringLitPos = soul::ast::Span();
+    soul::ast::Span idPos = soul::ast::Span();
     std::int64_t idp = std::int64_t();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -706,7 +706,7 @@ soul::parser::Match LiteralParser<LexerT>::LiteralOperatorId(LexerT& lexer, otav
                         }
                         if (match.hit)
                         {
-                            sourcePos = lexer.GetSourcePos(pos);
+                            span = lexer.GetSpan(pos);
                         }
                         *parentMatch4 = match;
                     }
@@ -730,7 +730,7 @@ soul::parser::Match LiteralParser<LexerT>::LiteralOperatorId(LexerT& lexer, otav
                             }
                             if (match.hit)
                             {
-                                stringLitPos = lexer.GetSourcePos(pos);
+                                stringLitPos = lexer.GetSpan(pos);
                                 pass = lexer.GetToken(pos).ToString() == U"";
                             }
                             if (match.hit && !pass)
@@ -762,7 +762,7 @@ soul::parser::Match LiteralParser<LexerT>::LiteralOperatorId(LexerT& lexer, otav
                         }
                         if (match.hit)
                         {
-                            idPos = lexer.GetSourcePos(pos);
+                            idPos = lexer.GetSpan(pos);
                             idp = pos;
                         }
                         *parentMatch8 = match;
@@ -779,7 +779,7 @@ soul::parser::Match LiteralParser<LexerT>::LiteralOperatorId(LexerT& lexer, otav
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LiteralOperatorId");
                 #endif
-                return soul::parser::Match(true, new otava::ast::LiteralOperatorIdNode(sourcePos, otava::parser::token::ParseIdentifier(idPos, lexer.FileName(), lexer.GetToken(idp)), stringLitPos));
+                return soul::parser::Match(true, new otava::ast::LiteralOperatorIdNode(span, otava::parser::token::ParseIdentifier(idPos, lexer.FileName(), lexer.GetToken(idp)), stringLitPos));
             }
         }
         *parentMatch0 = match;
@@ -827,7 +827,7 @@ soul::parser::Match LiteralParser<LexerT>::StringLiteral(LexerT& lexer, otava::s
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "StringLiteral");
                 #endif
-                return soul::parser::Match(true, otava::parser::token::ParseStringLiteral(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
+                return soul::parser::Match(true, otava::parser::token::ParseStringLiteral(lexer.GetSpan(pos), lexer.FileName(), lexer.GetToken(pos)));
             }
         }
         *parentMatch0 = match;

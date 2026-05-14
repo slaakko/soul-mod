@@ -9,7 +9,7 @@ export namespace otava::ast {
 class CharNode : public Node
 {
 public:
-    CharNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    CharNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"char"; }
@@ -18,7 +18,7 @@ public:
 class Char8Node : public Node
 {
 public:
-    Char8Node(const soul::ast::SourcePos& sourcePos_) noexcept;
+    Char8Node(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"char8_t"; }
@@ -27,7 +27,7 @@ public:
 class Char16Node : public Node
 {
 public:
-    Char16Node(const soul::ast::SourcePos& sourcePos_) noexcept;
+    Char16Node(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"char16_t"; }
@@ -36,7 +36,7 @@ public:
 class Char32Node : public Node
 {
 public:
-    Char32Node(const soul::ast::SourcePos& sourcePos_) noexcept;
+    Char32Node(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"char32_t"; }
@@ -45,7 +45,7 @@ public:
 class WCharNode : public Node
 {
 public:
-    WCharNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    WCharNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"wchar_t"; }
@@ -54,7 +54,7 @@ public:
 class BoolNode : public Node
 {
 public:
-    BoolNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    BoolNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"bool"; }
@@ -63,7 +63,7 @@ public:
 class ShortNode : public Node
 {
 public:
-    ShortNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ShortNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"short"; }
@@ -72,7 +72,7 @@ public:
 class IntNode : public Node
 {
 public:
-    IntNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    IntNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"int"; }
@@ -81,7 +81,7 @@ public:
 class LongNode : public Node
 {
 public:
-    LongNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    LongNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"long"; }
@@ -90,7 +90,7 @@ public:
 class SignedNode : public Node
 {
 public:
-    SignedNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    SignedNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"signed"; }
@@ -99,7 +99,7 @@ public:
 class UnsignedNode : public Node
 {
 public:
-    UnsignedNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    UnsignedNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"unsigned"; }
@@ -108,7 +108,7 @@ public:
 class FloatNode : public Node
 {
 public:
-    FloatNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    FloatNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"float"; }
@@ -117,7 +117,7 @@ public:
 class DoubleNode : public Node
 {
 public:
-    DoubleNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    DoubleNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"double"; }
@@ -126,7 +126,7 @@ public:
 class VoidNode : public Node
 {
 public:
-    VoidNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    VoidNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"void"; }

@@ -169,9 +169,9 @@ ValueKind Value::GetValueKind() const noexcept
     return ValueKind::none;
 }
 
-otava::intermediate::Value* Value::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+otava::intermediate::Value* Value::IrValue(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ThrowException("cannot evaluate statically", sourcePos, context);
+    ThrowException("cannot evaluate statically", fullSpan, context);
     return nullptr;
 }
 
@@ -223,7 +223,7 @@ void BoolValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-otava::intermediate::Value* BoolValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+otava::intermediate::Value* BoolValue::IrValue(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     return emitter.EmitBool(value);
 }
@@ -277,9 +277,9 @@ void IntegerValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-otava::intermediate::Value* IntegerValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+otava::intermediate::Value* IntegerValue::IrValue(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    otava::intermediate::Type* irType = GetType()->IrType(emitter, sourcePos, context);
+    otava::intermediate::Type* irType = GetType()->IrType(emitter, fullSpan, context);
     return emitter.EmitIntegerValue(irType, value);
 }
 
@@ -332,9 +332,9 @@ void FloatingValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-otava::intermediate::Value* FloatingValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+otava::intermediate::Value* FloatingValue::IrValue(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    otava::intermediate::Type* irType = GetType()->IrType(emitter, sourcePos, context);
+    otava::intermediate::Type* irType = GetType()->IrType(emitter, fullSpan, context);
     return emitter.EmitFloatingValue(irType, value);
 }
 
@@ -371,9 +371,9 @@ void NullPtrValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-otava::intermediate::Value* NullPtrValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+otava::intermediate::Value* NullPtrValue::IrValue(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    return GetType()->IrType(emitter, sourcePos, context)->DefaultValue();
+    return GetType()->IrType(emitter, fullSpan, context)->DefaultValue();
 }
 
 StringValue::StringValue(TypeSymbol* type_) : Value(SymbolKind::stringValueSymbol, std::u32string(), type_), value()
@@ -411,9 +411,9 @@ void StringValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-otava::intermediate::Value* StringValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+otava::intermediate::Value* StringValue::IrValue(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    TypeSymbol* type = GetType()->DirectType(context)->FinalType(sourcePos, context);
+    TypeSymbol* type = GetType()->DirectType(context)->FinalType(fullSpan, context);
     if (type->IsConstCharPtrType() || type->IsBasicStringCharType(context))
     {
         return emitter.EmitStringValue(value);
@@ -468,9 +468,9 @@ void CharValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-otava::intermediate::Value* CharValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+otava::intermediate::Value* CharValue::IrValue(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    otava::intermediate::Type* irType = GetType()->IrType(emitter, sourcePos, context);
+    otava::intermediate::Type* irType = GetType()->IrType(emitter, fullSpan, context);
     return emitter.EmitIntegerValue(irType, value);
 }
 
@@ -554,7 +554,7 @@ std::u32string SymbolValue::ToString() const
     return symbol->Name();
 }
 
-otava::intermediate::Value* SymbolValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+otava::intermediate::Value* SymbolValue::IrValue(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (symbol->IsVariableSymbol())
     {
@@ -562,10 +562,10 @@ otava::intermediate::Value* SymbolValue::IrValue(Emitter& emitter, const soul::a
         Value* value = variableSymbol->GetValue();
         if (value)
         {
-            return value->IrValue(emitter, sourcePos, context);
+            return value->IrValue(emitter, fullSpan, context);
         }
     }
-    ThrowException("cannot evaluate statically", sourcePos, context);
+    ThrowException("cannot evaluate statically", fullSpan, context);
     return nullptr;
 }
 
@@ -670,13 +670,13 @@ void ArrayValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-otava::intermediate::Value* ArrayValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+otava::intermediate::Value* ArrayValue::IrValue(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    otava::intermediate::ArrayType* arrayType = static_cast<otava::intermediate::ArrayType*>(GetType()->IrType(emitter, sourcePos, context));
+    otava::intermediate::ArrayType* arrayType = static_cast<otava::intermediate::ArrayType*>(GetType()->IrType(emitter, fullSpan, context));
     std::vector<otava::intermediate::Value*> elements;
     for (Value* elementValue : elementValues)
     {
-        elements.push_back(elementValue->IrValue(emitter, sourcePos, context));
+        elements.push_back(elementValue->IrValue(emitter, fullSpan, context));
     }
     return emitter.EmitArrayValue(elements, arrayType);
 }
@@ -742,13 +742,13 @@ Value* StructureValue::Convert(ValueKind kind, EvaluationContext& context)
     return this;
 }
 
-otava::intermediate::Value* StructureValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+otava::intermediate::Value* StructureValue::IrValue(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    otava::intermediate::StructureType* structureType = static_cast<otava::intermediate::StructureType*>(GetType()->IrType(emitter, sourcePos, context));
+    otava::intermediate::StructureType* structureType = static_cast<otava::intermediate::StructureType*>(GetType()->IrType(emitter, fullSpan, context));
     std::vector<otava::intermediate::Value*> fields;
     for (Value* fieldValue : fieldValues)
     {
-        fields.push_back(fieldValue->IrValue(emitter, sourcePos, context));
+        fields.push_back(fieldValue->IrValue(emitter, fullSpan, context));
     }
     return emitter.EmitStructureValue(fields, structureType);
 }

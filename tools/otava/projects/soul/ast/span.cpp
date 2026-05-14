@@ -67,4 +67,15 @@ bool operator<(const LineColLen& left, const LineColLen& right) noexcept
     return left.len < right.len;
 }
 
+std::string ToString(const Span& span)
+{
+    std::string s("(");
+    if (span.IsValid())
+    {
+        s.append(std::to_string(span.pos)).append(", ").append(std::to_string(span.len));
+    }
+    s.append(")");
+    return s;
+}
+
 } // namespace soul::ast

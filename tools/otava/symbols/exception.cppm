@@ -7,7 +7,7 @@ export module otava.symbols.exception;
 
 import std;
 import otava.symbols.context;
-import soul.ast.source.pos;
+import soul.ast.span;
 
 export namespace otava::symbols {
 
@@ -19,10 +19,11 @@ class Exception : public std::runtime_error
 public:
     Exception();
     Exception(const std::string& message_);
-    Exception(const std::string& message_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    Exception(const std::string& message_, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos, otava::symbols::Context* context);
-    Exception(const std::string& title, const std::string& message_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    Exception(const std::string& title, const std::string& message_, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos, otava::symbols::Context* context);
+    Exception(const std::string& message_, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context);
+    Exception(const std::string& message_, const soul::ast::FullSpan& fullSpan, const soul::ast::FullSpan& refSpan, otava::symbols::Context* context);
+    Exception(const std::string& title, const std::string& message_, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context);
+    Exception(const std::string& title, const std::string& message_, const soul::ast::FullSpan& fullSpan, const soul::ast::FullSpan& refSpan, 
+        otava::symbols::Context* context);
     inline void SetWarning() noexcept { warning = true; }
     inline bool Warning() const noexcept { return warning; }
 private:
@@ -30,18 +31,18 @@ private:
 };
 
 [[noreturn]]
-void ThrowException(const std::string& message, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+void ThrowException(const std::string& message, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context);
 
 [[noreturn]]
-void ThrowException(const std::string& message, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos, otava::symbols::Context* context);
+void ThrowException(const std::string& message, const soul::ast::FullSpan& fullSpan, const soul::ast::FullSpan& refSpan, otava::symbols::Context* context);
 
 [[noreturn]]
 void ThrowException(const Exception& ex);
 
 void PrintWarning(const Exception& ex, Context* context);
 
-void PrintWarning(const std::string& message, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+void PrintWarning(const std::string& message, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context);
 
-void PrintWarning(const std::string& message, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos, otava::symbols::Context* context);
+void PrintWarning(const std::string& message, const soul::ast::FullSpan& fullSpan, const soul::ast::FullSpan& refSpan, otava::symbols::Context* context);
 
 } // namespace otava::symbols

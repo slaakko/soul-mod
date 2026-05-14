@@ -7,9 +7,9 @@ import util.code.formatter;
 
 namespace otava::ast {
 
-void PrintSource(Node& node, std::ostream& stream)
+void PrintSource(Node& node, std::ostream& stream, const std::vector<int>& lineStartIndeces)
 {
-    SourceCodePrinterVisitor visitor(stream);
+    SourceCodePrinterVisitor visitor(stream, lineStartIndeces);
     node.Accept(visitor);
     stream << std::endl;
 }

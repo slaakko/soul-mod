@@ -6,11 +6,11 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-LiteralNode::LiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : Node(kind_, sourcePos_), rep()
+LiteralNode::LiteralNode(NodeKind kind_, const soul::ast::Span& span_) noexcept : Node(kind_, span_), rep()
 {
 }
 
-LiteralNode::LiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::u32string& rep_) : Node(kind_, sourcePos_), rep(rep_)
+LiteralNode::LiteralNode(NodeKind kind_, const soul::ast::Span& span_, const std::u32string& rep_) : Node(kind_, span_), rep(rep_)
 {
 }
 
@@ -26,18 +26,18 @@ void LiteralNode::Read(Reader& reader)
     rep = reader.ReadStr();
 }
 
-IntegerLiteralNode::IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept : LiteralNode(NodeKind::integerLiteralNode, sourcePos_), value(), suffix(), base()
+IntegerLiteralNode::IntegerLiteralNode(const soul::ast::Span& span_) noexcept : LiteralNode(NodeKind::integerLiteralNode, span_), value(), suffix(), base()
 {
 }
 
-IntegerLiteralNode::IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_, std::uint64_t value_, Suffix suffix_, Base base_, const std::u32string& rep_) :
-    LiteralNode(NodeKind::integerLiteralNode, sourcePos_, rep_), value(value_), suffix(suffix_), base(base_)
+IntegerLiteralNode::IntegerLiteralNode(const soul::ast::Span& span_, std::uint64_t value_, Suffix suffix_, Base base_, const std::u32string& rep_) :
+    LiteralNode(NodeKind::integerLiteralNode, span_, rep_), value(value_), suffix(suffix_), base(base_)
 {
 }
 
 Node* IntegerLiteralNode::Clone() const
 {
-    IntegerLiteralNode* clone = new IntegerLiteralNode(GetSourcePos(), value, suffix, base, Rep());
+    IntegerLiteralNode* clone = new IntegerLiteralNode(GetSpan(), value, suffix, base, Rep());
     clone->SetId(Id());
     return clone;
 }
@@ -63,19 +63,19 @@ void IntegerLiteralNode::Read(Reader& reader)
     base = static_cast<Base>(reader.GetBinaryStreamReader().ReadByte());
 }
 
-FloatingLiteralNode::FloatingLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    LiteralNode(NodeKind::floatingLiteralNode, sourcePos_), value(), suffix(), base()
+FloatingLiteralNode::FloatingLiteralNode(const soul::ast::Span& span_) noexcept :
+    LiteralNode(NodeKind::floatingLiteralNode, span_), value(), suffix(), base()
 {
 }
 
-FloatingLiteralNode::FloatingLiteralNode(const soul::ast::SourcePos& sourcePos_, double value_, Suffix suffix_, Base base_, const std::u32string& rep_) :
-    LiteralNode(NodeKind::floatingLiteralNode, sourcePos_, rep_), value(value_), suffix(suffix_), base(base_)
+FloatingLiteralNode::FloatingLiteralNode(const soul::ast::Span& span_, double value_, Suffix suffix_, Base base_, const std::u32string& rep_) :
+    LiteralNode(NodeKind::floatingLiteralNode, span_, rep_), value(value_), suffix(suffix_), base(base_)
 {
 }
 
 Node* FloatingLiteralNode::Clone() const
 {
-    FloatingLiteralNode* clone = new FloatingLiteralNode(GetSourcePos(), value, suffix, base, Rep());
+    FloatingLiteralNode* clone = new FloatingLiteralNode(GetSpan(), value, suffix, base, Rep());
     clone->SetId(Id());
     return clone;
 }
@@ -101,20 +101,20 @@ void FloatingLiteralNode::Read(Reader& reader)
     base = static_cast<Base>(reader.GetBinaryStreamReader().ReadByte());
 }
 
-CharacterLiteralNode::CharacterLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    LiteralNode(NodeKind::characterLiteralNode, sourcePos_), value(), encodingPrefix(), hasMultipleCharacters(false)
+CharacterLiteralNode::CharacterLiteralNode(const soul::ast::Span& span_) noexcept :
+    LiteralNode(NodeKind::characterLiteralNode, span_), value(), encodingPrefix(), hasMultipleCharacters(false)
 {
 }
 
-CharacterLiteralNode::CharacterLiteralNode(const soul::ast::SourcePos& sourcePos_, char32_t value_, EncodingPrefix encodingPrefix_,
+CharacterLiteralNode::CharacterLiteralNode(const soul::ast::Span& span_, char32_t value_, EncodingPrefix encodingPrefix_,
     const std::u32string& rep_, bool hasMultipleCharacters_) :
-    LiteralNode(NodeKind::characterLiteralNode, sourcePos_, rep_), value(value_), encodingPrefix(encodingPrefix_), hasMultipleCharacters(hasMultipleCharacters_)
+    LiteralNode(NodeKind::characterLiteralNode, span_, rep_), value(value_), encodingPrefix(encodingPrefix_), hasMultipleCharacters(hasMultipleCharacters_)
 {
 }
 
 Node* CharacterLiteralNode::Clone() const
 {
-    CharacterLiteralNode* clone = new CharacterLiteralNode(GetSourcePos(), value, encodingPrefix, Rep(), hasMultipleCharacters);
+    CharacterLiteralNode* clone = new CharacterLiteralNode(GetSpan(), value, encodingPrefix, Rep(), hasMultipleCharacters);
     clone->SetId(Id());
     return clone;
 }
@@ -140,29 +140,29 @@ void CharacterLiteralNode::Read(Reader& reader)
     hasMultipleCharacters = reader.GetBinaryStreamReader().ReadBool();
 }
 
-StringLiteralNode::StringLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    LiteralNode(NodeKind::stringLiteralNode, sourcePos_), value(), encodingPrefix()
+StringLiteralNode::StringLiteralNode(const soul::ast::Span& span_) noexcept :
+    LiteralNode(NodeKind::stringLiteralNode, span_), value(), encodingPrefix()
 {
 }
 
-StringLiteralNode::StringLiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : LiteralNode(kind_, sourcePos_), value(), encodingPrefix()
+StringLiteralNode::StringLiteralNode(NodeKind kind_, const soul::ast::Span& span_) : LiteralNode(kind_, span_), value(), encodingPrefix()
 {
 }
 
-StringLiteralNode::StringLiteralNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_) :
-    LiteralNode(NodeKind::stringLiteralNode, sourcePos_, rep_), value(value_), encodingPrefix(encodingPrefix_)
+StringLiteralNode::StringLiteralNode(const soul::ast::Span& span_, const std::u32string& value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_) :
+    LiteralNode(NodeKind::stringLiteralNode, span_, rep_), value(value_), encodingPrefix(encodingPrefix_)
 {
 }
 
-StringLiteralNode::StringLiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_,
+StringLiteralNode::StringLiteralNode(NodeKind kind_, const soul::ast::Span& span_, const std::u32string& value_, EncodingPrefix encodingPrefix_,
     const std::u32string& rep_) :
-    LiteralNode(kind_, sourcePos_, rep_), value(value_), encodingPrefix(encodingPrefix_)
+    LiteralNode(kind_, span_, rep_), value(value_), encodingPrefix(encodingPrefix_)
 {
 }
 
 Node* StringLiteralNode::Clone() const
 {
-    StringLiteralNode* clone = new StringLiteralNode(GetSourcePos(), value, encodingPrefix, Rep());
+    StringLiteralNode* clone = new StringLiteralNode(GetSpan(), value, encodingPrefix, Rep());
     clone->SetId(Id());
     return clone;
 }
@@ -186,19 +186,19 @@ void StringLiteralNode::Read(Reader& reader)
     encodingPrefix = static_cast<EncodingPrefix>(reader.GetBinaryStreamReader().ReadByte());
 }
 
-RawStringLiteralNode::RawStringLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept : StringLiteralNode(NodeKind::rawStringLiteralNode, sourcePos_)
+RawStringLiteralNode::RawStringLiteralNode(const soul::ast::Span& span_) noexcept : StringLiteralNode(NodeKind::rawStringLiteralNode, span_)
 {
 }
 
-RawStringLiteralNode::RawStringLiteralNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_,
+RawStringLiteralNode::RawStringLiteralNode(const soul::ast::Span& span_, const std::u32string& value_, EncodingPrefix encodingPrefix_,
     const std::u32string& delimSequence_, const std::u32string& rep_) :
-    StringLiteralNode(NodeKind::rawStringLiteralNode, sourcePos_, value_, encodingPrefix_, rep_), delimSequence(delimSequence_)
+    StringLiteralNode(NodeKind::rawStringLiteralNode, span_, value_, encodingPrefix_, rep_), delimSequence(delimSequence_)
 {
 }
 
 Node* RawStringLiteralNode::Clone() const
 {
-    RawStringLiteralNode* clone = new RawStringLiteralNode(GetSourcePos(), GetValue(), EncodingPrefix(), delimSequence, Rep());
+    RawStringLiteralNode* clone = new RawStringLiteralNode(GetSpan(), GetValue(), EncodingPrefix(), delimSequence, Rep());
     clone->SetId(Id());
     return clone;
 }
@@ -220,18 +220,18 @@ void RawStringLiteralNode::Read(Reader& reader)
     delimSequence = reader.ReadStr();
 }
 
-BooleanLiteralNode::BooleanLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept : LiteralNode(NodeKind::booleanLiteralNode, sourcePos_), value()
+BooleanLiteralNode::BooleanLiteralNode(const soul::ast::Span& span_) noexcept : LiteralNode(NodeKind::booleanLiteralNode, span_), value()
 {
 }
 
-BooleanLiteralNode::BooleanLiteralNode(const soul::ast::SourcePos& sourcePos_, bool value_, const std::u32string& rep_) :
-    LiteralNode(NodeKind::booleanLiteralNode, sourcePos_, rep_), value(value_)
+BooleanLiteralNode::BooleanLiteralNode(const soul::ast::Span& span_, bool value_, const std::u32string& rep_) :
+    LiteralNode(NodeKind::booleanLiteralNode, span_, rep_), value(value_)
 {
 }
 
 Node* BooleanLiteralNode::Clone() const
 {
-    BooleanLiteralNode* clone = new BooleanLiteralNode(GetSourcePos(), value, Rep());
+    BooleanLiteralNode* clone = new BooleanLiteralNode(GetSpan(), value, Rep());
     clone->SetId(Id());
     return clone;
 }
@@ -253,18 +253,18 @@ void BooleanLiteralNode::Read(Reader& reader)
     value = reader.ReadBool();
 }
 
-NullPtrLiteralNode::NullPtrLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept : LiteralNode(NodeKind::nullPtrLiteralNode, sourcePos_)
+NullPtrLiteralNode::NullPtrLiteralNode(const soul::ast::Span& span_) noexcept : LiteralNode(NodeKind::nullPtrLiteralNode, span_)
 {
 }
 
-NullPtrLiteralNode::NullPtrLiteralNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& rep_) :
-    LiteralNode(NodeKind::nullPtrLiteralNode, sourcePos_, rep_)
+NullPtrLiteralNode::NullPtrLiteralNode(const soul::ast::Span& span_, const std::u32string& rep_) :
+    LiteralNode(NodeKind::nullPtrLiteralNode, span_, rep_)
 {
 }
 
 Node* NullPtrLiteralNode::Clone() const
 {
-    NullPtrLiteralNode* clone = new NullPtrLiteralNode(GetSourcePos(), Rep());
+    NullPtrLiteralNode* clone = new NullPtrLiteralNode(GetSpan(), Rep());
     clone->SetId(Id());
     return clone;
 }
@@ -274,19 +274,19 @@ void NullPtrLiteralNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-UserDefinedLiteraNode::UserDefinedLiteraNode(const soul::ast::SourcePos& sourcePos_) noexcept :
-    BinaryNode(NodeKind::userDefinedLiteralNode, sourcePos_, nullptr, nullptr)
+UserDefinedLiteraNode::UserDefinedLiteraNode(const soul::ast::Span& span_) noexcept :
+    BinaryNode(NodeKind::userDefinedLiteralNode, span_, nullptr, nullptr)
 {
 }
 
-UserDefinedLiteraNode::UserDefinedLiteraNode(const soul::ast::SourcePos& sourcePos_, Node* literalNode_, Node* udSuffix_) noexcept :
-    BinaryNode(NodeKind::userDefinedLiteralNode, sourcePos_, literalNode_, udSuffix_)
+UserDefinedLiteraNode::UserDefinedLiteraNode(const soul::ast::Span& span_, Node* literalNode_, Node* udSuffix_) noexcept :
+    BinaryNode(NodeKind::userDefinedLiteralNode, span_, literalNode_, udSuffix_)
 {
 }
 
 Node* UserDefinedLiteraNode::Clone() const
 {
-    UserDefinedLiteraNode* clone = new UserDefinedLiteraNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    UserDefinedLiteraNode* clone = new UserDefinedLiteraNode(GetSpan(), Left()->Clone(), Right()->Clone());
     clone->SetId(Id());
     return clone;
 }
@@ -296,18 +296,18 @@ void UserDefinedLiteraNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-LiteralOperatorIdNode::LiteralOperatorIdNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::literalOperatorIdNode, sourcePos_, nullptr)
+LiteralOperatorIdNode::LiteralOperatorIdNode(const soul::ast::Span& span_) noexcept : UnaryNode(NodeKind::literalOperatorIdNode, span_, nullptr)
 {
 }
 
-LiteralOperatorIdNode::LiteralOperatorIdNode(const soul::ast::SourcePos& sourcePos_, Node* id_, const soul::ast::SourcePos& stringLitPos_) noexcept :
-    UnaryNode(NodeKind::literalOperatorIdNode, sourcePos_, id_), stringLitPos(stringLitPos_)
+LiteralOperatorIdNode::LiteralOperatorIdNode(const soul::ast::Span& span_, Node* id_, const soul::ast::Span& stringLitSpan_) noexcept :
+    UnaryNode(NodeKind::literalOperatorIdNode, span_, id_), stringLitSpan(stringLitSpan_)
 {
 }
 
 Node* LiteralOperatorIdNode::Clone() const
 {
-    LiteralOperatorIdNode* clone = new LiteralOperatorIdNode(GetSourcePos(), Child()->Clone(), stringLitPos);
+    LiteralOperatorIdNode* clone = new LiteralOperatorIdNode(GetSpan(), Child()->Clone(), stringLitSpan);
     clone->SetId(Id());
     return clone;
 }
@@ -320,13 +320,13 @@ void LiteralOperatorIdNode::Accept(Visitor& visitor)
 void LiteralOperatorIdNode::Write(Writer& writer)
 {
     UnaryNode::Write(writer);
-    writer.Write(stringLitPos);
+    writer.Write(stringLitSpan);
 }
 
 void LiteralOperatorIdNode::Read(Reader& reader)
 {
     UnaryNode::Read(reader);
-    stringLitPos = reader.ReadSourcePos();
+    stringLitSpan = reader.ReadSpan();
 }
 
 std::u32string EncodingPrefixStr(EncodingPrefix encodingPrefix)

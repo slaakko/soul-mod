@@ -18,40 +18,73 @@ void SetExceptionThrown()
     exception_thrown = true;
 }
 
-std::string ErrorLine(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+int LineNumber(const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    if (sourcePos.IsValid())
+    if (fullSpan.IsValid())
     {
         soul::lexer::FileMap* fileMap = context->GetFileMap();
         if (fileMap)
         {
-            std::string errorLine = util::ToUtf8(fileMap->GetFileLine(sourcePos.file, sourcePos.line));
-            std::string caretLine = std::string(sourcePos.col - 1, ' ') + "^";
-            return ":\n" + errorLine + "\n" + caretLine;
+            const std::vector<int>* lineStartIndeces = fileMap->LineStartIndeces(fullSpan.fileIndex);
+            if (lineStartIndeces)
+            {
+                soul::ast::LineColLen lineColLen = soul::ast::SpanToLineColLen(fullSpan.span, *lineStartIndeces);
+                return lineColLen.line;
+            }
+        }
+    }
+    return 0;
+}
+
+std::string ErrorLine(const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
+{
+    if (fullSpan.IsValid())
+    {
+        soul::lexer::FileMap* fileMap = context->GetFileMap();
+        if (fileMap)
+        {
+            const std::vector<int>* lineStartIndeces = fileMap->LineStartIndeces(fullSpan.fileIndex);
+            if (lineStartIndeces)
+            {
+                soul::ast::LineColLen lineColLen = soul::ast::SpanToLineColLen(fullSpan.span, *lineStartIndeces);
+                std::string errorLine = util::ToUtf8(fileMap->GetFileLine(fullSpan.fileIndex, lineColLen.line));
+                std::string caretLine = std::string(lineColLen.col - 1, ' ') + std::string(lineColLen.len, '^');
+                return ":\n" + errorLine + "\n" + caretLine;
+            }
         }
     }
     return std::string();
 }
 
-std::string SourceFilePath(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+std::string SourceFilePath(const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    if (sourcePos.IsValid())
+    if (fullSpan.IsValid())
     {
         soul::lexer::FileMap* fileMap = context->GetFileMap();
         if (fileMap)
         {
-            return fileMap->GetFilePath(sourcePos.file);
+            return fileMap->GetFilePath(fullSpan.fileIndex);
         }
     }
     return std::string();
 }
 
-std::string ReferenceInfo(const soul::ast::SourcePos& refSourcePos, otava::symbols::Context* context)
+std::string ReferenceInfo(const soul::ast::FullSpan& refSpan, otava::symbols::Context* context)
 {
-    if (refSourcePos.IsValid())
+    if (refSpan.IsValid())
     {
-        std::string message = "\nSee reference file " + SourceFilePath(refSourcePos, context) + ", line " + std::to_string(refSourcePos.line) + ErrorLine(refSourcePos, context);
-        return message;
+        soul::lexer::FileMap* fileMap = context->GetFileMap();
+        if (fileMap)
+        {
+            const std::vector<int>* lineStartIndeces = fileMap->LineStartIndeces(refSpan.fileIndex);
+            if (lineStartIndeces)
+            {
+                soul::ast::LineColLen lineColLen = soul::ast::SpanToLineColLen(refSpan.span, *lineStartIndeces);
+                std::string message = "\nSee reference file " + SourceFilePath(refSpan, context) + ", line " +
+                    std::to_string(lineColLen.line) + ErrorLine(refSpan, context);
+                return message;
+            }
+        }
     }
     return std::string();
 }
@@ -64,39 +97,39 @@ Exception::Exception(const std::string& message_) : std::runtime_error(message_)
 {
 }
 
-Exception::Exception(const std::string& message_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) :
-    Exception(message_, sourcePos, soul::ast::SourcePos(), context)
+Exception::Exception(const std::string& message_, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) :
+    Exception(message_, fullSpan, soul::ast::FullSpan(), context)
 {
 }
 
-Exception::Exception(const std::string& message_, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos, otava::symbols::Context* context) :
-    Exception("error: ", message_, sourcePos, refSourcePos, context)
+Exception::Exception(const std::string& message_, const soul::ast::FullSpan& fullSpan, const soul::ast::FullSpan& refSpan, otava::symbols::Context* context) :
+    Exception("error: ", message_, fullSpan, refSpan, context)
 {
 }
 
-Exception::Exception(const std::string& title, const std::string& message_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) :
-    Exception(title, message_, sourcePos, soul::ast::SourcePos(), context)
+Exception::Exception(const std::string& title, const std::string& message_, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) :
+    Exception(title, message_, fullSpan, soul::ast::FullSpan(), context)
 {
 }
 
-Exception::Exception(const std::string& title_, const std::string& message_, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos,
+Exception::Exception(const std::string& title_, const std::string& message_, const soul::ast::FullSpan& fullSpan, const soul::ast::FullSpan& refSpan,
     otava::symbols::Context* context) :
-    std::runtime_error(title_ + message_ + ", file '" + SourceFilePath(sourcePos, context) +
-        "', line " + std::to_string(sourcePos.line) + ErrorLine(sourcePos, context) + ReferenceInfo(refSourcePos, context)), warning(false)
+    std::runtime_error(title_ + message_ + ", file '" + SourceFilePath(fullSpan, context) +
+        "', line " + std::to_string(LineNumber(fullSpan, context)) + ErrorLine(fullSpan, context) + ReferenceInfo(refSpan, context)), warning(false)
 {
 }
 
 [[noreturn]]
-void ThrowException(const std::string& message, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+void ThrowException(const std::string& message, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    ThrowException(message, sourcePos, soul::ast::SourcePos(), context);
+    ThrowException(message, fullSpan, soul::ast::FullSpan(), context);
 }
 
 [[noreturn]]
-void ThrowException(const std::string& message, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos, otava::symbols::Context* context)
+void ThrowException(const std::string& message, const soul::ast::FullSpan& fullSpan, const soul::ast::FullSpan& refSpan, otava::symbols::Context* context)
 {
     exception_thrown = true;
-    throw Exception(message, sourcePos, refSourcePos, context);
+    throw Exception(message, fullSpan, refSpan, context);
 }
 
 [[noreturn]]
@@ -114,14 +147,14 @@ void PrintWarning(const Exception& ex, Context* context)
     }
 }
 
-void PrintWarning(const std::string& message, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+void PrintWarning(const std::string& message, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    PrintWarning(message, sourcePos, soul::ast::SourcePos(), context);
+    PrintWarning(message, fullSpan, soul::ast::FullSpan(), context);
 }
 
-void PrintWarning(const std::string& message, const soul::ast::SourcePos& sourcePos, const soul::ast::SourcePos& refSourcePos, otava::symbols::Context* context)
+void PrintWarning(const std::string& message, const soul::ast::FullSpan& fullSpan, const soul::ast::FullSpan& refSpan, otava::symbols::Context* context)
 {
-    Exception exception("warning: ", message, sourcePos, refSourcePos, context);
+    Exception exception("warning: ", message, fullSpan, refSpan, context);
     exception.SetWarning();
     PrintWarning(exception, context);
 }

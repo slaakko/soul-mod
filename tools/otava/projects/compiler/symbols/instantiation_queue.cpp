@@ -59,7 +59,7 @@ std::vector<InstantiationRequest>* InstantiationQueue::GetRequests(FunctionSymbo
     return nullptr;
 }
 
-void InstantiateEnqueuedRequests(FunctionSymbol* functionTemplate, const soul::ast::SourcePos& sourcePos, Context* context)
+void InstantiateEnqueuedRequests(FunctionSymbol* functionTemplate, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     InstantiationQueue* instantiationQueue = context->GetInstantiationQueue();
     std::vector<InstantiationRequest>* requests = instantiationQueue->GetRequests(functionTemplate);
@@ -71,7 +71,7 @@ void InstantiateEnqueuedRequests(FunctionSymbol* functionTemplate, const soul::a
             if (FunctionMatches(request.Function(), functionTemplate, context))
             {
                 context->SetInstantiationIrName(request.Function()->IrName(context));
-                InstantiateFunctionTemplate(functionTemplate, request.TemplateParamMap(), sourcePos, context);
+                InstantiateFunctionTemplate(functionTemplate, request.TemplateParamMap(), fullSpan, context);
             }
         }
         requests->erase(std::remove_if(requests->begin(), requests->end(), RequestMatches(functionTemplate, context)), requests->end());

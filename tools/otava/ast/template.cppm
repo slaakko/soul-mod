@@ -13,8 +13,8 @@ export namespace otava::ast {
 class TemplateDeclarationNode : public BinaryNode
 {
 public:
-    TemplateDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    TemplateDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* templateHead_, Node* declaration_) noexcept;
+    TemplateDeclarationNode(const soul::ast::Span& span_) noexcept;
+    TemplateDeclarationNode(const soul::ast::Span& span_, Node* templateHead_, Node* declaration_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -22,7 +22,7 @@ public:
 class TemplateHeadNode : public CompoundNode
 {
 public:
-    TemplateHeadNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    TemplateHeadNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -39,25 +39,25 @@ private:
 class TemplateParameterListNode : public ListNode
 {
 public:
-    TemplateParameterListNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    TemplateParameterListNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline void SetLAnglePos(const soul::ast::SourcePos& laPos_) noexcept { laPos = laPos_; }
-    inline void SetRAnglePos(const soul::ast::SourcePos& raPos_) noexcept { raPos = raPos_; }
-    inline const soul::ast::SourcePos& LAnglePos() const noexcept { return laPos; }
-    inline const soul::ast::SourcePos& RAnglePos() const noexcept { return raPos; }
+    inline void SetLAngleSpan(const soul::ast::Span& laSpan_) noexcept { laSpan = laSpan_; }
+    inline void SetRAngleSpan(const soul::ast::Span& raSpan_) noexcept { raSpan = raSpan_; }
+    inline const soul::ast::Span& LAngleSpan() const noexcept { return laSpan; }
+    inline const soul::ast::Span& RAngleSpan() const noexcept { return raSpan; }
 private:
-    soul::ast::SourcePos laPos;
-    soul::ast::SourcePos raPos;
+    soul::ast::Span laSpan;
+    soul::ast::Span raSpan;
 };
 
 class TypeParameterNode : public CompoundNode
 {
 public:
-    TypeParameterNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    TypeParameterNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_, Node* identifier_, Node* assign_, Node* typeId_, Node* ellipsis_, 
+    TypeParameterNode(const soul::ast::Span& span_) noexcept;
+    TypeParameterNode(const soul::ast::Span& span_, Node* typeConstraint_, Node* identifier_, Node* assign_, Node* typeId_, Node* ellipsis_,
         Node* templateHead_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -81,31 +81,31 @@ private:
 class TemplateIdNode : public ListNode
 {
 public:
-    TemplateIdNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    TemplateIdNode(const soul::ast::SourcePos& sourcePos_, Node* templateName_) noexcept;
+    TemplateIdNode(const soul::ast::Span& span_) noexcept;
+    TemplateIdNode(const soul::ast::Span& span_, Node* templateName_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* TemplateName() const noexcept { return templateName.get(); }
-    inline void SetLAnglePos(const soul::ast::SourcePos& laPos_) noexcept { laPos = laPos_; }
-    inline void SetRAnglePos(const soul::ast::SourcePos& raPos_) noexcept { raPos = raPos_; }
-    inline const soul::ast::SourcePos& LAnglePos() const noexcept { return laPos; }
-    inline const soul::ast::SourcePos& RAnglePos() const noexcept { return raPos; }
+    inline void SetLAngleSpan(const soul::ast::Span& laSpan_) noexcept { laSpan = laSpan_; }
+    inline void SetRAngleSpan(const soul::ast::Span& raSpan_) noexcept { raSpan = raSpan_; }
+    inline const soul::ast::Span& LAngleSpan() const noexcept { return laSpan; }
+    inline const soul::ast::Span& RAngleSpan() const noexcept { return raSpan; }
     inline const std::vector<bool>& TemplateArgKinds() const noexcept { return templateArgKinds; }
     void SetTemplateArgKinds(const std::vector<bool>& templateArgKinds_);
     std::u32string Str() const override;
 private:
     std::unique_ptr<Node> templateName;
-    soul::ast::SourcePos laPos;
-    soul::ast::SourcePos raPos;
+    soul::ast::Span laSpan;
+    soul::ast::Span raSpan;
     std::vector<bool> templateArgKinds;
 };
 
 class TypenameNode : public Node
 {
 public:
-    TypenameNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    TypenameNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -113,9 +113,9 @@ public:
 class DeductionGuideNode : public CompoundNode
 {
 public:
-    DeductionGuideNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    DeductionGuideNode(const soul::ast::SourcePos& sourcePos_, Node* templateName_, Node* params_, Node* arrow_, Node* templateId_, Node* explicitSpecifier_, 
-        Node* semicolon_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept;
+    DeductionGuideNode(const soul::ast::Span& span_) noexcept;
+    DeductionGuideNode(const soul::ast::Span& span_, Node* templateName_, Node* params_, Node* arrow_, Node* templateId_, Node* explicitSpecifier_,
+        Node* semicolon_, const soul::ast::Span& lpSpan_, const soul::ast::Span& rpSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -126,8 +126,8 @@ public:
     inline Node* TemplateId() const noexcept { return templateId.get(); }
     inline Node* ExplicitSpecifier() const noexcept { return explicitSpecifier.get(); }
     inline Node* Semicolon() const noexcept { return semicolon.get(); }
-    inline const soul::ast::SourcePos& LParenPos() const noexcept { return lpPos; }
-    inline const soul::ast::SourcePos& RParenPos() const noexcept { return rpPos; }
+    inline const soul::ast::Span& LParenSpan() const noexcept { return lpSpan; }
+    inline const soul::ast::Span& RParenSpan() const noexcept { return rpSpan; }
 private:
     std::unique_ptr<Node> templateName;
     std::unique_ptr<Node> params;
@@ -135,15 +135,15 @@ private:
     std::unique_ptr<Node> templateId;
     std::unique_ptr<Node> explicitSpecifier;
     std::unique_ptr<Node> semicolon;
-    soul::ast::SourcePos lpPos;
-    soul::ast::SourcePos rpPos;
+    soul::ast::Span lpSpan;
+    soul::ast::Span rpSpan;
 };
 
 class ExplicitInstantiationNode : public CompoundNode
 {
 public:
-    ExplicitInstantiationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ExplicitInstantiationNode(const soul::ast::SourcePos& sourcePos_, Node* extrn_, Node* tmp_, Node* declaration_) noexcept;
+    ExplicitInstantiationNode(const soul::ast::Span& span_) noexcept;
+    ExplicitInstantiationNode(const soul::ast::Span& span_, Node* extrn_, Node* tmp_, Node* declaration_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -160,7 +160,7 @@ private:
 class TemplateNode : public Node
 {
 public:
-    TemplateNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    TemplateNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -168,23 +168,23 @@ public:
 class ExplicitSpecializationNode : public CompoundNode
 {
 public:
-    ExplicitSpecializationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ExplicitSpecializationNode(const soul::ast::SourcePos& sourcePos_, Node* tmp_, Node* templateHeadNode_, Node* declaration_,
-        const soul::ast::SourcePos& laPos_, const soul::ast::SourcePos& raPos_) noexcept;
+    ExplicitSpecializationNode(const soul::ast::Span& span_) noexcept;
+    ExplicitSpecializationNode(const soul::ast::Span& span_, Node* tmp_, Node* templateHeadNode_, Node* declaration_,
+        const soul::ast::Span& laSpan_, const soul::ast::Span& raSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* Template() const noexcept { return tmp.get(); }
     inline Node* Declaration() const noexcept { return declaration.get(); }
-    inline const soul::ast::SourcePos& LAnglePos() const noexcept { return laPos; }
-    inline const soul::ast::SourcePos& RAnglePos() const noexcept { return raPos; }
+    inline const soul::ast::Span& LAngleSpan() const noexcept { return laSpan; }
+    inline const soul::ast::Span& RAngleSpan() const noexcept { return raSpan; }
 private:
     std::unique_ptr<Node> tmp;
     std::unique_ptr<Node> templateHeadNode;
     std::unique_ptr<Node> declaration;
-    soul::ast::SourcePos laPos;
-    soul::ast::SourcePos raPos;
+    soul::ast::Span laSpan;
+    soul::ast::Span raSpan;
 };
 
 } // namespace otava::ast

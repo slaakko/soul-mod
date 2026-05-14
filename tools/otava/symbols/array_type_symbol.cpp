@@ -76,56 +76,56 @@ void ArrayTypeSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-otava::intermediate::Type* ArrayTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+otava::intermediate::Type* ArrayTypeSymbol::IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    util::uuid irId = IrId(sourcePos, context);
+    util::uuid irId = IrId(fullSpan, context);
     otava::intermediate::Type* type = emitter.GetType(irId);
     if (!type)
     {
-        type = emitter.MakeArrayType(size, elementType->IrType(emitter, sourcePos, context));
+        type = emitter.MakeArrayType(size, elementType->IrType(emitter, fullSpan, context));
         emitter.SetType(irId, type);
     }
     return type;
 }
 
-void ArrayTypeSymbol::Bind(const soul::ast::SourcePos& sourcePos, Context* context)
+void ArrayTypeSymbol::Bind(const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (IsBound()) return;
     SetBound();
-    FunctionGroupSymbol* constructorGroup = GetScope()->GetOrInsertFunctionGroup(U"@constructor", sourcePos, context);
+    FunctionGroupSymbol* constructorGroup = GetScope()->GetOrInsertFunctionGroup(U"@constructor", fullSpan, context);
 
     ArrayTypeDefaultCtor* arrayTypeDefaultCtor = new ArrayTypeDefaultCtor(this, context);
-    GetScope()->AddSymbol(arrayTypeDefaultCtor, sourcePos, context);
+    GetScope()->AddSymbol(arrayTypeDefaultCtor, fullSpan, context);
     constructorGroup->AddFunction(arrayTypeDefaultCtor);
 
     ArrayTypeCopyCtor* arrayTypeCopyCtor = new ArrayTypeCopyCtor(this, context);
-    GetScope()->AddSymbol(arrayTypeCopyCtor, sourcePos, context);
+    GetScope()->AddSymbol(arrayTypeCopyCtor, fullSpan, context);
     constructorGroup->AddFunction(arrayTypeCopyCtor);
 
     ArrayTypeMoveCtor* arrayTypeMoveCtor = new ArrayTypeMoveCtor(this, context);
-    GetScope()->AddSymbol(arrayTypeMoveCtor, sourcePos, context);
+    GetScope()->AddSymbol(arrayTypeMoveCtor, fullSpan, context);
     constructorGroup->AddFunction(arrayTypeMoveCtor);
 
-    FunctionGroupSymbol* assignmentGroup = GetScope()->GetOrInsertFunctionGroup(U"operator=", sourcePos, context);
+    FunctionGroupSymbol* assignmentGroup = GetScope()->GetOrInsertFunctionGroup(U"operator=", fullSpan, context);
 
     ArrayTypeCopyAssignment* arrayTypeCopyAssignment = new ArrayTypeCopyAssignment(this, context);
-    GetScope()->AddSymbol(arrayTypeCopyAssignment, sourcePos, context);
+    GetScope()->AddSymbol(arrayTypeCopyAssignment, fullSpan, context);
     assignmentGroup->AddFunction(arrayTypeCopyAssignment);
 
     ArrayTypeMoveAssignment* arrayTypeMoveAssignment = new ArrayTypeMoveAssignment(this, context);
-    GetScope()->AddSymbol(arrayTypeMoveAssignment, sourcePos, context);
+    GetScope()->AddSymbol(arrayTypeMoveAssignment, fullSpan, context);
     assignmentGroup->AddFunction(arrayTypeMoveAssignment);
 
-    FunctionGroupSymbol* beginGroup = GetScope()->GetOrInsertFunctionGroup(U"begin", sourcePos, context);
+    FunctionGroupSymbol* beginGroup = GetScope()->GetOrInsertFunctionGroup(U"begin", fullSpan, context);
 
     ArrayTypeBegin* arrayTypeBegin = new ArrayTypeBegin(this, context);
-    GetScope()->AddSymbol(arrayTypeBegin, sourcePos, context);
+    GetScope()->AddSymbol(arrayTypeBegin, fullSpan, context);
     beginGroup->AddFunction(arrayTypeBegin);
 
-    FunctionGroupSymbol* endGroup = GetScope()->GetOrInsertFunctionGroup(U"end", sourcePos, context);
+    FunctionGroupSymbol* endGroup = GetScope()->GetOrInsertFunctionGroup(U"end", fullSpan, context);
 
     ArrayTypeEnd* arrayTypeEnd = new ArrayTypeEnd(this, context);
-    GetScope()->AddSymbol(arrayTypeEnd, sourcePos, context);
+    GetScope()->AddSymbol(arrayTypeEnd, fullSpan, context);
     endGroup->AddFunction(arrayTypeEnd);
 }
 
@@ -139,7 +139,7 @@ ArrayTypeDefaultCtor::ArrayTypeDefaultCtor(ArrayTypeSymbol* arrayType_, Context*
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     SetNoExcept();
 }
 
@@ -170,7 +170,7 @@ void ArrayTypeDefaultCtor::Resolve(SymbolTable& symbolTable, Context* context)
 }
 
 void ArrayTypeDefaultCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     if ((flags & OperationFlags::defaultInit) == OperationFlags::none) return;
     otava::intermediate::Value* loopIndexVar = emitter.EmitLocal(emitter.GetLongType());
@@ -186,10 +186,10 @@ void ArrayTypeDefaultCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpre
     emitter.EmitBranch(less, trueBlock, nextBlock);
     emitter.SetCurrentBasicBlock(trueBlock);
     otava::intermediate::Value* currentLoopIndexValue = emitter.EmitLoad(loopIndexVar);
-    args[0]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[0]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* array = emitter.Stack().Pop();
     otava::intermediate::Value* elemAddr = emitter.EmitElemAddr(array, currentLoopIndexValue);
-    otava::intermediate::Value* defaultValue = arrayType->ElementType()->IrType(emitter, sourcePos, context)->MakeDefaultValue(*emitter.GetIntermediateContext());
+    otava::intermediate::Value* defaultValue = arrayType->ElementType()->IrType(emitter, fullSpan, context)->MakeDefaultValue(*emitter.GetIntermediateContext());
     emitter.EmitStore(defaultValue, elemAddr);
     otava::intermediate::Value* nextLoopIndexValue = emitter.EmitAdd(currentLoopIndexValue, emitter.EmitLong(1));
     emitter.EmitStore(nextLoopIndexValue, loopIndexVar);
@@ -206,9 +206,9 @@ ArrayTypeCopyCtor::ArrayTypeCopyCtor(ArrayTypeSymbol* arrayType_, Context* conte
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddConst(context)->AddLValueRef(context));
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    AddParameter(thatParam, soul::ast::FullSpan(), context);
     SetNoExcept();
 }
 
@@ -239,7 +239,7 @@ void ArrayTypeCopyCtor::Resolve(SymbolTable& symbolTable, Context* context)
 }
 
 void ArrayTypeCopyCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* loopIndexVar = emitter.EmitLocal(emitter.GetLongType());
     emitter.EmitStore(emitter.EmitLong(0), loopIndexVar);
@@ -254,11 +254,11 @@ void ArrayTypeCopyCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressi
     emitter.EmitBranch(less, trueBlock, nextBlock);
     emitter.SetCurrentBasicBlock(trueBlock);
     otava::intermediate::Value* currentLoopIndexValue = emitter.EmitLoad(loopIndexVar);
-    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* sourceArray = emitter.Stack().Pop();
     otava::intermediate::Value* sourceElemAddr = emitter.EmitElemAddr(sourceArray, currentLoopIndexValue);
     otava::intermediate::Value* sourceValue = emitter.EmitLoad(sourceElemAddr);
-    args[0]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[0]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* targetArray = emitter.Stack().Pop();
     otava::intermediate::Value* targetElemAddr = emitter.EmitElemAddr(targetArray, currentLoopIndexValue);
     emitter.EmitStore(sourceValue, targetElemAddr);
@@ -277,9 +277,9 @@ ArrayTypeMoveCtor::ArrayTypeMoveCtor(ArrayTypeSymbol* arrayType_, Context* conte
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddRValueRef(context));
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    AddParameter(thatParam, soul::ast::FullSpan(), context);
     SetNoExcept();
 }
 
@@ -310,7 +310,7 @@ void ArrayTypeMoveCtor::Resolve(SymbolTable& symbolTable, Context* context)
 }
 
 void ArrayTypeMoveCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* loopIndexVar = emitter.EmitLocal(emitter.GetLongType());
     emitter.EmitStore(emitter.EmitLong(0), loopIndexVar);
@@ -325,11 +325,11 @@ void ArrayTypeMoveCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressi
     emitter.EmitBranch(less, trueBlock, nextBlock);
     emitter.SetCurrentBasicBlock(trueBlock);
     otava::intermediate::Value* currentLoopIndexValue = emitter.EmitLoad(loopIndexVar);
-    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* sourceArray = emitter.Stack().Pop();
     otava::intermediate::Value* sourceElemAddr = emitter.EmitElemAddr(sourceArray, currentLoopIndexValue);
     otava::intermediate::Value* sourceValue = emitter.EmitLoad(sourceElemAddr);
-    args[0]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[0]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* targetArray = emitter.Stack().Pop();
     otava::intermediate::Value* targetElemAddr = emitter.EmitElemAddr(targetArray, currentLoopIndexValue);
     emitter.EmitStore(sourceValue, targetElemAddr);
@@ -349,9 +349,9 @@ ArrayTypeCopyAssignment::ArrayTypeCopyAssignment(ArrayTypeSymbol* arrayType_, Co
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddConst(context)->AddLValueRef(context));
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    AddParameter(thatParam, soul::ast::FullSpan(), context);
     SetReturnType(arrayType->AddLValueRef(context), context);
     SetNoExcept();
 }
@@ -382,7 +382,7 @@ void ArrayTypeCopyAssignment::Resolve(SymbolTable& symbolTable, Context* context
     }
 }
 void ArrayTypeCopyAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* loopIndexVar = emitter.EmitLocal(emitter.GetLongType());
     emitter.EmitStore(emitter.EmitLong(0), loopIndexVar);
@@ -397,11 +397,11 @@ void ArrayTypeCopyAssignment::GenerateCode(Emitter& emitter, std::vector<BoundEx
     emitter.EmitBranch(less, trueBlock, nextBlock);
     emitter.SetCurrentBasicBlock(trueBlock);
     otava::intermediate::Value* currentLoopIndexValue = emitter.EmitLoad(loopIndexVar);
-    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* sourceArray = emitter.Stack().Pop();
     otava::intermediate::Value* sourceElemAddr = emitter.EmitElemAddr(sourceArray, currentLoopIndexValue);
     otava::intermediate::Value* sourceValue = emitter.EmitLoad(sourceElemAddr);
-    args[0]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[0]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* targetArray = emitter.Stack().Pop();
     otava::intermediate::Value* targetElemAddr = emitter.EmitElemAddr(targetArray, currentLoopIndexValue);
     emitter.EmitStore(sourceValue, targetElemAddr);
@@ -409,7 +409,7 @@ void ArrayTypeCopyAssignment::GenerateCode(Emitter& emitter, std::vector<BoundEx
     emitter.EmitStore(nextLoopIndexValue, loopIndexVar);
     emitter.EmitJump(condBlock);
     emitter.SetCurrentBasicBlock(nextBlock);
-    args[0]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[0]->Load(emitter, OperationFlags::none, fullSpan, context);
 }
 
 ArrayTypeMoveAssignment::ArrayTypeMoveAssignment(const std::u32string& name_) : FunctionSymbol(SymbolKind::arrayTypeMoveAssignment, name_), arrayType(nullptr)
@@ -422,9 +422,9 @@ ArrayTypeMoveAssignment::ArrayTypeMoveAssignment(ArrayTypeSymbol* arrayType_, Co
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", arrayType->AddRValueRef(context));
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    AddParameter(thatParam, soul::ast::FullSpan(), context);
     SetReturnType(arrayType->AddLValueRef(context), context);
     SetNoExcept();
 }
@@ -456,7 +456,7 @@ void ArrayTypeMoveAssignment::Resolve(SymbolTable& symbolTable, Context* context
 }
 
 void ArrayTypeMoveAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     otava::intermediate::Value* loopIndexVar = emitter.EmitLocal(emitter.GetLongType());
     emitter.EmitStore(emitter.EmitLong(0), loopIndexVar);
@@ -471,11 +471,11 @@ void ArrayTypeMoveAssignment::GenerateCode(Emitter& emitter, std::vector<BoundEx
     emitter.EmitBranch(less, trueBlock, nextBlock);
     emitter.SetCurrentBasicBlock(trueBlock);
     otava::intermediate::Value* currentLoopIndexValue = emitter.EmitLoad(loopIndexVar);
-    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* sourceArray = emitter.Stack().Pop();
     otava::intermediate::Value* sourceElemAddr = emitter.EmitElemAddr(sourceArray, currentLoopIndexValue);
     otava::intermediate::Value* sourceValue = emitter.EmitLoad(sourceElemAddr);
-    args[0]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[0]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* targetArray = emitter.Stack().Pop();
     otava::intermediate::Value* targetElemAddr = emitter.EmitElemAddr(targetArray, currentLoopIndexValue);
     emitter.EmitStore(sourceValue, targetElemAddr);
@@ -483,7 +483,7 @@ void ArrayTypeMoveAssignment::GenerateCode(Emitter& emitter, std::vector<BoundEx
     emitter.EmitStore(nextLoopIndexValue, loopIndexVar);
     emitter.EmitJump(condBlock);
     emitter.SetCurrentBasicBlock(nextBlock);
-    args[0]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[0]->Load(emitter, OperationFlags::none, fullSpan, context);
 }
 
 ArrayTypeBegin::ArrayTypeBegin(const std::u32string& name_) : FunctionSymbol(SymbolKind::arrayTypeBegin, name_), arrayType(nullptr)
@@ -496,7 +496,7 @@ ArrayTypeBegin::ArrayTypeBegin(ArrayTypeSymbol* arrayType_, Context* context) :
     SetFunctionKind(FunctionKind::function);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     SetReturnType(arrayType->ElementType()->AddPointer(context), context);
     SetNoExcept();
 }
@@ -528,9 +528,9 @@ void ArrayTypeBegin::Resolve(SymbolTable& symbolTable, Context* context)
 }
 
 void ArrayTypeBegin::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    args[0]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[0]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* array = emitter.Stack().Pop();
     otava::intermediate::Value* elemAddr = emitter.EmitElemAddr(array, emitter.EmitLong(0));
     emitter.Stack().Push(elemAddr);
@@ -546,7 +546,7 @@ ArrayTypeEnd::ArrayTypeEnd(ArrayTypeSymbol* arrayType_, Context* context) :
     SetFunctionKind(FunctionKind::function);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", arrayType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     SetReturnType(arrayType->ElementType()->AddPointer(context), context);
     SetNoExcept();
 }
@@ -578,9 +578,9 @@ void ArrayTypeEnd::Resolve(SymbolTable& symbolTable, Context* context)
 }
 
 void ArrayTypeEnd::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    args[0]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[0]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* array = emitter.Stack().Pop();
     otava::intermediate::Value* elemAddr = emitter.EmitElemAddr(array, emitter.EmitLong(arrayType->Size()));
     emitter.Stack().Push(elemAddr);

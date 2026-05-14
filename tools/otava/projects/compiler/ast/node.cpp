@@ -51,336 +51,336 @@ std::string NodeKindStr(NodeKind nodeKind)
 {
     switch (nodeKind)
     {
-        case NodeKind::nullNode: return "nullNode";
-        case NodeKind::translationUnitNode: return "translationUnitNode";
-        case NodeKind::moduleUnitNode: return "moduleUnitNode";
-        case NodeKind::moduleDeclarationNode: return "moduleDeclarationNode";
-        case NodeKind::exportDeclarationNode: return "exportDeclarationNode";
-        case NodeKind::exportNode: return "exportNode";
-        case NodeKind::importNode: return "importNode";
-        case NodeKind::importDeclarationNode: return "importDeclarationNode";
-        case NodeKind::modulePartitionNode: return "modulePartitionNode";
-        case NodeKind::moduleNode: return "moduleNode";
-        case NodeKind::globalModuleFragmentNode: return "globalModuleFragmentNode";
-        case NodeKind::privateModuleFragmentNode: return "privateModuleFragmentNode";
-        case NodeKind::angleHeaderNameNode: return "angleHeaderNameNode";
-        case NodeKind::quoteHeaderNameNode: return "quoteHeaderNameNode";
-        case NodeKind::identifierNode: return "identifierNode";
-        case NodeKind::unnamedNode: return "unnamedNode";
-        case NodeKind::colonColonNode: return "colonColonNode";
-        case NodeKind::nestedNameSpecifierNode: return "nestedNameSpecifierNode";
-        case NodeKind::qualifiedIdNode: return "qualifiedIdNode";
-        case NodeKind::identifierListNode: return "identifierListNode";
-        case NodeKind::moduleNameNode: return "moduleNameNode";
-        case NodeKind::charNode: return "charNode";
-        case NodeKind::char8Node: return "char8Node";
-        case NodeKind::char16Node: return "char16Node";
-        case NodeKind::char32Node: return "char32Node";
-        case NodeKind::wcharNode: return "wcharNode";
-        case NodeKind::boolNode: return "boolNode";
-        case NodeKind::shortNode: return "shortNode";
-        case NodeKind::intNode: return "intNode";
-        case NodeKind::longNode: return "longNode";
-        case NodeKind::signedNode: return "signedNode";
-        case NodeKind::unsignedNode: return "unsignedNode";
-        case NodeKind::floatNode: return "floatNode";
-        case NodeKind::doubleNode: return "doubleNode";
-        case NodeKind::voidNode: return "voidNode";
-        case NodeKind::constNode: return "constNode";
-        case NodeKind::volatileNode: return "volatileNode";
-        case NodeKind::lvalueRefNode: return "lvalueRefNode";
-        case NodeKind::rvalueRefNode: return "rvalueRefNode";
-        case NodeKind::ptrNode: return "ptrNode";
-        case NodeKind::cvQualifierSequenceNode: return "cvQualifierSequenceNode";
-        case NodeKind::ptrOperatorNode: return "ptrOperatorNode";
-        case NodeKind::noexceptSpecifierNode: return "noexceptSpecifierNode";
-        case NodeKind::throwSpecifierNode: return "throwSpecifierNode";
-        case NodeKind::packDeclaratorIdNode: return "packDeclaratorIdNode";
-        case NodeKind::arrayDeclaratorNode: return "arrayDeclaratorNode";
-        case NodeKind::functionDeclaratorNode: return "functionDeclaratorNode";
-        case NodeKind::prefixNode: return "prefixNode";
-        case NodeKind::trailingQualifiersNode: return "trailingQualifiersNode";
-        case NodeKind::trailingAttributesNode: return "trailingAttributesNode";
-        case NodeKind::ptrDeclaratorNode: return "ptrDeclaratorNode";
-        case NodeKind::expressionListNode: return "expressionListNode";
-        case NodeKind::assignmentInitializerNode: return "assignmentInitializerNode";
-        case NodeKind::conditionalExprNode: return "conditionalExprNode";
-        case NodeKind::questNode: return "questNode";
-        case NodeKind::colonNode: return "colonNode";
-        case NodeKind::commaNode: return "commaNode";
-        case NodeKind::binaryExprNode: return "binaryExprNode";
-        case NodeKind::unaryExprNode: return "unaryExprNode";
-        case NodeKind::yieldExprNode: return "yieldExprNode";
-        case NodeKind::throwExprNode: return "throwExprNode";
-        case NodeKind::assignNode: return "assignNode";
-        case NodeKind::plusAssignNode: return "plusAssignNode";
-        case NodeKind::minusAssignNode: return "minusAssignNode";
-        case NodeKind::mulAssignNode: return "mulAssignNode";
-        case NodeKind::divAssignNode: return "divAssignNode";
-        case NodeKind::modAssignNode: return "modAssignNode";
-        case NodeKind::xorAssignNode: return "xorAssignNode";
-        case NodeKind::andAssignNode: return "andAssignNode";
-        case NodeKind::orAssignNode: return "orAssignNode";
-        case NodeKind::shiftLeftAssignNode: return "shiftLeftAssignNode";
-        case NodeKind::shiftRightAssignNode: return "shiftRightAssignNode";
-        case NodeKind::disjunctionNode: return "disjunctionNode";
-        case NodeKind::conjunctionNode: return "conjunctionNode";
-        case NodeKind::inclusiveOrNode: return "inclusiveOrNode";
-        case NodeKind::exclusiveOrNode: return "exclusiveOrNode";
-        case NodeKind::andNode: return "andNode";
-        case NodeKind::equalNode: return "equalNode";
-        case NodeKind::notEqualNode: return "notEqualNode";
-        case NodeKind::lessNode: return "lessNode";
-        case NodeKind::greaterNode: return "greaterNode";
-        case NodeKind::lessOrEqualNode: return "lessOrEqualNode";
-        case NodeKind::greaterOrEqualNode: return "greaterOrEqualNode";
-        case NodeKind::compareNode: return "compareNode";
-        case NodeKind::shiftLeftNode: return "shiftLeftNode";
-        case NodeKind::shiftRightNode: return "shiftRightNode";
-        case NodeKind::plusNode: return "plusNode";
-        case NodeKind::minusNode: return "minusNode";
-        case NodeKind::mulNode: return "mulNode";
-        case NodeKind::divNode: return "divNode";
-        case NodeKind::modNode: return "modNode";
-        case NodeKind::dotStarNode: return "dotStarNode";
-        case NodeKind::arrowStarNode: return "arrowStarNode";
-        case NodeKind::castExprNode: return "castExprNode";
-        case NodeKind::derefNode: return "derefNode";
-        case NodeKind::addrOfNode: return "addrOfNode";
-        case NodeKind::notNode: return "notNode";
-        case NodeKind::complementNode: return "complementNode";
-        case NodeKind::prefixIncNode: return "prefixIncNode";
-        case NodeKind::prefixDecNode: return "prefixDecNode";
-        case NodeKind::awaitExprNode: return "awaitExprNode";
-        case NodeKind::sizeOfTypeExprNode: return "sizeOfTypeExprNode";
-        case NodeKind::sizeOfPackExpNode: return "sizeOfPackExpNode";
-        case NodeKind::sizeOfUnaryExprNode: return "sizeOfUnaryExprNode";
-        case NodeKind::alignOfExprNode: return "alignOfExprNode";
-        case NodeKind::noexceptExprNode: return "noexceptExprNode";
-        case NodeKind::foldExprNode: return "foldExprNode";
-        case NodeKind::newDeclaratorNode: return "newDeclaratorNode";
-        case NodeKind::arrayNewDeclaratorNode: return "arrayNewDeclaratorNode";
-        case NodeKind::newInitializerNode: return "newInitializerNode";
-        case NodeKind::ellipsisNode: return "ellipsisNode";
-        case NodeKind::bracedInitListNode: return "bracedInitListNode";
-        case NodeKind::designatedInitializerNode: return "designatedInitializerNode";
-        case NodeKind::designatorNode: return "designatorNode";
-        case NodeKind::newExprNode: return "newExprNode";
-        case NodeKind::newPlacementNode: return "newPlacementNode";
-        case NodeKind::parenNewTypeIdNode: return "parenNewTypeIdNode";
-        case NodeKind::newTypeIdNode: return "newTypeIdNode";
-        case NodeKind::arrayDeletePtrNode: return "arrayDeletePtrNode";
-        case NodeKind::deletePtrNode: return "deletePtrNode";
-        case NodeKind::subscriptExprNode: return "subscriptExprNode";
-        case NodeKind::invokeExprNode: return "invokeExprNode";
-        case NodeKind::dotNode: return "dotNode";
-        case NodeKind::templateNode: return "templateNode";
-        case NodeKind::arrowNode: return "arrowNode";
-        case NodeKind::pairNode: return "pairNode";
-        case NodeKind::memberExprNode: return "memberExprNode";
-        case NodeKind::postfixIncExprNode: return "postfixIncExprNode";
-        case NodeKind::postfixDecExprNode: return "postfixDecExprNode";
-        case NodeKind::typeIdExprNode: return "typeIdExprNode";
-        case NodeKind::dynamicCastNode: return "dynamicCastNode";
-        case NodeKind::staticCastNode: return "staticCastNode";
-        case NodeKind::reinterpretCastNode: return "reinterpretCastNode";
-        case NodeKind::constCastNode: return "constCastNode";
-        case NodeKind::cppCastExprNode: return "cppCastExprNode";
-        case NodeKind::thisNode: return "thisNode";
-        case NodeKind::parenExprNode: return "parenExprNode";
-        case NodeKind::lambdaExpressionNode: return "lambdaExpressionNode";
-        case NodeKind::lambdaIntroducerNode: return "lambdaIntroducerNode";
-        case NodeKind::lambdaCaptureNode: return "lambdaCaptureNode";
-        case NodeKind::lambdaDeclaratorNode: return "lambdaDeclaratorNode";
-        case NodeKind::lambdaSpecifiersNode: return "lambdaSpecifiersNode";
-        case NodeKind::lambdaTemplateParamsNode: return "lambdaTemplateParamsNode";
-        case NodeKind::defaultRefCaptureNode: return "defaultRefCaptureNode";
-        case NodeKind::defaultCopyCaptureNode: return "defaultCopyCaptureNode";
-        case NodeKind::byRefCaptureNode: return "byRefCaptureNode";
-        case NodeKind::simpleCaptureNode: return "simpleCaptureNode";
-        case NodeKind::initCaptureNode: return "initCaptureNode";
-        case NodeKind::currentObjectCopyCapture: return "currentObjectCopyCapture";
-        case NodeKind::currentObjectByRefCapture: return "currentObjectByRefCapture";
-        case NodeKind::integerLiteralNode: return "integerLiteralNode";
-        case NodeKind::floatingLiteralNode: return "floatingLiteralNode";
-        case NodeKind::characterLiteralNode: return "characterLiteralNode";
-        case NodeKind::stringLiteralNode: return "stringLiteralNode";
-        case NodeKind::rawStringLiteralNode: return "rawStringLiteralNode";
-        case NodeKind::booleanLiteralNode: return "booleanLiteralNode";
-        case NodeKind::nullPtrLiteralNode: return "nullPtrLiteralNode";
-        case NodeKind::userDefinedLiteralNode: return "userDefinedLiteralNode";
-        case NodeKind::literalOperatorIdNode: return "literalOperatorIdNode";
-        case NodeKind::labeledStatementNode: return "labeledStatementNode";
-        case NodeKind::caseStatmentNode: return "caseStatmentNode";
-        case NodeKind::defaultStatementNode: return "defaultStatementNode";
-        case NodeKind::compoundStatementNode: return "compoundStatementNode";
-        case NodeKind::sequenceStatementNode: return "sequenceStatementNode";
-        case NodeKind::ifStatementNode: return "ifStatementNode";
-        case NodeKind::switchStatemeNode: return "switchStatemeNode";
-        case NodeKind::whileStatementNode: return "whileStatementNode";
-        case NodeKind::doStatementNode: return "doStatementNode";
-        case NodeKind::rangeForStatementNode: return "rangeForStatementNode";
-        case NodeKind::forRangeDeclarationNode: return "forRangeDeclarationNode";
-        case NodeKind::structuredBindingNode: return "structuredBindingNode";
-        case NodeKind::forStatementNode: return "forStatementNode";
-        case NodeKind::breakStatementNode: return "breakStatementNode";
-        case NodeKind::continueStatementNode: return "continueStatementNode";
-        case NodeKind::returnStatementNode: return "returnStatementNode";
-        case NodeKind::coReturnStatementNode: return "coReturnStatementNode";
-        case NodeKind::gotoStatementNode: return "gotoStatementNode";
-        case NodeKind::tryStatementNode: return "tryStatementNode";
-        case NodeKind::handlerSequenceNode: return "handlerSequenceNode";
-        case NodeKind::handlerNode: return "handlerNode";
-        case NodeKind::exceptionDeclarationNode: return "exceptionDeclarationNode";
-        case NodeKind::expressionStatementNode: return "expressionStatementNode";
-        case NodeKind::declarationStatementNode: return "declarationStatementNode";
-        case NodeKind::initConditionNode: return "initConditionNode";
-        case NodeKind::semicolonNode: return "semicolonNode";
-        case NodeKind::templateDeclarationNode: return "templateDeclarationNode";
-        case NodeKind::templateHeadNode: return "templateHeadNode";
-        case NodeKind::templateParameterListNode: return "templateParameterListNode";
-        case NodeKind::typeParameterNode: return "typeParameterNode";
-        case NodeKind::templateIdNode: return "templateIdNode";
-        case NodeKind::typenameNode: return "typenameNode";
-        case NodeKind::deductionGuideNode: return "deductionGuideNode";
-        case NodeKind::explicitInstantiationNode: return "explicitInstantiationNode";
-        case NodeKind::explicitSpecializationNode: return "explicitSpecializationNode";
-        case NodeKind::declarationSequenceNode: return "declarationSequenceNode";
-        case NodeKind::simpleDeclarationNode: return "simpleDeclarationNode";
-        case NodeKind::usingDeclarationNode: return "usingDeclarationNode";
-        case NodeKind::usingNode: return "usingNode";
-        case NodeKind::usingDeclaratorListNode: return "usingDeclaratorListNode";
-        case NodeKind::usingEnumDeclarationNode: return "usingEnumDeclarationNode";
-        case NodeKind::emptyDeclarationNode: return "emptyDeclarationNode";
-        case NodeKind::namespaceNode: return "namespaceNode";
-        case NodeKind::usingDirectiveNode: return "usingDirectiveNode";
-        case NodeKind::asmDeclarationNode: return "asmDeclarationNode";
-        case NodeKind::asmNode: return "asmNode";
-        case NodeKind::namespaceAliasDefinitionNode: return "namespaceAliasDefinitionNode";
-        case NodeKind::staticAssertDeclarationNode: return "staticAssertDeclarationNode";
-        case NodeKind::staticAssertNode: return "staticAssertNode";
-        case NodeKind::aliasDeclarationNode: return "aliasDeclarationNode";
-        case NodeKind::definingTypeIdNode: return "definingTypeIdNode";
-        case NodeKind::definingTypeSpecifierSequenceNode: return "definingTypeSpecifierSequenceNode";
-        case NodeKind::opaqueEnumDeclarationNode: return "opaqueEnumDeclarationNode";
-        case NodeKind::noDeclSpecFunctionDeclarationNode: return "noDeclSpecFunctionDeclarationNode";
-        case NodeKind::linkageSpecificationNode: return "linkageSpecificationNode";
-        case NodeKind::namespaceDefinitionNode: return "namespaceDefinitionNode";
-        case NodeKind::namespaceBodyNode: return "namespaceBodyNode";
-        case NodeKind::attributeDeclarationNode: return "attributeDeclarationNode";
-        case NodeKind::initDeclaratorListNode: return "initDeclaratorListNode";
-        case NodeKind::initDeclaratorNode: return "initDeclaratorNode";
-        case NodeKind::trailingFunctionDeclaratorNode: return "trailingFunctionDeclaratorNode";
-        case NodeKind::parenthesizedDeclaratorNode: return "parenthesizedDeclaratorNode";
-        case NodeKind::abstractDeclaratorNode: return "abstractDeclaratorNode";
-        case NodeKind::declSpecifierSequenceNode: return "declSpecifierSequenceNode";
-        case NodeKind::friendNode: return "friendNode";
-        case NodeKind::typedefNode: return "typedefNode";
-        case NodeKind::constExprNode: return "constExprNode";
-        case NodeKind::constEvalNode: return "constEvalNode";
-        case NodeKind::constInitNode: return "constInitNode";
-        case NodeKind::inlineNode: return "inlineNode";
-        case NodeKind::staticNode: return "staticNode";
-        case NodeKind::threadLocalNode: return "threadLocalNode";
-        case NodeKind::externNode: return "externNode";
-        case NodeKind::mutableNode: return "mutableNode";
-        case NodeKind::virtualNode: return "virtualNode";
-        case NodeKind::explicitNode: return "explicitNode";
-        case NodeKind::conditionalExplicitNode: return "conditionalExplicitNode";
-        case NodeKind::qualifiedPtrNode: return "qualifiedPtrNode";
-        case NodeKind::typeSpecifierSequenceNode: return "typeSpecifierSequenceNode";
-        case NodeKind::typenameSpecifierNode: return "typenameSpecifierNode";
-        case NodeKind::typeIdNode: return "typeIdNode";
-        case NodeKind::trailingReturnTypeNode: return "trailingReturnTypeNode";
-        case NodeKind::elaboratedTypeSpecifierNode: return "elaboratedTypeSpecifierNode";
-        case NodeKind::declTypeSpecifierNode: return "declTypeSpecifierNode";
-        case NodeKind::placeholderTypeSpecifierNode: return "placeholderTypeSpecifierNode";
-        case NodeKind::classSpecifierNode: return "classSpecifierNode";
-        case NodeKind::classHeadNode: return "classHeadNode";
-        case NodeKind::baseClauseNode: return "baseClauseNode";
-        case NodeKind::baseSpecifierListNode: return "baseSpecifierListNode";
-        case NodeKind::baseSpecifierNode: return "baseSpecifierNode";
-        case NodeKind::beginAccessGroupNode: return "beginAccessGroupNode";
-        case NodeKind::memberDeclarationNode: return "memberDeclarationNode";
-        case NodeKind::memberDeclaratorListNode: return "memberDeclaratorListNode";
-        case NodeKind::virtSpecifierSequenceNode: return "virtSpecifierSequenceNode";
-        case NodeKind::constructorNode: return "constructorNode";
-        case NodeKind::constructorInitializerNode: return "constructorInitializerNode";
-        case NodeKind::memberInitializerListNode: return "memberInitializerListNode";
-        case NodeKind::memberInitializerNode: return "memberInitializerNode";
-        case NodeKind::publicNode: return "publicNode";
-        case NodeKind::protectedNode: return "protectedNode";
-        case NodeKind::privateNode: return "privateNode";
-        case NodeKind::classNode: return "classNode";
-        case NodeKind::structNode: return "structNode";
-        case NodeKind::unionNode: return "unionNode";
-        case NodeKind::overrideNode: return "overrideNode";
-        case NodeKind::finalNode: return "finalNode";
-        case NodeKind::pureSpecifierNode: return "pureSpecifierNode";
-        case NodeKind::enumSpecifierNode: return "enumSpecifierNode";
-        case NodeKind::enumHeadNode: return "enumHeadNode";
-        case NodeKind::enumBaseNode: return "enumBaseNode";
-        case NodeKind::enumClassNode: return "enumClassNode";
-        case NodeKind::enumStructNode: return "enumStructNode";
-        case NodeKind::enumNode: return "enumNode";
-        case NodeKind::enumeratorDefinitionNode: return "enumeratorDefinitionNode";
-        case NodeKind::enumeratorNode: return "enumeratorNode";
-        case NodeKind::elaboratedEnumSpecifierNode: return "elaboratedEnumSpecifierNodeS";
-        case NodeKind::functionDefinitionNode: return "functionDefinitionNode";
-        case NodeKind::functionBodyNode: return "functionBodyNode";
-        case NodeKind::defaultedOrDeletedFunctionNode: return "defaultedOrDeletedFunctionNode";
-        case NodeKind::defaultNode: return "defaultNode";
-        case NodeKind::deleteNode: return "deleteNode";
-        case NodeKind::operatorFnIdNode: return "operatorFnIdNode";
-        case NodeKind::operatorNode: return "operatorNode";
-        case NodeKind::newArrayOpNode: return "newArrayOpNode";
-        case NodeKind::newOpNode: return "newOpNode";
-        case NodeKind::deleteArrayOpNode: return "deleteArrayOpNode";
-        case NodeKind::deleteOpNode: return "deleteOpNode";
-        case NodeKind::coAwaitOpNode: return "coAwaitOpNode";
-        case NodeKind::invokeOpNode: return "invokeOpNode";
-        case NodeKind::subscriptOpNode: return "subscriptOpNode";
-        case NodeKind::conversionFnIdNode: return "conversionFnIdNode";
-        case NodeKind::conversionTypeIdNode: return "conversionTypeIdNode";
-        case NodeKind::conversionDeclaratorNode: return "conversionDeclaratorNode";
-        case NodeKind::destructorIdNode: return "destructorIdNode";
-        case NodeKind::parameterNode: return "parameterNode";
-        case NodeKind::parameterListNode: return "parameterListNode";
-        case NodeKind::noexceptNode: return "noexceptNode";
-        case NodeKind::functionTryBlock: return "functionTryBlock";
-        case NodeKind::conceptDefinitionNode: return "conceptDefinitionNode";
-        case NodeKind::requiresExprNode: return "requiresExprNode";
-        case NodeKind::requirementBodyNode: return "requirementBodyNode";
-        case NodeKind::simpleRequirementNode: return "simpleRequirementNode";
-        case NodeKind::typeRequirementNode: return "typeRequirementNode";
-        case NodeKind::compoundRequirementNode: return "compoundRequirementNode";
-        case NodeKind::returnTypeRequirementNode: return "returnTypeRequirementNode";
-        case NodeKind::nestedRequirementNode: return "nestedRequirementNode";
-        case NodeKind::typeConstraintNode: return "typeConstraintNode";
-        case NodeKind::requiresClauseNode: return "requiresClauseNode";
-        case NodeKind::attributeSpecifierSequenceNode: return "attributeSpecifierSequenceNode";
-        case NodeKind::attributeSpecifierNode: return "attributeSpecifierNode";
-        case NodeKind::attributeUsingPrefixNode: return "attributeUsingPrefixNode";
-        case NodeKind::attributeNode: return "attributeNode";
-        case NodeKind::attributeScopedTokenNode: return "attributeScopedTokenNode";
-        case NodeKind::attributeArgumentsNode: return "attributeArgumentsNode";
-        case NodeKind::balancedTokenSequenceNode: return "balancedTokenSequenceNode";
-        case NodeKind::tokenNode: return "tokenNode";
-        case NodeKind::lparenNode: return "lparenNode";
-        case NodeKind::rparenNode: return "rparenNode";
-        case NodeKind::lbracketNode: return "lbracketNode";
-        case NodeKind::rbracketNode: return "rbracketNode";
-        case NodeKind::lbraceNode: return "lbraceNode";
-        case NodeKind::rbraceNode: return "rbraceNode";
-        case NodeKind::alignmentSpecifierNode: return "alignmentSpecifierNode";
-        case NodeKind::pragmaNode: return "pragmaNode";
-        case NodeKind::boundStatementNode: return "boundStatementNode";
-        case NodeKind::opNewCall: return "opNewCall";
+    case NodeKind::nullNode: return "nullNode";
+    case NodeKind::translationUnitNode: return "translationUnitNode";
+    case NodeKind::moduleUnitNode: return "moduleUnitNode";
+    case NodeKind::moduleDeclarationNode: return "moduleDeclarationNode";
+    case NodeKind::exportDeclarationNode: return "exportDeclarationNode";
+    case NodeKind::exportNode: return "exportNode";
+    case NodeKind::importNode: return "importNode";
+    case NodeKind::importDeclarationNode: return "importDeclarationNode";
+    case NodeKind::modulePartitionNode: return "modulePartitionNode";
+    case NodeKind::moduleNode: return "moduleNode";
+    case NodeKind::globalModuleFragmentNode: return "globalModuleFragmentNode";
+    case NodeKind::privateModuleFragmentNode: return "privateModuleFragmentNode";
+    case NodeKind::angleHeaderNameNode: return "angleHeaderNameNode";
+    case NodeKind::quoteHeaderNameNode: return "quoteHeaderNameNode";
+    case NodeKind::identifierNode: return "identifierNode";
+    case NodeKind::unnamedNode: return "unnamedNode";
+    case NodeKind::colonColonNode: return "colonColonNode";
+    case NodeKind::nestedNameSpecifierNode: return "nestedNameSpecifierNode";
+    case NodeKind::qualifiedIdNode: return "qualifiedIdNode";
+    case NodeKind::identifierListNode: return "identifierListNode";
+    case NodeKind::moduleNameNode: return "moduleNameNode";
+    case NodeKind::charNode: return "charNode";
+    case NodeKind::char8Node: return "char8Node";
+    case NodeKind::char16Node: return "char16Node";
+    case NodeKind::char32Node: return "char32Node";
+    case NodeKind::wcharNode: return "wcharNode";
+    case NodeKind::boolNode: return "boolNode";
+    case NodeKind::shortNode: return "shortNode";
+    case NodeKind::intNode: return "intNode";
+    case NodeKind::longNode: return "longNode";
+    case NodeKind::signedNode: return "signedNode";
+    case NodeKind::unsignedNode: return "unsignedNode";
+    case NodeKind::floatNode: return "floatNode";
+    case NodeKind::doubleNode: return "doubleNode";
+    case NodeKind::voidNode: return "voidNode";
+    case NodeKind::constNode: return "constNode";
+    case NodeKind::volatileNode: return "volatileNode";
+    case NodeKind::lvalueRefNode: return "lvalueRefNode";
+    case NodeKind::rvalueRefNode: return "rvalueRefNode";
+    case NodeKind::ptrNode: return "ptrNode";
+    case NodeKind::cvQualifierSequenceNode: return "cvQualifierSequenceNode";
+    case NodeKind::ptrOperatorNode: return "ptrOperatorNode";
+    case NodeKind::noexceptSpecifierNode: return "noexceptSpecifierNode";
+    case NodeKind::throwSpecifierNode: return "throwSpecifierNode";
+    case NodeKind::packDeclaratorIdNode: return "packDeclaratorIdNode";
+    case NodeKind::arrayDeclaratorNode: return "arrayDeclaratorNode";
+    case NodeKind::functionDeclaratorNode: return "functionDeclaratorNode";
+    case NodeKind::prefixNode: return "prefixNode";
+    case NodeKind::trailingQualifiersNode: return "trailingQualifiersNode";
+    case NodeKind::trailingAttributesNode: return "trailingAttributesNode";
+    case NodeKind::ptrDeclaratorNode: return "ptrDeclaratorNode";
+    case NodeKind::expressionListNode: return "expressionListNode";
+    case NodeKind::assignmentInitializerNode: return "assignmentInitializerNode";
+    case NodeKind::conditionalExprNode: return "conditionalExprNode";
+    case NodeKind::questNode: return "questNode";
+    case NodeKind::colonNode: return "colonNode";
+    case NodeKind::commaNode: return "commaNode";
+    case NodeKind::binaryExprNode: return "binaryExprNode";
+    case NodeKind::unaryExprNode: return "unaryExprNode";
+    case NodeKind::yieldExprNode: return "yieldExprNode";
+    case NodeKind::throwExprNode: return "throwExprNode";
+    case NodeKind::assignNode: return "assignNode";
+    case NodeKind::plusAssignNode: return "plusAssignNode";
+    case NodeKind::minusAssignNode: return "minusAssignNode";
+    case NodeKind::mulAssignNode: return "mulAssignNode";
+    case NodeKind::divAssignNode: return "divAssignNode";
+    case NodeKind::modAssignNode: return "modAssignNode";
+    case NodeKind::xorAssignNode: return "xorAssignNode";
+    case NodeKind::andAssignNode: return "andAssignNode";
+    case NodeKind::orAssignNode: return "orAssignNode";
+    case NodeKind::shiftLeftAssignNode: return "shiftLeftAssignNode";
+    case NodeKind::shiftRightAssignNode: return "shiftRightAssignNode";
+    case NodeKind::disjunctionNode: return "disjunctionNode";
+    case NodeKind::conjunctionNode: return "conjunctionNode";
+    case NodeKind::inclusiveOrNode: return "inclusiveOrNode";
+    case NodeKind::exclusiveOrNode: return "exclusiveOrNode";
+    case NodeKind::andNode: return "andNode";
+    case NodeKind::equalNode: return "equalNode";
+    case NodeKind::notEqualNode: return "notEqualNode";
+    case NodeKind::lessNode: return "lessNode";
+    case NodeKind::greaterNode: return "greaterNode";
+    case NodeKind::lessOrEqualNode: return "lessOrEqualNode";
+    case NodeKind::greaterOrEqualNode: return "greaterOrEqualNode";
+    case NodeKind::compareNode: return "compareNode";
+    case NodeKind::shiftLeftNode: return "shiftLeftNode";
+    case NodeKind::shiftRightNode: return "shiftRightNode";
+    case NodeKind::plusNode: return "plusNode";
+    case NodeKind::minusNode: return "minusNode";
+    case NodeKind::mulNode: return "mulNode";
+    case NodeKind::divNode: return "divNode";
+    case NodeKind::modNode: return "modNode";
+    case NodeKind::dotStarNode: return "dotStarNode";
+    case NodeKind::arrowStarNode: return "arrowStarNode";
+    case NodeKind::castExprNode: return "castExprNode";
+    case NodeKind::derefNode: return "derefNode";
+    case NodeKind::addrOfNode: return "addrOfNode";
+    case NodeKind::notNode: return "notNode";
+    case NodeKind::complementNode: return "complementNode";
+    case NodeKind::prefixIncNode: return "prefixIncNode";
+    case NodeKind::prefixDecNode: return "prefixDecNode";
+    case NodeKind::awaitExprNode: return "awaitExprNode";
+    case NodeKind::sizeOfTypeExprNode: return "sizeOfTypeExprNode";
+    case NodeKind::sizeOfPackExpNode: return "sizeOfPackExpNode";
+    case NodeKind::sizeOfUnaryExprNode: return "sizeOfUnaryExprNode";
+    case NodeKind::alignOfExprNode: return "alignOfExprNode";
+    case NodeKind::noexceptExprNode: return "noexceptExprNode";
+    case NodeKind::foldExprNode: return "foldExprNode";
+    case NodeKind::newDeclaratorNode: return "newDeclaratorNode";
+    case NodeKind::arrayNewDeclaratorNode: return "arrayNewDeclaratorNode";
+    case NodeKind::newInitializerNode: return "newInitializerNode";
+    case NodeKind::ellipsisNode: return "ellipsisNode";
+    case NodeKind::bracedInitListNode: return "bracedInitListNode";
+    case NodeKind::designatedInitializerNode: return "designatedInitializerNode";
+    case NodeKind::designatorNode: return "designatorNode";
+    case NodeKind::newExprNode: return "newExprNode";
+    case NodeKind::newPlacementNode: return "newPlacementNode";
+    case NodeKind::parenNewTypeIdNode: return "parenNewTypeIdNode";
+    case NodeKind::newTypeIdNode: return "newTypeIdNode";
+    case NodeKind::arrayDeletePtrNode: return "arrayDeletePtrNode";
+    case NodeKind::deletePtrNode: return "deletePtrNode";
+    case NodeKind::subscriptExprNode: return "subscriptExprNode";
+    case NodeKind::invokeExprNode: return "invokeExprNode";
+    case NodeKind::dotNode: return "dotNode";
+    case NodeKind::templateNode: return "templateNode";
+    case NodeKind::arrowNode: return "arrowNode";
+    case NodeKind::pairNode: return "pairNode";
+    case NodeKind::memberExprNode: return "memberExprNode";
+    case NodeKind::postfixIncExprNode: return "postfixIncExprNode";
+    case NodeKind::postfixDecExprNode: return "postfixDecExprNode";
+    case NodeKind::typeIdExprNode: return "typeIdExprNode";
+    case NodeKind::dynamicCastNode: return "dynamicCastNode";
+    case NodeKind::staticCastNode: return "staticCastNode";
+    case NodeKind::reinterpretCastNode: return "reinterpretCastNode";
+    case NodeKind::constCastNode: return "constCastNode";
+    case NodeKind::cppCastExprNode: return "cppCastExprNode";
+    case NodeKind::thisNode: return "thisNode";
+    case NodeKind::parenExprNode: return "parenExprNode";
+    case NodeKind::lambdaExpressionNode: return "lambdaExpressionNode";
+    case NodeKind::lambdaIntroducerNode: return "lambdaIntroducerNode";
+    case NodeKind::lambdaCaptureNode: return "lambdaCaptureNode";
+    case NodeKind::lambdaDeclaratorNode: return "lambdaDeclaratorNode";
+    case NodeKind::lambdaSpecifiersNode: return "lambdaSpecifiersNode";
+    case NodeKind::lambdaTemplateParamsNode: return "lambdaTemplateParamsNode";
+    case NodeKind::defaultRefCaptureNode: return "defaultRefCaptureNode";
+    case NodeKind::defaultCopyCaptureNode: return "defaultCopyCaptureNode";
+    case NodeKind::byRefCaptureNode: return "byRefCaptureNode";
+    case NodeKind::simpleCaptureNode: return "simpleCaptureNode";
+    case NodeKind::initCaptureNode: return "initCaptureNode";
+    case NodeKind::currentObjectCopyCapture: return "currentObjectCopyCapture";
+    case NodeKind::currentObjectByRefCapture: return "currentObjectByRefCapture";
+    case NodeKind::integerLiteralNode: return "integerLiteralNode";
+    case NodeKind::floatingLiteralNode: return "floatingLiteralNode";
+    case NodeKind::characterLiteralNode: return "characterLiteralNode";
+    case NodeKind::stringLiteralNode: return "stringLiteralNode";
+    case NodeKind::rawStringLiteralNode: return "rawStringLiteralNode";
+    case NodeKind::booleanLiteralNode: return "booleanLiteralNode";
+    case NodeKind::nullPtrLiteralNode: return "nullPtrLiteralNode";
+    case NodeKind::userDefinedLiteralNode: return "userDefinedLiteralNode";
+    case NodeKind::literalOperatorIdNode: return "literalOperatorIdNode";
+    case NodeKind::labeledStatementNode: return "labeledStatementNode";
+    case NodeKind::caseStatmentNode: return "caseStatmentNode";
+    case NodeKind::defaultStatementNode: return "defaultStatementNode";
+    case NodeKind::compoundStatementNode: return "compoundStatementNode";
+    case NodeKind::sequenceStatementNode: return "sequenceStatementNode";
+    case NodeKind::ifStatementNode: return "ifStatementNode";
+    case NodeKind::switchStatemeNode: return "switchStatemeNode";
+    case NodeKind::whileStatementNode: return "whileStatementNode";
+    case NodeKind::doStatementNode: return "doStatementNode";
+    case NodeKind::rangeForStatementNode: return "rangeForStatementNode";
+    case NodeKind::forRangeDeclarationNode: return "forRangeDeclarationNode";
+    case NodeKind::structuredBindingNode: return "structuredBindingNode";
+    case NodeKind::forStatementNode: return "forStatementNode";
+    case NodeKind::breakStatementNode: return "breakStatementNode";
+    case NodeKind::continueStatementNode: return "continueStatementNode";
+    case NodeKind::returnStatementNode: return "returnStatementNode";
+    case NodeKind::coReturnStatementNode: return "coReturnStatementNode";
+    case NodeKind::gotoStatementNode: return "gotoStatementNode";
+    case NodeKind::tryStatementNode: return "tryStatementNode";
+    case NodeKind::handlerSequenceNode: return "handlerSequenceNode";
+    case NodeKind::handlerNode: return "handlerNode";
+    case NodeKind::exceptionDeclarationNode: return "exceptionDeclarationNode";
+    case NodeKind::expressionStatementNode: return "expressionStatementNode";
+    case NodeKind::declarationStatementNode: return "declarationStatementNode";
+    case NodeKind::initConditionNode: return "initConditionNode";
+    case NodeKind::semicolonNode: return "semicolonNode";
+    case NodeKind::templateDeclarationNode: return "templateDeclarationNode";
+    case NodeKind::templateHeadNode: return "templateHeadNode";
+    case NodeKind::templateParameterListNode: return "templateParameterListNode";
+    case NodeKind::typeParameterNode: return "typeParameterNode";
+    case NodeKind::templateIdNode: return "templateIdNode";
+    case NodeKind::typenameNode: return "typenameNode";
+    case NodeKind::deductionGuideNode: return "deductionGuideNode";
+    case NodeKind::explicitInstantiationNode: return "explicitInstantiationNode";
+    case NodeKind::explicitSpecializationNode: return "explicitSpecializationNode";
+    case NodeKind::declarationSequenceNode: return "declarationSequenceNode";
+    case NodeKind::simpleDeclarationNode: return "simpleDeclarationNode";
+    case NodeKind::usingDeclarationNode: return "usingDeclarationNode";
+    case NodeKind::usingNode: return "usingNode";
+    case NodeKind::usingDeclaratorListNode: return "usingDeclaratorListNode";
+    case NodeKind::usingEnumDeclarationNode: return "usingEnumDeclarationNode";
+    case NodeKind::emptyDeclarationNode: return "emptyDeclarationNode";
+    case NodeKind::namespaceNode: return "namespaceNode";
+    case NodeKind::usingDirectiveNode: return "usingDirectiveNode";
+    case NodeKind::asmDeclarationNode: return "asmDeclarationNode";
+    case NodeKind::asmNode: return "asmNode";
+    case NodeKind::namespaceAliasDefinitionNode: return "namespaceAliasDefinitionNode";
+    case NodeKind::staticAssertDeclarationNode: return "staticAssertDeclarationNode";
+    case NodeKind::staticAssertNode: return "staticAssertNode";
+    case NodeKind::aliasDeclarationNode: return "aliasDeclarationNode";
+    case NodeKind::definingTypeIdNode: return "definingTypeIdNode";
+    case NodeKind::definingTypeSpecifierSequenceNode: return "definingTypeSpecifierSequenceNode";
+    case NodeKind::opaqueEnumDeclarationNode: return "opaqueEnumDeclarationNode";
+    case NodeKind::noDeclSpecFunctionDeclarationNode: return "noDeclSpecFunctionDeclarationNode";
+    case NodeKind::linkageSpecificationNode: return "linkageSpecificationNode";
+    case NodeKind::namespaceDefinitionNode: return "namespaceDefinitionNode";
+    case NodeKind::namespaceBodyNode: return "namespaceBodyNode";
+    case NodeKind::attributeDeclarationNode: return "attributeDeclarationNode";
+    case NodeKind::initDeclaratorListNode: return "initDeclaratorListNode";
+    case NodeKind::initDeclaratorNode: return "initDeclaratorNode";
+    case NodeKind::trailingFunctionDeclaratorNode: return "trailingFunctionDeclaratorNode";
+    case NodeKind::parenthesizedDeclaratorNode: return "parenthesizedDeclaratorNode";
+    case NodeKind::abstractDeclaratorNode: return "abstractDeclaratorNode";
+    case NodeKind::declSpecifierSequenceNode: return "declSpecifierSequenceNode";
+    case NodeKind::friendNode: return "friendNode";
+    case NodeKind::typedefNode: return "typedefNode";
+    case NodeKind::constExprNode: return "constExprNode";
+    case NodeKind::constEvalNode: return "constEvalNode";
+    case NodeKind::constInitNode: return "constInitNode";
+    case NodeKind::inlineNode: return "inlineNode";
+    case NodeKind::staticNode: return "staticNode";
+    case NodeKind::threadLocalNode: return "threadLocalNode";
+    case NodeKind::externNode: return "externNode";
+    case NodeKind::mutableNode: return "mutableNode";
+    case NodeKind::virtualNode: return "virtualNode";
+    case NodeKind::explicitNode: return "explicitNode";
+    case NodeKind::conditionalExplicitNode: return "conditionalExplicitNode";
+    case NodeKind::qualifiedPtrNode: return "qualifiedPtrNode";
+    case NodeKind::typeSpecifierSequenceNode: return "typeSpecifierSequenceNode";
+    case NodeKind::typenameSpecifierNode: return "typenameSpecifierNode";
+    case NodeKind::typeIdNode: return "typeIdNode";
+    case NodeKind::trailingReturnTypeNode: return "trailingReturnTypeNode";
+    case NodeKind::elaboratedTypeSpecifierNode: return "elaboratedTypeSpecifierNode";
+    case NodeKind::declTypeSpecifierNode: return "declTypeSpecifierNode";
+    case NodeKind::placeholderTypeSpecifierNode: return "placeholderTypeSpecifierNode";
+    case NodeKind::classSpecifierNode: return "classSpecifierNode";
+    case NodeKind::classHeadNode: return "classHeadNode";
+    case NodeKind::baseClauseNode: return "baseClauseNode";
+    case NodeKind::baseSpecifierListNode: return "baseSpecifierListNode";
+    case NodeKind::baseSpecifierNode: return "baseSpecifierNode";
+    case NodeKind::beginAccessGroupNode: return "beginAccessGroupNode";
+    case NodeKind::memberDeclarationNode: return "memberDeclarationNode";
+    case NodeKind::memberDeclaratorListNode: return "memberDeclaratorListNode";
+    case NodeKind::virtSpecifierSequenceNode: return "virtSpecifierSequenceNode";
+    case NodeKind::constructorNode: return "constructorNode";
+    case NodeKind::constructorInitializerNode: return "constructorInitializerNode";
+    case NodeKind::memberInitializerListNode: return "memberInitializerListNode";
+    case NodeKind::memberInitializerNode: return "memberInitializerNode";
+    case NodeKind::publicNode: return "publicNode";
+    case NodeKind::protectedNode: return "protectedNode";
+    case NodeKind::privateNode: return "privateNode";
+    case NodeKind::classNode: return "classNode";
+    case NodeKind::structNode: return "structNode";
+    case NodeKind::unionNode: return "unionNode";
+    case NodeKind::overrideNode: return "overrideNode";
+    case NodeKind::finalNode: return "finalNode";
+    case NodeKind::pureSpecifierNode: return "pureSpecifierNode";
+    case NodeKind::enumSpecifierNode: return "enumSpecifierNode";
+    case NodeKind::enumHeadNode: return "enumHeadNode";
+    case NodeKind::enumBaseNode: return "enumBaseNode";
+    case NodeKind::enumClassNode: return "enumClassNode";
+    case NodeKind::enumStructNode: return "enumStructNode";
+    case NodeKind::enumNode: return "enumNode";
+    case NodeKind::enumeratorDefinitionNode: return "enumeratorDefinitionNode";
+    case NodeKind::enumeratorNode: return "enumeratorNode";
+    case NodeKind::elaboratedEnumSpecifierNode: return "elaboratedEnumSpecifierNodeS";
+    case NodeKind::functionDefinitionNode: return "functionDefinitionNode";
+    case NodeKind::functionBodyNode: return "functionBodyNode";
+    case NodeKind::defaultedOrDeletedFunctionNode: return "defaultedOrDeletedFunctionNode";
+    case NodeKind::defaultNode: return "defaultNode";
+    case NodeKind::deleteNode: return "deleteNode";
+    case NodeKind::operatorFnIdNode: return "operatorFnIdNode";
+    case NodeKind::operatorNode: return "operatorNode";
+    case NodeKind::newArrayOpNode: return "newArrayOpNode";
+    case NodeKind::newOpNode: return "newOpNode";
+    case NodeKind::deleteArrayOpNode: return "deleteArrayOpNode";
+    case NodeKind::deleteOpNode: return "deleteOpNode";
+    case NodeKind::coAwaitOpNode: return "coAwaitOpNode";
+    case NodeKind::invokeOpNode: return "invokeOpNode";
+    case NodeKind::subscriptOpNode: return "subscriptOpNode";
+    case NodeKind::conversionFnIdNode: return "conversionFnIdNode";
+    case NodeKind::conversionTypeIdNode: return "conversionTypeIdNode";
+    case NodeKind::conversionDeclaratorNode: return "conversionDeclaratorNode";
+    case NodeKind::destructorIdNode: return "destructorIdNode";
+    case NodeKind::parameterNode: return "parameterNode";
+    case NodeKind::parameterListNode: return "parameterListNode";
+    case NodeKind::noexceptNode: return "noexceptNode";
+    case NodeKind::functionTryBlock: return "functionTryBlock";
+    case NodeKind::conceptDefinitionNode: return "conceptDefinitionNode";
+    case NodeKind::requiresExprNode: return "requiresExprNode";
+    case NodeKind::requirementBodyNode: return "requirementBodyNode";
+    case NodeKind::simpleRequirementNode: return "simpleRequirementNode";
+    case NodeKind::typeRequirementNode: return "typeRequirementNode";
+    case NodeKind::compoundRequirementNode: return "compoundRequirementNode";
+    case NodeKind::returnTypeRequirementNode: return "returnTypeRequirementNode";
+    case NodeKind::nestedRequirementNode: return "nestedRequirementNode";
+    case NodeKind::typeConstraintNode: return "typeConstraintNode";
+    case NodeKind::requiresClauseNode: return "requiresClauseNode";
+    case NodeKind::attributeSpecifierSequenceNode: return "attributeSpecifierSequenceNode";
+    case NodeKind::attributeSpecifierNode: return "attributeSpecifierNode";
+    case NodeKind::attributeUsingPrefixNode: return "attributeUsingPrefixNode";
+    case NodeKind::attributeNode: return "attributeNode";
+    case NodeKind::attributeScopedTokenNode: return "attributeScopedTokenNode";
+    case NodeKind::attributeArgumentsNode: return "attributeArgumentsNode";
+    case NodeKind::balancedTokenSequenceNode: return "balancedTokenSequenceNode";
+    case NodeKind::tokenNode: return "tokenNode";
+    case NodeKind::lparenNode: return "lparenNode";
+    case NodeKind::rparenNode: return "rparenNode";
+    case NodeKind::lbracketNode: return "lbracketNode";
+    case NodeKind::rbracketNode: return "rbracketNode";
+    case NodeKind::lbraceNode: return "lbraceNode";
+    case NodeKind::rbraceNode: return "rbraceNode";
+    case NodeKind::alignmentSpecifierNode: return "alignmentSpecifierNode";
+    case NodeKind::pragmaNode: return "pragmaNode";
+    case NodeKind::boundStatementNode: return "boundStatementNode";
+    case NodeKind::opNewCall: return "opNewCall";
     }
     return "<node>";
 }
 
-Node::Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : kind(kind_), sourcePos(sourcePos_), parent(nullptr), id(GetNextNodeId())
+Node::Node(NodeKind kind_, const soul::ast::Span& span_) noexcept : kind(kind_), span(span_), parent(nullptr), id(GetNextNodeId())
 {
 }
 
@@ -407,20 +407,20 @@ void Node::Clear()
 void Node::Write(Writer& writer)
 {
     writer.GetBinaryStreamWriter().Write(id);
-    writer.Write(sourcePos);
+    writer.Write(span);
 }
 
 void Node::Read(Reader& reader)
 {
     id = reader.GetBinaryStreamReader().ReadLong();
-    sourcePos = reader.ReadSourcePos();
+    span = reader.ReadSpan();
 }
 
-CompoundNode::CompoundNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : Node(kind_, sourcePos_)
+CompoundNode::CompoundNode(NodeKind kind_, const soul::ast::Span& span_) noexcept : Node(kind_, span_)
 {
 }
 
-UnaryNode::UnaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept : Node(kind_, sourcePos_), child(child_)
+UnaryNode::UnaryNode(NodeKind kind_, const soul::ast::Span& span_, Node* child_) noexcept : Node(kind_, span_), child(child_)
 {
     if (child)
     {
@@ -445,7 +445,7 @@ std::u32string UnaryNode::Str() const
     return child->Str();
 }
 
-BinaryNode::BinaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* left_, Node* right_) noexcept : Node(kind_, sourcePos_), left(left_), right(right_)
+BinaryNode::BinaryNode(NodeKind kind_, const soul::ast::Span& span_, Node* left_, Node* right_) noexcept : Node(kind_, span_), left(left_), right(right_)
 {
     if (left)
     {
@@ -478,7 +478,7 @@ std::u32string BinaryNode::Str() const
     return str;
 }
 
-SequenceNode::SequenceNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : Node(kind_, sourcePos_)
+SequenceNode::SequenceNode(NodeKind kind_, const soul::ast::Span& span_) noexcept : Node(kind_, span_)
 {
 }
 
@@ -532,7 +532,7 @@ std::u32string SequenceNode::Str() const
     return str;
 }
 
-ListNode::ListNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept : Node(kind_, sourcePos_)
+ListNode::ListNode(NodeKind kind_, const soul::ast::Span& span_) noexcept : Node(kind_, span_)
 {
 }
 
@@ -587,7 +587,7 @@ std::u32string ListNode::Str() const
 
 struct AbstractNodeFactory
 {
-    virtual Node* CreateNode(const soul::ast::SourcePos& sourcePos) = 0;
+    virtual Node* CreateNode(const soul::ast::Span& span) = 0;
 };
 
 template<typename T>
@@ -596,9 +596,9 @@ concept NodeClass = std::derived_from<T, Node>;
 template<NodeClass C>
 struct NodeFactory : AbstractNodeFactory
 {
-    Node* CreateNode(const soul::ast::SourcePos& sourcePos) override
+    Node* CreateNode(const soul::ast::Span& span) override
     {
-        return new C(sourcePos);
+        return new C(span);
     }
 };
 
@@ -606,7 +606,7 @@ class NodeFactoryCollection
 {
 public:
     static NodeFactoryCollection& Instance();
-    Node* CreateNode(NodeKind kind, const soul::ast::SourcePos& sourcePos);
+    Node* CreateNode(NodeKind kind, const soul::ast::Span& span);
     void Register(NodeKind kind, AbstractNodeFactory* factory);
 private:
     NodeFactoryCollection();
@@ -961,12 +961,12 @@ NodeFactoryCollection::NodeFactoryCollection()
     Register(NodeKind::placeholderTypeSpecifierNode, new NodeFactory<PlaceholderTypeSpecifierNode>());
 }
 
-Node* NodeFactoryCollection::CreateNode(NodeKind nodeKind, const soul::ast::SourcePos& sourcePos)
+Node* NodeFactoryCollection::CreateNode(NodeKind nodeKind, const soul::ast::Span& span)
 {
     AbstractNodeFactory* factory = factories[static_cast<std::uint16_t>(nodeKind)].get();
     if (factory)
     {
-        return factory->CreateNode(sourcePos);
+        return factory->CreateNode(span);
     }
     else
     {
@@ -980,9 +980,9 @@ void NodeFactoryCollection::Register(NodeKind kind, AbstractNodeFactory* factory
     factories[static_cast<std::uint16_t>(kind)] = std::unique_ptr<AbstractNodeFactory>(factory);
 }
 
-Node* CreateNode(NodeKind nodeKind, const soul::ast::SourcePos& sourcePos)
+Node* CreateNode(NodeKind nodeKind, const soul::ast::Span& span)
 {
-    return NodeFactoryCollection::Instance().CreateNode(nodeKind, sourcePos);
+    return NodeFactoryCollection::Instance().CreateNode(nodeKind, span);
 }
 
 void MakeNodeFactoryCollection()
@@ -1020,14 +1020,14 @@ std::int64_t NodeIdFactory::GetNextNodeId() noexcept
 
 thread_local NodeIdFactory* nodeIdFactory = nullptr;
 
+NodeIdFactory* GetNodeIdFactory() noexcept
+{
+    return nodeIdFactory;
+}
+
 void SetNodeIdFactory(NodeIdFactory* factory) noexcept
 {
     nodeIdFactory = factory;
-}
-
-NodeIdFactory* GetNodeIdFactory()
-{
-    return nodeIdFactory;
 }
 
 std::int64_t GetNextNodeId() noexcept

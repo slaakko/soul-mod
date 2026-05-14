@@ -11,14 +11,14 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-AttributeSpecifierSequenceNode::AttributeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept : 
-    SequenceNode(NodeKind::attributeSpecifierSequenceNode, sourcePos_)
+AttributeSpecifierSequenceNode::AttributeSpecifierSequenceNode(const soul::ast::Span& span_) noexcept :
+    SequenceNode(NodeKind::attributeSpecifierSequenceNode, span_)
 {
 }
 
 Node* AttributeSpecifierSequenceNode::Clone() const
 {
-    AttributeSpecifierSequenceNode* clone = new AttributeSpecifierSequenceNode(GetSourcePos());
+    AttributeSpecifierSequenceNode* clone = new AttributeSpecifierSequenceNode(GetSpan());
     for (const auto& node : Nodes())
     {
         clone->AddNode(node->Clone());
@@ -32,13 +32,13 @@ void AttributeSpecifierSequenceNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-AttributeSpecifierNode::AttributeSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : ListNode(NodeKind::attributeSpecifierNode, sourcePos_)
+AttributeSpecifierNode::AttributeSpecifierNode(const soul::ast::Span& span_) noexcept : ListNode(NodeKind::attributeSpecifierNode, span_)
 {
 }
 
 Node* AttributeSpecifierNode::Clone() const
 {
-    AttributeSpecifierNode* clone = new AttributeSpecifierNode(GetSourcePos());
+    AttributeSpecifierNode* clone = new AttributeSpecifierNode(GetSpan());
     for (const auto& node : Nodes())
     {
         clone->AddNode(node->Clone());
@@ -56,43 +56,43 @@ void AttributeSpecifierNode::Write(Writer& writer)
 {
     ListNode::Write(writer);
     writer.Write(usingPrefix.get());
-    writer.Write(lbPos1);
-    writer.Write(lbPos2);
-    writer.Write(rbPos1);
-    writer.Write(rbPos2);
+    writer.Write(lbSpan1);
+    writer.Write(lbSpan2);
+    writer.Write(rbSpan1);
+    writer.Write(rbSpan2);
 }
 
 void AttributeSpecifierNode::Read(Reader& reader)
 {
     ListNode::Read(reader);
     usingPrefix.reset(reader.ReadNode());
-    lbPos1 = reader.ReadSourcePos();
-    lbPos2 = reader.ReadSourcePos();
-    rbPos1 = reader.ReadSourcePos();
-    rbPos2 = reader.ReadSourcePos();
+    lbSpan1 = reader.ReadSpan();
+    lbSpan2 = reader.ReadSpan();
+    rbSpan1 = reader.ReadSpan();
+    rbSpan2 = reader.ReadSpan();
 }
 
-void AttributeSpecifierNode::SetBracketPositions(const soul::ast::SourcePos& lbPos1_, const soul::ast::SourcePos& lbPos2_, 
-    const soul::ast::SourcePos& rbPos1_, const soul::ast::SourcePos& rbPos2_) noexcept
+void AttributeSpecifierNode::SetBracketSpans(const soul::ast::Span& lbSpan1_, const soul::ast::Span& lbSpan2_, 
+    const soul::ast::Span& rbSpan1_, const soul::ast::Span& rbSpan2_) noexcept
 {
-    lbPos1 = lbPos1_;
-    lbPos2 = lbPos2_;
-    rbPos1 = rbPos1_;
-    rbPos2 = rbPos2_;
+    lbSpan1 = lbSpan1_;
+    lbSpan2 = lbSpan2_;
+    rbSpan1 = rbSpan1_;
+    rbSpan2 = rbSpan2_;
 }
 
-AttributeUsingPrefixNode::AttributeUsingPrefixNode(const soul::ast::SourcePos& sourcePos_) noexcept : UnaryNode(NodeKind::attributeUsingPrefixNode, sourcePos_, nullptr)
+AttributeUsingPrefixNode::AttributeUsingPrefixNode(const soul::ast::Span& span_) noexcept : UnaryNode(NodeKind::attributeUsingPrefixNode, span_, nullptr)
 {
 }
 
-AttributeUsingPrefixNode::AttributeUsingPrefixNode(const soul::ast::SourcePos& sourcePos_, Node* atttributeNamespace_, const soul::ast::SourcePos& colonPos_) noexcept :
-    UnaryNode(NodeKind::attributeUsingPrefixNode, sourcePos_, atttributeNamespace_), colonPos(colonPos_)
+AttributeUsingPrefixNode::AttributeUsingPrefixNode(const soul::ast::Span& span_, Node* atttributeNamespace_, const soul::ast::Span& colonSpan_) noexcept :
+    UnaryNode(NodeKind::attributeUsingPrefixNode, span_, atttributeNamespace_), colonSpan(colonSpan_)
 {
 }
 
 Node* AttributeUsingPrefixNode::Clone() const
 {
-    AttributeUsingPrefixNode* clone = new AttributeUsingPrefixNode(GetSourcePos(), Child()->Clone(), colonPos);
+    AttributeUsingPrefixNode* clone = new AttributeUsingPrefixNode(GetSpan(), Child()->Clone(), colonSpan);
     clone->SetId(Id());
     return clone;
 }
@@ -105,27 +105,27 @@ void AttributeUsingPrefixNode::Accept(Visitor& visitor)
 void AttributeUsingPrefixNode::Write(Writer& writer)
 {
     UnaryNode::Write(writer);
-    writer.Write(colonPos);
+    writer.Write(colonSpan);
 }
 
 void AttributeUsingPrefixNode::Read(Reader& reader)
 {
     UnaryNode::Read(reader);
-    colonPos = reader.ReadSourcePos();
+    colonSpan = reader.ReadSpan();
 }
 
-AttributeNode::AttributeNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::attributeNode, sourcePos_)
+AttributeNode::AttributeNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::attributeNode, span_)
 {
 }
 
-AttributeNode::AttributeNode(const soul::ast::SourcePos& sourcePos_, Node* attributeToken_, Node* attributeArgs_) noexcept :
-    CompoundNode(NodeKind::attributeNode, sourcePos_), attributeToken(attributeToken_), attributeArgs(attributeArgs_)
+AttributeNode::AttributeNode(const soul::ast::Span& span_, Node* attributeToken_, Node* attributeArgs_) noexcept :
+    CompoundNode(NodeKind::attributeNode, span_), attributeToken(attributeToken_), attributeArgs(attributeArgs_)
 {
 }
 
 Node* AttributeNode::Clone() const
 {
-    AttributeNode* clone = new AttributeNode(GetSourcePos(), attributeToken->Clone(), attributeArgs->Clone());
+    AttributeNode* clone = new AttributeNode(GetSpan(), attributeToken->Clone(), attributeArgs->Clone());
     clone->SetId(Id());
     return clone;
 }
@@ -149,18 +149,18 @@ void AttributeNode::Read(Reader& reader)
     attributeArgs.reset(reader.ReadNode());
 }
 
-AttributeScopedTokenNode::AttributeScopedTokenNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::attributeScopedTokenNode, sourcePos_)
+AttributeScopedTokenNode::AttributeScopedTokenNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::attributeScopedTokenNode, span_)
 {
 }
 
-AttributeScopedTokenNode::AttributeScopedTokenNode(const soul::ast::SourcePos& sourcePos_, Node* ns_, Node* colonColon_, Node* identifier_) noexcept :
-    CompoundNode(NodeKind::attributeScopedTokenNode, sourcePos_), ns(ns_), colonColon(colonColon_), identifier(identifier_)
+AttributeScopedTokenNode::AttributeScopedTokenNode(const soul::ast::Span& span_, Node* ns_, Node* colonColon_, Node* identifier_) noexcept :
+    CompoundNode(NodeKind::attributeScopedTokenNode, span_), ns(ns_), colonColon(colonColon_), identifier(identifier_)
 {
 }
 
 Node* AttributeScopedTokenNode::Clone() const
 {
-    AttributeScopedTokenNode* clone = new AttributeScopedTokenNode(GetSourcePos(), ns->Clone(), colonColon->Clone(), identifier->Clone());
+    AttributeScopedTokenNode* clone = new AttributeScopedTokenNode(GetSpan(), ns->Clone(), colonColon->Clone(), identifier->Clone());
     clone->SetId(Id());
     return clone;
 }
@@ -186,19 +186,19 @@ void AttributeScopedTokenNode::Read(Reader& reader)
     identifier.reset(reader.ReadNode());
 }
 
-AttributeArgumentsNode::AttributeArgumentsNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::attributeArgumentsNode, sourcePos_)
+AttributeArgumentsNode::AttributeArgumentsNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::attributeArgumentsNode, span_)
 {
 }
 
-AttributeArgumentsNode::AttributeArgumentsNode(const soul::ast::SourcePos& sourcePos_, Node* balancedTokenSequence_, 
-    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
-    CompoundNode(NodeKind::attributeArgumentsNode, sourcePos_), balancedTokenSequence(balancedTokenSequence_), lpPos(lpPos_), rpPos(rpPos_)
+AttributeArgumentsNode::AttributeArgumentsNode(const soul::ast::Span& span_, Node* balancedTokenSequence_,
+    const soul::ast::Span& lpSpan_, const soul::ast::Span& rpSpan_) noexcept :
+    CompoundNode(NodeKind::attributeArgumentsNode, span_), balancedTokenSequence(balancedTokenSequence_), lpSpan(lpSpan_), rpSpan(rpSpan_)
 {
 }
 
 Node* AttributeArgumentsNode::Clone() const
 {
-    AttributeArgumentsNode* clone = new AttributeArgumentsNode(GetSourcePos(), balancedTokenSequence->Clone(), lpPos, rpPos);
+    AttributeArgumentsNode* clone = new AttributeArgumentsNode(GetSpan(), balancedTokenSequence->Clone(), lpSpan, rpSpan);
     clone->SetId(Id());
     return clone;
 }
@@ -212,25 +212,25 @@ void AttributeArgumentsNode::Write(Writer& writer)
 {
     CompoundNode::Write(writer);
     writer.Write(balancedTokenSequence.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    writer.Write(lpSpan);
+    writer.Write(rpSpan);
 }
 
 void AttributeArgumentsNode::Read(Reader& reader)
 {
     CompoundNode::Read(reader);
     balancedTokenSequence.reset(reader.ReadNode());
-    lpPos = reader.ReadSourcePos();
-    rpPos = reader.ReadSourcePos();
+    lpSpan = reader.ReadSpan();
+    rpSpan = reader.ReadSpan();
 }
 
-BalancedTokenSequenceNode::BalancedTokenSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept : SequenceNode(NodeKind::balancedTokenSequenceNode, sourcePos_)
+BalancedTokenSequenceNode::BalancedTokenSequenceNode(const soul::ast::Span& span_) noexcept : SequenceNode(NodeKind::balancedTokenSequenceNode, span_)
 {
 }
 
 Node* BalancedTokenSequenceNode::Clone() const
 {
-    BalancedTokenSequenceNode* clone = new BalancedTokenSequenceNode(GetSourcePos());
+    BalancedTokenSequenceNode* clone = new BalancedTokenSequenceNode(GetSpan());
     for (const auto& node : Nodes())
     {
         clone->AddNode(node->Clone());
@@ -244,17 +244,17 @@ void BalancedTokenSequenceNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-TokenNode::TokenNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::tokenNode, sourcePos_)
+TokenNode::TokenNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::tokenNode, span_)
 {
 }
 
-TokenNode::TokenNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& str_) : CompoundNode(NodeKind::tokenNode, sourcePos_), str(str_)
+TokenNode::TokenNode(const soul::ast::Span& span_, const std::u32string& str_) : CompoundNode(NodeKind::tokenNode, span_), str(str_)
 {
 }
 
 Node* TokenNode::Clone() const
 {
-    TokenNode* clone = new TokenNode(GetSourcePos(), str);
+    TokenNode* clone = new TokenNode(GetSpan(), str);
     clone->SetId(Id());
     return clone;
 }
@@ -276,13 +276,13 @@ void TokenNode::Read(Reader& reader)
     str = reader.ReadStr();
 }
 
-AlignmentSpecifierNode::AlignmentSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::alignmentSpecifierNode, sourcePos_)
+AlignmentSpecifierNode::AlignmentSpecifierNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::alignmentSpecifierNode, span_)
 {
 }
 
-AlignmentSpecifierNode::AlignmentSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* alignment_, Node* ellipsis_, 
-    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept :
-    CompoundNode(NodeKind::alignmentSpecifierNode, sourcePos_), alignment(alignment_), ellipsis(ellipsis_), lpPos(lpPos_), rpPos(rpPos_)
+AlignmentSpecifierNode::AlignmentSpecifierNode(const soul::ast::Span& span_, Node* alignment_, Node* ellipsis_,
+    const soul::ast::Span& lpSpan_, const soul::ast::Span& rpSpan_) noexcept :
+    CompoundNode(NodeKind::alignmentSpecifierNode, span_), alignment(alignment_), ellipsis(ellipsis_), lpSpan(lpSpan_), rpSpan(rpSpan_)
 {
 }
 
@@ -293,7 +293,7 @@ Node* AlignmentSpecifierNode::Clone() const
     {
         clonedEllipsis = ellipsis->Clone();
     }
-    AlignmentSpecifierNode* clone = new AlignmentSpecifierNode(GetSourcePos(), alignment->Clone(), clonedEllipsis, lpPos, rpPos);
+    AlignmentSpecifierNode* clone = new AlignmentSpecifierNode(GetSpan(), alignment->Clone(), clonedEllipsis, lpSpan, rpSpan);
     clone->SetId(Id());
     return clone;
 }
@@ -308,8 +308,8 @@ void AlignmentSpecifierNode::Write(Writer& writer)
     CompoundNode::Write(writer);
     writer.Write(alignment.get());
     writer.Write(ellipsis.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
+    writer.Write(lpSpan);
+    writer.Write(rpSpan);
 }
 
 void AlignmentSpecifierNode::Read(Reader& reader)
@@ -317,8 +317,8 @@ void AlignmentSpecifierNode::Read(Reader& reader)
     CompoundNode::Read(reader);
     alignment.reset(reader.ReadNode());
     ellipsis.reset(reader.ReadNode());
-    lpPos = reader.ReadSourcePos();
-    rpPos = reader.ReadSourcePos();
+    lpSpan = reader.ReadSpan();
+    rpSpan = reader.ReadSpan();
 }
 
 } // namespace otava::ast

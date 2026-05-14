@@ -13,8 +13,8 @@ export namespace otava::ast {
 class FunctionDefinitionNode : public CompoundNode
 {
 public:
-    FunctionDefinitionNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    FunctionDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* declSpecifiers_, Node* declarator_, Node* specifiers_, 
+    FunctionDefinitionNode(const soul::ast::Span& span_) noexcept;
+    FunctionDefinitionNode(const soul::ast::Span& span_, Node* attributes_, Node* declSpecifiers_, Node* declarator_, Node* specifiers_,
         Node* functionBody_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -40,8 +40,8 @@ private:
 class FunctionBodyNode : public UnaryNode
 {
 public:
-    FunctionBodyNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    FunctionBodyNode(const soul::ast::SourcePos& sourcePos_, Node* compoundStatement_) noexcept;
+    FunctionBodyNode(const soul::ast::Span& span_) noexcept;
+    FunctionBodyNode(const soul::ast::Span& span_, Node* compoundStatement_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -49,7 +49,7 @@ public:
 class DefaultNode : public Node
 {
 public:
-    DefaultNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    DefaultNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -57,7 +57,7 @@ public:
 class DeleteNode : public Node
 {
 public:
-    DeleteNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    DeleteNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -65,8 +65,8 @@ public:
 class DefaultedOrDeletedFunctionNode : public CompoundNode
 {
 public:
-    DefaultedOrDeletedFunctionNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    DefaultedOrDeletedFunctionNode(const soul::ast::SourcePos& sourcePos_, Node* assign_, Node* defaultOrDelete_, Node* semicolon_) noexcept;
+    DefaultedOrDeletedFunctionNode(const soul::ast::Span& span_) noexcept;
+    DefaultedOrDeletedFunctionNode(const soul::ast::Span& span_, Node* assign_, Node* defaultOrDelete_, Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -83,8 +83,8 @@ private:
 class NoDeclSpecFunctionDeclarationNode : public CompoundNode
 {
 public:
-    NoDeclSpecFunctionDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    NoDeclSpecFunctionDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* declarator_, Node* semicolon_) noexcept;
+    NoDeclSpecFunctionDeclarationNode(const soul::ast::Span& span_) noexcept;
+    NoDeclSpecFunctionDeclarationNode(const soul::ast::Span& span_, Node* attributes_, Node* declarator_, Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -101,7 +101,7 @@ private:
 class OperatorNode : public Node
 {
 public:
-    OperatorNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    OperatorNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"operator"; }
@@ -110,24 +110,24 @@ public:
 class NewArrayOpNode : public CompoundNode
 {
 public:
-    NewArrayOpNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    NewArrayOpNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) noexcept;
+    NewArrayOpNode(const soul::ast::Span& span_) noexcept;
+    NewArrayOpNode(const soul::ast::Span& span_, const soul::ast::Span& lbSpan_, const soul::ast::Span& rbSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline const soul::ast::SourcePos& LBracketPos() const noexcept { return lbPos; }
-    inline const soul::ast::SourcePos& RBracketPos() const noexcept { return rbPos; }
+    inline const soul::ast::Span& LBracketSpan() const noexcept { return lbSpan; }
+    inline const soul::ast::Span& RBracketSpan() const noexcept { return rbSpan; }
     std::u32string Str() const override { return U"new[]"; }
 private:
-    soul::ast::SourcePos lbPos;
-    soul::ast::SourcePos rbPos;
+    soul::ast::Span lbSpan;
+    soul::ast::Span rbSpan;
 };
 
 class NewOpNode : public Node
 {
 public:
-    NewOpNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    NewOpNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"new"; }
@@ -136,24 +136,24 @@ public:
 class DeleteArrayOpNode : public CompoundNode
 {
 public:
-    DeleteArrayOpNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    DeleteArrayOpNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) noexcept;
+    DeleteArrayOpNode(const soul::ast::Span& span_) noexcept;
+    DeleteArrayOpNode(const soul::ast::Span& span_, const soul::ast::Span& lbSpan_, const soul::ast::Span& rbSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline const soul::ast::SourcePos& LBracketPos() const noexcept { return lbPos; }
-    inline const soul::ast::SourcePos& RBracketPos() const noexcept { return rbPos; }
+    inline const soul::ast::Span& LBracketSpan() const noexcept { return lbSpan; }
+    inline const soul::ast::Span& RBracketSpan() const noexcept { return rbSpan; }
     std::u32string Str() const override { return U"delete[]"; }
 private:
-    soul::ast::SourcePos lbPos;
-    soul::ast::SourcePos rbPos;
+    soul::ast::Span lbSpan;
+    soul::ast::Span rbSpan;
 };
 
 class DeleteOpNode : public Node
 {
 public:
-    DeleteOpNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    DeleteOpNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"delete"; }
@@ -162,7 +162,7 @@ public:
 class CoAwaitOpNode : public Node
 {
 public:
-    CoAwaitOpNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    CoAwaitOpNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"co_await"; }
@@ -171,7 +171,7 @@ public:
 class InvokeOpNode : public Node
 {
 public:
-    InvokeOpNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    InvokeOpNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"()"; }
@@ -180,7 +180,7 @@ public:
 class SubscriptOpNode : public Node
 {
 public:
-    SubscriptOpNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    SubscriptOpNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"[]"; }
@@ -189,8 +189,8 @@ public:
 class OperatorFunctionIdNode : public BinaryNode
 {
 public:
-    OperatorFunctionIdNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    OperatorFunctionIdNode(const soul::ast::SourcePos& sourcePos_, Node* operatorKwNode_, Node* op_) noexcept;
+    OperatorFunctionIdNode(const soul::ast::Span& span_) noexcept;
+    OperatorFunctionIdNode(const soul::ast::Span& span_, Node* operatorKwNode_, Node* op_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override;
@@ -199,8 +199,8 @@ public:
 class ConversionFunctionIdNode : public BinaryNode
 {
 public:
-    ConversionFunctionIdNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ConversionFunctionIdNode(const soul::ast::SourcePos& sourcePos_, Node* operatorKwNode_, Node* conversionTypeId_) noexcept;
+    ConversionFunctionIdNode(const soul::ast::Span& span_) noexcept;
+    ConversionFunctionIdNode(const soul::ast::Span& span_, Node* operatorKwNode_, Node* conversionTypeId_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override;
@@ -209,8 +209,8 @@ public:
 class ConversionTypeIdNode : public CompoundNode
 {
 public:
-    ConversionTypeIdNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ConversionTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifierSeq_, Node* conversionDeclarator_) noexcept;
+    ConversionTypeIdNode(const soul::ast::Span& span_) noexcept;
+    ConversionTypeIdNode(const soul::ast::Span& span_, Node* typeSpecifierSeq_, Node* conversionDeclarator_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -225,8 +225,8 @@ private:
 class ConversionDeclaratorNode : public CompoundNode
 {
 public:
-    ConversionDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ConversionDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* ptrOp_, Node* conversionDeclarator_) noexcept;
+    ConversionDeclaratorNode(const soul::ast::Span& span_) noexcept;
+    ConversionDeclaratorNode(const soul::ast::Span& span_, Node* ptrOp_, Node* conversionDeclarator_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -241,8 +241,8 @@ private:
 class DestructorIdNode : public UnaryNode
 {
 public:
-    DestructorIdNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    DestructorIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeName_) noexcept;
+    DestructorIdNode(const soul::ast::Span& span_) noexcept;
+    DestructorIdNode(const soul::ast::Span& span_, Node* typeName_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -250,7 +250,7 @@ public:
 class ParameterNode : public CompoundNode
 {
 public:
-    ParameterNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ParameterNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -277,24 +277,24 @@ private:
 class ParameterListNode : public ListNode
 {
 public:
-    ParameterListNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ParameterListNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline void SetLParenPos(const soul::ast::SourcePos& lpPos_) noexcept { lpPos = lpPos_; }
-    inline void SetRParenPos(const soul::ast::SourcePos& rpPos_) noexcept { rpPos = rpPos_; }
-    inline const soul::ast::SourcePos& LParenPos() const noexcept { return lpPos; }
-    inline const soul::ast::SourcePos& RParenPos() const noexcept { return rpPos; }
+    inline void SetLParenSpan(const soul::ast::Span& lpSpan_) noexcept { lpSpan = lpSpan_; }
+    inline void SetRParenSpan(const soul::ast::Span& rpSpan_) noexcept { rpSpan = rpSpan_; }
+    inline const soul::ast::Span& LParenSpan() const noexcept { return lpSpan; }
+    inline const soul::ast::Span& RParenSpan() const noexcept { return rpSpan; }
 private:
-    soul::ast::SourcePos lpPos;
-    soul::ast::SourcePos rpPos;
+    soul::ast::Span lpSpan;
+    soul::ast::Span rpSpan;
 };
 
 class NoexceptNode : public Node
 {
 public:
-    NoexceptNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    NoexceptNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -302,8 +302,8 @@ public:
 class FunctionTryBlockNode : public CompoundNode
 {
 public:
-    FunctionTryBlockNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    FunctionTryBlockNode(const soul::ast::SourcePos& sourcePos_, Node* ctorInitializer_, Node* tryBlock_, Node* handlers_) noexcept;
+    FunctionTryBlockNode(const soul::ast::Span& span_) noexcept;
+    FunctionTryBlockNode(const soul::ast::Span& span_, Node* ctorInitializer_, Node* tryBlock_, Node* handlers_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;

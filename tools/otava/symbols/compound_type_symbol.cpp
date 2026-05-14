@@ -150,10 +150,10 @@ TypeSymbol* CompoundTypeSymbol::Unify(TypeSymbol* argType, Context* context)
 }
 
 TypeSymbol* CompoundTypeSymbol::UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, 
-    const soul::ast::SourcePos& sourcePos, Context* context)
+    const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    TypeSymbol* newBaseType = baseType->UnifyTemplateArgumentType(templateParameterMap, sourcePos, context);
-    context->SetSourcePos(sourcePos);
+    TypeSymbol* newBaseType = baseType->UnifyTemplateArgumentType(templateParameterMap, fullSpan, context);
+    context->SetFullSpan(fullSpan);
     return context->GetSymbolTable()->MakeCompoundType(newBaseType, GetDerivations(), context);
 }
 
@@ -207,17 +207,17 @@ std::u32string CompoundTypeSymbol::FullName() const
     return fullName;
 }
 
-otava::intermediate::Type* CompoundTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+otava::intermediate::Type* CompoundTypeSymbol::IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    util::uuid irId = IrId(sourcePos, context);
+    util::uuid irId = IrId(fullSpan, context);
     otava::intermediate::Type* type = emitter.GetType(irId);
     if (!type)
     {
         if (!baseType)
         {
-            ThrowException("cannot obtain base type for type '" + util::ToUtf8(Name()) + "' because it is incomplete at this point", sourcePos, context);
+            ThrowException("cannot obtain base type for type '" + util::ToUtf8(Name()) + "' because it is incomplete at this point", fullSpan, context);
         }
-        type = baseType->IrType(emitter, sourcePos, context);
+        type = baseType->IrType(emitter, fullSpan, context);
         int pointerCount = otava::symbols::PointerCount(derivations);
         for (int i = 0; i < pointerCount; ++i)
         {
@@ -236,10 +236,10 @@ otava::intermediate::Type* CompoundTypeSymbol::IrType(Emitter& emitter, const so
     return type;
 }
 
-TypeSymbol* CompoundTypeSymbol::FinalType(const soul::ast::SourcePos& sourcePos, Context* context)
+TypeSymbol* CompoundTypeSymbol::FinalType(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    TypeSymbol* finalBaseType = baseType->FinalType(sourcePos, context);
-    context->SetSourcePos(sourcePos);
+    TypeSymbol* finalBaseType = baseType->FinalType(fullSpan, context);
+    context->SetFullSpan(fullSpan);
     return context->GetSymbolTable()->MakeCompoundType(finalBaseType, derivations, context);
 }
 
@@ -327,19 +327,19 @@ std::u32string MakeCompoundTypeName(TypeSymbol* baseType, Derivations derivation
     return name;
 }
 
-util::uuid CompoundTypeSymbol::IrId(const soul::ast::SourcePos& sourcePos, Context* context) const 
+util::uuid CompoundTypeSymbol::IrId(const soul::ast::FullSpan& fullSpan, Context* context) const
 {
     if (!baseType)
     {
-        ThrowException("cannot obtain base type for type '" + util::ToUtf8(Name()) + "' because it is incomplete at this point", sourcePos, context);
+        ThrowException("cannot obtain base type for type '" + util::ToUtf8(Name()) + "' because it is incomplete at this point", fullSpan, context);
     }
-    util::uuid irId = baseType->IrId(sourcePos, context);
+    util::uuid irId = baseType->IrId(fullSpan, context);
     util::uuid derivationsId = context->GetSymbolTable()->GetCompoundTypeId(static_cast<std::uint8_t>(derivations));
     util::Xor(irId, derivationsId);
     return irId;
 }
 
-util::uuid MakeCompoundTypeId(TypeSymbol* baseType, Derivations derivations, const soul::ast::SourcePos& sourcePos, Context* context) noexcept
+util::uuid MakeCompoundTypeId(TypeSymbol* baseType, Derivations derivations, const soul::ast::FullSpan& fullSpan, Context* context) noexcept
 {
     util::uuid id = baseType->Id();
     util::uuid derivationsId = context->GetSymbolTable()->GetCompoundTypeId(static_cast<std::uint8_t>(derivations));

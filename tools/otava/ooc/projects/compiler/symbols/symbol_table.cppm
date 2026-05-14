@@ -1,7 +1,7 @@
 export module otava.symbols.symbol.table;
 
 import std;
-import soul.ast.source.pos;
+import soul.ast.span;
 import otava.ast;
 import otava.symbols.derivations;
 import otava.symbols.lookup;
@@ -115,7 +115,7 @@ public:
     inline void SetErrorTypeSymbol(TypeSymbol* errorTypeSymbol_) noexcept { errorTypeSymbol = errorTypeSymbol_; }
     inline Scope* CurrentScope() const noexcept { return currentScope; }
     void SetCurrentScope(Scope* scope);
-    Scope* GetNamespaceScope(const std::u32string& nsName, const soul::ast::SourcePos& sourcePos, Context* context);
+    Scope* GetNamespaceScope(const std::u32string& nsName, const soul::ast::FullSpan& fullSpan, Context* context);
     void PushScope();
     void PopScope();
     void BeginScope(Scope* scope);
@@ -131,7 +131,7 @@ public:
     void BeginNamespace(otava::ast::Node* node, Context* context);
     void EndNamespace(int level);
     void BeginClass(const std::u32string& name, ClassKind classKind, TypeSymbol* spcialiation, otava::ast::Node* node, Context* context);
-    void AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
+    void AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::FullSpan& fullSpan, Context* context);
     void EndClass();
     void AddForwardClassDeclaration(const std::u32string& name, ClassKind classKind, TypeSymbol* specialization, otava::ast::Node* node, Context* context);
     void AddFriend(const std::u32string& name, otava::ast::Node* node, Context* context);
@@ -139,7 +139,7 @@ public:
     void EndEnumeratedType();
     void AddForwardEnumDeclaration(const std::u32string& name, EnumTypeKind enumTypeKind, TypeSymbol* underlyingType, otava::ast::Node* node, Context* context);
     void AddEnumerator(const std::u32string& name, Value* value, otava::ast::Node* node, Context* context);
-    BlockSymbol* BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context);
+    BlockSymbol* BeginBlock(const soul::ast::FullSpan& fullSpan, Context* context);
     void EndBlock(Context* context);
     void RemoveBlock();
     void BeginTemplateDeclaration(otava::ast::Node* node, Context* context);
@@ -174,13 +174,13 @@ public:
     AliasGroupTypeSymbol* MakeAliasGroupTypeSymbol(AliasGroupSymbol* aliasGroup);
     ConceptSymbol* AddConcept(const std::u32string& name, otava::ast::Node* node, Context* context);
     ClassTemplateSpecializationSymbol* MakeClassTemplateSpecialization(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments,
-        const soul::ast::SourcePos& sourcePos, Context* context);
+        const soul::ast::FullSpan& fullSpan, Context* context);
     AliasTypeTemplateSpecializationSymbol* MakeAliasTypeTemplateSpecialization(TypeSymbol* aliasTypeTemplate, const std::vector<Symbol*>& templateArguments);
     ArrayTypeSymbol* MakeArrayType(TypeSymbol* elementType, std::int64_t size);
     DependentTypeSymbol* MakeDependentTypeSymbol(otava::ast::Node* node);
-    Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context);
-    Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
-    Symbol* LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
+    Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::FullSpan& fullSpan, Context* context);
+    Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::FullSpan& fullSpan, Context* context, LookupFlags flags);
+    Symbol* LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::FullSpan& fullSpan, Context* context, LookupFlags flags);
     Symbol* LookupSymbol(Symbol* symbol);
     void ResolveForwardDeclarations();
     void CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs,
@@ -236,7 +236,7 @@ public:
     inline const std::set<ClassTypeSymbol*>& Classes() const { return allClasses; }
     inline void SetNodeMap(otava::ast::NodeMap* nodeMap_) { nodeMap = nodeMap_; }
     inline otava::ast::NodeMap* GetNodeMap() { return nodeMap; }
-    inline void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
+    void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
     inline SymbolMap* GetSymbolMap() const { return symbolMap; }
     inline ConversionTable& GetConversionTable() { return *conversionTable; }
     inline const ConversionTable& GetConversionTable() const { return *conversionTable; }

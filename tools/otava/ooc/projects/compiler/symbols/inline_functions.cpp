@@ -39,7 +39,7 @@ FunctionSymbol* InlineFunctionRepository::GetInlineFunction(FunctionSymbol* fn) 
     }
 }
 
-FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::SourcePos& sourcePos, Context* context)
+FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (fn->IsGenerated()) return fn;
     InlineFunctionRepository* inlineFunctionRepository = context->GetBoundCompileUnit()->GetInlineFunctionRepository();
@@ -88,7 +88,7 @@ FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::S
                 functionDefinition->SetParent(fn->Parent());
                 std::string irName = functionDefinition->IrName(context);
                 inlineFunctionRepository->AddInlineFunction(fn, inlineFn);
-                context->PushBoundFunction(new BoundFunctionNode(functionDefinition, sourcePos));
+                context->PushBoundFunction(new BoundFunctionNode(functionDefinition, fullSpan));
                 functionDefinition = BindFunction(functionDefinitionNode, functionDefinition, context);
                 inlineFn = functionDefinition;
                 context->PopFlags();
@@ -101,7 +101,7 @@ FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::S
             }
             else
             {
-                ThrowException("otava.symbols.inline_functions: function definition symbol expected", node->GetSourcePos(), context);
+                ThrowException("otava.symbols.inline_functions: function definition symbol expected", context->MakeFullSpan(node->GetSpan()), fullSpan, context);
             }
         }
         catch (const std::exception& ex)
@@ -112,7 +112,7 @@ FunctionSymbol* InstantiateInlineFunction(FunctionSymbol* fn, const soul::ast::S
                 inlineFunctionFullName = util::ToUtf8(inlineFn->FullName());
             }
             PrintWarning("failed to instantiating inline function '" + inlineFunctionFullName +
-                "': " + std::string(ex.what()), node->GetSourcePos(), context);
+                "': " + std::string(ex.what()), context->MakeFullSpan(node->GetSpan()), fullSpan, context);
             return fn;
         }
         context->GetSymbolTable()->EndScope();

@@ -223,13 +223,13 @@ bool VariableLess::operator()(VariableSymbol* left, VariableSymbol* right) const
     return left->Name() < right->Name();
 }
 
-void SetDeclaredVariableType(VariableSymbol* variable, const soul::ast::SourcePos& sourcePos, Context* context)
+void SetDeclaredVariableType(VariableSymbol* variable, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     TypeSymbol* variableBaseType = variable->GetType()->GetBaseType();
     if (variableBaseType->IsTemplateParameterSymbol())
     {
         Symbol* symbol = context->GetSymbolTable()->CurrentScope()->Lookup(variableBaseType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope,
-            sourcePos, context, LookupFlags::none);
+            fullSpan, context, LookupFlags::none);
         if (symbol && symbol->IsTypeSymbol())
         {
             TypeSymbol* typeSymbol = static_cast<TypeSymbol*>(symbol);

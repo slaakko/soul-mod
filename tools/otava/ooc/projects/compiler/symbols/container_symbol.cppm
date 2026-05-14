@@ -14,7 +14,7 @@ public:
     ContainerSymbol(SymbolKind kind_, const std::u32string& name_);
     ContainerSymbol(SymbolKind kind_, const util::uuid& id_, const std::u32string& name_);
     Scope* GetScope() noexcept override { return &scope; }
-    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context) override;
     std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol) override;
     inline const std::vector<std::unique_ptr<Symbol>>& Symbols() const noexcept { return members; }
     void Write(Writer& writer) override;

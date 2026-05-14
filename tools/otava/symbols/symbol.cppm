@@ -8,7 +8,7 @@ export module otava.symbols.symbol;
 import std;
 import soul.xml.dom;
 import util.uuid;
-import soul.ast.source.pos;
+import soul.ast.span;
 import otava.symbols.scope;
 import util.unicode;
 
@@ -166,7 +166,7 @@ public:
     inline SymbolKind Kind() const noexcept { return kind; }
     inline const util::uuid& Id() const noexcept { return id; }
     void SetId(const util::uuid& id_) noexcept { id = id_; }
-    virtual util::uuid IrId(const soul::ast::SourcePos& sourcePos, Context* context) const { return id; }
+    virtual util::uuid IrId(const soul::ast::FullSpan& fullSpan, Context* context) const { return id; }
     inline const std::u32string& Name() const noexcept { return name; }
     void SetName(const std::u32string& name_);
     inline Access GetAccess() const noexcept { return access; }
@@ -186,7 +186,7 @@ public:
     virtual std::u32string FullName() const;
     virtual std::string SymbolKindStr() const = 0;
     virtual bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept { return true; }
-    virtual void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context);
+    virtual void AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context);
     virtual bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const;
     virtual std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol);
     virtual void Write(Writer& writer);
@@ -266,11 +266,11 @@ public:
     bool IsMoveAssignment() const noexcept;
     bool IsDtor() const noexcept;
     SymbolGroupKind GetSymbolGroupKind() const noexcept;
-    void* IrObject(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
+    void* IrObject(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context);
     bool IsExtern() const noexcept;
     virtual soul::xml::Element* ToXml() const;
-    inline void SetSourcePos(const soul::ast::SourcePos& sourcePos_) noexcept { sourcePos = sourcePos_; }
-    inline const soul::ast::SourcePos& GetSourcePos() const noexcept { return sourcePos; }
+    inline void SetFullSpan(const soul::ast::FullSpan& fullSpan_) noexcept { fullSpan = fullSpan_; }
+    inline const soul::ast::FullSpan& GetFullSpan() const noexcept { return fullSpan; }
 private:
     SymbolKind kind;
     SymbolFlags flags;
@@ -279,7 +279,7 @@ private:
     Symbol* parent;
     DeclarationFlags declarationFlags;
     Access access;
-    soul::ast::SourcePos sourcePos;
+    soul::ast::FullSpan fullSpan;
 };
 
 } // namespace otava::symbols

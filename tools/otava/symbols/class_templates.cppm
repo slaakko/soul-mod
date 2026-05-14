@@ -23,7 +23,7 @@ class ClassTemplateSpecializationSymbol : public ClassTypeSymbol
 public:
     ClassTemplateSpecializationSymbol(const std::u32string& name_);
     ClassTemplateSpecializationSymbol(const util::uuid& id_, const std::u32string& name_);
-    util::uuid IrId(const soul::ast::SourcePos& sourcePos, Context* context) const override;
+    util::uuid IrId(const soul::ast::FullSpan& fullSpan, Context* context) const override;
     inline bool Instantiated() const noexcept { return instantiated; }
     inline void SetInstantiated() noexcept { instantiated = true; }
     std::string SymbolKindStr() const override { return "specialization symbol"; }
@@ -40,11 +40,11 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, 
-        const soul::ast::SourcePos& sourcePos, Context* context) noexcept override;
+        const soul::ast::FullSpan& fullSpan, Context* context) noexcept override;
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     inline FunctionSymbol* Destructor() const noexcept { return destructor; }
     inline void SetDestructor(FunctionSymbol* destructor_) noexcept { destructor = destructor_; }
-    TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    TypeSymbol* FinalType(const soul::ast::FullSpan& fullSpan, Context* context) override;
     bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const noexcept override;
     inline bool InstantiatingDestructor() const noexcept { return instantiatingDestructor; }
     inline void SetInstantiatingDestructor(bool instantiating) noexcept { instantiatingDestructor = instantiating; }
@@ -80,10 +80,10 @@ private:
 };
 
 util::uuid MakeClassTemplateSpecializationSymbolId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments, 
-    const soul::ast::SourcePos& sourcePos, Context* context);
+    const soul::ast::FullSpan& fullSpan, Context* context);
 
 util::uuid MakeClassTemplateSpecializationSymbolIrId(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments,
-    const soul::ast::SourcePos& sourcePos, Context* context);
+    const soul::ast::FullSpan& fullSpan, Context* context);
 
 struct MemFunKey
 {
@@ -115,12 +115,12 @@ CompoundTypeSymbol* GetCompoundSpecializationArgType(TypeSymbol* specialization,
 ClassTemplateSpecializationSymbol* GetClassTemplateSpecializationArgType(TypeSymbol* specialization, int index) noexcept;
 
 ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs, 
-    const soul::ast::SourcePos& sourcePos, Context* context);
+    const soul::ast::FullSpan& fullSpan, Context* context);
 
 FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
     ClassTemplateSpecializationSymbol* classTemplateSpecialization, const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap,
-    const soul::ast::SourcePos& sourcePos, Context* context);
+    const soul::ast::FullSpan& fullSpan, Context* context);
 
-void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, const soul::ast::SourcePos& sourcePos, Context* context);
+void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, const soul::ast::FullSpan& fullSpan, Context* context);
 
 } // namespace otava::symbols

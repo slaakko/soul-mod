@@ -13,28 +13,28 @@ export namespace otava::ast {
 class EnumSpecifierNode : public ListNode
 {
 public:
-    EnumSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    EnumSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* enumHead_) noexcept;
+    EnumSpecifierNode(const soul::ast::Span& span_) noexcept;
+    EnumSpecifierNode(const soul::ast::Span& span_, Node* enumHead_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* EnumHead() const noexcept { return enumHead.get(); }
-    inline void SetLBracePos(const soul::ast::SourcePos& lbPos_) noexcept { lbPos = lbPos_; }
-    inline void SetRBracePos(const soul::ast::SourcePos& rbPos_) noexcept { rbPos = rbPos_; }
-    inline const soul::ast::SourcePos& LBracePos() const noexcept { return lbPos; }
-    inline const soul::ast::SourcePos& RBracePos() const noexcept { return rbPos; }
+    inline void SetLBraceSpan(const soul::ast::Span& lbSpan_) noexcept { lbSpan = lbSpan_; }
+    inline void SetRBraceSpan(const soul::ast::Span& rbSpan_) noexcept { rbSpan = rbSpan_; }
+    inline const soul::ast::Span& LBraceSpan() const noexcept { return lbSpan; }
+    inline const soul::ast::Span& RBraceSpan() const noexcept { return rbSpan; }
 private:
     std::unique_ptr<Node> enumHead;
-    soul::ast::SourcePos lbPos;
-    soul::ast::SourcePos rbPos;
+    soul::ast::Span lbSpan;
+    soul::ast::Span rbSpan;
 };
 
 class EnumHeadNode : public CompoundNode
 {
 public:
-    EnumHeadNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    EnumHeadNode(const soul::ast::SourcePos& sourcePos_, Node* enumKey_, Node* enumHeadName_, Node* enumBase_, Node* attributes_) noexcept;
+    EnumHeadNode(const soul::ast::Span& span_) noexcept;
+    EnumHeadNode(const soul::ast::Span& span_, Node* enumKey_, Node* enumHeadName_, Node* enumBase_, Node* attributes_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -53,8 +53,8 @@ private:
 class EnumBaseNode : public UnaryNode
 {
 public:
-    EnumBaseNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    EnumBaseNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_) noexcept;
+    EnumBaseNode(const soul::ast::Span& span_) noexcept;
+    EnumBaseNode(const soul::ast::Span& span_, Node* typeSpecifiers_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -62,35 +62,35 @@ public:
 class EnumClassNode : public CompoundNode
 {
 public:
-    EnumClassNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    EnumClassNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& classPos_) noexcept;
+    EnumClassNode(const soul::ast::Span& span_) noexcept;
+    EnumClassNode(const soul::ast::Span& span_, const soul::ast::Span& classSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline const soul::ast::SourcePos& ClassPos() const noexcept { return classPos; }
+    inline const soul::ast::Span& ClassSpan() const noexcept { return classSpan; }
 private:
-    soul::ast::SourcePos classPos;
+    soul::ast::Span classSpan;
 };
 
 class EnumStructNode : public CompoundNode
 {
 public:
-    EnumStructNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    EnumStructNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& structPos_) noexcept;
+    EnumStructNode(const soul::ast::Span& span_) noexcept;
+    EnumStructNode(const soul::ast::Span& span_, const soul::ast::Span& structSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline const soul::ast::SourcePos& StructPos() const noexcept { return structPos; }
+    inline const soul::ast::Span& StructSpan() const noexcept { return structSpan; }
 private:
-    soul::ast::SourcePos structPos;
+    soul::ast::Span structSpan;
 };
 
 class EnumNode : public Node
 {
 public:
-    EnumNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    EnumNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -98,26 +98,26 @@ public:
 class EnumeratorDefinitionNode : public CompoundNode
 {
 public:
-    EnumeratorDefinitionNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    EnumeratorDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* enumerator_, Node* value_, const soul::ast::SourcePos& assignPos_) noexcept;
+    EnumeratorDefinitionNode(const soul::ast::Span& span_) noexcept;
+    EnumeratorDefinitionNode(const soul::ast::Span& span_, Node* enumerator_, Node* value_, const soul::ast::Span& assignSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* Enumerator() const noexcept { return enumerator.get(); }
     inline Node* GetValue() const noexcept { return value.get(); }
-    inline const soul::ast::SourcePos& AssignPos() const noexcept { return assignPos; }
+    inline const soul::ast::Span& AssignSpan() const noexcept { return assignSpan; }
 private:
     std::unique_ptr<Node> enumerator;
     std::unique_ptr<Node> value;
-    soul::ast::SourcePos assignPos;
+    soul::ast::Span assignSpan;
 };
 
 class EnumeratorNode : public CompoundNode
 {
 public:
-    EnumeratorNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    EnumeratorNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* attributes_) noexcept;
+    EnumeratorNode(const soul::ast::Span& span_) noexcept;
+    EnumeratorNode(const soul::ast::Span& span_, Node* identifier_, Node* attributes_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -132,8 +132,8 @@ private:
 class ElaboratedEnumSpecifierNode : public UnaryNode
 {
 public:
-    ElaboratedEnumSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ElaboratedEnumSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* enumName_) noexcept;
+    ElaboratedEnumSpecifierNode(const soul::ast::Span& span_) noexcept;
+    ElaboratedEnumSpecifierNode(const soul::ast::Span& span_, Node* enumName_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -141,8 +141,8 @@ public:
 class OpaqueEnumDeclarationNode : public CompoundNode
 {
 public:
-    OpaqueEnumDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    OpaqueEnumDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* enumKey_, Node* enumHeadName_, Node* enumBase_, Node* attributes_, Node* semicolon_) noexcept;
+    OpaqueEnumDeclarationNode(const soul::ast::Span& span_) noexcept;
+    OpaqueEnumDeclarationNode(const soul::ast::Span& span_, Node* enumKey_, Node* enumHeadName_, Node* enumBase_, Node* attributes_, Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;

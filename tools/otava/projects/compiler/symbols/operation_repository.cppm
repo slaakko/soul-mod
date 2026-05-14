@@ -1,7 +1,7 @@
 export module otava.symbols.operation.repository;
 
 import std;
-import soul.ast.source.pos;
+import soul.ast.span;
 
 export namespace otava::symbols {
 
@@ -20,7 +20,7 @@ public:
     virtual ~Operation();
     inline const std::u32string& GroupName() const noexcept { return groupName; }
     inline int Arity() const noexcept { return arity; }
-    virtual FunctionSymbol* Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) = 0;
+    virtual FunctionSymbol* Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) = 0;
 private:
     std::u32string groupName;
     int arity;
@@ -32,7 +32,7 @@ public:
     OperationGroup(const std::u32string& name_);
     inline const std::u32string& Name() const noexcept { return name; }
     void AddOperation(Operation* operation);
-    FunctionSymbol* GetOperation(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos,
+    FunctionSymbol* GetOperation(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::FullSpan& fullSpan,
         otava::symbols::Context* context);
 private:
     std::u32string name;
@@ -46,7 +46,7 @@ public:
     OperationRepository();
     void AddOperation(Operation* operation);
     FunctionSymbol* GetOperation(const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context);
 private:
     OperationGroup* GetOrInsertOperationGroup(const std::u32string& operationGroupName);
     std::map<std::u32string, OperationGroup*> groupMap;
@@ -54,10 +54,10 @@ private:
     std::vector<std::unique_ptr<Operation>> operations;
 };
 
-FunctionDefinitionSymbol* GenerateClassDefaultCtor(ClassTypeSymbol* classType, const soul::ast::SourcePos& sourcePos, Context* context);
-FunctionDefinitionSymbol* GenerateClassCopyCtor(ClassTypeSymbol* classType, const soul::ast::SourcePos& sourcePos, Context* context);
-FunctionDefinitionSymbol* GenerateClassMoveCtor(ClassTypeSymbol* classType, const soul::ast::SourcePos& sourcePos, Context* context);
-FunctionDefinitionSymbol* GenerateClassCopyAssignment(ClassTypeSymbol* classType, const soul::ast::SourcePos& sourcePos, Context* context);
-FunctionDefinitionSymbol* GenerateClassMoveAssignment(ClassTypeSymbol* classType, const soul::ast::SourcePos& sourcePos, Context* context);
+FunctionDefinitionSymbol* GenerateClassDefaultCtor(ClassTypeSymbol* classType, const soul::ast::FullSpan& fullSpan, Context* context);
+FunctionDefinitionSymbol* GenerateClassCopyCtor(ClassTypeSymbol* classType, const soul::ast::FullSpan& fullSpan, Context* context);
+FunctionDefinitionSymbol* GenerateClassMoveCtor(ClassTypeSymbol* classType, const soul::ast::FullSpan& fullSpan, Context* context);
+FunctionDefinitionSymbol* GenerateClassCopyAssignment(ClassTypeSymbol* classType, const soul::ast::FullSpan& fullSpan, Context* context);
+FunctionDefinitionSymbol* GenerateClassMoveAssignment(ClassTypeSymbol* classType, const soul::ast::FullSpan& fullSpan, Context* context);
 
 } // namespace otava::symbols

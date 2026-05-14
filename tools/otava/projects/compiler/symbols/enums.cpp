@@ -77,11 +77,11 @@ void EnumeratedTypeSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-otava::intermediate::Type* EnumeratedTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+otava::intermediate::Type* EnumeratedTypeSymbol::IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (underlyingType)
     {
-        return underlyingType->IrType(emitter, sourcePos, context);
+        return underlyingType->IrType(emitter, fullSpan, context);
     }
     else
     {
@@ -325,7 +325,7 @@ void EnumCreator::Visit(otava::ast::EnumeratorDefinitionNode& node)
     Symbol* currentSymbol = context->GetSymbolTable()->CurrentScope()->GetSymbol();
     if (!currentSymbol->IsEnumeratedTypeSymbol())
     {
-        ThrowException("otava.symbols.enums: EnumCreator(): enum scope expected", node.GetSourcePos(), context);
+        ThrowException("otava.symbols.enums: EnumCreator(): enum scope expected", context->MakeFullSpan(node.GetSpan()), context);
     }
     EnumeratedTypeSymbol* enumType = static_cast<EnumeratedTypeSymbol*>(currentSymbol);
     TypeSymbol* valueType = enumType->UnderlyingType();
@@ -441,12 +441,12 @@ void EndEnumType(otava::ast::Node* node, Context* context)
     Symbol* currentSymbol = context->GetSymbolTable()->CurrentScope()->GetSymbol();
     if (!currentSymbol->IsEnumeratedTypeSymbol())
     {
-        ThrowException("cpp20.symbols.enums: EndEnumeratedType(): enum scope expected", node->GetSourcePos(), context);
+        ThrowException("cpp20.symbols.enums: EndEnumeratedType(): enum scope expected", context->MakeFullSpan(node->GetSpan()), context);
     }
     EnumeratedTypeSymbol* enumType = static_cast<EnumeratedTypeSymbol*>(currentSymbol);
     context->GetSymbolTable()->EndEnumeratedType();
     context->GetSymbolTable()->EndScope();
-    BindEnumType(enumType, node->GetSourcePos(), context);
+    BindEnumType(enumType, context->MakeFullSpan(node->GetSpan()), context);
 }
 
 void ProcessEnumForwardDeclaration(otava::ast::Node* node, Context* context)
@@ -466,7 +466,7 @@ EnumTypeDefaultCtor::EnumTypeDefaultCtor(EnumeratedTypeSymbol* enumType_, Contex
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     SetNoExcept();
 }
 
@@ -498,17 +498,17 @@ void EnumTypeDefaultCtor::Resolve(SymbolTable& symbolTable, Context* context)
 }
 
 void EnumTypeDefaultCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     if ((flags & OperationFlags::defaultInit) != OperationFlags::none)
     {
-        emitter.Stack().Push(enumType->IrType(emitter, sourcePos, context)->DefaultValue());
+        emitter.Stack().Push(enumType->IrType(emitter, fullSpan, context)->DefaultValue());
         OperationFlags storeFlags = OperationFlags::none;
         if ((flags & OperationFlags::storeDeref) != OperationFlags::none)
         {
             storeFlags = storeFlags | OperationFlags::deref;
         }
-        args[0]->Store(emitter, storeFlags, sourcePos, context);
+        args[0]->Store(emitter, storeFlags, fullSpan, context);
     }
 }
 
@@ -521,9 +521,9 @@ EnumTypeCopyCtor::EnumTypeCopyCtor(EnumeratedTypeSymbol* enumType_, Context* con
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType);
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    AddParameter(thatParam, soul::ast::FullSpan(), context);
     SetNoExcept();
 }
 
@@ -555,15 +555,15 @@ void EnumTypeCopyCtor::Resolve(SymbolTable& symbolTable, Context* context)
 }
 
 void EnumTypeCopyCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
     OperationFlags storeFlags = OperationFlags::none;
     if ((flags & OperationFlags::storeDeref) != OperationFlags::none)
     {
         storeFlags = storeFlags | OperationFlags::deref;
     }
-    args[0]->Store(emitter, storeFlags, sourcePos, context);
+    args[0]->Store(emitter, storeFlags, fullSpan, context);
 }
 
 EnumTypeMoveCtor::EnumTypeMoveCtor(const std::u32string& name_) : FunctionSymbol(SymbolKind::enumTypeMoveCtor, name_), enumType(nullptr)
@@ -575,9 +575,9 @@ EnumTypeMoveCtor::EnumTypeMoveCtor(EnumeratedTypeSymbol* enumType_, Context* con
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType->AddRValueRef(context));
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    AddParameter(thatParam, soul::ast::FullSpan(), context);
     SetNoExcept();
 }
 
@@ -609,9 +609,9 @@ void EnumTypeMoveCtor::Resolve(SymbolTable& symbolTable, Context* context)
 }
 
 void EnumTypeMoveCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* rvalueRefValue = emitter.Stack().Pop();
     emitter.Stack().Push(emitter.EmitLoad(rvalueRefValue));
     OperationFlags storeFlags = OperationFlags::none;
@@ -619,7 +619,7 @@ void EnumTypeMoveCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressio
     {
         storeFlags = storeFlags | OperationFlags::deref;
     }
-    args[0]->Store(emitter, storeFlags, sourcePos, context);
+    args[0]->Store(emitter, storeFlags, fullSpan, context);
 }
 
 EnumTypeCopyAssignment::EnumTypeCopyAssignment(const std::u32string& name_) : FunctionSymbol(SymbolKind::enumTypeCopyAssignment, name_), enumType(nullptr)
@@ -632,9 +632,9 @@ EnumTypeCopyAssignment::EnumTypeCopyAssignment(EnumeratedTypeSymbol* enumType_, 
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType);
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    AddParameter(thatParam, soul::ast::FullSpan(), context);
     SetNoExcept();
 }
 
@@ -666,10 +666,10 @@ void EnumTypeCopyAssignment::Resolve(SymbolTable& symbolTable, Context* context)
 }
 
 void EnumTypeCopyAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
-    args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+    args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
+    args[0]->Store(emitter, OperationFlags::none, fullSpan, context);
     emitter.Stack().Push(context->Ptr());
 }
 
@@ -683,9 +683,9 @@ EnumTypeMoveAssignment::EnumTypeMoveAssignment(EnumeratedTypeSymbol* enumType_, 
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType->AddRValueRef(context));
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    AddParameter(thatParam, soul::ast::FullSpan(), context);
     SetNoExcept();
 }
 
@@ -717,12 +717,12 @@ void EnumTypeMoveAssignment::Resolve(SymbolTable& symbolTable, Context* context)
 }
 
 void EnumTypeMoveAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* refValue = emitter.Stack().Pop();
     emitter.Stack().Push(emitter.EmitLoad(refValue));
-    args[0]->Store(emitter, OperationFlags::setPtr, sourcePos, context);
+    args[0]->Store(emitter, OperationFlags::setPtr, fullSpan, context);
     emitter.Stack().Push(context->Ptr());
 }
 
@@ -735,9 +735,9 @@ EnumTypeEqual::EnumTypeEqual(EnumeratedTypeSymbol* enumType_, Context* context) 
     SetFunctionKind(FunctionKind::function);
     SetAccess(Access::public_);
     ParameterSymbol* leftParam = new ParameterSymbol(U"left", enumType);
-    AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
+    AddParameter(leftParam, soul::ast::FullSpan(), nullptr);
     ParameterSymbol* rightParam = new ParameterSymbol(U"right", enumType);
-    AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
+    AddParameter(rightParam, soul::ast::FullSpan(), nullptr);
     TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType);
     SetReturnType(boolType, context);
     SetNoExcept();
@@ -771,11 +771,11 @@ void EnumTypeEqual::Resolve(SymbolTable& symbolTable, Context* context)
 }
 
 void EnumTypeEqual::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    args[0]->Load(emitter, flags, sourcePos, context);
+    args[0]->Load(emitter, flags, fullSpan, context);
     otava::intermediate::Value* left = emitter.Stack().Pop();
-    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* right = emitter.Stack().Pop();
     emitter.Stack().Push(emitter.EmitEqual(left, right));
 }
@@ -789,9 +789,9 @@ EnumTypeLess::EnumTypeLess(EnumeratedTypeSymbol* enumType_, Context* context) : 
     SetFunctionKind(FunctionKind::function);
     SetAccess(Access::public_);
     ParameterSymbol* leftParam = new ParameterSymbol(U"left", enumType);
-    AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
+    AddParameter(leftParam, soul::ast::FullSpan(), nullptr);
     ParameterSymbol* rightParam = new ParameterSymbol(U"right", enumType);
-    AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
+    AddParameter(rightParam, soul::ast::FullSpan(), nullptr);
     TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType);
     SetReturnType(boolType, context);
     SetNoExcept();
@@ -825,52 +825,52 @@ void EnumTypeLess::Resolve(SymbolTable& symbolTable, Context* context)
 }
 
 void EnumTypeLess::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    args[0]->Load(emitter, flags, sourcePos, context);
+    args[0]->Load(emitter, flags, fullSpan, context);
     otava::intermediate::Value* left = emitter.Stack().Pop();
-    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* right = emitter.Stack().Pop();
     emitter.Stack().Push(emitter.EmitLess(left, right));
 }
 
-void BindEnumType(EnumeratedTypeSymbol* enumType, const soul::ast::SourcePos& sourcePos, Context* context)
+void BindEnumType(EnumeratedTypeSymbol* enumType, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (enumType->IsBound()) return;
     enumType->SetBound();
     Scope* scope = enumType->GetScope();
-    FunctionGroupSymbol* constructorGroup = scope->GetOrInsertFunctionGroup(U"@constructor", sourcePos, context);
+    FunctionGroupSymbol* constructorGroup = scope->GetOrInsertFunctionGroup(U"@constructor", fullSpan, context);
     EnumTypeDefaultCtor* enumTypeDefaultCtor = new EnumTypeDefaultCtor(enumType, context);
-    scope->AddSymbol(enumTypeDefaultCtor, sourcePos, context);
+    scope->AddSymbol(enumTypeDefaultCtor, fullSpan, context);
     constructorGroup->AddFunction(enumTypeDefaultCtor);
     EnumTypeCopyCtor* enumTypeCopyCtor = new EnumTypeCopyCtor(enumType, context);
-    scope->AddSymbol(enumTypeCopyCtor, sourcePos, context);
+    scope->AddSymbol(enumTypeCopyCtor, fullSpan, context);
     constructorGroup->AddFunction(enumTypeCopyCtor);
     EnumTypeMoveCtor* enumTypeMoveCtor = new EnumTypeMoveCtor(enumType, context);
-    scope->AddSymbol(enumTypeMoveCtor, sourcePos, context);
+    scope->AddSymbol(enumTypeMoveCtor, fullSpan, context);
     constructorGroup->AddFunction(enumTypeMoveCtor);
 
-    FunctionGroupSymbol* destructorGroup = scope->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
+    FunctionGroupSymbol* destructorGroup = scope->GetOrInsertFunctionGroup(U"@destructor", fullSpan, context);
     TrivialDestructor* trivialDestructor = new TrivialDestructor(enumType, context);
-    scope->AddSymbol(trivialDestructor, sourcePos, context);
+    scope->AddSymbol(trivialDestructor, fullSpan, context);
     destructorGroup->AddFunction(trivialDestructor);
 
-    FunctionGroupSymbol* assignmentGroup = scope->GetOrInsertFunctionGroup(U"operator=", sourcePos, context);
+    FunctionGroupSymbol* assignmentGroup = scope->GetOrInsertFunctionGroup(U"operator=", fullSpan, context);
     EnumTypeCopyAssignment* enumTypeCopyAssignment = new EnumTypeCopyAssignment(enumType, context);
-    scope->AddSymbol(enumTypeCopyAssignment, sourcePos, context);
+    scope->AddSymbol(enumTypeCopyAssignment, fullSpan, context);
     assignmentGroup->AddFunction(enumTypeCopyAssignment);
     EnumTypeMoveAssignment* enumTypeMoveAssignment = new EnumTypeMoveAssignment(enumType, context);
-    scope->AddSymbol(enumTypeMoveAssignment, sourcePos, context);
+    scope->AddSymbol(enumTypeMoveAssignment, fullSpan, context);
     assignmentGroup->AddFunction(enumTypeMoveAssignment);
 
-    FunctionGroupSymbol* equalGroup = scope->GetOrInsertFunctionGroup(U"operator==", sourcePos, context);
+    FunctionGroupSymbol* equalGroup = scope->GetOrInsertFunctionGroup(U"operator==", fullSpan, context);
     EnumTypeEqual* enumTypeEqual = new EnumTypeEqual(enumType, context);
-    scope->AddSymbol(enumTypeEqual, sourcePos, context);
+    scope->AddSymbol(enumTypeEqual, fullSpan, context);
     equalGroup->AddFunction(enumTypeEqual);
 
-    FunctionGroupSymbol* lessGroup = scope->GetOrInsertFunctionGroup(U"operator<", sourcePos, context);
+    FunctionGroupSymbol* lessGroup = scope->GetOrInsertFunctionGroup(U"operator<", fullSpan, context);
     EnumTypeLess* enumTypeLess = new EnumTypeLess(enumType, context);
-    scope->AddSymbol(enumTypeLess, sourcePos, context);
+    scope->AddSymbol(enumTypeLess, fullSpan, context);
     lessGroup->AddFunction(enumTypeLess);
 }
 

@@ -6,7 +6,7 @@
 export module otava.symbols.scope;
 
 import std;
-import soul.ast.source.pos;
+import soul.ast.span;
 import otava.symbols.lookup;
 
 export namespace otava::symbols {
@@ -74,7 +74,7 @@ public:
     void Install(Symbol* symbol, Context* context);
     void Install(Symbol* symbol, Symbol* from, Context* context);
     void Uninstall(Symbol* symbol);
-    Symbol* Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, const soul::ast::SourcePos& sourcePos, 
+    Symbol* Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, const soul::ast::FullSpan& fullSpan, 
         Context* context, LookupFlags flags) const;
     inline bool IsBlockScope() const noexcept { return kind == ScopeKind::blockScope; }
     inline bool IsClassScope() const noexcept { return kind == ScopeKind::classScope; }
@@ -90,7 +90,7 @@ public:
     virtual ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(std::set<Scope*>& visited) const { return nullptr; }
     virtual void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags, 
         std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const;
-    virtual void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context);
+    virtual void AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context);
     virtual std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol);
     virtual std::vector<Scope*> ParentScopes() const { return std::vector<Scope*>(); }
     virtual void AddParentScope(Scope* parentScope_);
@@ -98,15 +98,15 @@ public:
     virtual void PopParentScope();
     virtual bool HasParentScope(const Scope* parentScope) const noexcept { return false; }
     virtual void ClearParentScopes() {}
-    virtual void AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context);
-    virtual void AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::SourcePos& sourcePos, Context* context);
-    virtual void AddUsingDirective(NamespaceSymbol* ns, const soul::ast::SourcePos& sourcePos, Context* context);
-    virtual ClassGroupSymbol* GetOrInsertClassGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context);
-    virtual FunctionGroupSymbol* GetOrInsertFunctionGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context);
-    virtual ConceptGroupSymbol* GetOrInsertConceptGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context);
-    virtual VariableGroupSymbol* GetOrInsertVariableGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context);
-    virtual AliasGroupSymbol* GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context);
-    virtual EnumGroupSymbol* GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context);
+    virtual void AddBaseScope(Scope* baseScope, const soul::ast::FullSpan& fullSpan, Context* context);
+    virtual void AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::FullSpan& fullSpan, Context* context);
+    virtual void AddUsingDirective(NamespaceSymbol* ns, const soul::ast::FullSpan& fullSpan, Context* context);
+    virtual ClassGroupSymbol* GetOrInsertClassGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context);
+    virtual FunctionGroupSymbol* GetOrInsertFunctionGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context);
+    virtual ConceptGroupSymbol* GetOrInsertConceptGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context);
+    virtual VariableGroupSymbol* GetOrInsertVariableGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context);
+    virtual AliasGroupSymbol* GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context);
+    virtual EnumGroupSymbol* GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context);
     virtual void Import(Scope* that, Context* context);
 private:
     ScopeKind kind;
@@ -126,24 +126,24 @@ public:
     bool IsContainerScope() const noexcept override { return true; }
     Scope* GetClassScope() const noexcept override;
     Scope* GetNamespaceScope() const noexcept override;
-    void AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void AddBaseScope(Scope* baseScope, const soul::ast::FullSpan& fullSpan, Context* context) override;
     Symbol* GetSymbol() noexcept override;
     ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(std::set<Scope*>& visited) const override;
     inline ContainerSymbol* GetContainerSymbol() const noexcept { return containerSymbol; }
     inline void SetContainerSymbol(ContainerSymbol* containerSymbol_) noexcept { containerSymbol = containerSymbol_; }
-    void AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    void AddUsingDirective(NamespaceSymbol* ns, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::FullSpan& fullSpan, Context* context) override;
+    void AddUsingDirective(NamespaceSymbol* ns, const soul::ast::FullSpan& fullSpan, Context* context) override;
     std::string FullName() const override;
     void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags, 
         std::vector<Symbol*>& symbols, std::set<const Scope*>& visited, Context* context) const override;
-    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context) override;
     std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol) override;
-    ClassGroupSymbol* GetOrInsertClassGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    FunctionGroupSymbol* GetOrInsertFunctionGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    ConceptGroupSymbol* GetOrInsertConceptGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    VariableGroupSymbol* GetOrInsertVariableGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    AliasGroupSymbol* GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    EnumGroupSymbol* GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    ClassGroupSymbol* GetOrInsertClassGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context) override;
+    FunctionGroupSymbol* GetOrInsertFunctionGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context) override;
+    ConceptGroupSymbol* GetOrInsertConceptGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context) override;
+    VariableGroupSymbol* GetOrInsertVariableGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context) override;
+    AliasGroupSymbol* GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context) override;
+    EnumGroupSymbol* GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context) override;
     bool HasParentScope(const Scope* parentScope) const noexcept override;
 private:
     std::vector<Scope*> parentScopes;

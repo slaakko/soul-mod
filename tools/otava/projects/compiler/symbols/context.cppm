@@ -3,7 +3,7 @@ export module otava.symbols.context;
 import std;
 import soul.lexer.base;
 import soul.lexer.file.map;
-import soul.ast.source.pos;
+import soul.ast.span;
 import otava.ast.node;
 import otava.ast.function;
 import otava.intermediate.data;
@@ -138,6 +138,7 @@ public:
     SymbolTable* GetSymbolTable() noexcept { return symbolTable; }
     void SetSymbolTable(SymbolTable* symbolTable_) noexcept;
     Module* GetModule() noexcept;
+    soul::ast::FullSpan MakeFullSpan(const soul::ast::Span& span) const;
     inline TraceInfo* GetTraceInfo() const noexcept { return traceInfo; }
     inline void SetTraceInfo(TraceInfo* traceInfo_) noexcept { traceInfo = traceInfo_; }
     void SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_) noexcept;
@@ -148,7 +149,7 @@ public:
     inline BoundFunctionNode* ReleaseBoundFunction() noexcept { return boundFunction.release(); }
     void PushBoundFunction(BoundFunctionNode* boundFunction_);
     void PopBoundFunction();
-    BoundExpressionNode* GetThisPtr(const soul::ast::SourcePos& sourcePos);
+    BoundExpressionNode* GetThisPtr(const soul::ast::FullSpan& fullSpan);
     EvaluationContext* GetEvaluationContext() noexcept;
     std::string FileName() const;
     void SetFileName(const std::string& fileName_);
@@ -209,8 +210,8 @@ public:
     void PushTemplateParameterMap(std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>* templateParamMap);
     void PopTemplateParameterMap();
     inline std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>* TemplateParameterMap() const noexcept { return templateParameterMap; }
-    inline void SetSourcePos(const soul::ast::SourcePos& sourcePos_) noexcept { sourcePos = sourcePos_; }
-    inline const soul::ast::SourcePos& GetSourcePos() const noexcept { return sourcePos; }
+    inline void SetFullSpan(const soul::ast::FullSpan& fullSpan_) noexcept { fullSpan = fullSpan_; }
+    inline const soul::ast::FullSpan& GetFullSpan() const noexcept { return fullSpan; }
     inline TypeSymbol* ArgType() noexcept { return argType; }
     inline void SetArgType(TypeSymbol* argType_) noexcept { argType = argType_; }
     inline TypeSymbol* ParamType() noexcept { return paramType; }
@@ -314,7 +315,7 @@ private:
     FunctionDefinitionSymbolSet* functionDefinitionSymbolSet;
     std::stack< std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>*> templateParameterMapStack;
     std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>* templateParameterMap;
-    soul::ast::SourcePos sourcePos;
+    soul::ast::FullSpan fullSpan;
     TypeSymbol* argType;
     TypeSymbol* paramType;
     int totalFunctionsCompiled;

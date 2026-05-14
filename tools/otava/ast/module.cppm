@@ -13,8 +13,8 @@ export namespace otava::ast {
 class ModuleDeclarationNode : public CompoundNode
 {
 public:
-    ModuleDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ModuleDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* exprt_, Node* modle_, Node* moduleName_, Node* modulePartition_, Node* attributes_, 
+    ModuleDeclarationNode(const soul::ast::Span& span_) noexcept;
+    ModuleDeclarationNode(const soul::ast::Span& span_, Node* exprt_, Node* modle_, Node* moduleName_, Node* modulePartition_, Node* attributes_,
         Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -38,28 +38,28 @@ private:
 class ExportDeclarationNode : public CompoundNode
 {
 public:
-    ExportDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ExportDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* exprt_, Node* subject_, 
-        const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) noexcept;
+    ExportDeclarationNode(const soul::ast::Span& span_) noexcept;
+    ExportDeclarationNode(const soul::ast::Span& span_, Node* exprt_, Node* subject_,
+        const soul::ast::Span& lbSpan_, const soul::ast::Span& rbSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* Export() const noexcept { return exprt.get(); }
     inline Node* Subject() const noexcept { return subject.get(); }
-    inline const soul::ast::SourcePos& LBracePos() const noexcept { return lbPos; }
-    inline const soul::ast::SourcePos& RBracePos() const noexcept { return rbPos; }
+    inline const soul::ast::Span& LBraceSpan() const noexcept { return lbSpan; }
+    inline const soul::ast::Span& RBraceSpan() const noexcept { return rbSpan; }
 private:
     std::unique_ptr<Node> exprt;
     std::unique_ptr<Node> subject;
-    soul::ast::SourcePos lbPos;
-    soul::ast::SourcePos rbPos;
+    soul::ast::Span lbSpan;
+    soul::ast::Span rbSpan;
 };
 
 class ExportNode : public Node
 {
 public:
-    ExportNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ExportNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -67,7 +67,7 @@ public:
 class ImportNode : public Node
 {
 public:
-    ImportNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ImportNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -75,8 +75,8 @@ public:
 class ImportDeclarationNode : public CompoundNode
 {
 public:
-    ImportDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ImportDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* imprt_, Node* subject_, Node* attributes_, Node* semicolon_) noexcept;
+    ImportDeclarationNode(const soul::ast::Span& span_) noexcept;
+    ImportDeclarationNode(const soul::ast::Span& span_, Node* imprt_, Node* subject_, Node* attributes_, Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -95,8 +95,8 @@ private:
 class ModulePartitionNode : public UnaryNode
 {
 public:
-    ModulePartitionNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ModulePartitionNode(const soul::ast::SourcePos& sourcePos_, Node* moduleName_) noexcept;
+    ModulePartitionNode(const soul::ast::Span& span_) noexcept;
+    ModulePartitionNode(const soul::ast::Span& span_, Node* moduleName_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -104,7 +104,7 @@ public:
 class ModuleNode : public Node
 {
 public:
-    ModuleNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ModuleNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -112,8 +112,8 @@ public:
 class GlobalModuleFragmentNode : public CompoundNode
 {
 public:
-    GlobalModuleFragmentNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    GlobalModuleFragmentNode(const soul::ast::SourcePos& sourcePos_, Node* modle_, Node* semicolon_, Node* declarations_) noexcept;
+    GlobalModuleFragmentNode(const soul::ast::Span& span_) noexcept;
+    GlobalModuleFragmentNode(const soul::ast::Span& span_, Node* modle_, Node* semicolon_, Node* declarations_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -130,8 +130,8 @@ private:
 class PrivateModuleFragmentNode : public CompoundNode
 {
 public:
-    PrivateModuleFragmentNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    PrivateModuleFragmentNode(const soul::ast::SourcePos& sourcePos_, Node* modle_, Node* colon_, Node* privat_, Node* semicolon_, Node* declarations_) noexcept;
+    PrivateModuleFragmentNode(const soul::ast::Span& span_) noexcept;
+    PrivateModuleFragmentNode(const soul::ast::Span& span_, Node* modle_, Node* colon_, Node* privat_, Node* semicolon_, Node* declarations_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -152,8 +152,8 @@ private:
 class AngleHeaderName : public Node
 {
 public:
-    AngleHeaderName(const soul::ast::SourcePos& sourcePos_) noexcept;
-    AngleHeaderName(const soul::ast::SourcePos& sourcePos_, const std::u32string& rep_);
+    AngleHeaderName(const soul::ast::Span& span_) noexcept;
+    AngleHeaderName(const soul::ast::Span& span_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -166,8 +166,8 @@ private:
 class QuoteHeaderName : public Node
 {
 public:
-    QuoteHeaderName(const soul::ast::SourcePos& sourcePos_) noexcept;
-    QuoteHeaderName(const soul::ast::SourcePos& sourcePos_, const std::u32string& rep_);
+    QuoteHeaderName(const soul::ast::Span& span_) noexcept;
+    QuoteHeaderName(const soul::ast::Span& span_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;

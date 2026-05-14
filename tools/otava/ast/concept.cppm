@@ -13,8 +13,8 @@ export namespace otava::ast {
 class ConceptDefinitionNode : public CompoundNode
 {
 public:
-    ConceptDefinitionNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ConceptDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* conceptName_, Node* assign_, Node* constraintExpr_, Node* semicolon_) noexcept;
+    ConceptDefinitionNode(const soul::ast::Span& span_) noexcept;
+    ConceptDefinitionNode(const soul::ast::Span& span_, Node* conceptName_, Node* assign_, Node* constraintExpr_, Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -33,8 +33,8 @@ private:
 class RequiresExprNode : public CompoundNode
 {
 public:
-    RequiresExprNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    RequiresExprNode(const soul::ast::SourcePos& sourcePos_, Node* params_, Node* body_) noexcept;
+    RequiresExprNode(const soul::ast::Span& span_) noexcept;
+    RequiresExprNode(const soul::ast::Span& span_, Node* params_, Node* body_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -49,25 +49,25 @@ private:
 class RequirementBodyNode : public SequenceNode
 {
 public:
-    RequirementBodyNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    RequirementBodyNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void SetLBracePos(const soul::ast::SourcePos& lbPos_) noexcept;
-    void SetRBracePos(const soul::ast::SourcePos& rbPos_) noexcept;
-    inline const soul::ast::SourcePos& LBracePos() const noexcept { return lbPos; }
-    inline const soul::ast::SourcePos& RBracePos() const noexcept { return rbPos; }
+    void SetLBraceSpan(const soul::ast::Span& lbSpan_) noexcept;
+    void SetRBraceSpan(const soul::ast::Span& rbSpan_) noexcept;
+    inline const soul::ast::Span& LBraceSpan() const noexcept { return lbSpan; }
+    inline const soul::ast::Span& RBraceSpan() const noexcept { return rbSpan; }
 private:
-    soul::ast::SourcePos lbPos;
-    soul::ast::SourcePos rbPos;
+    soul::ast::Span lbSpan;
+    soul::ast::Span rbSpan;
 };
 
 class SimpleRequirementNode : public BinaryNode
 {
 public:
-    SimpleRequirementNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    SimpleRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, Node* semicolon_) noexcept;
+    SimpleRequirementNode(const soul::ast::Span& span_) noexcept;
+    SimpleRequirementNode(const soul::ast::Span& span_, Node* expr_, Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -75,8 +75,8 @@ public:
 class TypeRequirementNode : public CompoundNode
 {
 public:
-    TypeRequirementNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    TypeRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* typeName_, Node* semicolon_) noexcept;
+    TypeRequirementNode(const soul::ast::Span& span_) noexcept;
+    TypeRequirementNode(const soul::ast::Span& span_, Node* nns_, Node* typeName_, Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -93,9 +93,9 @@ private:
 class CompoundRequirementNode : public CompoundNode
 {
 public:
-    CompoundRequirementNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    CompoundRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, Node* noexcept_, Node* returnTypeRequirement_, Node* semicolon_, 
-        const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) noexcept;
+    CompoundRequirementNode(const soul::ast::Span& span_) noexcept;
+    CompoundRequirementNode(const soul::ast::Span& span_, Node* expr_, Node* noexcept_, Node* returnTypeRequirement_, Node* semicolon_,
+        const soul::ast::Span& lbSpan_, const soul::ast::Span& rbSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -104,22 +104,22 @@ public:
     inline Node* NoExcept() const noexcept { return noexceptNode.get(); }
     inline Node* ReturnTypeRequirement() const noexcept { return returnTypeRequirement.get(); }
     inline Node* Semicolon() const noexcept { return semicolon.get(); }
-    inline const soul::ast::SourcePos& LBracePos() const noexcept { return lbPos; }
-    inline const soul::ast::SourcePos& RBracePos() const noexcept { return rbPos; }
+    inline const soul::ast::Span& LBraceSpan() const noexcept { return lbSpan; }
+    inline const soul::ast::Span& RBraceSpan() const noexcept { return rbSpan; }
 private:
     std::unique_ptr<Node> expr;
     std::unique_ptr<Node> noexceptNode;
     std::unique_ptr<Node> returnTypeRequirement;
     std::unique_ptr<Node> semicolon;
-    soul::ast::SourcePos lbPos;
-    soul::ast::SourcePos rbPos;
+    soul::ast::Span lbSpan;
+    soul::ast::Span rbSpan;
 };
 
 class ReturnTypeRequirementNode : public UnaryNode
 {
 public:
-    ReturnTypeRequirementNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ReturnTypeRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_) noexcept;
+    ReturnTypeRequirementNode(const soul::ast::Span& span_) noexcept;
+    ReturnTypeRequirementNode(const soul::ast::Span& span_, Node* typeConstraint_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -127,8 +127,8 @@ public:
 class NestedRequirementNode : public BinaryNode
 {
 public:
-    NestedRequirementNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    NestedRequirementNode(const soul::ast::SourcePos& sourcePos_, Node* constraintExpression_, Node* semicolon_) noexcept;
+    NestedRequirementNode(const soul::ast::Span& span_) noexcept;
+    NestedRequirementNode(const soul::ast::Span& span_, Node* constraintExpression_, Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -136,8 +136,8 @@ public:
 class TypeConstraintNode : public ListNode
 {
 public:
-    TypeConstraintNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    TypeConstraintNode(const soul::ast::SourcePos& sourcePos_, Node* conceptName_) noexcept;
+    TypeConstraintNode(const soul::ast::Span& span_) noexcept;
+    TypeConstraintNode(const soul::ast::Span& span_, Node* conceptName_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -145,22 +145,22 @@ public:
     inline void SetHasTemplateArgumentList() noexcept { hasTemplateArgumentList = true; }
     inline bool HasTemplateArgumentList() const noexcept { return hasTemplateArgumentList; }
     inline Node* ConceptName() const noexcept { return conceptName.get(); }
-    void SetLAnglePos(const soul::ast::SourcePos& laPos_) noexcept;
-    void SetRAnglePos(const soul::ast::SourcePos& raPos_) noexcept;
-    inline const soul::ast::SourcePos& LAnglePos() const noexcept { return laPos; }
-    inline const soul::ast::SourcePos& RAnglePos() const noexcept { return laPos; }
+    void SetLAngleSpan(const soul::ast::Span& laSpan_) noexcept;
+    void SetRAngleSpan(const soul::ast::Span& raSpan_) noexcept;
+    inline const soul::ast::Span& LAngleSpan() const noexcept { return laSpan; }
+    inline const soul::ast::Span& RAngleSpan() const noexcept { return laSpan; }
 private:
     std::unique_ptr<Node> conceptName;
     bool hasTemplateArgumentList;
-    soul::ast::SourcePos laPos;
-    soul::ast::SourcePos raPos;
+    soul::ast::Span laSpan;
+    soul::ast::Span raSpan;
 };
 
 class RequiresClauseNode : public UnaryNode
 {
 public:
-    RequiresClauseNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    RequiresClauseNode(const soul::ast::SourcePos& sourcePos_, Node* constraintLogicalOrExpr_) noexcept;
+    RequiresClauseNode(const soul::ast::Span& span_) noexcept;
+    RequiresClauseNode(const soul::ast::Span& span_, Node* constraintLogicalOrExpr_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };

@@ -50,67 +50,67 @@ std::string GenerateMainWrapper(otava::symbols::Context* context, int numParams)
     *           return @retval;
     *   }
     */
-    otava::ast::IdentifierNode* mainFn = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"main");
-    otava::ast::InvokeExprNode* mainFnCall = new otava::ast::InvokeExprNode(soul::ast::SourcePos(), mainFn);
+    otava::ast::IdentifierNode* mainFn = new otava::ast::IdentifierNode(soul::ast::Span(), U"main");
+    otava::ast::InvokeExprNode* mainFnCall = new otava::ast::InvokeExprNode(soul::ast::Span(), mainFn);
     if (numParams == 2)
     {
-        otava::ast::IdentifierNode* argcNode = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"argc");
+        otava::ast::IdentifierNode* argcNode = new otava::ast::IdentifierNode(soul::ast::Span(), U"argc");
         mainFnCall->AddNode(argcNode);
-        otava::ast::IdentifierNode* argvNode = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"argv");
+        otava::ast::IdentifierNode* argvNode = new otava::ast::IdentifierNode(soul::ast::Span(), U"argv");
         mainFnCall->AddNode(argvNode);
     }
-    otava::ast::IdentifierNode* retValDeclarator = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"@retval");
-    otava::ast::DeclSpecifierSequenceNode* retValDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::SourcePos());
-    retValDeclSpecifiers->AddNode(new otava::ast::IntNode(soul::ast::SourcePos()));
-    otava::ast::InitDeclaratorListNode* retValInitDeclarators = new otava::ast::InitDeclaratorListNode(soul::ast::SourcePos());
-    otava::ast::InitDeclaratorNode* retValInitDeclarator = new otava::ast::InitDeclaratorNode(soul::ast::SourcePos(), retValDeclarator, mainFnCall);
+    otava::ast::IdentifierNode* retValDeclarator = new otava::ast::IdentifierNode(soul::ast::Span(), U"@retval");
+    otava::ast::DeclSpecifierSequenceNode* retValDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::Span());
+    retValDeclSpecifiers->AddNode(new otava::ast::IntNode(soul::ast::Span()));
+    otava::ast::InitDeclaratorListNode* retValInitDeclarators = new otava::ast::InitDeclaratorListNode(soul::ast::Span());
+    otava::ast::InitDeclaratorNode* retValInitDeclarator = new otava::ast::InitDeclaratorNode(soul::ast::Span(), retValDeclarator, mainFnCall);
     retValInitDeclarators->AddNode(retValInitDeclarator);
     otava::ast::SimpleDeclarationNode* retValDeclaration = new otava::ast::SimpleDeclarationNode(
-        soul::ast::SourcePos(), retValDeclSpecifiers, retValInitDeclarators, nullptr, new otava::ast::SemicolonNode(soul::ast::SourcePos()));
-    otava::ast::DeclSpecifierSequenceNode* declSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::SourcePos());
-    declSpecifiers->AddNode(new otava::ast::IntNode(soul::ast::SourcePos()));
-    otava::ast::CompoundStatementNode* body = new otava::ast::CompoundStatementNode(soul::ast::SourcePos());
-    otava::ast::IdentifierNode* globalInitFn = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"__global_init__");
-    otava::ast::InvokeExprNode* globalInitFnCall = new otava::ast::InvokeExprNode(soul::ast::SourcePos(), globalInitFn);
-    otava::ast::ExpressionStatementNode* globalInitStmt = new otava::ast::ExpressionStatementNode(soul::ast::SourcePos(), globalInitFnCall, nullptr,
-        new otava::ast::SemicolonNode(soul::ast::SourcePos()));
+        soul::ast::Span(), retValDeclSpecifiers, retValInitDeclarators, nullptr, new otava::ast::SemicolonNode(soul::ast::Span()));
+    otava::ast::DeclSpecifierSequenceNode* declSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::Span());
+    declSpecifiers->AddNode(new otava::ast::IntNode(soul::ast::Span()));
+    otava::ast::CompoundStatementNode* body = new otava::ast::CompoundStatementNode(soul::ast::Span());
+    otava::ast::IdentifierNode* globalInitFn = new otava::ast::IdentifierNode(soul::ast::Span(), U"__global_init__");
+    otava::ast::InvokeExprNode* globalInitFnCall = new otava::ast::InvokeExprNode(soul::ast::Span(), globalInitFn);
+    otava::ast::ExpressionStatementNode* globalInitStmt = new otava::ast::ExpressionStatementNode(soul::ast::Span(), globalInitFnCall, nullptr,
+        new otava::ast::SemicolonNode(soul::ast::Span()));
     body->AddNode(globalInitStmt);
     body->AddNode(retValDeclaration);
-    otava::ast::Node* runAtExitsFn = otava::symbols::MakeTypeNameNodes(soul::ast::SourcePos(), U"std::run_at_exits");
-    otava::ast::InvokeExprNode* runAtExitsFnCall = new otava::ast::InvokeExprNode(soul::ast::SourcePos(), runAtExitsFn);
-    otava::ast::ExpressionStatementNode* runAtExitsStmt = new otava::ast::ExpressionStatementNode(soul::ast::SourcePos(), runAtExitsFnCall, nullptr,
-        new otava::ast::SemicolonNode(soul::ast::SourcePos()));
+    otava::ast::Node* runAtExitsFn = otava::symbols::MakeTypeNameNodes(soul::ast::FullSpan(), U"std::run_at_exits");
+    otava::ast::InvokeExprNode* runAtExitsFnCall = new otava::ast::InvokeExprNode(soul::ast::Span(), runAtExitsFn);
+    otava::ast::ExpressionStatementNode* runAtExitsStmt = new otava::ast::ExpressionStatementNode(soul::ast::Span(), runAtExitsFnCall, nullptr,
+        new otava::ast::SemicolonNode(soul::ast::Span()));
     body->AddNode(runAtExitsStmt);
-    otava::ast::IdentifierNode* globalDoneFn = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"__global_done__");
-    otava::ast::InvokeExprNode* globalDoneFnCall = new otava::ast::InvokeExprNode(soul::ast::SourcePos(), globalDoneFn);
-    otava::ast::ExpressionStatementNode* globalDoneStmt = new otava::ast::ExpressionStatementNode(soul::ast::SourcePos(), globalDoneFnCall, nullptr,
-        new otava::ast::SemicolonNode(soul::ast::SourcePos()));
+    otava::ast::IdentifierNode* globalDoneFn = new otava::ast::IdentifierNode(soul::ast::Span(), U"__global_done__");
+    otava::ast::InvokeExprNode* globalDoneFnCall = new otava::ast::InvokeExprNode(soul::ast::Span(), globalDoneFn);
+    otava::ast::ExpressionStatementNode* globalDoneStmt = new otava::ast::ExpressionStatementNode(soul::ast::Span(), globalDoneFnCall, nullptr,
+        new otava::ast::SemicolonNode(soul::ast::Span()));
     body->AddNode(globalDoneStmt);
-    otava::ast::IdentifierNode* retValVarId = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"@retval");
-    otava::ast::ReturnStatementNode* returnRetValStmt = new otava::ast::ReturnStatementNode(soul::ast::SourcePos(), retValVarId, nullptr, nullptr, soul::ast::SourcePos());
+    otava::ast::IdentifierNode* retValVarId = new otava::ast::IdentifierNode(soul::ast::Span(), U"@retval");
+    otava::ast::ReturnStatementNode* returnRetValStmt = new otava::ast::ReturnStatementNode(soul::ast::Span(), retValVarId, nullptr, nullptr, soul::ast::Span());
     body->AddNode(returnRetValStmt);
-    otava::ast::FunctionBodyNode* functionBody = new otava::ast::FunctionBodyNode(soul::ast::SourcePos(), body);
-    otava::ast::ParameterListNode* parameters = new otava::ast::ParameterListNode(soul::ast::SourcePos());
-    otava::ast::ParameterNode* argcParam = new otava::ast::ParameterNode(soul::ast::SourcePos());
-    otava::ast::DeclSpecifierSequenceNode* argcDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::SourcePos());
-    argcDeclSpecifiers->AddNode(new otava::ast::IntNode(soul::ast::SourcePos()));
+    otava::ast::FunctionBodyNode* functionBody = new otava::ast::FunctionBodyNode(soul::ast::Span(), body);
+    otava::ast::ParameterListNode* parameters = new otava::ast::ParameterListNode(soul::ast::Span());
+    otava::ast::ParameterNode* argcParam = new otava::ast::ParameterNode(soul::ast::Span());
+    otava::ast::DeclSpecifierSequenceNode* argcDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::Span());
+    argcDeclSpecifiers->AddNode(new otava::ast::IntNode(soul::ast::Span()));
     argcParam->SetDeclSpecifiers(argcDeclSpecifiers);
-    argcParam->SetDeclarator(new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"argc"));
+    argcParam->SetDeclarator(new otava::ast::IdentifierNode(soul::ast::Span(), U"argc"));
     parameters->AddNode(argcParam);
-    otava::ast::ParameterNode* argvParam = new otava::ast::ParameterNode(soul::ast::SourcePos());
-    otava::ast::DeclSpecifierSequenceNode* argvDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::SourcePos());
-    argvDeclSpecifiers->AddNode(new otava::ast::ConstNode(soul::ast::SourcePos()));
-    argvDeclSpecifiers->AddNode(new otava::ast::CharNode(soul::ast::SourcePos()));
+    otava::ast::ParameterNode* argvParam = new otava::ast::ParameterNode(soul::ast::Span());
+    otava::ast::DeclSpecifierSequenceNode* argvDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::Span());
+    argvDeclSpecifiers->AddNode(new otava::ast::ConstNode(soul::ast::Span()));
+    argvDeclSpecifiers->AddNode(new otava::ast::CharNode(soul::ast::Span()));
     argvParam->SetDeclSpecifiers(argvDeclSpecifiers);
-    otava::ast::PtrDeclaratorNode* argvDeclarator = new otava::ast::PtrDeclaratorNode(soul::ast::SourcePos());
-    argvDeclarator->AddNode(new otava::ast::PtrOperatorNode(soul::ast::SourcePos(), new otava::ast::PtrNode(soul::ast::SourcePos())));
-    argvDeclarator->AddNode(new otava::ast::PtrOperatorNode(soul::ast::SourcePos(), new otava::ast::PtrNode(soul::ast::SourcePos())));
-    argvDeclarator->AddNode(new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"argv"));
+    otava::ast::PtrDeclaratorNode* argvDeclarator = new otava::ast::PtrDeclaratorNode(soul::ast::Span());
+    argvDeclarator->AddNode(new otava::ast::PtrOperatorNode(soul::ast::Span(), new otava::ast::PtrNode(soul::ast::Span())));
+    argvDeclarator->AddNode(new otava::ast::PtrOperatorNode(soul::ast::Span(), new otava::ast::PtrNode(soul::ast::Span())));
+    argvDeclarator->AddNode(new otava::ast::IdentifierNode(soul::ast::Span(), U"argv"));
     argvParam->SetDeclarator(argvDeclarator);
     parameters->AddNode(argvParam);
-    otava::ast::FunctionDeclaratorNode* declarator = new otava::ast::FunctionDeclaratorNode(soul::ast::SourcePos(),
-        new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"__main_wrapper__"), parameters);
-    std::unique_ptr<otava::ast::FunctionDefinitionNode> mainWrapperFn(new otava::ast::FunctionDefinitionNode(soul::ast::SourcePos(), nullptr, declSpecifiers, declarator, nullptr,
+    otava::ast::FunctionDeclaratorNode* declarator = new otava::ast::FunctionDeclaratorNode(soul::ast::Span(),
+        new otava::ast::IdentifierNode(soul::ast::Span(), U"__main_wrapper__"), parameters);
+    std::unique_ptr<otava::ast::FunctionDefinitionNode> mainWrapperFn(new otava::ast::FunctionDefinitionNode(soul::ast::Span(), nullptr, declSpecifiers, declarator, nullptr,
         functionBody));
     otava::symbols::InstantiationScope instantiationScope(context->GetSymbolTable()->CurrentScope());
     otava::symbols::Instantiator instantiator(context, &instantiationScope);
@@ -122,7 +122,7 @@ std::string GenerateMainWrapper(otava::symbols::Context* context, int numParams)
     if (mainWrapperFnSymbol && mainWrapperFnSymbol->IsFunctionDefinitionSymbol())
     {
         otava::symbols::FunctionDefinitionSymbol* mainWrapperFnDefSymbol = static_cast<otava::symbols::FunctionDefinitionSymbol*>(mainWrapperFnSymbol);
-        context->PushBoundFunction(new otava::symbols::BoundFunctionNode(mainWrapperFnDefSymbol, soul::ast::SourcePos()));
+        context->PushBoundFunction(new otava::symbols::BoundFunctionNode(mainWrapperFnDefSymbol, soul::ast::FullSpan()));
         mainWrapperFnDefSymbol = otava::symbols::BindFunction(mainWrapperFn.get(), mainWrapperFnDefSymbol, context);
         context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<otava::symbols::BoundNode>(context->ReleaseBoundFunction()), context);
         context->PopBoundFunction();
@@ -130,7 +130,7 @@ std::string GenerateMainWrapper(otava::symbols::Context* context, int numParams)
     }
     else
     {
-        otava::symbols::ThrowException("error instantiating main wrapper: function definition symbol expected", soul::ast::SourcePos(), context);
+        otava::symbols::ThrowException("error instantiating main wrapper: function definition symbol expected", soul::ast::FullSpan(), context);
     }
     return std::string();
 }
@@ -185,11 +185,11 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     {
         otava::symbols::TypeSymbol* intType = context.GetSymbolTable()->GetFundamentalTypeSymbol(otava::symbols::FundamentalTypeKind::intType);
         otava::symbols::ParameterSymbol* argcParam = context.GetSymbolTable()->CreateParameter(U"argc", nullptr, intType, &context);
-        mainFn->AddSymbol(argcParam, soul::ast::SourcePos(), &context);
+        mainFn->AddSymbol(argcParam, soul::ast::FullSpan(), &context);
         otava::symbols::TypeSymbol* constCharPtrPtrType = context.GetSymbolTable()->GetFundamentalTypeSymbol(
             otava::symbols::FundamentalTypeKind::charType)->AddConst(&context)->AddPointer(&context)->AddPointer(&context);
         otava::symbols::ParameterSymbol* argvParam = context.GetSymbolTable()->CreateParameter(U"argv", nullptr, constCharPtrPtrType, &context);
-        mainFn->AddSymbol(argvParam, soul::ast::SourcePos(), &context);
+        mainFn->AddSymbol(argvParam, soul::ast::FullSpan(), &context);
     }
     std::string mainWrapperIrName = GenerateMainWrapper(&context, numParams);
     int np = numParams;

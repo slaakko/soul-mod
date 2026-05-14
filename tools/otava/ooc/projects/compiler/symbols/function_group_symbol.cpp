@@ -360,7 +360,7 @@ void FunctionGroupSymbol::CollectBestMatchingViableFunctionTemplates(int arity, 
             functionScores.push_back(std::make_pair(function, score));
         }
     }
-    std::sort(functionScores.begin(), functionScores.end(), FunctionScoreGreater());
+    std::insertion_sort(functionScores.begin(), functionScores.end(), FunctionScoreGreater());
     if (!functionScores.empty())
     {
         FunctionSymbol* function = functionScores[0].first;
@@ -382,7 +382,7 @@ void FunctionGroupSymbol::CollectBestMatchingViableFunctionTemplates(int arity, 
             functionDefScores.push_back(std::make_pair(static_cast<FunctionSymbol*>(functionDefinition), score));
         }
     }
-    std::sort(functionDefScores.begin(), functionDefScores.end(), FunctionScoreGreater());
+    std::insertion_sort(functionDefScores.begin(), functionDefScores.end(), FunctionScoreGreater());
     if (!functionDefScores.empty())
     {
         FunctionSymbol* function = functionDefScores[0].first;

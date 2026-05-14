@@ -11,11 +11,11 @@ public:
     FunctionTypeSymbol();
     FunctionTypeSymbol(const std::u32string& name_);
     bool IsFunctionType() const noexcept override { return true; }
-    util::uuid IrId(const soul::ast::SourcePos& sourcePos, Context* context) const override;
+    util::uuid IrId(const soul::ast::FullSpan& fullSpan, Context* context) const override;
     void MakeName();
     std::string SymbolKindStr() const override { return "function type symbol"; }
     std::string SymbolDocKindStr() const override { return "function_type"; }
-    inline TypeSymbol* ReturnType() const noexcept { return returnType; }
+    inline TypeSymbol* ReturnType() const { return returnType; }
     inline void SetReturnType(TypeSymbol* returnType_) noexcept { returnType = returnType_; }
     inline const std::vector<TypeSymbol*>& ParameterTypes() const noexcept { return parameterTypes; }
     void AddParameterType(TypeSymbol* parameterType);
@@ -24,7 +24,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
-    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
 private:
     TypeSymbol* returnType;
     util::uuid returnTypeId;

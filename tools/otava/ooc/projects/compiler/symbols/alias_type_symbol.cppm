@@ -27,7 +27,7 @@ public:
     void Accept(Visitor& visitor) override;
     bool IsExportSymbol(Context* context) const noexcept override;
     bool IsExportMapSymbol(Context* context) const noexcept override;
-    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context) override;
     inline AliasGroupSymbol* Group() const noexcept { return group; }
     inline void SetGroup(AliasGroupSymbol* group_) noexcept { group = group_; }
     soul::xml::Element* ToXml() const override;

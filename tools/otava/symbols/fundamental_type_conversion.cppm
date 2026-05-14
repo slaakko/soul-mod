@@ -89,7 +89,7 @@ struct FundamentalTypeConversion : public FunctionSymbol
         SetConversionParamType(paramType_);
         SetConversionArgType(argType_);
         ParameterSymbol* arg = new ParameterSymbol(U"arg", argType);
-        AddParameter(arg, soul::ast::SourcePos(), nullptr);
+        AddParameter(arg, soul::ast::FullSpan(), nullptr);
         SetReturnType(paramType_, context);
         SetNoExcept();
     }
@@ -132,12 +132,12 @@ struct FundamentalTypeConversion : public FunctionSymbol
         argType = symbolTable.GetType(argTypeId);
     }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override
     {
         context->SetArgType(argType);
         context->SetParamType(paramType);
         otava::intermediate::Value* value = emitter.Stack().Pop();
-        emitter.Stack().Push(Op::Generate(emitter, value, static_cast<otava::intermediate::Type*>(paramType->IrType(emitter, sourcePos, context)), context));
+        emitter.Stack().Push(Op::Generate(emitter, value, static_cast<otava::intermediate::Type*>(paramType->IrType(emitter, fullSpan, context)), context));
     }
     std::int32_t distance;
     ConversionKind conversionKind;
@@ -216,7 +216,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
 private:
     TypeSymbol* paramType;
     TypeSymbol* argType;

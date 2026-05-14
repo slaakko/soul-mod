@@ -11,7 +11,7 @@ import otava.symbols.declarator;
 import otava.symbols.symbol;
 import otava.symbols.type.symbol;
 import otava.symbols.bound.tree;
-import soul.ast.source.pos;
+import soul.ast.span;
 
 export namespace otava::symbols {
 
@@ -21,7 +21,7 @@ class Reader;
 
 std::string DeclarationFlagStr(DeclarationFlags flags);
 
-VariableSymbol* ResolveParentVariable(const std::u32string& variableName, const soul::ast::SourcePos& sourcePos, int& level, Context* context);
+VariableSymbol* ResolveParentVariable(const std::u32string& variableName, const soul::ast::FullSpan& fullSpan, int& level, Context* context);
 void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context);
 Declaration ProcessFunctionDeclaration(otava::ast::Node* node, Context* context);
 Declaration ProcessParameterDeclaration(otava::ast::Node* node, Context* context);
@@ -36,15 +36,15 @@ void EndFunctionDefinition(otava::ast::Node* functionDefinitionNode, int scopes,
 void ProcessMemberFunctionDefinition(otava::ast::Node* node, Context* context);
 TypeSymbol* ProcessExplicitInstantiationDeclaration(otava::ast::Node* node, Context* context);
 TypeSymbol* MapType(FunctionSymbol* functionSymbol, TypeSymbol* type, Context* context);
-void GenerateDynamicInitialization(VariableSymbol* variable, BoundExpressionNode* initializer, const soul::ast::SourcePos& sourcePos, Context* context);
-std::unique_ptr<BoundFunctionCallNode> MakeAtExitForVariable(VariableSymbol* variable, const soul::ast::SourcePos& sourcePos, Context* context);
-void AddConvertingConstructorToConversionTable(FunctionSymbol* functionSymbol, const soul::ast::SourcePos& sourcePos, Context* context);
+void GenerateDynamicInitialization(VariableSymbol* variable, BoundExpressionNode* initializer, const soul::ast::FullSpan& fullSpan, Context* context);
+std::unique_ptr<BoundFunctionCallNode> MakeAtExitForVariable(VariableSymbol* variable, const soul::ast::FullSpan& fullSpan, Context* context);
+void AddConvertingConstructorToConversionTable(FunctionSymbol* functionSymbol, const soul::ast::FullSpan& fullSpan, Context* context);
 bool HasNoReturnAttribute(otava::ast::Node* attributes) noexcept;
 
 void Write(Writer& writer, DeclarationFlags flags);
 void Read(Reader& reader, DeclarationFlags& flags);
 
-void ThrowDeclarationParsingError(const soul::ast::SourcePos& sourcePos, Context* context);
+void ThrowDeclarationParsingError(const soul::ast::FullSpan& fullSpan, Context* context);
 
 void ProcessLinkageSpecification(otava::ast::Node* node, Context* context);
 

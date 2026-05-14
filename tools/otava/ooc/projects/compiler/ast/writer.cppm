@@ -2,7 +2,7 @@ export module otava.ast.writer;
 
 import std;
 import util;
-import soul.ast.source.pos;
+import soul.ast.span;
 import otava.ast.node;
 
 export namespace otava::ast {
@@ -13,7 +13,7 @@ public:
     Writer(const std::string& fileName);
     Writer(util::BinaryStreamWriter* writerPtr_);
     inline util::BinaryStreamWriter& GetBinaryStreamWriter() noexcept { return *writerPtr; }
-    void Write(const soul::ast::SourcePos& sourcePos);
+    void Write(const soul::ast::Span& span);
     void Write(NodeKind nodeKind);
     void Write(const std::u32string& str);
     void Write(bool value);

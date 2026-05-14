@@ -1,12 +1,12 @@
 
-// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/enum.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/enum.parser' using soul parser generator spg version 5.1.0
 
 module otava.parser.enums;
 
 import util;
 import soul.ast.common;
 import soul.ast.spg;
-import soul.ast.source.pos;
+import soul.ast.span;
 import soul.ast.lexer.pos.pair;
 import otava.parser.attribute;
 import otava.parser.expression;
@@ -32,7 +32,7 @@ soul::parser::Match EnumParser<LexerT>::EnumName(LexerT& lexer, otava::symbols::
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993025);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> identifier;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -78,9 +78,9 @@ soul::parser::Match EnumParser<LexerT>::EnumSpecifier(LexerT& lexer, otava::symb
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993026);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
-    soul::ast::SourcePos lbPos = soul::ast::SourcePos();
-    soul::ast::SourcePos rbPos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
+    soul::ast::Span lbSpan = soul::ast::Span();
+    soul::ast::Span rbSpan = soul::ast::Span();
     std::unique_ptr<otava::ast::EnumSpecifierNode> enumSpecifierNode = std::unique_ptr<otava::ast::EnumSpecifierNode>();
     std::unique_ptr<otava::ast::Node> enumHead;
     std::unique_ptr<otava::ast::Node> comma;
@@ -108,7 +108,7 @@ soul::parser::Match EnumParser<LexerT>::EnumSpecifier(LexerT& lexer, otava::symb
                             enumHead.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
-                                sourcePos = lexer.GetSourcePos(pos);
+                                span = lexer.GetSpan(pos);
                             }
                             *parentMatch5 = match;
                         }
@@ -131,8 +131,8 @@ soul::parser::Match EnumParser<LexerT>::EnumSpecifier(LexerT& lexer, otava::symb
                                 }
                                 if (match.hit)
                                 {
-                                    lbPos = lexer.GetSourcePos(pos);
-                                    enumSpecifierNode.reset(new otava::ast::EnumSpecifierNode(sourcePos, enumHead.release()));
+                                    lbSpan = lexer.GetSpan(pos);
+                                    enumSpecifierNode.reset(new otava::ast::EnumSpecifierNode(span, enumHead.release()));
                                     otava::symbols::BeginEnumType(enumSpecifierNode.get(), context);
                                 }
                                 *parentMatch7 = match;
@@ -244,9 +244,9 @@ soul::parser::Match EnumParser<LexerT>::EnumSpecifier(LexerT& lexer, otava::symb
                         }
                         if (match.hit)
                         {
-                            rbPos = lexer.GetSourcePos(pos);
-                            enumSpecifierNode->SetLBracePos(lbPos);
-                            enumSpecifierNode->SetRBracePos(rbPos);
+                            rbSpan = lexer.GetSpan(pos);
+                            enumSpecifierNode->SetLBraceSpan(lbSpan);
+                            enumSpecifierNode->SetRBraceSpan(rbSpan);
                         }
                         *parentMatch18 = match;
                     }
@@ -295,7 +295,7 @@ soul::parser::Match EnumParser<LexerT>::EnumHead(LexerT& lexer, otava::symbols::
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993027);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> name = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> enumKey;
     std::unique_ptr<otava::ast::Node> attributes;
@@ -326,7 +326,7 @@ soul::parser::Match EnumParser<LexerT>::EnumHead(LexerT& lexer, otava::symbols::
                             enumKey.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
-                                sourcePos = lexer.GetSourcePos(pos);
+                                span = lexer.GetSpan(pos);
                             }
                             *parentMatch5 = match;
                         }
@@ -446,7 +446,7 @@ soul::parser::Match EnumParser<LexerT>::EnumHead(LexerT& lexer, otava::symbols::
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumHead");
                 #endif
-                return soul::parser::Match(true, new otava::ast::EnumHeadNode(sourcePos, enumKey.release(), name.release(), enumBase.release(), attributes.release()));
+                return soul::parser::Match(true, new otava::ast::EnumHeadNode(span, enumKey.release(), name.release(), enumBase.release(), attributes.release()));
             }
         }
         *parentMatch0 = match;
@@ -478,7 +478,7 @@ soul::parser::Match EnumParser<LexerT>::EnumKey(LexerT& lexer)
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993028);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -502,7 +502,7 @@ soul::parser::Match EnumParser<LexerT>::EnumKey(LexerT& lexer)
                     }
                     if (match.hit)
                     {
-                        sourcePos = lexer.GetSourcePos(pos);
+                        span = lexer.GetSpan(pos);
                     }
                     *parentMatch3 = match;
                 }
@@ -529,7 +529,7 @@ soul::parser::Match EnumParser<LexerT>::EnumKey(LexerT& lexer)
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumKey");
                                 #endif
-                                return soul::parser::Match(true, new otava::ast::EnumClassNode(sourcePos, lexer.GetSourcePos(pos)));
+                                return soul::parser::Match(true, new otava::ast::EnumClassNode(span, lexer.GetSpan(pos)));
                             }
                         }
                         *parentMatch5 = match;
@@ -560,7 +560,7 @@ soul::parser::Match EnumParser<LexerT>::EnumKey(LexerT& lexer)
                             }
                             if (match.hit)
                             {
-                                sourcePos = lexer.GetSourcePos(pos);
+                                span = lexer.GetSpan(pos);
                             }
                             *parentMatch8 = match;
                         }
@@ -587,7 +587,7 @@ soul::parser::Match EnumParser<LexerT>::EnumKey(LexerT& lexer)
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumKey");
                                         #endif
-                                        return soul::parser::Match(true, new otava::ast::EnumStructNode(sourcePos, lexer.GetSourcePos(pos)));
+                                        return soul::parser::Match(true, new otava::ast::EnumStructNode(span, lexer.GetSpan(pos)));
                                     }
                                 }
                                 *parentMatch10 = match;
@@ -620,12 +620,12 @@ soul::parser::Match EnumParser<LexerT>::EnumKey(LexerT& lexer)
                     }
                     if (match.hit)
                     {
-                        sourcePos = lexer.GetSourcePos(pos);
+                        span = lexer.GetSpan(pos);
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumKey");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::EnumNode(sourcePos));
+                            return soul::parser::Match(true, new otava::ast::EnumNode(span));
                         }
                     }
                     *parentMatch12 = match;
@@ -693,7 +693,7 @@ soul::parser::Match EnumParser<LexerT>::EnumHeadName(LexerT& lexer, otava::symbo
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumHeadName");
                             #endif
-                            return soul::parser::Match(true, new otava::ast::QualifiedIdNode(lexer.GetSourcePos(pos), nns.release(), identifier.release()));
+                            return soul::parser::Match(true, new otava::ast::QualifiedIdNode(lexer.GetSpan(pos), nns.release(), identifier.release()));
                         }
                     }
                     *parentMatch3 = match;
@@ -758,7 +758,7 @@ soul::parser::Match EnumParser<LexerT>::EnumBase(LexerT& lexer, otava::symbols::
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993030);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> typeSpecifiers;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -782,7 +782,7 @@ soul::parser::Match EnumParser<LexerT>::EnumBase(LexerT& lexer, otava::symbols::
                     }
                     if (match.hit)
                     {
-                        sourcePos = lexer.GetSourcePos(pos);
+                        span = lexer.GetSpan(pos);
                     }
                     *parentMatch3 = match;
                 }
@@ -807,7 +807,7 @@ soul::parser::Match EnumParser<LexerT>::EnumBase(LexerT& lexer, otava::symbols::
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumBase");
                 #endif
-                return soul::parser::Match(true, new otava::ast::EnumBaseNode(sourcePos, typeSpecifiers.release()));
+                return soul::parser::Match(true, new otava::ast::EnumBaseNode(span, typeSpecifiers.release()));
             }
         }
         *parentMatch0 = match;
@@ -957,8 +957,8 @@ soul::parser::Match EnumParser<LexerT>::EnumeratorDefinition(LexerT& lexer, otav
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993032);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
-    soul::ast::SourcePos assignPos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
+    soul::ast::Span assignPos = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> value = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> enumerator;
     std::unique_ptr<otava::ast::Node> expr;
@@ -980,7 +980,7 @@ soul::parser::Match EnumParser<LexerT>::EnumeratorDefinition(LexerT& lexer, otav
                     enumerator.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
-                        sourcePos = lexer.GetSourcePos(pos);
+                        span = lexer.GetSpan(pos);
                     }
                     *parentMatch3 = match;
                 }
@@ -1013,7 +1013,7 @@ soul::parser::Match EnumParser<LexerT>::EnumeratorDefinition(LexerT& lexer, otav
                                     }
                                     if (match.hit)
                                     {
-                                        assignPos = lexer.GetSourcePos(pos);
+                                        assignPos = lexer.GetSpan(pos);
                                     }
                                     *parentMatch8 = match;
                                 }
@@ -1063,7 +1063,7 @@ soul::parser::Match EnumParser<LexerT>::EnumeratorDefinition(LexerT& lexer, otav
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumeratorDefinition");
                 #endif
-                return soul::parser::Match(true, new otava::ast::EnumeratorDefinitionNode(sourcePos, enumerator.release(), value.release(), assignPos));
+                return soul::parser::Match(true, new otava::ast::EnumeratorDefinitionNode(span, enumerator.release(), value.release(), assignPos));
             }
         }
         *parentMatch0 = match;
@@ -1095,7 +1095,7 @@ soul::parser::Match EnumParser<LexerT>::Enumerator(LexerT& lexer, otava::symbols
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993033);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> identifier;
     std::unique_ptr<otava::ast::Node> attributes;
     soul::parser::Match match(false);
@@ -1116,7 +1116,7 @@ soul::parser::Match EnumParser<LexerT>::Enumerator(LexerT& lexer, otava::symbols
                     identifier.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
-                        sourcePos = lexer.GetSourcePos(pos);
+                        span = lexer.GetSpan(pos);
                     }
                     *parentMatch3 = match;
                 }
@@ -1154,7 +1154,7 @@ soul::parser::Match EnumParser<LexerT>::Enumerator(LexerT& lexer, otava::symbols
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Enumerator");
                 #endif
-                return soul::parser::Match(true, new otava::ast::EnumeratorNode(sourcePos, identifier.release(), attributes.release()));
+                return soul::parser::Match(true, new otava::ast::EnumeratorNode(span, identifier.release(), attributes.release()));
             }
         }
         *parentMatch0 = match;
@@ -1186,7 +1186,7 @@ soul::parser::Match EnumParser<LexerT>::OpaqueEnumDeclaration(LexerT& lexer, ota
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993034);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> enumKey;
     std::unique_ptr<otava::ast::Node> attributes;
     std::unique_ptr<otava::ast::Node> enumHeadName;
@@ -1219,7 +1219,7 @@ soul::parser::Match EnumParser<LexerT>::OpaqueEnumDeclaration(LexerT& lexer, ota
                                 enumKey.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
-                                    sourcePos = lexer.GetSourcePos(pos);
+                                    span = lexer.GetSpan(pos);
                                 }
                                 *parentMatch6 = match;
                             }
@@ -1305,7 +1305,7 @@ soul::parser::Match EnumParser<LexerT>::OpaqueEnumDeclaration(LexerT& lexer, ota
         }
         if (match.hit)
         {
-            otava::ast::Node *node = new otava::ast::OpaqueEnumDeclarationNode(sourcePos, enumKey.release(), enumHeadName.release(), enumBase.release(), attributes.release(), semicolon.release());
+            otava::ast::Node *node = new otava::ast::OpaqueEnumDeclarationNode(span, enumKey.release(), enumHeadName.release(), enumBase.release(), attributes.release(), semicolon.release());
             otava::symbols::ProcessEnumForwardDeclaration(node, context);
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -1343,8 +1343,8 @@ soul::parser::Match EnumParser<LexerT>::ElaboratedEnumSpecifier(LexerT& lexer, o
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5996424684868993035);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
-    soul::ast::SourcePos nnsPos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
+    soul::ast::Span nnsSpan = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> nns;
     std::unique_ptr<otava::ast::Node> identifier;
     std::unique_ptr<otava::ast::Node> identifier2;
@@ -1363,7 +1363,7 @@ soul::parser::Match EnumParser<LexerT>::ElaboratedEnumSpecifier(LexerT& lexer, o
             }
             if (match.hit)
             {
-                sourcePos = lexer.GetSourcePos(pos);
+                span = lexer.GetSpan(pos);
             }
             *parentMatch1 = match;
         }
@@ -1392,7 +1392,7 @@ soul::parser::Match EnumParser<LexerT>::ElaboratedEnumSpecifier(LexerT& lexer, o
                             nns.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
-                                nnsPos = lexer.GetSourcePos(pos);
+                                nnsSpan = lexer.GetSpan(pos);
                             }
                             *parentMatch6 = match;
                         }
@@ -1411,7 +1411,7 @@ soul::parser::Match EnumParser<LexerT>::ElaboratedEnumSpecifier(LexerT& lexer, o
                                 identifier.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
-                                    otava::ast::Node *node = new otava::ast::ElaboratedEnumSpecifierNode(sourcePos, new otava::ast::QualifiedIdNode(nnsPos, nns.release(), identifier.release()));
+                                    otava::ast::Node *node = new otava::ast::ElaboratedEnumSpecifierNode(span, new otava::ast::QualifiedIdNode(nnsSpan, nns.release(), identifier.release()));
                                     otava::symbols::ProcessEnumForwardDeclaration(node, context);
                                     {
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -1441,7 +1441,7 @@ soul::parser::Match EnumParser<LexerT>::ElaboratedEnumSpecifier(LexerT& lexer, o
                                 identifier2.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
-                                    otava::ast::Node *node = new otava::ast::ElaboratedEnumSpecifierNode(sourcePos, identifier2.release());
+                                    otava::ast::Node *node = new otava::ast::ElaboratedEnumSpecifierNode(span, identifier2.release());
                                     otava::symbols::ProcessEnumForwardDeclaration(node, context);
                                     {
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT

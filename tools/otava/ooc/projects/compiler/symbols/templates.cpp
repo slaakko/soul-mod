@@ -56,9 +56,9 @@ TemplateParameterSymbol::TemplateParameterSymbol(Symbol* constraint_, const std:
 {
 }
 
-void TemplateParameterSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
+void TemplateParameterSymbol::AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    TypeSymbol::AddSymbol(symbol, sourcePos, context);
+    TypeSymbol::AddSymbol(symbol, fullSpan, context);
     if (symbol->IsParameterSymbol())
     {
         parameterSymbol = static_cast<ParameterSymbol*>(symbol);
@@ -121,7 +121,7 @@ TypeSymbol* TemplateParameterSymbol::Unify(TypeSymbol* argType, Context* context
 }
 
 TypeSymbol* TemplateParameterSymbol::UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap,
-    const soul::ast::SourcePos& sourcePos, Context* context)
+    const soul::ast::FullSpan& fullSpan, Context* context)
 {
     auto it = templateParameterMap.find(this);
     if (it != templateParameterMap.cend())
@@ -162,9 +162,9 @@ TemplateDeclarationSymbol::TemplateDeclarationSymbol() : ContainerSymbol(SymbolK
     GetScope()->SetKind(ScopeKind::templateDeclarationScope);
 }
 
-void TemplateDeclarationSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
+void TemplateDeclarationSymbol::AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ContainerSymbol::AddSymbol(symbol, sourcePos, context);
+    ContainerSymbol::AddSymbol(symbol, fullSpan, context);
     if (symbol->IsTemplateParameterSymbol())
     {
         templateParameters.push_back(static_cast<TemplateParameterSymbol*>(symbol));
@@ -197,7 +197,7 @@ void EndTemplateDeclaration(otava::ast::Node* node, Context* context)
     Symbol* symbol = context->GetSymbolTable()->CurrentScope()->GetSymbol();
     if (!symbol->IsTemplateDeclarationSymbol())
     {
-        ThrowException("otava.symbols.templates: EndTemplateDeclaration(): template scope expected", node->GetSourcePos(), context);
+        ThrowException("otava.symbols.templates: EndTemplateDeclaration(): template scope expected", context->MakeFullSpan(node->GetSpan()), context);
     }
     context->PopFlags();
     context->GetSymbolTable()->EndTemplateDeclaration();
@@ -279,7 +279,7 @@ void TemplateParameterCreator::Visit(otava::ast::ParameterNode& node)
     }
     else
     {
-        ThrowException("simple declarator expected", node.GetSourcePos(), context);
+        ThrowException("simple declarator expected", context->MakeFullSpan(node.GetSpan()), context);
     }
 }
 
@@ -320,7 +320,7 @@ ExplicitInstantiationSymbol::~ExplicitInstantiationSymbol()
     }
 }
 
-void ExplicitInstantiationSymbol::AddFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol, const soul::ast::SourcePos& sourcePos, Context* context)
+void ExplicitInstantiationSymbol::AddFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     functionDefinitionSymbol->SetFlag(FunctionSymbolFlags::fixedIrName);
     if (functionDefinitionSymbol->Declaration())
@@ -329,7 +329,7 @@ void ExplicitInstantiationSymbol::AddFunctionDefinitionSymbol(FunctionDefinition
         declaration->SetFlag(FunctionSymbolFlags::fixedIrName);
     }
     ExplicitlyInstantiatedFunctionDefinitionSymbol* explicitlyInstantiatedSymbol = new ExplicitlyInstantiatedFunctionDefinitionSymbol(
-        functionDefinitionSymbol, sourcePos, context);
+        functionDefinitionSymbol, fullSpan, context);
     explicitlyInstantiatedSymbol->SetFunctionKind(functionDefinitionSymbol->GetFunctionKind());
     functionDefinitionSymbols.push_back(explicitlyInstantiatedSymbol);
     functionDefinitionSymbolMap[functionDefinitionSymbol->DefIndex()] = explicitlyInstantiatedSymbol;
@@ -440,7 +440,7 @@ void ExplicitInstantiationProcessor::Visit(otava::ast::ExplicitInstantiationNode
     if (type && type->IsClassTemplateSpecializationSymbol())
     {
         ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(type);
-        specialization->MakeVTab(context, node.GetSourcePos());
+        specialization->MakeVTab(context, context->MakeFullSpan(node.GetSpan()));
         ExplicitInstantiationSymbol* explicitInstantiationSymbol = context->GetSymbolTable()->GetExplicitInstantiation(specialization);
         if (!explicitInstantiationSymbol)
         {
@@ -456,29 +456,30 @@ void ExplicitInstantiationProcessor::Visit(otava::ast::ExplicitInstantiationNode
                     FunctionDefinitionSymbol* memFnDefSymbol = memFnDefSymbolPair.second;
                     std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
                     FunctionSymbol* instantiatedFunctionSymbol = InstantiateMemFnOfClassTemplate(
-                        memFnDefSymbol, specialization, templateParameterMap, node.GetSourcePos(), context);
+                        memFnDefSymbol, specialization, templateParameterMap, context->MakeFullSpan(node.GetSpan()), context);
                     if (instantiatedFunctionSymbol->IsFunctionDefinitionSymbol())
                     {
                         FunctionDefinitionSymbol* instantiatedMemFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(instantiatedFunctionSymbol);
-                        explicitInstantiationSymbol->AddFunctionDefinitionSymbol(instantiatedMemFnDefSymbol, node.GetSourcePos(), context);
+                        explicitInstantiationSymbol->AddFunctionDefinitionSymbol(instantiatedMemFnDefSymbol,
+                            context->MakeFullSpan(node.GetSpan()), context);
                     }
                     else
                     {
-                        ThrowException("function definition symbol expected", node.GetSourcePos(), context);
+                        ThrowException("function definition symbol expected", context->MakeFullSpan(node.GetSpan()), context);
                     }
                 }
                 context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
             }
             else
             {
-                ThrowException("class type symbol expected", node.GetSourcePos(), context);
+                ThrowException("class type symbol expected", context->MakeFullSpan(node.GetSpan()), context);
             }
             context->GetSymbolTable()->AddExplicitInstantiation(explicitInstantiationSymbol);
         }
     }
     else
     {
-        ThrowException("class template specialization expected", node.GetSourcePos(), context);
+        ThrowException("class template specialization expected", context->MakeFullSpan(node.GetSpan()), context);
     }
 }
 

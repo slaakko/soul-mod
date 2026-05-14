@@ -7,7 +7,7 @@ export module otava.parser.enums;
 
 [interface]import otava.symbols.context;
 [interface]import otava.ast;
-[implementation]import soul.ast.source.pos;
+[implementation]import soul.ast.span;
 [implementation]import soul.ast.lexer.pos.pair;
 [implementation]import otava.parser.attribute;
 [implementation]import otava.parser.expression;
@@ -31,19 +31,19 @@ parser EnumParser
     using PunctuationParser.Semicolon;
     using TypeParser.TypeSpecifierSeqReset;
 
-    EnumName(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    EnumName(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
         ::= Identifier(context):identifier{ return identifier; }
         ;
 
-    EnumSpecifier(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos, 
+    EnumSpecifier(otava::symbols::Context* context, var soul::ast::Span span, var soul::ast::Span lbSpan, var soul::ast::Span rbSpan, 
         var std::unique_ptr<otava::ast::EnumSpecifierNode> enumSpecifierNode) : otava::ast::Node*
         ::= 
         (
-            EnumHead(context):enumHead{ sourcePos = lexer.GetSourcePos(pos); } 
+            EnumHead(context):enumHead{ span = lexer.GetSpan(pos); } 
             LBRACE
             { 
-                lbPos = lexer.GetSourcePos(pos); 
-                enumSpecifierNode.reset(new otava::ast::EnumSpecifierNode(sourcePos, enumHead)); 
+                lbSpan = lexer.GetSpan(pos); 
+                enumSpecifierNode.reset(new otava::ast::EnumSpecifierNode(span, enumHead)); 
                 otava::symbols::BeginEnumType(enumSpecifierNode.get(), context); 
             } 
             (
@@ -54,9 +54,9 @@ parser EnumParser
             )?
             RBRACE
             { 
-                rbPos = lexer.GetSourcePos(pos); 
-                enumSpecifierNode->SetLBracePos(lbPos); 
-                enumSpecifierNode->SetRBracePos(rbPos); 
+                rbSpan = lexer.GetSpan(pos); 
+                enumSpecifierNode->SetLBraceSpan(lbSpan); 
+                enumSpecifierNode->SetRBraceSpan(rbSpan); 
             }
         )
         {
@@ -65,10 +65,10 @@ parser EnumParser
         }
         ;
 
-    EnumHead(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::Node> name) : otava::ast::Node*
+    EnumHead(otava::symbols::Context* context, var soul::ast::Span span, var std::unique_ptr<otava::ast::Node> name) : otava::ast::Node*
         ::= 
         (
-            EnumKey:enumKey{ sourcePos = lexer.GetSourcePos(pos); } 
+            EnumKey:enumKey{ span = lexer.GetSpan(pos); } 
             AttributeSpecifierSeq(context):attributes?
             (   EnumHeadName(context):enumHeadName{ name.reset(enumHeadName); } 
             |   Unnamed:unnamed{ name.reset(unnamed); }
@@ -76,28 +76,28 @@ parser EnumParser
             EnumBase(context):enumBase?
         )
         {
-            return new otava::ast::EnumHeadNode(sourcePos, enumKey, name.release(), enumBase, attributes);
+            return new otava::ast::EnumHeadNode(span, enumKey, name.release(), enumBase, attributes);
         }
         ;
 
-    EnumKey(var soul::ast::SourcePos sourcePos) : otava::ast::Node*
-        ::= ENUM{ sourcePos = lexer.GetSourcePos(pos); } CLASS{ return new otava::ast::EnumClassNode(sourcePos, lexer.GetSourcePos(pos)); }
-        |   ENUM{ sourcePos = lexer.GetSourcePos(pos); } STRUCT{ return new otava::ast::EnumStructNode(sourcePos, lexer.GetSourcePos(pos)); }
-        |   ENUM{ sourcePos = lexer.GetSourcePos(pos); return new otava::ast::EnumNode(sourcePos); }
+    EnumKey(var soul::ast::Span span) : otava::ast::Node*
+        ::= ENUM{ span = lexer.GetSpan(pos); } CLASS{ return new otava::ast::EnumClassNode(span, lexer.GetSpan(pos)); }
+        |   ENUM{ span = lexer.GetSpan(pos); } STRUCT{ return new otava::ast::EnumStructNode(span, lexer.GetSpan(pos)); }
+        |   ENUM{ span = lexer.GetSpan(pos); return new otava::ast::EnumNode(span); }
         ;
 
     EnumHeadName(otava::symbols::Context* context) : otava::ast::Node*
-        ::= NestedNameSpecifier(context):nns Identifier(context):identifier{ return new otava::ast::QualifiedIdNode(lexer.GetSourcePos(pos), nns, identifier); }
+        ::= NestedNameSpecifier(context):nns Identifier(context):identifier{ return new otava::ast::QualifiedIdNode(lexer.GetSpan(pos), nns, identifier); }
         |   Identifier(context):identifier2{ return identifier2;}
         ;
 
-    EnumBase(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    EnumBase(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            COLON{ sourcePos = lexer.GetSourcePos(pos); } TypeSpecifierSeqReset(context):typeSpecifiers
+            COLON{ span = lexer.GetSpan(pos); } TypeSpecifierSeqReset(context):typeSpecifiers
         )
         {
-            return new otava::ast::EnumBaseNode(sourcePos, typeSpecifiers);
+            return new otava::ast::EnumBaseNode(span, typeSpecifiers);
         }
         ;
 
@@ -109,59 +109,59 @@ parser EnumParser
         )*
         ;
 
-    EnumeratorDefinition(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos assignPos, var std::unique_ptr<otava::ast::Node> value) : otava::ast::Node*
+    EnumeratorDefinition(otava::symbols::Context* context, var soul::ast::Span span, var soul::ast::Span assignSpan, var std::unique_ptr<otava::ast::Node> value) : otava::ast::Node*
         ::= 
         (
-            Enumerator(context):enumerator{ sourcePos = lexer.GetSourcePos(pos); }
+            Enumerator(context):enumerator{ span = lexer.GetSpan(pos); }
             (
-                ASSIGN{ assignPos = lexer.GetSourcePos(pos); }
+                ASSIGN{ assignSpan = lexer.GetSpan(pos); }
                 ConstantExpression(context):expr{ value.reset(expr); }
             )?
         )
         {
-            return new otava::ast::EnumeratorDefinitionNode(sourcePos, enumerator, value.release(), assignPos);
+            return new otava::ast::EnumeratorDefinitionNode(span, enumerator, value.release(), assignSpan);
         }
         ;
 
-    Enumerator(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    Enumerator(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            Identifier(context):identifier{ sourcePos = lexer.GetSourcePos(pos); } 
+            Identifier(context):identifier{ span = lexer.GetSpan(pos); } 
             AttributeSpecifierSeq(context):attributes?
         )
         {
-            return new otava::ast::EnumeratorNode(sourcePos, identifier, attributes);
+            return new otava::ast::EnumeratorNode(span, identifier, attributes);
         }
         ;
 
-    OpaqueEnumDeclaration(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    OpaqueEnumDeclaration(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            EnumKey:enumKey{ sourcePos = lexer.GetSourcePos(pos); }
+            EnumKey:enumKey{ span = lexer.GetSpan(pos); }
             AttributeSpecifierSeq(context):attributes? 
             EnumHeadName(context):enumHeadName 
             EnumBase(context):enumBase? 
             Semicolon:semicolon
         )
         {
-            otava::ast::Node* node = new otava::ast::OpaqueEnumDeclarationNode(sourcePos, enumKey, enumHeadName, enumBase, attributes, semicolon);
+            otava::ast::Node* node = new otava::ast::OpaqueEnumDeclarationNode(span, enumKey, enumHeadName, enumBase, attributes, semicolon);
             otava::symbols::ProcessEnumForwardDeclaration(node, context);
             return node;
         }
         ;
 
-    ElaboratedEnumSpecifier(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos nnsPos) : otava::ast::Node*
-        ::= ENUM{ sourcePos = lexer.GetSourcePos(pos); } 
-        (   NestedNameSpecifier(context):nns{ nnsPos = lexer.GetSourcePos(pos); } 
+    ElaboratedEnumSpecifier(otava::symbols::Context* context, var soul::ast::Span span, var soul::ast::Span nnsSpan) : otava::ast::Node*
+        ::= ENUM{ span = lexer.GetSpan(pos); } 
+        (   NestedNameSpecifier(context):nns{ nnsSpan = lexer.GetSpan(pos); } 
             Identifier(context):identifier
             { 
-                otava::ast::Node* node = new otava::ast::ElaboratedEnumSpecifierNode(sourcePos, new otava::ast::QualifiedIdNode(nnsPos, nns, identifier)); 
+                otava::ast::Node* node = new otava::ast::ElaboratedEnumSpecifierNode(span, new otava::ast::QualifiedIdNode(nnsSpan, nns, identifier)); 
                 otava::symbols::ProcessEnumForwardDeclaration(node, context);
                 return node;
             }
         |   Identifier(context):identifier2
             { 
-                otava::ast::Node* node = new otava::ast::ElaboratedEnumSpecifierNode(sourcePos, identifier2); 
+                otava::ast::Node* node = new otava::ast::ElaboratedEnumSpecifierNode(span, identifier2); 
                 otava::symbols::ProcessEnumForwardDeclaration(node, context);
                 return node;
             }

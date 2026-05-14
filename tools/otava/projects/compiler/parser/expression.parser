@@ -1,9 +1,14 @@
+// =================================
+// Copyright (c) 2026 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
 export module otava.parser.expression;
 
 [interface]import otava.symbols.context;
 [interface]import otava.ast;
 [implementation]import otava.symbols.exception;
-[implementation]import soul.ast.source.pos;
+[implementation]import soul.ast.span;
 [implementation]import soul.ast.lexer.pos.pair;
 [implementation]import otava.token;
 [implementation]import otava.lexer;
@@ -51,14 +56,16 @@ parser ExpressionParser
     main;
 
     Expression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, 
-        var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos commaPos) : otava::ast::Node*
+        var soul::ast::Span span, var soul::ast::Span commaSpan) : otava::ast::Node*
         ::= 
         (
-            AssignmentExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); } 
+            AssignmentExpression(context):left{ expr.reset(left); span = lexer.GetSpan(pos); } 
             (   
-                COMMA{ commaPos = lexer.GetSourcePos(pos); } AssignmentExpression(context):right
+                COMMA{ commaSpan = lexer.GetSpan(pos); } AssignmentExpression(context):right
                 {
-                    expr.reset(new otava::ast::BinaryExprNode(sourcePos, new otava::ast::CommaNode(commaPos), expr.release(), right));
+                    otava::ast::Node* r = right;
+                    span.Union(r->GetSpan());
+                    expr.reset(new otava::ast::BinaryExprNode(span, new otava::ast::CommaNode(commaSpan), expr.release(), r));
                 }
             )*
         )
@@ -72,17 +79,17 @@ parser ExpressionParser
         ;
 
     AssignmentExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var std::unique_ptr<otava::ast::Node> leftExpr, 
-        var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (   YieldExpression(context):yieldExpr{ expr.reset(yieldExpr); }
         |   ThrowExpression(context):throwExpr{ expr.reset(throwExpr); }
         |   (LogicalOrExpression(context):left
             { 
-                sourcePos = lexer.GetSourcePos(pos); 
+                span = lexer.GetSpan(pos); 
                 leftExpr.reset(left); 
                 if (!leftExpr)
                 {
-                    otava::symbols::ThrowException("left expression is null", sourcePos, context);
+                    otava::symbols::ThrowException("left expression is null", context->MakeFullSpan(span), context);
                 }
                 if (leftExpr->IsBinaryExprNode()) 
                 {
@@ -91,7 +98,9 @@ parser ExpressionParser
             }    
             AssignmentOp:op InitializerClause(context):right)
             {
-                expr.reset(new otava::ast::BinaryExprNode(sourcePos, op, leftExpr.release(), right));
+                otava::ast::Node* r = right;
+                span.Union(r->GetSpan());
+                expr.reset(new otava::ast::BinaryExprNode(span, op, leftExpr.release(), r));
             }
         |   ConditionalExpression(context):conditionalExpr{ expr.reset(conditionalExpr); }
         )
@@ -101,26 +110,28 @@ parser ExpressionParser
         ;
 
     AssignmentOp : otava::ast::Node*
-        ::= ASSIGN{ return new otava::ast::AssignNode(lexer.GetSourcePos(pos)); }
-        |   MUL_ASSIGN{ return new otava::ast::MulAssignNode(lexer.GetSourcePos(pos)); }
-        |   DIV_ASSIGN{ return new otava::ast::DivAssignNode(lexer.GetSourcePos(pos)); }
-        |   REM_ASSIGN{ return new otava::ast::ModAssignNode(lexer.GetSourcePos(pos)); }
-        |   ADD_ASSIGN{ return new otava::ast::PlusAssignNode(lexer.GetSourcePos(pos)); }
-        |   SUB_ASSIGN{ return new otava::ast::MinusAssignNode(lexer.GetSourcePos(pos)); }
-        |   SHIFT_RIGHT_ASSIGN{ return new otava::ast::ShiftRightAssignNode(lexer.GetSourcePos(pos)); }
-        |   SHIFT_LEFT_ASSIGN{ return new otava::ast::ShiftLeftAssignNode(lexer.GetSourcePos(pos)); }
-        |   AND_ASSIGN{ return new otava::ast::AndAssignNode(lexer.GetSourcePos(pos)); }
-        |   XOR_ASSIGN{ return new otava::ast::XorAssignNode(lexer.GetSourcePos(pos)); }
-        |   OR_ASSIGN{ return new otava::ast::OrAssignNode(lexer.GetSourcePos(pos)); }
+        ::= ASSIGN{ return new otava::ast::AssignNode(lexer.GetSpan(pos)); }
+        |   MUL_ASSIGN{ return new otava::ast::MulAssignNode(lexer.GetSpan(pos)); }
+        |   DIV_ASSIGN{ return new otava::ast::DivAssignNode(lexer.GetSpan(pos)); }
+        |   REM_ASSIGN{ return new otava::ast::ModAssignNode(lexer.GetSpan(pos)); }
+        |   ADD_ASSIGN{ return new otava::ast::PlusAssignNode(lexer.GetSpan(pos)); }
+        |   SUB_ASSIGN{ return new otava::ast::MinusAssignNode(lexer.GetSpan(pos)); }
+        |   SHIFT_RIGHT_ASSIGN{ return new otava::ast::ShiftRightAssignNode(lexer.GetSpan(pos)); }
+        |   SHIFT_LEFT_ASSIGN{ return new otava::ast::ShiftLeftAssignNode(lexer.GetSpan(pos)); }
+        |   AND_ASSIGN{ return new otava::ast::AndAssignNode(lexer.GetSpan(pos)); }
+        |   XOR_ASSIGN{ return new otava::ast::XorAssignNode(lexer.GetSpan(pos)); }
+        |   OR_ASSIGN{ return new otava::ast::OrAssignNode(lexer.GetSpan(pos)); }
         ;
 
-    ConditionalExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    ConditionalExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::Span span) : otava::ast::Node*
         ::= 
-        (   LogicalOrExpression(context):cond{ sourcePos = lexer.GetSourcePos(pos); expr.reset(cond); } 
+        (   LogicalOrExpression(context):cond{ span = lexer.GetSpan(pos); expr.reset(cond); } 
             (
                 Quest:quest Expression(context):thenExpr Colon:colon AssignmentExpression(context):elseExpr
                 {
-                    expr.reset(new otava::ast::ConditionalExprNode(sourcePos, expr.release(), quest, thenExpr, colon, elseExpr));
+                    otava::ast::Node* e = elseExpr;
+                    span.Union(e->GetSpan());
+                    expr.reset(new otava::ast::ConditionalExprNode(span, expr.release(), quest, thenExpr, colon, e));
                 }
             )?
         )
@@ -129,21 +140,26 @@ parser ExpressionParser
         }
         ;
 
-    YieldExpression(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
-        ::= CO_YIELD{ sourcePos = lexer.GetSourcePos(pos); }
-        (   AssignmentExpression(context):assignmentExpr{ return new otava::ast::YieldExprNode(sourcePos, assignmentExpr); }
-        |   BracedInitList(context):bracedInitList{ return new otava::ast::YieldExprNode(sourcePos, bracedInitList); }
+    YieldExpression(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
+        ::= CO_YIELD{ span = lexer.GetSpan(pos); }
+        (   AssignmentExpression(context):assignmentExpr{ return new otava::ast::YieldExprNode(span, assignmentExpr); }
+        |   BracedInitList(context):bracedInitList{ return new otava::ast::YieldExprNode(span, bracedInitList); }
         )
         ;
 
-    LogicalOrExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos, 
-        var soul::ast::SourcePos opPos) : otava::ast::Node*
+    LogicalOrExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::Span span, 
+        var soul::ast::Span opSpan) : otava::ast::Node*
         ::= 
         (
-            LogicalAndExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); } 
+            LogicalAndExpression(context):left{ expr.reset(left); span = lexer.GetSpan(pos); } 
             (
-                OR_OR{ opPos = lexer.GetSourcePos(pos); if (context->GetFlag(otava::symbols::ContextFlags::parsingTemplateId)) context->SetRejectTemplateId(); } 
-                LogicalAndExpression(context):right{ expr.reset(new otava::ast::BinaryExprNode(sourcePos, new otava::ast::DisjunctionNode(opPos), expr.release(), right)); }
+                OR_OR{ opSpan = lexer.GetSpan(pos); if (context->GetFlag(otava::symbols::ContextFlags::parsingTemplateId)) context->SetRejectTemplateId(); } 
+                LogicalAndExpression(context):right
+                { 
+                    otava::ast::Node* r = right;
+                    span.Union(r->GetSpan());
+                    expr.reset(new otava::ast::BinaryExprNode(span, new otava::ast::DisjunctionNode(opSpan), expr.release(), r)); 
+                }
             )*
         )
         {
@@ -151,14 +167,19 @@ parser ExpressionParser
         }
         ;
 
-    LogicalAndExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos, 
-        var soul::ast::SourcePos opPos) : otava::ast::Node*
+    LogicalAndExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::Span span, 
+        var soul::ast::Span opSpan) : otava::ast::Node*
         ::= 
         (
-            InclusiveOrExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); } 
+            InclusiveOrExpression(context):left{ expr.reset(left); span = lexer.GetSpan(pos); } 
             (
-                AMP_AMP{ opPos = lexer.GetSourcePos(pos); if (context->GetFlag(otava::symbols::ContextFlags::parsingTemplateId)) context->SetRejectTemplateId(); } 
-                InclusiveOrExpression(context):right{ expr.reset(new otava::ast::BinaryExprNode(sourcePos, new otava::ast::ConjunctionNode(opPos), expr.release(), right)); }
+                AMP_AMP{ opSpan = lexer.GetSpan(pos); if (context->GetFlag(otava::symbols::ContextFlags::parsingTemplateId)) context->SetRejectTemplateId(); } 
+                InclusiveOrExpression(context):right
+                { 
+                    otava::ast::Node* r = right;
+                    span.Union(r->GetSpan());
+                    expr.reset(new otava::ast::BinaryExprNode(span, new otava::ast::ConjunctionNode(opSpan), expr.release(), r)); 
+                }
             )*
         )
         {
@@ -166,14 +187,19 @@ parser ExpressionParser
         }
         ;
 
-    InclusiveOrExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos, 
-        var soul::ast::SourcePos opPos) : otava::ast::Node*
+    InclusiveOrExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::Span span, 
+        var soul::ast::Span opSpan) : otava::ast::Node*
         ::= 
         (
-            ExclusiveOrExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); } 
+            ExclusiveOrExpression(context):left{ expr.reset(left); span = lexer.GetSpan(pos); } 
             (
-                OR{ opPos = lexer.GetSourcePos(pos); } 
-                ExclusiveOrExpression(context):right{ expr.reset(new otava::ast::BinaryExprNode(sourcePos, new otava::ast::InclusiveOrNode(opPos), expr.release(), right)); }
+                OR{ opSpan = lexer.GetSpan(pos); } 
+                ExclusiveOrExpression(context):right
+                { 
+                    otava::ast::Node* r = right;
+                    span.Union(r->GetSpan());
+                    expr.reset(new otava::ast::BinaryExprNode(span, new otava::ast::InclusiveOrNode(opSpan), expr.release(), r)); 
+                }
             )*
         )
         {
@@ -181,14 +207,19 @@ parser ExpressionParser
         }
         ;
 
-    ExclusiveOrExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos, 
-        var soul::ast::SourcePos opPos) : otava::ast::Node*
+    ExclusiveOrExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::Span span, 
+        var soul::ast::Span opSpan) : otava::ast::Node*
         ::= 
         (
-            AndExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); } 
+            AndExpression(context):left{ expr.reset(left); span = lexer.GetSpan(pos); } 
             (
-                XOR{ opPos = lexer.GetSourcePos(pos); } 
-                AndExpression(context):right{ expr.reset(new otava::ast::BinaryExprNode(sourcePos, new otava::ast::ExclusiveOrNode(opPos), expr.release(), right)); }
+                XOR{ opSpan = lexer.GetSpan(pos); } 
+                AndExpression(context):right
+                { 
+                    otava::ast::Node* r = right;
+                    span.Union(r->GetSpan());
+                    expr.reset(new otava::ast::BinaryExprNode(span, new otava::ast::ExclusiveOrNode(opSpan), expr.release(), r)); 
+                }
             )*
         )
         {
@@ -196,14 +227,19 @@ parser ExpressionParser
         }
         ;
 
-    AndExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos, 
-        var soul::ast::SourcePos opPos) : otava::ast::Node*
+    AndExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::Span span, 
+        var soul::ast::Span opSpan) : otava::ast::Node*
         ::= 
         (
-            EqualityExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); } 
+            EqualityExpression(context):left{ expr.reset(left); span = lexer.GetSpan(pos); } 
             (
-                AMP{ opPos = lexer.GetSourcePos(pos); } 
-                EqualityExpression(context):right{ expr.reset(new otava::ast::BinaryExprNode(sourcePos, new otava::ast::AndNode(opPos), expr.release(), right)); }
+                AMP{ opSpan = lexer.GetSpan(pos); } 
+                EqualityExpression(context):right
+                { 
+                    otava::ast::Node* r = right;
+                    span.Union(r->GetSpan());
+                    expr.reset(new otava::ast::BinaryExprNode(span, new otava::ast::AndNode(opSpan), expr.release(), r)); 
+                }
             )*
         )
         {
@@ -211,12 +247,17 @@ parser ExpressionParser
         }
         ;
 
-    EqualityExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    EqualityExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            RelationalExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); }
+            RelationalExpression(context):left{ expr.reset(left); span = lexer.GetSpan(pos); }
             (
-                EqualityOp:op RelationalExpression(context):right{ expr.reset(new otava::ast::BinaryExprNode(sourcePos, op, expr.release(), right)); }
+                EqualityOp:op RelationalExpression(context):right
+                { 
+                    otava::ast::Node* r = right;
+                    span.Union(r->GetSpan());
+                    expr.reset(new otava::ast::BinaryExprNode(span, op, expr.release(), r)); 
+                }
             )*
         )
         {
@@ -225,18 +266,23 @@ parser ExpressionParser
         ;
 
     EqualityOp : otava::ast::Node*
-        ::= EQ{ return new otava::ast::EqualNode(lexer.GetSourcePos(pos)); }
-        |   NEQ{ return new otava::ast::NotEqualNode(lexer.GetSourcePos(pos)); }
+        ::= EQ{ return new otava::ast::EqualNode(lexer.GetSpan(pos)); }
+        |   NEQ{ return new otava::ast::NotEqualNode(lexer.GetSpan(pos)); }
         ;
 
 
-    RelationalExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    RelationalExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            CompareExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); }
+            CompareExpression(context):left{ expr.reset(left); span = lexer.GetSpan(pos); }
             (
                 RelationalOp(context->GetFlag(otava::symbols::ContextFlags::parsingTemplateId)):op 
-                CompareExpression(context):right{ expr.reset(new otava::ast::BinaryExprNode(sourcePos, op, expr.release(), right)); }
+                CompareExpression(context):right
+                { 
+                    otava::ast::Node* r = right;
+                    span.Union(r->GetSpan());
+                    expr.reset(new otava::ast::BinaryExprNode(span, op, expr.release(), r)); 
+                }
             )*
         )
         {
@@ -245,20 +291,25 @@ parser ExpressionParser
         ;
 
     RelationalOp(bool rejectRAngle) : otava::ast::Node*
-        ::= LANGLE{ return new otava::ast::LessNode(lexer.GetSourcePos(pos)); }
-        |   empty{ pass = !rejectRAngle; } RANGLE{ return new otava::ast::GreaterNode(lexer.GetSourcePos(pos)); }
-        |   LEQ{ return new otava::ast::LessOrEqualNode(lexer.GetSourcePos(pos)); }
-        |   GEQ{ return new otava::ast::GreaterOrEqualNode(lexer.GetSourcePos(pos)); }
+        ::= LANGLE{ return new otava::ast::LessNode(lexer.GetSpan(pos)); }
+        |   empty{ pass = !rejectRAngle; } RANGLE{ return new otava::ast::GreaterNode(lexer.GetSpan(pos)); }
+        |   LEQ{ return new otava::ast::LessOrEqualNode(lexer.GetSpan(pos)); }
+        |   GEQ{ return new otava::ast::GreaterOrEqualNode(lexer.GetSpan(pos)); }
         ;
 
-    CompareExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos, 
-        var soul::ast::SourcePos opPos) : otava::ast::Node*
+    CompareExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::Span span, 
+        var soul::ast::Span opSpan) : otava::ast::Node*
         ::=
         (
-            ShiftExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); }
+            ShiftExpression(context):left{ expr.reset(left); span = lexer.GetSpan(pos); }
             (
-                SPACE_SHIP{ opPos = lexer.GetSourcePos(pos); } 
-                ShiftExpression(context):right{ expr.reset(new otava::ast::BinaryExprNode(sourcePos, new otava::ast::CompareNode(opPos), expr.release(), right)); }
+                SPACE_SHIP{ opSpan = lexer.GetSpan(pos); } 
+                ShiftExpression(context):right
+                { 
+                    otava::ast::Node* r = right;
+                    span.Union(r->GetSpan());
+                    expr.reset(new otava::ast::BinaryExprNode(span, new otava::ast::CompareNode(opSpan), expr.release(), r)); 
+                }
             )*
         )
         {
@@ -266,13 +317,18 @@ parser ExpressionParser
         }
         ;
 
-    ShiftExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    ShiftExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            AdditiveExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); }
+            AdditiveExpression(context):left{ expr.reset(left); span = lexer.GetSpan(pos); }
             (
                 ShiftOp:op 
-                AdditiveExpression(context):right{ expr.reset(new otava::ast::BinaryExprNode(sourcePos, op, expr.release(), right)); }
+                AdditiveExpression(context):right
+                { 
+                    otava::ast::Node* r = right;
+                    span.Union(r->GetSpan());
+                    expr.reset(new otava::ast::BinaryExprNode(span, op, expr.release(), r)); 
+                }
             )*
         )
         {
@@ -281,17 +337,22 @@ parser ExpressionParser
         ;
 
     ShiftOp : otava::ast::Node*
-        ::= SHIFT_LEFT{ return new otava::ast::ShiftLeftNode(lexer.GetSourcePos(pos)); }
-        |   SHIFT_RIGHT{ return new otava::ast::ShiftRightNode(lexer.GetSourcePos(pos)); }
+        ::= SHIFT_LEFT{ return new otava::ast::ShiftLeftNode(lexer.GetSpan(pos)); }
+        |   SHIFT_RIGHT{ return new otava::ast::ShiftRightNode(lexer.GetSpan(pos)); }
         ;
 
-    AdditiveExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    AdditiveExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            MultiplicativeExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); }
+            MultiplicativeExpression(context):left{ expr.reset(left); span = lexer.GetSpan(pos); }
             (
                 AdditiveOp:op 
-                MultiplicativeExpression(context):right{ expr.reset(new otava::ast::BinaryExprNode(sourcePos, op, expr.release(), right)); }
+                MultiplicativeExpression(context):right
+                { 
+                    otava::ast::Node* r = right;
+                    span.Union(r->GetSpan());
+                    expr.reset(new otava::ast::BinaryExprNode(span, op, expr.release(), r)); 
+                }
             )*
         )
         {
@@ -300,27 +361,29 @@ parser ExpressionParser
         ;
 
     AdditiveOp : otava::ast::Node*
-        ::= PLUS{ return new otava::ast::PlusNode(lexer.GetSourcePos(pos)); }
-        |   MINUS{ return new otava::ast::MinusNode(lexer.GetSourcePos(pos)); }
+        ::= PLUS{ return new otava::ast::PlusNode(lexer.GetSpan(pos)); }
+        |   MINUS{ return new otava::ast::MinusNode(lexer.GetSpan(pos)); }
         ;
 
-    MultiplicativeExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos, var bool notFound) : 
+    MultiplicativeExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::Span span, var bool notFound) : 
         otava::ast::Node*
         ::= 
         (
-            PmExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); }
+            PmExpression(context):left{ expr.reset(left); span = lexer.GetSpan(pos); }
             (
                 MultiplicativeOp:op 
                 PmExpression(context):right
                 { 
-                    if (otava::symbols::MultiplicativeRightIdOperandNotFound(op.get(), right.get(), sourcePos, context))
+                    otava::ast::Node* r = right;
+                    span.Union(r->GetSpan());
+                    if (otava::symbols::MultiplicativeRightIdOperandNotFound(op.get(), r, context->MakeFullSpan(span), context))
                     {
                         notFound = true;
                         pass = false;
                     }
                     else
                     {
-                        expr.reset(new otava::ast::BinaryExprNode(sourcePos, op, expr.release(), right)); 
+                        expr.reset(new otava::ast::BinaryExprNode(span, op, expr.release(), r)); 
                     }
                 }
             )*
@@ -338,18 +401,23 @@ parser ExpressionParser
         ;
 
     MultiplicativeOp : otava::ast::Node*
-        ::= STAR{ return new otava::ast::MulNode(lexer.GetSourcePos(pos)); }
-        |   DIV{ return new otava::ast::DivNode(lexer.GetSourcePos(pos)); }
-        |   MOD{ return new otava::ast::ModNode(lexer.GetSourcePos(pos)); }
+        ::= STAR{ return new otava::ast::MulNode(lexer.GetSpan(pos)); }
+        |   DIV{ return new otava::ast::DivNode(lexer.GetSpan(pos)); }
+        |   MOD{ return new otava::ast::ModNode(lexer.GetSpan(pos)); }
         ;
 
-    PmExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    PmExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            CastExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); }
+            CastExpression(context):left{ expr.reset(left); span = lexer.GetSpan(pos); }
             (
                 PmOp:op 
-                CastExpression(context):right{ expr.reset(new otava::ast::BinaryExprNode(sourcePos, op, expr.release(), right)); }
+                CastExpression(context):right
+                { 
+                    otava::ast::Node* r = right;
+                    span.Union(r->GetSpan());
+                    expr.reset(new otava::ast::BinaryExprNode(span, op, expr.release(), r)); 
+                }
             )*
         )
         {
@@ -358,23 +426,25 @@ parser ExpressionParser
         ;
 
     PmOp : otava::ast::Node*
-        ::= DOT_STAR{ return new otava::ast::DotStarNode(lexer.GetSourcePos(pos)); }
-        |   ARROW_STAR{ return new otava::ast::ArrowStarNode(lexer.GetSourcePos(pos)); }
+        ::= DOT_STAR{ return new otava::ast::DotStarNode(lexer.GetSpan(pos)); }
+        |   ARROW_STAR{ return new otava::ast::ArrowStarNode(lexer.GetSpan(pos)); }
         ;
 
-    CastExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos, 
-        var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : otava::ast::Node*
+    CastExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::Span span, 
+        var soul::ast::Span lpSpan, var soul::ast::Span rpSpan) : otava::ast::Node*
         ::=  
         (
             (   
                 (
-                    LPAREN{ sourcePos = lexer.GetSourcePos(pos); lpPos = sourcePos; } 
+                    LPAREN{ span = lexer.GetSpan(pos); lpSpan = span; } 
                     TypeId(context):typeId 
-                    RPAREN{ rpPos = lexer.GetSourcePos(pos); } 
+                    RPAREN{ rpSpan = lexer.GetSpan(pos); } 
                     CastExpression(context):child
                 )
                 {
-                    expr.reset(new otava::ast::CastExprNode(sourcePos, typeId, child, lpPos, rpPos));
+                    otava::ast::Node* c = child;
+                    span.Union(c->GetSpan());
+                    expr.reset(new otava::ast::CastExprNode(span, typeId, c, lpSpan, rpSpan));
                 }
             )
             |   UnaryExpression(context):ue{ expr.reset(ue); }
@@ -384,9 +454,9 @@ parser ExpressionParser
         }
         ;
 
-    UnaryExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    UnaryExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::Span span) : otava::ast::Node*
         ::= 
-        (   UnaryOp:op{ sourcePos = lexer.GetSourcePos(pos); } CastExpression(context):child{ expr.reset(new otava::ast::UnaryExprNode(sourcePos, op, child)); }
+        (   UnaryOp:op{ span = lexer.GetSpan(pos); } CastExpression(context):child{ expr.reset(new otava::ast::UnaryExprNode(span, op, child)); }
         |   AwaitExpression(context):awaitExpr{ expr.reset(awaitExpr); }
         |   SizeOfExpression(context):sizeOfExpr{ expr.reset(sizeOfExpr); }
         |   AlignOfExpression(context):alignOfExpr{ expr.reset(alignOfExpr); }
@@ -401,80 +471,95 @@ parser ExpressionParser
         ;
 
     UnaryOp : otava::ast::Node*
-        ::= STAR{ return new otava::ast::DerefNode(lexer.GetSourcePos(pos)); }
-        |   AMP{ return new otava::ast::AddrOfNode(lexer.GetSourcePos(pos)); }
-        |   PLUS{ return new otava::ast::PlusNode(lexer.GetSourcePos(pos)); }
-        |   MINUS{ return new otava::ast::MinusNode(lexer.GetSourcePos(pos)); }
-        |   EXCLAMATION{ return new otava::ast::NotNode(lexer.GetSourcePos(pos)); }
-        |   TILDE{ return new otava::ast::ComplementNode(lexer.GetSourcePos(pos)); }
-        |   PLUS_PLUS{ return new otava::ast::PrefixIncNode(lexer.GetSourcePos(pos)); }
-        |   MINUS_MINUS{ return new otava::ast::PrefixDecNode(lexer.GetSourcePos(pos)); }
+        ::= STAR{ return new otava::ast::DerefNode(lexer.GetSpan(pos)); }
+        |   AMP{ return new otava::ast::AddrOfNode(lexer.GetSpan(pos)); }
+        |   PLUS{ return new otava::ast::PlusNode(lexer.GetSpan(pos)); }
+        |   MINUS{ return new otava::ast::MinusNode(lexer.GetSpan(pos)); }
+        |   EXCLAMATION{ return new otava::ast::NotNode(lexer.GetSpan(pos)); }
+        |   TILDE{ return new otava::ast::ComplementNode(lexer.GetSpan(pos)); }
+        |   PLUS_PLUS{ return new otava::ast::PrefixIncNode(lexer.GetSpan(pos)); }
+        |   MINUS_MINUS{ return new otava::ast::PrefixDecNode(lexer.GetSpan(pos)); }
         ;
 
-    AwaitExpression(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
-        ::= CO_AWAIT{ sourcePos = lexer.GetSourcePos(pos); } CastExpression(context):child{ return new otava::ast::AwaitExprNode(sourcePos, child); }
-        ;
-
-    SizeOfExpression(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos, 
-        var soul::ast::SourcePos ellipsisPos, var std::unique_ptr<otava::ast::Node> childNode) : otava::ast::Node*
-        ::= SIZEOF{ sourcePos = lexer.GetSourcePos(pos); } LPAREN{ lpPos = lexer.GetSourcePos(pos); } TypeId(context):typeId RPAREN
+    AwaitExpression(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
+        ::= CO_AWAIT{ span = lexer.GetSpan(pos); } 
+            CastExpression(context):child
             { 
-                rpPos = lexer.GetSourcePos(pos); 
-                return new otava::ast::SizeOfTypeExprNode(sourcePos, typeId, lpPos, rpPos); 
+                otava::ast::Node* c = child;
+                span.Union(c->GetSpan());
+                return new otava::ast::AwaitExprNode(span, c); 
             }
-        |   SIZEOF{ sourcePos = lexer.GetSourcePos(pos); } ELLIPSIS{ ellipsisPos = lexer.GetSourcePos(pos); } 
-            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
-            ID{ childNode.reset(otava::parser::token::ParseIdentifier(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos))); } 
+        ;
+
+    SizeOfExpression(otava::symbols::Context* context, var soul::ast::Span span, var soul::ast::Span lpSpan, var soul::ast::Span rpSpan, 
+        var soul::ast::Span ellipsisPos, var std::unique_ptr<otava::ast::Node> childNode) : otava::ast::Node*
+        ::= SIZEOF{ span = lexer.GetSpan(pos); } LPAREN{ lpSpan = lexer.GetSpan(pos); } TypeId(context):typeId RPAREN
+            { 
+                rpSpan = lexer.GetSpan(pos); 
+                return new otava::ast::SizeOfTypeExprNode(span, typeId, lpSpan, rpSpan); 
+            }
+        |   SIZEOF{ span = lexer.GetSpan(pos); } ELLIPSIS{ ellipsisPos = lexer.GetSpan(pos); } 
+            LPAREN{ lpSpan = lexer.GetSpan(pos); } 
+            ID{ childNode.reset(otava::parser::token::ParseIdentifier(lexer.GetSpan(pos), lexer.FileName(), lexer.GetToken(pos))); } 
             RPAREN
             { 
-                rpPos = lexer.GetSourcePos(pos); 
-                return new otava::ast::SizeOfPackExprNode(sourcePos, childNode.release(), ellipsisPos, lpPos, rpPos); 
+                rpSpan = lexer.GetSpan(pos); 
+                span.Union(rpSpan);
+                return new otava::ast::SizeOfPackExprNode(span, childNode.release(), ellipsisPos, lpSpan, rpSpan); 
             }
-        |   SIZEOF{ sourcePos = lexer.GetSourcePos(pos); } UnaryExpression(context):child{ return new otava::ast::SizeOfUnaryExprNode(sourcePos, child); }
+        |   SIZEOF{ span = lexer.GetSpan(pos); } 
+            UnaryExpression(context):child
+            { 
+                otava::ast::Node* c = child;
+                span.Union(c->GetSpan());
+                return new otava::ast::SizeOfUnaryExprNode(span, c); 
+            }
         ;
 
-    AlignOfExpression(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : 
+    AlignOfExpression(otava::symbols::Context* context, var soul::ast::Span span, var soul::ast::Span lpSpan, var soul::ast::Span rpSpan) : 
         otava::ast::Node*
         ::= 
         (
-            ALIGNOF{ sourcePos = lexer.GetSourcePos(pos); } LPAREN{ lpPos = lexer.GetSourcePos(pos); } TypeId(context):typeId RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+            ALIGNOF{ span = lexer.GetSpan(pos); } LPAREN{ lpSpan = lexer.GetSpan(pos); } TypeId(context):typeId RPAREN{ rpSpan = lexer.GetSpan(pos); }
         )
         {
-            return new otava::ast::AlignOfExprNode(sourcePos, typeId, lpPos, rpPos);
+            span.Union(rpSpan);
+            return new otava::ast::AlignOfExprNode(span, typeId, lpSpan, rpSpan);
         }
         ;
 
-    NoexceptEpression(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : 
+    NoexceptEpression(otava::symbols::Context* context, var soul::ast::Span span, var soul::ast::Span lpSpan, var soul::ast::Span rpSpan) : 
         otava::ast::Node*
         ::= 
         (
-            NOEXCEPT{ sourcePos = lexer.GetSourcePos(pos); } LPAREN{ lpPos = lexer.GetSourcePos(pos); } Expression(context):expr RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+            NOEXCEPT{ span = lexer.GetSpan(pos); } LPAREN{ lpSpan = lexer.GetSpan(pos); } Expression(context):expr RPAREN{ rpSpan = lexer.GetSpan(pos); }
         )
         {
-            return new otava::ast::NoexceptExprNode(sourcePos, expr, lpPos, rpPos);
+            span.Union(rpSpan);
+            return new otava::ast::NoexceptExprNode(span, expr, lpSpan, rpSpan);
         }
         ;
 
-    NewExpression(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::Node> colonColonNode, 
-        var soul::ast::SourcePos newPos) : otava::ast::Node*
+    NewExpression(otava::symbols::Context* context, var soul::ast::Span span, var std::unique_ptr<otava::ast::Node> colonColonNode, 
+        var soul::ast::Span newPos) : otava::ast::Node*
         ::= 
         (
-            (   COLON_COLON{ sourcePos = lexer.GetSourcePos(pos); colonColonNode.reset(new otava::ast::ColonColonNode(sourcePos)); } NEW{ newPos = lexer.GetSourcePos(pos); }
-            |   NEW{ sourcePos = lexer.GetSourcePos(pos); newPos = sourcePos; }
+            (   COLON_COLON{ span = lexer.GetSpan(pos); colonColonNode.reset(new otava::ast::ColonColonNode(span)); } NEW{ newPos = lexer.GetSpan(pos); }
+            |   NEW{ span = lexer.GetSpan(pos); newPos = span; }
             )
             NewPlacement(context):placement? NewTypeId(context):newTypeId NewInitializer(context):newInitializer?
         )
         {
-            return new otava::ast::NewExprNode(sourcePos, placement, newTypeId, newInitializer, colonColonNode.release(), newPos);
+            return new otava::ast::NewExprNode(span, placement, newTypeId, newInitializer, colonColonNode.release(), newPos);
         }
         ;
 
     NewPlacement(otava::symbols::Context* context, var std::unique_ptr<otava::ast::NewPlacementNode> placement) : otava::ast::Node*
         ::= 
         (
-            LPAREN{ soul::ast::SourcePos sourcePos = lexer.GetSourcePos(pos); placement.reset(new otava::ast::NewPlacementNode(sourcePos)); placement->SetLParenPos(sourcePos); } 
+            LPAREN{ soul::ast::Span span = lexer.GetSpan(pos); placement.reset(new otava::ast::NewPlacementNode(span)); placement->SetLParenSpan(span); } 
             ExpressionList(context, placement.get()):el 
-            RPAREN{ placement->SetRParenPos(lexer.GetSourcePos(pos)); }
+            RPAREN{ placement->SetRParenSpan(lexer.GetSpan(pos)); }
         )
         {
             return placement.release();
@@ -482,45 +567,45 @@ parser ExpressionParser
         ;
 
     NewInitializer(otava::symbols::Context* context, var std::unique_ptr<otava::ast::NewInitializerNode> node, 
-        var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : otava::ast::Node*
+        var soul::ast::Span lpSpan, var soul::ast::Span rpSpan) : otava::ast::Node*
         ::= 
         (
             (
-                LPAREN{ lpPos = lexer.GetSourcePos(pos); node.reset(new otava::ast::NewInitializerNode(lpPos)); } 
+                LPAREN{ lpSpan = lexer.GetSpan(pos); node.reset(new otava::ast::NewInitializerNode(lpSpan)); } 
                 ExpressionList(context, node.get()):exprList? 
-                RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+                RPAREN{ rpSpan = lexer.GetSpan(pos); }
             )
             {
-                node->SetLParenPos(lpPos);
-                node->SetRParenPos(rpPos);
+                node->SetLParenSpan(lpSpan);
+                node->SetRParenSpan(rpSpan);
                 return node.release();
             }
         |   BracedInitList(context):bracedInitList{ return bracedInitList; }
         )
         ;
 
-    NewTypeId(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : 
+    NewTypeId(otava::symbols::Context* context, var soul::ast::Span span, var soul::ast::Span lpSpan, var soul::ast::Span rpSpan) : 
         otava::ast::Node*
         ::= 
         (
-            LPAREN{ sourcePos = lexer.GetSourcePos(pos); lpPos = sourcePos; } 
+            LPAREN{ span = lexer.GetSpan(pos); lpSpan = span; } 
             TypeId(context):typeId 
-            RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+            RPAREN{ rpSpan = lexer.GetSpan(pos); }
         )
         { 
-            return new otava::ast::ParenNewTypeIdNode(sourcePos, typeId, lpPos, rpPos); 
+            return new otava::ast::ParenNewTypeIdNode(span, typeId, lpSpan, rpSpan); 
         }
         |   empty{ context->PushResetFlag(otava::symbols::ContextFlags::hasDefiningTypeSpecifier); }
-            TypeSpecifierSeq(context):typeSpecifierSeq{ sourcePos = lexer.GetSourcePos(pos); context->PopFlags(); } / { context->PopFlags(); }
-            (   NewDeclarator(context):newDeclarator{ return new otava::ast::NewTypeIdNode(sourcePos, typeSpecifierSeq, newDeclarator); }
-            |   empty{ return new otava::ast::NewTypeIdNode(sourcePos, typeSpecifierSeq, nullptr); }
+            TypeSpecifierSeq(context):typeSpecifierSeq{ span = lexer.GetSpan(pos); context->PopFlags(); } / { context->PopFlags(); }
+            (   NewDeclarator(context):newDeclarator{ return new otava::ast::NewTypeIdNode(span, typeSpecifierSeq, newDeclarator); }
+            |   empty{ return new otava::ast::NewTypeIdNode(span, typeSpecifierSeq, nullptr); }
             )
         ;
 
     NewDeclarator(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node) : otava::ast::Node*
         ::= 
         (
-            PtrOperator(context):first{ node.reset(new otava::ast::NewDeclaratorNode(lexer.GetSourcePos(pos))); node->AddNode(first); } 
+            PtrOperator(context):first{ node.reset(new otava::ast::NewDeclaratorNode(lexer.GetSpan(pos))); node->AddNode(first); } 
             (
                 PtrOperator(context):next{ node->AddNode(next); }
             )* 
@@ -539,7 +624,7 @@ parser ExpressionParser
         ::= 
         (
             (
-                LBracket:lb{ node.reset(new otava::ast::ArrayNewDeclaratorNode(lexer.GetSourcePos(pos))); node->AddNode(lb); } 
+                LBracket:lb{ node.reset(new otava::ast::ArrayNewDeclaratorNode(lexer.GetSpan(pos))); node->AddNode(lb); } 
                 (Expression(context):size{ node->AddNode(size); })? 
                 RBracket:rb{ node->AddNode(rb); } 
             )
@@ -555,68 +640,73 @@ parser ExpressionParser
         }
         ;
 
-    DeleteExpression(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::Node> colonColonNode, 
-        var soul::ast::SourcePos deletePos, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : otava::ast::Node*
+    DeleteExpression(otava::symbols::Context* context, var soul::ast::Span span, var std::unique_ptr<otava::ast::Node> colonColonNode, 
+        var soul::ast::Span deletePos, var soul::ast::Span lbSpan, var soul::ast::Span rbSpan) : otava::ast::Node*
         ::= 
-        (   COLON_COLON{ sourcePos = lexer.GetSourcePos(pos); colonColonNode.reset(new otava::ast::ColonColonNode(sourcePos)); } DELETE{ deletePos = lexer.GetSourcePos(pos); }
-        |   DELETE{ sourcePos = lexer.GetSourcePos(pos); deletePos = sourcePos; }
+        (   COLON_COLON{ span = lexer.GetSpan(pos); colonColonNode.reset(new otava::ast::ColonColonNode(span)); } DELETE{ deletePos = lexer.GetSpan(pos); }
+        |   DELETE{ span = lexer.GetSpan(pos); deletePos = span; }
         )
-        (   LBRACKET{ lbPos = lexer.GetSourcePos(pos); } 
-            RBRACKET{ rbPos = lexer.GetSourcePos(pos); } 
-            CastExpression(context):ptr1{ return new otava::ast::ArrayDeletePtrNode(sourcePos, ptr1, colonColonNode.release(), deletePos, lbPos, rbPos); }
-        |   CastExpression(context):ptr2{ return new otava::ast::DeletePtrNode(sourcePos, ptr2, colonColonNode.release(), deletePos); }
+        (   LBRACKET{ lbSpan = lexer.GetSpan(pos); } 
+            RBRACKET{ rbSpan = lexer.GetSpan(pos); } 
+            CastExpression(context):ptr1{ return new otava::ast::ArrayDeletePtrNode(span, ptr1, colonColonNode.release(), deletePos, lbSpan, rbSpan); }
+        |   CastExpression(context):ptr2{ return new otava::ast::DeletePtrNode(span, ptr2, colonColonNode.release(), deletePos); }
         )
         ;
 
-    PostfixExpression(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::Node> expr, 
-        var std::unique_ptr<otava::ast::InvokeExprNode> invokeNode, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos, 
-        var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : otava::ast::Node*
+    PostfixExpression(otava::symbols::Context* context, var soul::ast::Span span, var std::unique_ptr<otava::ast::Node> expr, 
+        var std::unique_ptr<otava::ast::InvokeExprNode> invokeNode, var soul::ast::Span lbSpan, var soul::ast::Span rbSpan, 
+        var soul::ast::Span lpSpan, var soul::ast::Span rpSpan) : otava::ast::Node*
         ::= 
         (
-            (   CppCastExpression(context):cppCastExpr{ sourcePos = lexer.GetSourcePos(pos); expr.reset(cppCastExpr); }
-            |   TypeIdExpression(context):typeIdExpr{ sourcePos = lexer.GetSourcePos(pos); expr.reset(typeIdExpr); }
-            |   SimpleTypeSpecifierReset(context):simpleTypeSpecifier1{ sourcePos = lexer.GetSourcePos(pos); } 
+            (   CppCastExpression(context):cppCastExpr{ span = lexer.GetSpan(pos); expr.reset(cppCastExpr); }
+            |   TypeIdExpression(context):typeIdExpr{ span = lexer.GetSpan(pos); expr.reset(typeIdExpr); }
+            |   SimpleTypeSpecifierReset(context):simpleTypeSpecifier1{ span = lexer.GetSpan(pos); } 
                 LPAREN
                 { 
-                    lpPos = lexer.GetSourcePos(pos); 
-                    invokeNode.reset(new otava::ast::InvokeExprNode(sourcePos, simpleTypeSpecifier1)); 
+                    lpSpan = lexer.GetSpan(pos); 
+                    invokeNode.reset(new otava::ast::InvokeExprNode(span, simpleTypeSpecifier1)); 
                 } 
                 ExpressionList(context, invokeNode.get()):args2? 
-                RPAREN{ rpPos = lexer.GetSourcePos(pos); invokeNode->SetLParenPos(lpPos); invokeNode->SetRParenPos(rpPos); expr.reset(invokeNode.release()); }
+                RPAREN
+                { 
+                    rpSpan = lexer.GetSpan(pos); 
+                    span.Union(rpSpan); 
+                    invokeNode->SetLParenSpan(lpSpan); invokeNode->SetRParenSpan(rpSpan); expr.reset(invokeNode.release()); 
+                }
             |   SimpleTypeSpecifierReset(context):simpleTypeSpecifier2
                 { 
-                    sourcePos = lexer.GetSourcePos(pos); 
-                    expr.reset(new otava::ast::InvokeExprNode(sourcePos, simpleTypeSpecifier1)); } 
+                    span = lexer.GetSpan(pos); 
+                    expr.reset(new otava::ast::InvokeExprNode(span, simpleTypeSpecifier1)); } 
                     BracedInitList(context):args3{ expr->AddNode(args3); 
                 }
-            |   TypenameSpecifier(context):typenameSpecifier1{ sourcePos = lexer.GetSourcePos(pos); } 
-                LPAREN{ lpPos = lexer.GetSourcePos(pos); invokeNode.reset(new otava::ast::InvokeExprNode(sourcePos, typenameSpecifier1)); } 
+            |   TypenameSpecifier(context):typenameSpecifier1{ span = lexer.GetSpan(pos); } 
+                LPAREN{ lpSpan = lexer.GetSpan(pos); invokeNode.reset(new otava::ast::InvokeExprNode(span, typenameSpecifier1)); } 
                 ExpressionList(context, invokeNode.get()):args4? 
-                RPAREN{ rpPos = lexer.GetSourcePos(pos); invokeNode->SetLParenPos(lpPos); invokeNode->SetRParenPos(rpPos); expr.reset(invokeNode.release()); }
-            |   TypenameSpecifier(context):typenameSpecifier2{ sourcePos = lexer.GetSourcePos(pos); expr.reset(new otava::ast::InvokeExprNode(sourcePos, simpleTypeSpecifier2)); } 
+                RPAREN{ rpSpan = lexer.GetSpan(pos); invokeNode->SetLParenSpan(lpSpan); invokeNode->SetRParenSpan(rpSpan); expr.reset(invokeNode.release()); }
+            |   TypenameSpecifier(context):typenameSpecifier2{ span = lexer.GetSpan(pos); expr.reset(new otava::ast::InvokeExprNode(span, simpleTypeSpecifier2)); } 
                 BracedInitList(context):args5{ expr->AddNode(args5); }
-            |   ConceptGuard(context):conceptGuard IntrinsicInvokeExpr(context):invokeExpr{ sourcePos = lexer.GetSourcePos(pos); expr.reset(invokeExpr); }
-            |   PrimaryExpression(context):primaryExpr{ expr.reset(primaryExpr); sourcePos = lexer.GetSourcePos(pos); }
+            |   ConceptGuard(context):conceptGuard IntrinsicInvokeExpr(context):invokeExpr{ span = lexer.GetSpan(pos); expr.reset(invokeExpr); }
+            |   PrimaryExpression(context):primaryExpr{ expr.reset(primaryExpr); span = lexer.GetSpan(pos); }
             )
             (
-                (   LBRACKET{ lbPos = lexer.GetSourcePos(pos); } 
+                (   LBRACKET{ lbSpan = lexer.GetSpan(pos); } 
                     ExprOrBracedInitList(context):index 
-                    RBRACKET{ rbPos = lexer.GetSourcePos(pos); expr.reset(new otava::ast::SubscriptExprNode(sourcePos, expr.release(), index, lbPos, rbPos)); }
+                    RBRACKET{ rbSpan = lexer.GetSpan(pos); expr.reset(new otava::ast::SubscriptExprNode(span, expr.release(), index, lbSpan, rbSpan)); }
                 |   LPAREN
                     { 
-                        lpPos = lexer.GetSourcePos(pos); 
-                        invokeNode.reset(new otava::ast::InvokeExprNode(sourcePos, expr.release())); 
+                        lpSpan = lexer.GetSpan(pos); 
+                        invokeNode.reset(new otava::ast::InvokeExprNode(span, expr.release())); 
                         if (context->GetFlag(otava::symbols::ContextFlags::makeCompileUnitInitFn))
                         {
                             invokeNode->SetCompileUnitInitFn();
                         }
                     } 
                     ExpressionList(context, invokeNode.get()):args? 
-                    RPAREN{ rpPos = lexer.GetSourcePos(pos); invokeNode->SetLParenPos(lpPos); invokeNode->SetRParenPos(rpPos); expr.reset(invokeNode.release()); }
-                |   DotOp:dotOp IdExpression(context):idExpr1{ expr.reset(new otava::ast::MemberExprNode(sourcePos, expr.release(), dotOp, idExpr1)); }
-                |   ArrowOp:arrowOp IdExpression(context):idExpr2{ expr.reset(new otava::ast::MemberExprNode(sourcePos, expr.release(), arrowOp, idExpr2)); }
-                |   PLUS_PLUS{ expr.reset(new otava::ast::PostfixIncExprNode(sourcePos, expr.release(), lexer.GetSourcePos(pos))); }
-                |   MINUS_MINUS{ expr.reset(new otava::ast::PostfixDecExprNode(sourcePos, expr.release(), lexer.GetSourcePos(pos))); }
+                    RPAREN{ rpSpan = lexer.GetSpan(pos); invokeNode->SetLParenSpan(lpSpan); invokeNode->SetRParenSpan(rpSpan); expr.reset(invokeNode.release()); }
+                |   DotOp:dotOp IdExpression(context):idExpr1{ expr.reset(new otava::ast::MemberExprNode(span, expr.release(), dotOp, idExpr1)); }
+                |   ArrowOp:arrowOp IdExpression(context):idExpr2{ expr.reset(new otava::ast::MemberExprNode(span, expr.release(), arrowOp, idExpr2)); }
+                |   PLUS_PLUS{ expr.reset(new otava::ast::PostfixIncExprNode(span, expr.release(), lexer.GetSpan(pos))); }
+                |   MINUS_MINUS{ expr.reset(new otava::ast::PostfixDecExprNode(span, expr.release(), lexer.GetSpan(pos))); }
                 )*
             )
         )
@@ -626,54 +716,54 @@ parser ExpressionParser
         ;
 
     CppCastExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> op, 
-        var soul::ast::SourcePos laPos, var soul::ast::SourcePos raPos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : otava::ast::Node*
+        var soul::ast::Span laSpan, var soul::ast::Span raSpan, var soul::ast::Span lpSpan, var soul::ast::Span rpSpan) : otava::ast::Node*
         ::= 
         (
-            (   DYNAMIC_CAST{ op.reset(new otava::ast::DynamicCastNode(lexer.GetSourcePos(pos))); }
-            |   STATIC_CAST{ op.reset(new otava::ast::StaticCastNode(lexer.GetSourcePos(pos))); }
-            |   REINTERPRET_CAST{ op.reset(new otava::ast::ReinterpretCastNode(lexer.GetSourcePos(pos))); }
-            |   CONST_CAST{ op.reset(new otava::ast::ConstCastNode(lexer.GetSourcePos(pos))); }
+            (   DYNAMIC_CAST{ op.reset(new otava::ast::DynamicCastNode(lexer.GetSpan(pos))); }
+            |   STATIC_CAST{ op.reset(new otava::ast::StaticCastNode(lexer.GetSpan(pos))); }
+            |   REINTERPRET_CAST{ op.reset(new otava::ast::ReinterpretCastNode(lexer.GetSpan(pos))); }
+            |   CONST_CAST{ op.reset(new otava::ast::ConstCastNode(lexer.GetSpan(pos))); }
             )
-            LANGLE{ laPos = lexer.GetSourcePos(pos); }
+            LANGLE{ laSpan = lexer.GetSpan(pos); }
             TypeId(context):typeId
-            RANGLE{ raPos = lexer.GetSourcePos(pos); }
-            LPAREN{ lpPos = lexer.GetSourcePos(pos); }
+            RANGLE{ raSpan = lexer.GetSpan(pos); }
+            LPAREN{ lpSpan = lexer.GetSpan(pos); }
             Expression(context):child
-            RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+            RPAREN{ rpSpan = lexer.GetSpan(pos); }
         )
         {
-            return new otava::ast::CppCastExprNode(lexer.GetSourcePos(pos), typeId, child, op.release(), laPos, raPos, lpPos, rpPos);
+            return new otava::ast::CppCastExprNode(lexer.GetSpan(pos), typeId, child, op.release(), laSpan, raSpan, lpSpan, rpSpan);
         }
         ;
 
-    TypeIdExpression(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos, 
+    TypeIdExpression(otava::symbols::Context* context, var soul::ast::Span span, var soul::ast::Span lpSpan, var soul::ast::Span rpSpan, 
         var std::unique_ptr<otava::ast::Node> child) : otava::ast::Node*
         ::= 
         (
-            TYPEID{ sourcePos = lexer.GetSourcePos(pos); } 
-            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
+            TYPEID{ span = lexer.GetSpan(pos); } 
+            LPAREN{ lpSpan = lexer.GetSpan(pos); } 
             (   TypeId(context):typeId{ child.reset(typeId); } 
             |   Expression(context):expr{ child.reset(expr); }
             ) 
-            RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+            RPAREN{ rpSpan = lexer.GetSpan(pos); }
         )
         {
-            return new otava::ast::TypeIdExprNode(sourcePos, child.release(), lpPos, rpPos);
+            return new otava::ast::TypeIdExprNode(span, child.release(), lpSpan, rpSpan);
         }
         ;
 
     IntrinsicInvokeExpr(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> exprNode, 
-        var std::unique_ptr<otava::ast::InvokeExprNode> invokeNode, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : 
+        var std::unique_ptr<otava::ast::InvokeExprNode> invokeNode, var soul::ast::Span span, var soul::ast::Span lpSpan, var soul::ast::Span rpSpan) : 
         otava::ast::Node*
         ::= 
         (
-            PrimaryExpression(context):primaryExpr{ exprNode.reset(primaryExpr); sourcePos = lexer.GetSourcePos(pos); }
-            (   LPAREN{ lpPos = lexer.GetSourcePos(pos); invokeNode.reset(new otava::ast::InvokeExprNode(lexer.GetSourcePos(pos), exprNode.release())); } 
+            PrimaryExpression(context):primaryExpr{ exprNode.reset(primaryExpr); span = lexer.GetSpan(pos); }
+            (   LPAREN{ lpSpan = lexer.GetSpan(pos); invokeNode.reset(new otava::ast::InvokeExprNode(lexer.GetSpan(pos), exprNode.release())); } 
                 ParameterDeclarationClause(context, invokeNode.get()):params 
-                RPAREN{ rpPos = lexer.GetSourcePos(pos); invokeNode->SetLParenPos(lpPos); invokeNode->SetRParenPos(rpPos); exprNode.reset(invokeNode.release()); }
-            |   LPAREN{ lpPos = lexer.GetSourcePos(pos); invokeNode.reset(new otava::ast::InvokeExprNode(lexer.GetSourcePos(pos), exprNode.release())); } 
+                RPAREN{ rpSpan = lexer.GetSpan(pos); invokeNode->SetLParenSpan(lpSpan); invokeNode->SetRParenSpan(rpSpan); exprNode.reset(invokeNode.release()); }
+            |   LPAREN{ lpSpan = lexer.GetSpan(pos); invokeNode.reset(new otava::ast::InvokeExprNode(lexer.GetSpan(pos), exprNode.release())); } 
                 ExpressionList(context, invokeNode.get()):args? 
-                RPAREN{ rpPos = lexer.GetSourcePos(pos); invokeNode->SetLParenPos(lpPos); invokeNode->SetRParenPos(rpPos); exprNode.reset(invokeNode.release()); }
+                RPAREN{ rpSpan = lexer.GetSpan(pos); invokeNode->SetLParenSpan(lpSpan); invokeNode->SetRParenSpan(rpSpan); exprNode.reset(invokeNode.release()); }
             )
         )
         {
@@ -683,7 +773,7 @@ parser ExpressionParser
 
     PrimaryExpression(otava::symbols::Context* context) : otava::ast::Node*
         ::= Literal(context):literal{ return literal; }
-        |   THIS{ return new otava::ast::ThisNode(lexer.GetSourcePos(pos)); }
+        |   THIS{ return new otava::ast::ThisNode(lexer.GetSpan(pos)); }
         |   FoldExpression(context):foldExpr{ return foldExpr; }
         |   ParenthesizedExpression(context):parenExpr{ return parenExpr; }
         |   IdExpression(context):idExpr{ return idExpr; }
@@ -692,9 +782,9 @@ parser ExpressionParser
         ;
 
     FoldExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::FoldExprNode> expr, var std::unique_ptr<otava::ast::Node> op2Node, 
-        var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : otava::ast::Node*
+        var soul::ast::Span lpSpan, var soul::ast::Span rpSpan) : otava::ast::Node*
         ::= 
-        (   LPAREN{ lpPos = lexer.GetSourcePos(pos); expr.reset(new otava::ast::FoldExprNode(lpPos)); }
+        (   LPAREN{ lpSpan = lexer.GetSpan(pos); expr.reset(new otava::ast::FoldExprNode(lpSpan)); }
             (   
                 (
                     CastExpression(context):castExpr1 FoldOp:op1 Ellipsis:ellipsis1
@@ -721,82 +811,82 @@ parser ExpressionParser
                     expr->AddNode(castExpr3);
                 }
             )
-            RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+            RPAREN{ rpSpan = lexer.GetSpan(pos); }
         )
         {
-            expr->SetLParenPos(lpPos);
-            expr->SetRParenPos(rpPos);
+            expr->SetLParenSpan(lpSpan);
+            expr->SetRParenSpan(rpSpan);
             return expr.release();
         }
         ;
 
     FoldOp : otava::ast::Node*
-        ::= PLUS{ return new otava::ast::PlusNode(lexer.GetSourcePos(pos)); }
-        |   MINUS{ return new otava::ast::MinusNode(lexer.GetSourcePos(pos)); }
-        |   STAR{ return new otava::ast::MulNode(lexer.GetSourcePos(pos)); }
-        |   DIV{ return new otava::ast::DivNode(lexer.GetSourcePos(pos)); }
-        |   MOD{ return new otava::ast::ModNode(lexer.GetSourcePos(pos)); }
-        |   XOR{ return new otava::ast::ExclusiveOrNode(lexer.GetSourcePos(pos)); }
-        |   AMP{ return new otava::ast::AndNode(lexer.GetSourcePos(pos)); }
-        |   OR{ return new otava::ast::InclusiveOrNode(lexer.GetSourcePos(pos)); }
-        |   SHIFT_LEFT{ return new otava::ast::ShiftLeftNode(lexer.GetSourcePos(pos)); }
-        |   SHIFT_RIGHT{ return new otava::ast::ShiftRightNode(lexer.GetSourcePos(pos)); }
-        |   ADD_ASSIGN{ return new otava::ast::PlusAssignNode(lexer.GetSourcePos(pos)); }
-        |   SUB_ASSIGN{ return new otava::ast::MinusAssignNode(lexer.GetSourcePos(pos)); }
-        |   MUL_ASSIGN{ return new otava::ast::MulAssignNode(lexer.GetSourcePos(pos)); }
-        |   DIV_ASSIGN{ return new otava::ast::DivAssignNode(lexer.GetSourcePos(pos)); }
-        |   REM_ASSIGN{ return new otava::ast::ModAssignNode(lexer.GetSourcePos(pos)); }
-        |   XOR_ASSIGN{ return new otava::ast::XorAssignNode(lexer.GetSourcePos(pos)); }
-        |   AND_ASSIGN{ return new otava::ast::AndAssignNode(lexer.GetSourcePos(pos)); }
-        |   OR_ASSIGN{ return new otava::ast::OrAssignNode(lexer.GetSourcePos(pos)); }
-        |   SHIFT_LEFT_ASSIGN{ return new otava::ast::ShiftLeftAssignNode(lexer.GetSourcePos(pos)); }
-        |   SHIFT_RIGHT_ASSIGN{ return new otava::ast::ShiftRightAssignNode(lexer.GetSourcePos(pos)); }
-        |   ASSIGN{ return new otava::ast::AssignNode(lexer.GetSourcePos(pos)); }
-        |   EQ{ return new otava::ast::EqualNode(lexer.GetSourcePos(pos)); }
-        |   NEQ{ return new otava::ast::NotEqualNode(lexer.GetSourcePos(pos)); }
-        |   LANGLE{ return new otava::ast::LessNode(lexer.GetSourcePos(pos)); }
-        |   RANGLE{ return new otava::ast::GreaterNode(lexer.GetSourcePos(pos)); }
-        |   LEQ{ return new otava::ast::LessOrEqualNode(lexer.GetSourcePos(pos)); }
-        |   GEQ{ return new otava::ast::GreaterOrEqualNode(lexer.GetSourcePos(pos)); }
-        |   AMP_AMP{ return new otava::ast::ConjunctionNode(lexer.GetSourcePos(pos)); }
-        |   OR_OR{ return new otava::ast::DisjunctionNode(lexer.GetSourcePos(pos)); }
-        |   COMMA{ return new otava::ast::CommaNode(lexer.GetSourcePos(pos)); }
-        |   DOT_STAR{ return new otava::ast::DotStarNode(lexer.GetSourcePos(pos)); }
-        |   ARROW_STAR{ return new otava::ast::ArrowStarNode(lexer.GetSourcePos(pos)); }
+        ::= PLUS{ return new otava::ast::PlusNode(lexer.GetSpan(pos)); }
+        |   MINUS{ return new otava::ast::MinusNode(lexer.GetSpan(pos)); }
+        |   STAR{ return new otava::ast::MulNode(lexer.GetSpan(pos)); }
+        |   DIV{ return new otava::ast::DivNode(lexer.GetSpan(pos)); }
+        |   MOD{ return new otava::ast::ModNode(lexer.GetSpan(pos)); }
+        |   XOR{ return new otava::ast::ExclusiveOrNode(lexer.GetSpan(pos)); }
+        |   AMP{ return new otava::ast::AndNode(lexer.GetSpan(pos)); }
+        |   OR{ return new otava::ast::InclusiveOrNode(lexer.GetSpan(pos)); }
+        |   SHIFT_LEFT{ return new otava::ast::ShiftLeftNode(lexer.GetSpan(pos)); }
+        |   SHIFT_RIGHT{ return new otava::ast::ShiftRightNode(lexer.GetSpan(pos)); }
+        |   ADD_ASSIGN{ return new otava::ast::PlusAssignNode(lexer.GetSpan(pos)); }
+        |   SUB_ASSIGN{ return new otava::ast::MinusAssignNode(lexer.GetSpan(pos)); }
+        |   MUL_ASSIGN{ return new otava::ast::MulAssignNode(lexer.GetSpan(pos)); }
+        |   DIV_ASSIGN{ return new otava::ast::DivAssignNode(lexer.GetSpan(pos)); }
+        |   REM_ASSIGN{ return new otava::ast::ModAssignNode(lexer.GetSpan(pos)); }
+        |   XOR_ASSIGN{ return new otava::ast::XorAssignNode(lexer.GetSpan(pos)); }
+        |   AND_ASSIGN{ return new otava::ast::AndAssignNode(lexer.GetSpan(pos)); }
+        |   OR_ASSIGN{ return new otava::ast::OrAssignNode(lexer.GetSpan(pos)); }
+        |   SHIFT_LEFT_ASSIGN{ return new otava::ast::ShiftLeftAssignNode(lexer.GetSpan(pos)); }
+        |   SHIFT_RIGHT_ASSIGN{ return new otava::ast::ShiftRightAssignNode(lexer.GetSpan(pos)); }
+        |   ASSIGN{ return new otava::ast::AssignNode(lexer.GetSpan(pos)); }
+        |   EQ{ return new otava::ast::EqualNode(lexer.GetSpan(pos)); }
+        |   NEQ{ return new otava::ast::NotEqualNode(lexer.GetSpan(pos)); }
+        |   LANGLE{ return new otava::ast::LessNode(lexer.GetSpan(pos)); }
+        |   RANGLE{ return new otava::ast::GreaterNode(lexer.GetSpan(pos)); }
+        |   LEQ{ return new otava::ast::LessOrEqualNode(lexer.GetSpan(pos)); }
+        |   GEQ{ return new otava::ast::GreaterOrEqualNode(lexer.GetSpan(pos)); }
+        |   AMP_AMP{ return new otava::ast::ConjunctionNode(lexer.GetSpan(pos)); }
+        |   OR_OR{ return new otava::ast::DisjunctionNode(lexer.GetSpan(pos)); }
+        |   COMMA{ return new otava::ast::CommaNode(lexer.GetSpan(pos)); }
+        |   DOT_STAR{ return new otava::ast::DotStarNode(lexer.GetSpan(pos)); }
+        |   ARROW_STAR{ return new otava::ast::ArrowStarNode(lexer.GetSpan(pos)); }
         ;
 
-    ParenthesizedExpression(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : 
+    ParenthesizedExpression(otava::symbols::Context* context, var soul::ast::Span span, var soul::ast::Span lpSpan, var soul::ast::Span rpSpan) : 
         otava::ast::Node*
         ::= 
         (
-            LPAREN{ sourcePos = lexer.GetSourcePos(pos); lpPos = sourcePos; } Expression(context):expr RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+            LPAREN{ span = lexer.GetSpan(pos); lpSpan = span; } Expression(context):expr RPAREN{ rpSpan = lexer.GetSpan(pos); }
         )
         {
-            return new otava::ast::ParenthesizedExprNode(sourcePos, expr, lpPos, rpPos);
+            return new otava::ast::ParenthesizedExprNode(span, expr, lpSpan, rpSpan);
         }
         ;
 
-    DotOp(var std::unique_ptr<otava::ast::Node> dotNode, var std::unique_ptr<otava::ast::Node> templateNode, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    DotOp(var std::unique_ptr<otava::ast::Node> dotNode, var std::unique_ptr<otava::ast::Node> templateNode, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            DOT{ sourcePos = lexer.GetSourcePos(pos); dotNode.reset(new otava::ast::DotNode(sourcePos)); } 
+            DOT{ span = lexer.GetSpan(pos); dotNode.reset(new otava::ast::DotNode(span)); } 
             TEMPLATE
             { 
-                templateNode.reset(new otava::ast::TemplateNode(lexer.GetSourcePos(pos))); 
-                return new otava::ast::PairNode(sourcePos, dotNode.release(), templateNode.release()); 
+                templateNode.reset(new otava::ast::TemplateNode(lexer.GetSpan(pos))); 
+                return new otava::ast::PairNode(span, dotNode.release(), templateNode.release()); 
             }
-        |   DOT{ return new otava::ast::DotNode(lexer.GetSourcePos(pos)); }
+        |   DOT{ return new otava::ast::DotNode(lexer.GetSpan(pos)); }
         )
         ;
 
-    ArrowOp(var std::unique_ptr<otava::ast::Node> arrowNode, var std::unique_ptr<otava::ast::Node> templateNode, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
-        ::= ARROW{ sourcePos = lexer.GetSourcePos(pos); arrowNode.reset(new otava::ast::ArrowNode(sourcePos)); } 
+    ArrowOp(var std::unique_ptr<otava::ast::Node> arrowNode, var std::unique_ptr<otava::ast::Node> templateNode, var soul::ast::Span span) : otava::ast::Node*
+        ::= ARROW{ span = lexer.GetSpan(pos); arrowNode.reset(new otava::ast::ArrowNode(span)); } 
             TEMPLATE
             { 
-                templateNode.reset(new otava::ast::TemplateNode(lexer.GetSourcePos(pos))); 
-                return new otava::ast::PairNode(sourcePos, arrowNode.release(), templateNode.release()); 
+                templateNode.reset(new otava::ast::TemplateNode(lexer.GetSpan(pos))); 
+                return new otava::ast::PairNode(span, arrowNode.release(), templateNode.release()); 
             }
-        |   ARROW{ return new otava::ast::ArrowNode(lexer.GetSourcePos(pos)); }
+        |   ARROW{ return new otava::ast::ArrowNode(lexer.GetSpan(pos)); }
         ;
 
     IdExpression(otava::symbols::Context* context) : otava::ast::Node*
@@ -813,14 +903,14 @@ parser ExpressionParser
         ::= InitializerList(context, container):il
         ;
 
-    ThrowExpression(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    ThrowExpression(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            THROW{ sourcePos = lexer.GetSourcePos(pos); } 
+            THROW{ span = lexer.GetSpan(pos); } 
             AssignmentExpression(context):expr?
         )
         {
-            return new otava::ast::ThrowExprNode(sourcePos, expr);
+            return new otava::ast::ThrowExprNode(span, expr);
         }
         ;
 }

@@ -92,8 +92,8 @@ public:
     bool IsValidDeclarationScope(ScopeKind scopeKind) const noexcept override;
     TemplateDeclarationSymbol* ParentTemplateDeclaration() const noexcept;
     bool IsTemplate() const noexcept;
-    void MakeVTab(Context* context, const soul::ast::SourcePos& sourcePos);
-    void InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos, bool clear);
+    void MakeVTab(Context* context, const soul::ast::FullSpan& fullSpan);
+    void InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::FullSpan& fullSpan, bool clear);
     const std::vector<FunctionSymbol*>& VTab() const { return vtab; }
     std::string IrName(Context* context) const override;
     const std::string& VTabName(Context* context) const { return vtabName; }
@@ -106,7 +106,7 @@ public:
     otava::intermediate::Value* GetVTabVariable(Emitter& emitter, Context* context);
     std::vector<ClassTypeSymbol*> VPtrHolderClasses() const;
     inline const std::vector<ClassTypeSymbol*>& BaseClasses() const noexcept { return baseClasses; }
-    void AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
+    void AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::FullSpan& fullSpan, Context* context);
     inline const std::vector<ClassTypeSymbol*>& DerivedClasses() const noexcept { return derivedClasses; }
     void AddDerivedClass(ClassTypeSymbol* derivedClass);
     bool HasBaseClass(TypeSymbol* baseClass, int& distance, Context* context) const noexcept override;
@@ -121,15 +121,15 @@ public:
     bool IsPolymorphic() const noexcept override;
     inline const std::vector<VariableSymbol*>& MemberVariables() const noexcept { return memberVariables; }
     inline const std::vector<FunctionSymbol*>& MemberFunctions() const noexcept { return memberFunctions; }
-    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context) override;
     void SetMemFnDefSymbol(FunctionDefinitionSymbol* memFnDefSymbol);
     FunctionDefinitionSymbol* GetMemFnDefSymbol(int32_t defIndex) const noexcept;
     inline const std::map<std::int32_t, FunctionDefinitionSymbol*>& MemFnDefSymbolMap() const noexcept { return memFnDefSymbolMap; }
     inline void SetNextMemFnDefIndex(int32_t defIndex) noexcept { nextMemFnDefIndex = std::max(defIndex, nextMemFnDefIndex); }
     inline int32_t NextMemFnDefIndex() const noexcept { return nextMemFnDefIndex; }
-    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context) override;
     inline const std::vector<TypeSymbol*>& ObjectLayout() const noexcept { return objectLayout; }
-    void MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Context* context);
+    void MakeObjectLayout(const soul::ast::FullSpan& fullSpan, Context* context);
     void MapFunction(FunctionSymbol* function);
     FunctionSymbol* GetFunctionByIndex(std::int32_t functionIndex) const noexcept;
     std::int32_t NextFunctionIndex() noexcept;
@@ -152,7 +152,7 @@ public:
     inline void SetGroup(ClassGroupSymbol* group_) noexcept { group = group_; }
     bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const noexcept override;
     FunctionSymbol* CopyCtor() const noexcept { return copyCtor; }
-    void GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context);
+    void GenerateCopyCtor(const soul::ast::FullSpan& fullSpan, Context* context);
     void ResetCopyCtor() noexcept { copyCtor = nullptr; }
     std::pair<bool, std::int64_t> Delta(ClassTypeSymbol* base, Emitter& emitter, Context* context) noexcept;
     int TotalMemberCount() const noexcept;
@@ -195,7 +195,7 @@ class ForwardClassDeclarationSymbol : public TypeSymbol
 public:
     ForwardClassDeclarationSymbol(const std::u32string& name_);
     int Arity() noexcept;
-    util::uuid IrId(const soul::ast::SourcePos& sourcedPos, Context* context) const override;
+    util::uuid IrId(const soul::ast::FullSpan& fullSpan, Context* context) const override;
     inline ClassKind GetClassKind() const noexcept { return classKind; }
     inline void SetClassKind(ClassKind classKind_) noexcept { classKind = classKind_; }
     inline TypeSymbol* Specialization() const noexcept { return specialization; }
@@ -210,8 +210,8 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable, Context* context) override;
-    TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
-    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    TypeSymbol* FinalType(const soul::ast::FullSpan& fullSpan, Context* context) override;
+    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context) override;
     bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const noexcept override;
     inline ClassGroupSymbol* Group() const noexcept { return group; }
     inline void SetGroup(ClassGroupSymbol* group_) noexcept { group = group_; }
@@ -243,13 +243,13 @@ void GetClassAttributes(otava::ast::Node* node, std::u32string& name, otava::sym
 std::vector<ClassTypeSymbol*> ResolveBaseClasses(otava::ast::Node* node, Context* context);
 void ParseInlineMemberFunctions(otava::ast::Node* classSpecifierNode, ClassTypeSymbol* classTypeSymbol, Context* context);
 void ParseInlineMemberFunction(Context* context, FunctionSymbol* memfn);
-Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context);
 void GenerateDestructors(BoundCompileUnitNode* compileUnit, otava::symbols::Context* context);
 BoundFunctionCallNode* MakeDestructorCall(ClassTypeSymbol* cls, BoundExpressionNode* arg, FunctionDefinitionSymbol* destructor,
-    const soul::ast::SourcePos& sourcePos, Context* context);
+    const soul::ast::FullSpan& fullSpan, Context* context);
 void CheckGenerateTemporaryDestructorCall(BoundConstructTemporaryNode* constructTemporary, BoundExpressionNode* arg, Context* context);
-void ThrowMemberDeclarationParsingError(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-void ThrowStatementParsingError(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+void ThrowMemberDeclarationParsingError(const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context);
+void ThrowStatementParsingError(const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context);
 
 struct ClassLess
 {

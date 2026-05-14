@@ -6,7 +6,7 @@
 export module otava.ast.node;
 
 import std;
-import soul.ast.source.pos;
+import soul.ast.span;
 import otava.ast.node.list;
 
 export namespace otava::ast {
@@ -96,7 +96,7 @@ std::string NodeKindStr(NodeKind nodeKind);
 class Node
 {
 public:
-    Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept;
+    Node(NodeKind kind_, const soul::ast::Span& span_) noexcept;
     virtual ~Node();
     virtual Node* Clone() const = 0;
     inline NodeKind Kind() const noexcept { return kind; }
@@ -105,8 +105,8 @@ public:
     virtual std::u32string Str() const { return std::u32string(); }
     virtual NodeType Type() const noexcept { return NodeType::single; }
     virtual int Count() const noexcept { return 0; }
-    inline const soul::ast::SourcePos& GetSourcePos() const noexcept { return sourcePos; }
-    inline void SetSourcePos(const soul::ast::SourcePos& sourcePos_) noexcept { sourcePos = sourcePos_; }
+    inline const soul::ast::Span& GetSpan() const noexcept { return span; }
+    inline void SetSpan(const soul::ast::Span& span_) noexcept { span = span_; }
     virtual void Accept(Visitor& visitor) = 0;
     virtual void Write(Writer& writer);
     virtual void Read(Reader& reader);
@@ -167,7 +167,7 @@ public:
     inline bool IsSimpleDeclarationNode() const noexcept { return kind == NodeKind::simpleDeclarationNode; }
 private:
     NodeKind kind;
-    soul::ast::SourcePos sourcePos;
+    soul::ast::Span span;
     Node* parent;
     std::int64_t id;
 };
@@ -175,14 +175,14 @@ private:
 class CompoundNode : public Node
 {
 public:
-    CompoundNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept;
+    CompoundNode(NodeKind kind_, const soul::ast::Span& span_) noexcept;
     NodeType Type() const noexcept override { return NodeType::compound; }
 };
 
 class UnaryNode : public Node
 {
 public:
-    UnaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept;
+    UnaryNode(NodeKind kind_, const soul::ast::Span& span_, Node* child_) noexcept;
     UnaryNode(const UnaryNode&) = delete;
     UnaryNode& operator=(const UnaryNode&) = delete;
     void Write(Writer& writer) override;
@@ -198,7 +198,7 @@ private:
 class BinaryNode : public Node
 {
 public:
-    BinaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* left_, Node* right_) noexcept;
+    BinaryNode(NodeKind kind_, const soul::ast::Span& span_, Node* left_, Node* right_) noexcept;
     BinaryNode(const BinaryNode&) = delete;
     BinaryNode& operator=(const BinaryNode&) = delete;
     void Write(Writer& writer) override;
@@ -216,7 +216,7 @@ private:
 class SequenceNode : public Node
 {
 public:
-    SequenceNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept;
+    SequenceNode(NodeKind kind_, const soul::ast::Span& span_) noexcept;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     NodeType Type() const noexcept override { return NodeType::sequence; }
@@ -234,7 +234,7 @@ private:
 class ListNode : public Node
 {
 public:
-    ListNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept;
+    ListNode(NodeKind kind_, const soul::ast::Span& span_) noexcept;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     NodeType Type() const noexcept override { return NodeType::list; }
@@ -267,7 +267,7 @@ private:
 void MakeNodeFactoryCollection();
 NodeIdFactory* GetNodeIdFactory() noexcept;
 void SetNodeIdFactory(NodeIdFactory* factory) noexcept;
-Node* CreateNode(NodeKind nodeKind, const soul::ast::SourcePos& sourcePos);
+Node* CreateNode(NodeKind nodeKind, const soul::ast::Span& span);
 std::int64_t GetNextNodeId() noexcept;
 
 } // namespace otava::ast

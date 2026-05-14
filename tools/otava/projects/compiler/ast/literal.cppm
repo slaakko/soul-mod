@@ -43,8 +43,8 @@ enum class EncodingPrefix : std::uint8_t
 class LiteralNode : public Node
 {
 public:
-    LiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) noexcept;
-    LiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::u32string& rep_);
+    LiteralNode(NodeKind kind_, const soul::ast::Span& span_) noexcept;
+    LiteralNode(NodeKind kind_, const soul::ast::Span& span_, const std::u32string& rep_);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline const std::u32string& Rep() const noexcept { return rep; }
@@ -56,8 +56,8 @@ private:
 class IntegerLiteralNode : public LiteralNode
 {
 public:
-    IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_, std::uint64_t value_, Suffix suffix_, Base base_, const std::u32string& rep_);
+    IntegerLiteralNode(const soul::ast::Span& span_) noexcept;
+    IntegerLiteralNode(const soul::ast::Span& span_, std::uint64_t value_, Suffix suffix_, Base base_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -75,8 +75,8 @@ private:
 class FloatingLiteralNode : public LiteralNode
 {
 public:
-    FloatingLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    FloatingLiteralNode(const soul::ast::SourcePos& sourcePos_, double value_, Suffix suffix_, Base base_, const std::u32string& rep_);
+    FloatingLiteralNode(const soul::ast::Span& span_) noexcept;
+    FloatingLiteralNode(const soul::ast::Span& span_, double value_, Suffix suffix_, Base base_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -93,8 +93,8 @@ private:
 class CharacterLiteralNode : public LiteralNode
 {
 public:
-    CharacterLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    CharacterLiteralNode(const soul::ast::SourcePos& sourcePos_, char32_t value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_, bool hasMultipleCharacters_);
+    CharacterLiteralNode(const soul::ast::Span& span_) noexcept;
+    CharacterLiteralNode(const soul::ast::Span& span_, char32_t value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_, bool hasMultipleCharacters_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -111,10 +111,10 @@ private:
 class StringLiteralNode : public LiteralNode
 {
 public:
-    StringLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    StringLiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
-    StringLiteralNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_);
-    StringLiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_);
+    StringLiteralNode(const soul::ast::Span& span_) noexcept;
+    StringLiteralNode(NodeKind kind_, const soul::ast::Span& span_);
+    StringLiteralNode(const soul::ast::Span& span_, const std::u32string& value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_);
+    StringLiteralNode(NodeKind kind_, const soul::ast::Span& span_, const std::u32string& value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -129,8 +129,8 @@ private:
 class RawStringLiteralNode : public StringLiteralNode
 {
 public:
-    RawStringLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    RawStringLiteralNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_,
+    RawStringLiteralNode(const soul::ast::Span& span_) noexcept;
+    RawStringLiteralNode(const soul::ast::Span& span_, const std::u32string& value_, EncodingPrefix encodingPrefix_,
         const std::u32string& delimSequence_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -144,8 +144,8 @@ private:
 class BooleanLiteralNode : public LiteralNode
 {
 public:
-    BooleanLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    BooleanLiteralNode(const soul::ast::SourcePos& sourcePos_, bool value_, const std::u32string& rep_);
+    BooleanLiteralNode(const soul::ast::Span& span_) noexcept;
+    BooleanLiteralNode(const soul::ast::Span& span_, bool value_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -158,8 +158,8 @@ private:
 class NullPtrLiteralNode : public LiteralNode
 {
 public:
-    NullPtrLiteralNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    NullPtrLiteralNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& rep_);
+    NullPtrLiteralNode(const soul::ast::Span& span_) noexcept;
+    NullPtrLiteralNode(const soul::ast::Span& span_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -167,8 +167,8 @@ public:
 class UserDefinedLiteraNode : public BinaryNode
 {
 public:
-    UserDefinedLiteraNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    UserDefinedLiteraNode(const soul::ast::SourcePos& sourcePos_, Node* literalNode_, Node* udSuffix_) noexcept;
+    UserDefinedLiteraNode(const soul::ast::Span& span_) noexcept;
+    UserDefinedLiteraNode(const soul::ast::Span& span_, Node* literalNode_, Node* udSuffix_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -176,15 +176,15 @@ public:
 class LiteralOperatorIdNode : public UnaryNode
 {
 public:
-    LiteralOperatorIdNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    LiteralOperatorIdNode(const soul::ast::SourcePos& sourcePos_, Node* id_, const soul::ast::SourcePos& stringLitPos_) noexcept;
+    LiteralOperatorIdNode(const soul::ast::Span& span_) noexcept;
+    LiteralOperatorIdNode(const soul::ast::Span& span_, Node* id_, const soul::ast::Span& stringLitSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline const soul::ast::SourcePos& StringLitPos() const noexcept { return stringLitPos; }
+    inline const soul::ast::Span& StringLitSpan() const noexcept { return stringLitSpan; }
 private:
-    soul::ast::SourcePos stringLitPos;
+    soul::ast::Span stringLitSpan;
 };
 
 std::u32string EncodingPrefixStr(EncodingPrefix encodingPrefix);

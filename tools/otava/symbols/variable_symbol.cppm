@@ -74,6 +74,6 @@ struct VariableLess
     bool operator()(VariableSymbol* left, VariableSymbol* right) const noexcept;
 };
 
-void SetDeclaredVariableType(VariableSymbol* variable, const soul::ast::SourcePos& sourcePos, Context* context);
+void SetDeclaredVariableType(VariableSymbol* variable, const soul::ast::FullSpan& fullSpan, Context* context);
 
 } // namespace otava::symbols

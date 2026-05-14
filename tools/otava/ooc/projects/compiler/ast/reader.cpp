@@ -5,9 +5,9 @@ import otava.ast.error;
 
 namespace otava::ast {
 
-Reader::Reader(const std::string& fileName) : 
-    fileStream(new util::FileStream(fileName, util::OpenMode::binary | util::OpenMode::read)), 
-    bufferedStream(new util::BufferedStream(*fileStream)), 
+Reader::Reader(const std::string& fileName) :
+    fileStream(new util::FileStream(fileName, util::OpenMode::binary | util::OpenMode::read)),
+    bufferedStream(new util::BufferedStream(*fileStream)),
     binaryStreamReader(new util::BinaryStreamReader(*bufferedStream)),
     readerPtr(binaryStreamReader.get())
 {
@@ -17,13 +17,12 @@ Reader::Reader(util::BinaryStreamReader* readerPtr_) : readerPtr(readerPtr_)
 {
 }
 
-soul::ast::SourcePos Reader::ReadSourcePos()
+soul::ast::Span Reader::ReadSpan()
 {
-    int line = readerPtr->ReadULEB128UInt();
-    if (line == 0) return soul::ast::SourcePos();
-    int col = readerPtr->ReadULEB128UInt();
-    int file = readerPtr->ReadULEB128UInt();
-    return soul::ast::SourcePos(file, line, col);
+    int len = readerPtr->ReadULEB128UInt();
+    if (len == 0) return soul::ast::Span();
+    int pos = readerPtr->ReadULEB128UInt();
+    return soul::ast::Span(pos, len);
 }
 
 NodeKind Reader::ReadNodeKind()
@@ -51,8 +50,8 @@ Node* Reader::ReadNode()
     }
     else
     {
-        soul::ast::SourcePos sourcePos = ReadSourcePos();
-        Node* node = CreateNode(kind, sourcePos);
+        soul::ast::Span span = ReadSpan();
+        Node* node = CreateNode(kind, span);
         node->SetId(-1);
         node->Read(*this);
         if (node->InternalId() == -1)

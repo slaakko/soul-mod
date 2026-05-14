@@ -13,7 +13,7 @@ class CompoundTypeSymbol : public TypeSymbol
 public:
     CompoundTypeSymbol(const std::u32string& name_);
     CompoundTypeSymbol(TypeSymbol* baseType_, Derivations derivations_, const util::uuid& id_);
-    util::uuid IrId(const soul::ast::SourcePos& sourcePos, Context* context) const override;
+    util::uuid IrId(const soul::ast::FullSpan& fullSpan, Context* context) const override;
     TypeSymbol* GetBaseType() noexcept override { return baseType; }
     const TypeSymbol* GetBaseType() const noexcept override { return baseType; }
     std::string SymbolKindStr() const override { return "compound type symbol"; }
@@ -22,12 +22,12 @@ public:
     TypeSymbol* PlainType(Context* context) noexcept override;
     bool IsVoidPtrType() const noexcept override { return baseType->IsVoidType(); }
     int PointerCount() const noexcept override;
-    inline TypeSymbol* BaseType() const noexcept { return baseType; }
+    inline TypeSymbol* BaseType() const { return baseType; }
     Derivations GetDerivations() const noexcept override { return derivations; }
     TypeSymbol* RemoveDerivations(Derivations sourceDerivations, Context* context) override;
     TypeSymbol* Unify(TypeSymbol* argType, Context* context) override;
     TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap,
-        const soul::ast::SourcePos& sourcePos, Context* context) override;
+        const soul::ast::FullSpan& fullSpan, Context* context) override;
     std::string IrName(Context* context) const override;
     std::u32string FullName() const override;
     void Write(Writer& writer) override;
@@ -35,8 +35,8 @@ public:
     void Resolve(SymbolTable& symbolTable, Context* context) override;
     void Accept(Visitor& visitor) override;
     bool IsExportSymbol(Context* context) const noexcept override;
-    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context) override;
+    TypeSymbol* FinalType(const soul::ast::FullSpan& fullSpan, Context* context) override;
     TypeSymbol* DirectType(Context* context) override;
     bool IsComplete(std::set<const TypeSymbol*>& visited, const TypeSymbol*& incompleteType) const noexcept override;
     bool IsBasicStringCharType(Context* context) noexcept override { return PointerCount() == 0 && PlainType(context)->IsBasicStringCharType(context); }
@@ -50,6 +50,6 @@ private:
 };
 
 std::u32string MakeCompoundTypeName(TypeSymbol* baseType, Derivations derivations);
-util::uuid MakeCompoundTypeId(TypeSymbol* baseType, Derivations derivations, const soul::ast::SourcePos& sourcePos, Context* context) noexcept;
+util::uuid MakeCompoundTypeId(TypeSymbol* baseType, Derivations derivations, const soul::ast::FullSpan& fullSpan, Context* context) noexcept;
 
 } // namespace otava::symbols

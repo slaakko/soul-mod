@@ -6,7 +6,7 @@
 export module otava.symbols.exception_handling;
 
 import std;
-import soul.ast.source.pos;
+import soul.ast.span;
 import otava.ast;
 import otava.symbols.bound.tree;
 
@@ -21,7 +21,7 @@ public:
     inline bool IsEmpty() const noexcept { return destructorCalls.empty(); }
     void Add(BoundExpressionNode* destructorCall, Context* context);
     void Make(otava::ast::CompoundStatementNode* compoundStatement);
-    soul::ast::SourcePos GetSourcePos() const;
+    soul::ast::FullSpan GetFullSpan() const;
 private:
     Cleanup* cleanup;
     std::vector<std::unique_ptr<BoundExpressionNode>> destructorCalls;
@@ -39,7 +39,7 @@ public:
     inline void SetChanged() noexcept { changed = true; }
     inline void ResetChanged() noexcept { changed = false; }
     void Make(otava::ast::CompoundStatementNode* compoundStatement);
-    soul::ast::SourcePos GetSourcePos() const;
+    soul::ast::FullSpan GetFullSpan() const;
 private:
     std::vector<std::unique_ptr<CleanupBlock>> cleanupBlocks;
     bool changed;

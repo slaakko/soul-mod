@@ -17,7 +17,7 @@ public:
     GetFramePtrIntrinsic(Context* context);
     ParameterSymbol* ThisParam(Context* context) const override { return nullptr; }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+        const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context) override;
 };
 
 void MakeIntrinsics(Context* context);

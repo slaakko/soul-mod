@@ -7,7 +7,7 @@ export module otava.symbols.instantiation_queue;
 
 import std;
 import otava.symbols.template_param_compare;
-import soul.ast.source.pos;
+import soul.ast.span;
 
 export namespace otava::symbols {
 
@@ -38,6 +38,6 @@ private:
     std::map<std::string, std::map<std::u32string, std::vector<InstantiationRequest>>> requestMap;
 };
 
-void InstantiateEnqueuedRequests(FunctionSymbol* functionTemplate, const soul::ast::SourcePos& sourcePos, Context* context);
+void InstantiateEnqueuedRequests(FunctionSymbol* functionTemplate, const soul::ast::FullSpan& fullSpan, Context* context);
 
 } // namespace otava::symbols

@@ -40,7 +40,7 @@ void GotoTargetMapBuilder::Visit(otava::symbols::BoundLabeledStatementNode& node
         auto it = labeledStatementMap.find(node.Label());
         if (it != labeledStatementMap.end())
         {
-            otava::symbols::ThrowException("goto target label '" + util::ToUtf8(node.Label()) + "' not unique", node.GetSourcePos(), context);
+            otava::symbols::ThrowException("goto target label '" + util::ToUtf8(node.Label()) + "' not unique", node.GetFullSpan(), context);
         }
         else
         {
@@ -57,7 +57,7 @@ void GotoTargetMapBuilder::Visit(otava::symbols::BoundGotoStatementNode& node)
         auto it = labeledStatementMap.find(node.Target());
         if (it == labeledStatementMap.end())
         {
-            otava::symbols::ThrowException("goto target label '" + util::ToUtf8(node.Target()) + "' not found", node.GetSourcePos(), context);
+            otava::symbols::ThrowException("goto target label '" + util::ToUtf8(node.Target()) + "' not found", node.GetFullSpan(), context);
         }
         else
         {

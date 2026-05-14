@@ -31,9 +31,9 @@ parser InitializationParser
         ::= 
         (
             BraceOrEqualInitializer(context):braceOrEqualInit{ initializer.reset(braceOrEqualInit); }
-        |   LPAREN{ exprListNode.reset(new otava::ast::ExpressionListNode(lexer.GetSourcePos(pos))); exprListNode->SetLParenPos(lexer.GetSourcePos(pos)); } 
+        |   LPAREN{ exprListNode.reset(new otava::ast::ExpressionListNode(lexer.GetSpan(pos))); exprListNode->SetLParenSpan(lexer.GetSpan(pos)); } 
             ExpressionList(context, exprListNode.get()):expressionList 
-            RPAREN{ exprListNode->SetRParenPos(lexer.GetSourcePos(pos)); initializer.reset(exprListNode.release()); }
+            RPAREN{ exprListNode->SetRParenSpan(lexer.GetSpan(pos)); initializer.reset(exprListNode.release()); }
         )
         {
             return initializer.release();
@@ -68,25 +68,25 @@ parser InitializationParser
         )
         ;
 
-    DesignatedInitializerClause(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    DesignatedInitializerClause(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            Designator(context):designator{ sourcePos = lexer.GetSourcePos(pos); }
+            Designator(context):designator{ span = lexer.GetSpan(pos); }
             BraceOrEqualInitializer(context):initializer
         )
         {
-            return new otava::ast::DesignatedInitializerNode(sourcePos, designator, initializer);
+            return new otava::ast::DesignatedInitializerNode(span, designator, initializer);
         }
         ;
 
-    Designator(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+    Designator(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
         ::= 
         (
-            DOT{ sourcePos = lexer.GetSourcePos(pos); }
+            DOT{ span = lexer.GetSpan(pos); }
             Identifier(context):identifier
         )
         {
-            return new otava::ast::DesignatorNode(sourcePos, identifier);
+            return new otava::ast::DesignatorNode(span, identifier);
         }
         ;
 
@@ -95,21 +95,21 @@ parser InitializationParser
         |   Expression(context):expr{ return expr; }
         ;
 
-    BraceOrEqualInitializer(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
-        ::= ASSIGN{ sourcePos = lexer.GetSourcePos(pos); } InitializerClause(context):initializer{ return new otava::ast::AssignmentInitNode(sourcePos, initializer); }
+    BraceOrEqualInitializer(otava::symbols::Context* context, var soul::ast::Span span) : otava::ast::Node*
+        ::= ASSIGN{ span = lexer.GetSpan(pos); } InitializerClause(context):initializer{ return new otava::ast::AssignmentInitNode(span, initializer); }
         |   BracedInitList(context):bracedInitList{ return bracedInitList; }
         ;
 
     BracedInitList(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> initList) : otava::ast::Node*
         ::= 
         (
-            LBrace:lbrace{ initList.reset(new otava::ast::BracedInitListNode(lexer.GetSourcePos(pos))); initList->AddNode(lbrace); }
+            LBrace:lbrace{ initList.reset(new otava::ast::BracedInitListNode(lexer.GetSpan(pos))); initList->AddNode(lbrace); }
             (   InitializerList(context, initList.get()):initializerList 
             |   DesignatedInitializerList(context, initList.get()):designatedInitList
             )
             (Comma:comma{ initList->AddNode(comma); })?
             RBrace:rbrace{ initList->AddNode(rbrace); }
-        |   LBrace:lbrace{ initList.reset(new otava::ast::BracedInitListNode(lexer.GetSourcePos(pos))); initList->AddNode(lbrace); }
+        |   LBrace:lbrace{ initList.reset(new otava::ast::BracedInitListNode(lexer.GetSpan(pos))); initList->AddNode(lbrace); }
             RBrace:rbrace{ initList->AddNode(rbrace); }
         )
         {

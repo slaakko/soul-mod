@@ -199,7 +199,7 @@ void Scope::Uninstall(Symbol* symbol)
     symbolMap.erase(std::make_pair(symbol->Name(), symbolGroupKind));
 }
 
-Symbol* Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, const soul::ast::SourcePos& sourcePos, Context* context, 
+Symbol* Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, const soul::ast::FullSpan& fullSpan, Context* context, 
     LookupFlags flags) const 
 {
     std::vector<Symbol*> symbols;
@@ -238,7 +238,7 @@ Symbol* Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind,
             }
             errorMessage.append(util::ToUtf8(symbol->FullName()));
         }
-        ThrowException(errorMessage, sourcePos, context);
+        ThrowException(errorMessage, fullSpan, context);
         return nullptr;
     }
 }
@@ -292,9 +292,9 @@ void Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, S
     }
 }
 
-void Scope::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
+void Scope::AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ThrowException("cannot declare symbol '" + util::ToUtf8(symbol->Name()) + "' in " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot declare symbol '" + util::ToUtf8(symbol->Name()) + "' in " + ScopeKindStr(kind) + " '" + FullName() + "'", fullSpan, context);
 }
 
 std::unique_ptr<Symbol> Scope::RemoveSymbol(Symbol* symbol)
@@ -322,54 +322,54 @@ void Scope::PopParentScope()
     throw std::runtime_error("could not pop parent scope");
 }
 
-void Scope::AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context)
+void Scope::AddBaseScope(Scope* baseScope, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ThrowException("cannot add base class scope to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add base class scope to " + ScopeKindStr(kind) + " '" + FullName() + "'", fullSpan, context);
 }
 
-void Scope::AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::SourcePos& sourcePos, Context* context)
+void Scope::AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ThrowException("cannot add using declaration '" + util::ToUtf8(usingDeclaration->FullName()) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add using declaration '" + util::ToUtf8(usingDeclaration->FullName()) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", fullSpan, context);
 }
 
-void Scope::AddUsingDirective(NamespaceSymbol* ns, const soul::ast::SourcePos& sourcePos, Context* context)
+void Scope::AddUsingDirective(NamespaceSymbol* ns, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ThrowException("cannot add using directive '" + util::ToUtf8(ns->FullName()) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add using directive '" + util::ToUtf8(ns->FullName()) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", fullSpan, context);
 }
 
-ClassGroupSymbol* Scope::GetOrInsertClassGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
+ClassGroupSymbol* Scope::GetOrInsertClassGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ThrowException("cannot add class group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add class group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", fullSpan, context);
     return nullptr;
 }
 
-FunctionGroupSymbol* Scope::GetOrInsertFunctionGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
+FunctionGroupSymbol* Scope::GetOrInsertFunctionGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ThrowException("cannot add function group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add function group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", fullSpan, context);
     return nullptr;
 }
 
-ConceptGroupSymbol* Scope::GetOrInsertConceptGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
+ConceptGroupSymbol* Scope::GetOrInsertConceptGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ThrowException("cannot add concept group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context); 
+    ThrowException("cannot add concept group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", fullSpan, context);
     return nullptr;
 }
 
-VariableGroupSymbol* Scope::GetOrInsertVariableGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
+VariableGroupSymbol* Scope::GetOrInsertVariableGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ThrowException("cannot add variable group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add variable group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", fullSpan, context);
     return nullptr;
 }
 
-AliasGroupSymbol* Scope::GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
+AliasGroupSymbol* Scope::GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ThrowException("cannot add alias group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add alias group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", fullSpan, context);
     return nullptr;
 }
 
-EnumGroupSymbol* Scope::GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
+EnumGroupSymbol* Scope::GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ThrowException("cannot add enum group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add enum group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", fullSpan, context);
     return nullptr;
 }
 
@@ -466,7 +466,7 @@ Scope* ContainerScope::GetNamespaceScope() const noexcept
     return nullptr;
 }
 
-void ContainerScope::AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context)
+void ContainerScope::AddBaseScope(Scope* baseScope, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (baseScope->IsContainerScope())
     {
@@ -561,7 +561,7 @@ void ContainerScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGrou
     }
 }
 
-void ContainerScope::AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::SourcePos& sourcePos, Context* context)
+void ContainerScope::AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (!usingDeclarationScope)
     {
@@ -571,7 +571,7 @@ void ContainerScope::AddUsingDeclaration(Symbol* usingDeclaration, const soul::a
     usingDeclarationScope->Install(usingDeclaration, context);
 }
 
-void ContainerScope::AddUsingDirective(NamespaceSymbol* ns, const soul::ast::SourcePos& sourcePos, Context* context)
+void ContainerScope::AddUsingDirective(NamespaceSymbol* ns, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (Kind() == ScopeKind::namespaceScope || Kind() == ScopeKind::blockScope)
     {
@@ -585,17 +585,17 @@ void ContainerScope::AddUsingDirective(NamespaceSymbol* ns, const soul::ast::Sou
     }
     else
     {
-        ThrowException("cannot add using directive to " + ScopeKindStr(Kind()), sourcePos, context);
+        ThrowException("cannot add using directive to " + ScopeKindStr(Kind()), fullSpan, context);
     }
 }
 
-void ContainerScope::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
+void ContainerScope::AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (!symbol->IsValidDeclarationScope(Kind()))
     {
-        ThrowException("cannot declare symbol '" + util::ToUtf8(symbol->Name()) + "' in " + ScopeKindStr(Kind()) + " '" + FullName() + "'", sourcePos, context);
+        ThrowException("cannot declare symbol '" + util::ToUtf8(symbol->Name()) + "' in " + ScopeKindStr(Kind()) + " '" + FullName() + "'", fullSpan, context);
     }
-    containerSymbol->AddSymbol(symbol, sourcePos, context);
+    containerSymbol->AddSymbol(symbol, fullSpan, context);
 }
 
 std::unique_ptr<Symbol> ContainerScope::RemoveSymbol(Symbol* symbol)
@@ -603,9 +603,9 @@ std::unique_ptr<Symbol> ContainerScope::RemoveSymbol(Symbol* symbol)
     return containerSymbol->RemoveSymbol(symbol);
 }
 
-ClassGroupSymbol* ContainerScope::GetOrInsertClassGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
+ClassGroupSymbol* ContainerScope::GetOrInsertClassGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    Symbol* symbol = Scope::Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, sourcePos, context, LookupFlags::dontResolveSingle);
+    Symbol* symbol = Scope::Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, fullSpan, context, LookupFlags::dontResolveSingle);
     if (symbol)
     {
         if (symbol->Kind() == SymbolKind::classGroupSymbol)
@@ -615,13 +615,13 @@ ClassGroupSymbol* ContainerScope::GetOrInsertClassGroup(const std::u32string& na
         }
     }
     ClassGroupSymbol* classGroupSymbol = new ClassGroupSymbol(name);
-    AddSymbol(classGroupSymbol, sourcePos, context);
+    AddSymbol(classGroupSymbol, fullSpan, context);
     return classGroupSymbol;
 }
 
-EnumGroupSymbol* ContainerScope::GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
+EnumGroupSymbol* ContainerScope::GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    Symbol* symbol = Scope::Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, sourcePos, context, LookupFlags::dontResolveSingle);
+    Symbol* symbol = Scope::Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, fullSpan, context, LookupFlags::dontResolveSingle);
     if (symbol)
     {
         if (symbol->Kind() == SymbolKind::enumGroupSymbol)
@@ -631,7 +631,7 @@ EnumGroupSymbol* ContainerScope::GetOrInsertEnumGroup(const std::u32string& name
         }
     }
     EnumGroupSymbol* enumGroupSymbol = new EnumGroupSymbol(name);
-    AddSymbol(enumGroupSymbol, sourcePos, context);
+    AddSymbol(enumGroupSymbol, fullSpan, context);
     return enumGroupSymbol;
 }
 
@@ -648,9 +648,9 @@ bool ContainerScope::HasParentScope(const Scope* parentScope) const noexcept
     return false;
 }
 
-FunctionGroupSymbol* ContainerScope::GetOrInsertFunctionGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
+FunctionGroupSymbol* ContainerScope::GetOrInsertFunctionGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    Symbol* symbol = Scope::Lookup(name, SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, sourcePos, context, LookupFlags::dontResolveSingle);
+    Symbol* symbol = Scope::Lookup(name, SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, fullSpan, context, LookupFlags::dontResolveSingle);
     if (symbol)
     {
         if (symbol->Kind() == SymbolKind::functionGroupSymbol)
@@ -660,13 +660,13 @@ FunctionGroupSymbol* ContainerScope::GetOrInsertFunctionGroup(const std::u32stri
         }
     }
     FunctionGroupSymbol* functionGroupSymbol = new FunctionGroupSymbol(name);
-    AddSymbol(functionGroupSymbol, sourcePos, context);
+    AddSymbol(functionGroupSymbol, fullSpan, context);
     return functionGroupSymbol;
 }
 
-ConceptGroupSymbol* ContainerScope::GetOrInsertConceptGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
+ConceptGroupSymbol* ContainerScope::GetOrInsertConceptGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    Symbol* symbol = Scope::Lookup(name, SymbolGroupKind::conceptSymbolGroup, ScopeLookup::thisScope, sourcePos, context, LookupFlags::dontResolveSingle);
+    Symbol* symbol = Scope::Lookup(name, SymbolGroupKind::conceptSymbolGroup, ScopeLookup::thisScope, fullSpan, context, LookupFlags::dontResolveSingle);
     if (symbol)
     {
         if (symbol->Kind() == SymbolKind::conceptGroupSymbol)
@@ -676,13 +676,13 @@ ConceptGroupSymbol* ContainerScope::GetOrInsertConceptGroup(const std::u32string
         }
     }
     ConceptGroupSymbol* conceptGroupSymbol = new ConceptGroupSymbol(name);
-    AddSymbol(conceptGroupSymbol, sourcePos, context);
+    AddSymbol(conceptGroupSymbol, fullSpan, context);
     return conceptGroupSymbol;
 }
 
-VariableGroupSymbol* ContainerScope::GetOrInsertVariableGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
+VariableGroupSymbol* ContainerScope::GetOrInsertVariableGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    Symbol* symbol = Scope::Lookup(name, SymbolGroupKind::variableSymbolGroup, ScopeLookup::thisScope, sourcePos, context, LookupFlags::dontResolveSingle);
+    Symbol* symbol = Scope::Lookup(name, SymbolGroupKind::variableSymbolGroup, ScopeLookup::thisScope, fullSpan, context, LookupFlags::dontResolveSingle);
     if (symbol)
     {
         if (symbol->Kind() == SymbolKind::variableGroupSymbol)
@@ -692,13 +692,13 @@ VariableGroupSymbol* ContainerScope::GetOrInsertVariableGroup(const std::u32stri
         }
     }
     VariableGroupSymbol* variableGroupSymbol = new VariableGroupSymbol(name);
-    AddSymbol(variableGroupSymbol, sourcePos, context);
+    AddSymbol(variableGroupSymbol, fullSpan, context);
     return variableGroupSymbol;
 }
 
-AliasGroupSymbol* ContainerScope::GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
+AliasGroupSymbol* ContainerScope::GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    Symbol* symbol = Scope::Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, sourcePos, context, LookupFlags::dontResolveSingle);
+    Symbol* symbol = Scope::Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, fullSpan, context, LookupFlags::dontResolveSingle);
     if (symbol)
     {
         if (symbol->Kind() == SymbolKind::aliasGroupSymbol)
@@ -708,7 +708,7 @@ AliasGroupSymbol* ContainerScope::GetOrInsertAliasGroup(const std::u32string& na
         }
     }
     AliasGroupSymbol* aliasGroupSymbol = new AliasGroupSymbol(name);
-    AddSymbol(aliasGroupSymbol, sourcePos, context);
+    AddSymbol(aliasGroupSymbol, fullSpan, context);
     return aliasGroupSymbol;
 }
 

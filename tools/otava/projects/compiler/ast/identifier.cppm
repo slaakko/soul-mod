@@ -8,8 +8,8 @@ export namespace otava::ast {
 class IdentifierNode : public CompoundNode
 {
 public:
-    IdentifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    IdentifierNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& str_) noexcept;
+    IdentifierNode(const soul::ast::Span& span_) noexcept;
+    IdentifierNode(const soul::ast::Span& span_, const std::u32string& str_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -22,7 +22,7 @@ private:
 class UnnamedNode : public Node
 {
 public:
-    UnnamedNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    UnnamedNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -30,7 +30,7 @@ public:
 class ColonColonNode : public Node
 {
 public:
-    ColonColonNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ColonColonNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"::"; }
@@ -39,7 +39,7 @@ public:
 class NestedNameSpecifierNode : public SequenceNode
 {
 public:
-    NestedNameSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    NestedNameSpecifierNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -47,8 +47,8 @@ public:
 class QualifiedIdNode : public BinaryNode
 {
 public:
-    QualifiedIdNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    QualifiedIdNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* unqualifiedId_) noexcept;
+    QualifiedIdNode(const soul::ast::Span& span_) noexcept;
+    QualifiedIdNode(const soul::ast::Span& span_, Node* nns_, Node* unqualifiedId_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -56,7 +56,7 @@ public:
 class IdentifierListNode : public ListNode
 {
 public:
-    IdentifierListNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    IdentifierListNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -64,8 +64,8 @@ public:
 class ModuleNameNode : public Node
 {
 public:
-    ModuleNameNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ModuleNameNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& str_);
+    ModuleNameNode(const soul::ast::Span& span_) noexcept;
+    ModuleNameNode(const soul::ast::Span& span_, const std::u32string& str_);
     std::u32string Str() const override { return str; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;

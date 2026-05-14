@@ -72,32 +72,32 @@ void NamespaceSymbol::Import(NamespaceSymbol* that, Context* context)
                 }
                 case SymbolKind::conceptGroupSymbol:
                 {
-                    installSymbol = currentScope->GetOrInsertConceptGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                    installSymbol = currentScope->GetOrInsertConceptGroup(symbol->Name(), soul::ast::FullSpan(), context);
                     break;
                 }
                 case SymbolKind::classGroupSymbol:
                 {
-                    installSymbol = currentScope->GetOrInsertClassGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                    installSymbol = currentScope->GetOrInsertClassGroup(symbol->Name(), soul::ast::FullSpan(), context);
                     break;
                 }
                 case SymbolKind::aliasGroupSymbol:
                 {
-                    installSymbol = currentScope->GetOrInsertAliasGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                    installSymbol = currentScope->GetOrInsertAliasGroup(symbol->Name(), soul::ast::FullSpan(), context);
                     break;
                 }
                 case SymbolKind::functionGroupSymbol:
                 {
-                    installSymbol = currentScope->GetOrInsertFunctionGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                    installSymbol = currentScope->GetOrInsertFunctionGroup(symbol->Name(), soul::ast::FullSpan(), context);
                     break;
                 }
                 case SymbolKind::variableGroupSymbol:
                 {
-                    installSymbol = currentScope->GetOrInsertVariableGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                    installSymbol = currentScope->GetOrInsertVariableGroup(symbol->Name(), soul::ast::FullSpan(), context);
                     break;
                 }
                 case SymbolKind::enumGroupSymbol:
                 {
-                    installSymbol = currentScope->GetOrInsertEnumGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                    installSymbol = currentScope->GetOrInsertEnumGroup(symbol->Name(), soul::ast::FullSpan(), context);
                     break;
                 }
             }
@@ -179,7 +179,7 @@ void EndNamespace(otava::ast::Node* node, int level, Context* context)
 {
     if (!context->GetSymbolTable()->CurrentScope()->GetSymbol()->IsNamespaceSymbol())
     {
-        ThrowException("otava.symbols.namespace: EndNamespace(): namespace scope expected", node->GetSourcePos(), context);
+        ThrowException("otava.symbols.namespace: EndNamespace(): namespace scope expected", context->MakeFullSpan(node->GetSpan()), context);
     }
     context->GetSymbolTable()->EndNamespace(level);
 }

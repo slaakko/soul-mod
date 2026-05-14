@@ -6,10 +6,9 @@
 export module soul_expected.xml.index;
 
 import std;
+import soul_expected.xml.document;
 
 export namespace soul_expected::xml {
-
-class Document;
 
 void BuildIndex(Document* document);
 

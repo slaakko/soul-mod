@@ -97,24 +97,24 @@ void DefaultVisitor::Visit(AttributeSpecifierSequenceNode& node)
 void DefaultVisitor::Visit(AttributeSpecifierNode& node)
 {
     BeginVisit(node);
-    VisitOperator("[", node.LBracketPos1());
-    VisitOperator("[", node.LBracketPos2());
+    VisitOperator("[", node.LBracketSpan1());
+    VisitOperator("[", node.LBracketSpan2());
     if (node.UsingPrefix())
     {
         node.UsingPrefix()->Accept(*this);
     }
     VisitListContent(node);
-    VisitOperator("]", node.RBracketPos1());
-    VisitOperator("]", node.RBracketPos2());
+    VisitOperator("]", node.RBracketSpan1());
+    VisitOperator("]", node.RBracketSpan2());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(AttributeUsingPrefixNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("using", node.GetSourcePos());
+    VisitKeyword("using", node.GetSpan());
     node.Child()->Accept(*this);
-    VisitOperator(":", node.ColonPos());
+    VisitOperator(":", node.ColonSpan());
     EndVisit(node);
 }
 
@@ -141,12 +141,12 @@ void DefaultVisitor::Visit(AttributeScopedTokenNode& node)
 void DefaultVisitor::Visit(AttributeArgumentsNode& node)
 {
     BeginVisit(node);
-    VisitOperator("(", node.LParenPos());
+    VisitOperator("(", node.LParenSpan());
     if (node.BalancedTokenSequence())
     {
         node.BalancedTokenSequence()->Accept(*this);
     }
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
@@ -158,63 +158,63 @@ void DefaultVisitor::Visit(BalancedTokenSequenceNode& node)
 void DefaultVisitor::Visit(TokenNode& node)
 {
     BeginVisit(node);
-    VisitToken(node.Str(), node.GetSourcePos());
+    VisitToken(node.Str(), node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(AlignmentSpecifierNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("alignas", node.GetSourcePos());
-    VisitOperator("(", node.LParenPos());
+    VisitKeyword("alignas", node.GetSpan());
+    VisitOperator("(", node.LParenSpan());
     node.Alignment()->Accept(*this);
     if (node.Ellipsis())
     {
         node.Ellipsis()->Accept(*this);
     }
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(LParenNode& node)
 {
     BeginVisit(node);
-    VisitOperator("(", node.GetSourcePos());
+    VisitOperator("(", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(RParenNode& node)
 {
     BeginVisit(node);
-    VisitOperator(")", node.GetSourcePos());
+    VisitOperator(")", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(LBracketNode& node)
 {
     BeginVisit(node);
-    VisitOperator("[", node.GetSourcePos());
+    VisitOperator("[", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(RBracketNode& node)
 {
     BeginVisit(node);
-    VisitOperator("]", node.GetSourcePos());
+    VisitOperator("]", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(LBraceNode& node)
 {
     BeginVisit(node);
-    VisitOperator("{", node.GetSourcePos());
+    VisitOperator("{", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(RBraceNode& node)
 {
     BeginVisit(node);
-    VisitOperator("}", node.GetSourcePos());
+    VisitOperator("}", node.GetSpan());
     EndVisit(node);
 }
 
@@ -224,9 +224,9 @@ void DefaultVisitor::Visit(ClassSpecifierNode& node)
 {
     BeginVisit(node);
     node.ClassHead()->Accept(*this);
-    VisitOperator("{", node.LBracePos());
+    VisitOperator("{", node.LBraceSpan());
     VisitSequenceContent(node);
-    VisitOperator("}", node.RBracePos());
+    VisitOperator("}", node.RBraceSpan());
     EndVisit(node);
 }
 
@@ -253,7 +253,7 @@ void DefaultVisitor::Visit(ClassHeadNode& node)
 void DefaultVisitor::Visit(BaseClauseNode& node)
 {
     BeginVisit(node);
-    VisitOperator(":", node.GetSourcePos());
+    VisitOperator(":", node.GetSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -300,7 +300,7 @@ void DefaultVisitor::Visit(BeginAccessGroupNode& node)
 {
     BeginVisit(node);
     node.Child()->Accept(*this);
-    VisitOperator(":", node.ColonPos());
+    VisitOperator(":", node.ColonSpan());
     EndVisit(node);
 }
 
@@ -336,9 +336,8 @@ void DefaultVisitor::Visit(ConstructorNode& node)
 void DefaultVisitor::Visit(ConstructorInitializerNode& node)
 {
     BeginVisit(node);
-    VisitOperator(":", node.GetSourcePos());
-    Node* n = node.GetMemberInitializerListNode();
-    n->Accept(*this);
+    VisitOperator(":", node.GetSpan());
+    node.GetMemberInitializerListNode()->Accept(*this);
     EndVisit(node);
 }
 
@@ -360,71 +359,71 @@ void DefaultVisitor::Visit(VirtSpecifierSequenceNode& node)
 void DefaultVisitor::Visit(ClassNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("class", node.GetSourcePos());
+    VisitKeyword("class", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(StructNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("struct", node.GetSourcePos());
+    VisitKeyword("struct", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(UnionNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("union", node.GetSourcePos());
+    VisitKeyword("union", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(PublicNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("public", node.GetSourcePos());
+    VisitKeyword("public", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ProtectedNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("protected", node.GetSourcePos());
+    VisitKeyword("protected", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(PrivateNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("private", node.GetSourcePos());
+    VisitKeyword("private", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(VirtualNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("virtual", node.GetSourcePos());
+    VisitKeyword("virtual", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(OverrideNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("override", node.GetSourcePos());
+    VisitKeyword("override", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(FinalNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("final", node.GetSourcePos());
+    VisitKeyword("final", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(PureSpecifierNode& node)
 {
     BeginVisit(node);
-    VisitOperator("=", node.GetSourcePos());
-    VisitOperator("0", node.ZeroPos());
+    VisitOperator("=", node.GetSpan());
+    VisitOperator("0", node.ZeroSpan());
     EndVisit(node);
 }
 
@@ -433,7 +432,7 @@ void DefaultVisitor::Visit(PureSpecifierNode& node)
 void DefaultVisitor::Visit(ConceptDefinitionNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("concept", node.GetSourcePos());
+    VisitKeyword("concept", node.GetSpan());
     node.ConceptName()->Accept(*this);
     node.Assign()->Accept(*this);
     node.ConstraintExpression()->Accept(*this);
@@ -443,7 +442,7 @@ void DefaultVisitor::Visit(ConceptDefinitionNode& node)
 void DefaultVisitor::Visit(RequiresExprNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("requires", node.GetSourcePos());
+    VisitKeyword("requires", node.GetSpan());
     if (node.Params())
     {
         node.Params()->Accept(*this);
@@ -455,9 +454,9 @@ void DefaultVisitor::Visit(RequiresExprNode& node)
 void DefaultVisitor::Visit(RequirementBodyNode& node)
 {
     BeginVisit(node);
-    VisitOperator("{", node.LBracePos());
+    VisitOperator("{", node.LBraceSpan());
     VisitSequenceContent(node);
-    VisitOperator("}", node.RBracePos());
+    VisitOperator("}", node.RBraceSpan());
     EndVisit(node);
 }
 
@@ -469,7 +468,7 @@ void DefaultVisitor::Visit(SimpleRequirementNode& node)
 void DefaultVisitor::Visit(TypeRequirementNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("typename", node.GetSourcePos());
+    VisitKeyword("typename", node.GetSpan());
     if (node.NestedNameSpecifier())
     {
         node.NestedNameSpecifier()->Accept(*this);
@@ -482,9 +481,9 @@ void DefaultVisitor::Visit(TypeRequirementNode& node)
 void DefaultVisitor::Visit(CompoundRequirementNode& node)
 {
     BeginVisit(node);
-    VisitOperator("{", node.LBracePos());
+    VisitOperator("{", node.LBraceSpan());
     node.Expr()->Accept(*this);
-    VisitOperator("}", node.RBracePos());
+    VisitOperator("}", node.RBraceSpan());
     if (node.NoExcept())
     {
         node.NoExcept()->Accept(*this);
@@ -500,7 +499,7 @@ void DefaultVisitor::Visit(CompoundRequirementNode& node)
 void DefaultVisitor::Visit(ReturnTypeRequirementNode& node)
 {
     BeginVisit(node);
-    VisitOperator("->", node.GetSourcePos());
+    VisitOperator("->", node.GetSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -508,7 +507,7 @@ void DefaultVisitor::Visit(ReturnTypeRequirementNode& node)
 void DefaultVisitor::Visit(NestedRequirementNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("requires", node.GetSourcePos());
+    VisitKeyword("requires", node.GetSpan());
     node.Left()->Accept(*this);
     node.Right()->Accept(*this);
     EndVisit(node);
@@ -520,9 +519,9 @@ void DefaultVisitor::Visit(TypeConstraintNode& node)
     node.ConceptName()->Accept(*this);
     if (node.HasTemplateArgumentList())
     {
-        VisitOperator("<", node.LAnglePos());
+        VisitOperator("<", node.LAngleSpan());
         VisitListContent(node);
-        VisitOperator(">", node.RAnglePos());
+        VisitOperator(">", node.RAngleSpan());
     }
     EndVisit(node);
 }
@@ -530,7 +529,7 @@ void DefaultVisitor::Visit(TypeConstraintNode& node)
 void DefaultVisitor::Visit(RequiresClauseNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("requires", node.GetSourcePos());
+    VisitKeyword("requires", node.GetSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -569,16 +568,16 @@ void DefaultVisitor::Visit(AsmDeclarationNode& node)
         node.Attributes()->Accept(*this);
     }
     node.Asm()->Accept(*this);
-    VisitOperator("(", node.LParenPos());
+    VisitOperator("(", node.LParenSpan());
     node.AsmText()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(AsmNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("asm", node.GetSourcePos());
+    VisitKeyword("asm", node.GetSpan());
     EndVisit(node);
 }
 
@@ -587,14 +586,14 @@ void DefaultVisitor::Visit(LinkageSpecificationNode& node)
     BeginVisit(node);
     node.Extern()->Accept(*this);
     node.Linkage()->Accept(*this);
-    if (node.LBracePos().IsValid())
+    if (node.LBraceSpan().IsValid())
     {
-        VisitOperator("{", node.LBracePos());
+        VisitOperator("{", node.LBraceSpan());
         if (node.Declarations())
         {
             node.Declarations()->Accept(*this);
         }
-        VisitOperator("}", node.RBracePos());
+        VisitOperator("}", node.RBraceSpan());
     }
     else
     {
@@ -619,9 +618,9 @@ void DefaultVisitor::Visit(NamespaceDefinitionNode& node)
     {
         node.NamespaceName()->Accept(*this);
     }
-    VisitOperator("{", node.LBracePos());
+    VisitOperator("{", node.LBraceSpan());
     node.NamespaceBody()->Accept(*this);
-    VisitOperator("}", node.RBracePos());
+    VisitOperator("}", node.RBraceSpan());
     EndVisit(node);
 }
 
@@ -638,8 +637,8 @@ void DefaultVisitor::Visit(NamespaceBodyNode& node)
 void DefaultVisitor::Visit(NamespaceAliasDefinitionNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("namespace", node.GetSourcePos());
-    node.GetId()->Accept(*this);
+    VisitKeyword("namespace", node.GetSpan());
+    node.Id()->Accept(*this);
     node.Assign()->Accept(*this);
     node.QualifiedNamespaceSpecifier()->Accept(*this);
     node.Semicolon()->Accept(*this);
@@ -658,7 +657,7 @@ void DefaultVisitor::Visit(UsingDeclarationNode& node)
 void DefaultVisitor::Visit(UsingNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("using", node.GetSourcePos());
+    VisitKeyword("using", node.GetSpan());
     EndVisit(node);
 }
 
@@ -693,7 +692,7 @@ void DefaultVisitor::Visit(UsingDirectiveNode& node)
 void DefaultVisitor::Visit(NamespaceNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("namespace", node.GetSourcePos());
+    VisitKeyword("namespace", node.GetSpan());
     EndVisit(node);
 }
 
@@ -701,14 +700,14 @@ void DefaultVisitor::Visit(StaticAssertDeclarationNode& node)
 {
     BeginVisit(node);
     node.StaticAssert()->Accept(*this);
-    VisitOperator("(", node.LParenPos());
+    VisitOperator("(", node.LParenSpan());
     node.ConstantExpr()->Accept(*this);
     if (node.Comma())
     {
         node.Comma()->Accept(*this);
         node.StringLiteral()->Accept(*this);
     }
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     node.Semicolon()->Accept(*this);
     EndVisit(node);
 }
@@ -716,7 +715,7 @@ void DefaultVisitor::Visit(StaticAssertDeclarationNode& node)
 void DefaultVisitor::Visit(StaticAssertNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("static_assert", node.GetSourcePos());
+    VisitKeyword("static_assert", node.GetSpan());
     EndVisit(node);
 }
 
@@ -738,7 +737,7 @@ void DefaultVisitor::Visit(AliasDeclarationNode& node)
 void DefaultVisitor::Visit(EmptyDeclarationNode& node)
 {
     BeginVisit(node);
-    VisitOperator(";", node.GetSourcePos());
+    VisitOperator(";", node.GetSpan());
     EndVisit(node);
 }
 
@@ -769,9 +768,9 @@ void DefaultVisitor::Visit(TrailingFunctionDeclaratorNode& node)
 void DefaultVisitor::Visit(ParenthesizedDeclaratorNode& node)
 {
     BeginVisit(node);
-    VisitOperator("(", node.LParenPos());
+    VisitOperator("(", node.LParenSpan());
     node.Declarator()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
@@ -788,87 +787,87 @@ void DefaultVisitor::Visit(DeclSpecifierSequenceNode& node)
 void DefaultVisitor::Visit(FriendNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("friend", node.GetSourcePos());
+    VisitKeyword("friend", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(TypedefNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("typedef", node.GetSourcePos());
+    VisitKeyword("typedef", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ConstExprNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("constexpr", node.GetSourcePos());
+    VisitKeyword("constexpr", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ConstEvalNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("consteval", node.GetSourcePos());
+    VisitKeyword("consteval", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ConstInitNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("constinit", node.GetSourcePos());
+    VisitKeyword("constinit", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(InlineNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("inline", node.GetSourcePos());
+    VisitKeyword("inline", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(StaticNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("static", node.GetSourcePos());
+    VisitKeyword("static", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ThreadLocalNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("thread_local", node.GetSourcePos());
+    VisitKeyword("thread_local", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ExternNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("extern", node.GetSourcePos());
+    VisitKeyword("extern", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(MutableNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("mutable", node.GetSourcePos());
+    VisitKeyword("mutable", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ExplicitNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("explicit", node.GetSourcePos());
+    VisitKeyword("explicit", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ConditionalExplicitNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("explicit", node.GetSourcePos());
-    VisitOperator("(", node.LParenPos());
+    VisitKeyword("explicit", node.GetSpan());
+    VisitOperator("(", node.LParenSpan());
     node.Condition()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
 }
 
 void DefaultVisitor::Visit(QualifiedPtrNode& node)
@@ -895,12 +894,12 @@ void DefaultVisitor::Visit(ArrayDeclaratorNode& node)
 {
     BeginVisit(node);
     node.Child()->Accept(*this);
-    VisitOperator("[", node.LBracketPos());
+    VisitOperator("[", node.LBracketSpan());
     if (node.Dimension())
     {
         node.Dimension()->Accept(*this);
     }
-    VisitOperator("]", node.RBracketPos());
+    VisitOperator("]", node.RBracketSpan());
     EndVisit(node);
 }
 
@@ -929,11 +928,12 @@ void DefaultVisitor::Visit(TrailingAttributesNode& node)
 void DefaultVisitor::Visit(NoexceptSpecifierNode& node)
 {
     BeginVisit(node);
+    VisitKeyword("noexcept", node.GetSpan());
     if (node.ConstantExpr())
     {
-        VisitOperator("(", node.LParenPos());
+        VisitOperator("(", node.LParenSpan());
         node.ConstantExpr()->Accept(*this);
-        VisitOperator("}", node.RParenPos());
+        VisitOperator("}", node.RParenSpan());
     }
     EndVisit(node);
 }
@@ -941,8 +941,16 @@ void DefaultVisitor::Visit(NoexceptSpecifierNode& node)
 void DefaultVisitor::Visit(ThrowSpecifierNode& node)
 {
     BeginVisit(node);
-    VisitOperator("(", node.LParenPos());
-    VisitOperator("}", node.RParenPos());
+    VisitOperator("(", node.LParenSpan());
+    VisitOperator("}", node.RParenSpan());
+    EndVisit(node);
+}
+
+void DefaultVisitor::Visit(ThrowExprNode& node)
+{
+    BeginVisit(node);
+    VisitKeyword("throw", node.GetSpan());
+    VisitUnaryNode(node);
     EndVisit(node);
 }
 
@@ -952,9 +960,9 @@ void DefaultVisitor::Visit(EnumSpecifierNode& node)
 {
     BeginVisit(node);
     node.EnumHead()->Accept(*this);
-    VisitOperator("{", node.LBracePos());
+    VisitOperator("{", node.LBraceSpan());
     VisitListContent(node);
-    VisitOperator("}", node.RBracePos());
+    VisitOperator("}", node.RBraceSpan());
     EndVisit(node);
 }
 
@@ -973,7 +981,7 @@ void DefaultVisitor::Visit(EnumHeadNode& node)
 void DefaultVisitor::Visit(EnumBaseNode& node)
 {
     BeginVisit(node);
-    VisitOperator(":", node.GetSourcePos());
+    VisitOperator(":", node.GetSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -981,23 +989,23 @@ void DefaultVisitor::Visit(EnumBaseNode& node)
 void DefaultVisitor::Visit(EnumClassNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("enum", node.GetSourcePos());
-    VisitKeyword("class", node.ClassPos());
+    VisitKeyword("enum", node.GetSpan());
+    VisitKeyword("class", node.ClassSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(EnumStructNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("enum", node.GetSourcePos());
-    VisitKeyword("struct", node.StructPos());
+    VisitKeyword("enum", node.GetSpan());
+    VisitKeyword("struct", node.StructSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(EnumNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("enum", node.GetSourcePos());
+    VisitKeyword("enum", node.GetSpan());
     EndVisit(node);
 }
 
@@ -1007,7 +1015,7 @@ void DefaultVisitor::Visit(EnumeratorDefinitionNode& node)
     node.Enumerator()->Accept(*this);
     if (node.GetValue())
     {
-        VisitOperator("=", node.AssignPos());
+        VisitOperator("=", node.AssignSpan());
         node.GetValue()->Accept(*this);
     }
     EndVisit(node);
@@ -1027,7 +1035,7 @@ void DefaultVisitor::Visit(EnumeratorNode& node)
 void DefaultVisitor::Visit(ElaboratedEnumSpecifierNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("enum", node.GetSourcePos());
+    VisitKeyword("enum", node.GetSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -1071,16 +1079,16 @@ void DefaultVisitor::Visit(UnaryExprNode& node)
 void DefaultVisitor::Visit(ExpressionListNode& node)
 {
     BeginVisit(node);
-    VisitOperator("(", node.LParenPos());
+    VisitOperator("(", node.LParenSpan());
     VisitListContent(node);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(AssignmentInitNode& node)
 {
     BeginVisit(node);
-    VisitOperator("=", node.GetSourcePos());
+    VisitOperator("=", node.GetSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -1088,7 +1096,7 @@ void DefaultVisitor::Visit(AssignmentInitNode& node)
 void DefaultVisitor::Visit(YieldExprNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("co_yield", node.GetSourcePos());
+    VisitKeyword("co_yield", node.GetSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -1107,254 +1115,254 @@ void DefaultVisitor::Visit(ConditionalExprNode& node)
 void DefaultVisitor::Visit(CommaNode& node)
 {
     BeginVisit(node);
-    VisitOperator(",", node.GetSourcePos());
+    VisitOperator(",", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(AssignNode& node)
 {
     BeginVisit(node);
-    VisitOperator("=", node.GetSourcePos());
+    VisitOperator("=", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(PlusAssignNode& node)
 {
     BeginVisit(node);
-    VisitOperator("+=", node.GetSourcePos());
+    VisitOperator("+=", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(MinusAssignNode& node)
 {
     BeginVisit(node);
-    VisitOperator("-=", node.GetSourcePos());
+    VisitOperator("-=", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(MulAssignNode& node)
 {
     BeginVisit(node);
-    VisitOperator("*=", node.GetSourcePos());
+    VisitOperator("*=", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(DivAssignNode& node)
 {
     BeginVisit(node);
-    VisitOperator("/=", node.GetSourcePos());
+    VisitOperator("/=", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ModAssignNode& node)
 {
     BeginVisit(node);
-    VisitOperator("%=", node.GetSourcePos());
+    VisitOperator("%=", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(XorAssignNode& node)
 {
     BeginVisit(node);
-    VisitOperator("^=", node.GetSourcePos());
+    VisitOperator("^=", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(AndAssignNode& node)
 {
     BeginVisit(node);
-    VisitOperator("&=", node.GetSourcePos());
+    VisitOperator("&=", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(OrAssignNode& node)
 {
     BeginVisit(node);
-    VisitOperator("|=", node.GetSourcePos());
+    VisitOperator("|=", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ShiftLeftAssignNode& node)
 {
     BeginVisit(node);
-    VisitOperator("<<=", node.GetSourcePos());
+    VisitOperator("<<=", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ShiftRightAssignNode& node)
 {
     BeginVisit(node);
-    VisitOperator(">>=", node.GetSourcePos());
+    VisitOperator(">>=", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(QuestNode& node)
 {
     BeginVisit(node);
-    VisitOperator("?", node.GetSourcePos());
+    VisitOperator("?", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ColonNode& node)
 {
     BeginVisit(node);
-    VisitOperator(":", node.GetSourcePos());
+    VisitOperator(":", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(DisjunctionNode& node)
 {
     BeginVisit(node);
-    VisitOperator("||", node.GetSourcePos());
+    VisitOperator("||", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ConjunctionNode& node)
 {
     BeginVisit(node);
-    VisitOperator("&&", node.GetSourcePos());
+    VisitOperator("&&", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(InclusiveOrNode& node)
 {
     BeginVisit(node);
-    VisitOperator("|", node.GetSourcePos());
+    VisitOperator("|", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ExclusiveOrNode& node)
 {
     BeginVisit(node);
-    VisitOperator("^", node.GetSourcePos());
+    VisitOperator("^", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(AndNode& node)
 {
     BeginVisit(node);
-    VisitOperator("&", node.GetSourcePos());
+    VisitOperator("&", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(EqualNode& node)
 {
     BeginVisit(node);
-    VisitOperator("==", node.GetSourcePos());
+    VisitOperator("==", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(NotEqualNode& node)
 {
     BeginVisit(node);
-    VisitOperator("!=", node.GetSourcePos());
+    VisitOperator("!=", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(LessNode& node)
 {
     BeginVisit(node);
-    VisitOperator("<", node.GetSourcePos());
+    VisitOperator("<", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(GreaterNode& node)
 {
     BeginVisit(node);
-    VisitOperator(">", node.GetSourcePos());
+    VisitOperator(">", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(LessOrEqualNode& node)
 {
     BeginVisit(node);
-    VisitOperator("<=", node.GetSourcePos());
+    VisitOperator("<=", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(GreaterOrEqualNode& node)
 {
     BeginVisit(node);
-    VisitOperator(">=", node.GetSourcePos());
+    VisitOperator(">=", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(CompareNode& node)
 {
     BeginVisit(node);
-    VisitOperator("<=>", node.GetSourcePos());
+    VisitOperator("<=>", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ShiftLeftNode& node)
 {
     BeginVisit(node);
-    VisitOperator("<<", node.GetSourcePos());
+    VisitOperator("<<", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ShiftRightNode& node)
 {
     BeginVisit(node);
-    VisitOperator(">>", node.GetSourcePos());
+    VisitOperator(">>", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(PlusNode& node)
 {
     BeginVisit(node);
-    VisitOperator("+", node.GetSourcePos());
+    VisitOperator("+", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(MinusNode& node)
 {
     BeginVisit(node);
-    VisitOperator("-", node.GetSourcePos());
+    VisitOperator("-", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(MulNode& node)
 {
     BeginVisit(node);
-    VisitOperator("*", node.GetSourcePos());
+    VisitOperator("*", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(DivNode& node)
 {
     BeginVisit(node);
-    VisitOperator("/", node.GetSourcePos());
+    VisitOperator("/", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ModNode& node)
 {
     BeginVisit(node);
-    VisitOperator("%", node.GetSourcePos());
+    VisitOperator("%", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(DotStarNode& node)
 {
     BeginVisit(node);
-    VisitOperator(".*", node.GetSourcePos());
+    VisitOperator(".*", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ArrowStarNode& node)
 {
     BeginVisit(node);
-    VisitOperator("->*", node.GetSourcePos());
+    VisitOperator("->*", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(CastExprNode& node)
 {
     BeginVisit(node);
-    VisitOperator("(", node.LParenPos());
+    VisitOperator("(", node.LParenSpan());
     node.TypeId()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -1362,49 +1370,49 @@ void DefaultVisitor::Visit(CastExprNode& node)
 void DefaultVisitor::Visit(DerefNode& node)
 {
     BeginVisit(node);
-    VisitOperator("*", node.GetSourcePos());
+    VisitOperator("*", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(AddrOfNode& node)
 {
     BeginVisit(node);
-    VisitOperator("&", node.GetSourcePos());
+    VisitOperator("&", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(NotNode& node)
 {
     BeginVisit(node);
-    VisitOperator("!", node.GetSourcePos());
+    VisitOperator("!", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ComplementNode& node)
 {
     BeginVisit(node);
-    VisitOperator("~", node.GetSourcePos());
+    VisitOperator("~", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(PrefixIncNode& node)
 {
     BeginVisit(node);
-    VisitOperator("++", node.GetSourcePos());
+    VisitOperator("++", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(PrefixDecNode& node)
 {
     BeginVisit(node);
-    VisitOperator("--", node.GetSourcePos());
+    VisitOperator("--", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(AwaitExprNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("co_await", node.GetSourcePos());
+    VisitKeyword("co_await", node.GetSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -1412,28 +1420,28 @@ void DefaultVisitor::Visit(AwaitExprNode& node)
 void DefaultVisitor::Visit(SizeOfTypeExprNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("sizeof", node.GetSourcePos());
-    VisitOperator("(", node.LParenPos());
+    VisitKeyword("sizeof", node.GetSpan());
+    VisitOperator("(", node.LParenSpan());
     node.Child()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(SizeOfPackExprNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("sizeof", node.GetSourcePos());
-    VisitOperator("...", node.EllipsisPos());
-    VisitOperator("(", node.LParenPos());
+    VisitKeyword("sizeof", node.GetSpan());
+    VisitOperator("...", node.EllipsisSpan());
+    VisitOperator("(", node.LParenSpan());
     node.Child()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(SizeOfUnaryExprNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("sizeof", node.GetSourcePos());
+    VisitKeyword("sizeof", node.GetSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -1441,20 +1449,20 @@ void DefaultVisitor::Visit(SizeOfUnaryExprNode& node)
 void DefaultVisitor::Visit(AlignOfExprNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("alignof", node.GetSourcePos());
-    VisitOperator("(", node.LParenPos());
+    VisitKeyword("alignof", node.GetSpan());
+    VisitOperator("(", node.LParenSpan());
     node.Child()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(NoexceptExprNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("noexcept", node.GetSourcePos());
-    VisitOperator("(", node.LParenPos());
+    VisitKeyword("noexcept", node.GetSpan());
+    VisitOperator("(", node.LParenSpan());
     node.Child()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
@@ -1481,18 +1489,18 @@ void DefaultVisitor::Visit(NewExprNode& node)
 void DefaultVisitor::Visit(NewPlacementNode& node)
 {
     BeginVisit(node);
-    VisitOperator("(", node.LParenPos());
+    VisitOperator("(", node.LParenSpan());
     VisitListContent(node);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ParenNewTypeIdNode& node)
 {
     BeginVisit(node);
-    VisitOperator("(", node.LParenPos());
+    VisitOperator("(", node.LParenSpan());
     node.Child()->Accept(*this);
-    VisitOperator(")", node.LParenPos());
+    VisitOperator(")", node.LParenSpan());
     EndVisit(node);
 }
 
@@ -1514,9 +1522,9 @@ void DefaultVisitor::Visit(ArrayDeletePtrNode& node)
     {
         node.ColonColonHead()->Accept(*this);
     }
-    VisitKeyword("delete", node.DeletePos());
-    VisitOperator("[", node.LBracketPos());
-    VisitOperator("]", node.RBracketPos());
+    VisitKeyword("delete", node.DeleteSpan());
+    VisitOperator("[", node.LBracketSpan());
+    VisitOperator("]", node.RBracketSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -1528,7 +1536,7 @@ void DefaultVisitor::Visit(DeletePtrNode& node)
     {
         node.ColonColonHead()->Accept(*this);
     }
-    VisitKeyword("delete", node.DeletePos());
+    VisitKeyword("delete", node.DeleteSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -1537,9 +1545,9 @@ void DefaultVisitor::Visit(SubscriptExprNode& node)
 {
     BeginVisit(node);
     node.Child()->Accept(*this);
-    VisitOperator("[", node.LBracketPos());
+    VisitOperator("[", node.LBracketSpan());
     node.Index()->Accept(*this);
-    VisitOperator("]", node.RBracketPos());
+    VisitOperator("]", node.RBracketSpan());
     EndVisit(node);
 }
 
@@ -1547,14 +1555,14 @@ void DefaultVisitor::Visit(InvokeExprNode& node)
 {
     BeginVisit(node);
     node.Subject()->Accept(*this);
-    if (node.LParenPos().IsValid())
+    if (node.LParenSpan().IsValid())
     {
-        VisitOperator("(", node.LParenPos());
+        VisitOperator("(", node.LParenSpan());
     }
     VisitListContent(node);
-    if (node.RParenPos().IsValid())
+    if (node.RParenSpan().IsValid())
     {
-        VisitOperator(")", node.RParenPos());
+        VisitOperator(")", node.RParenSpan());
     }
     EndVisit(node);
 }
@@ -1567,14 +1575,14 @@ void DefaultVisitor::Visit(PairNode& node)
 void DefaultVisitor::Visit(DotNode& node)
 {
     BeginVisit(node);
-    VisitOperator(".", node.GetSourcePos());
+    VisitOperator(".", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ArrowNode& node)
 {
     BeginVisit(node);
-    VisitOperator("->", node.GetSourcePos());
+    VisitOperator("->", node.GetSpan());
     EndVisit(node);
 }
 
@@ -1591,7 +1599,7 @@ void DefaultVisitor::Visit(PostfixIncExprNode& node)
 {
     BeginVisit(node);
     node.Child()->Accept(*this);
-    VisitOperator("++", node.OpPos());
+    VisitOperator("++", node.OpSpan());
     EndVisit(node);
 }
 
@@ -1599,45 +1607,45 @@ void DefaultVisitor::Visit(PostfixDecExprNode& node)
 {
     BeginVisit(node);
     node.Child()->Accept(*this);
-    VisitOperator("--", node.OpPos());
+    VisitOperator("--", node.OpSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(TypeIdExprNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("typeid", node.GetSourcePos());
-    VisitOperator("(", node.LParenPos());
+    VisitKeyword("typeid", node.GetSpan());
+    VisitOperator("(", node.LParenSpan());
     node.Child()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(DynamicCastNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("dynamic_cast", node.GetSourcePos());
+    VisitKeyword("dynamic_cast", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(StaticCastNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("static_cast", node.GetSourcePos());
+    VisitKeyword("static_cast", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ReinterpretCastNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("reinterpret_cast", node.GetSourcePos());
+    VisitKeyword("reinterpret_cast", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ConstCastNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("const_cast", node.GetSourcePos());
+    VisitKeyword("const_cast", node.GetSpan());
     EndVisit(node);
 }
 
@@ -1645,37 +1653,37 @@ void DefaultVisitor::Visit(CppCastExprNode& node)
 {
     BeginVisit(node);
     node.Op()->Accept(*this);
-    VisitOperator("<", node.LAnglePos());
+    VisitOperator("<", node.LAngleSpan());
     node.TypeId()->Accept(*this);
-    VisitOperator(">", node.RAnglePos());
-    VisitOperator("(", node.LParenPos());
+    VisitOperator(">", node.RAngleSpan());
+    VisitOperator("(", node.LParenSpan());
     node.Child()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ThisNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("this", node.GetSourcePos());
+    VisitKeyword("this", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ParenthesizedExprNode& node)
 {
     BeginVisit(node);
-    VisitOperator("(", node.LParenPos());
+    VisitOperator("(", node.LParenSpan());
     node.Child()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(FoldExprNode& node)
 {
     BeginVisit(node);
-    VisitOperator("(", node.LParenPos());
+    VisitOperator("(", node.LParenSpan());
     VisitSequence(node);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
@@ -1692,9 +1700,9 @@ void DefaultVisitor::Visit(ArrayNewDeclaratorNode& node)
 void DefaultVisitor::Visit(NewInitializerNode& node)
 {
     BeginVisit(node);
-    VisitOperator("(", node.LParenPos());
+    VisitOperator("(", node.LParenSpan());
     VisitListContent(node);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
 }
 
 void DefaultVisitor::Visit(BracedInitListNode& node)
@@ -1710,7 +1718,7 @@ void DefaultVisitor::Visit(DesignatedInitializerNode& node)
 void DefaultVisitor::Visit(DesignatorNode& node)
 {
     BeginVisit(node);
-    VisitOperator(".", node.GetSourcePos());
+    VisitOperator(".", node.GetSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -1718,7 +1726,7 @@ void DefaultVisitor::Visit(DesignatorNode& node)
 void DefaultVisitor::Visit(EllipsisNode& node)
 {
     BeginVisit(node);
-    VisitOperator("...", node.GetSourcePos());
+    VisitOperator("...", node.GetSpan());
     EndVisit(node);
 }
 
@@ -1752,14 +1760,14 @@ void DefaultVisitor::Visit(FunctionBodyNode& node)
 void DefaultVisitor::Visit(DefaultNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("default", node.GetSourcePos());
+    VisitKeyword("default", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(DeleteNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("delete", node.GetSourcePos());
+    VisitKeyword("delete", node.GetSpan());
     EndVisit(node);
 }
 
@@ -1787,60 +1795,60 @@ void DefaultVisitor::Visit(NoDeclSpecFunctionDeclarationNode& node)
 void DefaultVisitor::Visit(OperatorNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("operator", node.GetSourcePos());
+    VisitKeyword("operator", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(NewArrayOpNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("new", node.GetSourcePos());
-    VisitOperator("[", node.LBracketPos());
-    VisitOperator("]", node.RBracketPos());
+    VisitKeyword("new", node.GetSpan());
+    VisitOperator("[", node.LBracketSpan());
+    VisitOperator("]", node.RBracketSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(NewOpNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("new", node.GetSourcePos());
+    VisitKeyword("new", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(DeleteArrayOpNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("delete", node.GetSourcePos());
-    VisitOperator("[", node.LBracketPos());
-    VisitOperator("]", node.RBracketPos());
+    VisitKeyword("delete", node.GetSpan());
+    VisitOperator("[", node.LBracketSpan());
+    VisitOperator("]", node.RBracketSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(DeleteOpNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("delete", node.GetSourcePos());
+    VisitKeyword("delete", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(CoAwaitOpNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("co_await", node.GetSourcePos());
+    VisitKeyword("co_await", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(InvokeOpNode& node)
 {
     BeginVisit(node);
-    VisitOperator("()", node.GetSourcePos());
+    VisitOperator("()", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(SubscriptOpNode& node)
 {
     BeginVisit(node);
-    VisitOperator("[]", node.GetSourcePos());
+    VisitOperator("[]", node.GetSpan());
     EndVisit(node);
 }
 
@@ -1879,7 +1887,7 @@ void DefaultVisitor::Visit(ConversionDeclaratorNode& node)
 void DefaultVisitor::Visit(DestructorIdNode& node)
 {
     BeginVisit(node);
-    VisitOperator("~", node.GetSourcePos());
+    VisitOperator("~", node.GetSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -1907,23 +1915,23 @@ void DefaultVisitor::Visit(ParameterNode& node)
 void DefaultVisitor::Visit(ParameterListNode& node)
 {
     BeginVisit(node);
-    VisitOperator("(", node.LParenPos());
+    VisitOperator("(", node.LParenSpan());
     VisitListContent(node);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(NoexceptNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("noexcept", node.GetSourcePos());
+    VisitKeyword("noexcept", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(FunctionTryBlockNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("try", node.GetSourcePos());
+    VisitKeyword("try", node.GetSpan());
     if (node.CtorInitializer())
     {
         node.CtorInitializer()->Accept(*this);
@@ -1938,7 +1946,7 @@ void DefaultVisitor::Visit(FunctionTryBlockNode& node)
 void DefaultVisitor::Visit(IdentifierNode& node)
 {
     BeginVisit(node);
-    VisitIdentifier(node.Str(), node.GetSourcePos());
+    VisitIdentifier(node.Str(), node.GetSpan());
     EndVisit(node);
 }
 
@@ -1950,7 +1958,7 @@ void DefaultVisitor::Visit(UnnamedNode& node)
 void DefaultVisitor::Visit(ColonColonNode& node)
 {
     BeginVisit(node);
-    VisitOperator("::", node.GetSourcePos());
+    VisitOperator("::", node.GetSpan());
     EndVisit(node);
 }
 
@@ -1972,7 +1980,7 @@ void DefaultVisitor::Visit(IdentifierListNode& node)
 void DefaultVisitor::Visit(ModuleNameNode& node)
 {
     BeginVisit(node);
-    VisitIdentifier(node.Str(), node.GetSourcePos());
+    VisitIdentifier(node.Str(), node.GetSpan());
     EndVisit(node);
 }
 
@@ -1994,12 +2002,12 @@ void DefaultVisitor::Visit(LambdaExpressionNode& node)
 void DefaultVisitor::Visit(LambdaIntroducerNode& node)
 {
     BeginVisit(node);
-    VisitOperator("[", node.LBracketPos());
+    VisitOperator("[", node.LBracketSpan());
     if (node.Capture())
     {
         node.Capture()->Accept(*this);
     }
-    VisitOperator("]", node.RBracketPos());
+    VisitOperator("]", node.RBracketSpan());
     EndVisit(node);
 }
 
@@ -2011,21 +2019,21 @@ void DefaultVisitor::Visit(LambdaCaptureNode& node)
 void DefaultVisitor::Visit(DefaultRefCaptureNode& node)
 {
     BeginVisit(node);
-    VisitOperator("&", node.GetSourcePos());
+    VisitOperator("&", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(DefaultCopyCaptureNode& node)
 {
     BeginVisit(node);
-    VisitOperator("=", node.GetSourcePos());
+    VisitOperator("=", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ByRefCaptureNode& node)
 {
     BeginVisit(node);
-    VisitOperator("&", node.GetSourcePos());
+    VisitOperator("&", node.GetSpan());
     EndVisit(node);
 }
 
@@ -2047,15 +2055,15 @@ void DefaultVisitor::Visit(SimpleCaptureNode& node)
 void DefaultVisitor::Visit(CurrentObjectCopyCapture& node)
 {
     BeginVisit(node);
-    VisitOperator("*", node.GetSourcePos());
-    VisitKeyword("this", node.ThisPos());
+    VisitOperator("*", node.GetSpan());
+    VisitKeyword("this", node.ThisSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(CurrentObjectByRefCapture& node)
 {
     BeginVisit(node);
-    VisitKeyword("this", node.ThisPos());
+    VisitKeyword("this", node.ThisSpan());
     EndVisit(node);
 }
 
@@ -2131,49 +2139,49 @@ void DefaultVisitor::Visit(LambdaTemplateParamsNode& node)
 void DefaultVisitor::Visit(IntegerLiteralNode& node)
 {
     BeginVisit(node);
-    VisitLiteral(node.Rep(), node.GetSourcePos());
+    VisitLiteral(node.Rep(), node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(FloatingLiteralNode& node)
 {
     BeginVisit(node);
-    VisitLiteral(node.Rep(), node.GetSourcePos());
+    VisitLiteral(node.Rep(), node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(CharacterLiteralNode& node)
 {
     BeginVisit(node);
-    VisitLiteral(node.Rep(), node.GetSourcePos());
+    VisitLiteral(node.Rep(), node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(StringLiteralNode& node)
 {
     BeginVisit(node);
-    VisitLiteral(node.Rep(), node.GetSourcePos());
+    VisitLiteral(node.Rep(), node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(RawStringLiteralNode& node)
 {
     BeginVisit(node);
-    VisitLiteral(node.Rep(), node.GetSourcePos());
+    VisitLiteral(node.Rep(), node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(BooleanLiteralNode& node)
 {
     BeginVisit(node);
-    VisitLiteral(node.Rep(), node.GetSourcePos());
+    VisitLiteral(node.Rep(), node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(NullPtrLiteralNode& node)
 {
     BeginVisit(node);
-    VisitLiteral(node.Rep(), node.GetSourcePos());
+    VisitLiteral(node.Rep(), node.GetSpan());
     EndVisit(node);
 }
 
@@ -2185,8 +2193,8 @@ void DefaultVisitor::Visit(UserDefinedLiteraNode& node)
 void DefaultVisitor::Visit(LiteralOperatorIdNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("operator", node.GetSourcePos());
-    VisitOperator("\"\"", node.StringLitPos());
+    VisitKeyword("operator", node.GetSpan());
+    VisitOperator("\"\"", node.StringLitSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -2218,14 +2226,14 @@ void DefaultVisitor::Visit(ExportDeclarationNode& node)
 {
     BeginVisit(node);
     node.Export()->Accept(*this);
-    if (node.LBracePos().IsValid())
+    if (node.LBraceSpan().IsValid())
     {
-        VisitOperator("{", node.LBracePos());
+        VisitOperator("{", node.LBraceSpan());
         if (node.Subject())
         {
             node.Subject()->Accept(*this);
         }
-        VisitOperator("}", node.RBracePos());
+        VisitOperator("}", node.RBraceSpan());
     }
     else
     {
@@ -2237,14 +2245,14 @@ void DefaultVisitor::Visit(ExportDeclarationNode& node)
 void DefaultVisitor::Visit(ExportNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("export", node.GetSourcePos());
+    VisitKeyword("export", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ImportNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("import", node.GetSourcePos());
+    VisitKeyword("import", node.GetSpan());
     EndVisit(node);
 }
 
@@ -2264,7 +2272,7 @@ void DefaultVisitor::Visit(ImportDeclarationNode& node)
 void DefaultVisitor::Visit(ModulePartitionNode& node)
 {
     BeginVisit(node);
-    VisitOperator(":", node.GetSourcePos());
+    VisitOperator(":", node.GetSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -2272,7 +2280,7 @@ void DefaultVisitor::Visit(ModulePartitionNode& node)
 void DefaultVisitor::Visit(ModuleNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("module", node.GetSourcePos());
+    VisitKeyword("module", node.GetSpan());
     EndVisit(node);
 }
 
@@ -2305,14 +2313,14 @@ void DefaultVisitor::Visit(PrivateModuleFragmentNode& node)
 void DefaultVisitor::Visit(AngleHeaderName& node)
 {
     BeginVisit(node);
-    VisitHeaderName(node.Rep(), node.GetSourcePos());
+    VisitHeaderName(node.Rep(), node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(QuoteHeaderName& node)
 {
     BeginVisit(node);
-    VisitHeaderName(node.Rep(), node.GetSourcePos());
+    VisitHeaderName(node.Rep(), node.GetSpan());
     EndVisit(node);
 }
 
@@ -2321,35 +2329,35 @@ void DefaultVisitor::Visit(QuoteHeaderName& node)
 void DefaultVisitor::Visit(ConstNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("const", node.GetSourcePos());
+    VisitKeyword("const", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(VolatileNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("volatile", node.GetSourcePos());
+    VisitKeyword("volatile", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(LvalueRefNode& node)
 {
     BeginVisit(node);
-    VisitOperator("&", node.GetSourcePos());
+    VisitOperator("&", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(RvalueRefNode& node)
 {
     BeginVisit(node);
-    VisitOperator("&&", node.GetSourcePos());
+    VisitOperator("&&", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(PtrNode& node)
 {
     BeginVisit(node);
-    VisitOperator("*", node.GetSourcePos());
+    VisitOperator("*", node.GetSpan());
     EndVisit(node);
 }
 
@@ -2363,98 +2371,98 @@ void DefaultVisitor::Visit(CVQualifierSequenceNode& node)
 void DefaultVisitor::Visit(CharNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("char", node.GetSourcePos());
+    VisitKeyword("char", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(Char8Node& node)
 {
     BeginVisit(node);
-    VisitKeyword("char8_t", node.GetSourcePos());
+    VisitKeyword("char8_t", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(Char16Node& node)
 {
     BeginVisit(node);
-    VisitKeyword("char16_t", node.GetSourcePos());
+    VisitKeyword("char16_t", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(Char32Node& node)
 {
     BeginVisit(node);
-    VisitKeyword("char32_t", node.GetSourcePos());
+    VisitKeyword("char32_t", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(WCharNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("wchar_t", node.GetSourcePos());
+    VisitKeyword("wchar_t", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(BoolNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("bool", node.GetSourcePos());
+    VisitKeyword("bool", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(ShortNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("short", node.GetSourcePos());
+    VisitKeyword("short", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(IntNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("int", node.GetSourcePos());
+    VisitKeyword("int", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(LongNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("long", node.GetSourcePos());
+    VisitKeyword("long", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(SignedNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("signed", node.GetSourcePos());
+    VisitKeyword("signed", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(UnsignedNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("unsigned", node.GetSourcePos());
+    VisitKeyword("unsigned", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(FloatNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("float", node.GetSourcePos());
+    VisitKeyword("float", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(DoubleNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("double", node.GetSourcePos());
+    VisitKeyword("double", node.GetSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(VoidNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("void", node.GetSourcePos());
+    VisitKeyword("void", node.GetSpan());
     EndVisit(node);
 }
 
@@ -2468,7 +2476,7 @@ void DefaultVisitor::Visit(LabeledStatementNode& node)
         node.Attributes()->Accept(*this);
     }
     node.Label()->Accept(*this);
-    VisitOperator(":", node.ColonPos());
+    VisitOperator(":", node.ColonSpan());
     node.Statement()->Accept(*this);
     EndVisit(node);
 }
@@ -2480,9 +2488,9 @@ void DefaultVisitor::Visit(CaseStatementNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    VisitKeyword("case", node.CasePos());
+    VisitKeyword("case", node.CaseSpan());
     node.CaseExpression()->Accept(*this);
-    VisitOperator(":", node.ColonPos());
+    VisitOperator(":", node.ColonSpan());
     node.Statement()->Accept(*this);
     EndVisit(node);
 }
@@ -2494,8 +2502,8 @@ void DefaultVisitor::Visit(DefaultStatementNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    VisitKeyword("default", node.DefaultPos());
-    VisitOperator(":", node.ColonPos());
+    VisitKeyword("default", node.DefaultSpan());
+    VisitOperator(":", node.ColonSpan());
     node.Statement()->Accept(*this);
     EndVisit(node);
 }
@@ -2507,9 +2515,9 @@ void DefaultVisitor::Visit(CompoundStatementNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    VisitOperator("{", node.LBracePos());
+    VisitOperator("{", node.LBraceSpan());
     VisitSequenceContent(node);
-    VisitOperator("}", node.RBracePos());
+    VisitOperator("}", node.RBraceSpan());
     EndVisit(node);
 }
 
@@ -2528,18 +2536,18 @@ void DefaultVisitor::Visit(IfStatementNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    VisitKeyword("if", node.IfPos());
+    VisitKeyword("if", node.IfSpan());
     if (node.IsConstExprIf())
     {
-        VisitKeyword("constexpr", node.ConstExprSourcePos());
+        VisitKeyword("constexpr", node.ConstExprSpan());
     }
-    VisitOperator("(", node.LParenPos());
+    VisitOperator("(", node.LParenSpan());
     node.Condition()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     node.ThenStatement()->Accept(*this);
     if (node.ElseStatement())
     {
-        VisitKeyword("else", node.ElsePos());
+        VisitKeyword("else", node.ElseSpan());
         node.ElseStatement()->Accept(*this);
     }
     EndVisit(node);
@@ -2552,10 +2560,10 @@ void DefaultVisitor::Visit(SwitchStatementNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    VisitKeyword("switch", node.SwitchPos());
-    VisitOperator("(", node.LParenPos());
+    VisitKeyword("switch", node.SwitchSpan());
+    VisitOperator("(", node.LParenSpan());
     node.Condition()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     node.Statement()->Accept(*this);
     EndVisit(node);
 }
@@ -2567,10 +2575,10 @@ void DefaultVisitor::Visit(WhileStatementNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    VisitKeyword("while", node.WhilePos());
-    VisitOperator("(", node.LParenPos());
+    VisitKeyword("while", node.WhileSpan());
+    VisitOperator("(", node.LParenSpan());
     node.Condition()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     node.Statement()->Accept(*this);
     EndVisit(node);
 }
@@ -2582,12 +2590,12 @@ void DefaultVisitor::Visit(DoStatementNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    VisitKeyword("do", node.DoPos());
+    VisitKeyword("do", node.DoSpan());
     node.Statement()->Accept(*this);
-    VisitKeyword("while", node.WhilePos());
-    VisitOperator("(", node.LParenPos());
+    VisitKeyword("while", node.WhileSpan());
+    VisitOperator("(", node.LParenSpan());
     node.Expression()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     node.Semicolon()->Accept(*this);
     EndVisit(node);
 }
@@ -2599,16 +2607,16 @@ void DefaultVisitor::Visit(RangeForStatementNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    VisitKeyword("for", node.ForPos());
-    VisitOperator("(", node.LParenPos());
+    VisitKeyword("for", node.ForSpan());
+    VisitOperator("(", node.LParenSpan());
     if (node.InitStatement())
     {
         node.InitStatement()->Accept(*this);
     }
     node.Declaration()->Accept(*this);
-    VisitOperator(":", node.ColonPos());
+    VisitOperator(":", node.ColonSpan());
     node.Initializer()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     node.Statement()->Accept(*this);
     EndVisit(node);
 }
@@ -2637,9 +2645,9 @@ void DefaultVisitor::Visit(StructuredBindingNode& node)
     {
         node.RefQualifier()->Accept(*this);
     }
-    VisitOperator("[", node.LBracketPos());
+    VisitOperator("[", node.LBracketSpan());
     node.Identifiers()->Accept(*this);
-    VisitOperator("]", node.RBracketPos());
+    VisitOperator("]", node.RBracketSpan());
     if (node.Initializer())
     {
         node.Initializer()->Accept(*this);
@@ -2658,8 +2666,8 @@ void DefaultVisitor::Visit(ForStatementNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    VisitKeyword("for", node.ForPos());
-    VisitOperator("(", node.LParenPos());
+    VisitKeyword("for", node.ForSpan());
+    VisitOperator("(", node.LParenSpan());
     node.InitStatement()->Accept(*this);
     if (node.Condition())
     {
@@ -2670,7 +2678,7 @@ void DefaultVisitor::Visit(ForStatementNode& node)
     {
         node.LoopExpr()->Accept(*this);
     }
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     node.Statement()->Accept(*this);
     EndVisit(node);
 }
@@ -2682,7 +2690,7 @@ void DefaultVisitor::Visit(BreakStatementNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    VisitKeyword("break", node.BreakPos());
+    VisitKeyword("break", node.BreakSpan());
     node.Semicolon()->Accept(*this);
     EndVisit(node);
 }
@@ -2694,7 +2702,7 @@ void DefaultVisitor::Visit(ContinueStatementNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    VisitKeyword("continue", node.ContinuePos());
+    VisitKeyword("continue", node.ContinueSpan());
     node.Semicolon()->Accept(*this);
     EndVisit(node);
 }
@@ -2706,7 +2714,7 @@ void DefaultVisitor::Visit(ReturnStatementNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    VisitKeyword("return", node.ReturnPos());
+    VisitKeyword("return", node.ReturnSpan());
     if (node.ReturnValue())
     {
         node.ReturnValue()->Accept(*this);
@@ -2722,7 +2730,7 @@ void DefaultVisitor::Visit(CoReturnStatementNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    VisitKeyword("co_return", node.CoReturnPos());
+    VisitKeyword("co_return", node.CoReturnSpan());
     if (node.ReturnValue())
     {
         node.ReturnValue()->Accept(*this);
@@ -2738,7 +2746,7 @@ void DefaultVisitor::Visit(GotoStatementNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    VisitKeyword("goto", node.GotoPos());
+    VisitKeyword("goto", node.GotoSpan());
     node.Target()->Accept(*this);
     if (node.Semimcolon())
     {
@@ -2754,7 +2762,7 @@ void DefaultVisitor::Visit(TryStatementNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    VisitKeyword("try", node.TryPos());
+    VisitKeyword("try", node.TrySpan());
     node.TryBlock()->Accept(*this);
     node.Handlers()->Accept(*this);
     EndVisit(node);
@@ -2768,10 +2776,10 @@ void DefaultVisitor::Visit(HandlerSequenceNode& node)
 void DefaultVisitor::Visit(HandlerNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("catch", node.GetSourcePos());
-    VisitOperator("(", node.LParenPos());
+    VisitKeyword("catch", node.GetSpan());
+    VisitOperator("(", node.LParenSpan());
     node.Exception()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     node.CatchBlock()->Accept(*this);
 }
 
@@ -2835,7 +2843,7 @@ void DefaultVisitor::Visit(InitConditionNode& node)
 void DefaultVisitor::Visit(SemicolonNode& node)
 {
     BeginVisit(node);
-    VisitOperator(";", node.GetSourcePos());
+    VisitOperator(";", node.GetSpan());
     EndVisit(node);
 }
 
@@ -2849,7 +2857,7 @@ void DefaultVisitor::Visit(TemplateDeclarationNode& node)
 void DefaultVisitor::Visit(TemplateHeadNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("template", node.GetSourcePos());
+    VisitKeyword("template", node.GetSpan());
     node.TemplateParamList()->Accept(*this);
     if (node.RequiresClause())
     {
@@ -2861,9 +2869,9 @@ void DefaultVisitor::Visit(TemplateHeadNode& node)
 void DefaultVisitor::Visit(TemplateParameterListNode& node)
 {
     BeginVisit(node);
-    VisitOperator("<", node.LAnglePos());
+    VisitOperator("<", node.LAngleSpan());
     VisitListContent(node);
-    VisitOperator(">", node.RAnglePos());
+    VisitOperator(">", node.RAngleSpan());
     EndVisit(node);
 }
 
@@ -2898,16 +2906,16 @@ void DefaultVisitor::Visit(TemplateIdNode& node)
 {
     BeginVisit(node);
     node.TemplateName()->Accept(*this);
-    VisitOperator("<", node.LAnglePos());
+    VisitOperator("<", node.LAngleSpan());
     VisitListContent(node);
-    VisitOperator(">", node.RAnglePos());
+    VisitOperator(">", node.RAngleSpan());
     EndVisit(node);
 }
 
 void DefaultVisitor::Visit(TypenameNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("typename", node.GetSourcePos());
+    VisitKeyword("typename", node.GetSpan());
     EndVisit(node);
 }
 
@@ -2919,9 +2927,9 @@ void DefaultVisitor::Visit(DeductionGuideNode& node)
         node.ExplicitSpecifier()->Accept(*this);
     }
     node.TemplateName()->Accept(*this);
-    VisitOperator("(", node.LParenPos());
+    VisitOperator("(", node.LParenSpan());
     node.Parameters()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     node.Arrow()->Accept(*this);
     node.TemplateId()->Accept(*this);
     node.Semicolon()->Accept(*this);
@@ -2943,7 +2951,7 @@ void DefaultVisitor::Visit(ExplicitInstantiationNode& node)
 void DefaultVisitor::Visit(TemplateNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("template", node.GetSourcePos());
+    VisitKeyword("template", node.GetSpan());
     EndVisit(node);
 }
 
@@ -2951,8 +2959,8 @@ void DefaultVisitor::Visit(ExplicitSpecializationNode& node)
 {
     BeginVisit(node);
     node.Template()->Accept(*this);
-    VisitOperator("<", node.LAnglePos());
-    VisitOperator(">", node.RAnglePos());
+    VisitOperator("<", node.LAngleSpan());
+    VisitOperator(">", node.RAngleSpan());
     node.Declaration()->Accept(*this);
     EndVisit(node);
 }
@@ -2998,7 +3006,7 @@ void DefaultVisitor::Visit(TypeSpecifierSequenceNode& node)
 void DefaultVisitor::Visit(TypenameSpecifierNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("typename", node.GetSourcePos());
+    VisitKeyword("typename", node.GetSpan());
     node.NestedNameSpecifier()->Accept(*this);
     if (node.TemplateNode())
     {
@@ -3038,7 +3046,7 @@ void DefaultVisitor::Visit(DefiningTypeSpecifierSequenceNode& node)
 void DefaultVisitor::Visit(TrailingReturnTypeNode& node)
 {
     BeginVisit(node);
-    VisitOperator("->", node.GetSourcePos());
+    VisitOperator("->", node.GetSpan());
     node.Child()->Accept(*this);
     EndVisit(node);
 }
@@ -3058,10 +3066,10 @@ void DefaultVisitor::Visit(ElaboratedTypeSpecifierNode& node)
 void DefaultVisitor::Visit(DeclTypeSpecifierNode& node)
 {
     BeginVisit(node);
-    VisitKeyword("delctype", node.GetSourcePos());
-    VisitOperator("(", node.LParenPos());
+    VisitKeyword("delctype", node.GetSpan());
+    VisitOperator("(", node.LParenSpan());
     node.Expression()->Accept(*this);
-    VisitOperator(")", node.RParenPos());
+    VisitOperator(")", node.RParenSpan());
     EndVisit(node);
 }
 
@@ -3074,14 +3082,14 @@ void DefaultVisitor::Visit(PlaceholderTypeSpecifierNode& node)
     }
     if (node.IsDeclType())
     {
-        VisitKeyword("delctype", node.DeclTypePos());
-        VisitOperator("(", node.LParenPos());
-        VisitKeyword("auto", node.AutoPos());
-        VisitOperator(")", node.RParenPos());
+        VisitKeyword("delctype", node.DeclTypeSpan());
+        VisitOperator("(", node.LParenSpan());
+        VisitKeyword("auto", node.AutoSpan());
+        VisitOperator(")", node.RParenSpan());
     }
     else
     {
-        VisitKeyword("auto", node.AutoPos());
+        VisitKeyword("auto", node.AutoSpan());
     }
     EndVisit(node);
 }

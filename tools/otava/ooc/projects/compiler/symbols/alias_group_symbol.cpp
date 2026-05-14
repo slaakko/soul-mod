@@ -157,7 +157,7 @@ AliasTypeSymbol* AliasGroupSymbol::GetBestMatchingAliasType(const std::vector<Sy
             }
         }
     }
-    std::sort(viableAliasTypes.begin(), viableAliasTypes.end(), ViableAliasTypeGreater());
+    std::insertion_sort(viableAliasTypes.begin(), viableAliasTypes.end(), ViableAliasTypeGreater());
     if (!viableAliasTypes.empty())
     {
         return viableAliasTypes[0].first;

@@ -48,16 +48,16 @@ void FunctionTypeSymbol::MakeName()
     SetName(name);
 }
 
-util::uuid FunctionTypeSymbol::IrId(const soul::ast::SourcePos& sourcePos, Context* context) const 
+util::uuid FunctionTypeSymbol::IrId(const soul::ast::FullSpan& fullSpan, Context* context) const 
 {
     util::uuid id = context->GetSymbolTable()->GetFunctionTypeId();
-    util::uuid returnTypeId = returnType->IrId(sourcePos, context);
+    util::uuid returnTypeId = returnType->IrId(fullSpan, context);
     util::Xor(id, returnTypeId);
     int n = parameterTypes.size();
     for (int i = 0; i < n; ++i)
     {
         TypeSymbol* parameterType = parameterTypes[i];
-        util::uuid paramTypeIrId = parameterType->IrId(sourcePos, context);
+        util::uuid paramTypeIrId = parameterType->IrId(fullSpan, context);
         util::Rotate(paramTypeIrId, (i + 1) & (util::uuid::static_size() - 1));
         util::Xor(id, paramTypeIrId);
     }
@@ -139,18 +139,18 @@ void FunctionTypeSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-otava::intermediate::Type* FunctionTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+otava::intermediate::Type* FunctionTypeSymbol::IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    util::uuid irId = IrId(sourcePos, context);
+    util::uuid irId = IrId(fullSpan, context);
     otava::intermediate::Type* type = emitter.GetType(irId);
     if (!type)
     {
         std::vector<otava::intermediate::Type*> paramTypes;
         for (TypeSymbol* paramType : parameterTypes)
         {
-            paramTypes.push_back(paramType->IrType(emitter, sourcePos, context));
+            paramTypes.push_back(paramType->IrType(emitter, fullSpan, context));
         }
-        type = emitter.MakeFunctionType(returnType->IrType(emitter, sourcePos, context), paramTypes);
+        type = emitter.MakeFunctionType(returnType->IrType(emitter, fullSpan, context), paramTypes);
         emitter.SetType(irId, type);
     }
     return type;

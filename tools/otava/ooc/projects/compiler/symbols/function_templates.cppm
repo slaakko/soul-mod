@@ -1,7 +1,7 @@
 export module otava.symbols.function.templates;
 
 import std;
-import soul.ast.source.pos;
+import soul.ast.span;
 import otava.ast.node;
 import otava.symbols.templates;
 import otava.symbols.template_param_compare;
@@ -41,6 +41,6 @@ private:
 };
 
 FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
-    const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, const soul::ast::SourcePos& sourcePos, Context* context);
+    const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, const soul::ast::FullSpan& fullSpan, Context* context);
 
 } // namespace otava::symbols

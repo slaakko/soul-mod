@@ -41,7 +41,7 @@ soul::parser::Match PunctuationParser<LexerT>::Semicolon(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Semicolon");
                 #endif
-                return soul::parser::Match(true, new otava::ast::SemicolonNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::SemicolonNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -89,7 +89,7 @@ soul::parser::Match PunctuationParser<LexerT>::Comma(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Comma");
                 #endif
-                return soul::parser::Match(true, new otava::ast::CommaNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::CommaNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -137,7 +137,7 @@ soul::parser::Match PunctuationParser<LexerT>::Quest(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Quest");
                 #endif
-                return soul::parser::Match(true, new otava::ast::QuestNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::QuestNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -185,7 +185,7 @@ soul::parser::Match PunctuationParser<LexerT>::Colon(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Colon");
                 #endif
-                return soul::parser::Match(true, new otava::ast::ColonNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::ColonNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -233,7 +233,7 @@ soul::parser::Match PunctuationParser<LexerT>::ColonColon(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ColonColon");
                 #endif
-                return soul::parser::Match(true, new otava::ast::ColonColonNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::ColonColonNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -281,7 +281,7 @@ soul::parser::Match PunctuationParser<LexerT>::Ellipsis(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Ellipsis");
                 #endif
-                return soul::parser::Match(true, new otava::ast::EllipsisNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::EllipsisNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -329,7 +329,7 @@ soul::parser::Match PunctuationParser<LexerT>::LParen(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LParen");
                 #endif
-                return soul::parser::Match(true, new otava::ast::LParenNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::LParenNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -377,7 +377,7 @@ soul::parser::Match PunctuationParser<LexerT>::RParen(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RParen");
                 #endif
-                return soul::parser::Match(true, new otava::ast::RParenNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::RParenNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -425,7 +425,7 @@ soul::parser::Match PunctuationParser<LexerT>::LBracket(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LBracket");
                 #endif
-                return soul::parser::Match(true, new otava::ast::LBracketNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::LBracketNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -473,7 +473,7 @@ soul::parser::Match PunctuationParser<LexerT>::RBracket(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RBracket");
                 #endif
-                return soul::parser::Match(true, new otava::ast::RBracketNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::RBracketNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -521,7 +521,7 @@ soul::parser::Match PunctuationParser<LexerT>::LBrace(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LBrace");
                 #endif
-                return soul::parser::Match(true, new otava::ast::LBraceNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::LBraceNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -569,7 +569,7 @@ soul::parser::Match PunctuationParser<LexerT>::RBrace(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RBrace");
                 #endif
-                return soul::parser::Match(true, new otava::ast::RBraceNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::RBraceNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -617,7 +617,7 @@ soul::parser::Match PunctuationParser<LexerT>::Assign(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Assign");
                 #endif
-                return soul::parser::Match(true, new otava::ast::AssignNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::AssignNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;

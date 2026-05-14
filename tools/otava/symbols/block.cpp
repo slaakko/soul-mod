@@ -43,9 +43,9 @@ void BlockSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void BlockSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
+void BlockSymbol::AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ContainerSymbol::AddSymbol(symbol, sourcePos, context);
+    ContainerSymbol::AddSymbol(symbol, fullSpan, context);
     if (symbol->IsVariableSymbol())
     {
         VariableSymbol* variable = static_cast<VariableSymbol*>(symbol);
@@ -77,9 +77,9 @@ std::vector<BoundExpressionNode*> BlockSymbol::GetDestructorCalls(int statementI
     return v;
 }
 
-BlockSymbol* BeginBlock(const soul::ast::SourcePos& sourcePos, int blockId, Context* context)
+BlockSymbol* BeginBlock(const soul::ast::FullSpan& fullSpan, int blockId, Context* context)
 {
-    BlockSymbol* block = context->GetSymbolTable()->BeginBlock(sourcePos, context);
+    BlockSymbol* block = context->GetSymbolTable()->BeginBlock(fullSpan, context);
     block->SetBlockId(blockId);
     return block;
 }

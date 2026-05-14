@@ -58,7 +58,7 @@ void FunctionTemplateRepository::AddFunctionDefinition(const FunctionTemplateKey
 }
 
 FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
-    const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, const soul::ast::SourcePos& sourcePos, Context* context)
+    const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     FunctionTemplateRepository* functionTemplateRepository = context->GetBoundCompileUnit()->GetFunctionTemplateRepository();
     std::vector<TypeSymbol*> templateArgumentTypes;
@@ -73,7 +73,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
         }
         else
         {
-            ThrowException("template parameter type not found", sourcePos, context);
+            ThrowException("template parameter type not found", fullSpan, context);
         }
     }
     FunctionTemplateKey key(functionTemplate, templateArgumentTypes);
@@ -94,11 +94,11 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
         {
             ThrowException("otava.symbols.function_templates: wrong number of template args for instantiating function template '" +
                 util::ToUtf8(functionTemplate->Name()) + "'",
-                node->GetSourcePos(),
+                context->MakeFullSpan(node->GetSpan()), fullSpan,
                 context);
         }
         InstantiationScope instantiationScope(functionTemplate->Parent()->GetScope());
-        instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
+        instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", fullSpan, context));
         instantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
         std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
         for (int i = 0; i < arity; ++i)
@@ -117,7 +117,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
                 else
                 {
                     ThrowException("otava.symbols.function_templates: template parameter " +
-                        std::to_string(i) + " has no default type argument", node->GetSourcePos(), context);
+                        std::to_string(i) + " has no default type argument", context->MakeFullSpan(node->GetSpan()), fullSpan, context);
                 }
             }
             else
@@ -157,7 +157,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
                 std::string irName = functionDefinition->IrName(context);
                 functionDefinition->SetParent(functionTemplate->GetScope()->GetNamespaceScope()->GetSymbol());
                 functionTemplateRepository->AddFunctionDefinition(key, functionDefinition, node);
-                context->PushBoundFunction(new BoundFunctionNode(functionDefinition, sourcePos));
+                context->PushBoundFunction(new BoundFunctionNode(functionDefinition, fullSpan));
                 functionDefinition = BindFunction(functionDefinitionNode, functionDefinition, context);
                 specialization = functionDefinition;
                 context->PopFlags();
@@ -170,7 +170,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
             }
             else
             {
-                ThrowException("otava.symbols.function_templates: function definition symbol expected", node->GetSourcePos(), context);
+                ThrowException("otava.symbols.function_templates: function definition symbol expected", context->MakeFullSpan(node->GetSpan()), fullSpan, context);
             }
         }
         catch (const std::exception& ex)
@@ -181,7 +181,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
                 specializationFullName = util::ToUtf8(specialization->FullName());
             }
             ThrowException("otava.symbols.function_templates: error instantiating specialization '" + specializationFullName +
-                "': " + std::string(ex.what()), node->GetSourcePos(), context);
+                "': " + std::string(ex.what()), context->MakeFullSpan(node->GetSpan()), fullSpan, context);
         }
         context->GetSymbolTable()->EndScope();
         instantiationScope.PopParentScope();
@@ -203,11 +203,11 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
         {
             ThrowException("otava.symbols.function_templates: wrong number of template args for instantiating function template '" +
                 util::ToUtf8(functionTemplate->Name()) + "'",
-                node->GetSourcePos(),
+                context->MakeFullSpan(node->GetSpan()), fullSpan,
                 context);
         }
         InstantiationScope instantiationScope(functionTemplate->Parent()->GetScope());
-        instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
+        instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", fullSpan, context));
         instantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
         std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
         for (int i = 0; i < arity; ++i)
@@ -226,7 +226,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
                 else
                 {
                     ThrowException("otava.symbols.function_templates: template parameter " +
-                        std::to_string(i) + " has no default type argument", node->GetSourcePos(), context);
+                        std::to_string(i) + " has no default type argument", context->MakeFullSpan(node->GetSpan()), fullSpan, context);
                 }
             }
             else
@@ -257,7 +257,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
                 if (functionTemplate->IsExplicitSpecializationDeclaration())
                 {
                     Symbol* symbol = functionTemplate->Parent()->GetScope()->GetNamespaceScope()->Lookup(specialization->GroupName(),
-                        SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, sourcePos, context, LookupFlags::none);
+                        SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, fullSpan, context, LookupFlags::none);
                     if (symbol && symbol->IsFunctionGroupSymbol())
                     {
                         FunctionGroupSymbol* functionGroup = static_cast<FunctionGroupSymbol*>(symbol);
@@ -273,7 +273,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
             }
             else
             {
-                ThrowException("otava.symbols.function_templates: function symbol expected", node->GetSourcePos(), context);
+                ThrowException("otava.symbols.function_templates: function symbol expected", context->MakeFullSpan(node->GetSpan()), fullSpan, context);
             }
             context->PopFlags();
         }
@@ -285,7 +285,7 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate,
                 specializationName = util::ToUtf8(specialization->Name());
             }
             ThrowException("otava.symbols.function_templates: error instantiating specialization '" + specializationName +
-                "': " + std::string(ex.what()), node->GetSourcePos(), context);
+                "': " + std::string(ex.what()), context->MakeFullSpan(node->GetSpan()), fullSpan, context);
         }
         context->GetSymbolTable()->EndScope();
         instantiationScope.PopParentScope();

@@ -6,12 +6,12 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-TranslationUnitNode::TranslationUnitNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::translationUnitNode, sourcePos_)
+TranslationUnitNode::TranslationUnitNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::translationUnitNode, span_)
 {
 }
 
-TranslationUnitNode::TranslationUnitNode(const soul::ast::SourcePos& sourcePos_, Node* unit_) noexcept :
-    CompoundNode(NodeKind::translationUnitNode, sourcePos_), unit(unit_)
+TranslationUnitNode::TranslationUnitNode(const soul::ast::Span& span_, Node* unit_) noexcept :
+    CompoundNode(NodeKind::translationUnitNode, span_), unit(unit_)
 {
 }
 
@@ -22,7 +22,7 @@ Node* TranslationUnitNode::Clone() const
     {
         clonedUnit = unit->Clone();
     }
-    TranslationUnitNode* clone = new TranslationUnitNode(GetSourcePos(), clonedUnit);
+    TranslationUnitNode* clone = new TranslationUnitNode(GetSpan(), clonedUnit);
     clone->SetId(Id());
     return clone;
 }
@@ -44,13 +44,13 @@ void TranslationUnitNode::Read(Reader& reader)
     unit.reset(reader.ReadNode());
 }
 
-ModuleUnitNode::ModuleUnitNode(const soul::ast::SourcePos& sourcePos_) noexcept : CompoundNode(NodeKind::moduleUnitNode, sourcePos_)
+ModuleUnitNode::ModuleUnitNode(const soul::ast::Span& span_) noexcept : CompoundNode(NodeKind::moduleUnitNode, span_)
 {
 }
 
-ModuleUnitNode::ModuleUnitNode(const soul::ast::SourcePos& sourcePos_, Node* globalModuleFragment_, Node* moduleDeclaration_, Node* declarations_,
+ModuleUnitNode::ModuleUnitNode(const soul::ast::Span& span_, Node* globalModuleFragment_, Node* moduleDeclaration_, Node* declarations_,
     Node* privateModuleFragment_) noexcept :
-    CompoundNode(NodeKind::moduleUnitNode, sourcePos_), globalModuleFragment(globalModuleFragment_), moduleDeclaration(moduleDeclaration_), declarations(declarations_),
+    CompoundNode(NodeKind::moduleUnitNode, span_), globalModuleFragment(globalModuleFragment_), moduleDeclaration(moduleDeclaration_), declarations(declarations_),
     privateModuleFragment(privateModuleFragment_)
 {
 }
@@ -72,7 +72,7 @@ Node* ModuleUnitNode::Clone() const
     {
         clonedPrivateModuleFragment = privateModuleFragment->Clone();
     }
-    ModuleUnitNode* clone = new ModuleUnitNode(GetSourcePos(), clonedGlobalModuleFragment, moduleDeclaration->Clone(), clonedDeclarations, clonedPrivateModuleFragment);
+    ModuleUnitNode* clone = new ModuleUnitNode(GetSpan(), clonedGlobalModuleFragment, moduleDeclaration->Clone(), clonedDeclarations, clonedPrivateModuleFragment);
     clone->SetId(Id());
     return clone;
 }

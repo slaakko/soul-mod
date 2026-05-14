@@ -477,7 +477,7 @@ FundamentalTypeDefaultCtor::FundamentalTypeDefaultCtor(TypeSymbol* type_, Contex
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     SetNoExcept();
 }
 
@@ -513,17 +513,17 @@ void FundamentalTypeDefaultCtor::Resolve(SymbolTable& symbolTable, Context* cont
 }
 
 void FundamentalTypeDefaultCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     if ((flags & OperationFlags::defaultInit) != OperationFlags::none)
     {
-        emitter.Stack().Push(type->IrType(emitter, sourcePos, context)->DefaultValue());
+        emitter.Stack().Push(type->IrType(emitter, fullSpan, context)->DefaultValue());
         OperationFlags storeFlags = OperationFlags::none;
         if ((flags & OperationFlags::storeDeref) != OperationFlags::none)
         {
             storeFlags = storeFlags | OperationFlags::deref;
         }
-        args[0]->Store(emitter, storeFlags, sourcePos, context);
+        args[0]->Store(emitter, storeFlags, fullSpan, context);
     }
 }
 
@@ -537,9 +537,9 @@ FundamentalTypeCopyCtor::FundamentalTypeCopyCtor(TypeSymbol* type_, Context* con
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    AddParameter(thatParam, soul::ast::FullSpan(), context);
     SetNoExcept();
 }
 
@@ -575,15 +575,15 @@ void FundamentalTypeCopyCtor::Resolve(SymbolTable& symbolTable, Context* context
 }
 
 void FundamentalTypeCopyCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
     OperationFlags storeFlags = OperationFlags::none;
     if ((flags & OperationFlags::storeDeref) != OperationFlags::none)
     {
         storeFlags = storeFlags | OperationFlags::deref;
     }
-    args[0]->Store(emitter, storeFlags, sourcePos, context);
+    args[0]->Store(emitter, storeFlags, fullSpan, context);
 }
 
 FundamentalTypeMoveCtor::FundamentalTypeMoveCtor() : FunctionSymbol(SymbolKind::fundamentalTypeMoveCtor, U"@constructor"), type(nullptr)
@@ -596,9 +596,9 @@ FundamentalTypeMoveCtor::FundamentalTypeMoveCtor(TypeSymbol* type_, Context* con
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef(context));
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    AddParameter(thatParam, soul::ast::FullSpan(), context);
     SetNoExcept();
 }
 
@@ -634,9 +634,9 @@ void FundamentalTypeMoveCtor::Resolve(SymbolTable& symbolTable, Context* context
 }
 
 void FundamentalTypeMoveCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* rvalueRefValue = emitter.Stack().Pop();
     emitter.Stack().Push(emitter.EmitLoad(rvalueRefValue));
     OperationFlags storeFlags = OperationFlags::none;
@@ -644,7 +644,7 @@ void FundamentalTypeMoveCtor::GenerateCode(Emitter& emitter, std::vector<BoundEx
     {
         storeFlags = storeFlags | OperationFlags::deref;
     }
-    args[0]->Store(emitter, storeFlags, sourcePos, context);
+    args[0]->Store(emitter, storeFlags, fullSpan, context);
 }
 
 FundamentalTypeCopyAssignment::FundamentalTypeCopyAssignment() : FunctionSymbol(SymbolKind::fundamentalTypeCopyAssignment, U"operator="), type(nullptr)
@@ -657,9 +657,9 @@ FundamentalTypeCopyAssignment::FundamentalTypeCopyAssignment(TypeSymbol* type_, 
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    AddParameter(thatParam, soul::ast::FullSpan(), context);
     SetReturnType(type->AddLValueRef(context), context);
     SetNoExcept();
 }
@@ -696,10 +696,10 @@ void FundamentalTypeCopyAssignment::Resolve(SymbolTable& symbolTable, Context* c
 }
 
 void FundamentalTypeCopyAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
-    args[0]->Store(emitter, OperationFlags::setPtr, sourcePos, context);
+    args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
+    args[0]->Store(emitter, OperationFlags::setPtr, fullSpan, context);
     emitter.Stack().Push(context->Ptr());
 }
 
@@ -713,9 +713,9 @@ FundamentalTypeMoveAssignment::FundamentalTypeMoveAssignment(TypeSymbol* type_, 
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef(context));
-    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    AddParameter(thatParam, soul::ast::FullSpan(), context);
     SetReturnType(type->AddLValueRef(context), context);
     SetNoExcept();
 }
@@ -752,12 +752,12 @@ void FundamentalTypeMoveAssignment::Resolve(SymbolTable& symbolTable, Context* c
 }
 
 void FundamentalTypeMoveAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
-    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[1]->Load(emitter, OperationFlags::none, fullSpan, context);
     otava::intermediate::Value* refValue = emitter.Stack().Pop();
     emitter.Stack().Push(emitter.EmitLoad(refValue));
-    args[0]->Store(emitter, OperationFlags::setPtr, sourcePos, context);
+    args[0]->Store(emitter, OperationFlags::setPtr, fullSpan, context);
     emitter.Stack().Push(context->Ptr());
 }
 
@@ -770,13 +770,13 @@ TrivialDestructor::TrivialDestructor(TypeSymbol* type_, Context* context) : Func
     SetFunctionKind(FunctionKind::destructor);
     SetAccess(Access::public_);
     ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
-    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    AddParameter(thisParam, soul::ast::FullSpan(), context);
     SetFlag(FunctionSymbolFlags::trivialDestructor);
     SetNoExcept();
 }
 
 void TrivialDestructor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
 }
 

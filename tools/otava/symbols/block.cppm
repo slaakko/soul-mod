@@ -7,7 +7,7 @@ export module otava.symbols.block;
 
 import std;
 import otava.ast.node;
-import soul.ast.source.pos;
+import soul.ast.span;
 import otava.symbols.container.symbol;
 import otava.symbols.bound.tree;
 
@@ -21,7 +21,7 @@ public:
     std::string SymbolKindStr() const override { return "block symbol"; }
     std::string SymbolDocKindStr() const override { return "block"; }
     void Accept(Visitor& visitor) override;
-    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void AddSymbol(Symbol* symbol, const soul::ast::FullSpan& fullSpan, Context* context) override;
     inline int BlockId() const noexcept { return blockId; }
     inline void SetBlockId(int blockId_) noexcept { blockId = blockId_; }
     void AddDestructorCall(int statementIndex, BoundExpressionNode* destructorCall);
@@ -35,7 +35,7 @@ private:
 
 class Context;
 
-BlockSymbol* BeginBlock(const soul::ast::SourcePos& sourcePos, int blockId, Context* context);
+BlockSymbol* BeginBlock(const soul::ast::FullSpan& fullSpan, int blockId, Context* context);
 void EndBlock(Context* context);
 void RemoveBlock(Context* context);
 void MapNode(otava::ast::Node* node, Context* context);

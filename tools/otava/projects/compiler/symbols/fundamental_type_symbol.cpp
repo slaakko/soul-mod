@@ -159,29 +159,29 @@ std::u32string MakeFundamentalTypeName(FundamentalTypeKind kind)
 {
     switch (kind)
     {
-        case FundamentalTypeKind::none: return U"none";
-        case FundamentalTypeKind::boolType: return U"bool";
-        case FundamentalTypeKind::charType: return U"char";
-        case FundamentalTypeKind::signedCharType: return U"signed char";
-        case FundamentalTypeKind::unsignedCharType: return U"unsigned char";
-        case FundamentalTypeKind::char8Type: return U"char8_t";
-        case FundamentalTypeKind::char16Type: return U"char16_t";
-        case FundamentalTypeKind::shortIntType: return U"short int";
-        case FundamentalTypeKind::unsignedShortIntType: return U"unsigned short int";
-        case FundamentalTypeKind::char32Type: return U"char32_t";
-        case FundamentalTypeKind::wcharType: return U"wchar_t";
-        case FundamentalTypeKind::intType: return U"int";
-        case FundamentalTypeKind::unsignedIntType: return U"unsigned int";
-        case FundamentalTypeKind::longIntType: return U"long int";
-        case FundamentalTypeKind::unsignedLongIntType: return U"unsigned long int";
-        case FundamentalTypeKind::longLongIntType: return U"long long int";
-        case FundamentalTypeKind::unsignedLongLongIntType: return U"unsigned long long int";
-        case FundamentalTypeKind::floatType: return U"float";
-        case FundamentalTypeKind::doubleType: return U"double";
-        case FundamentalTypeKind::longDoubleType: return U"long double";
-        case FundamentalTypeKind::voidType: return U"void";
-        case FundamentalTypeKind::autoType: return U"auto";
-        case FundamentalTypeKind::nullPtrType: return U"nullptr_t";
+    case FundamentalTypeKind::none: return U"none";
+    case FundamentalTypeKind::boolType: return U"bool";
+    case FundamentalTypeKind::charType: return U"char";
+    case FundamentalTypeKind::signedCharType: return U"signed char";
+    case FundamentalTypeKind::unsignedCharType: return U"unsigned char";
+    case FundamentalTypeKind::char8Type: return U"char8_t";
+    case FundamentalTypeKind::char16Type: return U"char16_t";
+    case FundamentalTypeKind::shortIntType: return U"short int";
+    case FundamentalTypeKind::unsignedShortIntType: return U"unsigned short int";
+    case FundamentalTypeKind::char32Type: return U"char32_t";
+    case FundamentalTypeKind::wcharType: return U"wchar_t";
+    case FundamentalTypeKind::intType: return U"int";
+    case FundamentalTypeKind::unsignedIntType: return U"unsigned int";
+    case FundamentalTypeKind::longIntType: return U"long int";
+    case FundamentalTypeKind::unsignedLongIntType: return U"unsigned long int";
+    case FundamentalTypeKind::longLongIntType: return U"long long int";
+    case FundamentalTypeKind::unsignedLongLongIntType: return U"unsigned long long int";
+    case FundamentalTypeKind::floatType: return U"float";
+    case FundamentalTypeKind::doubleType: return U"double";
+    case FundamentalTypeKind::longDoubleType: return U"long double";
+    case FundamentalTypeKind::voidType: return U"void";
+    case FundamentalTypeKind::autoType: return U"auto";
+    case FundamentalTypeKind::nullPtrType: return U"nullptr_t";
     }
     return U"<fundamental type>";
 }
@@ -238,7 +238,7 @@ void FundamentalTypeSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-otava::intermediate::Type* FundamentalTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+otava::intermediate::Type* FundamentalTypeSymbol::IrType(Emitter& emitter, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     switch (fundamentalTypeKind)
     {
@@ -303,14 +303,14 @@ otava::intermediate::Type* FundamentalTypeSymbol::IrType(Emitter& emitter, const
     }
     default:
     {
-        ThrowException("unsupported fundamental type", sourcePos, context);
+        ThrowException("unsupported fundamental type", fullSpan, context);
         return nullptr;
     }
     }
     return nullptr;
 }
 
-TypeSymbol* GetFundamentalType(DeclarationFlags fundamentalTypeFlags, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+TypeSymbol* GetFundamentalType(DeclarationFlags fundamentalTypeFlags, const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     FundamentalTypeKind fundamentalTypeKind = FundamentalTypeFlagMapper::Instance().GetFundamentalTypeKind(fundamentalTypeFlags);
     if (fundamentalTypeKind != FundamentalTypeKind::none)
@@ -319,141 +319,141 @@ TypeSymbol* GetFundamentalType(DeclarationFlags fundamentalTypeFlags, const soul
     }
     else
     {
-        ThrowException("invalid combination of fundamental type specifiers", sourcePos, context);
+        ThrowException("invalid combination of fundamental type specifiers", fullSpan, context);
         return nullptr;
     }
 }
 
-void MakeFundamentaTypeSequence(FundamentalTypeSymbol* fundamentalType, const soul::ast::SourcePos& sourcePos, otava::ast::SequenceNode* sequence)
+void MakeFundamentaTypeSequence(FundamentalTypeSymbol* fundamentalType, const soul::ast::FullSpan& fullSpan, otava::ast::SequenceNode* sequence)
 {
     switch (fundamentalType->GetFundamentalTypeKind())
     {
     case FundamentalTypeKind::boolType:
     {
-        sequence->AddNode(new otava::ast::BoolNode(sourcePos));
+        sequence->AddNode(new otava::ast::BoolNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::charType:
     {
-        sequence->AddNode(new otava::ast::CharNode(sourcePos));
+        sequence->AddNode(new otava::ast::CharNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::signedCharType:
     {
-        sequence->AddNode(new otava::ast::SignedNode(sourcePos));
-        sequence->AddNode(new otava::ast::CharNode(sourcePos));
+        sequence->AddNode(new otava::ast::SignedNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::CharNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::unsignedCharType:
     {
-        sequence->AddNode(new otava::ast::UnsignedNode(sourcePos));
-        sequence->AddNode(new otava::ast::CharNode(sourcePos));
+        sequence->AddNode(new otava::ast::UnsignedNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::CharNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::char8Type:
     {
-        sequence->AddNode(new otava::ast::Char8Node(sourcePos));
+        sequence->AddNode(new otava::ast::Char8Node(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::char16Type:
     {
-        sequence->AddNode(new otava::ast::Char16Node(sourcePos));
+        sequence->AddNode(new otava::ast::Char16Node(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::char32Type:
     {
-        sequence->AddNode(new otava::ast::Char32Node(sourcePos));
+        sequence->AddNode(new otava::ast::Char32Node(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::wcharType:
     {
-        sequence->AddNode(new otava::ast::WCharNode(sourcePos));
+        sequence->AddNode(new otava::ast::WCharNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::shortIntType:
     {
-        sequence->AddNode(new otava::ast::ShortNode(sourcePos));
-        sequence->AddNode(new otava::ast::IntNode(sourcePos));
+        sequence->AddNode(new otava::ast::ShortNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::IntNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::unsignedShortIntType:
     {
-        sequence->AddNode(new otava::ast::UnsignedNode(sourcePos));
-        sequence->AddNode(new otava::ast::ShortNode(sourcePos));
-        sequence->AddNode(new otava::ast::IntNode(sourcePos));
+        sequence->AddNode(new otava::ast::UnsignedNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::ShortNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::IntNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::intType:
     {
-        sequence->AddNode(new otava::ast::IntNode(sourcePos));
+        sequence->AddNode(new otava::ast::IntNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::unsignedIntType:
     {
-        sequence->AddNode(new otava::ast::UnsignedNode(sourcePos));
-        sequence->AddNode(new otava::ast::IntNode(sourcePos));
+        sequence->AddNode(new otava::ast::UnsignedNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::IntNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::longIntType:
     {
-        sequence->AddNode(new otava::ast::LongNode(sourcePos));
-        sequence->AddNode(new otava::ast::IntNode(sourcePos));
+        sequence->AddNode(new otava::ast::LongNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::IntNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::unsignedLongIntType:
     {
-        sequence->AddNode(new otava::ast::UnsignedNode(sourcePos));
-        sequence->AddNode(new otava::ast::LongNode(sourcePos));
-        sequence->AddNode(new otava::ast::IntNode(sourcePos));
+        sequence->AddNode(new otava::ast::UnsignedNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::LongNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::IntNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::longLongIntType:
     {
-        sequence->AddNode(new otava::ast::LongNode(sourcePos));
-        sequence->AddNode(new otava::ast::LongNode(sourcePos));
-        sequence->AddNode(new otava::ast::IntNode(sourcePos));
+        sequence->AddNode(new otava::ast::LongNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::LongNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::IntNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::unsignedLongLongIntType:
     {
-        sequence->AddNode(new otava::ast::UnsignedNode(sourcePos));
-        sequence->AddNode(new otava::ast::LongNode(sourcePos));
-        sequence->AddNode(new otava::ast::LongNode(sourcePos));
-        sequence->AddNode(new otava::ast::IntNode(sourcePos));
+        sequence->AddNode(new otava::ast::UnsignedNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::LongNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::LongNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::IntNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::floatType:
     {
-        sequence->AddNode(new otava::ast::FloatNode(sourcePos));
+        sequence->AddNode(new otava::ast::FloatNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::doubleType:
     {
-        sequence->AddNode(new otava::ast::DoubleNode(sourcePos));
+        sequence->AddNode(new otava::ast::DoubleNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::longDoubleType:
     {
-        sequence->AddNode(new otava::ast::LongNode(sourcePos));
-        sequence->AddNode(new otava::ast::DoubleNode(sourcePos));
+        sequence->AddNode(new otava::ast::LongNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::DoubleNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::voidType:
     {
-        sequence->AddNode(new otava::ast::VoidNode(sourcePos));
+        sequence->AddNode(new otava::ast::VoidNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::autoType:
     {
-        sequence->AddNode(new otava::ast::PlaceholderTypeSpecifierNode(sourcePos));
+        sequence->AddNode(new otava::ast::PlaceholderTypeSpecifierNode(fullSpan.span));
         break;
     }
     case FundamentalTypeKind::nullPtrType:
     {
-        otava::ast::NestedNameSpecifierNode* nns = new otava::ast::NestedNameSpecifierNode(sourcePos);
-        nns->AddNode(new otava::ast::IdentifierNode(sourcePos, U"std"));
-        nns->AddNode(new otava::ast::ColonColonNode(sourcePos));
-        sequence->AddNode(new otava::ast::QualifiedIdNode(sourcePos, nns, new otava::ast::IdentifierNode(sourcePos, U"nullptr_t")));
+        otava::ast::NestedNameSpecifierNode* nns = new otava::ast::NestedNameSpecifierNode(fullSpan.span);
+        nns->AddNode(new otava::ast::IdentifierNode(fullSpan.span, U"std"));
+        nns->AddNode(new otava::ast::ColonColonNode(fullSpan.span));
+        sequence->AddNode(new otava::ast::QualifiedIdNode(fullSpan.span, nns, new otava::ast::IdentifierNode(fullSpan.span, U"nullptr_t")));
         break;
     }
     }

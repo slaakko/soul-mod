@@ -27,7 +27,7 @@ GetFramePtrIntrinsic::GetFramePtrIntrinsic(Context* context) : FunctionSymbol(Sy
 }
 
 void GetFramePtrIntrinsic::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    const soul::ast::FullSpan& fullSpan, otava::symbols::Context* context)
 {
     emitter.Stack().Push(emitter.EmitGetRbp());
 }

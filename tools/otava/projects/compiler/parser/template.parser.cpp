@@ -6,7 +6,7 @@ module otava.parser.templates;
 import util;
 import soul.ast.common;
 import soul.ast.spg;
-import soul.ast.source.pos;
+import soul.ast.span;
 import soul.ast.lexer.pos.pair;
 import otava.token;
 import otava.lexer;
@@ -36,7 +36,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateDeclaration(LexerT& lexer, o
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107585);
     std::unique_ptr<otava::ast::Node> templateHeadNode = std::unique_ptr<otava::ast::Node>();
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> templateHead;
     std::unique_ptr<otava::ast::Node> concepDefinition;
     std::unique_ptr<otava::ast::Node> declaration;
@@ -52,7 +52,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateDeclaration(LexerT& lexer, o
             if (match.hit)
             {
                 templateHeadNode.reset(templateHead.release());
-                sourcePos = lexer.GetSourcePos(pos);
+                span = lexer.GetSpan(pos);
             }
             *parentMatch1 = match;
         }
@@ -87,7 +87,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateDeclaration(LexerT& lexer, o
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TemplateDeclaration");
                                     #endif
-                                    return soul::parser::Match(true, new otava::ast::TemplateDeclarationNode(sourcePos, templateHeadNode.release(), concepDefinition.release()));
+                                    return soul::parser::Match(true, new otava::ast::TemplateDeclarationNode(span, templateHeadNode.release(), concepDefinition.release()));
                                 }
                             }
                             *parentMatch6 = match;
@@ -112,7 +112,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateDeclaration(LexerT& lexer, o
                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TemplateDeclaration");
                                             #endif
-                                            return soul::parser::Match(true, new otava::ast::TemplateDeclarationNode(sourcePos, templateHeadNode.release(), declaration.release()));
+                                            return soul::parser::Match(true, new otava::ast::TemplateDeclarationNode(span, templateHeadNode.release(), declaration.release()));
                                         }
                                     }
                                     *parentMatch8 = match;
@@ -184,7 +184,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateHead(LexerT& lexer, otava::s
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107586);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::TemplateHeadNode> templateHeadNode = std::unique_ptr<otava::ast::TemplateHeadNode>();
     std::unique_ptr<otava::ast::Node> templateParamList;
     std::unique_ptr<otava::ast::Node> requiresClause;
@@ -213,8 +213,8 @@ soul::parser::Match TemplateParser<LexerT>::TemplateHead(LexerT& lexer, otava::s
                         }
                         if (match.hit)
                         {
-                            sourcePos = lexer.GetSourcePos(pos);
-                            templateHeadNode.reset(new otava::ast::TemplateHeadNode(sourcePos));
+                            span = lexer.GetSpan(pos);
+                            templateHeadNode.reset(new otava::ast::TemplateHeadNode(span));
                             if (begin)
                             {
                                 otava::symbols::BeginTemplateDeclaration(templateHeadNode.get(), context);
@@ -329,8 +329,8 @@ soul::parser::Match TemplateParser<LexerT>::TemplateParameterList(LexerT& lexer,
     int index = int();
     std::unique_ptr<otava::ast::Node> templateParameterNode = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::TemplateParameterListNode> node = std::unique_ptr<otava::ast::TemplateParameterListNode>();
-    soul::ast::SourcePos laPos = soul::ast::SourcePos();
-    soul::ast::SourcePos raPos = soul::ast::SourcePos();
+    soul::ast::Span laSpan = soul::ast::Span();
+    soul::ast::Span raSpan = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> comma;
     std::unique_ptr<otava::ast::Node> next;
@@ -362,9 +362,9 @@ soul::parser::Match TemplateParser<LexerT>::TemplateParameterList(LexerT& lexer,
                             }
                             if (match.hit)
                             {
-                                soul::ast::SourcePos sourcePos = lexer.GetSourcePos(pos);
-                                node.reset(new otava::ast::TemplateParameterListNode(sourcePos));
-                                laPos = sourcePos;
+                                soul::ast::Span span = lexer.GetSpan(pos);
+                                node.reset(new otava::ast::TemplateParameterListNode(span));
+                                laSpan = span;
                             }
                             *parentMatch5 = match;
                         }
@@ -489,7 +489,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateParameterList(LexerT& lexer,
                         }
                         if (match.hit)
                         {
-                            raPos = lexer.GetSourcePos(pos);
+                            raSpan = lexer.GetSpan(pos);
                         }
                         *parentMatch16 = match;
                     }
@@ -501,8 +501,8 @@ soul::parser::Match TemplateParser<LexerT>::TemplateParameterList(LexerT& lexer,
         }
         if (match.hit)
         {
-            node->SetLAnglePos(laPos);
-            node->SetRAnglePos(raPos);
+            node->SetLAngleSpan(laSpan);
+            node->SetRAngleSpan(raSpan);
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TemplateParameterList");
@@ -618,7 +618,7 @@ soul::parser::Match TemplateParser<LexerT>::TypeParameter(LexerT& lexer, otava::
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107589);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> ellipsisNode = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> identifierNode = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> templateHead;
@@ -653,7 +653,7 @@ soul::parser::Match TemplateParser<LexerT>::TypeParameter(LexerT& lexer, otava::
                     templateHead.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
-                        sourcePos = lexer.GetSourcePos(pos);
+                        span = lexer.GetSpan(pos);
                     }
                     *parentMatch3 = match;
                 }
@@ -693,7 +693,7 @@ soul::parser::Match TemplateParser<LexerT>::TypeParameter(LexerT& lexer, otava::
                             key.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
-                                if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                                if (!span.IsValid()) span = lexer.GetSpan(pos);
                             }
                             *parentMatch8 = match;
                         }
@@ -758,7 +758,7 @@ soul::parser::Match TemplateParser<LexerT>::TypeParameter(LexerT& lexer, otava::
                                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TypeParameter");
                                                                 #endif
-                                                                return soul::parser::Match(true, new otava::ast::TypeParameterNode(sourcePos, key.release(), id.release(), asgn.release(), idExpr.release(), nullptr, templateHead.release()));
+                                                                return soul::parser::Match(true, new otava::ast::TypeParameterNode(span, key.release(), id.release(), asgn.release(), idExpr.release(), nullptr, templateHead.release()));
                                                             }
                                                         }
                                                         *parentMatch18 = match;
@@ -782,7 +782,7 @@ soul::parser::Match TemplateParser<LexerT>::TypeParameter(LexerT& lexer, otava::
                                                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TypeParameter");
                                                                         #endif
-                                                                        return soul::parser::Match(true, new otava::ast::TypeParameterNode(sourcePos, key.release(), id.release(), asgn.release(), typeId.release(), nullptr, templateHead.release()));
+                                                                        return soul::parser::Match(true, new otava::ast::TypeParameterNode(span, key.release(), id.release(), asgn.release(), typeId.release(), nullptr, templateHead.release()));
                                                                     }
                                                                 }
                                                                 *parentMatch20 = match;
@@ -873,7 +873,7 @@ soul::parser::Match TemplateParser<LexerT>::TypeParameter(LexerT& lexer, otava::
                                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TypeParameter");
                                                             #endif
-                                                            return soul::parser::Match(true, new otava::ast::TypeParameterNode(sourcePos, key.release(), identifierNode.release(), nullptr, nullptr, ellipsisNode.release(), templateHead.release()));
+                                                            return soul::parser::Match(true, new otava::ast::TypeParameterNode(span, key.release(), identifierNode.release(), nullptr, nullptr, ellipsisNode.release(), templateHead.release()));
                                                         }
                                                     }
                                                 }
@@ -912,7 +912,7 @@ soul::parser::Match TemplateParser<LexerT>::TypeParameter(LexerT& lexer, otava::
                                     constraint.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
                                     {
-                                        if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                                        if (!span.IsValid()) span = lexer.GetSpan(pos);
                                     }
                                     *parentMatch30 = match;
                                 }
@@ -970,7 +970,7 @@ soul::parser::Match TemplateParser<LexerT>::TypeParameter(LexerT& lexer, otava::
                                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TypeParameter");
                                                                 #endif
-                                                                return soul::parser::Match(true, new otava::ast::TypeParameterNode(sourcePos, constraint.release(), id3.release(), asgn2.release(), typeId2.release(), nullptr, templateHead.release()));
+                                                                return soul::parser::Match(true, new otava::ast::TypeParameterNode(span, constraint.release(), id3.release(), asgn2.release(), typeId2.release(), nullptr, templateHead.release()));
                                                             }
                                                         }
                                                         *parentMatch38 = match;
@@ -1054,7 +1054,7 @@ soul::parser::Match TemplateParser<LexerT>::TypeParameter(LexerT& lexer, otava::
                                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TypeParameter");
                                                                     #endif
-                                                                    return soul::parser::Match(true, new otava::ast::TypeParameterNode(sourcePos, constraint.release(), identifierNode.release(), nullptr, nullptr, ellipsisNode.release(), templateHead.release()));
+                                                                    return soul::parser::Match(true, new otava::ast::TypeParameterNode(span, constraint.release(), identifierNode.release(), nullptr, nullptr, ellipsisNode.release(), templateHead.release()));
                                                                 }
                                                             }
                                                         }
@@ -1213,7 +1213,7 @@ soul::parser::Match TemplateParser<LexerT>::Typename(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Typename");
                 #endif
-                return soul::parser::Match(true, new otava::ast::TypenameNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::TypenameNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -1261,7 +1261,7 @@ soul::parser::Match TemplateParser<LexerT>::Class(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Class");
                 #endif
-                return soul::parser::Match(true, new otava::ast::ClassNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::ClassNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -1295,9 +1295,9 @@ soul::parser::Match TemplateParser<LexerT>::TemplateId(LexerT& lexer, otava::sym
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107593);
     std::unique_ptr<otava::ast::TemplateIdNode> node = std::unique_ptr<otava::ast::TemplateIdNode>();
     std::unique_ptr<otava::ast::Node> templateName = std::unique_ptr<otava::ast::Node>();
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
-    soul::ast::SourcePos laPos = soul::ast::SourcePos();
-    soul::ast::SourcePos raPos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
+    soul::ast::Span laSpan = soul::ast::Span();
+    soul::ast::Span raSpan = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> operatorFunctionId;
     std::unique_ptr<otava::ast::Node> literalOperatorId;
     std::unique_ptr<otava::ast::Node> simpleTemplateId;
@@ -1342,7 +1342,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateId(LexerT& lexer, otava::sym
                                                 if (match.hit)
                                                 {
                                                     templateName.reset(operatorFunctionId.release());
-                                                    sourcePos = lexer.GetSourcePos(pos);
+                                                    span = lexer.GetSpan(pos);
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -1362,7 +1362,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateId(LexerT& lexer, otava::sym
                                                         if (match.hit)
                                                         {
                                                             templateName.reset(literalOperatorId.release());
-                                                            sourcePos = lexer.GetSourcePos(pos);
+                                                            span = lexer.GetSpan(pos);
                                                         }
                                                         *parentMatch11 = match;
                                                     }
@@ -1393,10 +1393,10 @@ soul::parser::Match TemplateParser<LexerT>::TemplateId(LexerT& lexer, otava::sym
                                             }
                                             if (match.hit)
                                             {
-                                                laPos = lexer.GetSourcePos(pos);
+                                                laSpan = lexer.GetSpan(pos);
                                                 ++vars->langleCount;
                                                 context->PushSetFlag(otava::symbols::ContextFlags::parsingTemplateId);
-                                                node.reset(new otava::ast::TemplateIdNode(sourcePos, templateName.release()));
+                                                node.reset(new otava::ast::TemplateIdNode(span, templateName.release()));
                                             }
                                             *parentMatch13 = match;
                                         }
@@ -1449,7 +1449,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateId(LexerT& lexer, otava::sym
                                     }
                                     if (match.hit)
                                     {
-                                        raPos = lexer.GetSourcePos(pos);
+                                        raSpan = lexer.GetSpan(pos);
                                         --vars->langleCount;
                                         context->PopFlags();
                                     }
@@ -1468,8 +1468,8 @@ soul::parser::Match TemplateParser<LexerT>::TemplateId(LexerT& lexer, otava::sym
                     }
                     if (match.hit)
                     {
-                        node->SetLAnglePos(laPos);
-                        node->SetRAnglePos(raPos);
+                        node->SetLAngleSpan(laSpan);
+                        node->SetRAngleSpan(raSpan);
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TemplateId");
@@ -1541,9 +1541,9 @@ soul::parser::Match TemplateParser<LexerT>::SimpleTemplateId(LexerT& lexer, otav
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107594);
     std::unique_ptr<otava::ast::TemplateIdNode> node = std::unique_ptr<otava::ast::TemplateIdNode>();
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
-    soul::ast::SourcePos laPos = soul::ast::SourcePos();
-    soul::ast::SourcePos raPos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
+    soul::ast::Span laSpan = soul::ast::Span();
+    soul::ast::Span raSpan = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> templateName;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -1570,7 +1570,7 @@ soul::parser::Match TemplateParser<LexerT>::SimpleTemplateId(LexerT& lexer, otav
                             templateName.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
-                                sourcePos = lexer.GetSourcePos(pos);
+                                span = lexer.GetSpan(pos);
                             }
                             *parentMatch5 = match;
                         }
@@ -1594,11 +1594,11 @@ soul::parser::Match TemplateParser<LexerT>::SimpleTemplateId(LexerT& lexer, otav
                                 }
                                 if (match.hit)
                                 {
-                                    laPos = lexer.GetSourcePos(pos);
+                                    laSpan = lexer.GetSpan(pos);
                                     ++vars->langleCount;
                                     context->PushSetFlag(otava::symbols::ContextFlags::parsingTemplateId);
                                     context->ResetRejectTemplateId();
-                                    node.reset(new otava::ast::TemplateIdNode(sourcePos, templateName.release()));
+                                    node.reset(new otava::ast::TemplateIdNode(span, templateName.release()));
                                 }
                                 *parentMatch7 = match;
                             }
@@ -1651,7 +1651,7 @@ soul::parser::Match TemplateParser<LexerT>::SimpleTemplateId(LexerT& lexer, otav
                         }
                         if (match.hit)
                         {
-                            raPos = lexer.GetSourcePos(pos);
+                            raSpan = lexer.GetSpan(pos);
                             --vars->langleCount;
                             context->PopFlags();
                         }
@@ -1676,8 +1676,8 @@ soul::parser::Match TemplateParser<LexerT>::SimpleTemplateId(LexerT& lexer, otav
             }
             else
             {
-                node->SetLAnglePos(laPos);
-                node->SetRAnglePos(raPos);
+                node->SetLAngleSpan(laSpan);
+                node->SetRAngleSpan(raSpan);
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTemplateId");
@@ -1892,7 +1892,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateArgumentList(LexerT& lexer, 
                         }
                         if (match.hit)
                         {
-                            templateIdNode->AddNode(new otava::ast::EllipsisNode(lexer.GetSourcePos(pos)));
+                            templateIdNode->AddNode(new otava::ast::EllipsisNode(lexer.GetSpan(pos)));
                         }
                         *parentMatch14 = match;
                     }
@@ -2191,9 +2191,9 @@ soul::parser::Match TemplateParser<LexerT>::DeductionGuide(LexerT& lexer, otava:
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107599);
     std::unique_ptr<otava::ast::ParameterListNode> params = std::unique_ptr<otava::ast::ParameterListNode>();
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
-    soul::ast::SourcePos lpPos = soul::ast::SourcePos();
-    soul::ast::SourcePos rpPos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
+    soul::ast::Span lpSpan = soul::ast::Span();
+    soul::ast::Span rpSpan = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> explicitSpecifier;
     std::unique_ptr<otava::ast::Node> templateName;
     std::unique_ptr<otava::ast::Node> arrow;
@@ -2242,7 +2242,7 @@ soul::parser::Match TemplateParser<LexerT>::DeductionGuide(LexerT& lexer, otava:
                                                     explicitSpecifier.reset(static_cast<otava::ast::Node*>(match.value));
                                                     if (match.hit)
                                                     {
-                                                        sourcePos = lexer.GetSourcePos(pos);
+                                                        span = lexer.GetSpan(pos);
                                                     }
                                                     *parentMatch11 = match;
                                                 }
@@ -2272,7 +2272,7 @@ soul::parser::Match TemplateParser<LexerT>::DeductionGuide(LexerT& lexer, otava:
                                                 templateName.reset(static_cast<otava::ast::Node*>(match.value));
                                                 if (match.hit)
                                                 {
-                                                    if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                                                    if (!span.IsValid()) span = lexer.GetSpan(pos);
                                                 }
                                                 *parentMatch13 = match;
                                             }
@@ -2299,8 +2299,8 @@ soul::parser::Match TemplateParser<LexerT>::DeductionGuide(LexerT& lexer, otava:
                                             }
                                             if (match.hit)
                                             {
-                                                lpPos = lexer.GetSourcePos(pos);
-                                                params.reset(new otava::ast::ParameterListNode(lexer.GetSourcePos(pos)));
+                                                lpSpan = lexer.GetSpan(pos);
+                                                params.reset(new otava::ast::ParameterListNode(lexer.GetSpan(pos)));
                                             }
                                             *parentMatch15 = match;
                                         }
@@ -2339,7 +2339,7 @@ soul::parser::Match TemplateParser<LexerT>::DeductionGuide(LexerT& lexer, otava:
                                     }
                                     if (match.hit)
                                     {
-                                        rpPos = lexer.GetSourcePos(pos);
+                                        rpSpan = lexer.GetSpan(pos);
                                     }
                                     *parentMatch18 = match;
                                 }
@@ -2394,7 +2394,7 @@ soul::parser::Match TemplateParser<LexerT>::DeductionGuide(LexerT& lexer, otava:
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DeductionGuide");
                 #endif
-                return soul::parser::Match(true, new otava::ast::DeductionGuideNode(sourcePos, templateName.release(), params.release(), arrow.release(), templateId.release(), explicitSpecifier.release(), semicolon.release(), lpPos, rpPos));
+                return soul::parser::Match(true, new otava::ast::DeductionGuideNode(span, templateName.release(), params.release(), arrow.release(), templateId.release(), explicitSpecifier.release(), semicolon.release(), lpSpan, rpSpan));
             }
         }
         *parentMatch0 = match;
@@ -2442,7 +2442,7 @@ soul::parser::Match TemplateParser<LexerT>::Arrow(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Arrow");
                 #endif
-                return soul::parser::Match(true, new otava::ast::ArrowNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::ArrowNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -2474,7 +2474,7 @@ soul::parser::Match TemplateParser<LexerT>::ExplicitInstantiation(LexerT& lexer,
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107601);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
     std::unique_ptr<otava::ast::Node> extrn;
     std::unique_ptr<otava::ast::Node> tmp;
     std::unique_ptr<otava::ast::Node> declaration;
@@ -2506,7 +2506,7 @@ soul::parser::Match TemplateParser<LexerT>::ExplicitInstantiation(LexerT& lexer,
                                 extrn.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
-                                    sourcePos = lexer.GetSourcePos(pos);
+                                    span = lexer.GetSpan(pos);
                                 }
                                 *parentMatch6 = match;
                             }
@@ -2536,7 +2536,7 @@ soul::parser::Match TemplateParser<LexerT>::ExplicitInstantiation(LexerT& lexer,
                             tmp.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
-                                if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                                if (!span.IsValid()) span = lexer.GetSpan(pos);
                             }
                             *parentMatch8 = match;
                         }
@@ -2561,7 +2561,7 @@ soul::parser::Match TemplateParser<LexerT>::ExplicitInstantiation(LexerT& lexer,
         }
         if (match.hit)
         {
-            otava::ast::ExplicitInstantiationNode *node = new otava::ast::ExplicitInstantiationNode(sourcePos, extrn.release(), tmp.release(), declaration.release());
+            otava::ast::ExplicitInstantiationNode *node = new otava::ast::ExplicitInstantiationNode(span, extrn.release(), tmp.release(), declaration.release());
             otava::symbols::ProcessExplicitInstantiation(node, context);
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -2599,9 +2599,9 @@ soul::parser::Match TemplateParser<LexerT>::ExplicitSpecialization(LexerT& lexer
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107602);
-    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
-    soul::ast::SourcePos laPos = soul::ast::SourcePos();
-    soul::ast::SourcePos raPos = soul::ast::SourcePos();
+    soul::ast::Span span = soul::ast::Span();
+    soul::ast::Span laSpan = soul::ast::Span();
+    soul::ast::Span raSpan = soul::ast::Span();
     std::unique_ptr<otava::ast::TemplateHeadNode> templateHeadNode = std::unique_ptr<otava::ast::TemplateHeadNode>();
     std::unique_ptr<otava::ast::Node> tmp;
     std::unique_ptr<otava::ast::Node> declaration;
@@ -2632,7 +2632,7 @@ soul::parser::Match TemplateParser<LexerT>::ExplicitSpecialization(LexerT& lexer
                                 tmp.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
-                                    sourcePos = lexer.GetSourcePos(pos);
+                                    span = lexer.GetSpan(pos);
                                 }
                                 *parentMatch6 = match;
                             }
@@ -2655,7 +2655,7 @@ soul::parser::Match TemplateParser<LexerT>::ExplicitSpecialization(LexerT& lexer
                                     }
                                     if (match.hit)
                                     {
-                                        laPos = lexer.GetSourcePos(pos);
+                                        laSpan = lexer.GetSpan(pos);
                                     }
                                     *parentMatch8 = match;
                                 }
@@ -2682,7 +2682,7 @@ soul::parser::Match TemplateParser<LexerT>::ExplicitSpecialization(LexerT& lexer
                                 }
                                 if (match.hit)
                                 {
-                                    raPos = lexer.GetSourcePos(pos);
+                                    raSpan = lexer.GetSpan(pos);
                                 }
                                 *parentMatch10 = match;
                             }
@@ -2704,7 +2704,7 @@ soul::parser::Match TemplateParser<LexerT>::ExplicitSpecialization(LexerT& lexer
                             soul::parser::Match match(true);
                             if (match.hit)
                             {
-                                templateHeadNode.reset(new otava::ast::TemplateHeadNode(lexer.GetSourcePos(pos)));
+                                templateHeadNode.reset(new otava::ast::TemplateHeadNode(lexer.GetSpan(pos)));
                                 otava::symbols::BeginTemplateDeclaration(templateHeadNode.get(), context);
                                 context->PushSetFlag(otava::symbols::ContextFlags::parsingTemplateDeclaration);
                             }
@@ -2751,7 +2751,7 @@ soul::parser::Match TemplateParser<LexerT>::ExplicitSpecialization(LexerT& lexer
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExplicitSpecialization");
                 #endif
-                return soul::parser::Match(true, new otava::ast::ExplicitSpecializationNode(sourcePos, tmp.release(), templateHeadNode.release(), declaration.release(), laPos, raPos));
+                return soul::parser::Match(true, new otava::ast::ExplicitSpecializationNode(span, tmp.release(), templateHeadNode.release(), declaration.release(), laSpan, raSpan));
             }
         }
         *parentMatch0 = match;
@@ -2799,7 +2799,7 @@ soul::parser::Match TemplateParser<LexerT>::Extern(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Extern");
                 #endif
-                return soul::parser::Match(true, new otava::ast::ExternNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::ExternNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;
@@ -2847,7 +2847,7 @@ soul::parser::Match TemplateParser<LexerT>::Template(LexerT& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Template");
                 #endif
-                return soul::parser::Match(true, new otava::ast::TemplateNode(lexer.GetSourcePos(pos)));
+                return soul::parser::Match(true, new otava::ast::TemplateNode(lexer.GetSpan(pos)));
             }
         }
         *parentMatch0 = match;

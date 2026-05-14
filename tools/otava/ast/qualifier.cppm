@@ -13,7 +13,7 @@ export namespace otava::ast {
 class ConstNode : public Node
 {
 public:
-    ConstNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ConstNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"const"; }
@@ -22,7 +22,7 @@ public:
 class VolatileNode : public Node
 {
 public:
-    VolatileNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    VolatileNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"volatile"; }
@@ -31,7 +31,7 @@ public:
 class LvalueRefNode : public Node
 {
 public:
-    LvalueRefNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    LvalueRefNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"&"; }
@@ -40,7 +40,7 @@ public:
 class RvalueRefNode : public Node
 {
 public:
-    RvalueRefNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    RvalueRefNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"&&"; }
@@ -49,7 +49,7 @@ public:
 class PtrNode : public Node
 {
 public:
-    PtrNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    PtrNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override { return U"*"; }
@@ -58,7 +58,7 @@ public:
 class CVQualifierSequenceNode : public SequenceNode
 {
 public:
-    CVQualifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    CVQualifierSequenceNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };

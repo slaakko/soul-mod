@@ -105,9 +105,9 @@ void SymbolTable::SetCurrentScope(Scope* scope)
     currentScope = scope;
 }
 
-Scope* SymbolTable::GetNamespaceScope(const std::u32string& nsName, const soul::ast::SourcePos& sourcePos, Context* context) 
+Scope* SymbolTable::GetNamespaceScope(const std::u32string& nsName, const soul::ast::FullSpan& fullSpan, Context* context) 
 {
-    Symbol* ns = Lookup(nsName, SymbolGroupKind::typeSymbolGroup, sourcePos, context);
+    Symbol* ns = Lookup(nsName, SymbolGroupKind::typeSymbolGroup, fullSpan, context);
     if (ns)
     {
         return ns->GetScope();
@@ -1018,7 +1018,7 @@ void SymbolTable::Resolve(Context* context)
         }
         else
         {
-            ThrowException("class template specialization expected", soul::ast::SourcePos(), context);
+            ThrowException("class template specialization expected", soul::ast::FullSpan(), context);
         }
     }
     for (const auto& specialization : aliasTypeTemplateSpecializations)
@@ -1030,7 +1030,7 @@ void SymbolTable::Resolve(Context* context)
         }
         else
         {
-            ThrowException("alias type template specialization expected", soul::ast::SourcePos(), context);
+            ThrowException("alias type template specialization expected", soul::ast::FullSpan(), context);
         }
     }
     for (const auto& arrayType : arrayTypes)
@@ -1050,24 +1050,24 @@ void SymbolTable::Resolve(Context* context)
     context->SetRequesterModule(prevRequesterModule);
 }
 
-Symbol* SymbolTable::Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context) 
+Symbol* SymbolTable::Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::FullSpan& fullSpan, Context* context) 
 {
-    Symbol* symbol = Lookup(name, symbolGroupKind, sourcePos, context, LookupFlags::none);
+    Symbol* symbol = Lookup(name, symbolGroupKind, fullSpan, context, LookupFlags::none);
     if (!symbol)
     {
-        symbol = LookupInScopeStack(name, symbolGroupKind, sourcePos, context, LookupFlags::none);
+        symbol = LookupInScopeStack(name, symbolGroupKind, fullSpan, context, LookupFlags::none);
     }
     return symbol;
 }
 
-Symbol* SymbolTable::LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos,
+Symbol* SymbolTable::LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::FullSpan& fullSpan,
     Context* context, LookupFlags flags)
 {
     if (topScopeIndex == -1) return nullptr;
     for (int i = scopeStack.size() - 1; i >= topScopeIndex; --i)
     {
         Scope* scope = scopeStack[i];
-        Symbol* symbol = scope->Lookup(name, symbolGroupKind, ScopeLookup::allScopes, sourcePos, context, flags);
+        Symbol* symbol = scope->Lookup(name, symbolGroupKind, ScopeLookup::allScopes, fullSpan, context, flags);
         if (symbol)
         {
             return symbol;
@@ -1076,9 +1076,9 @@ Symbol* SymbolTable::LookupInScopeStack(const std::u32string& name, SymbolGroupK
     return nullptr;
 }
 
-Symbol* SymbolTable::Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags)
+Symbol* SymbolTable::Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::FullSpan& fullSpan, Context* context, LookupFlags flags)
 {
-    return currentScope->Lookup(name, symbolGroupKind, ScopeLookup::allScopes, sourcePos, context, flags);
+    return currentScope->Lookup(name, symbolGroupKind, ScopeLookup::allScopes, fullSpan, context, flags);
 }
 
 Symbol* SymbolTable::LookupSymbol(Symbol* symbol)
@@ -1379,14 +1379,14 @@ void SymbolTable::UnmapType(TypeSymbol* type)
 VariableSymbol* SymbolTable::AddVariable(const std::u32string& name, otava::ast::Node* node, TypeSymbol* declaredType, TypeSymbol* initializerType, 
     Value* value, DeclarationFlags flags, Context* context)
 {
-    VariableGroupSymbol* variableGroup = currentScope->GroupScope()->GetOrInsertVariableGroup(name, node->GetSourcePos(), context);
+    VariableGroupSymbol* variableGroup = currentScope->GroupScope()->GetOrInsertVariableGroup(name, context->MakeFullSpan(node->GetSpan()), context);
     VariableSymbol* variableSymbol = new VariableSymbol(name);
     variableSymbol->SetAccess(CurrentAccess());
     variableSymbol->SetDeclaredType(declaredType);
     variableSymbol->SetInitializerType(initializerType);
     variableSymbol->SetValue(value);
     variableSymbol->SetDeclarationFlags(flags);
-    currentScope->SymbolScope()->AddSymbol(variableSymbol, node->GetSourcePos(), context);
+    currentScope->SymbolScope()->AddSymbol(variableSymbol, context->MakeFullSpan(node->GetSpan()), context);
     variableGroup->AddVariable(variableSymbol);
     return variableSymbol;
 }
@@ -1394,10 +1394,10 @@ VariableSymbol* SymbolTable::AddVariable(const std::u32string& name, otava::ast:
 AliasTypeSymbol* SymbolTable::AddAliasType(otava::ast::Node* idNode, otava::ast::Node* aliasTypeNode, TypeSymbol* type, Context* context)
 {
     std::u32string id = idNode->Str();
-    AliasGroupSymbol* aliasGroup = currentScope->GroupScope()->GetOrInsertAliasGroup(id, idNode->GetSourcePos(), context);
+    AliasGroupSymbol* aliasGroup = currentScope->GroupScope()->GetOrInsertAliasGroup(id, context->MakeFullSpan(idNode->GetSpan()), context);
     AliasTypeSymbol* aliasTypeSymbol = new AliasTypeSymbol(id, type);
     aliasTypeSymbol->SetAccess(currentAccess);
-    currentScope->SymbolScope()->AddSymbol(aliasTypeSymbol, idNode->GetSourcePos(), context);
+    currentScope->SymbolScope()->AddSymbol(aliasTypeSymbol, context->MakeFullSpan(idNode->GetSpan()), context);
     aliasGroup->AddAliasTypeSymbol(aliasTypeSymbol, context);
     MapNode(aliasTypeNode, aliasTypeSymbol);
     return aliasTypeSymbol;
@@ -1405,22 +1405,22 @@ AliasTypeSymbol* SymbolTable::AddAliasType(otava::ast::Node* idNode, otava::ast:
 
 void SymbolTable::AddUsingDeclaration(otava::ast::Node* node, Symbol* symbol, Context* context)
 {
-    currentScope->SymbolScope()->AddUsingDeclaration(symbol, node->GetSourcePos(), context);
+    currentScope->SymbolScope()->AddUsingDeclaration(symbol, context->MakeFullSpan(node->GetSpan()), context);
     MapNode(node, symbol, MapKind::nodeToSymbol);
 }
 
 void SymbolTable::AddUsingDirective(NamespaceSymbol* ns, otava::ast::Node* node, Context* context)
 {
-    currentScope->SymbolScope()->AddUsingDirective(ns, node->GetSourcePos(), context);
+    currentScope->SymbolScope()->AddUsingDirective(ns, context->MakeFullSpan(node->GetSpan()), context);
     MapNode(node, ns, MapKind::nodeToSymbol);
 }
 
 void SymbolTable::BeginNamespace(const std::u32string& name, otava::ast::Node* node, Context* context)
 {
-    soul::ast::SourcePos sourcePos;
+    soul::ast::FullSpan fullSpan;
     if (node)
     {
-        sourcePos = node->GetSourcePos();
+        fullSpan = context->MakeFullSpan(node->GetSpan());
     }
     if (name.empty())
     {
@@ -1428,7 +1428,7 @@ void SymbolTable::BeginNamespace(const std::u32string& name, otava::ast::Node* n
     }
     else
     {
-        Symbol* symbol = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, sourcePos, context, LookupFlags::dontResolveSingle);
+        Symbol* symbol = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, fullSpan, context, LookupFlags::dontResolveSingle);
         if (symbol)
         {
             if (symbol->IsNamespaceSymbol())
@@ -1443,7 +1443,7 @@ void SymbolTable::BeginNamespace(const std::u32string& name, otava::ast::Node* n
             }
             else
             {
-                ThrowException("name of namespace '" + util::ToUtf8(name) + " conflicts with earlier declaration", sourcePos, context);
+                ThrowException("name of namespace '" + util::ToUtf8(name) + " conflicts with earlier declaration", fullSpan, context);
             }
         }
         NamespaceSymbol* namespaceSymbol = new NamespaceSymbol(name);
@@ -1451,7 +1451,7 @@ void SymbolTable::BeginNamespace(const std::u32string& name, otava::ast::Node* n
         {
             MapNode(node, namespaceSymbol);
         }
-        currentScope->SymbolScope()->AddSymbol(namespaceSymbol, sourcePos, context);
+        currentScope->SymbolScope()->AddSymbol(namespaceSymbol, fullSpan, context);
         BeginScope(namespaceSymbol->GetScope());
     }
 }
@@ -1476,16 +1476,17 @@ void SymbolTable::EndNamespace(int level)
 
 void SymbolTable::BeginClass(const std::u32string& name, ClassKind classKind, TypeSymbol* specialization, otava::ast::Node* node, Context* context)
 {
-    Symbol* symbol = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, node->GetSourcePos(), context, LookupFlags::dontResolveSingle);
-    ClassGroupSymbol* classGroup = currentScope->GroupScope()->GetOrInsertClassGroup(name, node->GetSourcePos(), context);
+    soul::ast::FullSpan fullSpan = context->MakeFullSpan(node->GetSpan());
+    Symbol* symbol = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, fullSpan, context, LookupFlags::dontResolveSingle);
+    ClassGroupSymbol* classGroup = currentScope->GroupScope()->GetOrInsertClassGroup(name, fullSpan, context);
     ClassTypeSymbol* classTypeSymbol = new ClassTypeSymbol(name);
-    classTypeSymbol->SetSourcePos(node->GetSourcePos());
+    classTypeSymbol->SetFullSpan(fullSpan);
     classTypeSymbol->SetLevel(classLevel++);
     AddClass(classTypeSymbol);
     classTypeSymbol->SetAccess(CurrentAccess());
     classTypeSymbol->SetClassKind(classKind);
     classTypeSymbol->SetSpecialization(specialization, context);
-    currentScope->SymbolScope()->AddSymbol(classTypeSymbol, node->GetSourcePos(), context);
+    currentScope->SymbolScope()->AddSymbol(classTypeSymbol, fullSpan, context);
     classGroup->AddClass(classTypeSymbol);
     MapNode(node, classTypeSymbol);
     SetSpecifierNode(classTypeSymbol, node);
@@ -1506,17 +1507,17 @@ void SymbolTable::BeginClass(const std::u32string& name, ClassKind classKind, Ty
     }
 }
 
-void SymbolTable::AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context)
+void SymbolTable::AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     Symbol* symbol = currentScope->GetSymbol();
     if (symbol->IsClassTypeSymbol())
     {
         ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(symbol);
-        classTypeSymbol->AddBaseClass(baseClass, sourcePos, context);
+        classTypeSymbol->AddBaseClass(baseClass, fullSpan, context);
     }
     else
     {
-        ThrowException("class type symbol expected", sourcePos, context);
+        ThrowException("class type symbol expected", fullSpan, context);
     }
 }
 
@@ -1529,8 +1530,9 @@ void SymbolTable::EndClass()
 
 void SymbolTable::AddForwardClassDeclaration(const std::u32string& name, ClassKind classKind, TypeSymbol* specialization, otava::ast::Node* node, Context* context)
 {
-    Symbol* symbol = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, node->GetSourcePos(), context, LookupFlags::dontResolveSingle);
-    ClassGroupSymbol* classGroup = currentScope->GroupScope()->GetOrInsertClassGroup(name, node->GetSourcePos(), context);
+    soul::ast::FullSpan fullSpan = context->MakeFullSpan(node->GetSpan());
+    Symbol* symbol = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, fullSpan, context, LookupFlags::dontResolveSingle);
+    ClassGroupSymbol* classGroup = currentScope->GroupScope()->GetOrInsertClassGroup(name, fullSpan, context);
     std::unique_ptr<ForwardClassDeclarationSymbol> forwardDeclarationSymbol(new ForwardClassDeclarationSymbol(name));
     forwardDeclarationSymbol->SetAccess(CurrentAccess());
     forwardDeclarationSymbol->SetClassKind(classKind);
@@ -1544,30 +1546,32 @@ void SymbolTable::AddForwardClassDeclaration(const std::u32string& name, ClassKi
         MapNode(node, sym);
         forwardDeclarations.insert(sym);
         allForwardDeclarations.insert(sym);
-        currentScope->SymbolScope()->AddSymbol(sym, node->GetSourcePos(), context);
+        currentScope->SymbolScope()->AddSymbol(sym, fullSpan, context);
     }
 }
 
 void SymbolTable::AddFriend(const std::u32string& name, otava::ast::Node* node, Context* context)
 {
+    soul::ast::FullSpan fullSpan = context->MakeFullSpan(node->GetSpan());
     FriendSymbol* friendSymbol = new FriendSymbol(name);
-    currentScope->SymbolScope()->AddSymbol(friendSymbol, node->GetSourcePos(), context);
+    currentScope->SymbolScope()->AddSymbol(friendSymbol, fullSpan, context);
     MapNode(node, friendSymbol);
 }
 
 void SymbolTable::BeginEnumeratedType(const std::u32string& name, EnumTypeKind kind, TypeSymbol* underlyingType, otava::ast::Node* node, Context* context)
 {
-    EnumGroupSymbol* enumGroup = currentScope->GroupScope()->GetOrInsertEnumGroup(name, node->GetSourcePos(), context);
+    soul::ast::FullSpan fullSpan = context->MakeFullSpan(node->GetSpan());
+    EnumGroupSymbol* enumGroup = currentScope->GroupScope()->GetOrInsertEnumGroup(name, fullSpan, context);
     EnumeratedTypeSymbol* enumType = enumGroup->GetEnumType();
     if (enumType)
     {
-        ThrowException("enumerated type '" + util::ToUtf8(name) + "' not unique", node->GetSourcePos(), context);
+        ThrowException("enumerated type '" + util::ToUtf8(name) + "' not unique", fullSpan, context);
     }
     EnumeratedTypeSymbol* enumTypeSymbol = new EnumeratedTypeSymbol(name);
     enumTypeSymbol->SetAccess(CurrentAccess());
     enumTypeSymbol->SetEnumTypeKind(kind);
     enumTypeSymbol->SetUnderlyingType(underlyingType);
-    currentScope->SymbolScope()->AddSymbol(enumTypeSymbol, node->GetSourcePos(), context);
+    currentScope->SymbolScope()->AddSymbol(enumTypeSymbol, fullSpan, context);
     MapNode(node, enumTypeSymbol);
     enumGroup->SetEnumType(enumTypeSymbol);
     BeginScope(enumTypeSymbol->GetScope());
@@ -1580,7 +1584,8 @@ void SymbolTable::EndEnumeratedType()
 
 void SymbolTable::AddForwardEnumDeclaration(const std::u32string& name, EnumTypeKind enumTypeKind, TypeSymbol* underlyingType, otava::ast::Node* node, Context* context)
 {
-    EnumGroupSymbol* enumGroup = currentScope->GroupScope()->GetOrInsertEnumGroup(name, node->GetSourcePos(), context);
+    soul::ast::FullSpan fullSpan = context->MakeFullSpan(node->GetSpan());
+    EnumGroupSymbol* enumGroup = currentScope->GroupScope()->GetOrInsertEnumGroup(name, fullSpan, context);
     if (enumGroup->GetForwardDeclaration())
     {
         return;
@@ -1590,7 +1595,7 @@ void SymbolTable::AddForwardEnumDeclaration(const std::u32string& name, EnumType
     forwardDeclarationSymbol->SetEnumTypeKind(enumTypeKind);
     forwardDeclarationSymbol->SetUnderlyingType(underlyingType);
     Symbol* sym = forwardDeclarationSymbol;
-    currentScope->SymbolScope()->AddSymbol(sym, node->GetSourcePos(), context);
+    currentScope->SymbolScope()->AddSymbol(sym, fullSpan, context);
     enumGroup->SetForwardDeclaration(forwardDeclarationSymbol);
     MapNode(node, sym);
     forwardDeclarations.insert(sym);
@@ -1599,6 +1604,7 @@ void SymbolTable::AddForwardEnumDeclaration(const std::u32string& name, EnumType
 
 void SymbolTable::AddEnumerator(const std::u32string& name, Value* value, otava::ast::Node* node, Context* context)
 {
+    soul::ast::FullSpan fullSpan = context->MakeFullSpan(node->GetSpan());
     EnumeratedTypeSymbol* enumTypeSymbol = nullptr;
     Scope* scope = currentScope->SymbolScope();
     if (scope->IsContainerScope())
@@ -1620,19 +1626,19 @@ void SymbolTable::AddEnumerator(const std::u32string& name, Value* value, otava:
     }
     if (!enumTypeSymbol)
     {
-        ThrowException("could not add enumerator to symbol table: enumerated type not found", node->GetSourcePos(), context);
+        ThrowException("could not add enumerator to symbol table: enumerated type not found", fullSpan, context);
     }
     EnumConstantSymbol* enumConstantSymbol = new EnumConstantSymbol(name);
     enumConstantSymbol->SetEnumType(enumTypeSymbol);
     enumConstantSymbol->SetValue(value);
-    scope->AddSymbol(enumConstantSymbol, node->GetSourcePos(), context);
+    scope->AddSymbol(enumConstantSymbol, fullSpan, context);
     MapNode(node, enumConstantSymbol);
 }
 
-BlockSymbol* SymbolTable::BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context)
+BlockSymbol* SymbolTable::BeginBlock(const soul::ast::FullSpan& fullSpan, Context* context)
 {
     BlockSymbol* blockSymbol = new BlockSymbol();
-    currentScope->SymbolScope()->AddSymbol(blockSymbol, sourcePos, context);
+    currentScope->SymbolScope()->AddSymbol(blockSymbol, fullSpan, context);
     BeginScopeGeneric(blockSymbol->GetScope(), context);
     return blockSymbol;
 }
@@ -1660,7 +1666,7 @@ void SymbolTable::RemoveBlock()
 void SymbolTable::BeginTemplateDeclaration(otava::ast::Node* node, Context* context)
 {
     TemplateDeclarationSymbol* templateDeclarationSymbol = new TemplateDeclarationSymbol();
-    currentScope->SymbolScope()->AddSymbol(templateDeclarationSymbol, node->GetSourcePos(), context);
+    currentScope->SymbolScope()->AddSymbol(templateDeclarationSymbol, context->MakeFullSpan(node->GetSpan()), context);
     BeginScope(templateDeclarationSymbol->GetScope());
 }
 
@@ -1685,9 +1691,9 @@ void SymbolTable::AddTemplateParameter(const std::u32string& name, otava::ast::N
     TemplateParameterSymbol* templateParameterSymbol = new TemplateParameterSymbol(constraint, name, GetTemplateParameterId(index), index, defaultTemplateArgNode);
     if (parameter)
     {
-        templateParameterSymbol->AddSymbol(parameter, node->GetSourcePos(), context);
+        templateParameterSymbol->AddSymbol(parameter, context->MakeFullSpan(node->GetSpan()), context);
     }
-    currentScope->SymbolScope()->AddSymbol(templateParameterSymbol, node->GetSourcePos(), context);
+    currentScope->SymbolScope()->AddSymbol(templateParameterSymbol, context->MakeFullSpan(node->GetSpan()), context);
     MapNode(node, templateParameterSymbol);
 }
 
@@ -1703,20 +1709,20 @@ FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, const std::
     {
         groupName = U"@destructor";
     }
-    FunctionGroupSymbol* functionGroup = currentScope->GroupScope()->GetOrInsertFunctionGroup(groupName, node->GetSourcePos(), context);
+    FunctionGroupSymbol* functionGroup = currentScope->GroupScope()->GetOrInsertFunctionGroup(groupName, context->MakeFullSpan(node->GetSpan()), context);
     FunctionSymbol* functionSymbol = new FunctionSymbol(name);
     functionSymbol->SetAccess(CurrentAccess());
     functionSymbol->SetFunctionKind(kind);
     functionSymbol->SetFunctionQualifiers(qualifiers);
     functionSymbol->SetLinkage(currentLinkage);
     functionSymbol->SetDeclarationFlags(flags);
-    if (node) functionSymbol->SetSourcePos(node->GetSourcePos());
+    if (node) functionSymbol->SetFullSpan(context->MakeFullSpan(node->GetSpan()));
     if ((flags & (DeclarationFlags::inlineFlag | DeclarationFlags::constExprFlag)) != DeclarationFlags::none)
     {
         functionSymbol->SetInline();
     }
     functionSymbol->SetSpecialization(specialization);
-    currentScope->SymbolScope()->AddSymbol(functionSymbol, node->GetSourcePos(), context);
+    currentScope->SymbolScope()->AddSymbol(functionSymbol, context->MakeFullSpan(node->GetSpan()), context);
     functionGroup->AddFunction(functionSymbol);
     MapNode(node, functionSymbol);
     return functionSymbol;
@@ -1724,9 +1730,9 @@ FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, const std::
 
 void SymbolTable::AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol, Context* context)
 {
-    FunctionGroupSymbol* functionGroup = currentScope->GroupScope()->GetOrInsertFunctionGroup(functionSymbol->GroupName(), soul::ast::SourcePos(), context);
+    FunctionGroupSymbol* functionGroup = currentScope->GroupScope()->GetOrInsertFunctionGroup(functionSymbol->GroupName(), context->GetFullSpan(), context);
     functionSymbol->SetLinkage(currentLinkage);
-    scope->SymbolScope()->AddSymbol(functionSymbol, soul::ast::SourcePos(), context);
+    scope->SymbolScope()->AddSymbol(functionSymbol, soul::ast::FullSpan(), context);
     functionGroup->AddFunction(functionSymbol);
 }
 
@@ -1749,7 +1755,7 @@ FunctionDefinitionSymbol* SymbolTable::AddOrGetFunctionDefinition(Scope* scope, 
     {
         groupName = U"@destructor";
     }
-    FunctionGroupSymbol* functionGroup = scope->GroupScope()->GetOrInsertFunctionGroup(groupName, node->GetSourcePos(), context);
+    FunctionGroupSymbol* functionGroup = scope->GroupScope()->GetOrInsertFunctionGroup(groupName, context->MakeFullSpan(node->GetSpan()), context);
     std::unique_ptr<FunctionDefinitionSymbol> functionDefinition(new FunctionDefinitionSymbol(name));
     functionDefinition->SetGroup(functionGroup);
     functionDefinition->SetDeclarationFlags(declarationFlags);
@@ -1768,7 +1774,7 @@ FunctionDefinitionSymbol* SymbolTable::AddOrGetFunctionDefinition(Scope* scope, 
     functionDefinition->SetFunctionQualifiers(qualifiers);
     functionDefinition->SetSpecialization(specialization);
     functionDefinition->SetParent(currentScope->SymbolScope()->GetSymbol());
-    if (node) functionDefinition->SetSourcePos(node->GetSourcePos());
+    if (node) functionDefinition->SetFullSpan(context->MakeFullSpan(node->GetSpan()));
     int index = 0;
     for (auto* parameterType : parameterTypes)
     {
@@ -1795,7 +1801,7 @@ FunctionDefinitionSymbol* SymbolTable::AddOrGetFunctionDefinition(Scope* scope, 
         context->SetMemFunDefSymbolIndex(-1);
     }
     FunctionDefinitionSymbol* definition = functionDefinition.get();
-    currentScope->SymbolScope()->AddSymbol(functionDefinition.release(), node->GetSourcePos(), context);
+    currentScope->SymbolScope()->AddSymbol(functionDefinition.release(), context->MakeFullSpan(node->GetSpan()), context);
     FunctionSymbol* declaration = functionGroup->ResolveFunction(parameterTypes, qualifiers, specialization, definition->ParentTemplateDeclaration(),
         definition->IsSpecialization(), context);
     if (declaration)
@@ -1830,7 +1836,7 @@ TypeSymbol* SymbolTable::MakeCompoundType(TypeSymbol* baseType, Derivations deri
     {
         return baseType;
     }
-    util::uuid id = MakeCompoundTypeId(baseType, drv, context->GetSourcePos(), context);
+    util::uuid id = MakeCompoundTypeId(baseType, drv, context->GetFullSpan(), context);
     CompoundTypeSymbol* compoundType = GetCompoundType(id);
     if (compoundType)
     {
@@ -1968,18 +1974,18 @@ AliasGroupTypeSymbol* SymbolTable::MakeAliasGroupTypeSymbol(AliasGroupSymbol* al
 
 ConceptSymbol* SymbolTable::AddConcept(const std::u32string& name, otava::ast::Node* node, Context* context)
 {
-    ConceptGroupSymbol* conceptGroup = currentScope->GroupScope()->GetOrInsertConceptGroup(name, node->GetSourcePos(), context);
+    ConceptGroupSymbol* conceptGroup = currentScope->GroupScope()->GetOrInsertConceptGroup(name, context->MakeFullSpan(node->GetSpan()), context);
     ConceptSymbol* conceptSymbol = new ConceptSymbol(name);
     conceptGroup->AddConcept(conceptSymbol);
-    currentScope->SymbolScope()->AddSymbol(conceptSymbol, node->GetSourcePos(), context);
+    currentScope->SymbolScope()->AddSymbol(conceptSymbol, context->MakeFullSpan(node->GetSpan()), context);
     MapNode(node, conceptSymbol);
     return conceptSymbol;
 }
 
 ClassTemplateSpecializationSymbol* SymbolTable::MakeClassTemplateSpecialization(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments,
-    const soul::ast::SourcePos& sourcePos, Context* context)
+    const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    util::uuid id = MakeClassTemplateSpecializationSymbolId(classTemplate, templateArguments, sourcePos, context);
+    util::uuid id = MakeClassTemplateSpecializationSymbolId(classTemplate, templateArguments, fullSpan, context);
     auto it = classTemplateSpecializationMap.find(id);
     if (it != classTemplateSpecializationMap.end())
     {
@@ -2073,7 +2079,7 @@ void SymbolTable::AddFundamentalType(FundamentalTypeKind kind)
     FundamentalTypeSymbol* fundamentalTypeSymbol = new FundamentalTypeSymbol(kind);
     Context context;
     context.SetSymbolTable(this);
-    globalNs->AddSymbol(fundamentalTypeSymbol, soul::ast::SourcePos(), &context);
+    globalNs->AddSymbol(fundamentalTypeSymbol, soul::ast::FullSpan(), &context);
     MapFundamentalType(fundamentalTypeSymbol);
 }
 
@@ -2300,8 +2306,8 @@ void SymbolTable::CreateCoreSymbols()
     MapConstraint(typenameConstraintSymbol);
     Context context;
     context.SetSymbolTable(this);
-    globalNs->AddSymbol(typenameConstraintSymbol, soul::ast::SourcePos(), &context);
-    globalNs->AddSymbol(errorTypeSymbol, soul::ast::SourcePos(), &context);
+    globalNs->AddSymbol(typenameConstraintSymbol, soul::ast::FullSpan(), &context);
+    globalNs->AddSymbol(errorTypeSymbol, soul::ast::FullSpan(), &context);
 }
 
 void SymbolTable::AddToRecomputeNameSet(CompoundTypeSymbol* compoundTypeSymbol)

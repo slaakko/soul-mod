@@ -13,7 +13,7 @@ using namespace soul::token;
 
 std::string Version()
 {
-    return "5.1.0";
+    return "5.2.0";
 }
 
 void PrintHelp()

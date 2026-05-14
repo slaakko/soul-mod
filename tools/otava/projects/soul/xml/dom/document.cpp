@@ -24,7 +24,7 @@ Element* Document::GetElementById(const std::string& elementId) noexcept
     {
         index.clear();
         BuildIndex(this);
-        indexValid = true;
+        indexValid = true; 
     }
     auto it = index.find(elementId);
     if (it != index.cend())

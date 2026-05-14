@@ -368,7 +368,7 @@ I lower_bound(I first, I last, const T& value) noexcept
         {
             first = middle;
             ++first;
-            len -= half - 1;
+            len -= half + 1;
         }
         else
         {
@@ -390,7 +390,7 @@ I lower_bound(I first, I last, const T& value, R r) noexcept
         {
             first = middle;
             ++first;
-            len -= half - 1;
+            len -= half + 1;
         }
         else
         {
@@ -416,7 +416,7 @@ I upper_bound(I first, I last, const T& value) noexcept
         {
             first = middle;
             ++first;
-            len -= half - 1;
+            len -= half + 1;
         }
     }
     return first;
@@ -438,7 +438,7 @@ I upper_bound(I first, I last, const T& value, R r) noexcept
         {
             first = middle;
             ++first;
-            len -= half - 1;
+            len -= half + 1;
         }
     }
     return first;
@@ -456,7 +456,7 @@ pair<I, I> equal_range(I first, I last, const T& value) noexcept
         {
             first = middle;
             ++first;
-            len -= half - 1;
+            len -= half + 1;
         }
         else if (value < *middle)
         {
@@ -486,7 +486,7 @@ pair<I, I> equal_range(I first, I last, const T& value, R r) noexcept
         {
             first = middle;
             ++first;
-            len -= half - 1;
+            len -= half + 1;
         }
         else if (r(value, *middle))
         {

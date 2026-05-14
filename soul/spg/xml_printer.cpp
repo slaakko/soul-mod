@@ -7,6 +7,7 @@ module soul.spg.xml.printer;
 
 import soul.ast.spg;
 import soul.xml.dom;
+import soul.xml.document;
 
 namespace soul::spg {
 

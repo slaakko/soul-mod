@@ -365,7 +365,7 @@ TypeSymbol* DeclarationProcessor::ResolveBaseType(otava::ast::Node* node)
     DeclarationFlags fundamentalTypeFlags = flags & DeclarationFlags::fundamentalTypeFlags;
     if (fundamentalTypeFlags != DeclarationFlags::none)
     {
-        baseType = GetFundamentalType(fundamentalTypeFlags, node->GetSourcePos(), context);
+        baseType = GetFundamentalType(fundamentalTypeFlags, context->MakeFullSpan(node->GetSpan()), context);
     }
     else 
     {
@@ -518,55 +518,55 @@ void DeclarationProcessor::Visit(otava::ast::InitConditionNode& node)
 
 void DeclarationProcessor::Visit(otava::ast::CharNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::charFlag, "char", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::charFlag, "char", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::charFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::Char8Node& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::char8Flag, "char8_t", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::char8Flag, "char8_t", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::char8Flag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::Char16Node& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::char16Flag, "char16_t", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::char16Flag, "char16_t", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::char16Flag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::Char32Node& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::char32Flag, "char32_t", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::char32Flag, "char32_t", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::char32Flag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::WCharNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::wcharFlag, "wchar_t", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::wcharFlag, "wchar_t", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::wcharFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::BoolNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::wcharFlag, "bool", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::wcharFlag, "bool", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::boolFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::ShortNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::shortFlag, "short", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::shortFlag, "short", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::shortFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::IntNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::intFlag, "int", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::intFlag, "int", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::intFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::LongNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::longLongFlag, "long long", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::longLongFlag, "long long", context->MakeFullSpan(node.GetSpan()), context);
     if ((flags & DeclarationFlags::longFlag) != DeclarationFlags::none)
     {
         flags = (flags | DeclarationFlags::longLongFlag) & ~DeclarationFlags::longFlag;
@@ -579,115 +579,115 @@ void DeclarationProcessor::Visit(otava::ast::LongNode& node)
 
 void DeclarationProcessor::Visit(otava::ast::SignedNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::signedFlag, "signed", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::signedFlag, "signed", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::signedFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::UnsignedNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::unsignedFlag, "unsigned", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::unsignedFlag, "unsigned", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::unsignedFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::FloatNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::floatFlag, "float", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::floatFlag, "float", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::floatFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::DoubleNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::doubleFlag, "double", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::doubleFlag, "double", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::doubleFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::VoidNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::voidFlag, "void", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::voidFlag, "void", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::voidFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::ConstNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::constFlag, "const", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::constFlag, "const", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::constFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::VolatileNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::volatileFlag, "volatile", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::volatileFlag, "volatile", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::volatileFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::PlaceholderTypeSpecifierNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::autoFlag, "auto", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::autoFlag, "auto", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::autoFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::FriendNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::friendFlag, "friend", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::friendFlag, "friend", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::friendFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::TypedefNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::typedefFlag, "typedef", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::typedefFlag, "typedef", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::typedefFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::ConstExprNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::constExprFlag, "constexpr", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::constExprFlag, "constexpr", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::constExprFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::ConstEvalNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::constEvalFlag, "consteval", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::constEvalFlag, "consteval", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::constEvalFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::ConstInitNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::constInitFlag, "constinit", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::constInitFlag, "constinit", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::constInitFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::InlineNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::inlineFlag, "inline", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::inlineFlag, "inline", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::inlineFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::StaticNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::staticFlag, "static", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::staticFlag, "static", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::staticFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::ThreadLocalNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::threadLocalFlag, "thread_local", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::threadLocalFlag, "thread_local", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::threadLocalFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::ExternNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::externFlag, "extern", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::externFlag, "extern", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::externFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::VirtualNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::externFlag, "virtual", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::externFlag, "virtual", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::virtualFlag;
 }
 
 void DeclarationProcessor::Visit(otava::ast::ExplicitNode& node)
 {
-    CheckDuplicateSpecifier(flags, DeclarationFlags::explicitFlag, "explicit", node.GetSourcePos(), context);
+    CheckDuplicateSpecifier(flags, DeclarationFlags::explicitFlag, "explicit", context->MakeFullSpan(node.GetSpan()), context);
     flags = flags | DeclarationFlags::explicitFlag;
 }
 
@@ -726,7 +726,7 @@ VariableSymbol* ProcessArrayDeclarator(ArrayDeclarator* arrayDeclarator, TypeSym
         arrayDeclarator->SetSize(GetSizeFromInitializer(node));
     }
     ArrayTypeSymbol* arrayTypeSymbol = context->GetSymbolTable()->MakeArrayType(elementType, arrayDeclarator->Size());
-    arrayTypeSymbol->Bind(arrayDeclarator->Node()->GetSourcePos(), context);
+    arrayTypeSymbol->Bind(context->MakeFullSpan(arrayDeclarator->Node()->GetSpan()), context);
     VariableSymbol* variable = context->GetSymbolTable()->AddVariable(arrayDeclarator->Name(), arrayDeclarator->Node(), arrayTypeSymbol, nullptr, nullptr, flags, context);
     return variable;
 }
@@ -746,14 +746,14 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
     functionSymbol->SetReturnType(returnType, context);
     for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
     {
-        soul::ast::SourcePos sourcePos;
+        soul::ast::FullSpan fullSpan;
         std::u32string name;
         otava::ast::Node* node = nullptr;
         if (parameterDeclaration.declarator)
         {
             name = parameterDeclaration.declarator->Name();
             node = parameterDeclaration.declarator->Node();
-            sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
+            fullSpan = context->MakeFullSpan(parameterDeclaration.declarator->Node()->GetSpan());
         }
         TypeSymbol* parameterType = MapType(functionSymbol, parameterDeclaration.type, context);
         ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterType, context);
@@ -761,7 +761,7 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
         {
             parameter->SetDefaultValue(parameterDeclaration.initializer);
         }
-        functionSymbol->AddParameter(parameter, sourcePos, context);
+        functionSymbol->AddParameter(parameter, fullSpan, context);
     }
     ClassTypeSymbol* classType = functionSymbol->ParentClassType();
     if (classType)
@@ -787,9 +787,9 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
     if (functionSymbol->IsExplicitSpecializationDeclaration())
     {
         std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
-        InstantiateFunctionTemplate(functionSymbol, templateParameterMap, functionDeclarator->Node()->GetSourcePos(), context);
+        InstantiateFunctionTemplate(functionSymbol, templateParameterMap, context->MakeFullSpan(functionDeclarator->Node()->GetSpan()), context);
     }
-    AddConvertingConstructorToConversionTable(functionSymbol, functionDeclarator->Node()->GetSourcePos(), context);
+    AddConvertingConstructorToConversionTable(functionSymbol, context->MakeFullSpan(functionDeclarator->Node()->GetSpan()), context);
     if (!(context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate | ContextFlags::instantiateFunctionTemplate | ContextFlags::instantiateInlineFunction)))
     {
         functionSymbol->SetFlag(FunctionSymbolFlags::fixedIrName);
@@ -797,7 +797,7 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
     }
 }
 
-VariableSymbol* ResolveParentVariable(SimpleDeclarator* simpleDeclarator, const soul::ast::SourcePos& sourcePos, Context* context)
+VariableSymbol* ResolveParentVariable(SimpleDeclarator* simpleDeclarator, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     int blockId = context->ParentBlockId();
     int level = 0;
@@ -813,7 +813,7 @@ VariableSymbol* ResolveParentVariable(SimpleDeclarator* simpleDeclarator, const 
                 if (blockScope)
                 {
                     Symbol* symbol = blockScope->Lookup(simpleDeclarator->Name(),
-                        SymbolGroupKind::variableSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, sourcePos, context, LookupFlags::none);
+                        SymbolGroupKind::variableSymbolGroup, ScopeLookup::thisAndBaseAndParentScope, fullSpan, context, LookupFlags::none);
                     if (symbol && symbol->IsVariableSymbol())
                     {
                         VariableSymbol* variableSymbol = static_cast<VariableSymbol*>(symbol);
@@ -838,7 +838,7 @@ VariableSymbol* ResolveParentVariable(SimpleDeclarator* simpleDeclarator, const 
             }
         }
     }
-    ThrowException("parent function variable '" + util::ToUtf8(simpleDeclarator->Name()) + "' not resolved", sourcePos, context);
+    ThrowException("parent function variable '" + util::ToUtf8(simpleDeclarator->Name()) + "' not resolved", fullSpan, context);
     return nullptr;
 }
 
@@ -863,7 +863,7 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* function
                     VariableSymbol* variable = nullptr;
                     if (context->GetFlag(ContextFlags::invoke | ContextFlags::tryCatch))
                     {
-                        variable = ResolveParentVariable(simpleDeclarator, node->GetSourcePos(), context);
+                        variable = ResolveParentVariable(simpleDeclarator, context->MakeFullSpan(node->GetSpan()), context);
                     }
                     else
                     {
@@ -878,8 +878,8 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* function
                             if (!variable->IsExtern())
                             {
                                 context->GetBoundCompileUnit()->AddBoundNode(
-                                    std::unique_ptr<BoundNode>(new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos())), context);
-                                GenerateDynamicInitialization(variable, variableInitializer.get(), node->GetSourcePos(), context);
+                                    std::unique_ptr<BoundNode>(new BoundGlobalVariableDefinitionNode(variable, context->MakeFullSpan(node->GetSpan()))), context);
+                                GenerateDynamicInitialization(variable, variableInitializer.get(), context->MakeFullSpan(node->GetSpan()), context);
                             }
                         }
                     }
@@ -906,7 +906,7 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* function
                 if (variable->IsGlobalVariable())
                 {
                     context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(
-                        new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos())), context);
+                        new BoundGlobalVariableDefinitionNode(variable, context->MakeFullSpan(node->GetSpan()))), context);
                 }
                 declaration.variable = variable;
                 break;
@@ -1057,14 +1057,14 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
             int parameterIndex = 0;
             for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
             {
-                soul::ast::SourcePos sourcePos;
+                soul::ast::FullSpan fullSpan;
                 std::u32string name;
                 otava::ast::Node* node = nullptr;
                 if (parameterDeclaration.declarator)
                 {
                     name = parameterDeclaration.declarator->Name();
                     node = parameterDeclaration.declarator->Node();
-                    sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
+                    fullSpan = context->MakeFullSpan(parameterDeclaration.declarator->Node()->GetSpan());
                 }
                 TypeSymbol* parameterType = MapType(definition, parameterDeclaration.type, context);
                 ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterType, context);
@@ -1084,7 +1084,7 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                         }
                     }
                 }
-                definition->AddParameter(parameter, sourcePos, context);
+                definition->AddParameter(parameter, fullSpan, context);
                 ++parameterIndex;
             }
             definition->AddDefinitionToGroup(context);
@@ -1101,7 +1101,7 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                 {
                     ThrowException("the return type of function '" + util::ToUtf8(definition->FullName()) +
                         "' definition differs from the return type of function declaration",
-                        definition->GetSourcePos(), fnDeclaration->GetSourcePos(), context);
+                        definition->GetFullSpan(), fnDeclaration->GetFullSpan(), context);
                 }
             }
             context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context);
@@ -1112,7 +1112,7 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                 definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
             }
             ++scopes;
-            BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition, declarator->GetSourcePos());
+            BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition, context->MakeFullSpan(declarator->GetSpan()));
             context->PushBoundFunction(boundFunctionNode);
         }
     }
@@ -1186,12 +1186,12 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
         }
         if (functionDefinitionSymbol && functionDefinitionSymbol->IsTemplate())
         {
-            InstantiateEnqueuedRequests(functionDefinitionSymbol, node->GetSourcePos(), context);
+            InstantiateEnqueuedRequests(functionDefinitionSymbol, context->MakeFullSpan(node->GetSpan()), context);
         }
         if (functionDefinitionSymbol && functionDefinitionSymbol->IsExplicitSpecializationDefinitionSymbol())
         {
             std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
-            InstantiateFunctionTemplate(functionDefinitionSymbol, templateParameterMap, node->GetSourcePos(), context);
+            InstantiateFunctionTemplate(functionDefinitionSymbol, templateParameterMap, context->MakeFullSpan(node->GetSpan()), context);
         }
     }
     if (context->GetBoundFunction())
@@ -1219,9 +1219,9 @@ void Read(Reader& reader, DeclarationFlags& flags)
     flags = static_cast<DeclarationFlags>(reader.GetBinaryStreamReader().ReadInt());
 }
 
-void ThrowDeclarationParsingError(const soul::ast::SourcePos& sourcePos, Context* context)
+void ThrowDeclarationParsingError(const soul::ast::FullSpan& fullSpan, Context* context)
 {
-    ThrowException("declaration parsing error", sourcePos, context);
+    ThrowException("declaration parsing error", fullSpan, context);
 }
 
 class LinkageProcessor : public otava::ast::DefaultVisitor
@@ -1260,7 +1260,7 @@ void LinkageProcessor::Visit(otava::ast::StringLiteralNode& node)
     }
     else
     {
-        ThrowException("unknown linkage", node.GetSourcePos(), context);
+        ThrowException("unknown linkage", context->MakeFullSpan(node.GetSpan()), context);
     }
 }
 
@@ -1302,15 +1302,15 @@ TypeSymbol* MapType(FunctionSymbol* functionSymbol, TypeSymbol* type, Context* c
     return type;
 }
 
-void GenerateDynamicInitialization(VariableSymbol* variable, BoundExpressionNode* initializer, const soul::ast::SourcePos& sourcePos, Context* context)
+void GenerateDynamicInitialization(VariableSymbol* variable, BoundExpressionNode* initializer, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (!variable->GetType()->IsClassTypeSymbol()) return;
     if (context->GetFlag(ContextFlags::noDynamicInit)) return;
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
-    BoundVariableNode* boundGlobalVariable = new BoundVariableNode(variable, sourcePos);
+    BoundVariableNode* boundGlobalVariable = new BoundVariableNode(variable, fullSpan);
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
-    args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundGlobalVariable, sourcePos, variable->GetType()->AddPointer(context))));
+    args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundGlobalVariable, fullSpan, variable->GetType()->AddPointer(context))));
     if (initializer)
     {
         if (initializer->IsBoundExpressionListNode())
@@ -1330,48 +1330,48 @@ void GenerateDynamicInitialization(VariableSymbol* variable, BoundExpressionNode
     Exception ex;
     std::vector<TypeSymbol*> templateArgs;
     std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverload(
-        context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, args, sourcePos, context, ex);
+        context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, args, fullSpan, context, ex);
     if (constructorCall)
     {
-        std::unique_ptr<BoundFunctionCallNode> atExitCall = MakeAtExitForVariable(variable, sourcePos, context);
-        context->GetBoundCompileUnit()->AddDynamicInitialization(constructorCall.release(), atExitCall.release(), sourcePos, context);
+        std::unique_ptr<BoundFunctionCallNode> atExitCall = MakeAtExitForVariable(variable, fullSpan, context);
+        context->GetBoundCompileUnit()->AddDynamicInitialization(constructorCall.release(), atExitCall.release(), fullSpan, context);
     }
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
 }
 
-std::unique_ptr<BoundFunctionCallNode> MakeAtExitForVariable(VariableSymbol* variable, const soul::ast::SourcePos& sourcePos, Context* context)
+std::unique_ptr<BoundFunctionCallNode> MakeAtExitForVariable(VariableSymbol* variable, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     std::vector<std::unique_ptr<BoundExpressionNode>> dtorArgs;
-    BoundVariableNode* boundGlobalVariable = new BoundVariableNode(variable, sourcePos);
-    dtorArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundGlobalVariable, sourcePos, variable->GetType()->AddPointer(context))));
+    BoundVariableNode* boundGlobalVariable = new BoundVariableNode(variable, fullSpan);
+    dtorArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundGlobalVariable, fullSpan, variable->GetType()->AddPointer(context))));
     Exception ex;
     std::vector<TypeSymbol*> templateArgs;
     std::unique_ptr<BoundFunctionCallNode> destructorCall = ResolveOverload(
-        context->GetSymbolTable()->CurrentScope(), U"@destructor", templateArgs, dtorArgs, sourcePos, context, ex);
+        context->GetSymbolTable()->CurrentScope(), U"@destructor", templateArgs, dtorArgs, fullSpan, context, ex);
     std::unique_ptr<BoundFunctionCallNode> atExitCall;
     if (destructorCall && !destructorCall->GetFunctionSymbol()->IsTrivialDestructor())
     {
         TypeSymbol* voidPtrType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType)->AddPointer(context);
         std::vector<std::unique_ptr<BoundExpressionNode>> atExitArgs;
-        atExitArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundFunctionValueNode(destructorCall->GetFunctionSymbol(), sourcePos, voidPtrType)));
-        BoundVariableNode* boundGlobalVariable = new BoundVariableNode(variable, sourcePos);
+        atExitArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundFunctionValueNode(destructorCall->GetFunctionSymbol(), fullSpan, voidPtrType)));
+        BoundVariableNode* boundGlobalVariable = new BoundVariableNode(variable, fullSpan);
         atExitArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundVariableAsVoidPtrNode(new BoundAddressOfNode(
-            boundGlobalVariable, sourcePos, boundGlobalVariable->GetType()->AddPointer(context)), sourcePos, voidPtrType)));
+            boundGlobalVariable, fullSpan, boundGlobalVariable->GetType()->AddPointer(context)), fullSpan, voidPtrType)));
         Exception ex;
-        Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+        Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", fullSpan, context);
         std::vector<TypeSymbol*> templateArgs;
-        atExitCall = ResolveOverload(stdScope, U"at_exit", templateArgs, atExitArgs, sourcePos, context, ex);
+        atExitCall = ResolveOverload(stdScope, U"at_exit", templateArgs, atExitArgs, fullSpan, context, ex);
     }
     return atExitCall;
 }
 
-void AddConvertingConstructorToConversionTable(FunctionSymbol* functionSymbol, const soul::ast::SourcePos& sourcePos, Context* context)
+void AddConvertingConstructorToConversionTable(FunctionSymbol* functionSymbol, const soul::ast::FullSpan& fullSpan, Context* context)
 {
     if (!functionSymbol->IsExplicit() && functionSymbol->GetFunctionKind() == FunctionKind::constructor && functionSymbol->MemFunArity(context) == 2)
     {
         TypeSymbol* conversionParamType = functionSymbol->MemFunParameters(context)[0]->GetType()->RemovePointer(context)->DirectType(
-            context)->FinalType(sourcePos, context);
-        TypeSymbol* conversionArgType = functionSymbol->MemFunParameters(context)[1]->GetType()->PlainType(context)->DirectType(context)->FinalType(sourcePos, context);
+            context)->FinalType(fullSpan, context);
+        TypeSymbol* conversionArgType = functionSymbol->MemFunParameters(context)[1]->GetType()->PlainType(context)->DirectType(context)->FinalType(fullSpan, context);
         if (!TypesEqual(conversionParamType, conversionArgType, context))
         {
             FunctionSymbol* conversion = context->GetSymbolTable()->GetConversionTable().GetConversion(conversionParamType, conversionArgType, context);

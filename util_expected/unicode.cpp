@@ -26,7 +26,7 @@ std::unexpected<int> UnicodeError(const std::string& message_)
 
 std::string SoulVersionStr()
 {
-    return "5.1.0";
+    return "5.2.0";
 }
 
 std::expected<std::string, int> SoulRoot()

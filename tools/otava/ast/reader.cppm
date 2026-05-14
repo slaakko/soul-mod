@@ -7,7 +7,7 @@ export module otava.ast.reader;
 
 import std;
 import util;
-import soul.ast.source.pos;
+import soul.ast.span;
 import otava.ast.node;
 
 export namespace otava::ast {
@@ -20,7 +20,7 @@ public:
     Reader(const std::string& fileName);
     Reader(util::BinaryStreamReader* readerPtr_);
     inline util::BinaryStreamReader& GetBinaryStreamReader() noexcept { return *readerPtr; }
-    soul::ast::SourcePos ReadSourcePos();
+    soul::ast::Span ReadSpan();
     NodeKind ReadNodeKind();
     std::u32string ReadStr();
     bool ReadBool();

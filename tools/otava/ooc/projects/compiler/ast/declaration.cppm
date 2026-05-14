@@ -8,7 +8,7 @@ export namespace otava::ast {
 class DeclarationSequenceNode : public SequenceNode
 {
 public:
-    DeclarationSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    DeclarationSequenceNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -16,8 +16,8 @@ public:
 class SimpleDeclarationNode : public CompoundNode
 {
 public:
-    SimpleDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    SimpleDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* declarationSpecifiers_, Node* initDeclaratorList_, Node* attributes_, Node* semicolon_) noexcept;
+    SimpleDeclarationNode(const soul::ast::Span& span_) noexcept;
+    SimpleDeclarationNode(const soul::ast::Span& span_, Node* declarationSpecifiers_, Node* initDeclaratorList_, Node* attributes_, Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -39,9 +39,9 @@ private:
 class AsmDeclarationNode : public CompoundNode
 {
 public:
-    AsmDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    AsmDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* asm__, Node* asmText_, Node* semicolon_, Node* attributes_,
-        const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept;
+    AsmDeclarationNode(const soul::ast::Span& span_) noexcept;
+    AsmDeclarationNode(const soul::ast::Span& span_, Node* asm__, Node* asmText_, Node* semicolon_, Node* attributes_,
+        const soul::ast::Span& lpSpan_, const soul::ast::Span& rpSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -50,21 +50,21 @@ public:
     inline Node* AsmText() const noexcept { return asmText.get(); }
     inline Node* Semicolon() const noexcept { return semicolon.get(); }
     inline Node* Attributes() const noexcept { return attributes.get(); }
-    inline const soul::ast::SourcePos& LParenPos() const noexcept { return lpPos; }
-    inline const soul::ast::SourcePos& RParenPos() const noexcept { return rpPos; }
+    inline const soul::ast::Span& LParenSpan() const noexcept { return lpSpan; }
+    inline const soul::ast::Span& RParenSpan() const noexcept { return rpSpan; }
 private:
     std::unique_ptr<Node> asm_;
     std::unique_ptr<Node> asmText;
     std::unique_ptr<Node> semicolon;
     std::unique_ptr<Node> attributes;
-    soul::ast::SourcePos lpPos;
-    soul::ast::SourcePos rpPos;
+    soul::ast::Span lpSpan;
+    soul::ast::Span rpSpan;
 };
 
 class AsmNode : public Node
 {
 public:
-    AsmNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    AsmNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -72,9 +72,9 @@ public:
 class LinkageSpecificationNode : public CompoundNode
 {
 public:
-    LinkageSpecificationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    LinkageSpecificationNode(const soul::ast::SourcePos& sourcePos_, Node* extrn_, Node* linkage_, Node* declarations_, const soul::ast::SourcePos& lbPos_,
-        const soul::ast::SourcePos& rbPos_) noexcept;
+    LinkageSpecificationNode(const soul::ast::Span& span_) noexcept;
+    LinkageSpecificationNode(const soul::ast::Span& span_, Node* extrn_, Node* linkage_, Node* declarations_,
+        const soul::ast::Span& lbSpan_, const soul::ast::Span& rbSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -82,22 +82,22 @@ public:
     inline Node* Extern() const noexcept { return extrn.get(); }
     inline Node* Linkage() const noexcept { return linkage.get(); }
     inline Node* Declarations() const noexcept { return declarations.get(); }
-    inline const soul::ast::SourcePos& LBracePos() const noexcept { return lbPos; }
-    inline const soul::ast::SourcePos& RBracePos() const noexcept { return rbPos; }
+    inline const soul::ast::Span& LBraceSpan() const noexcept { return lbSpan; }
+    inline const soul::ast::Span& RBraceSpan() const noexcept { return rbSpan; }
 private:
     std::unique_ptr<Node> extrn;
     std::unique_ptr<Node> linkage;
     std::unique_ptr<Node> declarations;
-    soul::ast::SourcePos lbPos;
-    soul::ast::SourcePos rbPos;
+    soul::ast::Span lbSpan;
+    soul::ast::Span rbSpan;
 };
 
 class NamespaceDefinitionNode : public CompoundNode
 {
 public:
-    NamespaceDefinitionNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    NamespaceDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* nskw_, Node* nsName_, Node* nsBody_, Node* inln_, Node* attributes_,
-        const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) noexcept;
+    NamespaceDefinitionNode(const soul::ast::Span& span_) noexcept;
+    NamespaceDefinitionNode(const soul::ast::Span& span_, Node* nskw_, Node* nsName_, Node* nsBody_, Node* inln_, Node* attributes_,
+        const soul::ast::Span& lbSpan_, const soul::ast::Span& rbSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -107,23 +107,23 @@ public:
     inline Node* NamespaceBody() const noexcept { return nsBody.get(); }
     inline Node* Inline() const noexcept { return inln.get(); }
     inline Node* Attributes() const noexcept { return attributes.get(); }
-    inline const soul::ast::SourcePos& LBracePos() const noexcept { return lbPos; }
-    inline const soul::ast::SourcePos& RBracePos() const noexcept { return rbPos; }
+    inline const soul::ast::Span& LBraceSpan() const noexcept { return lbSpan; }
+    inline const soul::ast::Span& RBraceSpan() const noexcept { return rbSpan; }
 private:
     std::unique_ptr<Node> nskw;
     std::unique_ptr<Node> nsName;
     std::unique_ptr<Node> nsBody;
     std::unique_ptr<Node> inln;
     std::unique_ptr<Node> attributes;
-    soul::ast::SourcePos lbPos;
-    soul::ast::SourcePos rbPos;
+    soul::ast::Span lbSpan;
+    soul::ast::Span rbSpan;
 };
 
 class NamespaceBodyNode : public CompoundNode
 {
 public:
-    NamespaceBodyNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    NamespaceBodyNode(const soul::ast::SourcePos& sourcePos_, Node* declarations_) noexcept;
+    NamespaceBodyNode(const soul::ast::Span& span_) noexcept;
+    NamespaceBodyNode(const soul::ast::Span& span_, Node* declarations_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -136,13 +136,13 @@ private:
 class NamespaceAliasDefinitionNode : public CompoundNode
 {
 public:
-    NamespaceAliasDefinitionNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    NamespaceAliasDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* id_, Node* assign_, Node* qns_, Node* semicolon_) noexcept;
+    NamespaceAliasDefinitionNode(const soul::ast::Span& span_) noexcept;
+    NamespaceAliasDefinitionNode(const soul::ast::Span& span_, Node* id_, Node* assign_, Node* qns_, Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline Node* GetId() const noexcept { return id.get(); }
+    inline Node* Id() const noexcept { return id.get(); }
     inline Node* Assign() const noexcept { return assign.get(); }
     inline Node* QualifiedNamespaceSpecifier() const noexcept { return qns.get(); }
     inline Node* Semicolon() const noexcept { return semicolon.get(); }
@@ -156,8 +156,8 @@ private:
 class UsingDeclarationNode : public CompoundNode
 {
 public:
-    UsingDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    UsingDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* usng_, Node* declarators_, Node* semicolon_) noexcept;
+    UsingDeclarationNode(const soul::ast::Span& span_) noexcept;
+    UsingDeclarationNode(const soul::ast::Span& span_, Node* usng_, Node* declarators_, Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -174,15 +174,16 @@ private:
 class UsingNode : public Node
 {
 public:
-    UsingNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    UsingNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    std::u32string Str() const override { return U"using"; }
 };
 
 class UsingDeclaratorListNode : public ListNode
 {
 public:
-    UsingDeclaratorListNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    UsingDeclaratorListNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -190,8 +191,8 @@ public:
 class UsingEnumDeclarationNode : public CompoundNode
 {
 public:
-    UsingEnumDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    UsingEnumDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* usng_, Node* ees_, Node* semicolon_) noexcept;
+    UsingEnumDeclarationNode(const soul::ast::Span& span_) noexcept;
+    UsingEnumDeclarationNode(const soul::ast::Span& span_, Node* usng_, Node* ees_, Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -208,8 +209,8 @@ private:
 class UsingDirectiveNode : public CompoundNode
 {
 public:
-    UsingDirectiveNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    UsingDirectiveNode(const soul::ast::SourcePos& sourcePos_, Node* usng_, Node* nskw_, Node* id_, Node* semicolon_, Node* attributes_) noexcept;
+    UsingDirectiveNode(const soul::ast::Span& span_) noexcept;
+    UsingDirectiveNode(const soul::ast::Span& span_, Node* usng_, Node* nskw_, Node* id_, Node* semicolon_, Node* attributes_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -230,7 +231,7 @@ private:
 class NamespaceNode : public Node
 {
 public:
-    NamespaceNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    NamespaceNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -238,9 +239,9 @@ public:
 class StaticAssertDeclarationNode : public CompoundNode
 {
 public:
-    StaticAssertDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    StaticAssertDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* staticAssert_, Node* constantExpr_, Node* comma_, Node* stringLiteral_,
-        Node* semicolon_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept;
+    StaticAssertDeclarationNode(const soul::ast::Span& span_) noexcept;
+    StaticAssertDeclarationNode(const soul::ast::Span& span_, Node* staticAssert_, Node* constantExpr_, Node* comma_, Node* stringLiteral_,
+        Node* semicolon_, const soul::ast::Span& lpSpan_, const soul::ast::Span& rpSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -250,22 +251,22 @@ public:
     inline Node* Comma() const noexcept { return comma.get(); }
     inline Node* StringLiteral() const noexcept { return stringLiteral.get(); }
     inline Node* Semicolon() const noexcept { return semicolon.get(); }
-    inline const soul::ast::SourcePos& LParenPos() const noexcept { return lpPos; }
-    inline const soul::ast::SourcePos& RParenPos() const noexcept { return rpPos; }
+    inline const soul::ast::Span& LParenSpan() const noexcept { return lpSpan; }
+    inline const soul::ast::Span& RParenSpan() const noexcept { return rpSpan; }
 private:
     std::unique_ptr<Node> staticAssert;
     std::unique_ptr<Node> constantExpr;
     std::unique_ptr<Node> comma;
     std::unique_ptr<Node> stringLiteral;
     std::unique_ptr<Node> semicolon;
-    soul::ast::SourcePos lpPos;
-    soul::ast::SourcePos rpPos;
+    soul::ast::Span lpSpan;
+    soul::ast::Span rpSpan;
 };
 
 class StaticAssertNode : public Node
 {
 public:
-    StaticAssertNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    StaticAssertNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -273,8 +274,8 @@ public:
 class AliasDeclarationNode : public CompoundNode
 {
 public:
-    AliasDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    AliasDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* usng_, Node* identifier_, Node* assign_, Node* definingTypeId_, Node* attributes_,
+    AliasDeclarationNode(const soul::ast::Span& span_) noexcept;
+    AliasDeclarationNode(const soul::ast::Span& span_, Node* usng_, Node* identifier_, Node* assign_, Node* definingTypeId_, Node* attributes_,
         Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -299,7 +300,7 @@ private:
 class EmptyDeclarationNode : public Node
 {
 public:
-    EmptyDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    EmptyDeclarationNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -307,8 +308,8 @@ public:
 class AttributeDeclarationNode : public BinaryNode
 {
 public:
-    AttributeDeclarationNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    AttributeDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* semicolon_) noexcept;
+    AttributeDeclarationNode(const soul::ast::Span& span_) noexcept;
+    AttributeDeclarationNode(const soul::ast::Span& span_, Node* attributes_, Node* semicolon_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -316,7 +317,7 @@ public:
 class InitDeclaratorListNode : public ListNode
 {
 public:
-    InitDeclaratorListNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    InitDeclaratorListNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -324,8 +325,8 @@ public:
 class InitDeclaratorNode : public BinaryNode
 {
 public:
-    InitDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    InitDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* declarator_, Node* init_) noexcept;
+    InitDeclaratorNode(const soul::ast::Span& span_) noexcept;
+    InitDeclaratorNode(const soul::ast::Span& span_, Node* declarator_, Node* init_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override;
@@ -334,8 +335,8 @@ public:
 class TrailingFunctionDeclaratorNode : public CompoundNode
 {
 public:
-    TrailingFunctionDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    TrailingFunctionDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* declarator_, Node* params_, Node* trailingReturnType_) noexcept;
+    TrailingFunctionDeclaratorNode(const soul::ast::Span& span_) noexcept;
+    TrailingFunctionDeclaratorNode(const soul::ast::Span& span_, Node* declarator_, Node* params_, Node* trailingReturnType_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -352,26 +353,26 @@ private:
 class ParenthesizedDeclaratorNode : public CompoundNode
 {
 public:
-    ParenthesizedDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ParenthesizedDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* declarator_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept;
+    ParenthesizedDeclaratorNode(const soul::ast::Span& span_) noexcept;
+    ParenthesizedDeclaratorNode(const soul::ast::Span& span_, Node* declarator_, const soul::ast::Span& lpSpan_, const soul::ast::Span& rpSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* Declarator() const noexcept { return declarator.get(); }
-    inline const soul::ast::SourcePos& LParenPos() const noexcept { return lpPos; }
-    inline const soul::ast::SourcePos& RParenPos() const noexcept { return rpPos; }
+    inline const soul::ast::Span& LParenSpan() const noexcept { return lpSpan; }
+    inline const soul::ast::Span& RParenSpan() const noexcept { return rpSpan; }
     std::u32string Str() const override;
 private:
     std::unique_ptr<Node> declarator;
-    soul::ast::SourcePos lpPos;
-    soul::ast::SourcePos rpPos;
+    soul::ast::Span lpSpan;
+    soul::ast::Span rpSpan;
 };
 
 class AbstractDeclaratorNode : public Node
 {
 public:
-    AbstractDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    AbstractDeclaratorNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -379,7 +380,7 @@ public:
 class DeclSpecifierSequenceNode : public SequenceNode
 {
 public:
-    DeclSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    DeclSpecifierSequenceNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override;
@@ -388,7 +389,7 @@ public:
 class FriendNode : public Node
 {
 public:
-    FriendNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    FriendNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -396,7 +397,7 @@ public:
 class TypedefNode : public Node
 {
 public:
-    TypedefNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    TypedefNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -404,7 +405,7 @@ public:
 class ConstExprNode : public Node
 {
 public:
-    ConstExprNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ConstExprNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -412,7 +413,7 @@ public:
 class ConstEvalNode : public Node
 {
 public:
-    ConstEvalNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ConstEvalNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -420,7 +421,7 @@ public:
 class ConstInitNode : public Node
 {
 public:
-    ConstInitNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ConstInitNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -428,7 +429,7 @@ public:
 class InlineNode : public Node
 {
 public:
-    InlineNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    InlineNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -436,7 +437,7 @@ public:
 class StaticNode : public Node
 {
 public:
-    StaticNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    StaticNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -444,7 +445,7 @@ public:
 class ThreadLocalNode : public Node
 {
 public:
-    ThreadLocalNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ThreadLocalNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -452,7 +453,7 @@ public:
 class ExternNode : public Node
 {
 public:
-    ExternNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ExternNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -460,7 +461,7 @@ public:
 class MutableNode : public Node
 {
 public:
-    MutableNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    MutableNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -468,7 +469,7 @@ public:
 class ExplicitNode : public Node
 {
 public:
-    ExplicitNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    ExplicitNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -476,26 +477,26 @@ public:
 class ConditionalExplicitNode : public UnaryNode
 {
 public:
-    ConditionalExplicitNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ConditionalExplicitNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept;
+    ConditionalExplicitNode(const soul::ast::Span& span_) noexcept;
+    ConditionalExplicitNode(const soul::ast::Span& span_, Node* cond_, const soul::ast::Span& lpSpan_, const soul::ast::Span& rpSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* Condition() const noexcept { return cond.get(); }
-    inline const soul::ast::SourcePos& LParenPos() const noexcept { return lpPos; }
-    inline const soul::ast::SourcePos& RParenPos() const noexcept { return rpPos; }
+    inline const soul::ast::Span& LParenSpan() const noexcept { return lpSpan; }
+    inline const soul::ast::Span& RParenSpan() const noexcept { return rpSpan; }
 private:
     std::unique_ptr<Node> cond;
-    soul::ast::SourcePos lpPos;
-    soul::ast::SourcePos rpPos;
+    soul::ast::Span lpSpan;
+    soul::ast::Span rpSpan;
 };
 
 class QualifiedPtrNode : public BinaryNode
 {
 public:
-    QualifiedPtrNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    QualifiedPtrNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* ptr_) noexcept;
+    QualifiedPtrNode(const soul::ast::Span& span_) noexcept;
+    QualifiedPtrNode(const soul::ast::Span& span_, Node* nns_, Node* ptr_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -503,8 +504,8 @@ public:
 class PtrOperatorNode : public UnaryNode
 {
 public:
-    PtrOperatorNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    PtrOperatorNode(const soul::ast::SourcePos& sourcePos_, Node* child_) noexcept;
+    PtrOperatorNode(const soul::ast::Span& span_) noexcept;
+    PtrOperatorNode(const soul::ast::Span& span_, Node* child_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -512,7 +513,7 @@ public:
 class PtrDeclaratorNode : public SequenceNode
 {
 public:
-    PtrDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept;
+    PtrDeclaratorNode(const soul::ast::Span& span_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::u32string Str() const override;
@@ -521,8 +522,8 @@ public:
 class PackDeclaratorIdNode : public BinaryNode
 {
 public:
-    PackDeclaratorIdNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    PackDeclaratorIdNode(const soul::ast::SourcePos& sourcePos_, Node* ellipsis_, Node* idExpr_) noexcept;
+    PackDeclaratorIdNode(const soul::ast::Span& span_) noexcept;
+    PackDeclaratorIdNode(const soul::ast::Span& span_, Node* ellipsis_, Node* idExpr_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -530,28 +531,28 @@ public:
 class ArrayDeclaratorNode : public UnaryNode
 {
 public:
-    ArrayDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ArrayDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* dimension_, const soul::ast::SourcePos& lbPos_,
-        const soul::ast::SourcePos& rbPos_) noexcept;
+    ArrayDeclaratorNode(const soul::ast::Span& span_) noexcept;
+    ArrayDeclaratorNode(const soul::ast::Span& span_, Node* child_, Node* dimension_, const soul::ast::Span& lbSpan_,
+        const soul::ast::Span& rbSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* Dimension() const noexcept { return dimension.get(); }
-    inline const soul::ast::SourcePos& LBracketPos() const noexcept { return lbPos; }
-    inline const soul::ast::SourcePos& RBracketPos() const noexcept { return rbPos; }
+    inline const soul::ast::Span& LBracketSpan() const noexcept { return lbSpan; }
+    inline const soul::ast::Span& RBracketSpan() const noexcept { return rbSpan; }
     std::u32string Str() const override;
 private:
     std::unique_ptr<Node> dimension;
-    soul::ast::SourcePos lbPos;
-    soul::ast::SourcePos rbPos;
+    soul::ast::Span lbSpan;
+    soul::ast::Span rbSpan;
 };
 
 class FunctionDeclaratorNode : public UnaryNode
 {
 public:
-    FunctionDeclaratorNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    FunctionDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* parameters_) noexcept;
+    FunctionDeclaratorNode(const soul::ast::Span& span_) noexcept;
+    FunctionDeclaratorNode(const soul::ast::Span& span_, Node* child_, Node* parameters_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -565,8 +566,8 @@ private:
 class PrefixNode : public BinaryNode
 {
 public:
-    PrefixNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    PrefixNode(const soul::ast::SourcePos& sourcePos_, Node* prefix_, Node* subject_) noexcept;
+    PrefixNode(const soul::ast::Span& span_) noexcept;
+    PrefixNode(const soul::ast::Span& span_, Node* prefix_, Node* subject_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -574,8 +575,8 @@ public:
 class TrailingQualifiersNode : public SequenceNode
 {
 public:
-    TrailingQualifiersNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    TrailingQualifiersNode(const soul::ast::SourcePos& sourcePos_, Node* subject_) noexcept;
+    TrailingQualifiersNode(const soul::ast::Span& span_) noexcept;
+    TrailingQualifiersNode(const soul::ast::Span& span_, Node* subject_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -589,8 +590,8 @@ private:
 class TrailingAttributesNode : public BinaryNode
 {
 public:
-    TrailingAttributesNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    TrailingAttributesNode(const soul::ast::SourcePos& sourcePos_, Node* left_, Node* attributes_) noexcept;
+    TrailingAttributesNode(const soul::ast::Span& span_) noexcept;
+    TrailingAttributesNode(const soul::ast::Span& span_, Node* left_, Node* attributes_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
@@ -598,35 +599,35 @@ public:
 class NoexceptSpecifierNode : public CompoundNode
 {
 public:
-    NoexceptSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    NoexceptSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* constantExpr_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept;
+    NoexceptSpecifierNode(const soul::ast::Span& span_) noexcept;
+    NoexceptSpecifierNode(const soul::ast::Span& span_, Node* constantExpr_, const soul::ast::Span& lpSpan_, const soul::ast::Span& rpSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     inline Node* ConstantExpr() const noexcept { return constantExpr.get(); }
-    inline const soul::ast::SourcePos& LParenPos() const noexcept { return lpPos; }
-    inline const soul::ast::SourcePos& RParenPos() const noexcept { return rpPos; }
+    inline const soul::ast::Span& LParenSpan() const noexcept { return lpSpan; }
+    inline const soul::ast::Span& RParenSpan() const noexcept { return rpSpan; }
 private:
     std::unique_ptr<Node> constantExpr;
-    soul::ast::SourcePos lpPos;
-    soul::ast::SourcePos rpPos;
+    soul::ast::Span lpSpan;
+    soul::ast::Span rpSpan;
 };
 
 class ThrowSpecifierNode : public CompoundNode
 {
 public:
-    ThrowSpecifierNode(const soul::ast::SourcePos& sourcePos_) noexcept;
-    ThrowSpecifierNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) noexcept;
+    ThrowSpecifierNode(const soul::ast::Span& span_) noexcept;
+    ThrowSpecifierNode(const soul::ast::Span& span_, const soul::ast::Span& lpSpan_, const soul::ast::Span& rpSpan_) noexcept;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline const soul::ast::Span& LParenSpan() const { return lpSpan; }
+    inline const soul::ast::Span& RParenSpan() const { return rpSpan; }
 private:
-    soul::ast::SourcePos lpPos;
-    soul::ast::SourcePos rpPos;
+    soul::ast::Span lpSpan;
+    soul::ast::Span rpSpan;
 };
 
 } // namespace otava::ast

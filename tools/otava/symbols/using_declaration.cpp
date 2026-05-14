@@ -44,18 +44,19 @@ void UsingDeclarationProcessor::Visit(otava::ast::QualifiedIdNode& node)
 
 void UsingDeclarationProcessor::Visit(otava::ast::IdentifierNode& node)
 {
+    soul::ast::FullSpan fullSpan = context->MakeFullSpan(node.GetSpan());
     std::vector<Symbol*> symbols;
     std::set<const Scope*> visited;
     scope->Lookup(node.Str(), SymbolGroupKind::all, ScopeLookup::thisScope, LookupFlags::none, symbols, visited, context);
     if (symbols.empty())
     {
-        ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found", node.GetSourcePos(), context);
+        ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found", fullSpan, context);
     }
     for (Symbol* symbol : symbols)
     {
         if (symbol->IsNamespaceSymbol())
         {
-            ThrowException("symbol '" + util::ToUtf8(symbol->FullName()) + "' denotes a namespace", node.GetSourcePos(), context);
+            ThrowException("symbol '" + util::ToUtf8(symbol->FullName()) + "' denotes a namespace", fullSpan, context);
         }
         else
         {

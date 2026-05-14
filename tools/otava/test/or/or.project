@@ -1,0 +1,3 @@
+project or;
+target=program;
+source <main.cpp>;

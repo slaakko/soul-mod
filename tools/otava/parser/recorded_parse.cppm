@@ -8,7 +8,7 @@ export module otava.parser.recorded.parse;
 import std;
 import otava.ast.statement;
 import otava.ast.classes;
-import soul.ast.source.pos;
+import soul.ast.span;
 import soul.lexer;
 import otava.lexer;
 import otava.symbols.context;
